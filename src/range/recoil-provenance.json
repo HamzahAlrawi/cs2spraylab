@@ -1,0 +1,23 @@
+{
+  "build": "2000908",
+  "inspectedAt": "2026-09-12",
+  "clientSha256": "a0c195f0b6ec00915ef08c548200a010ebbe7982d3a4bc468cad939b67c8c4e3",
+  "tier0Sha256": "add398561b7831fc3b59356a3c3e48b87ba8d8db376b156c1b68c4d710136a8a",
+  "clientRvas": {
+    "tableGenerator": "0x7a9b80",
+    "tableLoop": "0x7a9c1b",
+    "tableLookup": "0x7abd80",
+    "tableMask": "0x7abeeb",
+    "punchIntegrator": "0x827220",
+    "punchImpulse": "0x835850"
+  },
+  "tier0Rvas": { "constructor": "0x15ea30", "randomFloat": "0x15eb10" },
+  "constants": {
+    "tableSize": 64, "smoothing": 0.55, "suppressionShots": 4,
+    "suppressionStart": 0.75, "punchRateHz": 128,
+    "angleExponentialDecay": 8, "angleLinearDecay": 18,
+    "velocityDecay": 4.5, "velocityThreshold": 0.03125, "trajectoryScale": 2
+  },
+  "verification": "Numeric RNG and full recoil tables match isolated, hash-pinned machine-code emulation. Full angular trajectories require native capture validation.",
+  "limitations": ["Euler rather than quaternion interpolation", "No partial-burst recoil-index recovery", "Approximate optional spread", "Fixed-step rather than subtick shot timing"]
+}
