@@ -1,0 +1,3 @@
+name = "cs2-spray-trainer-mvp"
+compatibility_date = "2026-05-30"
+pages_build_output_dir = "dist"
