@@ -1,9 +1,10 @@
 import { CSSProperties, useEffect, useRef, useState } from 'react';
-import { Activity, Check, ChevronDown, Code2 as Github, Crosshair as AimIcon, Download, Gift, History, Maximize, Pause, Play, RotateCcw, Settings2, Shield, Target, Upload, Volume2, VolumeX, X } from 'lucide-react';
-import { Crosshair, defaults, gameData, loadSettings, MeasuredProfile, migrateMode, Mode, modeNames, parseProfile, presets, saveSettings, Settings, Weapon, weaponIds, weaponNames } from './config';
+import { Activity, ArrowUp, Check, ChevronDown, Code2 as Github, Crosshair as AimIcon, Download, Gift, History, Maximize, Pause, Play, RotateCcw, Settings2, Shield, Target, Upload, Volume2, VolumeX, X } from 'lucide-react';
+import { Crosshair, defaults, gameData, historyModeNames, loadSettings, MeasuredProfile, migrateMode, Mode, modeNames, parseProfile, presets, saveSettings, Settings, Weapon, weaponIds, weaponNames } from './config';
 import { RangeEngine, RangeStatus } from './engine';
 import { Result } from './simulation';
 import { loadAttempts } from '../lib/storage';
+import { markSetupHintSeen, needsSetupHint } from './onboarding';
 
 function CrosshairView({ value }: { value: Crosshair }) {
   const style = { '--cross-color': value.color, '--cross-size': `${value.size}px`, '--cross-gap': `${value.gap}px`, '--cross-thickness': `${value.thickness}px`, '--cross-outline': `${value.outline}px`, opacity: value.alpha } as CSSProperties;
@@ -29,7 +30,7 @@ function readResults(): Result[] {
     const a = JSON.parse(localStorage.getItem('spraylab.results.v2') || '[]');
     return Array.isArray(a) ? a.filter(r => r && weaponIds.includes(r.weapon) && typeof r.id === 'string'
       && ['shots', 'hits', 'heads', 'seconds', 'tracking'].every(k => Number.isFinite(r[k])) && Number.isFinite(Date.parse(r.date))
-      && Array.isArray(r.samples) && r.samples.length <= 150 && r.samples.every((p: Record<string, unknown>) => p && ['x', 'y', 'bullet'].every(k => Number.isFinite(p[k])))).slice(0, 100).map(r => ({ ...r, mode: migrateMode(r.mode) })) : [];
+      && Array.isArray(r.samples) && r.samples.length <= 150 && r.samples.every((p: Record<string, unknown>) => p && ['x', 'y', 'bullet'].every(k => Number.isFinite(p[k])))).slice(0, 100).map(r => ({ ...r, mode: r.mode === 'tracking' ? 'tracking' : migrateMode(r.mode) })) : [];
   } catch { return []; }
 }
 function download(name: string, value: unknown) {
@@ -37,12 +38,14 @@ function download(name: string, value: unknown) {
   const a = document.createElement('a'); a.href = url; a.download = name; a.click();
   setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
-const emptyStatus: RangeStatus = { weapon: 'ak47', active: false, firing: false, shots: 0, hits: 0, heads: 0, remaining: 30, reload: 0, speed: 0, distance: 12, tracking: 0, trackingRemaining: 30, input: 'Ready', audio: 'locked', assets: 'Loading models', fps: 0 };
+const emptyStatus: RangeStatus = { weapon: 'ak47', active: false, firing: false, shots: 0, hits: 0, heads: 0, remaining: 30, reload: 0, speed: 0, distance: 12, input: 'Ready', audio: 'locked', assets: 'Loading models', fps: 0 };
 type Panel = 'settings' | 'weapons' | 'history' | null;
 type Tab = 'game' | 'crosshair' | 'data';
 
 export default function RangeApp() {
   const [settings, setSettings] = useState(loadSettings);
+  const [setupHint, setSetupHint] = useState(needsSetupHint);
+  const settingsButton = useRef<HTMLButtonElement>(null);
   const settingsRef = useRef(settings); settingsRef.current = settings;
   const [status, setStatus] = useState(emptyStatus);
   const [panel, setPanel] = useState<Panel>(null), [tab, setTab] = useState<Tab>('game');
@@ -60,11 +63,12 @@ export default function RangeApp() {
   const drawer = useRef<HTMLElement>(null);
   const assetReady = status.assets === 'Models ready' && status.weapon === settings.weapon;
   const weapon = gameData.weapons[settings.weapon];
-  const tracking = settings.mode === 'tracking';
-  const score = tracking ? status.tracking : status.shots ? status.hits / status.shots * 100 : 0;
+  const score = status.shots ? status.hits / status.shots * 100 : 0;
   const update = (patch: Partial<Settings>) => setSettings(s => ({ ...s, ...patch }));
   const cross = (patch: Partial<Crosshair>) => setSettings(s => ({ ...s, crosshair: { ...s.crosshair, ...patch } }));
-  const open = (next: Panel) => { engine.current?.pause(); setPanel(next); };
+  const open = (next: Panel) => { engine.current?.pause(); setSetupHint(false); setPanel(next); };
+  useEffect(() => { if (setupHint) markSetupHintSeen(); }, [setupHint]);
+  useEffect(() => { if (status.active) setSetupHint(false); }, [status.active]);
   useEffect(() => {
     let range: RangeEngine;
     try {
@@ -122,7 +126,15 @@ export default function RangeApp() {
     <header className="appbar">
       <a className="brand" href="/" aria-label="SprayLab home"><AimIcon size={25} strokeWidth={1.7} /><span>SPRAYLAB<span className="brand-sub">COUNTER-STRIKE TRAINING</span></span></a>
       <nav className="main-nav" aria-label="Workspace"><button className={!panel ? 'selected' : ''} onClick={() => setPanel(null)}><Target size={16} />Range</button><button className={panel === 'history' ? 'selected' : ''} onClick={() => open('history')}><History size={16} />Session<span className="count">{results.length}</span></button></nav>
-      <button className="settings-button" onClick={() => open('settings')}><Settings2 size={17} />Settings</button>
+      <div className="app-actions">
+        <a className="header-donation" href="https://steamcommunity.com/tradeoffer/new/?partner=135963670&token=IS6KDROD" target="_blank" rel="noreferrer"><Gift size={16} />Donate</a>
+        <button ref={settingsButton} className={`settings-button${setupHint ? ' settings-nudge' : ''}`} aria-describedby={setupHint ? 'settings-hint-text' : undefined} onClick={() => open('settings')}><Settings2 size={17} />Settings</button>
+        {setupHint && !panel && <div className="settings-hint" role="status">
+          <ArrowUp className="hint-arrow" size={22} aria-hidden="true" />
+          <button className="hint-action" aria-label="Customize your CS2 settings" onClick={() => open('settings')}><b>Match your CS2 setup</b><span id="settings-hint-text">Sensitivity, crosshair & audio</span></button>
+          <button className="icon-button" aria-label="Dismiss settings hint" title="Dismiss hint" onClick={() => { setSetupHint(false); settingsButton.current?.focus(); }}><X size={16} /></button>
+        </div>}
+      </div>
     </header>
     <section className="range-toolbar" aria-label="Range configuration">
       <button className="weapon-select" onClick={() => open('weapons')}><img src={`/models/${settings.weapon}.png`} alt="" /><span><small>LOADOUT</small>{weaponNames[settings.weapon]}</span><ChevronDown size={15} /></button>
@@ -132,7 +144,7 @@ export default function RangeApp() {
     </section>
     <section className="range-stage" aria-label="Practice range">
       <div className="canvas-host" ref={host} />
-      <div className="range-topline"><span className="range-badge"><i />{status.active ? 'LIVE RANGE' : 'RANGE 01'}</span><span>{tracking ? '30 SECOND DRILL' : profiles[settings.weapon] ? 'IMPORTED RECOIL CAPTURE' : 'GAME-DERIVED RECOIL'}</span></div>
+      <div className="range-topline"><span className="range-badge"><i />{status.active ? 'LIVE RANGE' : 'RANGE 01'}</span><span>{profiles[settings.weapon] ? 'IMPORTED RECOIL CAPTURE' : 'GAME-DERIVED RECOIL'}</span></div>
       <div className="target-label">{modeNames[settings.mode]} <span>{status.distance.toFixed(1)} m</span></div>
       <div className="follow-origin" ref={follow}><CrosshairView value={settings.crosshair} /></div>
       <div className="hit-marker" ref={hitmarker}><X size={42} strokeWidth={3} /></div>
@@ -141,11 +153,11 @@ export default function RangeApp() {
       {status.active && <div className="exit-hint"><span>Press ESC to exit</span><button className="icon-button" aria-label="Pause range" title="Pause range (Esc)" onClick={() => engine.current?.pause()}><Pause size={16} /></button></div>}
       <div className="range-hud">
         <div className="hud-performance"><span className="hud-stat"><Activity size={17} /><b>{Math.round(status.speed)}</b><small>u/s</small></span><span className="hud-stat"><Target size={17} /><b>{status.distance.toFixed(1)}</b><small>m</small></span></div>
-        <div className="hud-result"><small>{tracking ? 'ON TARGET' : 'HIT RATE'}</small><strong data-testid="accuracy">{Math.round(score)}<em>%</em></strong>{tracking ? <span>{status.trackingRemaining.toFixed(1)}s remaining</span> : <div className="hit-counts"><span className="head-count"><b>{status.heads}</b> HEAD</span><span className="body-count"><b>{status.hits - status.heads}</b> BODY</span><span className="miss-count"><b>{status.shots - status.hits}</b> MISS</span></div>}</div>
-        <div className="hud-ammo"><small>{tracking ? 'TRACKING' : weaponNames[settings.weapon]}</small><strong data-testid="ammo">{tracking ? status.trackingRemaining.toFixed(0) : status.remaining}<em>{!tracking ? `/ ${Math.min(settings.burst || weapon.magazine, weapon.magazine)}` : ''}</em></strong><span>{status.firing ? tracking ? 'Tracking' : 'Firing' : 'Ready'}</span></div>
+        <div className="hud-result"><small>HIT RATE</small><strong data-testid="accuracy">{Math.round(score)}<em>%</em></strong><div className="hit-counts"><span className="head-count"><b>{status.heads}</b> HEAD</span><span className="body-count"><b>{status.hits - status.heads}</b> BODY</span><span className="miss-count"><b>{status.shots - status.hits}</b> MISS</span></div></div>
+        <div className="hud-ammo"><small>{weaponNames[settings.weapon]}</small><strong data-testid="ammo">{status.remaining}<em>{`/ ${Math.min(settings.burst || weapon.magazine, weapon.magazine)}`}</em></strong><span>{status.firing ? 'Firing' : 'Ready'}</span></div>
       </div>
     </section>
-    <footer className="statusbar"><span><i className={status.active ? 'online' : ''} />{status.input}<span className="desktop-status">{status.fps} FPS</span></span><span className="status-center">{status.audio === 'unavailable' ? 'Audio unavailable' : `${Math.round(60 / weapon.cycle)} RPM`}<span className="desktop-status">Build {gameData.build}</span></span><div className="project-links"><a href="https://github.com/HamzahAlrawi/cs2spraylab" target="_blank" rel="noreferrer"><Github size={14} />Source</a><a className="donation" href="https://steamcommunity.com/tradeoffer/new/?partner=135963670&token=IS6KDROD" target="_blank" rel="noreferrer"><Gift size={14} />Donate</a></div></footer>
+    <footer className="statusbar"><span><i className={status.active ? 'online' : ''} />{status.input}<span className="desktop-status">{status.fps} FPS</span></span><span className="status-center">{status.audio === 'unavailable' ? 'Audio unavailable' : `${Math.round(60 / weapon.cycle)} RPM`}<span className="desktop-status">Build {gameData.build}</span></span><div className="project-links"><a href="https://github.com/HamzahAlrawi/cs2spraylab" target="_blank" rel="noreferrer"><Github size={14} />Source</a></div></footer>
     {notice && <div className="toast" role="status">{notice}<button className="icon-button" aria-label="Dismiss message" onClick={() => setNotice('')}><X size={15} /></button></div>}
     {panel && <div className="drawer-backdrop" onPointerDown={e => { if (e.target === e.currentTarget) setPanel(null); }}>
       <aside className={`drawer ${panel === 'history' ? 'wide' : ''}`} role="dialog" aria-modal="true" aria-labelledby="panel-title" tabIndex={-1} ref={drawer}>
@@ -161,8 +173,11 @@ export default function RangeApp() {
               <h2>Training</h2><label className="select-row">Burst length<select aria-label="Burst length" value={settings.burst} onChange={e => update({ burst: +e.target.value })}><option value="0">Full magazine</option><option value="5">5 rounds</option><option value="10">10 rounds</option><option value="15">15 rounds</option></select></label>
               <Toggle label="Follow recoil" checked={settings.follow} onChange={v => update({ follow: v })} />
               <Toggle label="Practice spread" checked={settings.spread} onChange={v => update({ spread: v })} />
-              <Toggle label="Moving target" checked={settings.moving || tracking} onChange={v => update({ moving: v, ...(tracking && !v ? { mode: 'spray' as Mode } : {}) })} />
+              <Toggle label="Moving target" checked={settings.moving} onChange={v => update({ moving: v })} />
               <label className="select-row">Target movement<select aria-label="Target movement" value={settings.targetSpeed} onChange={e => update({ targetSpeed: e.target.value as Settings['targetSpeed'] })}><option value="rifle">{weaponNames[settings.weapon]} / {weapon.speed} u/s</option><option value="smg">MP9 / 240 u/s</option><option value="knife">Knife / 250 u/s</option></select></label>
+              <h2>Wall guides</h2>
+              <Toggle label="Impact pattern (left)" checked={settings.showImpactPattern} onChange={v => update({ showImpactPattern: v })} />
+              <Toggle label="Mouse movement (right)" checked={settings.showMousePath} onChange={v => update({ showMousePath: v })} />
               <h2>Graphics</h2><label className="select-row">Render quality<select aria-label="Render quality" value={settings.quality} onChange={e => update({ quality: e.target.value as Settings['quality'] })}><option value="auto">Adaptive</option><option value="low">Low</option><option value="high">High</option></select></label>
               <label className="select-row">Display aspect<select aria-label="Display aspect" value={settings.aspect} onChange={e => update({ aspect: e.target.value as Settings['aspect'] })}>{['native', '16:9', '16:10', '4:3', '5:4'].map(a => <option key={a} value={a}>{a === 'native' ? 'Native viewport' : `${a} stretched`}</option>)}</select></label>
             </>}
@@ -194,8 +209,8 @@ export default function RangeApp() {
         {panel === 'weapons' && <div className="drawer-content arsenal">{weaponIds.map(id => <button className={`weapon-item ${settings.weapon === id ? 'chosen' : ''}`} key={id} onClick={() => { update({ weapon: id }); setPanel(null); }}><img src={`/models/${id}.png`} alt={weaponNames[id]} /><span><b>{weaponNames[id]}</b><small>{gameData.weapons[id].magazine} rounds <i /> {Math.round(60 / gameData.weapons[id].cycle)} RPM</small></span>{id === settings.weapon && <Check size={18} />}</button>)}</div>}
         {panel === 'history' && <div className="drawer-content history">
           <div className="session-summary"><div><small>ATTEMPTS</small><b>{results.length}</b></div><div><small>AVG. HIT RATE</small><b>{results.filter(r => r.shots).length ? Math.round(results.filter(r => r.shots).reduce((n, r) => n + r.hits / r.shots * 100, 0) / results.filter(r => r.shots).length) : 0}%</b></div><button className="icon-button" aria-label="Export history" title="Export history" onClick={() => download('spraylab-history.json', { results, legacy })}><Download size={18} /></button></div>
-          {selected && <section className="replay"><div className="section-title"><h2>{weaponNames[selected.weapon]} / {modeNames[selected.mode]}</h2><span>{selected.mode === 'tracking' ? `${selected.tracking.toFixed(1)}%` : `${selected.hits}/${selected.shots}`}</span></div>{selected.samples.length > 0 && <><svg viewBox="0 0 400 240" role="img" aria-label="Shot replay, metres relative to target head"><path d="M200 0V240M0 120H400" stroke="#47524d" strokeDasharray="3 5" /><circle cx="200" cy="120" r="10" fill="none" stroke="#8daba0" /><path d="M182 139h36v42h-36z" fill="#394943" />{selected.samples.slice(0, replay).map((s, i) => <g key={i}><circle cx={200 + Math.max(-190, Math.min(190, s.x * 70))} cy={120 - Math.max(-110, Math.min(110, s.y * 70))} r="3" fill={s.head ? '#e6cf6b' : s.hit ? '#6ddbb1' : '#ed9186'} /><title>Round {s.bullet}: {s.x.toFixed(2)}m, {s.y.toFixed(2)}m</title></g>)}</svg><Slider label="Replay round" value={replay} min={0} max={selected.samples.length} onChange={setReplay} /></>}</section>}
-          <h2>Recent attempts</h2>{!results.length && <p className="empty-state">No attempts yet.</p>}{results.map(r => <button key={r.id} className={`history-row ${selected?.id === r.id ? 'selected' : ''}`} onClick={() => { setSelected(r); setReplay(r.samples.length); }}><span><b>{weaponNames[r.weapon]}</b><small>{modeNames[r.mode]} / {new Date(r.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</small></span><strong>{Math.round(r.mode === 'tracking' ? r.tracking : r.shots ? r.hits / r.shots * 100 : 0)}%</strong><ChevronDown size={14} /></button>)}
+          {selected && <section className="replay"><div className="section-title"><h2>{weaponNames[selected.weapon]} / {historyModeNames[selected.mode]}</h2><span>{selected.mode === 'tracking' ? `${selected.tracking.toFixed(1)}%` : `${selected.hits}/${selected.shots}`}</span></div>{selected.samples.length > 0 && <><svg viewBox="0 0 400 240" role="img" aria-label="Shot replay, metres relative to target head"><path d="M200 0V240M0 120H400" stroke="#47524d" strokeDasharray="3 5" /><circle cx="200" cy="120" r="10" fill="none" stroke="#8daba0" /><path d="M182 139h36v42h-36z" fill="#394943" />{selected.samples.slice(0, replay).map((s, i) => <g key={i}><circle cx={200 + Math.max(-190, Math.min(190, s.x * 70))} cy={120 - Math.max(-110, Math.min(110, s.y * 70))} r="3" fill={s.head ? '#e6cf6b' : s.hit ? '#6ddbb1' : '#ed9186'} /><title>Round {s.bullet}: {s.x.toFixed(2)}m, {s.y.toFixed(2)}m</title></g>)}</svg><Slider label="Replay round" value={replay} min={0} max={selected.samples.length} onChange={setReplay} /></>}</section>}
+          <h2>Recent attempts</h2>{!results.length && <p className="empty-state">No attempts yet.</p>}{results.map(r => <button key={r.id} className={`history-row ${selected?.id === r.id ? 'selected' : ''}`} onClick={() => { setSelected(r); setReplay(r.samples.length); }}><span><b>{weaponNames[r.weapon]}</b><small>{historyModeNames[r.mode]} / {new Date(r.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</small></span><strong>{Math.round(r.mode === 'tracking' ? r.tracking : r.shots ? r.hits / r.shots * 100 : 0)}%</strong><ChevronDown size={14} /></button>)}
           {legacy.length > 0 && <><h2>Previous-version history</h2>{legacy.map(r => <div className="history-row" key={r.id}><span>{r.weaponName}<small>{new Date(r.createdAt).toLocaleDateString()}</small></span><b>{r.scores.overall} score</b></div>)}</>}
         </div>}
       </aside>

@@ -92,6 +92,8 @@ for (const [id, key, model, sound] of definitions) {
   console.log(id, output.weapons[id].magazine, output.weapons[id].cycle, 'seed', output.weapons[id].recoilSeed);
   if (!process.argv.includes('--data-only')) {
     if (!fs.existsSync(`research/raw-models/${id}.glb`)) run('-f', `${source.m_szWorldModel}_c`, '-o', `research/raw-models/${id}.glb`, '-d', '--gltf_export_format', 'glb', '--gltf_export_materials', '--gltf_textures_adapt');
+    // Even without clips, animation export preserves the weapon's bind skeleton.
+    if (!fs.existsSync(`research/raw-models/${id}-rigged.glb`)) run('-f', `${source.m_szWorldModel}_c`, '-o', `research/raw-models/${id}-rigged.glb`, '-d', '--gltf_export_format', 'glb', '--gltf_export_materials', '--gltf_textures_adapt', '--gltf_export_animations', '--gltf_animation_list', '__bind_pose_only__');
     if (!fs.existsSync(`public/revamp/audio/${id}.wav`)) run('-f', `sounds/weapons/${sound}.vsnd_c`, '-o', `public/revamp/audio/${id}.wav`, '-d');
     console.log(`Exported ${id} model and sound`);
   }

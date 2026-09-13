@@ -84,10 +84,10 @@ describe('Shot scheduling and independent drills', () => {
     const s = make(); s.start(true); s.input.side = 1; s.cancel(); run(s, 5);
     expect(s.shots).toBe(1); expect(s.active).toBe(false); expect(s.velocity.x).toBe(0); expect(s.input.side).toBe(0);
   });
-  it('counts tracking by elapsed time, never bullets', () => {
-    const s = make({ mode: 'tracking' }); s.isOnTarget = () => true; const shot = vi.fn(); s.onShot = shot;
-    s.start(true); run(s, 30.1, 100);
-    expect(shot).not.toHaveBeenCalled(); expect(s.latest?.tracking).toBeCloseTo(100); expect(s.latest?.shots).toBe(0);
+  it('migrates retired tracking to an ordinary guided shooting attempt', () => {
+    const s = new Simulation(sanitizeSettings({mode: 'tracking', burst: 5}));
+    s.start(true); run(s, 1);
+    expect(s.latest?.mode).toBe('guided'); expect(s.latest?.shots).toBe(5); expect(s.latest?.tracking).toBe(0);
   });
   it('only emits one result even when release and blur arrive together', () => {
     const s = make(), result = vi.fn(); s.onResult = result; s.start(); s.release('mouse'); s.cancel();
@@ -100,7 +100,7 @@ describe('Shot scheduling and independent drills', () => {
     expect(times[1] - times[0]).toBeGreaterThanOrEqual(gameData.weapons.ak47.cycle);
   });
   it('consolidates retired training modes into guided spray', () => {
-    for (const mode of ['weak', 'ghost', 'trace', 'fade', '__proto__', 'toString']) expect(migrateMode(mode)).toBe('guided');
+    for (const mode of ['weak', 'ghost', 'trace', 'fade', 'tracking', '__proto__', 'toString']) expect(migrateMode(mode)).toBe('guided');
     expect(migrateMode('transfer')).toBe('transfer');
   });
   it('the same angular shot grows linearly with distance, including 100m', () => {
