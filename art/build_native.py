@@ -2,6 +2,7 @@
 import bpy, json, math, os
 from pathlib import Path
 from mathutils import Vector, Matrix
+from mathutils.bvhtree import BVHTree
 
 ROOT = Path(globals().get('SPRAYLAB_ROOT', os.getcwd()))
 OUT = ROOT / 'public/revamp/models'; OUT.mkdir(parents=True, exist_ok=True)
@@ -37,11 +38,51 @@ def bake(obj, name=None):
     result.matrix_world = obj.matrix_world.copy()
     return result
 
+def posed_weapon(ident, character, secondary):
+    imported, _ = import_glb(ident+'-rigged')
+    rig = next(o for o in imported if o.type == 'ARMATURE')
+    bind_root = rig.matrix_world @ rig.data.bones['weapon'].matrix_local
+    anim_root = secondary.matrix_world @ secondary.data.bones['weapon'].matrix_local
+    # Mesh bind origins are weapon-specific, not the animation skeleton's zero origin.
+    # Retarget the authored part poses before baking (silencer, magazines, straps).
+    for bone in sorted(rig.pose.bones, key=lambda b: len(b.parent_recursive)):
+        authored = secondary.pose.bones.get(bone.name)
+        if authored:
+            bone.matrix = rig.matrix_world.inverted() @ bind_root @ anim_root.inverted() @ secondary.matrix_world @ authored.matrix
+            # A child matrix is converted through the evaluated parent pose.
+            bpy.context.view_layer.update()
+    bpy.context.view_layer.update()
+    for bone in rig.pose.bones:
+        authored = secondary.pose.bones.get(bone.name)
+        if authored:
+            expected = rig.matrix_world.inverted() @ bind_root @ anim_root.inverted() @ secondary.matrix_world @ authored.matrix
+            error = max(abs(bone.matrix[r][c] - expected[r][c]) for r in range(4) for c in range(4))
+            if error > 1e-4: raise RuntimeError('Weapon part pose mismatch: '+ident+'/'+bone.name)
+    meshes = [o for o in imported if o.type == 'MESH' and 'legacy' not in o.name.lower()]
+    attachment = character.matrix_world @ character.pose.bones['wpn'].matrix @ bind_root.inverted()
+    posed = [bake(o, 'held_weapon_'+ident) for o in meshes]
+    for o in posed: o.matrix_world = attachment @ o.matrix_world
+    vertices, polygons = [], []
+    for o in posed:
+        offset = len(vertices)
+        vertices.extend(o.matrix_world @ v.co for v in o.data.vertices)
+        polygons.extend([offset+i for i in p.vertices] for p in o.data.polygons)
+    tree = BVHTree.FromPolygons(vertices, polygons)
+    distances = []
+    for side in ['L', 'R']:
+        probes = [character.matrix_world @ character.pose.bones[name+'_'+side].head for name in ['finger_middle_1', 'finger_index_1', 'finger_thumb_2']]
+        distances.append(min(tree.find_nearest(p)[3] for p in probes))
+    for o in posed: o['grip_surface_distance'] = distances
+    print('GRIP', ident, distances)
+    if max(distances) > .045: raise RuntimeError('Weapon is detached from its authored grip: '+ident)
+    hide(imported)
+    return posed, list(bind_root.translation)
+
 def export(objects, ident, animated=False):
     bpy.ops.object.select_all(action='DESELECT')
     for obj in objects: obj.hide_set(False); obj.select_set(True)
     bpy.ops.export_scene.gltf(filepath=str(OUT / (ident+'.glb')), export_format='GLB', use_selection=True, use_active_scene=True,
-        export_animations=animated, export_animation_mode='NLA_TRACKS', export_anim_single_armature=False, export_frame_range=False, export_image_format='AUTO')
+        export_animations=animated, export_animation_mode='NLA_TRACKS', export_anim_single_armature=False, export_frame_range=False, export_image_format='AUTO', export_extras=True)
     print('EXPORTED', ident)
 
 def hide(objects):
@@ -62,7 +103,7 @@ for pos, energy, size in [((2,-3,4),220,4), ((-2,1,2),160,3)]:
 source, actions = import_glb('view-arms')
 character = next(o for o in source if o.type == 'ARMATURE' and 'ctm_sas' in o.name)
 hide(source)
-for ident in weapons:
+for ident in globals().get('SPRAYLAB_WEAPONS', weapons):
     choose_pose(source, actions, clips[ident], 'viewmodel')
     hands = [bake(o, 'view_'+ident+'_'+o.name.split('.')[-1]) for o in source if o.type == 'MESH' and 'firstperson_' in o.name]
     imported, _ = import_glb(ident)
@@ -76,12 +117,12 @@ for ident in weapons:
     for o in imported: o.hide_render = o not in meshes
     for o in hands: o.hide_render = True
     scene.render.filepath = str(OUT/(ident+'.png')); bpy.ops.render.render(write_still=True)
-    bone = character.pose.bones['wpn']
     secondary = next(o for o in source if o.type == 'ARMATURE' and o.name.split('.vnmskel')[0] == weapons[ident]['skeleton'].split('.vnmskel')[0])
-    weapon_basis = secondary.matrix_world @ secondary.pose.bones['weapon'].bone.matrix_local
-    attachment = character.matrix_world @ bone.matrix @ weapon_basis.inverted()
-    posed = [bake(o, 'held_weapon_'+ident) for o in meshes]
-    for o in posed: o.matrix_world = attachment @ o.matrix_world
+    posed, bind_origin = posed_weapon(ident, character, secondary)
+    for o in posed:
+        o['assembly_version'] = 2
+        o['weapon_bind_origin'] = bind_origin
+        o['pose_clip'] = clips[ident]
     for o in hands: o.hide_render = False
     hide(imported)
     export(hands+posed, 'view-'+ident)
@@ -98,14 +139,13 @@ rig = next(o for o in target if o.type == 'ARMATURE' and 'ctm_sas' in o.name)
 meshes = [o for o in target if o.type == 'MESH' and 'thirdperson_' in o.name]
 for o in target:
     if o not in meshes and o != rig: o.hide_render = True
-held, _ = import_glb('m4a1s')
-gun = [o for o in held if o.type == 'MESH' and 'legacy' not in o.name.lower()]
-bone = rig.pose.bones['wpn']
 secondary = next(o for o in target if o.type == 'ARMATURE' and 'm4a1_silencer' in o.name)
-weapon_basis = secondary.matrix_world @ secondary.pose.bones['weapon'].bone.matrix_local
+gun, bind_origin = posed_weapon('m4a1s', rig, secondary)
 for o in gun:
     o.name = 'held_weapon_target'
-    transform = rig.matrix_world @ bone.matrix @ weapon_basis.inverted() @ o.matrix_world
+    o['assembly_version'] = 2
+    o['weapon_bind_origin'] = bind_origin
+    transform = o.matrix_world.copy()
     o.parent = rig; o.parent_type = 'BONE'; o.parent_bone = 'wpn'
     bpy.context.view_layer.update()
     o.matrix_world = transform

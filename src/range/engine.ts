@@ -6,11 +6,13 @@ import { Settings, MeasuredProfile, Weapon, gameData } from './config';
 import { DEG, direction, Simulation, Shot, Vec, VERTICAL_FOV, TARGET_Z } from './simulation';
 import { RangeAudio } from './audio';
 import { requestRawLock } from './input';
+import { VIEWMODEL_FOV, VIEWMODEL_OFFSET, viewmodelViewport } from './viewmodel';
+import { GUIDE_COLORS, SprayDemonstration } from './spray-demonstration';
 
 export type RangeStatus = {
   weapon: Weapon;
   active: boolean; firing: boolean; shots: number; hits: number; heads: number; remaining: number;
-  reload: number; speed: number; distance: number; tracking: number; trackingRemaining: number;
+  reload: number; speed: number; distance: number;
   input: string; audio: string; assets: string; fps: number;
 };
 const vector = (v: Vec) => new THREE.Vector3(v.x, v.y, v.z);
@@ -21,7 +23,10 @@ export class RangeEngine {
   scene = new THREE.Scene();
   camera = new THREE.PerspectiveCamera(VERTICAL_FOV, 1, .025, 250);
   viewScene = new THREE.Scene();
-  viewCamera = new THREE.PerspectiveCamera(54, 1, .01, 10);
+  viewCamera = new THREE.PerspectiveCamera(VIEWMODEL_FOV, 1, .01, 10);
+  viewViewport = viewmodelViewport(1, 1);
+  demonstration = new SprayDemonstration();
+  mouseDemonstration = new SprayDemonstration('mouse');
   weaponRoot = new THREE.Group();
   targets = [new THREE.Group(), new THREE.Group()];
   targetModels: THREE.Object3D[] = [];
@@ -51,7 +56,7 @@ export class RangeEngine {
   environment?: THREE.WebGLRenderTarget;
   constructor(public host: HTMLElement, public onStatus: (s: RangeStatus) => void, settings: Settings, crosshair: HTMLElement, hitmarker: HTMLElement, public onError: (s: string) => void) {
     this.crosshair = crosshair; this.hitmarker = hitmarker;
-    this.cues.forEach((cue, i) => { cue.className = `aim-cue ${i ? 'next' : 'now'}`; cue.innerHTML = `<i></i><span>${i ? 'NEXT' : 'NOW'}</span>`; host.append(cue); });
+    this.cues.forEach((cue, i) => { cue.className = `aim-cue ${i ? 'next' : 'now'}`; cue.style.color = i ? GUIDE_COLORS.next : GUIDE_COLORS.now; cue.innerHTML = `<i></i><span>${i ? 'NEXT' : 'NOW'}</span>`; host.append(cue); });
     this.hitCaption.className = 'hit-caption'; host.append(this.hitCaption);
     this.sim = new Simulation(settings);
     this.renderer = new THREE.WebGLRenderer({ antialias: settings.quality !== 'low', powerPreference: 'high-performance', alpha: false });
@@ -65,8 +70,8 @@ export class RangeEngine {
     this.renderer.domElement.dataset.range = 'true';
     host.prepend(this.renderer.domElement);
     this.buildScene();
+    this.updateDemonstration();
     this.sim.onShot = s => this.shot(s);
-    this.sim.isOnTarget = (origin, dir) => this.castTargets(origin, dir).length > 0;
     this.observer = new ResizeObserver(() => this.resize()); this.observer.observe(host);
     this.bindInput(); this.resize();
     void this.loadTarget(); void this.setWeapon(settings.weapon);
@@ -117,7 +122,7 @@ export class RangeEngine {
       }
       m.normalScale.set(.4, .4); return m;
     };
-    const concrete = surface('wall', 31.5, 1.5, '#bec2b9'); const dark = material('#444d4b'); const steel = material('#4e6766', .48);
+    const concrete = surface('wall', 31.5, 1.5, '#8d9993'); const dark = material('#444d4b'); const steel = material('#4e6766', .48);
     this.box([24, .2, 126], [0, -.1, -52], surface('floor', 12, 63, '#8a9389'));
     this.box([.5, 5, 126], [-12, 2.5, -52], concrete);
     this.box([.5, 5, 126], [12, 2.5, -52], concrete);
@@ -154,11 +159,12 @@ export class RangeEngine {
       this.scene.add(scene);
     }).catch(() => {});
     // Target backplates give useful impact feedback even at 100 m.
-    this.box([16, 4.2, .25], [0, 2.1, TARGET_Z - 1.6], material('#becbc7'));
+    this.box([16, 4.2, .25], [0, 2.1, TARGET_Z - 1.6], material('#536765'));
+    this.scene.add(this.demonstration.mesh, this.mouseDemonstration.mesh);
     for (const x of [-8, 8]) this.box([.18, 4.5, .4], [x, 2.25, TARGET_Z - 1.6], steel);
     this.targets.forEach((target, i) => {
       const tag = this.label(i ? 'B' : 'A', .32, .16, '#ffffff'); tag.position.set(0, 2.05, 0); tag.name = 'lane-tag'; target.add(tag);
-      const marker = new THREE.Mesh(new THREE.RingGeometry(.4, .44, 48), new THREE.MeshBasicMaterial({ color: '#51edee', side: THREE.DoubleSide, transparent: true, opacity: .8 }));
+      const marker = new THREE.Mesh(new THREE.RingGeometry(.4, .44, 48), new THREE.MeshBasicMaterial({ color: GUIDE_COLORS.now, side: THREE.DoubleSide, transparent: true, opacity: .8 }));
       marker.name = 'active-lane'; marker.rotation.x = -Math.PI / 2; marker.position.y = .015; target.add(marker);
       this.scene.add(target);
     });
@@ -177,9 +183,8 @@ export class RangeEngine {
       const { scene, animations } = await new GLTFLoader().loadAsync('/models/target.glb');
       if (this.disposed) { this.disposeObject(scene); return; }
       this.targetAsset = scene;
-      const bounds = new THREE.Box3().setFromObject(scene); const size = bounds.getSize(new THREE.Vector3());
-      const scale = 1.83 / size.y;
-      scene.scale.setScalar(scale); scene.position.y = -bounds.min.y * scale;
+      // Native GLB coordinates are already metres. A loading-pose bounding box
+      // includes extended limbs and must not be used to resize the standing player.
       scene.traverse(o => {
         if (!(o instanceof THREE.Mesh)) return;
         o.castShadow = true; o.receiveShadow = true; o.userData.skipScoring = /held_weapon|weapons[\\/]/i.test(o.name);
@@ -210,38 +215,74 @@ export class RangeEngine {
     this.assetStatus = 'Loading weapon';
     this.weaponRoot.clear();
     try {
-      if (!this.loading.has(id)) this.loading.set(id, new GLTFLoader().loadAsync(`/models/view-${id}.glb`).then(g => g.scene));
       let model = this.modelCache.get(id);
       if (!model) {
+        if (!this.loading.has(id)) {
+          const pending = new GLTFLoader().loadAsync(`/models/view-${id}.glb`).then(({ scene: model }) => {
+            if (this.disposed) { this.disposeObject(model); return model; }
+            const wrapper = new THREE.Group();
+            model.rotation.y = Math.PI;
+            model.traverse(o => { if (o instanceof THREE.Mesh) for (const m of Array.isArray(o.material) ? o.material : [o.material]) {
+              if (m instanceof THREE.MeshStandardMaterial) {
+                m.envMapIntensity = .3;
+                // The imported roughness map already contains the native surface values.
+                m.roughness = 1;
+                if (/sleeve|glove|bare_arm/.test(m.name)) { m.metalness = 0; m.roughness = .9; m.roughnessMap = null; m.metalnessMap = null; }
+              }
+            } });
+            wrapper.add(model);
+            this.modelCache.set(id, wrapper);
+            return wrapper;
+          }).finally(() => { this.loading.delete(id); });
+          this.loading.set(id, pending);
+        }
         model = await this.loading.get(id)!;
-        if (this.disposed) { this.disposeObject(model); return; }
-        const wrapper = new THREE.Group();
-        model.rotation.y = Math.PI;
-        model.traverse(o => { if (o instanceof THREE.Mesh) for (const m of Array.isArray(o.material) ? o.material : [o.material]) {
-          if (m instanceof THREE.MeshStandardMaterial) { m.envMapIntensity = .5; m.roughness = .8; }
-        } });
-        model.updateMatrixWorld(true);
-        wrapper.add(model);
-        this.modelCache.set(id, wrapper); model = wrapper;
       }
-      if (revision !== this.revision || this.disposed) return;
+      if (this.disposed) return;
+      if (revision !== this.revision) { this.trimModelCache(); return; }
+      this.modelCache.delete(id); this.modelCache.set(id, model);
       this.weaponRoot.add(model);
       this.weaponRoot.position.set(0, 0, 0);
       this.weaponRoot.rotation.set(0, 0, 0);
+      this.trimModelCache();
       this.updateAssetStatus();
-    } catch { if (!this.disposed) { this.assetStatus = 'Weapon asset missing'; this.loading.delete(id); this.onError('The weapon model could not load. Check the local asset export.'); } }
+    } catch {
+      if (!this.disposed && revision === this.revision) {
+        this.assetStatus = 'Weapon asset missing';
+        this.onError('The weapon model could not load. Check the local asset export.');
+      }
+    }
+  }
+  trimModelCache() {
+    // Embedded glove textures are duplicated per GLB; keep only three GPU assemblies.
+    for (const [id, model] of this.modelCache) {
+      if (this.modelCache.size <= 3) break;
+      if (id === this.sim.settings.weapon) continue;
+      this.modelCache.delete(id); this.disposeObject(model);
+    }
   }
   configure(settings: Settings, measured?: MeasuredProfile) {
     const changedWeapon = settings.weapon !== this.sim.settings.weapon;
     const resetKeys: (keyof Settings)[] = ['weapon', 'mode', 'moving', 'targetSpeed', 'burst'];
     if (!resetKeys.some(key => settings[key] !== this.sim.settings[key]) && measured === this.sim.measured) {
+      const changedInversion = settings.invertY !== this.sim.settings.invertY;
       this.sim.settings = settings;
+      if (changedInversion) this.updateDemonstration();
+      this.demonstration.mesh.visible = settings.showImpactPattern;
+      this.mouseDemonstration.mesh.visible = settings.showMousePath;
       this.renderer.shadowMap.enabled = settings.quality !== 'low'; this.resize(); return;
     }
     this.sim.configure(settings, measured);
+    this.updateDemonstration();
     this.clearImpacts(); this.syncTargets(); this.resize();
     this.renderer.shadowMap.enabled = settings.quality !== 'low';
     if (changedWeapon) void this.setWeapon(settings.weapon);
+  }
+  updateDemonstration() {
+    this.demonstration.mesh.visible = this.sim.settings.showImpactPattern;
+    this.mouseDemonstration.mesh.visible = this.sim.settings.showMousePath;
+    this.demonstration.setPattern(this.sim.settings.weapon, this.sim.pattern, gameData.weapons[this.sim.settings.weapon].cycle, this.elapsed);
+    this.mouseDemonstration.setPattern(this.sim.settings.weapon, this.sim.pattern, gameData.weapons[this.sim.settings.weapon].cycle, this.elapsed, this.sim.settings.invertY);
   }
   clearImpacts() {
     this.impacts.clear();
@@ -299,6 +340,8 @@ export class RangeEngine {
   }
   pause() {
     this.sim.cancel();
+    this.hitTime = 0;
+    this.hitmarker.style.opacity = this.hitCaption.style.opacity = '0';
     if (document.pointerLockElement === this.renderer.domElement) document.exitPointerLock();
   }
   bindInput() {
@@ -366,7 +409,9 @@ export class RangeEngine {
     this.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, cap));
     this.renderer.setSize(width, height);
     const aspect = this.sim.settings.aspect === 'native' ? width / height : this.sim.settings.aspect.split(':').map(Number).reduce((a, b) => a / b);
-    this.camera.aspect = this.viewCamera.aspect = aspect;
+    this.camera.aspect = aspect;
+    this.viewViewport = viewmodelViewport(width, height);
+    this.viewCamera.aspect = this.viewViewport.aspect;
     this.camera.updateProjectionMatrix(); this.viewCamera.updateProjectionMatrix();
   }
   tick(timestamp: number) {
@@ -377,7 +422,7 @@ export class RangeEngine {
     const activeLane = this.sim.firing ? this.sim.targetForShot() : 0;
     this.targets.forEach((t, i) => {
       const marker = t.getObjectByName('active-lane') as THREE.Mesh;
-      (marker.material as THREE.MeshBasicMaterial).color.set(i === activeLane ? '#51edee' : '#ffdc59');
+      (marker.material as THREE.MeshBasicMaterial).color.set(i === activeLane ? GUIDE_COLORS.now : GUIDE_COLORS.next);
       t.getObjectByName('lane-tag')!.visible = this.sim.settings.mode === 'transfer';
     });
     const animation = Math.abs(this.sim.targetVelocity) < .1 ? 0 : this.sim.targetVelocity > 0 ? 1 : 2;
@@ -395,9 +440,8 @@ export class RangeEngine {
     this.hitmarker.style.opacity = this.hitTime > 0 ? '1' : '0';
     this.hitCaption.style.opacity = this.hitTime > 0 ? '1' : '0';
     const moving = Math.hypot(this.sim.velocity.x, this.sim.velocity.z);
-    this.weaponRoot.position.set(.08, -.03 + Math.sin(this.elapsed * 12) * Math.min(moving, 1) * .002, this.kick * .015);
+    this.weaponRoot.position.set(VIEWMODEL_OFFSET.x, VIEWMODEL_OFFSET.y + Math.sin(this.elapsed * 12) * Math.min(moving, 1) * .002, this.kick * .015);
     this.weaponRoot.rotation.x = this.kick * .02;
-    this.weaponRoot.visible = this.sim.settings.mode !== 'tracking';
     const r = this.sim.settings.follow ? this.sim.recoil : { yaw: 0, pitch: 0 };
     const point = new THREE.Vector3(-Math.tan(-this.sim.yaw + r.yaw * DEG), 0, -1);
     // Project the recoil-only direction with the same camera, excluding random spread.
@@ -420,14 +464,18 @@ export class RangeEngine {
       cue.style.left = `${(point.x + 1) * 50}%`; cue.style.top = `${(1 - point.y) * 50}%`;
       cue.querySelector('span')!.textContent = `${i ? 'NEXT' : 'NOW'} ${index + 1}${this.sim.settings.mode === 'transfer' ? this.sim.targetForShot(index) ? ' / B' : ' / A' : ''}`;
     });
+    this.demonstration.update(this.elapsed);
+    this.mouseDemonstration.update(this.elapsed);
+    this.renderer.setViewport(0, 0, this.host.clientWidth, this.host.clientHeight);
     this.renderer.autoClear = true; this.renderer.render(this.scene, this.camera);
-    this.renderer.autoClear = false; this.renderer.clearDepth(); this.renderer.render(this.viewScene, this.viewCamera);
+    this.renderer.autoClear = false; this.renderer.clearDepth();
+    const v = this.viewViewport; this.renderer.setViewport(v.x, v.y, v.width, v.height);
+    this.renderer.render(this.viewScene, this.viewCamera);
     if (this.elapsed - this.statusTime > .1) {
       this.statusTime = this.elapsed;
       this.onStatus({ weapon: this.sim.settings.weapon, active: this.sim.active, firing: this.sim.firing, shots: this.sim.shots, hits: this.sim.hits, heads: this.sim.heads,
         remaining: this.sim.firing ? this.sim.burstSize - this.sim.shots : this.sim.burstSize, reload: 0,
-        speed: moving / .0254, distance, tracking: this.sim.trackingTime ? this.sim.onTargetTime / this.sim.trackingTime * 100 : 0,
-        trackingRemaining: Math.max(0, 30 - this.sim.trackingTime), input: this.inputStatus, audio: this.audio.status, assets: this.assetStatus, fps: dt ? Math.round(1 / dt) : 0 });
+        speed: moving / .0254, distance, input: this.inputStatus, audio: this.audio.status, assets: this.assetStatus, fps: dt ? Math.round(1 / dt) : 0 });
     }
     this.frame = requestAnimationFrame(t => this.tick(t));
   }
@@ -444,6 +492,8 @@ export class RangeEngine {
   dispose() {
     this.disposed = true; this.pause(); cancelAnimationFrame(this.frame); this.observer.disconnect();
     this.cleanup.forEach(fn => fn()); this.audio.dispose();
+    this.demonstration.dispose();
+    this.mouseDemonstration.dispose();
     this.disposeObject(this.scene); this.modelCache.forEach(m => this.disposeObject(m));
     this.markerGeometry.dispose(); this.missMaterial.dispose(); this.hitMaterial.dispose(); this.bodyMaterial.dispose();
     this.cues.forEach(c => c.remove()); this.hitCaption.remove();

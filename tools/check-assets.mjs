@@ -14,6 +14,11 @@ for (const id of assets) {
   if (!j.meshes?.length || j.nodes.some(n => /Cube/i.test(n.name || ''))) throw new Error(`Unexpected export geometry: ${id}`);
   if (j.images?.some(image => image.uri)) throw new Error(`External texture in ${id}`);
   if (id.startsWith('view-') && !j.meshes.some(n => /firstperson_(default_gloves_arms|sleeves)/i.test(n.name || ''))) throw new Error(`Missing native first-person hands: ${id}`);
+  if (id.startsWith('view-') || id === 'target') {
+    const assembly = j.nodes.find(n => n.extras?.assembly_version === 2)?.extras;
+    if (!assembly || !assembly.weapon_bind_origin?.some(v => Math.abs(v) > .001)) throw new Error(`Missing weapon bind-origin correction: ${id}`);
+    if (assembly.grip_surface_distance?.length !== 2 || assembly.grip_surface_distance.some(v => !Number.isFinite(v) || v > .045)) throw new Error(`Detached weapon grip: ${id}`);
+  }
   if (id === 'target' && (!j.skins?.length || !['idle_rifle', 'run_e_rifle', 'run_w_rifle'].every(name => j.animations?.some(a => a.name.includes(name))))) throw new Error('Target rig/locomotion animations missing');
   hashes.add(crypto.createHash('sha256').update(b).digest('hex'));
   if (ids.includes(id)) {
@@ -32,4 +37,5 @@ for (const id of [...ids, 'target']) {
     || (meta.hasAlpha && stats.channels[stats.channels.length - 1].sum === 0)) throw new Error(`Blank or invalid thumbnail: ${id}`);
 }
 for (const name of ['wall', 'wall-normal', 'floor', 'floor-normal']) if (!fs.existsSync(`public/revamp/textures/${name}.webp`)) throw new Error(`Missing ${name} texture`);
+await import('./verify-scale.mjs');
 console.log(`Verified all runtime assets. Models and audio: ${(total / 1e6).toFixed(2)} MB`);

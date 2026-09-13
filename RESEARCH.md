@@ -93,7 +93,7 @@ Ground/air wish-direction acceleration, crouching and jumping are included. Subt
 
 ## Browser And Asset Review
 
-The user-supplied deployed site was inspected against the restored ZIP. The current range retains inversion, follow recoil, crosshair editing, moving targets, tracking, history and replay. Retired modes migrate to Guided spray. Old history is retained separately; current hit rate is not the legacy composite score.
+The user-supplied deployed site was inspected against the restored ZIP. The current range retains inversion, follow recoil, crosshair editing, moving targets, history and replay. Tracking has since been removed at the user's request. Retired modes migrate to Guided spray. Old history is retained separately; current hit rate is not the legacy composite score.
 
 Native first-person gloves/sleeves are baked in weapon-specific grip poses. The SAS target retains idle and both strafe clips, with its rifle attached through the native weapon bone. Original Blender architecture is independent of the target groups.
 
@@ -102,3 +102,29 @@ A discovered WebKit readiness race was fixed: loading the target alone cannot en
 Automated browser profiles include real isolated Brave/Opera GX binaries, Chromium, Firefox and WebKit, plus portrait/landscape mobile emulation. Pixel checks establish nonblank rendering and motion, not identical graphics. Physical Android/iOS device testing, native spray captures and exact engine parity remain outstanding.
 
 Valve-derived models, textures, sounds, raw research and editable Blender workspaces stay local and are excluded from Git. The original range-kit geometry is included with source. Republishing Valve assets requires the appropriate rights.
+
+## Viewmodel And Guidance Refinement
+
+The native weapon model's `weapon` bind bone is translated, unlike the zero-origin secondary animation skeleton. Using the secondary skeleton's inverse alone left some guns floating above their grips. The importer now retains each weapon's actual bind skeleton, retargets its part pose, and assembles through `character.wpn * inverse(weaponBindWorld)`. Blender bakes the complete hands/gun assembly together. The target's corrected rifle remains bone-parented through all three world clips. Export checks measure authored finger-bone probes against the gun surface on both sides (not a claim of zero mesh intersection).
+
+Viewmodel projection uses a 68-degree horizontal reference at 4:3, converted to Three's vertical FOV. The horizontal-reference convention and separate viewmodel projection are documented in [Valve's Source SDK view setup](https://github.com/ValveSoftware/source-sdk-2013/blob/master/src/game/client/view.cpp#L988). Visual references include [Valve's CS2 weapon presentation](https://www.counter-strike.net/cs2#weapons) and its [first-person M4 smoke demonstration](https://cdn.fastly.steamstatic.com/apps/csgo/images/csgo_react/cs2/smokes_vid2.webm), viewed as rendered video frames. Weapon-specific idle poses come from the installed assets. This is a Source-style presentation, not a claim that this browser reproduces CS2's complete camera animation graph.
+
+Part bones are evaluated parent-first before baking, with a matrix agreement assertion for every mapped bone. This fixes the Negev ammunition belt: assigning child matrices against stale parent evaluations previously left it looping above the receiver. The target grip verifier samples both strafe cycles as well as idle.
+
+The viewmodel has a square-pixel, bottom-right viewport: 4:3 minimum on portrait screens and 16:9 maximum on ultrawide screens. Stretching the world no longer stretches the hands or gun. The training camera, sensitivity, ray calculations and physical impact locations are unchanged. This portrait adaptation is deliberately not a native CS2 feature.
+
+The left backstop has a repeating active-weapon impact-pattern demonstration in all modes. It uses the current native or imported profile, perspective-projects its angular directions, fits the shape uniformly and traces it at the weapon's firing interval. The right board shows mouse compensation: negative recoil yaw and positive recoil pitch in screen-down coordinates, with the latter reversed for inverted Y. Unlike impact projection, mouse counts are linear in angles. Both boards are labeled shape previews, not metrically sized impact groups or sensitivity-calibrated mouse travel. A test cancels every generated shot across all 17 weapons at two sensitivities and both Y conventions, without spread or target motion.
+
+Both displays default on with independent persisted Settings toggles. They stay fixed to the muted green-grey backstop and stop animating with reduced-motion preferences. NOW/NEXT guides use mint/pink; the yellow Compact crosshair defaults to 2 px strokes. Saved custom crosshairs remain intact. First-time visitors see a dismissible Settings hint; its short arrow animation respects reduced motion and does not repeat after reload. Donate sits in the top header.
+
+The renderer bounds the viewmodel GPU cache to three complete assemblies, disposes evicted resources, and allows revisiting evicted weapons. Browser coverage includes a complete arsenal sweep followed by reloading the initial weapon.
+
+## Player And Map Scale Audit
+
+The September 13 audit found a real target-scale error. Three.js measured the target's initial loading-pose bounds as **2.039217 m**, then the renderer scaled that whole hierarchy to 1.83 m. Independent Blender evaluation of the native SAS rifle-idle clip measured **1.821906 m**. The runtime multiplier `1.83 / 2.039217 = 0.897403` therefore made the standing player about **10.26% too small**, exaggerating the apparent map size. The renderer now preserves the exported native transforms and ground origin, for both the main and transfer targets. No world-distance, sensitivity or impact-coordinate multiplier was changed.
+
+[ValveResourceFormat's coordinate conversion](https://github.com/ValveResourceFormat/ValveResourceFormat/blob/master/ValveResourceFormat/IO/Gltf/GltfModelExporter.Conversion.cs) explicitly converts Source inches to glTF metres using 0.0254. This agrees with the trainer's movement and geometry conversion. The native idle mesh is approximately 71.729 Source units tall; its stance is not identical to a nominal 72-unit standing collision hull. The two authored eyeball bones are at 1.629/1.646 m in this tilted-head idle pose, consistent with the trainer's 64-unit (1.6256 m) standing camera. Camera height is a gameplay reference, not a claim that the camera follows an animated eyeball bone.
+
+`tools/verify-scale.mjs` evaluates the shipped optimized GLB's actual idle animation, checks height against the independent native measurement within 2 mm, and checks the native ground origin. It runs with `npm run assets:check`. Unit tests prevent target-loading code from resizing either clone, verify 64/46-unit camera heights, 90-degree horizontal FOV at 4:3 (106.2602 at 16:9), Source-unit/metre projection equivalence at 5/12/25/50/100 m, and each weapon's steady movement distance per second.
+
+The custom map is 24 m wide with 5 m floor intervals; its 6.1 m roof structure is industrial architecture, not a copied CS2 level. It uses the same metre coordinates as the native assets and movement. There is no single universal CS2 map scale multiplier to apply. A smaller embedded browser viewport also produces fewer target pixels than a full-screen game at the same vertical FOV. Use the existing range Fullscreen control for an equal-resolution comparison; changing player size or sensitivity to compensate would corrupt physical scale. This audit does not establish pixel-perfect agreement with a live CS2 capture.

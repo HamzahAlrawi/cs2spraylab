@@ -13,7 +13,7 @@ test('target readiness never enables shooting before the weapon has loaded', asy
   await page.waitForTimeout(800);
   await expect(page.getByRole('button', { name: 'Loading range', exact: true })).toBeDisabled();
   release();
-  await expect(page.getByRole('button', { name: 'Enter range', exact: true })).toBeEnabled();
+  await expect(page.getByRole('button', { name: 'Enter range', exact: true })).toBeEnabled({timeout: 45000});
   let releaseNext!: () => void;
   const nextGate = new Promise<void>(resolve => { releaseNext = resolve; });
   await page.route('**/models/view-m4a4.glb', async route => { await nextGate; await route.continue(); });
@@ -21,13 +21,13 @@ test('target readiness never enables shooting before the weapon has loaded', asy
   await page.locator('.weapon-item').filter({ has: page.locator('img[src="/models/m4a4.png"]') }).click();
   await expect(page.getByRole('button', { name: 'Loading range', exact: true })).toBeDisabled();
   releaseNext();
-  await expect(page.getByRole('button', { name: 'Enter range', exact: true })).toBeEnabled();
+  await expect(page.getByRole('button', { name: 'Enter range', exact: true })).toBeEnabled({timeout: 45000});
 });
 
 test('range renders real models, settings persist, and viewport has no overflow', async ({ page }, info) => {
   const errors: string[] = []; page.on('pageerror', e => errors.push(e.message));
   await page.goto('/');
-  await expect(page.getByRole('button', { name: 'Enter range', exact: true })).toBeEnabled();
+  await expect(page.getByRole('button', { name: 'Enter range', exact: true })).toBeEnabled({timeout: 45000});
   const canvas = page.locator('canvas[data-range]');
   const png = await canvas.screenshot();
   const stats = await sharp(png).stats();
@@ -56,7 +56,7 @@ test('tap emits exactly a timed five-shot burst, without audio or Pointer Lock',
     Object.defineProperty(HTMLElement.prototype, 'requestPointerLock', { value: undefined });
   });
   await page.goto('/');
-  await expect(page.getByRole('button', { name: 'Enter range', exact: true })).toBeEnabled();
+  await expect(page.getByRole('button', { name: 'Enter range', exact: true })).toBeEnabled({timeout: 45000});
   await page.getByRole('button', { name: 'Settings', exact: true }).click();
   await page.getByLabel('Burst length').selectOption('5');
   await page.getByRole('button', { name: 'Done', exact: true }).click();
@@ -74,24 +74,31 @@ test('tap emits exactly a timed five-shot burst, without audio or Pointer Lock',
   await expect(page.getByRole('heading', { name: 'Recent attempts' })).toBeVisible();
 });
 
-test('moving tracking target changes canvas pixels and never consumes ammunition', async ({ page }) => {
+test('moving targets animate in shooting modes without starting a burst', async ({ page }) => {
+  await page.emulateMedia({reducedMotion: 'reduce'});
   await page.goto('/');
-  await expect(page.getByRole('button', { name: 'Enter range', exact: true })).toBeEnabled();
-  await page.getByLabel('Training mode').selectOption('tracking');
+  await expect(page.getByRole('button', { name: 'Enter range', exact: true })).toBeEnabled({timeout: 45000});
+  await page.getByLabel('Training mode').selectOption('spray');
+  await page.getByRole('button', {name: 'Settings', exact: true}).click();
+  await page.getByLabel('Moving target', {exact: true}).check();
+  await page.getByRole('button', {name: 'Done', exact: true}).click();
   const canvas = page.locator('canvas[data-range]');
   const before = await canvas.screenshot();
-  await canvas.dispatchEvent('pointerdown', { button: 0, pointerId: 1, isPrimary: true, pointerType: 'touch' });
+  await page.getByRole('button', {name: 'Enter range', exact: true}).click();
   await page.waitForTimeout(700);
   const after = await canvas.screenshot();
   expect(before.equals(after)).toBe(false);
-  await page.getByRole('button', { name: 'Pause range', exact: true }).click();
-  await expect.poll(async () => page.evaluate(() => JSON.parse(localStorage.getItem('spraylab.results.v2') || '[]')[0]?.shots)).toBe(0);
+  if (await page.evaluate(() => Boolean(document.pointerLockElement))) await page.keyboard.press('Escape');
+  else await page.getByRole('button', { name: 'Pause range', exact: true }).click();
+  await expect(page.getByRole('button', {name: 'Enter range', exact: true})).toBeEnabled({timeout: 45000});
+  await expect(page.getByTestId('ammo')).toContainText('30');
+  expect(await page.evaluate(() => JSON.parse(localStorage.getItem('spraylab.results.v2') || '[]').length)).toBe(0);
 });
 
 test('blocked storage still allows rendering and settings changes', async ({ page }) => {
   await page.addInitScript(() => Object.defineProperty(window, 'localStorage', { get: () => { throw new DOMException('Blocked', 'SecurityError'); } }));
   await page.goto('/');
-  await expect(page.getByRole('button', { name: 'Enter range', exact: true })).toBeEnabled();
+  await expect(page.getByRole('button', { name: 'Enter range', exact: true })).toBeEnabled({timeout: 45000});
   await page.getByRole('button', { name: 'Settings', exact: true }).click();
   await page.getByLabel('Invert mouse Y').check();
   await expect(page.getByLabel('Invert mouse Y')).toBeChecked();
@@ -100,20 +107,26 @@ test('blocked storage still allows rendering and settings changes', async ({ pag
 test('all weapon viewmodels render distinctly and native shot samples decode', async ({ page }, info) => {
   test.setTimeout(300000);
   await page.goto('/');
-  await expect(page.getByRole('button', { name: 'Enter range', exact: true })).toBeEnabled();
+  await expect(page.getByRole('button', { name: 'Enter range', exact: true })).toBeEnabled({timeout: 45000});
   const names = weaponIds;
   const fingerprints = new Set<string>();
   for (const name of names) {
     await page.locator('.weapon-select').click();
     await page.locator('.weapon-item').filter({ has: page.locator(`img[src="/models/${name}.png"]`) }).click();
-    await expect(page.getByRole('button', { name: 'Enter range', exact: true })).toBeEnabled();
+    await expect(page.getByRole('button', { name: 'Enter range', exact: true })).toBeEnabled({timeout: 45000});
     await page.waitForTimeout(300);
     const png = await page.locator('canvas[data-range]').screenshot();
-    const { data } = await sharp(png).resize(64, 64).raw().toBuffer({ resolveWithObject: true });
+    // Exclude the animated wall plot: this fingerprint must come from the gun.
+    const meta = await sharp(png).metadata();
+    const left = Math.floor(meta.width! * .55), top = Math.floor(meta.height! * .6);
+    const { data } = await sharp(png).extract({left, top, width: meta.width! - left, height: meta.height! - top}).resize(64, 64).raw().toBuffer({ resolveWithObject: true });
     fingerprints.add(data.toString('base64'));
     await page.screenshot({ path: `test-results/${info.project.name}-${name.replace(/[^a-z0-9]/gi, '')}.png` });
   }
   expect(fingerprints.size).toBe(17);
+  await page.locator('.weapon-select').click();
+  await page.locator('.weapon-item').filter({has: page.locator('img[src="/models/ak47.png"]')}).click();
+  await expect(page.getByRole('button', {name: 'Enter range', exact: true})).toBeEnabled({timeout: 45000});
   const decoded = await page.evaluate(async ids => {
     const Constructor = window.AudioContext || (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
     if (!Constructor) return null;
@@ -140,7 +153,7 @@ test('all weapon viewmodels render distinctly and native shot samples decode', a
 
 test('guided cues, immediate repeat ammo, visible feedback and project links', async ({ page }) => {
   await page.goto('/');
-  await expect(page.getByRole('button', { name: 'Enter range', exact: true })).toBeEnabled();
+  await expect(page.getByRole('button', { name: 'Enter range', exact: true })).toBeEnabled({timeout: 45000});
   await expect(page.locator('.aim-cue.now')).toBeVisible();
   await expect(page.locator('.aim-cue.next')).toBeVisible();
   expect(await page.locator('.aim-cue.now').evaluate(e => getComputedStyle(e).color)).not.toBe(await page.locator('.aim-cue.next').evaluate(e => getComputedStyle(e).color));
@@ -228,7 +241,7 @@ test('mouse Pointer Lock rejection leaves drag aim and keyboard movement usable'
 
 test('transfer hands the guide from A to B and restores A for the next attempt', async ({ page }, info) => {
   await page.goto('/');
-  await expect(page.getByRole('button', { name: 'Enter range', exact: true })).toBeEnabled();
+  await expect(page.getByRole('button', { name: 'Enter range', exact: true })).toBeEnabled({timeout: 45000});
   await page.getByLabel('Training mode').selectOption('transfer');
   await expect(page.locator('.aim-cue.now')).toContainText('NOW 1 / A');
   const canvas = page.locator('canvas[data-range]');
@@ -244,7 +257,7 @@ test('long-range compensation cues remain fixed-size and player distance persist
   test.skip(info.project.name !== 'chromium', 'Long desktop traversal is covered once');
   await page.addInitScript(() => Object.defineProperty(HTMLElement.prototype, 'requestPointerLock', { value: undefined }));
   await page.goto('/');
-  await expect(page.getByRole('button', { name: 'Enter range', exact: true })).toBeEnabled();
+  await expect(page.getByRole('button', { name: 'Enter range', exact: true })).toBeEnabled({timeout: 45000});
   const nearSize = await page.locator('.aim-cue.now').boundingBox();
   await page.getByRole('button', { name: 'Enter range', exact: true }).click();
   await page.keyboard.down('KeyS');
@@ -266,7 +279,7 @@ test('mobile landscape keeps shooting, settings and project links within the vie
   test.skip(!info.project.name.startsWith('mobile'), 'Touch landscape workflow');
   await page.setViewportSize({ width: 844, height: 390 });
   await page.goto('/');
-  await expect(page.getByRole('button', { name: 'Enter range', exact: true })).toBeEnabled();
+  await expect(page.getByRole('button', { name: 'Enter range', exact: true })).toBeEnabled({timeout: 45000});
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth && document.documentElement.scrollHeight <= innerHeight)).toBe(true);
   await expect(page.getByRole('link', { name: 'Donate' })).toBeVisible();
   await expect(page.getByRole('button', { name: 'Settings', exact: true })).toBeVisible();

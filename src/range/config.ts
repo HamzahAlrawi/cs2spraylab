@@ -2,8 +2,9 @@ import data from './game-data.json';
 import { nativeRecoilPattern } from './recoil';
 
 export type Weapon = keyof typeof data.weapons;
-export type Mode = 'guided' | 'spray' | 'transfer' | 'tracking';
-export const modeNames: Record<Mode, string> = { guided: 'Guided spray', spray: 'Free spray', transfer: 'Spray transfer', tracking: 'Target tracking' };
+export type Mode = 'guided' | 'spray' | 'transfer';
+export const modeNames: Record<Mode, string> = { guided: 'Guided spray', spray: 'Free spray', transfer: 'Spray transfer' };
+export const historyModeNames = { ...modeNames, tracking: 'Target tracking (retired)' };
 export function migrateMode(mode: unknown): Mode {
   return typeof mode === 'string' && Object.prototype.hasOwnProperty.call(modeNames, mode) ? mode as Mode : 'guided';
 }
@@ -12,6 +13,7 @@ export type Settings = {
   weapon: Weapon; mode: Mode; sensitivity: number; dpi: number; invertY: boolean;
   moving: boolean; targetSpeed: 'rifle' | 'smg' | 'knife';
   follow: boolean; volume: number; spread: boolean; burst: number; quality: 'auto' | 'low' | 'high';
+  showImpactPattern: boolean; showMousePath: boolean;
   aspect: 'native' | '16:9' | '16:10' | '4:3' | '5:4';
   crosshair: Crosshair;
 };
@@ -22,8 +24,9 @@ export const defaults: Settings = {
   weapon: 'ak47', mode: 'guided', sensitivity: 1, dpi: 800, invertY: false,
   moving: false, targetSpeed: 'rifle', follow: false, volume: 0.2,
   spread: false, burst: 0, quality: 'auto',
+  showImpactPattern: true, showMousePath: true,
   aspect: 'native',
-  crosshair: { color: '#ffeb55', size: 3, gap: 2, thickness: 1, outline: 1, alpha: 1, dot: false, t: false, dynamic: false }
+  crosshair: { color: '#ffeb55', size: 3, gap: 2, thickness: 2, outline: 1, alpha: 1, dot: false, t: false, dynamic: false }
 };
 export const presets: Record<string, Crosshair> = {
   Compact: defaults.crosshair,
@@ -43,12 +46,13 @@ export function sanitizeSettings(raw: unknown): Settings {
     invertY: s.invertY === true,
     moving: s.moving === true, targetSpeed: ['rifle', 'smg', 'knife'].includes(s.targetSpeed!) ? s.targetSpeed! : 'rifle',
     follow: s.follow === true, volume: numeric(s.volume, .2, 0, 1), spread: s.spread === true,
+    showImpactPattern: s.showImpactPattern !== false, showMousePath: s.showMousePath !== false,
     burst: [0, 5, 10, 15].includes(s.burst!) ? s.burst! : 0,
     quality: ['auto', 'low', 'high'].includes(s.quality!) ? s.quality! : 'auto',
     aspect: ['native', '16:9', '16:10', '4:3', '5:4'].includes(s.aspect!) ? s.aspect! : 'native',
     crosshair: {
       color: /^#[\da-f]{6}$/i.test(c.color) ? c.color : defaults.crosshair.color,
-      size: numeric(c.size, 3, 0, 20), gap: numeric(c.gap, 2, -4, 20), thickness: numeric(c.thickness, 1, .5, 5),
+      size: numeric(c.size, 3, 0, 20), gap: numeric(c.gap, 2, -4, 20), thickness: numeric(c.thickness, defaults.crosshair.thickness, .5, 5),
       outline: numeric(c.outline, 1, 0, 3), alpha: numeric(c.alpha, 1, .1, 1),
       dot: c.dot === true, t: c.t === true, dynamic: c.dynamic === true
     }

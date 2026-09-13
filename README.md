@@ -1,6 +1,6 @@
 # SprayLab
 
-A browser Counter-Strike recoil and tracking trainer. React + TypeScript + Three.js, built with Vite. No server, account, telemetry or connection to the game process.
+A browser Counter-Strike recoil trainer. React + TypeScript + Three.js, built with Vite. No server, account, telemetry or connection to the game process.
 
 ## Run
 
@@ -18,14 +18,19 @@ Open the URL printed by Vite. Phones on the same network can use the LAN address
 
 ## Training
 
-- Guided spray, the default: cyan NOW and gold NEXT compensation cues.
+- Guided spray, the default: mint NOW and pink NEXT compensation cues.
 - Free spray: no compensation assistance.
 - Spray transfer: switch from lane A to B at the selected burst's midpoint.
-- Target tracking: thirty seconds, moving target, no ammunition consumed.
+
+Tracking is retired. Older tracking preferences open Guided spray; previous tracking results remain accessible in history.
 
 Seventeen automatic weapons: AK-47, M4A4, M4A1-S, Galil AR, FAMAS, SG 553, AUG, MP9, MP7, MP5-SD, MAC-10, UMP-45, P90, PP-Bizon, M249, Negev and CZ75-Auto. Scopes and alternate burst-fire modes are not implemented.
 
-Native weapon-specific first-person poses and SAS target animations, colored head/body/miss feedback, moving targets, crosshair editor, follow recoil, replay and local session history are included. Defaults: 800 eDPI, 20% audio, yellow Compact crosshair, follow recoil OFF.
+Native weapon-specific first-person poses and SAS target animations, colored head/body/miss feedback, moving targets, crosshair editor, follow recoil, replay and local session history are included. Defaults: 800 eDPI, 20% audio, yellow Compact crosshair with 2 px strokes, follow recoil OFF. Existing custom crosshair settings are preserved; selecting Compact applies the updated preset.
+
+All modes show the active weapon's impact pattern on the left backstop and the compensating mouse path on the right. Both are on by default and can be disabled independently in Settings. The mouse path respects inverted Y. These are shape previews at the native firing cadence, not sensitivity-calibrated mouse-distance diagrams; reduced-motion preferences show static paths. The muted backstop keeps the guides readable. Hands and weapons keep their proportions on portrait, ultrawide and stretched-world views.
+
+First-time visitors receive a dismissible animated Settings hint for sensitivity, crosshair and audio. Donate is in the top header beside Settings.
 
 ## Architecture
 
@@ -34,11 +39,14 @@ For a data engineer: React is the view layer, TypeScript supplies static contrac
 - `src/range/simulation.ts`: fixed-step movement, target motion, shot timing and drill state.
 - `src/range/recoil.ts`: deterministic seed table and angular recoil integration.
 - `src/range/engine.ts`: cameras, GLB assets, animation, input, ray intersection and feedback.
+- `src/range/viewmodel.ts`, `spray-demonstration.ts`: responsive weapon projection and the world-fixed pattern display.
 - `src/range/RangeApp.tsx`: UI, settings, history and replay.
 - `src/range/game-data.json`: extracted weapon parameters and build provenance.
 - `art/build_native.py`, `art/build_range.py`: Blender asset assembly and original architecture.
 
 The world uses metres, with one Source unit represented by 0.0254 m. Shots are world-space rays, not screen-space dots. Target mesh intersections determine hits. A second camera renders the weapon independently of world clipping. Browser localStorage retains settings/history, with an in-memory fallback when blocked.
+
+Targets preserve their native 1.822 m rifle-idle dimensions. The scale audit corrected an initial-pose resize that made them about 10% too small; asset checks now guard against regression. The custom range is not a recreation of a specific CS2 map. Fullscreen provides a fairer size comparison than an embedded browser viewport.
 
 ## Accuracy
 

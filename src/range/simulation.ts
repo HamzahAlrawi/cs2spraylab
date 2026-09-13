@@ -11,7 +11,7 @@ export const JUMP_SPEED = 301.993 * UNIT;
 export type Vec = { x: number; y: number; z: number };
 export type Shot = { index: number; at: number; origin: Vec; direction: Vec; recoil: Angle };
 export type ImpactSample = { x: number; y: number; hit: boolean; head: boolean; bullet: number };
-export type Result = { id: string; weapon: Weapon; mode: Settings['mode']; shots: number; hits: number; heads: number; seconds: number; tracking: number; date: string; samples: ImpactSample[] };
+export type Result = { id: string; weapon: Weapon; mode: Settings['mode'] | 'tracking'; shots: number; hits: number; heads: number; seconds: number; tracking: number; date: string; samples: ImpactSample[] };
 export type Input = { forward: number; side: number; walk: boolean; crouch: boolean; jump: boolean };
 export const idleInput = (): Input => ({ forward: 0, side: 0, walk: false, crouch: false, jump: false });
 
@@ -52,7 +52,7 @@ export class Simulation {
   targetX = 0; targetVelocity = 0; targetSign = 1;
   input = idleInput(); active = false; firing = false; automatic = false;
   readyAt = 0; nextShot = 0; startedAt = 0; shots = 0; hits = 0; heads = 0;
-  trackingTime = 0; onTargetTime = 0; recoil: Angle = { yaw: 0, pitch: 0 };
+  recoil: Angle = { yaw: 0, pitch: 0 };
   pattern: Angle[]; latest?: Result; measured?: MeasuredProfile;
   samples: ImpactSample[] = []; attempts = 0;
   lastShotAt = -Infinity;
@@ -64,7 +64,6 @@ export class Simulation {
   }
   onShot: (shot: Shot) => void = () => {};
   onResult: (result: Result) => void = () => {};
-  isOnTarget: (origin: Vec, ray: Vec) => boolean = () => false;
   constructor(public settings: Settings) { this.pattern = recoilPattern(settings.weapon); this.configure(settings); }
   configure(s: Settings, measured?: MeasuredProfile) {
     this.cancel(); this.settings = s; this.measured = measured;
@@ -80,16 +79,16 @@ export class Simulation {
   start(automatic = false) {
     if (this.firing) return false;
     this.active = true; this.firing = true; this.automatic = automatic;
-    this.shots = this.hits = this.heads = this.trackingTime = this.onTargetTime = 0;
+    this.shots = this.hits = this.heads = 0;
     this.startedAt = this.time; this.nextShot = Math.max(this.time, this.lastShotAt + gameData.weapons[this.settings.weapon].cycle);
     this.latest = undefined;
     this.samples = [];
-    if (this.settings.mode !== 'tracking' && this.time >= this.nextShot) this.fire();
+    if (this.time >= this.nextShot) this.fire();
     return true;
   }
   release(pointerType: string) {
     if (this.automatic || pointerType === 'touch') return;
-    if (this.settings.mode !== 'tracking') this.finish();
+    this.finish();
   }
   cancel() {
     if (this.firing) this.finish();
@@ -100,10 +99,10 @@ export class Simulation {
     if (!this.firing) return;
     this.firing = false; this.automatic = false; this.recoil = { yaw: 0, pitch: 0 };
     this.readyAt = this.time;
-    if (this.shots || this.trackingTime > .1) {
+    if (this.shots) {
       this.latest = { id: `${Date.now()}-${Math.random().toString(36).slice(2)}`, weapon: this.settings.weapon, mode: this.settings.mode,
         shots: this.shots, hits: this.hits, heads: this.heads, seconds: this.time - this.startedAt,
-        tracking: this.trackingTime ? this.onTargetTime / this.trackingTime * 100 : 0, date: new Date().toISOString(), samples: [...this.samples] };
+        tracking: 0, date: new Date().toISOString(), samples: [...this.samples] };
       this.attempts++;
       this.onResult(this.latest);
     }
@@ -140,7 +139,7 @@ export class Simulation {
     this.position.x = nextX; this.position.z = nextZ;
     this.eyeHeight += ((crouch ? 46 : 64) * UNIT - this.eyeHeight) * Math.min(1, dt * 16);
     this.position.y = this.feet + this.eyeHeight;
-    if (this.settings.moving || this.settings.mode === 'tracking') {
+    if (this.settings.moving) {
       const extent = this.settings.mode === 'transfer' ? 1.25 : 3;
       this.targetVelocity = this.targetSign * targetSpeed(this.settings);
       this.targetX += this.targetVelocity * dt;
@@ -149,11 +148,7 @@ export class Simulation {
         this.targetSign *= -1; this.targetVelocity *= -1;
       }
     }
-    if (this.firing && this.settings.mode === 'tracking') {
-      this.trackingTime += dt;
-      if (this.isOnTarget(this.position, direction(this.yaw, this.pitch))) this.onTargetTime += dt;
-      if (this.trackingTime >= 30) this.finish();
-    } else if (this.firing && this.time + 1e-9 >= this.nextShot) this.fire();
+    if (this.firing && this.time + 1e-9 >= this.nextShot) this.fire();
   }
   fire() {
     const weapon = gameData.weapons[this.settings.weapon];
