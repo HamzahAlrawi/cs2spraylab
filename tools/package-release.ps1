@@ -12,7 +12,7 @@ if ($LASTEXITCODE -ne 0) { throw 'Could not list tracked source files' }
 foreach ($file in $tracked) { [void]$files.Add($file) }
 $data = Get-Content -LiteralPath (Join-Path $root 'src/range/game-data.json') -Raw | ConvertFrom-Json
 if ($IncludeGameAssets) {
-    foreach ($id in $data.weapons.PSObject.Properties.Name) {
+    foreach ($id in @($data.weapons.PSObject.Properties.Name) + @('usp', 'knife')) {
         foreach ($file in @("models/$id.glb", "models/view-$id.glb", "models/$id.png", "audio/$id.wav")) {
             [void]$files.Add("public/revamp/$file")
         }

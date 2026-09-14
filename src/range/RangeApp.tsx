@@ -5,6 +5,9 @@ import { RangeEngine, RangeStatus } from './engine';
 import { Result } from './simulation';
 import { loadAttempts } from '../lib/storage';
 import { markSetupHintSeen, needsSetupHint } from './onboarding';
+import {equipmentIds,equipmentNames,equipmentStats,type Slot} from './equipment';
+import {isDrillMode,readDrillMetrics} from './drills';
+import {DrillPanel,DrillReview} from './DrillPanel';
 
 function CrosshairView({ value }: { value: Crosshair }) {
   const style = { '--cross-color': value.color, '--cross-size': `${value.size}px`, '--cross-gap': `${value.gap}px`, '--cross-thickness': `${value.thickness}px`, '--cross-outline': `${value.outline}px`, opacity: value.alpha } as CSSProperties;
@@ -28,9 +31,9 @@ function NumberField({ label, value, min, max, step = 1, onCommit }: { label: st
 function readResults(): Result[] {
   try {
     const a = JSON.parse(localStorage.getItem('spraylab.results.v2') || '[]');
-    return Array.isArray(a) ? a.filter(r => r && weaponIds.includes(r.weapon) && typeof r.id === 'string'
+    return Array.isArray(a) ? a.filter(r => r && equipmentIds.includes(r.weapon) && typeof r.id === 'string'
       && ['shots', 'hits', 'heads', 'seconds', 'tracking'].every(k => Number.isFinite(r[k])) && Number.isFinite(Date.parse(r.date))
-      && Array.isArray(r.samples) && r.samples.length <= 150 && r.samples.every((p: Record<string, unknown>) => p && ['x', 'y', 'bullet'].every(k => Number.isFinite(p[k])))).slice(0, 100).map(r => ({ ...r, mode: r.mode === 'tracking' ? 'tracking' : migrateMode(r.mode) })) : [];
+      && Array.isArray(r.samples) && r.samples.length <= 150 && r.samples.every((p: Record<string, unknown>) => p && ['x', 'y', 'bullet'].every(k => Number.isFinite(p[k])))).slice(0, 100).map(r => ({ ...r, drill:readDrillMetrics(r.drill), mode: r.mode === 'tracking' ? 'tracking' : migrateMode(r.mode) })) : [];
   } catch { return []; }
 }
 function download(name: string, value: unknown) {
@@ -38,7 +41,7 @@ function download(name: string, value: unknown) {
   const a = document.createElement('a'); a.href = url; a.download = name; a.click();
   setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
-const emptyStatus: RangeStatus = { weapon: 'ak47', active: false, firing: false, shots: 0, hits: 0, heads: 0, remaining: 30, reload: 0, speed: 0, distance: 12, input: 'Ready', audio: 'locked', assets: 'Loading models', fps: 0 };
+const emptyStatus: RangeStatus = { weapon: 'ak47', equipped:'ak47',slot:1,equipReady:true,magazine:30, active: false, firing: false, shots: 0, hits: 0, heads: 0, remaining: 30, reload: 0, speed: 0, distance: 12, input: 'Ready', audio: 'locked', assets: 'Loading models', fps: 0 };
 type Panel = 'settings' | 'weapons' | 'history' | null;
 type Tab = 'game' | 'crosshair' | 'data';
 
@@ -109,7 +112,7 @@ export default function RangeApp() {
   }, [panel]);
   const start = () => {
     const coarse = matchMedia('(pointer: coarse)').matches;
-    if (coarse) { engine.current!.sim.active = true; engine.current!.inputStatus = 'Touch'; void engine.current?.audio.unlock(settings.weapon); }
+    if (coarse) { engine.current!.sim.active = true; engine.current!.inputStatus = 'Touch'; void engine.current?.audio.unlock(engine.current.sim.equipped); }
     else void engine.current?.enter();
   };
   const importProfile = async (file?: File) => {
@@ -140,12 +143,16 @@ export default function RangeApp() {
       <button className="weapon-select" onClick={() => open('weapons')}><img src={`/models/${settings.weapon}.png`} alt="" /><span><small>LOADOUT</small>{weaponNames[settings.weapon]}</span><ChevronDown size={15} /></button>
       <label className="mode-select"><small>DRILL</small><select aria-label="Training mode" value={settings.mode} onChange={e => update({ mode: e.target.value as Mode })}>{Object.entries(modeNames).map(([id, name]) => <option key={id} value={id}>{name}</option>)}</select></label>
       <div className="distance-input"><small>DISTANCE</small><output>{status.distance.toFixed(1)} m</output></div>
-      <div className="toolbar-actions"><button className="icon-button" title="Reset range (R)" aria-label="Reset range" onClick={() => { engine.current?.sim.reset(); engine.current?.clearImpacts(); }}><RotateCcw size={18} /></button><button className="icon-button" title={settings.volume ? 'Mute' : 'Unmute'} aria-label={settings.volume ? 'Mute' : 'Unmute'} onClick={() => update({ volume: settings.volume ? 0 : .2 })}>{settings.volume ? <Volume2 size={18} /> : <VolumeX size={18} />}</button><button className="icon-button fullscreen" title="Fullscreen" aria-label="Fullscreen" onClick={() => { if (document.fullscreenElement) void document.exitFullscreen(); else void host.current?.parentElement?.requestFullscreen?.().catch(() => setNotice('Fullscreen unavailable in this browser.')); }}><Maximize size={18} /></button></div>
+      <div className="toolbar-actions"><button className="icon-button" title="Reset range" aria-label="Reset range" onClick={() => { engine.current?.sim.reset(); engine.current?.clearImpacts(); }}><RotateCcw size={18} /></button><button className="icon-button" title={settings.volume ? 'Mute' : 'Unmute'} aria-label={settings.volume ? 'Mute' : 'Unmute'} onClick={() => update({ volume: settings.volume ? 0 : .2 })}>{settings.volume ? <Volume2 size={18} /> : <VolumeX size={18} />}</button><button className="icon-button fullscreen" title="Fullscreen" aria-label="Fullscreen" onClick={() => { if (document.fullscreenElement) void document.exitFullscreen(); else void host.current?.closest('.range-stage')?.requestFullscreen?.().catch(() => setNotice('Fullscreen unavailable in this browser.')); }}><Maximize size={18} /></button></div>
     </section>
-    <section className="range-stage" aria-label="Practice range">
+    <section className={`range-stage${isDrillMode(settings.mode)?' with-drill':''}`} aria-label="Practice range">
+      <div className="range-view">
       <div className="canvas-host" ref={host} />
       <div className="range-topline"><span className="range-badge"><i />{status.active ? 'LIVE RANGE' : 'RANGE 01'}</span><span>{profiles[settings.weapon] ? 'IMPORTED RECOIL CAPTURE' : 'GAME-DERIVED RECOIL'}</span></div>
-      <div className="target-label">{modeNames[settings.mode]} <span>{status.distance.toFixed(1)} m</span></div>
+      {!isDrillMode(settings.mode)&&<div className="target-label">{modeNames[settings.mode]} <span>{status.distance.toFixed(1)} m</span></div>}
+      <div className="equipment-slots" role="group" aria-label="Equipped weapon">
+        {([1,2,3] as Slot[]).map(slot=>{const id=slot===1?settings.weapon:slot===2?'usp':'knife';return <button key={slot} aria-pressed={status.slot===slot} aria-label={`Equip ${equipmentNames[id]}`} title={`${equipmentNames[id]} (${slot})`} onClick={()=>{void engine.current?.equip(slot);}}><span>{slot}</span><img src={`/models/${id}.png`} alt=""/></button>;})}
+      </div>
       <div className="follow-origin" ref={follow}><CrosshairView value={settings.crosshair} /></div>
       <div className="hit-marker" ref={hitmarker}><X size={42} strokeWidth={3} /></div>
       {!status.active && !error && <button className="enter-range" disabled={!assetReady} onClick={start}><Play size={18} fill="currentColor" />{assetReady ? 'Enter range' : 'Loading range'}</button>}
@@ -154,10 +161,12 @@ export default function RangeApp() {
       <div className="range-hud">
         <div className="hud-performance"><span className="hud-stat"><Activity size={17} /><b>{Math.round(status.speed)}</b><small>u/s</small></span><span className="hud-stat"><Target size={17} /><b>{status.distance.toFixed(1)}</b><small>m</small></span></div>
         <div className="hud-result"><small>HIT RATE</small><strong data-testid="accuracy">{Math.round(score)}<em>%</em></strong><div className="hit-counts"><span className="head-count"><b>{status.heads}</b> HEAD</span><span className="body-count"><b>{status.hits - status.heads}</b> BODY</span><span className="miss-count"><b>{status.shots - status.hits}</b> MISS</span></div></div>
-        <div className="hud-ammo"><small>{weaponNames[settings.weapon]}</small><strong data-testid="ammo">{status.remaining}<em>{`/ ${Math.min(settings.burst || weapon.magazine, weapon.magazine)}`}</em></strong><span>{status.firing ? 'Firing' : 'Ready'}</span></div>
+        <div className="hud-ammo"><small>{equipmentNames[status.equipped]}</small><strong data-testid="ammo">{status.slot===3?'--':status.remaining}{status.slot!==3&&<em>{`/ ${status.magazine}`}</em>}</strong><span>{status.reload?`Reloading ${status.reload.toFixed(1)} s`:!status.equipReady?'Drawing':status.firing ? 'Firing' : 'Ready'}</span>{status.slot===2&&<button className="reload-pistol" disabled={status.remaining===12||!!status.reload} onClick={()=>engine.current?.sim.reload()} title="Reload USP-S (R)"><RotateCcw size={13}/>Reload</button>}</div>
       </div>
+      </div>
+      {isDrillMode(settings.mode)&&<DrillPanel status={status} mode={settings.mode} challenge={settings.drillPace==='challenge'}/>}
     </section>
-    <footer className="statusbar"><span><i className={status.active ? 'online' : ''} />{status.input}<span className="desktop-status">{status.fps} FPS</span></span><span className="status-center">{status.audio === 'unavailable' ? 'Audio unavailable' : `${Math.round(60 / weapon.cycle)} RPM`}<span className="desktop-status">Build {gameData.build}</span></span><div className="project-links"><a href="https://github.com/HamzahAlrawi/cs2spraylab" target="_blank" rel="noreferrer"><Github size={14} />Source</a></div></footer>
+    <footer className="statusbar"><span><i className={status.active ? 'online' : ''} />{status.input}<span className="desktop-status">{status.fps} FPS</span></span><span className="status-center">{status.audio === 'unavailable' ? 'Audio unavailable' : status.slot===3?'250 u/s':`${Math.round(60 / equipmentStats(status.equipped).cycle)} RPM`}<span className="desktop-status">Build {gameData.build}</span></span><div className="project-links"><a href="https://github.com/HamzahAlrawi/cs2spraylab" target="_blank" rel="noreferrer"><Github size={14} />Source</a></div></footer>
     {notice && <div className="toast" role="status">{notice}<button className="icon-button" aria-label="Dismiss message" onClick={() => setNotice('')}><X size={15} /></button></div>}
     {panel && <div className="drawer-backdrop" onPointerDown={e => { if (e.target === e.currentTarget) setPanel(null); }}>
       <aside className={`drawer ${panel === 'history' ? 'wide' : ''}`} role="dialog" aria-modal="true" aria-labelledby="panel-title" tabIndex={-1} ref={drawer}>
@@ -171,6 +180,8 @@ export default function RangeApp() {
               <div className="readout"><span>eDPI</span><b>{Math.round(settings.sensitivity * settings.dpi)}</b></div>
               <Toggle label="Invert mouse Y" checked={settings.invertY} onChange={v => update({ invertY: v })} />
               <h2>Training</h2><label className="select-row">Burst length<select aria-label="Burst length" value={settings.burst} onChange={e => update({ burst: +e.target.value })}><option value="0">Full magazine</option><option value="5">5 rounds</option><option value="10">10 rounds</option><option value="15">15 rounds</option></select></label>
+              <label className="select-row">Peeking angles<select aria-label="Peeking angles" value={settings.peekScenario} onChange={e=>update({peekScenario:e.target.value as Settings['peekScenario']})}><option value="mixed">Mixed situations</option><option value="common">Common angles</option><option value="deep">Deep holds</option><option value="off-angle">Off-angles</option><option value="elevated">Elevated holds</option></select></label>
+              <label className="select-row">Drill pace<select aria-label="Drill pace" value={settings.drillPace} onChange={e=>update({drillPace:e.target.value as Settings['drillPace']})}><option value="practice">Practice / 8 s exposure</option><option value="challenge">Challenge / 1.5 s exposure</option></select></label>
               <Toggle label="Follow recoil" checked={settings.follow} onChange={v => update({ follow: v })} />
               <Toggle label="Practice spread" checked={settings.spread} onChange={v => update({ spread: v })} />
               <Toggle label="Moving target" checked={settings.moving} onChange={v => update({ moving: v })} />
@@ -209,8 +220,8 @@ export default function RangeApp() {
         {panel === 'weapons' && <div className="drawer-content arsenal">{weaponIds.map(id => <button className={`weapon-item ${settings.weapon === id ? 'chosen' : ''}`} key={id} onClick={() => { update({ weapon: id }); setPanel(null); }}><img src={`/models/${id}.png`} alt={weaponNames[id]} /><span><b>{weaponNames[id]}</b><small>{gameData.weapons[id].magazine} rounds <i /> {Math.round(60 / gameData.weapons[id].cycle)} RPM</small></span>{id === settings.weapon && <Check size={18} />}</button>)}</div>}
         {panel === 'history' && <div className="drawer-content history">
           <div className="session-summary"><div><small>ATTEMPTS</small><b>{results.length}</b></div><div><small>AVG. HIT RATE</small><b>{results.filter(r => r.shots).length ? Math.round(results.filter(r => r.shots).reduce((n, r) => n + r.hits / r.shots * 100, 0) / results.filter(r => r.shots).length) : 0}%</b></div><button className="icon-button" aria-label="Export history" title="Export history" onClick={() => download('spraylab-history.json', { results, legacy })}><Download size={18} /></button></div>
-          {selected && <section className="replay"><div className="section-title"><h2>{weaponNames[selected.weapon]} / {historyModeNames[selected.mode]}</h2><span>{selected.mode === 'tracking' ? `${selected.tracking.toFixed(1)}%` : `${selected.hits}/${selected.shots}`}</span></div>{selected.samples.length > 0 && <><svg viewBox="0 0 400 240" role="img" aria-label="Shot replay, metres relative to target head"><path d="M200 0V240M0 120H400" stroke="#47524d" strokeDasharray="3 5" /><circle cx="200" cy="120" r="10" fill="none" stroke="#8daba0" /><path d="M182 139h36v42h-36z" fill="#394943" />{selected.samples.slice(0, replay).map((s, i) => <g key={i}><circle cx={200 + Math.max(-190, Math.min(190, s.x * 70))} cy={120 - Math.max(-110, Math.min(110, s.y * 70))} r="3" fill={s.head ? '#e6cf6b' : s.hit ? '#6ddbb1' : '#ed9186'} /><title>Round {s.bullet}: {s.x.toFixed(2)}m, {s.y.toFixed(2)}m</title></g>)}</svg><Slider label="Replay round" value={replay} min={0} max={selected.samples.length} onChange={setReplay} /></>}</section>}
-          <h2>Recent attempts</h2>{!results.length && <p className="empty-state">No attempts yet.</p>}{results.map(r => <button key={r.id} className={`history-row ${selected?.id === r.id ? 'selected' : ''}`} onClick={() => { setSelected(r); setReplay(r.samples.length); }}><span><b>{weaponNames[r.weapon]}</b><small>{historyModeNames[r.mode]} / {new Date(r.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</small></span><strong>{Math.round(r.mode === 'tracking' ? r.tracking : r.shots ? r.hits / r.shots * 100 : 0)}%</strong><ChevronDown size={14} /></button>)}
+          {selected && <section className="replay"><div className="section-title"><h2>{equipmentNames[selected.weapon]} / {historyModeNames[selected.mode]}</h2><span>{selected.mode === 'tracking' ? `${selected.tracking.toFixed(1)}%` : `${selected.hits}/${selected.shots}`}</span></div>{selected.drill&&<DrillReview value={selected.drill}/>} {selected.samples.length > 0 && <><svg viewBox="0 0 400 240" role="img" aria-label="Shot replay, metres relative to target head"><path d="M200 0V240M0 120H400" stroke="#47524d" strokeDasharray="3 5" /><circle cx="200" cy="120" r="10" fill="none" stroke="#8daba0" /><path d="M182 139h36v42h-36z" fill="#394943" />{selected.samples.slice(0, replay).map((s, i) => <g key={i}><circle cx={200 + Math.max(-190, Math.min(190, s.x * 70))} cy={120 - Math.max(-110, Math.min(110, s.y * 70))} r="3" fill={s.head ? '#e6cf6b' : s.hit ? '#6ddbb1' : '#ed9186'} /><title>Round {s.bullet}: {s.x.toFixed(2)}m, {s.y.toFixed(2)}m</title></g>)}</svg><Slider label="Replay round" value={replay} min={0} max={selected.samples.length} onChange={setReplay} /></>}</section>}
+          <h2>Recent attempts</h2>{!results.length && <p className="empty-state">No attempts yet.</p>}{results.map(r => <button key={r.id} className={`history-row ${selected?.id === r.id ? 'selected' : ''}`} onClick={() => { setSelected(r); setReplay(r.samples.length); }}><span><b>{equipmentNames[r.weapon]}</b><small>{historyModeNames[r.mode]} / {new Date(r.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</small></span><strong>{Math.round(r.mode === 'tracking' ? r.tracking : r.shots ? r.hits / r.shots * 100 : 0)}%</strong><ChevronDown size={14} /></button>)}
           {legacy.length > 0 && <><h2>Previous-version history</h2>{legacy.map(r => <div className="history-row" key={r.id}><span>{r.weaponName}<small>{new Date(r.createdAt).toLocaleDateString()}</small></span><b>{r.scores.overall} score</b></div>)}</>}
         </div>}
       </aside>

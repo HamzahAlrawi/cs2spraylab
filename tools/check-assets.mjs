@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 import crypto from 'node:crypto';
 import sharp from 'sharp';
-const ids = Object.keys(JSON.parse(fs.readFileSync('src/range/game-data.json', 'utf8')).weapons);
+const ids = [...Object.keys(JSON.parse(fs.readFileSync('src/range/game-data.json', 'utf8')).weapons),'usp','knife'];
 const assets = [...ids, ...ids.map(id => `view-${id}`), 'target', 'range-kit'];
 let total = 0;
 const hashes = new Set();
@@ -17,7 +17,8 @@ for (const id of assets) {
   if (id.startsWith('view-') || id === 'target') {
     const assembly = j.nodes.find(n => n.extras?.assembly_version === 2)?.extras;
     if (!assembly || !assembly.weapon_bind_origin?.some(v => Math.abs(v) > .001)) throw new Error(`Missing weapon bind-origin correction: ${id}`);
-    if (assembly.grip_surface_distance?.length !== 2 || assembly.grip_surface_distance.some(v => !Number.isFinite(v) || v > .045)) throw new Error(`Detached weapon grip: ${id}`);
+    const grips = id==='view-knife' ? assembly.grip_surface_distance?.slice(1) : assembly.grip_surface_distance;
+    if (assembly.grip_surface_distance?.length !== 2 || grips.some(v => !Number.isFinite(v) || v > .045)) throw new Error(`Detached weapon grip: ${id}`);
   }
   if (id === 'target' && (!j.skins?.length || !['idle_rifle', 'run_e_rifle', 'run_w_rifle'].every(name => j.animations?.some(a => a.name.includes(name))))) throw new Error('Target rig/locomotion animations missing');
   hashes.add(crypto.createHash('sha256').update(b).digest('hex'));

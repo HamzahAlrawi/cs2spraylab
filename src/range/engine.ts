@@ -8,12 +8,17 @@ import { RangeAudio } from './audio';
 import { requestRawLock } from './input';
 import { VIEWMODEL_FOV, VIEWMODEL_OFFSET, viewmodelViewport } from './viewmodel';
 import { GUIDE_COLORS, SprayDemonstration } from './spray-demonstration';
+import {type Equipment, type Slot} from './equipment';
+import {DrillScenery} from './drill-scene';
+import {HEAD_HEIGHT, type DrillMetrics} from './drills';
 
 export type RangeStatus = {
   weapon: Weapon;
   active: boolean; firing: boolean; shots: number; hits: number; heads: number; remaining: number;
   reload: number; speed: number; distance: number;
   input: string; audio: string; assets: string; fps: number;
+  equipped: Equipment; slot: Slot; equipReady: boolean; magazine: number;
+  drill?: {round:number; completed:number; passed:number; scenario:string; covered:boolean; side:number; phase:'prepare'|'exposed'|'feedback'|'reposition'; accurate:boolean; error:number; last?:DrillMetrics};
 };
 const vector = (v: Vec) => new THREE.Vector3(v.x, v.y, v.z);
 const material = (color: string, roughness = .8) => new THREE.MeshStandardMaterial({ color, roughness });
@@ -27,6 +32,7 @@ export class RangeEngine {
   viewViewport = viewmodelViewport(1, 1);
   demonstration = new SprayDemonstration();
   mouseDemonstration = new SprayDemonstration('mouse');
+  drillScenery = new DrillScenery(); drillRevision = -1;
   weaponRoot = new THREE.Group();
   targets = [new THREE.Group(), new THREE.Group()];
   targetModels: THREE.Object3D[] = [];
@@ -44,8 +50,9 @@ export class RangeEngine {
   cues = [document.createElement('div'), document.createElement('div')];
   hitCaption = document.createElement('div');
   cleanup: (() => void)[] = [];
-  modelCache = new Map<Weapon, THREE.Object3D>();
-  loading = new Map<Weapon, Promise<THREE.Object3D>>();
+  clearInput?: () => void;
+  modelCache = new Map<Equipment, THREE.Object3D>();
+  loading = new Map<Equipment, Promise<THREE.Object3D>>();
   revision = 0; kick = 0; hitTime = 0;
   markerGeometry = new THREE.SphereGeometry(.018, 6, 4);
   missMaterial = new THREE.MeshBasicMaterial({ color: '#ff6259' });
@@ -161,6 +168,7 @@ export class RangeEngine {
     // Target backplates give useful impact feedback even at 100 m.
     this.box([16, 4.2, .25], [0, 2.1, TARGET_Z - 1.6], material('#536765'));
     this.scene.add(this.demonstration.mesh, this.mouseDemonstration.mesh);
+    this.scene.add(this.drillScenery.group); this.solids.push(...this.drillScenery.solids);
     for (const x of [-8, 8]) this.box([.18, 4.5, .4], [x, 2.25, TARGET_Z - 1.6], steel);
     this.targets.forEach((target, i) => {
       const tag = this.label(i ? 'B' : 'A', .32, .16, '#ffffff'); tag.position.set(0, 2.05, 0); tag.name = 'lane-tag'; target.add(tag);
@@ -172,6 +180,9 @@ export class RangeEngine {
     this.syncTargets();
   }
   syncTargets() {
+    if (this.drillRevision !== this.sim.drillRevision) {
+      this.drillRevision = this.sim.drillRevision; this.drillScenery.setScenario(this.sim.drill?.scenario); this.clearImpacts();
+    }
     this.targets.forEach((target, i) => {
       target.visible = i === 0 || this.sim.settings.mode === 'transfer';
       target.position.copy(vector(this.sim.targetPosition(i)));
@@ -208,9 +219,16 @@ export class RangeEngine {
     } catch { if (!this.disposed) { this.assetStatus = 'Target asset missing'; this.onError('The player model could not load. Restore the local game assets with npm run assets:build.'); } }
   }
   updateAssetStatus() {
-    if (this.loadedTarget && this.modelCache.has(this.sim.settings.weapon)) this.assetStatus = 'Models ready';
+    if (this.loadedTarget && this.modelCache.has(this.sim.equipped)) this.assetStatus = 'Models ready';
   }
-  async setWeapon(id: Weapon) {
+  async equip(slot: Slot) {
+    if (this.sim.active) this.renderer.domElement.focus({preventScroll:true});
+    if (!this.sim.equip(slot)) return;
+    this.updateDemonstration();
+    void this.audio.unlock(this.sim.equipped);
+    await this.setWeapon(this.sim.equipped);
+  }
+  async setWeapon(id: Equipment) {
     const revision = ++this.revision;
     this.assetStatus = 'Loading weapon';
     this.weaponRoot.clear();
@@ -226,7 +244,7 @@ export class RangeEngine {
               if (m instanceof THREE.MeshStandardMaterial) {
                 m.envMapIntensity = .3;
                 // The imported roughness map already contains the native surface values.
-                m.roughness = 1;
+                if (m.roughnessMap) m.roughness = 1;
                 if (/sleeve|glove|bare_arm/.test(m.name)) { m.metalness = 0; m.roughness = .9; m.roughnessMap = null; m.metalnessMap = null; }
               }
             } });
@@ -257,30 +275,31 @@ export class RangeEngine {
     // Embedded glove textures are duplicated per GLB; keep only three GPU assemblies.
     for (const [id, model] of this.modelCache) {
       if (this.modelCache.size <= 3) break;
-      if (id === this.sim.settings.weapon) continue;
+      if (id === this.sim.equipped) continue;
       this.modelCache.delete(id); this.disposeObject(model);
     }
   }
   configure(settings: Settings, measured?: MeasuredProfile) {
     const changedWeapon = settings.weapon !== this.sim.settings.weapon;
-    const resetKeys: (keyof Settings)[] = ['weapon', 'mode', 'moving', 'targetSpeed', 'burst'];
+    const resetKeys: (keyof Settings)[] = ['weapon', 'mode', 'moving', 'targetSpeed', 'burst', 'peekScenario', 'drillPace'];
     if (!resetKeys.some(key => settings[key] !== this.sim.settings[key]) && measured === this.sim.measured) {
       const changedInversion = settings.invertY !== this.sim.settings.invertY;
       this.sim.settings = settings;
       if (changedInversion) this.updateDemonstration();
-      this.demonstration.mesh.visible = settings.showImpactPattern;
-      this.mouseDemonstration.mesh.visible = settings.showMousePath;
+      this.demonstration.mesh.visible = settings.showImpactPattern && !this.sim.drill && this.sim.slot===1;
+      this.mouseDemonstration.mesh.visible = settings.showMousePath && !this.sim.drill && this.sim.slot===1;
       this.renderer.shadowMap.enabled = settings.quality !== 'low'; this.resize(); return;
     }
-    this.sim.configure(settings, measured);
+    this.clearInput?.(); this.sim.configure(settings, measured);
+    if (changedWeapon) this.sim.slot = 1;
     this.updateDemonstration();
     this.clearImpacts(); this.syncTargets(); this.resize();
     this.renderer.shadowMap.enabled = settings.quality !== 'low';
     if (changedWeapon) void this.setWeapon(settings.weapon);
   }
   updateDemonstration() {
-    this.demonstration.mesh.visible = this.sim.settings.showImpactPattern;
-    this.mouseDemonstration.mesh.visible = this.sim.settings.showMousePath;
+    this.demonstration.mesh.visible = this.sim.settings.showImpactPattern && !this.sim.drill && this.sim.slot===1;
+    this.mouseDemonstration.mesh.visible = this.sim.settings.showMousePath && !this.sim.drill && this.sim.slot===1;
     this.demonstration.setPattern(this.sim.settings.weapon, this.sim.pattern, gameData.weapons[this.sim.settings.weapon].cycle, this.elapsed);
     this.mouseDemonstration.setPattern(this.sim.settings.weapon, this.sim.pattern, gameData.weapons[this.sim.settings.weapon].cycle, this.elapsed, this.sim.settings.invertY);
   }
@@ -290,31 +309,40 @@ export class RangeEngine {
   }
   castTargets(origin: Vec, dir: Vec) {
     this.syncTargets(); this.ray.set(vector(origin), vector(dir));
-    const obstacle = this.ray.intersectObjects(this.solids.filter(o => o.parent?.visible !== false), false)[0];
+    const obstacle = this.ray.intersectObjects(this.visibleSolids(), false)[0];
     return this.ray.intersectObjects(this.targetModels.filter(m => m.parent?.visible), true)
       .filter(hit => !hit.object.userData.skipScoring && (!obstacle || hit.distance < obstacle.distance));
+  }
+  visibleSolids() {
+    return this.solids.filter(o=>{ for(let node:THREE.Object3D|null=o;node;node=node.parent) if(!node.visible) return false; return true; });
   }
   shot(shot: Shot) {
     const targetHit = this.castTargets(shot.origin, shot.direction)[0];
     this.ray.set(vector(shot.origin), vector(shot.direction));
-    const wallHit = this.ray.intersectObjects(this.solids.filter(o => o.parent?.visible !== false), false)[0];
-    const physicalHit = targetHit && (!wallHit || targetHit.distance < wallHit.distance) ? targetHit : undefined;
+    const wallHit = this.ray.intersectObjects(this.visibleSolids(), false)[0];
+    const physicalHit = targetHit && (!shot.melee || targetHit.distance<=48*.0254) && (!wallHit || targetHit.distance < wallHit.distance) ? targetHit : undefined;
     const expectedTarget = this.targets[this.sim.targetForShot(shot.index)];
     const hit = physicalHit && expectedTarget.getObjectById(physicalHit.object.id) ? physicalHit : undefined;
+    if (shot.melee) {
+      this.kick=1; this.audio.play('knife',this.sim.settings.volume);
+      this.hitCaption.textContent=hit?'KNIFE HIT':'';this.hitTime=hit ? .45 : 0;
+      this.hitmarker.style.color=this.hitCaption.style.color='#51edee';
+      return;
+    }
     const impact = physicalHit || wallHit;
     const target = expectedTarget;
     const t = (target.position.z - shot.origin.z) / shot.direction.z;
     this.sim.samples.push({ x: t > 0 ? shot.origin.x + shot.direction.x * t - target.position.x : 100,
-      y: t > 0 ? shot.origin.y + shot.direction.y * t - 1.63 : 100, hit: !!hit, head: !!hit && hit.point.y > 1.52,
-      bullet: shot.index + 1 });
-    const head = !!hit && hit.point.y > 1.52;
+      y: t > 0 ? shot.origin.y + shot.direction.y * t - target.position.y - HEAD_HEIGHT : 100, hit: !!hit, head: !!hit && hit.point.y > target.position.y+1.52,
+      bullet: this.sim.drill ? this.sim.drill.shots+1 : shot.index + 1 });
+    const head = !!hit && hit.point.y > target.position.y+1.52;
     this.hitTime = .45;
     this.hitmarker.style.color = head ? '#ffdc59' : hit ? '#51edee' : '#ff7469';
     this.hitCaption.textContent = head ? 'HEADSHOT' : hit ? 'BODY HIT' : physicalHit ? 'WRONG TARGET' : 'MISS';
     this.hitCaption.style.color = this.hitmarker.style.color;
     if (hit) {
       this.sim.hits++;
-      if (hit.point.y > 1.52) this.sim.heads++;
+      if (head) this.sim.heads++;
     }
     if (impact) {
       const mark = new THREE.Mesh(this.markerGeometry, head ? this.hitMaterial : hit ? this.bodyMaterial : this.missMaterial);
@@ -328,17 +356,18 @@ export class RangeEngine {
       this.targets.forEach(t => { const marks = t.children.filter(c => c.userData.impact); if (marks.length > 60) t.remove(marks[0]); });
     }
     this.kick = 1;
-    this.audio.play(this.sim.settings.weapon, this.sim.settings.volume);
+    this.audio.play(this.sim.equipped, this.sim.settings.volume);
   }
   async enter() {
     this.sim.active = true;
     this.renderer.domElement.focus({ preventScroll: true });
-    void this.audio.unlock(this.sim.settings.weapon);
+    void this.audio.unlock(this.sim.equipped);
     const mode = await requestRawLock(this.renderer.domElement);
     if (this.disposed) return;
     this.inputStatus = mode === 'raw' ? 'Raw mouse' : mode === 'standard' ? 'Standard mouse' : 'Drag aim';
   }
   pause() {
+    this.clearInput?.();
     this.sim.cancel();
     this.hitTime = 0;
     this.hitmarker.style.opacity = this.hitCaption.style.opacity = '0';
@@ -353,9 +382,9 @@ export class RangeEngine {
     const capture = (id: number) => { try { canvas.setPointerCapture(id); } catch { /* Some embedded engines reject pointer capture. */ } };
     listen(canvas, 'pointerdown', ((e: PointerEvent) => {
       if (e.button !== 0 || !e.isPrimary) return;
-      if (!this.loadedTarget || !this.modelCache.has(this.sim.settings.weapon)) return;
+      if (!this.loadedTarget || !this.modelCache.has(this.sim.equipped)) return;
       e.preventDefault();
-      void this.audio.unlock(this.sim.settings.weapon);
+      void this.audio.unlock(this.sim.equipped);
       if (e.pointerType === 'touch' || e.pointerType === 'pen') {
         this.inputStatus = 'Touch'; this.sim.active = true;
         pointer = e.pointerId; lastX = e.clientX; lastY = e.clientY;
@@ -383,17 +412,20 @@ export class RangeEngine {
     listen(canvas, 'pointercancel', (() => { pointer = null; this.pause(); }) as EventListener);
     listen(canvas, 'contextmenu', e => e.preventDefault());
     listen(document, 'pointerlockchange', (() => {
-      if (document.pointerLockElement !== canvas && this.inputStatus !== 'Touch' && this.inputStatus !== 'Drag aim') this.sim.cancel();
+      if (document.pointerLockElement !== canvas && this.inputStatus !== 'Touch' && this.inputStatus !== 'Drag aim') this.pause();
     }) as EventListener);
     listen(document, 'pointerlockerror', (() => { this.inputStatus = 'Drag aim'; }) as EventListener);
     const keys = new Set<string>();
     const update = () => {
       this.sim.input = { forward: +keys.has('KeyW') - +keys.has('KeyS'), side: +keys.has('KeyD') - +keys.has('KeyA'), walk: keys.has('ShiftLeft') || keys.has('ShiftRight'), crouch: keys.has('ControlLeft') || keys.has('KeyC'), jump: keys.has('Space') };
     };
+    this.clearInput = () => { keys.clear(); pointer = null; update(); };
     listen(window, 'keydown', ((e: KeyboardEvent) => {
       if (!this.sim.active || (e.target instanceof HTMLElement && e.target.matches('input,select,textarea,button'))) return;
       if (['KeyW', 'KeyA', 'KeyS', 'KeyD', 'ShiftLeft', 'ShiftRight', 'ControlLeft', 'KeyC', 'Space'].includes(e.code)) { e.preventDefault(); keys.add(e.code); update(); }
-      if (e.code === 'KeyR') { this.sim.reset(); this.clearImpacts(); }
+      if (!e.repeat && ['Digit1','Digit2','Digit3'].includes(e.code)) { e.preventDefault(); void this.equip(+e.code.slice(-1) as Slot); }
+      if (!e.repeat && e.code === 'KeyQ') { e.preventDefault(); void this.equip(this.sim.previousSlot); }
+      if (!e.repeat && e.code === 'KeyR') { if(this.sim.slot===2) this.sim.reload(); else {this.sim.reset();this.clearImpacts();} }
       if (e.code === 'Escape') this.pause();
     }) as EventListener);
     listen(window, 'keyup', ((e: KeyboardEvent) => { keys.delete(e.code); update(); }) as EventListener);
@@ -422,6 +454,7 @@ export class RangeEngine {
     const activeLane = this.sim.firing ? this.sim.targetForShot() : 0;
     this.targets.forEach((t, i) => {
       const marker = t.getObjectByName('active-lane') as THREE.Mesh;
+      marker.visible = !this.sim.drill;
       (marker.material as THREE.MeshBasicMaterial).color.set(i === activeLane ? GUIDE_COLORS.now : GUIDE_COLORS.next);
       t.getObjectByName('lane-tag')!.visible = this.sim.settings.mode === 'transfer';
     });
@@ -435,13 +468,16 @@ export class RangeEngine {
     this.camera.rotation.set(this.sim.pitch, this.sim.yaw, 0, 'YXZ');
     this.camera.updateMatrixWorld();
     this.kick = Math.max(0, this.kick - dt * 10);
-    this.muzzle.intensity = this.sim.settings.weapon === 'm4a1s' ? 0 : this.kick > .65 ? 2 : 0;
+    this.muzzle.intensity = ['m4a1s','usp','knife'].includes(this.sim.equipped) ? 0 : this.kick > .65 ? 2 : 0;
     this.hitTime = Math.max(0, this.hitTime - dt);
     this.hitmarker.style.opacity = this.hitTime > 0 ? '1' : '0';
     this.hitCaption.style.opacity = this.hitTime > 0 ? '1' : '0';
     const moving = Math.hypot(this.sim.velocity.x, this.sim.velocity.z);
-    this.weaponRoot.position.set(VIEWMODEL_OFFSET.x, VIEWMODEL_OFFSET.y + Math.sin(this.elapsed * 12) * Math.min(moving, 1) * .002, this.kick * .015);
-    this.weaponRoot.rotation.x = this.kick * .02;
+    const drawing = Math.max(0,this.sim.equipReadyAt-this.sim.time);
+    const reloading = this.sim.pistolReloadAt>0;
+    this.weaponRoot.position.set(VIEWMODEL_OFFSET.x, VIEWMODEL_OFFSET.y + Math.sin(this.elapsed * 12) * Math.min(moving, 1) * .002 - drawing*.25 - (reloading ? .12 : 0), this.kick * .015);
+    this.weaponRoot.rotation.x = this.kick * (this.sim.slot===3 ? -.6 : .02) - drawing*.3;
+    this.weaponRoot.rotation.z = this.sim.slot===3 ? this.kick*-.45 : reloading ? -.25 : 0;
     const r = this.sim.settings.follow ? this.sim.recoil : { yaw: 0, pitch: 0 };
     const point = new THREE.Vector3(-Math.tan(-this.sim.yaw + r.yaw * DEG), 0, -1);
     // Project the recoil-only direction with the same camera, excluding random spread.
@@ -454,7 +490,7 @@ export class RangeEngine {
     const distance = Math.hypot(dx, dz);
     this.cues.forEach((cue, i) => {
       const index = (this.sim.firing ? this.sim.shots : 0) + i;
-      const visible = ['guided', 'transfer'].includes(this.sim.settings.mode) && index < this.sim.burstSize;
+      const visible = this.sim.slot===1 && ['guided', 'transfer'].includes(this.sim.settings.mode) && index < this.sim.burstSize;
       const target = this.sim.targetPosition(this.sim.targetForShot(index));
       const dx = target.x - this.sim.position.x, dz = target.z - this.sim.position.z;
       const p = this.sim.pattern[Math.min(index, this.sim.pattern.length - 1)];
@@ -473,8 +509,13 @@ export class RangeEngine {
     this.renderer.render(this.viewScene, this.viewCamera);
     if (this.elapsed - this.statusTime > .1) {
       this.statusTime = this.elapsed;
-      this.onStatus({ weapon: this.sim.settings.weapon, active: this.sim.active, firing: this.sim.firing, shots: this.sim.shots, hits: this.sim.hits, heads: this.sim.heads,
-        remaining: this.sim.firing ? this.sim.burstSize - this.sim.shots : this.sim.burstSize, reload: 0,
+      const drill=this.sim.drill;
+      this.onStatus({ weapon: this.sim.settings.weapon, equipped:this.sim.equipped,slot:this.sim.slot,equipReady:this.sim.time>=this.sim.equipReadyAt,
+        magazine:this.sim.slot===1?this.sim.burstSize:this.sim.stats.magazine,
+        active: this.sim.active, firing: this.sim.firing, shots: drill?.shots ?? this.sim.shots, hits: drill?.hits ?? this.sim.hits, heads: drill?.heads ?? this.sim.heads,
+        remaining: this.sim.slot===2 ? this.sim.pistolAmmo : this.sim.slot===3 ? 0 : this.sim.firing ? this.sim.burstSize - this.sim.shots : this.sim.burstSize, reload: Math.max(0,this.sim.pistolReloadAt-this.sim.time),
+        ...(drill ? {drill:{round:this.sim.drillRound,completed:this.sim.drillCompleted,passed:this.sim.drillPassed,scenario:drill.scenario.name,covered:drill.scenario.covered,side:drill.scenario.side,
+          phase:drill.finished?(this.sim.repositionFrom?'reposition':'feedback'):drill.visible?'exposed':'prepare',accurate:drill.accurate,error:drill.error,last:this.sim.drillResult}} : {}),
         speed: moving / .0254, distance, input: this.inputStatus, audio: this.audio.status, assets: this.assetStatus, fps: dt ? Math.round(1 / dt) : 0 });
     }
     this.frame = requestAnimationFrame(t => this.tick(t));
@@ -494,6 +535,7 @@ export class RangeEngine {
     this.cleanup.forEach(fn => fn()); this.audio.dispose();
     this.demonstration.dispose();
     this.mouseDemonstration.dispose();
+    this.drillScenery.dispose();
     this.disposeObject(this.scene); this.modelCache.forEach(m => this.disposeObject(m));
     this.markerGeometry.dispose(); this.missMaterial.dispose(); this.hitMaterial.dispose(); this.bodyMaterial.dispose();
     this.cues.forEach(c => c.remove()); this.hitCaption.remove();

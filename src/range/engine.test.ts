@@ -33,6 +33,13 @@ describe('Target line of sight', () => {
     body.userData.skipScoring = false; target.visible = false;
     expect(engine.castTargets(origin, direction)).toHaveLength(0);
   });
+  it('blocks cover shots and ignores a wall only when its whole lane is hidden', () => {
+    const {engine,wall}=rayFixture();
+    const lane=new THREE.Group();wall.parent!.add(lane);lane.add(wall);wall.position.z=-9;
+    expect(engine.castTargets(origin,direction)).toHaveLength(0);
+    lane.visible=false;
+    expect(engine.castTargets(origin,direction).length).toBeGreaterThan(0);
+  });
 });
 
 it('bounds the GPU weapon cache and never evicts the selected assembly', () => {
@@ -52,9 +59,11 @@ it('clears hit feedback immediately when pausing so it cannot cover the entry bu
   engine.hitmarker = {style: {opacity: '1'}} as HTMLElement;
   engine.hitCaption = {style: {opacity: '1'}} as HTMLDivElement;
   engine.hitTime = .45;
+  engine.clearInput = vi.fn();
   vi.stubGlobal('document', {pointerLockElement: null});
   try {
     engine.pause();
+    expect(engine.clearInput).toHaveBeenCalledOnce();
     expect(engine.hitTime).toBe(0);
     expect(engine.hitmarker.style.opacity).toBe('0');
     expect(engine.hitCaption.style.opacity).toBe('0');

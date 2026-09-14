@@ -1,0 +1,49 @@
+{
+  "build": "2000908",
+  "source": "scripts/weapons.vdata_c",
+  "sha256": "fbd0d6f754c234efb24ec5c6b8c335f190e67f17ac7ec98dc2cd2ea2ddb4037e",
+  "weapons": {
+    "usp": {
+      "magazine": 12,
+      "cycle": 0.17,
+      "speed": 240,
+      "deploy": 1,
+      "reload": 2.2,
+      "stand": 0.0049,
+      "crouch": 0.00368,
+      "move": 0.01387,
+      "spread": 0.0015,
+      "fire": 0.052,
+      "recovery": 0.349532,
+      "recoilSeed": 5426,
+      "recoilAngle": 0,
+      "recoilVariance": 0,
+      "recoilMagnitude": 23,
+      "recoilMagnitudeVariance": 0,
+      "fullAuto": false,
+      "worldModel": "weapons/models/usp_silencer/weapon_pist_usp_silencer.vmdl",
+      "skeleton": "animation/skeletons/weapons/usp_silencer.vnmskel"
+    },
+    "knife": {
+      "magazine": 0,
+      "cycle": 0.15,
+      "speed": 250,
+      "deploy": 1,
+      "reload": 5,
+      "stand": 0,
+      "crouch": 0,
+      "move": 0,
+      "spread": 0,
+      "fire": 0,
+      "recovery": 1,
+      "recoilSeed": 26701,
+      "recoilAngle": 0,
+      "recoilVariance": 0,
+      "recoilMagnitude": 0,
+      "recoilMagnitudeVariance": 0,
+      "fullAuto": false,
+      "worldModel": "weapons/models/knife/knife_butterfly/weapon_knife_butterfly.vmdl",
+      "skeleton": "animation/skeletons/weapons/knife_butterfly.vnmskel"
+    }
+  }
+}

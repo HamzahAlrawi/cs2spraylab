@@ -2,7 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { execFileSync } from 'node:child_process';
 import sharp from 'sharp';
-const weapons = Object.keys(JSON.parse(fs.readFileSync('src/range/game-data.json', 'utf8')).weapons);
+const weapons = [...Object.keys(JSON.parse(fs.readFileSync('src/range/game-data.json', 'utf8')).weapons),'usp','knife'];
 const allIds = [...weapons, ...weapons.map(id => `view-${id}`), 'target', 'range-kit'];
 const ids = process.argv.slice(2).length ? process.argv.slice(2) : allIds;
 if (ids.some(id => !allIds.includes(id))) throw new Error('Unknown asset ID');

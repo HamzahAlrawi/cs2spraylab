@@ -2,8 +2,8 @@ import data from './game-data.json';
 import { nativeRecoilPattern } from './recoil';
 
 export type Weapon = keyof typeof data.weapons;
-export type Mode = 'guided' | 'spray' | 'transfer';
-export const modeNames: Record<Mode, string> = { guided: 'Guided spray', spray: 'Free spray', transfer: 'Spray transfer' };
+export type Mode = 'guided' | 'spray' | 'transfer' | 'peek' | 'precision' | 'burst';
+export const modeNames: Record<Mode, string> = { guided: 'Guided spray', spray: 'Free spray', transfer: 'Spray transfer', peek: 'Peeking practice', precision: 'First-shot precision', burst: 'Burst & reposition' };
 export const historyModeNames = { ...modeNames, tracking: 'Target tracking (retired)' };
 export function migrateMode(mode: unknown): Mode {
   return typeof mode === 'string' && Object.prototype.hasOwnProperty.call(modeNames, mode) ? mode as Mode : 'guided';
@@ -14,6 +14,8 @@ export type Settings = {
   moving: boolean; targetSpeed: 'rifle' | 'smg' | 'knife';
   follow: boolean; volume: number; spread: boolean; burst: number; quality: 'auto' | 'low' | 'high';
   showImpactPattern: boolean; showMousePath: boolean;
+  peekScenario: 'mixed' | 'common' | 'deep' | 'off-angle' | 'elevated';
+  drillPace: 'practice' | 'challenge';
   aspect: 'native' | '16:9' | '16:10' | '4:3' | '5:4';
   crosshair: Crosshair;
 };
@@ -25,6 +27,7 @@ export const defaults: Settings = {
   moving: false, targetSpeed: 'rifle', follow: false, volume: 0.2,
   spread: false, burst: 0, quality: 'auto',
   showImpactPattern: true, showMousePath: true,
+  peekScenario: 'mixed', drillPace: 'practice',
   aspect: 'native',
   crosshair: { color: '#ffeb55', size: 3, gap: 2, thickness: 2, outline: 1, alpha: 1, dot: false, t: false, dynamic: false }
 };
@@ -47,6 +50,8 @@ export function sanitizeSettings(raw: unknown): Settings {
     moving: s.moving === true, targetSpeed: ['rifle', 'smg', 'knife'].includes(s.targetSpeed!) ? s.targetSpeed! : 'rifle',
     follow: s.follow === true, volume: numeric(s.volume, .2, 0, 1), spread: s.spread === true,
     showImpactPattern: s.showImpactPattern !== false, showMousePath: s.showMousePath !== false,
+    peekScenario: ['mixed','common','deep','off-angle','elevated'].includes(s.peekScenario!) ? s.peekScenario! : 'mixed',
+    drillPace: s.drillPace === 'challenge' ? 'challenge' : 'practice',
     burst: [0, 5, 10, 15].includes(s.burst!) ? s.burst! : 0,
     quality: ['auto', 'low', 'high'].includes(s.quality!) ? s.quality! : 'auto',
     aspect: ['native', '16:9', '16:10', '4:3', '5:4'].includes(s.aspect!) ? s.aspect! : 'native',
