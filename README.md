@@ -12,7 +12,7 @@ npm run assets:check
 npm run dev -- --host 0.0.0.0
 ```
 
-Open the URL printed by Vite. Phones on the same network can use the LAN address. Tap the range to fire a selected burst. Desktop controls: mouse firing, WASD, Shift walking, Ctrl/C crouching, Space jumping, R reset, Esc exit. Distance is determined by your position.
+Open the URL printed by Vite. Phones on the same network can use the LAN address. Tap the range to fire a selected burst or one USP-S shot. Desktop controls: mouse firing, WASD, Shift walking, Ctrl/C crouching, Space jumping, 1/2/3 for primary/USP-S/knife, Q for the previous slot, R to reload the USP-S or reset a primary attempt, Esc exit. Distance is determined by your position.
 
 **A fresh clone needs assets.** Extracted Valve models, textures and audio are intentionally excluded from this source repository. See [REVAMP.md](REVAMP.md#local-asset-pipeline) for the reproducible local conversion. The development workspace already has these files. Do not deploy an asset-less build.
 
@@ -21,14 +21,19 @@ Open the URL printed by Vite. Phones on the same network can use the LAN address
 - Guided spray, the default: mint NOW and pink NEXT compensation cues.
 - Free spray: no compensation assistance.
 - Spray transfer: switch from lane A to B at the selected burst's midpoint.
+- Peeking practice: four cover stations, alternating left/right entries, common angles, deep holds, off-angles and elevated targets. Each target independently has a 65% chance of lower-body cover with its head visible after the corner is cleared.
+- First-shot precision: one deliberate shot per randomized target.
+- Burst & reposition: three shots per rep, then at least 0.9 m of lateral displacement before the next target.
+
+Peeking starts behind a wall with a common-angle pre-aim. The coach measures reveal-to-shot time, speed at firing, opposite-key braking, head alignment at the stop, angular aim error and mouse correction. Appropriate off-angle correction is not penalized as unnecessary movement. Practice/challenge exposure limits are 8/1.5 seconds, starting only when the head becomes visible. Feedback is retained in Session history. These are training heuristics, not measured FACEIT-rank benchmarks. Peeking and repositioning require a keyboard; mobile tap-to-shoot remains available for the other drills.
 
 Tracking is retired. Older tracking preferences open Guided spray; previous tracking results remain accessible in history.
 
-Seventeen automatic weapons: AK-47, M4A4, M4A1-S, Galil AR, FAMAS, SG 553, AUG, MP9, MP7, MP5-SD, MAC-10, UMP-45, P90, PP-Bizon, M249, Negev and CZ75-Auto. Scopes and alternate burst-fire modes are not implemented.
+Seventeen automatic primaries: AK-47, M4A4, M4A1-S, Galil AR, FAMAS, SG 553, AUG, MP9, MP7, MP5-SD, MAC-10, UMP-45, P90, PP-Bizon, M249, Negev and CZ75-Auto. Every loadout also has a suppressed USP-S and a butterfly knife with a custom emerald-style blade finish. Scopes and alternate burst-fire modes are not implemented.
 
 Native weapon-specific first-person poses and SAS target animations, colored head/body/miss feedback, moving targets, crosshair editor, follow recoil, replay and local session history are included. Defaults: 800 eDPI, 20% audio, yellow Compact crosshair with 2 px strokes, follow recoil OFF. Existing custom crosshair settings are preserved; selecting Compact applies the updated preset.
 
-All modes show the active weapon's impact pattern on the left backstop and the compensating mouse path on the right. Both are on by default and can be disabled independently in Settings. The mouse path respects inverted Y. These are shape previews at the native firing cadence, not sensitivity-calibrated mouse-distance diagrams; reduced-motion preferences show static paths. The muted backstop keeps the guides readable. Hands and weapons keep their proportions on portrait, ultrawide and stretched-world views.
+The three spray modes show the active primary's impact pattern on the left backstop and the compensating mouse path on the right. Both are on by default and can be disabled independently in Settings; the other drills and equipment slots hide them. The mouse path respects inverted Y. These are shape previews at the native firing cadence, not sensitivity-calibrated mouse-distance diagrams; reduced-motion preferences show static paths. The muted backstop keeps the guides readable. Hands and weapons keep their proportions on portrait, ultrawide and stretched-world views. Hit captions and their marker sit at the lower left, away from the crosshair.
 
 First-time visitors receive a dismissible animated Settings hint for sensitivity, crosshair and audio. Donate is in the top header beside Settings.
 
@@ -37,6 +42,8 @@ First-time visitors receive a dismissible animated Settings hint for sensitivity
 For a data engineer: React is the view layer, TypeScript supplies static contracts, and Vite serves/builds static files. Three.js owns the 3D world and rendering loop. React updates the HUD separately rather than rebuilding the scene each frame.
 
 - `src/range/simulation.ts`: fixed-step movement, target motion, shot timing and drill state.
+- `src/range/drills.ts`, `drill-scene.ts`, `DrillPanel.tsx`: scenario geometry, coaching evidence and review UI.
+- `src/range/equipment.ts`, `equipment-data.json`: loadout slots and extracted sidearm/knife parameters.
 - `src/range/recoil.ts`: deterministic seed table and angular recoil integration.
 - `src/range/engine.ts`: cameras, GLB assets, animation, input, ray intersection and feedback.
 - `src/range/viewmodel.ts`, `spray-demonstration.ts`: responsive weapon projection and the world-fixed pattern display.
@@ -54,6 +61,8 @@ Weapon definitions come from installed CS2 build 2000908. The seed generator and
 
 **This is not a bit-for-bit CS2 engine reproduction.** Practice bursts reset immediately, without the old artificial reload delay. Partial-burst native recoil-index recovery is not simulated. Browser Euler interpolation, spread RNG/accumulated firing inaccuracy, collision hulls, subtick movement, animation blending and the audio mixer still differ. See [RESEARCH.md](RESEARCH.md) for evidence and limitations.
 
+The USP-S uses native magazine, cadence, movement and cone parameters, but simplified firing-penalty recovery and no native pistol aim-punch state machine. The knife has a short-range practice swing, not native melee damage, backstabs or inspection animations. Its finish is authored here, not an extracted Gamma Doppler paint kit. New drills enable approximate practice spread and separately grade movement so a lucky moving hit is not a clean rep.
+
 ## Verify And Build
 
 ```sh
@@ -64,7 +73,7 @@ npm run test:browser
 npm audit
 ```
 
-Browser tests cover Chromium, Firefox, WebKit, mobile viewports and optional isolated Brave/Opera GX installations. Physical phone behavior still requires device testing.
+Browser tests cover Chromium, Firefox, WebKit, mobile viewports and optional isolated Brave/Opera GX installations. Windows Playwright WebKit currently loses visible WebGL output after a canvas resize, also reproduced with a standalone canvas without this app. The resized-canvas visual assertion is an explicit expected failure only on Windows WebKit; framebuffer and interaction checks still run. This does not verify Safari rendering on Apple hardware. Physical phone behavior still requires device testing.
 
 Cloudflare Pages serves `dist`; `npm run deploy:cloudflare` explicitly publishes it. Building or pushing this repository does not deploy to [spraylab.pages.dev](https://spraylab.pages.dev/).
 

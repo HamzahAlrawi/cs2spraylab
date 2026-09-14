@@ -1,13 +1,13 @@
-import { Weapon } from './config';
+import { Equipment } from './equipment';
 
 export class RangeAudio {
   context?: AudioContext;
-  buffers = new Map<Weapon, AudioBuffer>();
-  pending = new Map<Weapon, Promise<void>>();
+  buffers = new Map<Equipment, AudioBuffer>();
+  pending = new Map<Equipment, Promise<void>>();
   voices = new Set<AudioBufferSourceNode>();
   disposed = false;
   status: 'locked' | 'ready' | 'unavailable' = 'locked';
-  async unlock(weapon: Weapon) {
+  async unlock(weapon: Equipment) {
     try {
       const Constructor = window.AudioContext || (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
       if (!Constructor) throw new Error('Web Audio unavailable');
@@ -19,13 +19,13 @@ export class RangeAudio {
       this.status = 'ready';
     } catch { this.status = 'unavailable'; this.pending.delete(weapon); }
   }
-  private async load(weapon: Weapon) {
+  private async load(weapon: Equipment) {
     const response = await fetch(`/audio/${weapon}.wav`);
     if (!response.ok) throw new Error('Missing audio');
     const buffer = await this.context!.decodeAudioData(await response.arrayBuffer());
     if (!this.disposed) this.buffers.set(weapon, buffer);
   }
-  play(weapon: Weapon, volume: number) {
+  play(weapon: Equipment, volume: number) {
     if (!this.context || this.context.state !== 'running' || !volume || this.disposed) return;
     const buffer = this.buffers.get(weapon);
     if (!buffer) return;

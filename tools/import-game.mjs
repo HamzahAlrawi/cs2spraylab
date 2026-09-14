@@ -2,6 +2,7 @@ import fs from 'node:fs';
 import crypto from 'node:crypto';
 import { execFileSync } from 'node:child_process';
 import path from 'node:path';
+import {parseKv3} from './kv3.mjs';
 
 const game = process.env.CS2_PATH || 'C:/Program Files (x86)/Steam/steamapps/common/Counter-Strike Global Offensive';
 const cli = path.resolve('.local-tools/vrf/Source2Viewer-CLI.exe');
@@ -33,40 +34,7 @@ run('-f', 'scripts/weapons.vdata_c', '-d', '-o', 'research/weapons.vdata');
 
 // Parse the decompiler's KV3 text as a nested structure, including typed values.
 const raw = fs.readFileSync('research/weapons.vdata', 'utf8');
-const text = raw.replace(/<!--[^]*?-->/g, '');
-const tokens = text.match(/"(?:\\.|[^"\\])*"|\/\/[^\n]*|[-+]?\d+(?:\.\d+)?(?:e[-+]?\d+)?|[\w.]+|[{}\[\]=,:]/gi).filter(t => !t.startsWith('//'));
-let cursor = 0;
-function value() {
-  const token = tokens[cursor++];
-  if (token === '{') {
-    const object = {};
-    while (tokens[cursor] !== '}') {
-      if (cursor >= tokens.length) throw new Error('Unclosed KV3 object');
-      const key = tokens[cursor++].replace(/^"|"$/g, '');
-      if (tokens[cursor++] !== '=') throw new Error(`Missing = at ${key}`);
-      object[key] = value();
-      if (tokens[cursor] === ',') cursor++;
-    }
-    cursor++;
-    return object;
-  }
-  if (token === '[') {
-    const array = [];
-    while (tokens[cursor] !== ']') {
-      array.push(value());
-      if (tokens[cursor] === ',') cursor++;
-    }
-    cursor++;
-    return array;
-  }
-  if (tokens[cursor] === ':') { cursor++; return value(); }
-  if (token.startsWith('"')) return JSON.parse(token);
-  if (token === 'true' || token === 'false') return token === 'true';
-  if (token === 'null') return null;
-  if (Number.isFinite(Number(token))) return Number(token);
-  return token;
-}
-const data = value();
+const data = parseKv3(raw);
 const fields = {
   magazine: 'm_iMaxClip1', cycle: 'm_flCycleTime', speed: 'm_flMaxSpeed',
   spread: 'm_flSpread', stand: 'm_flInaccuracyStand', crouch: 'm_flInaccuracyCrouch', move: 'm_flInaccuracyMove',

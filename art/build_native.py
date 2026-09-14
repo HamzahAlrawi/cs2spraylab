@@ -7,7 +7,10 @@ from mathutils.bvhtree import BVHTree
 ROOT = Path(globals().get('SPRAYLAB_ROOT', os.getcwd()))
 OUT = ROOT / 'public/revamp/models'; OUT.mkdir(parents=True, exist_ok=True)
 weapons = json.loads((ROOT / 'src/range/game-data.json').read_text())['weapons']
+equipment_build = globals().get('SPRAYLAB_EQUIPMENT', False)
+if equipment_build: weapons.update(json.loads((ROOT / 'src/range/equipment-data.json').read_text())['weapons'])
 clips = dict(ak47='idle_ak', m4a4='idle_m4a4', m4a1s='idle_rifle', galil='idle_galilar', famas='idle_famas', sg553='idle_sg556', aug='idle_aug', mp9='idle_mp9', mp7='idle_mp7', mp5sd='idle_mp5sd', mac10='idle_mac10', ump45='idle_ump45', p90='idle_p90', bizon='idle_bizon', m249='idle1_m249', negev='idle_negev', cz75a='idle_cz75a')
+clips.update(usp='idle_pistol', knife='idle1_butterfly')
 scene = bpy.data.scenes.new('SprayLab Native Assembly'); bpy.context.window.scene = scene
 scene.render.engine = 'CYCLES'; scene.cycles.samples = 16
 scene.render.resolution_x = 640; scene.render.resolution_y = 360; scene.render.resolution_percentage = 100
@@ -58,7 +61,21 @@ def posed_weapon(ident, character, secondary):
             expected = rig.matrix_world.inverted() @ bind_root @ anim_root.inverted() @ secondary.matrix_world @ authored.matrix
             error = max(abs(bone.matrix[r][c] - expected[r][c]) for r in range(4) for c in range(4))
             if error > 1e-4: raise RuntimeError('Weapon part pose mismatch: '+ident+'/'+bone.name)
-    meshes = [o for o in imported if o.type == 'MESH' and 'legacy' not in o.name.lower()]
+    meshes = [o for o in imported if o.type == 'MESH']
+    if any(o.vertex_groups for o in meshes): meshes = [o for o in meshes if o.vertex_groups]
+    if any('hd' in o.name.lower() for o in meshes): meshes = [o for o in meshes if 'legacy' not in o.name.lower()]
+    if ident == 'knife':
+        emerald = bpy.data.materials.new('Emerald polished blade'); emerald.use_nodes = True
+        shader = emerald.node_tree.nodes.get('Principled BSDF')
+        shader.inputs['Base Color'].default_value = (.008, .36, .075, 1)
+        shader.inputs['Metallic'].default_value = .88; shader.inputs['Roughness'].default_value = .19
+        for o in meshes:
+            blade = o.vertex_groups.get('blade')
+            if not blade: raise RuntimeError('Missing native butterfly blade weights')
+            slot = len(o.data.materials); o.data.materials.append(emerald)
+            blade_vertices = {v.index for v in o.data.vertices if any(g.group == blade.index and g.weight > .5 for g in v.groups)}
+            for face in o.data.polygons:
+                if all(v in blade_vertices for v in face.vertices): face.material_index = slot
     attachment = character.matrix_world @ character.pose.bones['wpn'].matrix @ bind_root.inverted()
     posed = [bake(o, 'held_weapon_'+ident) for o in meshes]
     for o in posed: o.matrix_world = attachment @ o.matrix_world
@@ -74,7 +91,7 @@ def posed_weapon(ident, character, secondary):
         distances.append(min(tree.find_nearest(p)[3] for p in probes))
     for o in posed: o['grip_surface_distance'] = distances
     print('GRIP', ident, distances)
-    if max(distances) > .045: raise RuntimeError('Weapon is detached from its authored grip: '+ident)
+    if (distances[1] if ident == 'knife' else max(distances)) > .045: raise RuntimeError('Weapon is detached from its authored grip: '+ident)
     hide(imported)
     return posed, list(bind_root.translation)
 
@@ -100,7 +117,7 @@ for pos, energy, size in [((2,-3,4),220,4), ((-2,1,2),160,3)]:
     lamp = bpy.data.objects.new('Native softbox', bpy.data.lights.new('Native softbox', 'AREA'))
     scene.collection.objects.link(lamp); lamp.location = pos; lamp.data.energy = energy; lamp.data.size = size; point(lamp, (0,0,0))
 
-source, actions = import_glb('view-arms')
+source, actions = import_glb('equipment-arms' if equipment_build else 'view-arms')
 character = next(o for o in source if o.type == 'ARMATURE' and 'ctm_sas' in o.name)
 hide(source)
 for ident in globals().get('SPRAYLAB_WEAPONS', weapons):
@@ -126,6 +143,15 @@ for ident in globals().get('SPRAYLAB_WEAPONS', weapons):
     for o in hands: o.hide_render = False
     hide(imported)
     export(hands+posed, 'view-'+ident)
+    if ident == 'knife':
+        # Use the same open emerald blade for the slot preview and world asset.
+        export(posed, ident)
+        for o in hands: o.hide_render = True
+        for o in posed: o.hide_render = False
+        lo, hi = bounds(posed); center = (lo+hi)/2
+        cam.data.type = 'ORTHO'; cam.data.ortho_scale = max(hi-lo)*1.3
+        cam.location = center+Vector((2.4,-1.3,.7)); point(cam,center)
+        scene.render.filepath = str(OUT/(ident+'.png')); bpy.ops.render.render(write_still=True)
     if ident == 'ak47':
         cam.data.type = 'PERSP'; cam.data.lens = 35; cam.location = (0,0,0); point(cam, (0,-1,0))
         scene.render.filepath = str(ROOT/'research/native-view.png'); bpy.ops.render.render(write_still=True)

@@ -14,9 +14,21 @@ Ground movement uses Source wish-direction acceleration/friction and weapon spee
 
 Shots intersect animated target triangles and static obstacles. Only the required transfer target scores. Head/body classification uses a height threshold, not native CS2 hitbox damage groups. Compensation cues invert recoil around the current target angle, with fixed pixel sizes for distance readability. Decorative architecture is not an additional navigation obstacle.
 
-Each burst is an independent attempt. There is no reload-length lockout; only the native weapon cycle limits actual shot frequency. Touch completes the selected burst. Guided spray, Free spray and Spray transfer are the three current modes. Retired tracking settings migrate to Guided spray without deleting or relabeling historical tracking results. Follow recoil uses the pre-spread trajectory and resets on completion.
+Each primary burst is an independent attempt. There is no reload-length lockout; only the native weapon cycle limits actual shot frequency. Touch completes the selected burst. Guided spray, Free spray and Spray transfer are retained alongside Peeking practice, First-shot precision and Burst & reposition. Retired tracking settings migrate to Guided spray without deleting or relabeling historical tracking results. Follow recoil uses the pre-spread trajectory and resets on completion.
 
 Two world-fixed backstop displays animate the active weapon's impact pattern and inverse mouse path at its firing cadence. Both default on with separate Settings toggles. Mouse compensation is linear in angular mouse counts, not a mirror of the perspective-projected impact plot; inverted Y flips its vertical component. Paths are normalized shape previews and do not alter shots, scoring or impacts. Reduced-motion preferences disable path and first-visit hint animation. The Settings hint is shown once, only when no saved settings exist, with safe storage fallbacks.
+
+## Drill And Equipment Contracts
+
+`drills.ts` produces four fixed peeking stations and randomized targets. Rendering, ray occlusion, head-visibility probes and horizontal hull collision consume the same cover boxes. Elevated targets use an explicit platform and target-relative head height. Native target dimensions are unchanged. Cover collision is an axis-resolved training approximation, not a native stair/step/hull solver.
+
+`DrillCoach` samples movement at 128 Hz. The accuracy threshold is 34% of the held weapon's unmodified running cap, with feet grounded. Counter-strafe evidence requires an opposite lateral input while moving above that threshold, a subsequent threshold crossing, and a first shot within 350 ms. Pausing clears braking evidence. Stop alignment uses a nominal 0.115 m head radius; actual scoring still uses the rendered target mesh. Mouse travel is advisory: initial reveal error is subtracted before reporting excess correction. These thresholds are authored coaching choices, not professional-player measurements.
+
+Precision ends after one shot; peeking ends on a head hit or five shots; bursts end after three shots. The coach persists first-shot timing/aim metrics and aggregate hit/accuracy counts. Completed reps retain feedback for at least 1.4 s. Burst progression additionally needs 0.9 m lateral displacement in the previous firing frame. Exposure timers start at line of sight, pause with the simulation and never expire while an enemy has not yet been revealed. Drill summaries are validated when loaded from localStorage.
+
+Slots 1/2/3 hold the chosen primary, USP-S and butterfly knife; Q restores the previous slot. Each is lazy-loaded through the existing bounded three-assembly cache. Active switches have a one-second draw period, while paused previews render immediately. The USP-S retains its 12-round magazine across swaps, fires once per press, and reloads in 2.2 s. Swapping cancels its reload. Knife swings produce short-range feedback but do not enter bullet/drill statistics. The knife is a simplified practice interaction with a 48-unit ray reach and 0.4 s swing interval, not native melee simulation.
+
+The coach occupies a separate desktop column or scrollable mobile strip, never the aiming canvas. Shot text and marker are anchored at the lower left. Original spray guidance is hidden in the new drills and while holding secondary/melee equipment.
 
 ## Local Asset Pipeline
 
@@ -33,13 +45,15 @@ The read-only pipeline extracts VPK weapon definitions, native models, first-per
 
 `art/build_range.py` creates original trusses, columns, baffles, cabinets, lamps and rails in metres. Architecture is independent of target movement.
 
+`tools/import-equipment.mjs` extracts suppressed USP-S and knife definitions into `equipment-data.json`, their models, sound samples and native `idle_pistol`/`idle1_butterfly` arm clips. `art/build_equipment.py` reuses the bind-space assembler and authors the emerald blade material. Only the knife's holding hand is checked against the blade/handle surface; its other hand is intentionally free. The shared KV3 reader lives in `tools/kv3.mjs`.
+
 The optimizer embeds WebP textures and simplifies geometry without a remote decoder. Weapon loads are lazy and same-origin; the GPU cache retains three assemblies and disposes evicted geometry, materials and textures. Editable local workspaces are `art/spraylab-native-workshop.blend` and `art/spraylab-range.blend`. These, raw research, and extracted Valve assets are excluded from Git.
 
 Valve assets remain proprietary. This repository grants no redistribution rights to them. A code build is not sufficient for deployment; run `npm run assets:check` first.
 
 ## Validation
 
-`npm run check` runs unit tests plus TypeScript/Vite build. `npm run assets:check` validates weapon/viewmodel GLBs, pose/grip metadata, embedded textures, target animations, thumbnails and WAVs. `npm run test:browser` exercises canvas output, all 17 viewmodels, responsive framing, audio decode, touch bursts, retries, settings/storage failures, tracking retirement, movement, wall-guide animation/toggles, onboarding, feedback and links.
+`npm run check` runs unit tests plus TypeScript/Vite build. `npm run assets:check` validates weapon/viewmodel GLBs, pose/grip metadata, embedded textures, target animations, thumbnails and WAVs. `npm run test:browser` exercises canvas output, all 17 primary viewmodels plus USP-S/knife, responsive framing, audio decode, touch bursts, retries, settings/storage failures, tracking retirement, movement, wall-guide animation/toggles, onboarding, feedback and links. Expansion coverage includes peeking entries, coaching persistence, slot switching, semi-automatic taps and portrait/landscape coach layout.
 
 Actual Brave/Opera GX projects are enabled when isolated binaries exist at `.local-tools/brave/brave.exe` and `.local-tools/opera-gx/opera.exe`. Mobile profiles emulate viewports/input, not physical devices. Windows WebKit may omit Web Audio; the range remains usable without sound.
 
