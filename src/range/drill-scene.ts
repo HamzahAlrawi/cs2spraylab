@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import {PEEK_WALLS, type Scenario} from './drills';
+import {PEEK_WALLS, RANGE_WALLS, type Scenario} from './drills';
 
 export class DrillScenery {
   group = new THREE.Group();
@@ -13,7 +13,7 @@ export class DrillScenery {
     const material = new THREE.MeshStandardMaterial({color:'#75817c',roughness:.94,map:this.texture,normalMap:this.normal,normalScale:new THREE.Vector2(.3,.3)});
     const metal = new THREE.MeshStandardMaterial({color:'#334744',roughness:.55,metalness:.25});
     const paint = new THREE.MeshStandardMaterial({color:'#c7a65d',roughness:.7});
-    for (const id of [...PEEK_WALLS.map(c=>c.id),'target-cover','platform']) {
+    for (const id of [...PEEK_WALLS,...RANGE_WALLS].map(c=>c.id).concat('target-cover','platform')) {
       const group = new THREE.Group(); this.group.add(group); this.coverGroups.set(id,group);
       const body = new THREE.Mesh(new THREE.BoxGeometry(1,1,1),material);
       body.castShadow = body.receiveShadow = true; group.add(body); this.solids.push(body);
@@ -33,9 +33,10 @@ export class DrillScenery {
     this.group.visible=false;
   }
   setScenario(scenario?: Scenario) {
-    this.group.visible=!!scenario;
+    this.group.visible=true;
+    const covers=scenario?.covers ?? RANGE_WALLS;
     for (const [id,group] of this.coverGroups) {
-      const c=scenario?.covers.find(c=>c.id===id);group.visible=!!c;
+      const c=covers.find(c=>c.id===id);group.visible=!!c;
       if (c) { group.position.set(c.center.x,c.center.y,c.center.z);group.scale.set(c.size.x,c.size.y,c.size.z); }
     }
     this.group.updateMatrixWorld(true);

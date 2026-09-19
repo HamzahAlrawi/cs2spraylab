@@ -26,8 +26,9 @@ describe('Source scale and input', () => {
     expect(groundVelocity(0, 0, 0, 0, 5, STEP)).toEqual({ x: 0, z: 0 });
   });
   it('matches the installed AK maximum speed, including diagonals', () => {
+    // Measure open-floor speed, away from the side-lane cover collision tests.
     for (const side of [0, 1]) {
-      const s = make(); s.active = true; s.input.forward = 1; s.input.side = side; run(s, 1);
+      const s = make(); s.position.z = -60; s.active = true; s.input.forward = 1; s.input.side = side; run(s, 1);
       expect(Math.hypot(s.velocity.x, s.velocity.z) / UNIT).toBeCloseTo(215, 5);
     }
   });

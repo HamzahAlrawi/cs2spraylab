@@ -18,7 +18,6 @@
 .hit-counts{display:flex;justify-content:center;gap:16px;margin-top:4px}.hit-counts span{font-size:9px;white-space:nowrap;display:flex;align-items:center;gap:5px}.hit-counts b{font-size:19px;font-weight:700;font-variant-numeric:tabular-nums}.head-count{color:#ffdc59}.body-count{color:#51edee}.miss-count{color:#ff9389}
 .project-links{display:flex;gap:18px;align-items:center}.project-links a{display:flex;align-items:center;gap:5px;font-size:10px;color:#bac9c0}.project-links .donation{color:#e4d48e}.project-links a:hover{color:#fff}.statusbar{height:34px}
 @media(max-width:580px){.hit-counts{gap:8px}.hit-counts span{flex-direction:column;gap:0;font-size:7px}.hit-counts b{font-size:16px}.exit-hint{right:12px;top:49px;font-size:9px}.project-links{gap:10px}.project-links a{font-size:9px}.range-hud{grid-template-columns:1fr 1.3fr 1fr}.aim-cue span{font-size:9px}.hit-caption{font-size:15px}.statusbar{height:32px}}
-@media(max-height:540px) and (orientation:landscape){.hit-caption{top:calc(50% - 56px)}}
 .appbar{position:relative;z-index:5}.app-actions{margin-left:auto;display:flex;align-items:center;gap:10px;position:relative;flex-shrink:0}.app-actions .settings-button{margin-left:0}.header-donation{display:inline-flex;align-items:center;justify-content:center;gap:7px;height:36px;padding:0 12px;color:#f3dfa0;background:#514a2b;border:1px solid #9e8d48;border-radius:4px;font-size:12px;font-weight:600;white-space:nowrap}.header-donation:hover{background:#665b30;color:#fff0b4}
 .settings-hint{position:absolute;right:0;top:calc(100% + 15px);width:282px;max-width:calc(100vw - 24px);display:flex;align-items:center;gap:8px;padding:12px 9px 12px 16px;background:#263c35;border:1px solid #8fd7b6;border-radius:5px;box-shadow:0 5px 22px #0007;color:#f3fff8}.hint-action{display:flex;flex-direction:column;align-items:flex-start;text-align:left;gap:4px;flex:1;min-width:0;padding:0}.hint-action b{font-size:13px;font-weight:600}.hint-action span{font-size:11px;line-height:16px;color:#c0d9ce}.settings-hint .hint-arrow{position:absolute;right:35px;top:-24px;color:#9bffc8;filter:drop-shadow(0 1px 2px #000);animation:settings-arrow 1.2s ease-in-out 4}.settings-nudge{animation:settings-attention 1.2s ease-in-out 4}
 @keyframes settings-arrow{0%,100%{transform:translateY(3px)}50%{transform:translateY(-3px)}}@keyframes settings-attention{0%,100%{box-shadow:0 0 0 0 #8fd7b600}50%{box-shadow:0 0 0 4px #8fd7b64d;border-color:#a3edc9}}
@@ -27,11 +26,11 @@
 @media(prefers-reduced-motion:reduce){.settings-hint .hint-arrow,.settings-nudge{animation:none}}
 /* The coach gets its own column so feedback never covers the firing angle. */
 .range-stage{display:flex}
-.range-view{position:relative;flex:1;min-width:0;min-height:0;overflow:hidden;isolation:isolate}
+.range-view{position:relative;flex:1;min-width:0;min-height:0;overflow:hidden;isolation:isolate;container:range-view / size}
 .with-drill .enter-range{top:50%}
 .replay .drill-review svg{width:16px;height:16px;background:none;flex-shrink:0}
-.hit-caption{left:52px;top:auto;bottom:132px;transform:none;font-size:16px;line-height:24px;text-align:left}
-.hit-marker{left:26px;top:auto;bottom:134px;transform:none;width:20px;height:20px}.hit-marker svg{width:20px;height:20px}
+.hit-caption{left:50%;top:calc(50% + 40px);bottom:auto;transform:translateX(-50%);width:160px;font-size:16px;line-height:24px;text-align:center}
+.hit-marker{left:calc(50% - 102px);top:calc(50% + 42px);bottom:auto;transform:none;width:20px;height:20px}.hit-marker svg{width:20px;height:20px}
 .equipment-slots{position:absolute;right:24px;top:101px;display:flex;gap:4px}
 .equipment-slots button{width:67px;height:34px;border:1px solid #7b8b8166;background:#172820c9;position:relative;padding:2px 2px 2px 12px}
 .equipment-slots button[aria-pressed=true]{border-color:#e4cd7a;background:#36432ee8}
@@ -69,8 +68,7 @@
   .equipment-slots button{width:44px;height:30px;padding-left:9px}
   .equipment-slots img{width:31px;height:23px}
   .equipment-slots button span{left:3px;font-size:8px}
-  .hit-caption{left:42px;top:auto;bottom:132px;font-size:13px}
-  .hit-marker{left:16px}
+  .hit-caption{font-size:13px}
 }
 @media(max-height:550px) and (orientation:landscape){
   .range-stage.with-drill{flex-direction:row}
@@ -81,6 +79,22 @@
   .equipment-slots img{width:28px;height:23px}
   .exit-hint{top:10px}
   .range-topline>span:last-child{display:none}
-  .hit-caption{top:53px;bottom:auto;left:42px;font-size:11px;line-height:16px}
-  .hit-marker{top:51px;bottom:auto;left:16px}
 }
+@container range-view (max-height:360px){
+  .range-hud{bottom:12px}
+  .hud-result>small{display:none}
+  .hud-result strong{font-size:20px;line-height:20px}
+  .hit-counts{gap:6px}
+  .hit-counts b{font-size:12px}
+  .hit-counts span{font-size:7px;gap:2px}
+  .hit-caption{top:calc(50% + 28px);font-size:13px;line-height:18px}
+  .hit-marker{top:calc(50% + 29px);width:16px;height:16px}
+  .hit-marker svg{width:16px;height:16px}
+}
+.donation-wrap{display:none}.header-donation span{line-height:1.25;text-align:left}
+.rep-feedback{position:absolute;top:calc(50% + 28px);left:50%;transform:translateX(-50%);width:min(380px,calc(100% - 160px));text-align:center;pointer-events:none;z-index:4;color:#ffdbb4;text-shadow:0 2px 3px #000,0 0 8px #000}
+.rep-feedback.passed{color:#a6f2bc}.rep-feedback b{display:block;font-size:15px;line-height:20px}.rep-feedback p{font-size:11px;line-height:15px;margin-top:5px;color:#fff4df}
+.has-rep-feedback .hud-result{visibility:hidden}
+@media(max-width:580px){.header-donation{font-size:10px;gap:4px;padding:0 7px}.donation-wrap{display:block}.header-donation svg{width:12px}.main-nav .count{display:none}.rep-feedback b{font-size:13px;line-height:17px}}
+@media(max-width:360px){.appbar .brand{font-size:11px}.app-actions{gap:4px}.header-donation{font-size:9px;padding:0 4px}}
+@container range-view (max-height:240px){.rep-feedback{top:calc(50% + 20px)}.rep-feedback b{font-size:12px;line-height:15px}.rep-feedback p{font-size:10px;line-height:12px;margin-top:4px}}

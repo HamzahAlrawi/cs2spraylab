@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 import * as THREE from 'three';
 import { RangeEngine } from './engine';
-import { defaults, Weapon } from './config';
+import { defaults, modeNames, Mode, Weapon } from './config';
 import { Simulation } from './simulation';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 
@@ -40,6 +40,29 @@ describe('Target line of sight', () => {
     lane.visible=false;
     expect(engine.castTargets(origin,direction).length).toBeGreaterThan(0);
   });
+});
+
+it.each(Object.keys(modeNames) as Mode[])('shows distinct head/body feedback for actual hits in %s mode',mode=>{
+  const {engine,body,wall,target}=rayFixture();
+  engine.sim=new Simulation({...defaults,mode});
+  body.position.z=0;target.position.z=-10;
+  engine.targets=[target];engine.impacts=new THREE.Group();
+  engine.markerGeometry=new THREE.SphereGeometry(.018,6,4);
+  engine.hitMaterial=new THREE.MeshBasicMaterial();engine.bodyMaterial=new THREE.MeshBasicMaterial();engine.missMaterial=new THREE.MeshBasicMaterial();
+  engine.hitmarker={style:{}} as HTMLElement;engine.hitCaption={style:{},textContent:''} as HTMLDivElement;
+  engine.audio={play:vi.fn()} as unknown as RangeEngine['audio'];
+  try {
+    for(const [y,label,color] of [[1.7,'HEADSHOT','#ffdc59'],[1.1,'BODY HIT','#51edee']] as const){
+      engine.shot({index:0,at:0,origin:{x:0,y,z:0},direction:{x:0,y:0,z:-1},recoil:{yaw:0,pitch:0}});
+      expect(engine.hitCaption.textContent).toBe(label);
+      expect(engine.hitCaption.style.color).toBe(color);expect(engine.hitTime).toBe(.45);
+      expect(engine.sim.samples[engine.sim.samples.length-1]?.hit).toBe(true);
+    }
+    expect(engine.sim.hits).toBe(2);expect(engine.sim.heads).toBe(1);
+  } finally {
+    engine.markerGeometry.dispose();engine.hitMaterial.dispose();engine.bodyMaterial.dispose();engine.missMaterial.dispose();
+    body.geometry.dispose();wall.geometry.dispose();
+  }
 });
 
 it('bounds the GPU weapon cache and never evicts the selected assembly', () => {

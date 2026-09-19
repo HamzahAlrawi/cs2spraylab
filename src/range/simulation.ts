@@ -1,6 +1,6 @@
 import { Angle, clamp, gameData, MeasuredProfile, recoilPattern, Settings } from './config';
 import {equipmentForSlot, equipmentStats, equipmentData, type Equipment, type Slot} from './equipment';
-import {createScenario, DrillCoach, isDrillMode, moveWithCover, type CoachSample, type DrillMetrics} from './drills';
+import {createScenario, DrillCoach, isDrillMode, moveWithCover, RANGE_WALLS, REPOSITION_SHOTS, type CoachSample, type DrillMetrics} from './drills';
 
 export const UNIT = .0254;
 export const DEG = Math.PI / 180;
@@ -66,7 +66,8 @@ export class Simulation {
   get stats() { return equipmentStats(this.equipped); }
   get burstSize() {
     if (this.slot !== 1 || this.settings.mode === 'precision') return 1;
-    if (this.settings.mode === 'burst') return 3;
+    if (this.settings.mode === 'burst') return REPOSITION_SHOTS;
+    if (this.settings.mode === 'peek') return Math.min(gameData.weapons[this.settings.weapon].magazine,this.pattern.length);
     return Math.min(this.settings.burst || gameData.weapons[this.settings.weapon].magazine, this.pattern.length);
   }
   targetForShot(index = this.shots) { return this.settings.mode === 'transfer' && index >= Math.floor(this.burstSize / 2) ? 1 : 0; }
@@ -119,7 +120,7 @@ export class Simulation {
     if (!this.drill || this.drill.finished) return;
     this.drillResult = this.drill.result(timeout); this.drill.finished = true;
     this.drillCompleted++; this.drillPassed += +this.drillResult.passed;
-    this.nextDrillAt = this.time+1.4;
+    this.nextDrillAt = this.time+(this.settings.mode==='peek' ? 0 : 1.4);
     if (this.settings.mode === 'burst') { this.repositionFrom = {...this.position}; this.repositionYaw = this.yaw; }
     this.firing = this.automatic = false; this.recoil = {yaw:0,pitch:0};
     this.publishResult(this.drillResult);
@@ -169,7 +170,6 @@ export class Simulation {
     this.firing = false; this.automatic = false; this.recoil = { yaw: 0, pitch: 0 };
     this.readyAt = this.time;
     if (this.shots && !this.drill) this.publishResult();
-    if (this.drill && this.settings.mode === 'burst' && this.drill.shots >= 3) this.completeDrill();
   }
   reset() {
     this.cancel(); this.readyAt = this.time; this.shots = this.hits = this.heads = 0;
@@ -201,7 +201,7 @@ export class Simulation {
       if (this.feet === 0) this.verticalVelocity = 0;
     }
     const desired = {...this.position,x:clamp(this.position.x+this.velocity.x*dt,-11.3,11.3),z:clamp(this.position.z+this.velocity.z*dt,TARGET_Z+2.2,5)};
-    const resolved = this.drill ? moveWithCover(this.position,desired,this.drill.scenario.covers,this.feet,crouch ? 54*UNIT : 72*UNIT) : desired;
+    const resolved = moveWithCover(this.position,desired,this.drill?.scenario.covers ?? RANGE_WALLS,this.feet,crouch ? 54*UNIT : 72*UNIT);
     const nextX = resolved.x, nextZ = resolved.z;
     if (nextX === this.position.x) this.velocity.x = 0;
     if (nextZ === this.position.z) this.velocity.z = 0;
@@ -221,6 +221,11 @@ export class Simulation {
       this.drill.update(this.coachSample());
       const repositioned = !this.repositionFrom || Math.abs((this.position.x-this.repositionFrom.x)*Math.cos(this.repositionYaw)-(this.position.z-this.repositionFrom.z)*Math.sin(this.repositionYaw))>=.9;
       if (this.drill.finished && this.time >= this.nextDrillAt && repositioned) this.newDrill();
+      else if (!this.drill.finished && this.settings.mode==='peek') {
+        if(this.drill.firstShotAt!==null && this.time-this.drill.firstShotAt >= this.settings.peekDuration) {
+          this.completeDrill(); this.newDrill();
+        }
+      }
       else if (!this.drill.finished && this.drill.seenAt !== null && this.time-this.drill.seenAt > (this.settings.drillPace==='challenge' ? 1.5 : 8)) this.completeDrill(true);
     }
     if (this.firing && this.time + 1e-9 >= this.nextShot) this.fire();
@@ -231,7 +236,7 @@ export class Simulation {
     this.recoil = this.slot === 2 ? {yaw:0,pitch:0} : this.pattern[this.shots];
     let yaw = this.yaw - this.recoil.yaw * DEG;
     let pitch = this.pitch + this.recoil.pitch * DEG;
-    if (this.settings.spread || this.drill) {
+    if (this.settings.spread) {
       // Optional practice spread uses the installed weapon cone parameters.
       // Random sampling and firing inaccuracy are not advertised as engine parity.
       const moving = clamp((Math.hypot(this.velocity.x, this.velocity.z) / (weapon.speed * UNIT) - .34) / .66, 0, 1);
@@ -248,7 +253,7 @@ export class Simulation {
     if (this.drill && !this.drill.finished) {
       const sample = this.samples[this.samples.length-1];
       this.drill.record(this.coachSample(),!!sample?.hit,!!sample?.head);
-      if (this.settings.mode==='precision' || this.settings.mode==='peek' && (sample?.head || this.drill.shots>=5)) this.completeDrill();
+      if (this.settings.mode==='precision' || this.settings.mode==='burst' && this.drill.shots>=REPOSITION_SHOTS) this.completeDrill();
     }
     this.nextShot += weapon.cycle;
     if (this.shots >= this.burstSize) this.finish();
