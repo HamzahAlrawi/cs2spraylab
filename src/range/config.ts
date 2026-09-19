@@ -15,6 +15,7 @@ export type Settings = {
   follow: boolean; volume: number; spread: boolean; burst: number; quality: 'auto' | 'low' | 'high';
   showImpactPattern: boolean; showMousePath: boolean;
   peekScenario: 'mixed' | 'common' | 'deep' | 'off-angle' | 'elevated';
+  peekDuration: number;
   drillPace: 'practice' | 'challenge';
   aspect: 'native' | '16:9' | '16:10' | '4:3' | '5:4';
   crosshair: Crosshair;
@@ -27,7 +28,7 @@ export const defaults: Settings = {
   moving: false, targetSpeed: 'rifle', follow: false, volume: 0.2,
   spread: false, burst: 0, quality: 'auto',
   showImpactPattern: true, showMousePath: true,
-  peekScenario: 'mixed', drillPace: 'practice',
+  peekScenario: 'mixed', peekDuration: 1, drillPace: 'practice',
   aspect: 'native',
   crosshair: { color: '#ffeb55', size: 3, gap: 2, thickness: 2, outline: 1, alpha: 1, dot: false, t: false, dynamic: false }
 };
@@ -51,6 +52,7 @@ export function sanitizeSettings(raw: unknown): Settings {
     follow: s.follow === true, volume: numeric(s.volume, .2, 0, 1), spread: s.spread === true,
     showImpactPattern: s.showImpactPattern !== false, showMousePath: s.showMousePath !== false,
     peekScenario: ['mixed','common','deep','off-angle','elevated'].includes(s.peekScenario!) ? s.peekScenario! : 'mixed',
+    peekDuration: numeric(s.peekDuration,1,.5,10),
     drillPace: s.drillPace === 'challenge' ? 'challenge' : 'practice',
     burst: [0, 5, 10, 15].includes(s.burst!) ? s.burst! : 0,
     quality: ['auto', 'low', 'high'].includes(s.quality!) ? s.quality! : 'auto',

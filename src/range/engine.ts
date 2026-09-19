@@ -10,15 +10,15 @@ import { VIEWMODEL_FOV, VIEWMODEL_OFFSET, viewmodelViewport } from './viewmodel'
 import { GUIDE_COLORS, SprayDemonstration } from './spray-demonstration';
 import {type Equipment, type Slot} from './equipment';
 import {DrillScenery} from './drill-scene';
-import {HEAD_HEIGHT, type DrillMetrics} from './drills';
+import {HEAD_HEIGHT, type DrillMetrics, type Exposure} from './drills';
 
 export type RangeStatus = {
   weapon: Weapon;
-  active: boolean; firing: boolean; shots: number; hits: number; heads: number; remaining: number;
+  active: boolean; firing: boolean; hitFlash?:boolean; shots: number; hits: number; heads: number; remaining: number;
   reload: number; speed: number; distance: number;
   input: string; audio: string; assets: string; fps: number;
   equipped: Equipment; slot: Slot; equipReady: boolean; magazine: number;
-  drill?: {round:number; completed:number; passed:number; scenario:string; covered:boolean; side:number; phase:'prepare'|'exposed'|'feedback'|'reposition'; accurate:boolean; error:number; last?:DrillMetrics};
+  drill?: {round:number; completed:number; passed:number; scenario:string; covered:boolean; exposure:Exposure; side:number; phase:'prepare'|'exposed'|'feedback'|'reposition'; accurate:boolean; error:number; remaining?:number; last?:DrillMetrics};
 };
 const vector = (v: Vec) => new THREE.Vector3(v.x, v.y, v.z);
 const material = (color: string, roughness = .8) => new THREE.MeshStandardMaterial({ color, roughness });
@@ -281,7 +281,7 @@ export class RangeEngine {
   }
   configure(settings: Settings, measured?: MeasuredProfile) {
     const changedWeapon = settings.weapon !== this.sim.settings.weapon;
-    const resetKeys: (keyof Settings)[] = ['weapon', 'mode', 'moving', 'targetSpeed', 'burst', 'peekScenario', 'drillPace'];
+    const resetKeys: (keyof Settings)[] = ['weapon', 'mode', 'moving', 'targetSpeed', 'burst', 'peekScenario', 'peekDuration', 'drillPace'];
     if (!resetKeys.some(key => settings[key] !== this.sim.settings[key]) && measured === this.sim.measured) {
       const changedInversion = settings.invertY !== this.sim.settings.invertY;
       this.sim.settings = settings;
@@ -512,10 +512,12 @@ export class RangeEngine {
       const drill=this.sim.drill;
       this.onStatus({ weapon: this.sim.settings.weapon, equipped:this.sim.equipped,slot:this.sim.slot,equipReady:this.sim.time>=this.sim.equipReadyAt,
         magazine:this.sim.slot===1?this.sim.burstSize:this.sim.stats.magazine,
-        active: this.sim.active, firing: this.sim.firing, shots: drill?.shots ?? this.sim.shots, hits: drill?.hits ?? this.sim.hits, heads: drill?.heads ?? this.sim.heads,
+        active: this.sim.active, firing: this.sim.firing, hitFlash:this.hitTime>0, shots: drill?.shots ?? this.sim.shots, hits: drill?.hits ?? this.sim.hits, heads: drill?.heads ?? this.sim.heads,
         remaining: this.sim.slot===2 ? this.sim.pistolAmmo : this.sim.slot===3 ? 0 : this.sim.firing ? this.sim.burstSize - this.sim.shots : this.sim.burstSize, reload: Math.max(0,this.sim.pistolReloadAt-this.sim.time),
-        ...(drill ? {drill:{round:this.sim.drillRound,completed:this.sim.drillCompleted,passed:this.sim.drillPassed,scenario:drill.scenario.name,covered:drill.scenario.covered,side:drill.scenario.side,
-          phase:drill.finished?(this.sim.repositionFrom?'reposition':'feedback'):drill.visible?'exposed':'prepare',accurate:drill.accurate,error:drill.error,last:this.sim.drillResult}} : {}),
+        ...(drill ? {drill:{round:this.sim.drillRound,completed:this.sim.drillCompleted,passed:this.sim.drillPassed,scenario:drill.scenario.name,covered:drill.scenario.covered,exposure:drill.scenario.exposure,side:drill.scenario.side,
+          phase:drill.finished?(this.sim.repositionFrom?'reposition':'feedback'):drill.visible?'exposed':'prepare',accurate:drill.accurate,error:drill.error,
+          remaining:this.sim.settings.mode==='peek' && drill.firstShotAt!==null ? Math.max(0,this.sim.settings.peekDuration-(this.sim.time-drill.firstShotAt)) : undefined,
+          last:this.sim.settings.mode==='peek' && drill.shots>0 ? drill.result() : this.sim.drillResult}} : {}),
         speed: moving / .0254, distance, input: this.inputStatus, audio: this.audio.status, assets: this.assetStatus, fps: dt ? Math.round(1 / dt) : 0 });
     }
     this.frame = requestAnimationFrame(t => this.tick(t));

@@ -8,6 +8,7 @@ import { markSetupHintSeen, needsSetupHint } from './onboarding';
 import {equipmentIds,equipmentNames,equipmentStats,type Slot} from './equipment';
 import {isDrillMode,readDrillMetrics} from './drills';
 import {DrillPanel,DrillReview} from './DrillPanel';
+import {makeRepFeedback,type RepFeedback} from './rep-feedback';
 
 function CrosshairView({ value }: { value: Crosshair }) {
   const style = { '--cross-color': value.color, '--cross-size': `${value.size}px`, '--cross-gap': `${value.gap}px`, '--cross-thickness': `${value.thickness}px`, '--cross-outline': `${value.outline}px`, opacity: value.alpha } as CSSProperties;
@@ -53,6 +54,8 @@ export default function RangeApp() {
   const [status, setStatus] = useState(emptyStatus);
   const [panel, setPanel] = useState<Panel>(null), [tab, setTab] = useState<Tab>('game');
   const [results, setResults] = useState(readResults);
+  const resultsRef=useRef(results);resultsRef.current=results;
+  const [repFeedback,setRepFeedback]=useState<(RepFeedback&{id:string;mode:Mode})|null>(null);
   const [legacy] = useState(loadAttempts);
   const [selected, setSelected] = useState<Result>();
   const [profiles, setProfiles] = useState<Partial<Record<Weapon, MeasuredProfile>>>(() => {
@@ -67,11 +70,14 @@ export default function RangeApp() {
   const assetReady = status.assets === 'Models ready' && status.weapon === settings.weapon;
   const weapon = gameData.weapons[settings.weapon];
   const score = status.shots ? status.hits / status.shots * 100 : 0;
+  const showRepFeedback=repFeedback?.mode===settings.mode && status.active && !status.firing && !status.hitFlash;
   const update = (patch: Partial<Settings>) => setSettings(s => ({ ...s, ...patch }));
   const cross = (patch: Partial<Crosshair>) => setSettings(s => ({ ...s, crosshair: { ...s.crosshair, ...patch } }));
   const open = (next: Panel) => { engine.current?.pause(); setSetupHint(false); setPanel(next); };
   useEffect(() => { if (setupHint) markSetupHintSeen(); }, [setupHint]);
   useEffect(() => { if (status.active) setSetupHint(false); }, [status.active]);
+  useEffect(()=>{if(!repFeedback)return;const timer=setTimeout(()=>setRepFeedback(null),4000);return()=>clearTimeout(timer);},[repFeedback]);
+  useEffect(()=>setRepFeedback(null),[settings.mode]);
   useEffect(() => {
     let range: RangeEngine;
     try {
@@ -79,6 +85,11 @@ export default function RangeApp() {
       engine.current = range;
       range.sim.attempts = results.length;
       range.sim.onResult = result => {
+        if(result.drill&&isDrillMode(result.mode)) {
+          const previous=resultsRef.current.filter(r=>r.mode===result.mode&&r.drill).map(r=>r.drill!);
+          setRepFeedback({id:result.id,mode:result.mode,...makeRepFeedback(result.mode,result.drill,previous)});
+        }
+        resultsRef.current=[result,...resultsRef.current].slice(0,100);
         setSelected(result); setReplay(result.samples.length);
         setResults(previous => {
           const next = [result, ...previous].slice(0, 100);
@@ -130,7 +141,7 @@ export default function RangeApp() {
       <a className="brand" href="/" aria-label="SprayLab home"><AimIcon size={25} strokeWidth={1.7} /><span>SPRAYLAB<span className="brand-sub">COUNTER-STRIKE TRAINING</span></span></a>
       <nav className="main-nav" aria-label="Workspace"><button className={!panel ? 'selected' : ''} onClick={() => setPanel(null)}><Target size={16} />Range</button><button className={panel === 'history' ? 'selected' : ''} onClick={() => open('history')}><History size={16} />Session<span className="count">{results.length}</span></button></nav>
       <div className="app-actions">
-        <a className="header-donation" href="https://steamcommunity.com/tradeoffer/new/?partner=135963670&token=IS6KDROD" target="_blank" rel="noreferrer"><Gift size={16} />Donate</a>
+        <a className="header-donation" href="https://steamcommunity.com/tradeoffer/new/?partner=135963670&token=IS6KDROD" target="_blank" rel="noreferrer"><Gift size={16} /><span>Donate unwanted<br className="donation-wrap"/> CS2 skins</span></a>
         <button ref={settingsButton} className={`settings-button${setupHint ? ' settings-nudge' : ''}`} aria-describedby={setupHint ? 'settings-hint-text' : undefined} onClick={() => open('settings')}><Settings2 size={17} />Settings</button>
         {setupHint && !panel && <div className="settings-hint" role="status">
           <ArrowUp className="hint-arrow" size={22} aria-hidden="true" />
@@ -146,7 +157,7 @@ export default function RangeApp() {
       <div className="toolbar-actions"><button className="icon-button" title="Reset range" aria-label="Reset range" onClick={() => { engine.current?.sim.reset(); engine.current?.clearImpacts(); }}><RotateCcw size={18} /></button><button className="icon-button" title={settings.volume ? 'Mute' : 'Unmute'} aria-label={settings.volume ? 'Mute' : 'Unmute'} onClick={() => update({ volume: settings.volume ? 0 : .2 })}>{settings.volume ? <Volume2 size={18} /> : <VolumeX size={18} />}</button><button className="icon-button fullscreen" title="Fullscreen" aria-label="Fullscreen" onClick={() => { if (document.fullscreenElement) void document.exitFullscreen(); else void host.current?.closest('.range-stage')?.requestFullscreen?.().catch(() => setNotice('Fullscreen unavailable in this browser.')); }}><Maximize size={18} /></button></div>
     </section>
     <section className={`range-stage${isDrillMode(settings.mode)?' with-drill':''}`} aria-label="Practice range">
-      <div className="range-view">
+      <div className={`range-view${showRepFeedback?' has-rep-feedback':''}`}>
       <div className="canvas-host" ref={host} />
       <div className="range-topline"><span className="range-badge"><i />{status.active ? 'LIVE RANGE' : 'RANGE 01'}</span><span>{profiles[settings.weapon] ? 'IMPORTED RECOIL CAPTURE' : 'GAME-DERIVED RECOIL'}</span></div>
       {!isDrillMode(settings.mode)&&<div className="target-label">{modeNames[settings.mode]} <span>{status.distance.toFixed(1)} m</span></div>}
@@ -155,6 +166,7 @@ export default function RangeApp() {
       </div>
       <div className="follow-origin" ref={follow}><CrosshairView value={settings.crosshair} /></div>
       <div className="hit-marker" ref={hitmarker}><X size={42} strokeWidth={3} /></div>
+      {showRepFeedback&&repFeedback&&<div className={`rep-feedback${repFeedback.passed?' passed':''}`} role="status" aria-label="Rep feedback"><b>{repFeedback.message}</b>{repFeedback.tip&&<p>{repFeedback.tip}</p>}</div>}
       {!status.active && !error && <button className="enter-range" disabled={!assetReady} onClick={start}><Play size={18} fill="currentColor" />{assetReady ? 'Enter range' : 'Loading range'}</button>}
       {error && <div className="range-error" role="alert"><Shield size={24} /><p>{error}</p><button onClick={() => { setError(''); setGeneration(g => g + 1); }}><RotateCcw size={16} />Restart range</button></div>}
       {status.active && <div className="exit-hint"><span>Press ESC to exit</span><button className="icon-button" aria-label="Pause range" title="Pause range (Esc)" onClick={() => engine.current?.pause()}><Pause size={16} /></button></div>}
@@ -164,7 +176,7 @@ export default function RangeApp() {
         <div className="hud-ammo"><small>{equipmentNames[status.equipped]}</small><strong data-testid="ammo">{status.slot===3?'--':status.remaining}{status.slot!==3&&<em>{`/ ${status.magazine}`}</em>}</strong><span>{status.reload?`Reloading ${status.reload.toFixed(1)} s`:!status.equipReady?'Drawing':status.firing ? 'Firing' : 'Ready'}</span>{status.slot===2&&<button className="reload-pistol" disabled={status.remaining===12||!!status.reload} onClick={()=>engine.current?.sim.reload()} title="Reload USP-S (R)"><RotateCcw size={13}/>Reload</button>}</div>
       </div>
       </div>
-      {isDrillMode(settings.mode)&&<DrillPanel status={status} mode={settings.mode} challenge={settings.drillPace==='challenge'}/>}
+      {isDrillMode(settings.mode)&&<DrillPanel status={status} mode={settings.mode} challenge={settings.drillPace==='challenge'} peekDuration={settings.peekDuration}/>}
     </section>
     <footer className="statusbar"><span><i className={status.active ? 'online' : ''} />{status.input}<span className="desktop-status">{status.fps} FPS</span></span><span className="status-center">{status.audio === 'unavailable' ? 'Audio unavailable' : status.slot===3?'250 u/s':`${Math.round(60 / equipmentStats(status.equipped).cycle)} RPM`}<span className="desktop-status">Build {gameData.build}</span></span><div className="project-links"><a href="https://github.com/HamzahAlrawi/cs2spraylab" target="_blank" rel="noreferrer"><Github size={14} />Source</a></div></footer>
     {notice && <div className="toast" role="status">{notice}<button className="icon-button" aria-label="Dismiss message" onClick={() => setNotice('')}><X size={15} /></button></div>}
@@ -181,7 +193,8 @@ export default function RangeApp() {
               <Toggle label="Invert mouse Y" checked={settings.invertY} onChange={v => update({ invertY: v })} />
               <h2>Training</h2><label className="select-row">Burst length<select aria-label="Burst length" value={settings.burst} onChange={e => update({ burst: +e.target.value })}><option value="0">Full magazine</option><option value="5">5 rounds</option><option value="10">10 rounds</option><option value="15">15 rounds</option></select></label>
               <label className="select-row">Peeking angles<select aria-label="Peeking angles" value={settings.peekScenario} onChange={e=>update({peekScenario:e.target.value as Settings['peekScenario']})}><option value="mixed">Mixed situations</option><option value="common">Common angles</option><option value="deep">Deep holds</option><option value="off-angle">Off-angles</option><option value="elevated">Elevated holds</option></select></label>
-              <label className="select-row">Drill pace<select aria-label="Drill pace" value={settings.drillPace} onChange={e=>update({drillPace:e.target.value as Settings['drillPace']})}><option value="practice">Practice / 8 s exposure</option><option value="challenge">Challenge / 1.5 s exposure</option></select></label>
+              <Slider label="Peeking target duration" value={settings.peekDuration} min={.5} max={10} step={.25} suffix=" s" onChange={peekDuration=>update({peekDuration})}/>
+              <label className="select-row">Precision / burst pace<select aria-label="Drill pace" value={settings.drillPace} onChange={e=>update({drillPace:e.target.value as Settings['drillPace']})}><option value="practice">Practice / 8 s exposure</option><option value="challenge">Challenge / 1.5 s exposure</option></select></label>
               <Toggle label="Follow recoil" checked={settings.follow} onChange={v => update({ follow: v })} />
               <Toggle label="Practice spread" checked={settings.spread} onChange={v => update({ spread: v })} />
               <Toggle label="Moving target" checked={settings.moving} onChange={v => update({ moving: v })} />

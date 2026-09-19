@@ -124,12 +124,90 @@ test('slot clicks keep keyboard movement focused and pausing clears held directi
   await expect(page.locator('.hud-stat b').first()).toHaveText('0');
   await page.keyboard.up('KeyD');
 });
-test('hit captions stay away from the crosshair during a burst',async({page})=>{
+test('hit captions sit just below the crosshair without covering the score in every mode',async({page},info)=>{
   await ready(page);
+  for(const size of [null,{width:390,height:844},{width:844,height:390}]){
+    if(size)await page.setViewportSize(size);
+    for(const mode of ['guided','spray','transfer','peek','precision','burst']){
+      await page.getByLabel('Training mode').selectOption(mode);
+      if(['peek','precision','burst'].includes(mode))await expect(page.locator('.drill-panel')).toBeVisible();
+      else await expect(page.locator('.drill-panel')).toHaveCount(0);
+      for(const label of ['HEADSHOT','BODY HIT']){
+        await page.locator('.hit-caption').evaluate((el,text)=>{el.textContent=text;},label);
+        const [caption,c,score]=await page.evaluate(()=>['.hit-caption','canvas[data-range]','.hud-result'].map(selector=>{
+          const r=document.querySelector(selector)!.getBoundingClientRect();return {x:r.x,y:r.y,width:r.width,height:r.height};
+        }));
+        const cx=c.x+c.width/2,cy=c.y+c.height/2;
+        expect(Math.abs(caption.x+caption.width/2-cx)).toBeLessThan(2);
+        expect(caption.y-cy).toBeGreaterThanOrEqual(24);expect(caption.y-cy).toBeLessThanOrEqual(44);
+        expect(caption.y+caption.height).toBeLessThan(score.y);
+      }
+    }
+  }
+  await page.screenshot({path:`test-results/${info.project.name}-below-crosshair.png`,style:'.hit-caption{opacity:1!important}.enter-range{visibility:hidden}'});
+});
+
+test('six-shot bursts and configurable timed peeking retain live shot feedback',async({page})=>{
+  await ready(page);
+  await page.getByLabel('Training mode').selectOption('burst');
   const canvas=page.locator('canvas[data-range]');
-  await canvas.dispatchEvent('pointerdown',{button:0,pointerId:1,isPrimary:true,pointerType:'touch'});
-  await expect(page.locator('.hit-caption')).toHaveCSS('opacity','1');
-  const caption=(await page.locator('.hit-caption').boundingBox())!,c=(await canvas.boundingBox())!;
-  const cx=c.x+c.width/2,cy=c.y+c.height/2;
-  expect(caption.x+caption.width<cx-35||caption.x>cx+35||caption.y+caption.height<cy-35||caption.y>cy+35).toBe(true);
+  const tap=async()=>{
+    await canvas.dispatchEvent('pointerdown',{button:0,pointerId:1,isPrimary:true,pointerType:'touch'});
+    await canvas.dispatchEvent('pointerup',{button:0,pointerId:1,isPrimary:true,pointerType:'touch'});
+  };
+  await tap();
+  await expect.poll(()=>page.evaluate(()=>JSON.parse(localStorage.getItem('spraylab.results.v2')||'[]')[0]?.shots)).toBe(6);
+  await page.getByLabel('Training mode').selectOption('peek');
+  await page.getByRole('button',{name:'Settings',exact:true}).click();
+  await page.getByLabel('Peeking target duration',{exact:true}).fill('4');
+  await page.getByRole('button',{name:'Done',exact:true}).click();
+  await page.reload();await expect(page.getByRole('button',{name:'Enter range',exact:true})).toBeEnabled({timeout:45000});
+  await expect(page.locator('.coach-condition')).toContainText('4 s from first shot');
+  await tap();
+  const accurate=page.locator('.drill-metrics div').filter({has:page.locator('dt',{hasText:'Accurate shots'})}).locator('dd');
+  const settled=page.locator('.drill-metrics div').filter({has:page.locator('dt',{hasText:'Settled shots'})}).locator('dd');
+  await expect.poll(async()=>Number((await settled.innerText()).split('/')[0])).toBeGreaterThan(5);
+  await expect(accurate).toHaveText(/^0\/\d+$/);
+  await expect(page.locator('.coach-heading')).toContainText('REP 1');
+  await expect(page.locator('.coach-heading')).toContainText('REP 2',{timeout:15000});
+  await expect.poll(()=>page.evaluate(()=>JSON.parse(localStorage.getItem('spraylab.results.v2')||'[]')[0]?.shots)).toBe(30);
+  await expect(page.getByRole('status',{name:'Rep feedback',exact:true})).toContainText('Clear the wall first');
+});
+
+test('repeated mistakes produce a central tip and the skin donation label fits narrow screens',async({page},info)=>{
+  await page.addInitScript(()=>{Math.random=()=>.9;});
+  await ready(page);
+  await page.getByLabel('Training mode').selectOption('peek');
+  await page.getByRole('button',{name:'Settings',exact:true}).click();
+  await page.getByLabel('Peeking target duration',{exact:true}).fill('0.5');
+  await page.getByRole('button',{name:'Done',exact:true}).click();
+  for(let i=1;i<=3;i++){
+    await page.locator('canvas[data-range]').dispatchEvent('pointerdown',{button:0,pointerId:1,isPrimary:true,pointerType:'touch'});
+    await page.locator('canvas[data-range]').dispatchEvent('pointerup',{button:0,pointerId:1,isPrimary:true,pointerType:'touch'});
+    await expect.poll(()=>page.evaluate(()=>JSON.parse(localStorage.getItem('spraylab.results.v2')||'[]').length)).toBe(i);
+    await expect(page.getByRole('status',{name:'Rep feedback',exact:true})).toBeVisible();
+  }
+  const feedback=page.getByRole('status',{name:'Rep feedback',exact:true});
+  await expect(feedback).toContainText('Strafe until the exposed head is clear');
+  for(const size of [{width:390,height:844},{width:320,height:568},{width:844,height:390}]){
+    await page.setViewportSize(size);
+    // WebGL dimensions follow ResizeObserver, which can lag the CSS viewport.
+    await expect.poll(()=>page.evaluate(()=>{
+      const canvas=document.querySelector('canvas[data-range]')!.getBoundingClientRect();
+      const view=document.querySelector('.range-view')!.getBoundingClientRect();
+      return Math.abs(canvas.height-view.height)+Math.abs(canvas.width-view.width);
+    })).toBeLessThan(1);
+    const boxes=await page.evaluate(()=>{
+      const rect=(selector:string)=>{const r=document.querySelector(selector)!.getBoundingClientRect();return{x:r.x,y:r.y,width:r.width,height:r.height};};
+      return{feedback:rect('.rep-feedback'),canvas:rect('canvas[data-range]'),donate:rect('.header-donation'),settings:rect('.settings-button'),brand:rect('.brand'),history:rect('.main-nav')};
+    });
+    expect(boxes.feedback.y+boxes.feedback.height).toBeLessThanOrEqual(boxes.canvas.y+boxes.canvas.height-4);
+    expect(boxes.feedback.y).toBeGreaterThan(boxes.canvas.y+boxes.canvas.height/2+15);
+    expect(boxes.brand.x+boxes.brand.width).toBeLessThanOrEqual(boxes.history.x);
+    expect(boxes.history.x+boxes.history.width).toBeLessThanOrEqual(boxes.donate.x);
+    expect(boxes.donate.x+boxes.donate.width).toBeLessThanOrEqual(boxes.settings.x);
+    expect(boxes.settings.x+boxes.settings.width).toBeLessThanOrEqual(size.width);
+    await expect(page.getByRole('link',{name:'Donate unwanted CS2 skins',exact:true})).toBeVisible();
+    await page.screenshot({path:`test-results/${info.project.name}-rep-tip-${size.width}.png`});
+  }
 });

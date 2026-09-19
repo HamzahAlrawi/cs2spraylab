@@ -21,11 +21,13 @@ Open the URL printed by Vite. Phones on the same network can use the LAN address
 - Guided spray, the default: mint NOW and pink NEXT compensation cues.
 - Free spray: no compensation assistance.
 - Spray transfer: switch from lane A to B at the selected burst's midpoint.
-- Peeking practice: four cover stations, alternating left/right entries, common angles, deep holds, off-angles and elevated targets. Each target independently has a 65% chance of lower-body cover with its head visible after the corner is cleared.
+- Peeking practice: four cover stations, alternating left/right entries, common angles, deep holds, off-angles and elevated targets. Exposure is sampled independently: 65% left/right half exposed, 15% head-only behind high cover, and 20% open.
 - First-shot precision: one deliberate shot per randomized target.
-- Burst & reposition: three shots per rep, then at least 0.9 m of lateral displacement before the next target.
+- Burst & reposition: six shots per rep, then at least 0.9 m of lateral displacement before the next target.
 
-Peeking starts behind a wall with a common-angle pre-aim. The coach measures reveal-to-shot time, speed at firing, opposite-key braking, head alignment at the stop, angular aim error and mouse correction. Appropriate off-angle correction is not penalized as unnecessary movement. Practice/challenge exposure limits are 8/1.5 seconds, starting only when the head becomes visible. Feedback is retained in Session history. These are training heuristics, not measured FACEIT-rank benchmarks. Peeking and repositioning require a keyboard; mobile tap-to-shoot remains available for the other drills.
+Peeking starts behind a wall with a common-angle pre-aim. Its target remains shootable for one second after the first shot by default, adjustable from 0.5 to 10 seconds in Settings. Headshots do not end the rep; accurate-shot totals update live until the timer advances to the next angle. Pausing freezes the timer. Precision/burst practice and challenge exposure limits remain 8/1.5 seconds from head visibility. The coach measures reveal-to-shot time, speed at firing, opposite-key braking, head alignment at the stop, angular aim error and mouse correction. Appropriate off-angle correction is not penalized as unnecessary movement. Feedback is retained in Session history. These are training heuristics, not measured FACEIT-rank benchmarks. Peeking and repositioning require a keyboard; mobile tap-to-shoot remains available for the other drills.
+
+The three regular spray modes also have four side-lane cover walls for free peeking, with matching movement and bullet collision. The initial central and transfer firing lanes remain open.
 
 Tracking is retired. Older tracking preferences open Guided spray; previous tracking results remain accessible in history.
 
@@ -33,9 +35,11 @@ Seventeen automatic primaries: AK-47, M4A4, M4A1-S, Galil AR, FAMAS, SG 553, AUG
 
 Native weapon-specific first-person poses and SAS target animations, colored head/body/miss feedback, moving targets, crosshair editor, follow recoil, replay and local session history are included. Defaults: 800 eDPI, 20% audio, yellow Compact crosshair with 2 px strokes, follow recoil OFF. Existing custom crosshair settings are preserved; selecting Compact applies the updated preset.
 
-The three spray modes show the active primary's impact pattern on the left backstop and the compensating mouse path on the right. Both are on by default and can be disabled independently in Settings; the other drills and equipment slots hide them. The mouse path respects inverted Y. These are shape previews at the native firing cadence, not sensitivity-calibrated mouse-distance diagrams; reduced-motion preferences show static paths. The muted backstop keeps the guides readable. Hands and weapons keep their proportions on portrait, ultrawide and stretched-world views. Hit captions and their marker sit at the lower left, away from the crosshair.
+The three spray modes show the active primary's impact pattern on the left backstop and the compensating mouse path on the right. Both are on by default and can be disabled independently in Settings; the other drills and equipment slots hide them. The mouse path respects inverted Y. These are shape previews at the native firing cadence, not sensitivity-calibrated mouse-distance diagrams; reduced-motion preferences show static paths. The muted backstop keeps the guides readable. Hands and weapons keep their proportions on portrait, ultrawide and stretched-world views. Hit captions sit just below the centre crosshair in every mode, with a compact score HUD on short viewports to avoid overlap.
 
-First-time visitors receive a dismissible animated Settings hint for sensitivity, crosshair and audio. Donate is in the top header beside Settings.
+First-time visitors receive a dismissible animated Settings hint for sensitivity, crosshair and audio. "Donate unwanted CS2 skins" is in the top header beside Settings.
+
+Each completed drill rep shows a short verdict below the crosshair, with a targeted tip after three consecutive matching mistakes. "Settled shots" measures movement readiness; "Accurate shots" counts target hits made while settled. Old history without that intersection displays an unknown accurate-hit count instead of inventing one.
 
 ## Architecture
 
@@ -61,7 +65,7 @@ Weapon definitions come from installed CS2 build 2000908. The seed generator and
 
 **This is not a bit-for-bit CS2 engine reproduction.** Practice bursts reset immediately, without the old artificial reload delay. Partial-burst native recoil-index recovery is not simulated. Browser Euler interpolation, spread RNG/accumulated firing inaccuracy, collision hulls, subtick movement, animation blending and the audio mixer still differ. See [RESEARCH.md](RESEARCH.md) for evidence and limitations.
 
-The USP-S uses native magazine, cadence, movement and cone parameters, but simplified firing-penalty recovery and no native pistol aim-punch state machine. The knife has a short-range practice swing, not native melee damage, backstabs or inspection animations. Its finish is authored here, not an extracted Gamma Doppler paint kit. New drills enable approximate practice spread and separately grade movement so a lucky moving hit is not a clean rep.
+The USP-S uses native magazine, cadence, movement and cone parameters, but simplified firing-penalty recovery and no native pistol aim-punch state machine. The knife has a short-range practice swing, not native melee damage, backstabs or inspection animations. Its finish is authored here, not an extracted Gamma Doppler paint kit. All modes respect the same Practice spread setting and separately grade movement so a lucky moving hit is not a clean rep.
 
 ## Verify And Build
 
