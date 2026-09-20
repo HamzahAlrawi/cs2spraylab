@@ -26,7 +26,7 @@ describe('Source-unit world scale', () => {
     expect(pixels(1)).toBeCloseTo(height / distance * 720, 8);
   });
   it.each(weaponIds)('%s travels the installed weapon speed in the same units as target distance', weapon => {
-    const sim = new Simulation({...defaults, weapon});
+    const sim = new Simulation({...defaults, mode:'guided', weapon});
     sim.position.z = -50;
     sim.active = true; sim.input.forward = 1;
     for (let i = 0; i < 128; i++) sim.advance(STEP);

@@ -3,7 +3,7 @@ import { defaults, gameData, migrateLegacySettings, migrateMode, parseProfile, r
 import { DEG, direction, groundVelocity, mouseAngle, Simulation, STEP, targetSpeed, UNIT, VERTICAL_FOV, TARGET_Z, SPAWN_Z, JUMP_SPEED, GRAVITY } from './simulation';
 import { requestRawLock } from './input';
 
-const make = (extra = {}) => new Simulation({ ...defaults, ...extra, crosshair: { ...defaults.crosshair } });
+const make = (extra = {}) => new Simulation({ ...defaults, mode:'guided', ...extra, crosshair: { ...defaults.crosshair } });
 const run = (s: Simulation, seconds: number, fps = 60) => { for (let i = 0; i < Math.round(seconds * fps); i++) s.advance(1 / fps); };
 
 describe('Source scale and input', () => {
@@ -102,7 +102,8 @@ describe('Shot scheduling and independent drills', () => {
     expect(times[1] - times[0]).toBeGreaterThanOrEqual(gameData.weapons.ak47.cycle);
   });
   it('consolidates retired training modes into guided spray', () => {
-    for (const mode of ['weak', 'ghost', 'trace', 'fade', 'tracking', '__proto__', 'toString']) expect(migrateMode(mode)).toBe('guided');
+    for (const mode of ['weak', 'ghost', 'trace', 'fade', 'tracking']) expect(migrateMode(mode)).toBe('guided');
+    for (const mode of ['__proto__', 'toString', 'unknown']) expect(migrateMode(mode)).toBe('peek');
     expect(migrateMode('transfer')).toBe('transfer');
   });
   it('the same angular shot grows linearly with distance, including 100m', () => {
@@ -149,7 +150,7 @@ describe('walking distance, jumping and moving lanes', () => {
     const s = make(); expect(s.position.z).toBe(SPAWN_Z); expect(s.position.z - TARGET_Z).toBe(12);
     s.active = true; s.input.forward = 1; run(s, 1); const z = s.position.z;
     expect(z).toBeLessThan(SPAWN_Z); s.reset(); expect(s.position.z).toBe(z);
-    s.configure({ ...defaults, weapon: 'mp9' }); expect(s.position.z).toBe(z); expect(s.targetPosition(0).z).toBe(TARGET_Z);
+    s.configure({ ...defaults, mode:'guided', weapon: 'mp9' }); expect(s.position.z).toBe(z); expect(s.targetPosition(0).z).toBe(TARGET_Z);
   });
   it('keeps target speed constant through reversals, in bounded independent transfer lanes', () => {
     const s = make({ moving: true, mode: 'transfer' }); s.active = true;
@@ -172,6 +173,6 @@ describe('walking distance, jumping and moving lanes', () => {
   });
   it('ships the requested first-run defaults', () => {
     expect(defaults.sensitivity * defaults.dpi).toBe(800); expect(defaults.volume).toBe(.2);
-    expect(defaults.crosshair.color).toBe('#ffeb55'); expect(defaults.mode).toBe('guided');
+    expect(defaults.crosshair.color).toBe('#ffeb55'); expect(defaults.mode).toBe('peek');
   });
 });

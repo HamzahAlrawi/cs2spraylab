@@ -4,6 +4,7 @@ import sharp from 'sharp';
 test('pausing clears live hit feedback before the entry button returns', async ({page}) => {
   await page.goto('/');
   await expect(page.getByRole('button', {name: 'Enter range', exact: true})).toBeEnabled({timeout: 45000});
+  await page.getByLabel('Training mode').selectOption('guided');
   const result = await page.evaluate(async () => {
     const canvas = document.querySelector<HTMLCanvasElement>('canvas[data-range]')!;
     const caption = document.querySelector<HTMLElement>('.hit-caption')!;
@@ -30,6 +31,7 @@ test('wall patterns animate, respect reduced motion and can be switched off inde
   await page.setViewportSize({width: 1440, height: 1000});
   await page.goto('/');
   await expect(page.getByRole('button', {name: 'Enter range', exact: true})).toBeEnabled({timeout: 45000});
+  await page.getByLabel('Training mode').selectOption('guided');
   const box = (await page.locator('canvas[data-range]').boundingBox())!;
   const focal = box.height * 2 / 3;
   const clip = {x: box.x + box.width / 2 - 7 / 13.47 * focal + 3, y: box.y + box.height / 2 - (4 - 1.6256) / 13.47 * focal + 3,
@@ -93,6 +95,7 @@ test('viewmodels stay framed across portrait, landscape, ultrawide and stretched
   await reference.route('**/models/view-ak47.glb', route => route.fulfill({contentType: 'application/json', body: JSON.stringify({asset: {version: '2.0'}, scene: 0, scenes: [{nodes: []}], nodes: []})}));
   await reference.goto('/');
   await expect(reference.getByRole('button', {name: 'Enter range', exact: true})).toBeEnabled({timeout: 45000});
+  await reference.getByLabel('Training mode').selectOption('spray');
   for (const viewport of [{width: 1920, height: 1080}, {width: 1440, height: 1080}, {width: 3440, height: 1440}, {width: 390, height: 844}, {width: 844, height: 390}]) {
     await page.setViewportSize(viewport);
     for (const aspect of ['native', '4:3']) {

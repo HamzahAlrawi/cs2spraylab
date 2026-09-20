@@ -18,6 +18,7 @@ export const RANGE_WALLS: Cover[] = [-6.5,-3.5,3.5,6.5].map((x,i)=>({
   id:`range-cover-${i}`,center:{x,y:1.15,z:Math.abs(x)>5?-93:-91},size:{x:1.7,y:2.3,z:.55}
 }));
 export const REPOSITION_SHOTS = 6;
+export const EXCESS_MOUSE_LIMIT = 2.4;
 const RAD = Math.PI / 180;
 const distance = (a: Vec, b: Vec) => Math.hypot(a.x-b.x, a.y-b.y, a.z-b.z);
 const bound = (n: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, n));
@@ -204,7 +205,7 @@ export class DrillCoach {
     else if (!this.hits) { m.verdict='Aim missed'; m.feedback='Set head height before exposing the angle. Correct the remaining error once the target is visible.'; }
     else if (!this.heads && this.mode!=='burst') { m.verdict='Body hit'; m.feedback='Raise the initial pre-aim to head height; let the strafe bring the head onto the crosshair.'; }
     else if (this.mode==='peek' && !m.stoppedOnTarget) { m.verdict=m.passed?'Clean stop, aim still settling':'Aim after the stop'; m.feedback=this.scenario.kind==='off-angle'?'The off-angle needs a deliberate correction. Keep the clean stop and settle on the head before firing.':'Keep the same stopping timing; prepare the common angle earlier so the crosshair is on the head as you brake.'; }
-    else if (m.excessCorrection>2) { m.verdict=m.passed?'Hit with extra correction':'Over-corrected'; m.feedback='Pre-aim at head height, then let your strafe finish the alignment. Use a small mouse correction for an unexpected angle; do not force zero mouse movement.'; }
+    else if (m.excessCorrection>EXCESS_MOUSE_LIMIT) { m.verdict=m.passed?'Hit with extra correction':'Over-corrected'; m.feedback='Pre-aim at head height, then let your strafe finish the alignment. Use a small mouse correction for an unexpected angle; do not force zero mouse movement.'; }
     else { m.verdict=m.passed?'Clean rep':'Keep refining'; m.feedback=this.mode==='burst'?'Move laterally before the next burst. Stop again before firing.':this.scenario.kind==='off-angle'?'Good stop and deliberate correction for the unexpected position.':'Good preparation and shot timing. Repeat the same movement without rushing the trigger.'; }
     return m;
   }

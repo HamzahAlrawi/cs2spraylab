@@ -18,14 +18,14 @@ Open the URL printed by Vite. Phones on the same network can use the LAN address
 
 ## Training
 
-- Guided spray, the default: mint NOW and pink NEXT compensation cues.
+- Guided spray: mint NOW and pink NEXT compensation cues.
 - Free spray: no compensation assistance.
 - Spray transfer: switch from lane A to B at the selected burst's midpoint.
 - Peeking practice: four cover stations, alternating left/right entries, common angles, deep holds, off-angles and elevated targets. Exposure is sampled independently: 65% left/right half exposed, 15% head-only behind high cover, and 20% open.
 - Counterstrafing practice: build lateral speed, brake with the opposite key, then fire one deliberate shot. Its 0-100 score weights entry speed and speed at the shot; stationary-only reps score zero.
 - Burst & reposition: six shots per rep, then at least 0.9 m of lateral displacement before the next target.
 
-Peeking starts behind a wall with a common-angle pre-aim. Its target remains shootable for one second after the first shot by default, adjustable from 0.5 to 10 seconds in Settings. Headshots do not end the rep; accurate-shot totals update live until the timer advances to the next angle. Pausing freezes the timer. Precision/burst practice and challenge exposure limits remain 8/1.5 seconds from head visibility. The coach measures reveal-to-shot time, speed at firing, opposite-key braking, head alignment at the stop, angular aim error and mouse correction. Appropriate off-angle correction is not penalized as unnecessary movement. Feedback is retained in Session history. These are training heuristics, not measured FACEIT-rank benchmarks. Peeking and repositioning require a keyboard; mobile tap-to-shoot remains available for the other drills.
+Peeking practice is the first-run default. It starts behind a wall with a common-angle pre-aim. Its target remains shootable for one second after the first shot by default, adjustable from 0.5 to 10 seconds in Settings. Headshots do not end the rep; accurate-shot totals update live until the timer advances to the next angle. Pausing freezes the timer. Precision/burst practice and challenge exposure limits remain 8/1.5 seconds from head visibility. The coach measures reveal-to-shot time, speed at firing, opposite-key braking, head alignment at the stop, angular aim error and mouse correction. Appropriate off-angle correction is not penalized as unnecessary movement, and excess correction is flagged only above 2.4 degrees. Feedback is retained in Session history. These are training heuristics, not measured FACEIT-rank benchmarks. Peeking and repositioning require a keyboard; mobile tap-to-shoot remains available for the other drills.
 
 The three regular spray modes also have four side-lane cover walls for free peeking, with matching movement and bullet collision. The initial central and transfer firing lanes remain open.
 
