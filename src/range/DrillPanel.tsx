@@ -9,6 +9,8 @@ export function DrillReview({value:m}:{value:DrillMetrics}) {
   return <div className="drill-review">
     <div className={`drill-verdict ${m.passed?'passed':''}`}>{m.passed?<Check size={16}/>:<Target size={16}/>}<b>{m.verdict}</b></div>
     <dl className="drill-metrics">
+      {m.movementScore!==undefined&&<div><dt>Movement score</dt><dd>{m.movementScore}/100</dd></div>}
+      {m.peakSpeed!==undefined&&<div><dt>Speed before shot</dt><dd>{Math.round(m.peakSpeed)} u/s</dd></div>}
       <div><dt>Speed at shot</dt><dd>{Math.round(m.speedAtShot)} u/s</dd></div>
       <div><dt title="Shots fired while grounded and below the movement accuracy threshold">Settled shots</dt><dd>{m.settledShots}/{m.shots}</dd></div>
       <div><dt title="Hits landed while movement was settled">Accurate shots</dt><dd title={m.accuracyVerified?undefined:'Older rep: hit-and-movement accuracy was not recorded'}>{m.accuracyVerified?m.accurateShots:'--'}/{m.shots}</dd></div>
@@ -27,7 +29,7 @@ export function DrillReview({value:m}:{value:DrillMetrics}) {
 export function DrillPanel({status,mode,challenge,peekDuration}:{status:RangeStatus;mode:Mode;challenge:boolean;peekDuration:number}) {
   const d=status.drill;
   if(!d)return null;
-  const instruction=mode==='peek'?'Pre-aim head height. Strafe out, tap the opposite direction, then shoot. Correct with the mouse when the angle needs it.':mode==='precision'?'Place one deliberate shot on the head. Settle the crosshair before clicking; the next rep appears after your shot.':'Fire a controlled six-round burst, move at least 0.9 m sideways, then stop before firing again.';
+  const instruction=mode==='peek'?'Pre-aim head height. Let the strafe align the common angle, brake, then shoot. Correct unexpected angles with the mouse.':mode==='precision'?'Build lateral speed, tap the opposite direction, then shoot one settled headshot. Pre-aim and let movement finish alignment; correct unexpected positions with the mouse.':'Fire a controlled six-round burst, move at least 0.9 m sideways, then stop before firing again.';
   return <aside className="drill-panel" aria-label="Drill coach">
     <div className="coach-heading"><span>REP {d.round}</span><span>{d.passed}/{d.completed} CLEAN</span></div>
     <h2>{d.scenario}</h2>

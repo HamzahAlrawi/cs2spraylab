@@ -48,18 +48,17 @@ export function recoilTable(w: RecoilParameters) {
 }
 
 const DT = 1 / 128;
-const decay = f(Math.exp(-8 * DT));
-const velocityDecay = f(Math.exp(-4.5 * DT));
-function integrate(angle: RecoilAngle, velocity: RecoilAngle) {
+export function integratePunch(angle: RecoilAngle, velocity: RecoilAngle, dt = DT) {
+  const decay = f(Math.exp(-8 * dt)), velocityDecay = f(Math.exp(-4.5 * dt));
   let yaw = f(angle.yaw * decay), pitch = f(angle.pitch * decay);
   const length = Math.hypot(yaw, pitch);
-  const scale = length > 18 * DT ? f(1 - f(18 * DT / length)) : 0;
+  const scale = length > 18 * dt ? f(1 - f(18 * dt / length)) : 0;
   yaw = f(yaw * scale); pitch = f(pitch * scale);
   const next = { yaw: f(velocity.yaw * velocityDecay), pitch: f(velocity.pitch * velocityDecay) };
   if (Math.hypot(next.yaw, next.pitch) < 1 / 32) next.yaw = next.pitch = 0;
   const start = Math.hypot(velocity.yaw, velocity.pitch) < 1 / 32 ? { yaw: 0, pitch: 0 } : velocity;
   return {
-    angle: { yaw: f(f(yaw + f(start.yaw * DT / 2)) + f(next.yaw * DT / 2)), pitch: f(f(pitch + f(start.pitch * DT / 2)) + f(next.pitch * DT / 2)) },
+    angle: { yaw: f(f(yaw + f(start.yaw * dt / 2)) + f(next.yaw * dt / 2)), pitch: f(f(pitch + f(start.pitch * dt / 2)) + f(next.pitch * dt / 2)) },
     velocity: next
   };
 }
@@ -77,12 +76,12 @@ export function nativeRecoilPattern(w: RecoilParameters): RecoilAngle[] {
     velocity = { yaw: f(velocity.yaw + f(Math.sin(radians) * impulse.magnitude)), pitch: f(velocity.pitch + f(Math.cos(radians) * impulse.magnitude)) };
     let elapsed = 0;
     while (elapsed + DT <= w.cycle + 1e-9) {
-      ({ angle, velocity } = integrate(angle, velocity));
+      ({ angle, velocity } = integratePunch(angle, velocity));
       elapsed += DT;
     }
     const fraction = (w.cycle - elapsed) / DT;
     if (fraction > 1e-8) {
-      const next = integrate(angle, velocity);
+      const next = integratePunch(angle, velocity);
       angle = { yaw: f(angle.yaw + (next.angle.yaw - angle.yaw) * fraction), pitch: f(angle.pitch + (next.angle.pitch - angle.pitch) * fraction) };
       const v = Math.exp(-4.5 * (w.cycle - elapsed));
       velocity = { yaw: f(velocity.yaw * v), pitch: f(velocity.pitch * v) };

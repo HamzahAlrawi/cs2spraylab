@@ -10,7 +10,7 @@ import { VIEWMODEL_FOV, VIEWMODEL_OFFSET, viewmodelViewport } from './viewmodel'
 import { GUIDE_COLORS, SprayDemonstration } from './spray-demonstration';
 import {type Equipment, type Slot} from './equipment';
 import {DrillScenery} from './drill-scene';
-import {HEAD_HEIGHT, type DrillMetrics, type Exposure} from './drills';
+import {HEAD_HEIGHT, peekDirection, type DrillMetrics, type Exposure} from './drills';
 
 export type RangeStatus = {
   weapon: Weapon;
@@ -18,7 +18,7 @@ export type RangeStatus = {
   reload: number; speed: number; distance: number;
   input: string; audio: string; assets: string; fps: number;
   equipped: Equipment; slot: Slot; equipReady: boolean; magazine: number;
-  drill?: {round:number; completed:number; passed:number; scenario:string; covered:boolean; exposure:Exposure; side:number; phase:'prepare'|'exposed'|'feedback'|'reposition'; accurate:boolean; error:number; remaining?:number; last?:DrillMetrics};
+  drill?: {round:number; completed:number; passed:number; scenario:string; covered:boolean; exposure:Exposure; side:number; peekDirection?:number; phase:'prepare'|'exposed'|'feedback'|'reposition'; accurate:boolean; error:number; remaining?:number; last?:DrillMetrics};
 };
 const vector = (v: Vec) => new THREE.Vector3(v.x, v.y, v.z);
 const material = (color: string, roughness = .8) => new THREE.MeshStandardMaterial({ color, roughness });
@@ -285,6 +285,7 @@ export class RangeEngine {
     if (!resetKeys.some(key => settings[key] !== this.sim.settings[key]) && measured === this.sim.measured) {
       const changedInversion = settings.invertY !== this.sim.settings.invertY;
       this.sim.settings = settings;
+      this.resizeImpacts();
       if (changedInversion) this.updateDemonstration();
       this.demonstration.mesh.visible = settings.showImpactPattern && !this.sim.drill && this.sim.slot===1;
       this.mouseDemonstration.mesh.visible = settings.showMousePath && !this.sim.drill && this.sim.slot===1;
@@ -306,6 +307,11 @@ export class RangeEngine {
   clearImpacts() {
     this.impacts.clear();
     this.targets.forEach(t => t.children.filter(c => c.userData.impact).forEach(c => t.remove(c)));
+  }
+  resizeImpacts() {
+    for(const parent of [this.impacts,...this.targets])for(const mark of parent.children){
+      if(typeof mark.userData.impactScale==='number')mark.scale.setScalar(mark.userData.impactScale*this.sim.settings.impactSize);
+    }
   }
   castTargets(origin: Vec, dir: Vec) {
     this.syncTargets(); this.ray.set(vector(origin), vector(dir));
@@ -347,7 +353,8 @@ export class RangeEngine {
     if (impact) {
       const mark = new THREE.Mesh(this.markerGeometry, head ? this.hitMaterial : hit ? this.bodyMaterial : this.missMaterial);
       mark.position.copy(impact.point).addScaledVector(vector(shot.direction), -.012);
-      mark.scale.setScalar(Math.max(1, impact.distance / 18));
+      mark.userData.impactScale=Math.max(1, impact.distance / 18);
+      mark.scale.setScalar(mark.userData.impactScale*this.sim.settings.impactSize);
       if (physicalHit) {
         const target = this.targets.find(t => t.getObjectById(physicalHit.object.id));
         if (target) { target.worldToLocal(mark.position); mark.userData.impact = true; target.add(mark); }
@@ -493,7 +500,7 @@ export class RangeEngine {
       const visible = this.sim.slot===1 && ['guided', 'transfer'].includes(this.sim.settings.mode) && index < this.sim.burstSize;
       const target = this.sim.targetPosition(this.sim.targetForShot(index));
       const dx = target.x - this.sim.position.x, dz = target.z - this.sim.position.z;
-      const p = this.sim.pattern[Math.min(index, this.sim.pattern.length - 1)];
+      const p = visible ? this.sim.predictedRecoil(i===1) : {yaw:0,pitch:0};
       const aim = direction(Math.atan2(-dx, -dz) + p.yaw * DEG, Math.atan2(1.63 - this.sim.position.y, Math.hypot(dx, dz)) - p.pitch * DEG);
       const point = vector(aim).multiplyScalar(10).add(this.camera.position).project(this.camera);
       cue.hidden = !visible || point.z > 1 || Math.abs(point.x) > .95 || Math.abs(point.y) > .88;
@@ -515,6 +522,7 @@ export class RangeEngine {
         active: this.sim.active, firing: this.sim.firing, hitFlash:this.hitTime>0, shots: drill?.shots ?? this.sim.shots, hits: drill?.hits ?? this.sim.hits, heads: drill?.heads ?? this.sim.heads,
         remaining: this.sim.slot===2 ? this.sim.pistolAmmo : this.sim.slot===3 ? 0 : this.sim.firing ? this.sim.burstSize - this.sim.shots : this.sim.burstSize, reload: Math.max(0,this.sim.pistolReloadAt-this.sim.time),
         ...(drill ? {drill:{round:this.sim.drillRound,completed:this.sim.drillCompleted,passed:this.sim.drillPassed,scenario:drill.scenario.name,covered:drill.scenario.covered,exposure:drill.scenario.exposure,side:drill.scenario.side,
+          peekDirection:this.sim.settings.mode==='peek'?peekDirection(this.sim.position,this.sim.yaw,drill.scenario):0,
           phase:drill.finished?(this.sim.repositionFrom?'reposition':'feedback'):drill.visible?'exposed':'prepare',accurate:drill.accurate,error:drill.error,
           remaining:this.sim.settings.mode==='peek' && drill.firstShotAt!==null ? Math.max(0,this.sim.settings.peekDuration-(this.sim.time-drill.firstShotAt)) : undefined,
           last:this.sim.settings.mode==='peek' && drill.shots>0 ? drill.result() : this.sim.drillResult}} : {}),

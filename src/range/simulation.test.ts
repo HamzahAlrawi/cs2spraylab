@@ -72,10 +72,11 @@ describe('Shot scheduling and independent drills', () => {
     const s = make(); s.start(); run(s, .25, 100); s.release('mouse');
     expect(s.latest?.shots).toBe(3); run(s, 1); expect(s.shots).toBe(3);
   });
-  it('allows a new independent practice attempt immediately without a fake reload delay', () => {
+  it('allows firing immediately without erasing residual recoil after a 400ms pause', () => {
     const s = make(); s.start(); run(s, 1); s.release('mouse');
     run(s, .4, 100); expect(s.start()).toBe(true); expect(s.shots).toBe(1);
-    expect(Math.abs(s.recoil.yaw)).toBe(0); expect(s.recoil.pitch).toBe(0);
+    expect(Math.hypot(s.recoil.yaw,s.recoil.pitch)).toBeGreaterThan(.1);
+    expect(s.recovery.index).toBeGreaterThan(1);
   });
   it('finishes a touch burst despite touch and compatibility mouse release', () => {
     const s = make({ burst: 5 }); s.start(true); s.release('touch'); s.release('mouse'); run(s, 1);

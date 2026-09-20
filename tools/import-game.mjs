@@ -41,7 +41,7 @@ const fields = {
   fire: 'm_flInaccuracyFire', recovery: 'm_flRecoveryTimeStand', recoveryFinal: 'm_flRecoveryTimeStandFinal',
   recoveryCrouch: 'm_flRecoveryTimeCrouch', recoilSeed: 'm_nRecoilSeed',
   recoveryCrouchFinal: 'm_flRecoveryTimeCrouchFinal', recoveryStart: 'm_nRecoveryTransitionStartBullet', recoveryEnd: 'm_nRecoveryTransitionEndBullet',
-  jump: 'm_flInaccuracyJump', jumpInitial: 'm_flInaccuracyJumpInitial', land: 'm_flInaccuracyLand',
+  jump: 'm_flInaccuracyJump', jumpInitial: 'm_flInaccuracyJumpInitial', jumpApex: 'm_flInaccuracyJumpApex', land: 'm_flInaccuracyLand',
   recoilAngle: 'm_flRecoilAngle', recoilVariance: 'm_flRecoilAngleVariance',
   recoilMagnitude: 'm_flRecoilMagnitude', recoilMagnitudeVariance: 'm_flRecoilMagnitudeVariance',
   damage: 'm_nDamage', rangeModifier: 'm_flRangeModifier', range: 'm_flRange', armorRatio: 'm_flArmorRatio', headshotMultiplier: 'm_flHeadshotMultiplier', reload: 'm_flDisallowAttackAfterReloadStartDuration'

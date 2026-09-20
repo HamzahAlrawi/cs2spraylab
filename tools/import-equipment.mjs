@@ -12,11 +12,16 @@ fs.mkdirSync('public/revamp/audio', {recursive: true});
 run('-f', 'scripts/weapons.vdata_c', '-d', '-o', 'research/equipment-weapons.vdata');
 const raw = fs.readFileSync('research/equipment-weapons.vdata', 'utf8');
 const source = parseKv3(raw);
+const accuracyFields = {
+  recoveryFinal: 'm_flRecoveryTimeStandFinal', recoveryCrouch: 'm_flRecoveryTimeCrouch',
+  recoveryCrouchFinal: 'm_flRecoveryTimeCrouchFinal', recoveryStart: 'm_nRecoveryTransitionStartBullet', recoveryEnd: 'm_nRecoveryTransitionEndBullet',
+  jump: 'm_flInaccuracyJump', jumpInitial: 'm_flInaccuracyJumpInitial', jumpApex: 'm_flInaccuracyJumpApex', land: 'm_flInaccuracyLand'
+};
 const fields = {magazine: 'm_iMaxClip1', cycle: 'm_flCycleTime', speed: 'm_flMaxSpeed', deploy: 'm_flDeployDuration', reload: 'm_flDisallowAttackAfterReloadStartDuration', stand: 'm_flInaccuracyStand', crouch: 'm_flInaccuracyCrouch', move: 'm_flInaccuracyMove', spread: 'm_flSpread', fire: 'm_flInaccuracyFire', recovery: 'm_flRecoveryTimeStand', recoilSeed: 'm_nRecoilSeed', recoilAngle: 'm_flRecoilAngle', recoilVariance: 'm_flRecoilAngleVariance', recoilMagnitude: 'm_flRecoilMagnitude', recoilMagnitudeVariance: 'm_flRecoilMagnitudeVariance'};
 const output = {build: fs.readFileSync(`${game}/game/csgo/steam.inf`, 'utf8').match(/ClientVersion=(\d+)/)[1], source: 'scripts/weapons.vdata_c', sha256: crypto.createHash('sha256').update(raw).digest('hex'), weapons: {}};
 for (const [id, key, sound] of [['usp', 'weapon_usp_silencer', 'usp/usp_01'], ['knife', 'weapon_knife', 'knife/knife_slash1']]) {
   const data = source[key];
-  const stats = Object.fromEntries(Object.entries(fields).map(([name, field]) => {
+  const stats = Object.fromEntries(Object.entries({...fields, ...accuracyFields}).map(([name, field]) => {
     const v = Array.isArray(data[field]) ? data[field][id === 'usp' ? 1 : 0] : data[field];
     if (!Number.isFinite(v)) throw new Error(`Missing ${key}.${field}`);
     return [name, v];

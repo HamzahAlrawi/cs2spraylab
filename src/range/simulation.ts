@@ -1,6 +1,7 @@
 import { Angle, clamp, gameData, MeasuredProfile, recoilPattern, Settings } from './config';
 import {equipmentForSlot, equipmentStats, equipmentData, type Equipment, type Slot} from './equipment';
 import {createScenario, DrillCoach, isDrillMode, moveWithCover, RANGE_WALLS, REPOSITION_SHOTS, type CoachSample, type DrillMetrics} from './drills';
+import {WeaponRecovery} from './ballistics';
 
 export const UNIT = .0254;
 export const DEG = Math.PI / 180;
@@ -59,11 +60,26 @@ export class Simulation {
   samples: ImpactSample[] = []; attempts = 0;
   lastShotAt = -Infinity;
   slot: Slot = 1; previousSlot: Slot = 2; equipReadyAt = 0;
-  pistolAmmo = 12; pistolReloadAt = 0; pistolPenalty = 0; meleeAt = -Infinity;
+  pistolAmmo = 12; pistolReloadAt = 0; meleeAt = -Infinity;
+  recoveryStates = new Map<Equipment,WeaponRecovery>();
   drill?: DrillCoach; drillRound = 0; drillPassed = 0; drillCompleted = 0;
   drillResult?: DrillMetrics; nextDrillAt = 0; repositionFrom?: Vec; repositionYaw = 0; drillRevision = 0;
   get equipped() { return equipmentForSlot(this.slot, this.settings.weapon); }
   get stats() { return equipmentStats(this.equipped); }
+  get recovery() {
+    let state=this.recoveryStates.get(this.equipped);
+    if(!state){state=new WeaponRecovery(this.stats,this.slot===1?this.measured?.points:undefined);this.recoveryStates.set(this.equipped,state);}
+    return state;
+  }
+  resetRecovery(){this.recoveryStates.clear();this.recoil={yaw:0,pitch:0};}
+  predictedRecoil(next=false){
+    const due=this.firing?this.nextShot:Math.max(this.time,this.lastShotAt+this.stats.cycle);
+    const scheduledDelay=(at:number)=>Math.max(0,Math.ceil((at-this.time)/STEP-1e-8))*STEP;
+    const delay=scheduledDelay(due);
+    if(!next)return this.recovery.predict(delay);
+    const state=Object.assign(Object.create(WeaponRecovery.prototype),this.recovery) as WeaponRecovery;
+    state.advance(delay);return state.predict(scheduledDelay(due+this.stats.cycle)-delay,true);
+  }
   get burstSize() {
     if (this.slot !== 1 || this.settings.mode === 'precision') return 1;
     if (this.settings.mode === 'burst') return REPOSITION_SHOTS;
@@ -82,6 +98,7 @@ export class Simulation {
   configure(s: Settings, measured?: MeasuredProfile) {
     const changedMode = s.mode !== this.settings.mode;
     this.cancel(); this.settings = s; this.measured = measured;
+    this.resetRecovery();
     this.pattern = recoilPattern(s.weapon, measured);
     this.targetX = this.targetVelocity = 0; this.targetSign = 1;
     this.readyAt = this.time;
@@ -112,6 +129,7 @@ export class Simulation {
       this.velocity = {x:0,z:0}; this.feet = this.verticalVelocity = 0; this.eyeHeight = 64*UNIT;
     } else scenario.spawn = {...this.position};
     this.drill = new DrillCoach(this.settings.mode, scenario, this.time);
+    this.resetRecovery();
     this.drillRevision++; this.nextDrillAt = 0; this.repositionFrom = undefined;
     this.shots = this.hits = this.heads = 0; this.samples = [];
     this.drill.update(this.coachSample());
@@ -122,7 +140,7 @@ export class Simulation {
     this.drillCompleted++; this.drillPassed += +this.drillResult.passed;
     this.nextDrillAt = this.time+(this.settings.mode==='peek' ? 0 : 1.4);
     if (this.settings.mode === 'burst') { this.repositionFrom = {...this.position}; this.repositionYaw = this.yaw; }
-    this.firing = this.automatic = false; this.recoil = {yaw:0,pitch:0};
+    this.firing = this.automatic = false;
     this.publishResult(this.drillResult);
   }
   publishResult(drill?: DrillMetrics) {
@@ -167,14 +185,14 @@ export class Simulation {
   }
   finish() {
     if (!this.firing) return;
-    this.firing = false; this.automatic = false; this.recoil = { yaw: 0, pitch: 0 };
+    this.firing = false; this.automatic = false;
     this.readyAt = this.time;
     if (this.shots && !this.drill) this.publishResult();
   }
   reset() {
     this.cancel(); this.readyAt = this.time; this.shots = this.hits = this.heads = 0;
     this.latest = undefined;
-    this.pistolAmmo = 12; this.pistolReloadAt = 0; this.pistolPenalty = 0;
+    this.pistolAmmo = 12; this.pistolReloadAt = 0; this.resetRecovery();
     if (isDrillMode(this.settings.mode)) { this.drillResult = undefined; this.newDrill(true); }
   }
   advance(elapsed: number) {
@@ -185,7 +203,6 @@ export class Simulation {
   step(dt: number) {
     this.time += dt;
     const weapon = this.stats;
-    this.pistolPenalty *= Math.exp(-dt/equipmentData.weapons.usp.recovery);
     if (this.pistolReloadAt && this.time >= this.pistolReloadAt) { this.pistolAmmo = 12; this.pistolReloadAt = 0; }
     const { forward, side, walk, crouch, jump } = this.input;
     const wishX = side * Math.cos(this.yaw) - forward * Math.sin(this.yaw);
@@ -208,6 +225,9 @@ export class Simulation {
     this.position.x = nextX; this.position.z = nextZ;
     this.eyeHeight += ((crouch ? 46 : 64) * UNIT - this.eyeHeight) * Math.min(1, dt * 16);
     this.position.y = this.feet + this.eyeHeight;
+    const recovery=this.recovery;
+    for(const state of this.recoveryStates.values())state.advance(dt,crouch,this.feet>0);
+    this.recoil=this.slot===3?{yaw:0,pitch:0}:recovery.recoil;
     if (this.settings.moving && !this.drill) {
       const extent = this.settings.mode === 'transfer' ? 1.25 : 3;
       this.targetVelocity = this.targetSign * targetSpeed(this.settings);
@@ -233,21 +253,22 @@ export class Simulation {
   fire() {
     const weapon = this.stats;
     if (this.shots >= this.burstSize) { this.finish(); return; }
-    this.recoil = this.slot === 2 ? {yaw:0,pitch:0} : this.pattern[this.shots];
+    this.recoil = this.recovery.recoil;
     let yaw = this.yaw - this.recoil.yaw * DEG;
     let pitch = this.pitch + this.recoil.pitch * DEG;
     if (this.settings.spread) {
       // Optional practice spread uses the installed weapon cone parameters.
       // Random sampling and firing inaccuracy are not advertised as engine parity.
-      const moving = clamp((Math.hypot(this.velocity.x, this.velocity.z) / (weapon.speed * UNIT) - .34) / .66, 0, 1);
-      const cone = (this.input.crouch ? weapon.crouch : weapon.stand) + moving * weapon.move + (this.slot===2 ? this.pistolPenalty : 0);
+      const speedRatio=Math.hypot(this.velocity.x,this.velocity.z)/(weapon.speed*UNIT);
+      const cone=this.recovery.inaccuracy(speedRatio,this.input.walk,this.feet>0,this.verticalVelocity/UNIT);
       const a = Math.random() * Math.PI * 2, b = Math.random() * Math.PI * 2;
       const r = Math.random() * cone, q = Math.random() * weapon.spread;
       yaw += Math.cos(a) * r + Math.cos(b) * q;
       pitch += Math.sin(a) * r + Math.sin(b) * q;
     }
     const index = this.shots++;
-    if (this.slot===2) { this.pistolAmmo--; this.pistolPenalty = Math.min(.2,this.pistolPenalty+weapon.fire); }
+    if (this.slot===2) this.pistolAmmo--;
+    this.recovery.fire();
     this.lastShotAt = this.time;
     this.onShot({ index, at: this.time, origin: { ...this.position }, direction: direction(yaw, pitch), recoil: this.recoil, equipment:this.equipped });
     if (this.drill && !this.drill.finished) {

@@ -22,7 +22,7 @@ Open the URL printed by Vite. Phones on the same network can use the LAN address
 - Free spray: no compensation assistance.
 - Spray transfer: switch from lane A to B at the selected burst's midpoint.
 - Peeking practice: four cover stations, alternating left/right entries, common angles, deep holds, off-angles and elevated targets. Exposure is sampled independently: 65% left/right half exposed, 15% head-only behind high cover, and 20% open.
-- First-shot precision: one deliberate shot per randomized target.
+- Counterstrafing practice: build lateral speed, brake with the opposite key, then fire one deliberate shot. Its 0-100 score weights entry speed and speed at the shot; stationary-only reps score zero.
 - Burst & reposition: six shots per rep, then at least 0.9 m of lateral displacement before the next target.
 
 Peeking starts behind a wall with a common-angle pre-aim. Its target remains shootable for one second after the first shot by default, adjustable from 0.5 to 10 seconds in Settings. Headshots do not end the rep; accurate-shot totals update live until the timer advances to the next angle. Pausing freezes the timer. Precision/burst practice and challenge exposure limits remain 8/1.5 seconds from head visibility. The coach measures reveal-to-shot time, speed at firing, opposite-key braking, head alignment at the stop, angular aim error and mouse correction. Appropriate off-angle correction is not penalized as unnecessary movement. Feedback is retained in Session history. These are training heuristics, not measured FACEIT-rank benchmarks. Peeking and repositioning require a keyboard; mobile tap-to-shoot remains available for the other drills.
@@ -39,7 +39,9 @@ The three spray modes show the active primary's impact pattern on the left backs
 
 First-time visitors receive a dismissible animated Settings hint for sensitivity, crosshair and audio. "Donate unwanted CS2 skins" is in the top header beside Settings.
 
-Each completed drill rep shows a short verdict below the crosshair, with a targeted tip after three consecutive matching mistakes. "Settled shots" measures movement readiness; "Accurate shots" counts target hits made while settled. Old history without that intersection displays an unknown accurate-hit count instead of inventing one.
+Each completed drill rep shows a short verdict below the crosshair, with targeted tips for repeated mistakes. Stationary-only counterstrafe attempts and excess mouse correction receive immediate tips. Common angles favor movement-led pre-aim; unexpected positions still need deliberate mouse correction. Peeking shows a left/right arrow until the exposed head has a clear firing lane. "Settled shots" measures movement readiness; "Accurate shots" counts target hits made while settled. Old history without that intersection displays an unknown accurate-hit count instead of inventing one.
+
+Practice spread defaults ON, including movement and accumulated firing inaccuracy. Saved OFF choices are preserved and show a one-click enable button in the range. Bullet impact size is adjustable from 0.5x to 4x in Settings (default 1.5x), including already-fired marks, without moving their physical coordinates.
 
 ## Architecture
 
@@ -49,6 +51,7 @@ For a data engineer: React is the view layer, TypeScript supplies static contrac
 - `src/range/drills.ts`, `drill-scene.ts`, `DrillPanel.tsx`: scenario geometry, coaching evidence and review UI.
 - `src/range/equipment.ts`, `equipment-data.json`: loadout slots and extracted sidearm/knife parameters.
 - `src/range/recoil.ts`: deterministic seed table and angular recoil integration.
+- `src/range/ballistics.ts`: persistent punch, recoil-index recovery and accuracy penalties.
 - `src/range/engine.ts`: cameras, GLB assets, animation, input, ray intersection and feedback.
 - `src/range/viewmodel.ts`, `spray-demonstration.ts`: responsive weapon projection and the world-fixed pattern display.
 - `src/range/RangeApp.tsx`: UI, settings, history and replay.
@@ -63,9 +66,9 @@ Targets preserve their native 1.822 m rifle-idle dimensions. The scale audit cor
 
 Weapon definitions come from installed CS2 build 2000908. The seed generator and recoil recurrence were inspected in that build's offline client binary; every entry of all 17 recoil tables is tested against independent machine-code emulation. The active trainer no longer uses mouse-macro-derived curves. New game builds require revalidating the math and its provenance before updating the bundled snapshot.
 
-**This is not a bit-for-bit CS2 engine reproduction.** Practice bursts reset immediately, without the old artificial reload delay. Partial-burst native recoil-index recovery is not simulated. Browser Euler interpolation, spread RNG/accumulated firing inaccuracy, collision hulls, subtick movement, animation blending and the audio mixer still differ. See [RESEARCH.md](RESEARCH.md) for evidence and limitations.
+**This is not a bit-for-bit CS2 engine reproduction.** Recoil index, punch and accumulated firing inaccuracy now survive trigger release and recover using formulas inspected in the installed client. Only the weapon cycle limits consecutive shots, without an artificial reload delay. Browser Euler integration, recovery update timing, spread RNG, collision hulls, subtick movement, animation blending and the audio mixer still differ. See [RESEARCH.md](RESEARCH.md) for evidence and limitations.
 
-The USP-S uses native magazine, cadence, movement and cone parameters, but simplified firing-penalty recovery and no native pistol aim-punch state machine. The knife has a short-range practice swing, not native melee damage, backstabs or inspection animations. Its finish is authored here, not an extracted Gamma Doppler paint kit. All modes respect the same Practice spread setting and separately grade movement so a lucky moving hit is not a clean rep.
+The USP-S uses native magazine, cadence, movement, cone and recovery parameters with the shared persistent punch model; it is not a complete native pistol state machine. The knife has a short-range practice swing, not native melee damage, backstabs or inspection animations. Its finish is authored here, not an extracted Gamma Doppler paint kit. All modes respect the same Practice spread setting and separately grade movement so a lucky moving hit is not a clean rep.
 
 ## Verify And Build
 
@@ -80,6 +83,18 @@ npm audit
 Browser tests cover Chromium, Firefox, WebKit, mobile viewports and optional isolated Brave/Opera GX installations. Windows Playwright WebKit currently loses visible WebGL output after a canvas resize, also reproduced with a standalone canvas without this app. The resized-canvas visual assertion is an explicit expected failure only on Windows WebKit; framebuffer and interaction checks still run. This does not verify Safari rendering on Apple hardware. Physical phone behavior still requires device testing.
 
 Cloudflare Pages serves `dist`; `npm run deploy:cloudflare` explicitly publishes it. Building or pushing this repository does not deploy to [spraylab.pages.dev](https://spraylab.pages.dev/).
+
+To update the existing Pages project from this asset-complete Windows workspace, run in Command Prompt:
+
+```bat
+cd /d C:\Users\Ham\Desktop\cs2-spray-trainer-mvp
+npm run assets:check
+npm run check
+npx wrangler login
+npx wrangler pages deploy dist --project-name=spraylab --branch=main
+```
+
+Stop if either check fails. Skip login when already authenticated. `main` must match the project's configured production branch; otherwise use that branch to avoid creating only a preview. This uploads the built folder, not the source ZIP. See [Cloudflare's Direct Upload instructions](https://developers.cloudflare.com/pages/get-started/direct-upload/).
 
 On Windows, `tools/package-release.ps1 -Output <absolute-path.zip>` packages tracked source. Add `-IncludeGameAssets` for a local test ZIP containing the converted runtime assets. Both are lean archives without node_modules, Git history, research scratch files or agent notes; run `npm ci` after extraction. Valve-inclusive archives are not uploaded to GitHub by this tool.
 
