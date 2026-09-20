@@ -2,19 +2,31 @@ import {it,expect} from 'vitest';
 import {createScenario,DrillCoach,type DrillMetrics,type DrillMode} from './drills';
 import {makeRepFeedback} from './rep-feedback';
 
+it('immediately coaches stationary-only reps and excess mouse correction, with movement scores',()=>{
+  const base=new DrillCoach('precision',createScenario('precision',0,'common',()=>.9),0).result();
+  const stationary={...base,shots:1,hits:1,heads:1,settledShots:1,entrySpeedRatio:0,movementScore:0};
+  const feedback=makeRepFeedback('precision',stationary,[]);
+  expect(feedback.message).toContain('Move, then counter-strafe');expect(feedback.message).toContain('0/100');
+  expect(feedback.tip).toBeTruthy();
+  const mouse={...stationary,entrySpeedRatio:1,counterStrafed:true,excessCorrection:3,passed:true};
+  expect(makeRepFeedback('precision',mouse,[]).message).toContain('Less mouse');
+  expect(makeRepFeedback('precision',mouse,[]).tip).toContain('unexpected');
+});
+
 it('gives an immediate verdict and adds a targeted tip only after three consecutive matching issues',()=>{
   const base=new DrillCoach('peek',createScenario('peek',0,'common',()=>.9),0).result();
   const moving={...base,shots:6,hits:2,entryError:1,settledShots:0};
   expect(makeRepFeedback('peek',moving,[])).toEqual({message:'Stop before firing',passed:false,tip:undefined});
   expect(makeRepFeedback('peek',moving,[moving,moving]).tip).toContain('opposite key');
-  expect(makeRepFeedback('peek',moving,[{...moving,passed:true},moving]).tip).toBeUndefined();
-  expect(makeRepFeedback('peek',{...moving,passed:true},[moving,moving]).message).toBe('Clean rep');
+  const clean={...moving,passed:true,settledShots:6,counterStrafed:true};
+  expect(makeRepFeedback('peek',moving,[clean,moving]).tip).toBeUndefined();
+  expect(makeRepFeedback('peek',clean,[moving,moving]).message).toBe('Clean rep');
 });
 
 it('does not diagnose a stationary miss as movement inaccuracy',()=>{
   const base=new DrillCoach('precision',createScenario('precision',0,'common',()=>.9),0).result();
-  const miss={...base,shots:1,hits:0,settledShots:1,accurateShots:0};
-  expect(makeRepFeedback('precision',miss,[miss,miss]).message).toBe('Settle on the target');
+  const miss={...base,shots:1,hits:0,settledShots:1,accurateShots:0,entrySpeedRatio:1,counterStrafed:true};
+  expect(makeRepFeedback('precision',miss,[miss,miss]).message).toContain('Settle on the target');
 });
 
 it.each<[DrillMode,Partial<DrillMetrics>,string]>([

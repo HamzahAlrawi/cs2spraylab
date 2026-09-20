@@ -78,11 +78,12 @@ describe('wall spray demonstration', () => {
   });
   it.each(weaponIds)('the %s mouse path cancels every simulated recoil shot at different sensitivities', weapon => {
     for (const invertY of [false, true]) for (const sensitivity of [.5, 2]) {
-      const sim = new Simulation({...defaults, weapon, invertY, sensitivity});
+      const sim = new Simulation({...defaults, weapon, invertY, sensitivity,spread:false});
       const rays: Vec[] = []; sim.onShot = shot => rays.push(shot.direction); sim.start();
       let previous = {x: 0, y: 0};
       for (let i = 1; i < sim.pattern.length; i++) {
-        const next = mouseCompensation(sim.pattern[i], invertY);
+        sim.recovery.advance(sim.stats.cycle);
+        const next = mouseCompensation(sim.recovery.recoil, invertY);
         sim.aim((next.x - previous.x) / (.022 * sensitivity), (next.y - previous.y) / (.022 * sensitivity));
         sim.fire(); previous = next;
       }

@@ -47,11 +47,20 @@ python tools/verify-native-recoil.py
 
 The verifier refuses different DLL hashes. --write regenerates numeric fixtures only after hash validation. The complete angular punch recurrence has been inspected, but is not independently emulated end-to-end.
 
-### Recovery Versus Independent Attempts
+### Persistent Recovery (2026-09-20)
 
-Within an uninterrupted spray, the generated profile includes the recovered punch recurrence between shots. This is different from preserving weapon recoil index between interrupted bursts.
+Trigger release now ends a recorded attempt without resetting weapon punch, punch velocity, floating recoil index or accumulated firing inaccuracy. A deliberate reset, weapon/profile configuration change or new drill rep initializes a fresh exercise; equipment switching retains each weapon's state. Pausing freezes simulation time.
 
-**Partial-burst recoil-index recovery is not implemented.** Each release/completed burst ends an independent attempt and resets the trajectory. A 400 ms pause is not advertised as native recovery. The inaccurate previous decay behavior and artificial reload-length lockout are removed. Only the weapon's firing interval limits the next shot.
+Read-only inspection of the same hash-pinned client found:
+
+- RVA 0x802268: recoil index starts recovering after the last shot plus weapon cycle plus 1/64 second. It decays by `10^(-2*dt)` and becomes zero at or below 0.1. The per-shot increment is at 0x7e5ba9. A 400 ms pause after ten bullets therefore retains index and punch, rather than restarting the spray.
+- RVA 0x7e7e30: recovery time interpolates initial/final weapon values using the floored recoil index and extracted transition thresholds. Crouch has separate values; airborne recovery uses four times the initial crouch time.
+- RVA 0x8021e4: excess accuracy penalty recovers as `baseline + (penalty-baseline)*10^(-dt/recoveryTime)`. Higher baselines apply immediately. Baseline is stand/crouch, or stand plus jump inaccuracy in air. The native fixed accuracy step is 1/64 second; this trainer evaluates the continuous equivalent at 1/128 second alongside movement. Transition-boundary timing can differ.
+- RVA 0x7e5b37: firing inaccuracy is added after calculating a shot. Rapid taps therefore accumulate error independently of aim punch. This matches the distinction in [Valve's accuracy-recovery explanation](https://blog.counter-strike.net/second-shot/), whose historical weapon values are not used as current data.
+- RVA 0x7e71c6: movement penalty remaps speed from 34% to 95% of the weapon cap, clamps to 0..1, and raises it to 0.25 for running before multiplying by movement inaccuracy. The walking branch bypasses that exponent. The walking-state mapping is inferred from the inspected branch, not independently schema-validated. Speed affects accuracy; we do not invent an accuracy-dependent movement slowdown.
+- Jump-velocity inaccuracy uses separate initial/apex values, interpolated by `(sqrt(abs(vz))/sqrt(301.993)-0.25)/0.75` and clamped to 0..2 times the initial value. It is added to the airborne baseline, not substituted for it.
+
+`ballistics.ts` owns persistent state. NOW/NEXT cues use predicted live punch, while wall diagrams remain full-auto shape examples. Measured full-auto imports cannot establish recovery; their impulses are fitted to the supplied curve, then use the inspected damping model. That interrupted behavior is inferred, not a measured game capture. All primary tables still pass their independent native-emulation fixtures. The new recovery formulas have regression tests but no end-to-end native shot-capture comparison.
 
 The native client interpolates cached orientations as quaternions; the browser currently interpolates Euler angles. Floating-point transcendental functions and fixed-step shot scheduling can also differ. A native full-magazine impact capture is still needed to establish a measured error bound.
 
@@ -79,7 +88,7 @@ Values below use the selected primary/unscoped automatic mode, except M4A1-S use
 | Negev | 150 | 0.075 | 150 | 57966 | 20 |
 | CZ75-Auto | 12 | 0.1 | 240 | 9788 | 31 |
 
-Damage, range falloff, armor ratio, headshot multiplier, stand/crouch/move/fire/jump/land inaccuracy and recovery transitions are also retained in game-data.json. They are not all simulated. Optional spread uses standing/crouching/movement cones plus spread, but not accumulated firing inaccuracy, native spread RNG, Negev's early-shot spread transformation or airborne accuracy. Spread defaults OFF and is labeled approximate.
+Damage, range falloff, armor ratio, headshot multiplier, stand/crouch/move/fire/jump/land inaccuracy and recovery transitions are also retained in game-data.json. They are not all simulated. Practice spread now defaults ON and includes accumulated firing, stance, running/walking and airborne penalties. Explicit saved OFF preferences are preserved with an in-range enable button. Native spread RNG, Negev's early-shot spread transformation and landing/stamina effects remain unimplemented; random cone sampling is approximate.
 
 ## Scale, Movement And Targets
 

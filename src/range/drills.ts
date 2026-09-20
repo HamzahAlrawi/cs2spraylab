@@ -54,6 +54,20 @@ export function headVisible(origin: Vec, target: Vec, covers: Cover[]) {
   return [-.075, 0, .075].some(x => !segmentBlocked(origin, {x: target.x+x, y: target.y+HEAD_HEIGHT, z: target.z}, covers));
 }
 
+export function peekDirection(origin:Vec,yaw:number,s:Scenario):number {
+  const head=exposedHead(s);
+  const clear=(p:Vec)=>[-.02,0,.02].every(x=>!segmentBlocked(p,{...head,x:head.x+x},s.covers));
+  if(clear(origin))return 0;
+  const positions=[{...origin},{...origin}];
+  for(let step=0;step<60;step++)for(const [index,side] of [-1,1].entries()){
+    const from=positions[index],next={...from,x:from.x+side*Math.cos(yaw)*.1,z:from.z-side*Math.sin(yaw)*.1};
+    if(Math.abs(next.x)>11.3 || next.z< -97.8)continue;
+    positions[index]=moveWithCover(from,next,s.covers,0,1.83);
+    if(clear(positions[index]))return side;
+  }
+  return s.side;
+}
+
 // Resolve each horizontal axis against the same boxes used for occlusion/rendering.
 // Player hull: 32 Source units wide; substeps keep it from tunnelling through a wall.
 export function moveWithCover(from: Vec, next: Vec, covers: Cover[], feet: number, height: number): Vec {
@@ -97,7 +111,7 @@ export function createScenario(mode: DrillMode, round: number, selection: PeekSc
     covers.push({id:'target-cover',center:{x,y:height/2,z:target.z+depth},size:{x:2.1,y:height,z:thickness}});
   }
   if (target.y > 0) covers.push({id: 'platform', center: {x: target.x, y: target.y/2, z: target.z}, size: {x: 2, y: target.y, z: 1.6}});
-  return {name: mode === 'peek' ? `${kind === 'off-angle' ? 'Off-angle' : kind === 'deep' ? 'Deep hold' : kind === 'elevated' ? 'Elevated hold' : 'Common angle'} / ${side > 0 ? 'right' : 'left'}` : mode === 'precision' ? 'First-shot precision' : 'Burst & reposition', kind, target, spawn, ...angles, side, covered, exposure, covers};
+  return {name: mode === 'peek' ? `${kind === 'off-angle' ? 'Off-angle' : kind === 'deep' ? 'Deep hold' : kind === 'elevated' ? 'Elevated hold' : 'Common angle'} / ${side > 0 ? 'right' : 'left'}` : mode === 'precision' ? 'Counterstrafing practice' : 'Burst & reposition', kind, target, spawn, ...angles, side, covered, exposure, covers};
 }
 
 export type DrillMetrics = {
@@ -106,6 +120,7 @@ export type DrillMetrics = {
   entryError: number | null; shotError: number; stopError: number | null;
   mouseCorrection: number; excessCorrection: number; exposureMs: number | null; stopToShotMs: number | null;
   diagonal: boolean; feedback: string; verdict: string;
+  peakSpeed?:number; movementScore?:number; entrySpeedRatio?:number;
 };
 export type CoachSample = {time: number; position: Vec; yaw: number; pitch: number; velocity: {x:number;z:number}; speedCap: number; input: Input; feet: number};
 export function readDrillMetrics(raw: unknown): DrillMetrics | undefined {
@@ -117,6 +132,8 @@ export function readDrillMetrics(raw: unknown): DrillMetrics | undefined {
   if(!['entryError','stopError','exposureMs','stopToShotMs'].every(k=>m[k]===null||typeof m[k]==='number'&&Number.isFinite(m[k])&&(m[k] as number)>=0))return undefined;
   if(m.settledShots!==undefined && (typeof m.settledShots!=='number'||!Number.isFinite(m.settledShots)||m.settledShots<0||m.settledShots>(m.shots as number)))return undefined;
   if(m.accuracyVerified!==undefined && typeof m.accuracyVerified!=='boolean')return undefined;
+  for(const key of ['peakSpeed','movementScore','entrySpeedRatio'])if(m[key]!==undefined&&(typeof m[key]!=='number'||!Number.isFinite(m[key])||(m[key] as number)<0))return undefined;
+  if(typeof m.movementScore==='number'&&m.movementScore>100)return undefined;
   if((m.hits as number)>(m.shots as number)||(m.heads as number)>(m.hits as number)||(m.accurateShots as number)>(m.shots as number))return undefined;
   if(m.settledShots!==undefined && ((m.accurateShots as number)>(m.hits as number)||(m.accurateShots as number)>m.settledShots))return undefined;
   // Old history recorded movement eligibility, not the intersection of hits and settled shots.
@@ -133,7 +150,7 @@ export class DrillCoach {
   firstShotAt: number | null = null;
   lastPosition: Vec; finished = false;
   constructor(public mode: DrillMode, public scenario: Scenario, public beganAt: number) { this.lastPosition = {...scenario.spawn}; }
-  interruptMovement() { this.wasFast = false; this.stopAt = this.stopError = this.counterAt = null; }
+  interruptMovement() { this.wasFast = false; this.stopAt = this.stopError = this.counterAt = null; this.peakSpeed=0; }
   mouse(degrees: number) { if (this.seenAt !== null && !this.first) this.mouseCorrection += degrees; }
   update(s: CoachSample) {
     if (this.finished) return;
@@ -160,7 +177,11 @@ export class DrillCoach {
       this.firstShotAt = s.time;
       const headAngle = Math.atan2(HEAD_RADIUS, distance(s.position, exposedHead(this.scenario)))/RAD;
       const counterStrafed = this.counterAt !== null && this.stopAt !== null && this.stopAt >= this.counterAt && s.time-this.stopAt <= .35;
+      const entrySpeedRatio=this.peakSpeed/s.speedCap;
+      const stopQuality=bound(1-Math.hypot(s.velocity.x,s.velocity.z)/(s.speedCap*.34),0,1);
+      const movementScore=entrySpeedRatio<.34?0:Math.round(Math.min(this.accurate?100:30,40*bound(entrySpeedRatio/.9,0,1)+40*stopQuality+(counterStrafed?15:0)+(head&&hit?5:hit?2:0)));
       this.first = {scenario:this.scenario.name, covered:this.scenario.covered, passed:false, shots:0,hits:0,heads:0,accurateShots:0,settledShots:0,accuracyVerified:true,
+        peakSpeed:this.peakSpeed/.0254,entrySpeedRatio,movementScore,
         counterStrafed, stoppedOnTarget:this.stopError !== null && this.stopError <= headAngle,
         speedAtShot:Math.hypot(s.velocity.x,s.velocity.z)/.0254, entryError:this.entryError, shotError:this.error, stopError:this.stopError,
         mouseCorrection:this.mouseCorrection, excessCorrection:Math.max(0,this.mouseCorrection-(this.entryError || 0)),
@@ -173,16 +194,17 @@ export class DrillCoach {
     const m: DrillMetrics = {...(this.first || {scenario:this.scenario.name,covered:this.scenario.covered,counterStrafed:false,stoppedOnTarget:false,speedAtShot:0,entryError:this.entryError,shotError:this.error,stopError:this.stopError,mouseCorrection:this.mouseCorrection,excessCorrection:0,exposureMs:null,stopToShotMs:null,diagonal:this.diagonal}),
       shots:this.shots,hits:this.hits,heads:this.heads,accurateShots:this.accurateShots,settledShots:this.settledShots,accuracyVerified:true,passed:false,feedback:'',verdict:''};
     const settled = this.shots>0 && this.settledShots===this.shots;
-    m.passed = !timeout && settled && (this.mode === 'burst' ? this.hits>=Math.ceil(REPOSITION_SHOTS*2/3) : this.heads>0) && (this.mode !== 'peek' || m.counterStrafed && this.travelled>.4);
+    m.passed = !timeout && settled && (this.mode === 'burst' ? this.hits>=Math.ceil(REPOSITION_SHOTS*2/3) : this.heads>0) && (this.mode === 'burst' || m.counterStrafed && this.travelled>.4 && (this.mode!=='precision'||(m.entrySpeedRatio ?? 0)>=.65));
     if (timeout) { m.verdict='Angle held too long'; m.feedback='Clear the angle, brake, then commit to the shot. Reset behind cover for the next rep.'; }
     else if (this.mode==='peek' && m.entryError===null) {m.verdict='Target still behind cover';m.feedback='Clear the edge before committing the shot. Use the strafe to expose the angle, then brake.';}
+    else if (this.mode==='precision' && (m.entrySpeedRatio ?? 0)<.65) {m.verdict='Build speed before the shot';m.feedback='Strafe to at least 65% running speed, then counter-strafe. Standing still for the whole rep does not train braking.';}
     else if (!settled) { m.verdict='Shot before stopping'; m.feedback='Release the strafe key, tap the opposite key, and shoot as your speed settles.'; }
-    else if (this.mode==='peek' && !m.counterStrafed) { m.verdict='Stopped without a clean counter-strafe'; m.feedback='Build lateral speed, then tap the opposite direction. Coasting to a stop is accurate but slower.'; }
+    else if ((this.mode==='peek'||this.mode==='precision') && !m.counterStrafed) { m.verdict='Stopped without a clean counter-strafe'; m.feedback='Build lateral speed, then tap the opposite direction. Coasting to a stop is accurate but slower.'; }
     else if (m.diagonal && this.mode!=='precision') { m.verdict='Diagonal entry'; m.feedback='Set your path before the corner. A single lateral direction is easier to brake consistently.'; }
     else if (!this.hits) { m.verdict='Aim missed'; m.feedback='Set head height before exposing the angle. Correct the remaining error once the target is visible.'; }
     else if (!this.heads && this.mode!=='burst') { m.verdict='Body hit'; m.feedback='Raise the initial pre-aim to head height; let the strafe bring the head onto the crosshair.'; }
     else if (this.mode==='peek' && !m.stoppedOnTarget) { m.verdict=m.passed?'Clean stop, aim still settling':'Aim after the stop'; m.feedback=this.scenario.kind==='off-angle'?'The off-angle needs a deliberate correction. Keep the clean stop and settle on the head before firing.':'Keep the same stopping timing; prepare the common angle earlier so the crosshair is on the head as you brake.'; }
-    else if (m.excessCorrection>2) { m.verdict=m.passed?'Hit with extra correction':'Over-corrected'; m.feedback='The correction travelled farther than the initial error. Make one controlled adjustment and settle.'; }
+    else if (m.excessCorrection>2) { m.verdict=m.passed?'Hit with extra correction':'Over-corrected'; m.feedback='Pre-aim at head height, then let your strafe finish the alignment. Use a small mouse correction for an unexpected angle; do not force zero mouse movement.'; }
     else { m.verdict=m.passed?'Clean rep':'Keep refining'; m.feedback=this.mode==='burst'?'Move laterally before the next burst. Stop again before firing.':this.scenario.kind==='off-angle'?'Good stop and deliberate correction for the unexpected position.':'Good preparation and shot timing. Repeat the same movement without rushing the trigger.'; }
     return m;
   }

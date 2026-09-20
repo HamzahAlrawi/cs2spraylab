@@ -3,7 +3,7 @@ import { nativeRecoilPattern } from './recoil';
 
 export type Weapon = keyof typeof data.weapons;
 export type Mode = 'guided' | 'spray' | 'transfer' | 'peek' | 'precision' | 'burst';
-export const modeNames: Record<Mode, string> = { guided: 'Guided spray', spray: 'Free spray', transfer: 'Spray transfer', peek: 'Peeking practice', precision: 'First-shot precision', burst: 'Burst & reposition' };
+export const modeNames: Record<Mode, string> = { guided: 'Guided spray', spray: 'Free spray', transfer: 'Spray transfer', peek: 'Peeking practice', precision: 'Counterstrafing practice', burst: 'Burst & reposition' };
 export const historyModeNames = { ...modeNames, tracking: 'Target tracking (retired)' };
 export function migrateMode(mode: unknown): Mode {
   return typeof mode === 'string' && Object.prototype.hasOwnProperty.call(modeNames, mode) ? mode as Mode : 'guided';
@@ -16,6 +16,7 @@ export type Settings = {
   showImpactPattern: boolean; showMousePath: boolean;
   peekScenario: 'mixed' | 'common' | 'deep' | 'off-angle' | 'elevated';
   peekDuration: number;
+  impactSize: number;
   drillPace: 'practice' | 'challenge';
   aspect: 'native' | '16:9' | '16:10' | '4:3' | '5:4';
   crosshair: Crosshair;
@@ -26,7 +27,7 @@ export const gameData = data;
 export const defaults: Settings = {
   weapon: 'ak47', mode: 'guided', sensitivity: 1, dpi: 800, invertY: false,
   moving: false, targetSpeed: 'rifle', follow: false, volume: 0.2,
-  spread: false, burst: 0, quality: 'auto',
+  spread: true, burst: 0, quality: 'auto', impactSize: 1.5,
   showImpactPattern: true, showMousePath: true,
   peekScenario: 'mixed', peekDuration: 1, drillPace: 'practice',
   aspect: 'native',
@@ -49,7 +50,8 @@ export function sanitizeSettings(raw: unknown): Settings {
     sensitivity: numeric(s.sensitivity, 1, .05, 10), dpi: numeric(s.dpi, 800, 100, 32000),
     invertY: s.invertY === true,
     moving: s.moving === true, targetSpeed: ['rifle', 'smg', 'knife'].includes(s.targetSpeed!) ? s.targetSpeed! : 'rifle',
-    follow: s.follow === true, volume: numeric(s.volume, .2, 0, 1), spread: s.spread === true,
+    follow: s.follow === true, volume: numeric(s.volume, .2, 0, 1), spread: s.spread !== false,
+    impactSize: numeric(s.impactSize,1.5,.5,4),
     showImpactPattern: s.showImpactPattern !== false, showMousePath: s.showMousePath !== false,
     peekScenario: ['mixed','common','deep','off-angle','elevated'].includes(s.peekScenario!) ? s.peekScenario! : 'mixed',
     peekDuration: numeric(s.peekDuration,1,.5,10),

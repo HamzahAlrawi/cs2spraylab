@@ -1,10 +1,24 @@
 import {describe,it,expect,vi} from 'vitest';
-import {angleTo,createScenario,DrillCoach,headVisible,isDrillMode,moveWithCover,PEEK_WALLS,RANGE_WALLS,segmentBlocked,HEAD_HEIGHT,readDrillMetrics,exposedHead,type CoachSample} from './drills';
+import {angleTo,createScenario,DrillCoach,headVisible,isDrillMode,moveWithCover,PEEK_WALLS,RANGE_WALLS,segmentBlocked,HEAD_HEIGHT,readDrillMetrics,exposedHead,peekDirection,type CoachSample} from './drills';
 import {Simulation,STEP,UNIT,idleInput} from './simulation';
 import {defaults,sanitizeSettings} from './config';
 
 function seeded(seed=943) {return ()=>{seed=(Math.imul(seed,1664525)+1013904223)>>>0;return seed/4294967296;};}
 describe('Peeking geometry',()=>{
+  it('points toward a hittable lane on both sides and hides only after the exposed head is clear',()=>{
+    const random=seeded();
+    for(let i=0;i<1000;i++){
+      const s=createScenario('peek',i,'mixed',random);
+      expect(peekDirection(s.spawn,s.yaw,s)).toBe(s.side);
+      let lane={...s.spawn,x:s.spawn.x+s.side*2.05};
+      for(let step=0;step<60;step++){
+        const side=peekDirection(lane,s.yaw,s);if(!side)break;
+        lane=moveWithCover(lane,{...lane,x:lane.x+side*Math.cos(s.yaw)*.1,z:lane.z-side*Math.sin(s.yaw)*.1},s.covers,0,1.83);
+      }
+      expect(peekDirection(lane,s.yaw,s),`scenario ${i}`).toBe(0);
+      expect(peekDirection(s.spawn,s.yaw+Math.PI,s)).toBe(-s.side);
+    }
+  });
   it('adds usable cover to ordinary modes without blocking the central and transfer firing lanes',()=>{
     const sim=new Simulation({...defaults});
     for(const x of [0,-3.25,3.25])expect(segmentBlocked(sim.position,{x,y:HEAD_HEIGHT,z:-100},RANGE_WALLS)).toBe(false);
@@ -64,6 +78,21 @@ function coachFixture(){
   return{scenario,coach,sample};
 }
 describe('Evidence-based drill feedback',()=>{
+  it('scores entry speed and braking much more strongly than a lucky hit',()=>{
+    const score=(entry:number,shot:number,counter:boolean)=>{
+      const {scenario,sample}=coachFixture();const coach=new DrillCoach('precision',scenario,0);
+      sample.position.x+=2.1;sample.velocity.x=sample.speedCap*entry;sample.input.side=1;sample.time=.3;coach.update(sample);
+      sample.input.side=counter?-1:0;sample.time=.4;coach.update(sample);
+      sample.velocity.x=sample.speedCap*shot;sample.time=.48;const m=coach.record(sample,true,true);
+      return m;
+    };
+    expect(score(0,0,false).movementScore).toBe(0);
+    expect(score(1,0,true).movementScore).toBe(100);
+    expect(score(1,1,false).movementScore).toBeLessThanOrEqual(30);
+    expect(score(1,0,false).movementScore).toBeLessThan(score(1,0,true).movementScore!);
+    expect(score(.4,0,true).passed).toBe(false);
+    expect(score(1,.1,true).movementScore).toBeLessThan(score(1,0,true).movementScore!);
+  });
   it('counts accurate hits separately from stationary misses and moving hits',()=>{
     const {coach,sample}=coachFixture();sample.position.x+=2.2;
     coach.record(sample,false,false);
@@ -133,7 +162,7 @@ describe('Drill lifecycle',()=>{
     const results=vi.fn();sim.onResult=results;
     sim.onShot=s=>sim.samples.push({x:0,y:0,hit:true,head:true,bullet:s.index+1});
     sim.start(true);expect(sim.drill?.shots).toBe(1);expect(results).toHaveBeenCalledOnce();
-    expect(sim.latest?.drill?.passed).toBe(true);
+    expect(sim.latest?.drill?.passed).toBe(false);expect(sim.latest?.drill?.movementScore).toBe(0);
     sim.advance(.25);expect(sim.start()).toBe(false);
     for(let i=0;i<8;i++)sim.advance(.2);
     expect(sim.drillRound).toBe(2);expect(sim.drill?.finished).toBe(false);
