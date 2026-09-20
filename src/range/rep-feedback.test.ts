@@ -1,5 +1,5 @@
 import {it,expect} from 'vitest';
-import {createScenario,DrillCoach,type DrillMetrics,type DrillMode} from './drills';
+import {createScenario,DrillCoach,EXCESS_MOUSE_LIMIT,type DrillMetrics,type DrillMode} from './drills';
 import {makeRepFeedback} from './rep-feedback';
 
 it('immediately coaches stationary-only reps and excess mouse correction, with movement scores',()=>{
@@ -11,6 +11,14 @@ it('immediately coaches stationary-only reps and excess mouse correction, with m
   const mouse={...stationary,entrySpeedRatio:1,counterStrafed:true,excessCorrection:3,passed:true};
   expect(makeRepFeedback('precision',mouse,[]).message).toContain('Less mouse');
   expect(makeRepFeedback('precision',mouse,[]).tip).toContain('unexpected');
+});
+
+it('allows twenty percent more excess mouse movement before coaching it',()=>{
+  const base=new DrillCoach('peek',createScenario('peek',0,'common',()=>.9),0).result();
+  const metrics={...base,shots:1,hits:1,heads:1,settledShots:1,entryError:1,counterStrafed:true,passed:true};
+  expect(EXCESS_MOUSE_LIMIT).toBe(2.4);
+  expect(makeRepFeedback('peek',{...metrics,excessCorrection:2.4},[]).message).toBe('Clean rep');
+  expect(makeRepFeedback('peek',{...metrics,excessCorrection:2.401},[]).message).toBe('Less mouse, more pre-aim');
 });
 
 it('gives an immediate verdict and adds a targeted tip only after three consecutive matching issues',()=>{

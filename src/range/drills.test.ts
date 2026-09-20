@@ -20,7 +20,7 @@ describe('Peeking geometry',()=>{
     }
   });
   it('adds usable cover to ordinary modes without blocking the central and transfer firing lanes',()=>{
-    const sim=new Simulation({...defaults});
+    const sim=new Simulation({...defaults,mode:'guided'});
     for(const x of [0,-3.25,3.25])expect(segmentBlocked(sim.position,{x,y:HEAD_HEIGHT,z:-100},RANGE_WALLS)).toBe(false);
     const cover=RANGE_WALLS[1];
     sim.position.x=cover.center.x;sim.active=true;sim.input.forward=1;
@@ -217,7 +217,7 @@ describe('Drill lifecycle',()=>{
     expect(sanitizeSettings({peekDuration:4.25}).peekDuration).toBe(4.25);
   });
   it('restores the normal firing line when leaving the drill',()=>{
-    const sim=new Simulation({...defaults,mode:'peek'});sim.configure(defaults);
+    const sim=new Simulation({...defaults,mode:'peek'});sim.configure({...defaults,mode:'guided'});
     expect(sim.drill).toBeUndefined();expect(sim.position.z).toBe(-88);expect(sim.position.x).toBe(0);
     expect(isDrillMode('tracking')).toBe(false);
   });

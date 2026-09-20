@@ -6,7 +6,8 @@ export type Mode = 'guided' | 'spray' | 'transfer' | 'peek' | 'precision' | 'bur
 export const modeNames: Record<Mode, string> = { guided: 'Guided spray', spray: 'Free spray', transfer: 'Spray transfer', peek: 'Peeking practice', precision: 'Counterstrafing practice', burst: 'Burst & reposition' };
 export const historyModeNames = { ...modeNames, tracking: 'Target tracking (retired)' };
 export function migrateMode(mode: unknown): Mode {
-  return typeof mode === 'string' && Object.prototype.hasOwnProperty.call(modeNames, mode) ? mode as Mode : 'guided';
+  if(typeof mode==='string'&&['weak','ghost','trace','fade','tracking'].includes(mode))return 'guided';
+  return typeof mode === 'string' && Object.prototype.hasOwnProperty.call(modeNames, mode) ? mode as Mode : 'peek';
 }
 export type Crosshair = { color: string; size: number; gap: number; thickness: number; outline: number; alpha: number; dot: boolean; t: boolean; dynamic: boolean };
 export type Settings = {
@@ -25,7 +26,7 @@ export const weaponNames: Record<Weapon, string> = { ak47: 'AK-47', m4a4: 'M4A4'
 export const weaponIds = Object.keys(weaponNames) as Weapon[];
 export const gameData = data;
 export const defaults: Settings = {
-  weapon: 'ak47', mode: 'guided', sensitivity: 1, dpi: 800, invertY: false,
+  weapon: 'ak47', mode: 'peek', sensitivity: 1, dpi: 800, invertY: false,
   moving: false, targetSpeed: 'rifle', follow: false, volume: 0.2,
   spread: true, burst: 0, quality: 'auto', impactSize: 1.5,
   showImpactPattern: true, showMousePath: true,

@@ -1,4 +1,4 @@
-import {REPOSITION_SHOTS,type DrillMetrics,type DrillMode} from './drills';
+import {EXCESS_MOUSE_LIMIT,REPOSITION_SHOTS,type DrillMetrics,type DrillMode} from './drills';
 
 function issue(mode:DrillMode,m:DrillMetrics) {
   if(!m.shots)return 'late';
@@ -6,7 +6,7 @@ function issue(mode:DrillMode,m:DrillMetrics) {
   if(mode==='precision'&&(m.entrySpeedRatio ?? 0)<.65)return 'stationary';
   if(m.settledShots<m.shots)return 'moving';
   if((mode==='peek'||mode==='precision')&&!m.counterStrafed)return 'braking';
-  if(m.excessCorrection>2)return 'mouse';
+  if(m.excessCorrection>EXCESS_MOUSE_LIMIT)return 'mouse';
   if(m.passed)return 'clean';
   if(m.diagonal&&mode!=='precision')return 'diagonal';
   if(!m.hits)return 'aim';

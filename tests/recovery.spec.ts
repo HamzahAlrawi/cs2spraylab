@@ -3,6 +3,7 @@ import {test,expect} from '@playwright/test';
 test('spread defaults on, explicit off is visible, and impact size persists',async({page})=>{
   await page.goto('/');
   await expect(page.getByRole('button',{name:'Enter range',exact:true})).toBeEnabled({timeout:45000});
+  await expect(page.getByLabel('Training mode')).toHaveValue('peek');
   await page.getByRole('button',{name:'Settings',exact:true}).click();
   await expect(page.getByLabel('Practice spread',{exact:true})).toBeChecked();
   await page.getByLabel('Bullet impact size',{exact:true}).fill('3');

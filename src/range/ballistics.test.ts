@@ -79,7 +79,7 @@ describe('Persistent shot state',()=>{
     const random=vi.spyOn(Math,'random').mockReturnValue(.3);
     try{
       const shot=(running:boolean,spread:boolean)=>{
-        const s=new Simulation({...defaults,spread});if(running)s.velocity.x=ak.speed*UNIT;
+        const s=new Simulation({...defaults,mode:'guided',spread});if(running)s.velocity.x=ak.speed*UNIT;
         let result:Shot|undefined;s.onShot=x=>{result=x;};s.start();return result!.direction;
       };
       const idle=shot(false,true),moving=shot(true,true),off=shot(true,false);

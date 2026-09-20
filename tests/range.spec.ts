@@ -57,6 +57,7 @@ test('tap emits exactly a timed five-shot burst, without audio or Pointer Lock',
   });
   await page.goto('/');
   await expect(page.getByRole('button', { name: 'Enter range', exact: true })).toBeEnabled({timeout: 45000});
+  await page.getByLabel('Training mode').selectOption('guided');
   await page.getByRole('button', { name: 'Settings', exact: true }).click();
   await page.getByLabel('Burst length').selectOption('5');
   await page.getByRole('button', { name: 'Done', exact: true }).click();
@@ -154,6 +155,7 @@ test('all weapon viewmodels render distinctly and native shot samples decode', a
 test('guided cues, immediate repeat ammo, visible feedback and project links', async ({ page }) => {
   await page.goto('/');
   await expect(page.getByRole('button', { name: 'Enter range', exact: true })).toBeEnabled({timeout: 45000});
+  await page.getByLabel('Training mode').selectOption('guided');
   await expect(page.locator('.aim-cue.now')).toBeVisible();
   await expect(page.locator('.aim-cue.next')).toBeVisible();
   expect(await page.locator('.aim-cue.now').evaluate(e => getComputedStyle(e).color)).not.toBe(await page.locator('.aim-cue.next').evaluate(e => getComputedStyle(e).color));
@@ -180,6 +182,7 @@ test('walking controls distance, jump changes view and stationary backstop stays
   const errors: string[] = []; page.on('pageerror', e => errors.push(e.message));
   await page.addInitScript(() => Object.defineProperty(HTMLElement.prototype, 'requestPointerLock', { value: undefined }));
   await page.goto('/');
+  await page.getByLabel('Training mode').selectOption('guided');
   await page.getByRole('button', { name: 'Enter range', exact: true }).click();
   await page.keyboard.down('KeyW');
   await expect.poll(async () => parseFloat(await page.locator('.distance-input output').innerText())).toBeLessThan(8);
@@ -258,6 +261,7 @@ test('long-range compensation cues remain fixed-size and player distance persist
   await page.addInitScript(() => Object.defineProperty(HTMLElement.prototype, 'requestPointerLock', { value: undefined }));
   await page.goto('/');
   await expect(page.getByRole('button', { name: 'Enter range', exact: true })).toBeEnabled({timeout: 45000});
+  await page.getByLabel('Training mode').selectOption('guided');
   const nearSize = await page.locator('.aim-cue.now').boundingBox();
   await page.getByRole('button', { name: 'Enter range', exact: true }).click();
   await page.keyboard.down('KeyS');
