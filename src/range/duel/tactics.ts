@@ -381,8 +381,17 @@ export class TacticalBrain {
     }
     if (this.phase === 'setup' && time - this.phaseAt > this.setupWait) this.choosePeek(time);
     const exposure = this.exposurePoint();
+    const informationPeek = this.activePeek === 'shoulder' || this.activePeek === 'jump';
+    const movingFire = this.activePeek === 'run' || this.activePeek === 'ferrari' && !this.stopThisPeek;
+    // Once contact is recognized, a combat swing needs a firing stop even when
+    // its planned waypoint is farther away. Wide swings keep a short commitment.
+    const swingDelay = this.activePeek === 'ferrari' ? .2
+      : this.activePeek === 'wide' || this.activePeek === 'crouchWide' ? .12 : 0;
+    if (this.phase === 'expose' && identified && !informationPeek && !movingFire &&
+      self.ammo > 0 && !self.reloading && time >= Math.max(this.phaseAt, this.readyAt) + swingDelay)
+      this.transition('brake', time);
     if (this.phase === 'expose' && distance(self.position, exposure) < .24) {
-      this.transition(this.activePeek === 'shoulder' || this.activePeek === 'jump' ? 'return' : 'brake', time);
+      this.transition(informationPeek ? 'return' : 'brake', time);
     }
     if (this.phase === 'expose' && time - this.phaseAt > 3) {
       this.forceReposition = true; this.transition('return', time);
@@ -390,9 +399,8 @@ export class TacticalBrain {
     const brakeDelay = this.traits.brakeErrorMs / 1000;
     if (this.phase === 'brake' && time - this.phaseAt >= brakeDelay &&
       (speed < .3 || time - this.phaseAt > .28 + brakeDelay)) this.transition('attack', time);
-    const aimDeadline = visible ? Math.max(this.phaseAt + .65,
-      this.readyAt + this.traits.motorSettlingMs / 1000 + .35) : this.phaseAt + .55;
-    const attackExpired = this.attackFiredAt >= 0 ? time - this.attackFiredAt > this.attackWait : time > aimDeadline;
+    const attackExpired = this.attackFiredAt >= 0 ? time - this.attackFiredAt > this.attackWait
+      : !visible && time - this.phaseAt > .55;
     if (this.phase === 'attack' && (attackExpired || self.ammo === 0)) {
       this.nextBurstAt = time + .2 + this.random() * .15;
       if (self.ammo === 0) this.transition('reload', time);
@@ -403,6 +411,11 @@ export class TacticalBrain {
     }
     if (this.phase === 'microstrafe' && (this.microGoal && distance(self.position, this.microGoal) < .25 ||
       time - this.phaseAt > .65)) this.transition('brake', time);
+    // A short reset can reach nearby cover. If still exposed, contest the duel
+    // instead of silently following a distant retreat waypoint through open space.
+    if (this.phase === 'return' && identified && !informationPeek && !this.forceReposition &&
+      self.ammo > 0 && !self.reloading && time - this.phaseAt > .2)
+      this.transition(speed > .3 ? 'brake' : 'attack', time);
     if (this.phase === 'return' && distance(self.position, this.lane.retreat) < .35) {
       const moveAgain = this.forceReposition || blindFor > 5 || this.peekCount % 2 === 0 || this.random() < .22;
       if (moveAgain) this.chooseLane(self, teammates, time, this.forceReposition);
@@ -471,8 +484,9 @@ export class TacticalBrain {
     const proficiency = this.level === '10+' ? 1 : (Number(this.level) - 1) / 10;
     const lead = identified ? Math.min(.11, time - (this.observation?.time ?? time) +
       this.traits.motorSettlingMs / 2000 * proficiency) : 0;
-    const aimPoint = {...observedAim, x: observedAim.x + this.targetVelocity.x * lead,
-      z: observedAim.z + this.targetVelocity.z * lead};
+    // Own strafing changes the apparent angle too; predict relative motion.
+    const aimPoint = {...observedAim, x: observedAim.x + (this.targetVelocity.x - self.velocity.x) * lead,
+      z: observedAim.z + (this.targetVelocity.z - self.velocity.z) * lead};
     if (identified) {
       if (time >= this.driftAt) {
         const amplitude = this.traits.endpointErrorDegrees * (.55 - proficiency * .32) / this.accuracy * DEG;
@@ -509,12 +523,13 @@ export class TacticalBrain {
     // Gate the first shot against the visible target, not the leading motor setpoint.
     const aimError = Math.hypot(difference(directYaw, nextYaw - recoil.yaw * DEG),
       directPitch - (self.pitch + pitchDelta + recoil.pitch * DEG));
-    const movingFire = this.activePeek === 'run' || this.activePeek === 'ferrari' && !this.stopThisPeek;
     const firingPhase = this.phase === 'attack' || this.phase === 'expose' &&
       (this.activePeek === 'prefire' || movingFire);
     const prefire = this.activePeek === 'prefire' && !!remembered && memoryAge < 2;
+    const aimTolerance = Math.max((style.fireTolerance + this.traits.endpointErrorDegrees * .25) * DEG,
+      Math.atan2((this.bodyAim || finishSpray) && target?.bodyPoint ? .2 : .12, distance(observedAim, self.position)));
     const fire = time >= this.nextBurstAt && firingPhase && (identified && time > this.readyAt + this.traits.motorSettlingMs / 1000 || prefire) &&
-      (this.attackFiredAt >= 0 || aimError < (style.fireTolerance + this.traits.endpointErrorDegrees * .25) * DEG) &&
+      (this.attackFiredAt >= 0 || aimError < aimTolerance) &&
       (movingFire || !this.stopThisPeek || speed < gameData.weapons[this.weapon].speed * UNIT * .2);
     const press = fire && time >= this.nextShotAt;
     if (fire && this.phase === 'attack' && this.attackFiredAt < 0) this.attackFiredAt = time;
