@@ -122,10 +122,14 @@ test('Duel remains playable on a mobile landscape viewport', async ({page}, info
   await page.getByRole('button', {name: 'Enter duel'}).click();
   await expect(page.getByRole('button', {name: 'Pause duel'})).toBeVisible();
   await expect(page.locator('.settings-hint')).toHaveCount(0);
-  await page.touchscreen.tap(bounds.x + bounds.width * .5, bounds.y + bounds.height * .5);
+  await canvas.tap();
   await expect.poll(async () => Number((await page.locator('.duel-ammo strong').innerText()).split('/')[0].trim()),
     {timeout: 5000}).toBeLessThan(30);
   await page.screenshot({path: `test-results/${info.project.name}-duel-landscape.png`});
+  await page.getByRole('button', {name: 'Equip USP-S', exact: true}).tap();
+  await expect(page.getByRole('button', {name: 'Equip USP-S', exact: true})).toHaveAttribute('aria-pressed', 'true');
+  await page.getByRole('button', {name: 'Pause duel', exact: true}).tap();
+  await expect(page.getByRole('button', {name: 'Resume duel', exact: true})).toBeVisible();
 });
 
 test('Duel follow recoil uses the same live crosshair setting as the range', async ({page}, info) => {

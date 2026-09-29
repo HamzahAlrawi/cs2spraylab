@@ -18,6 +18,7 @@ export type ActorKinematics = {
   duckAmount?: number;
   jumpHeld: boolean;
   grounded?: boolean;
+  velocityModifier?: number;
 };
 export type ResolveMove = (from: Vec, desired: Vec, feet: number, height: number) => Vec;
 export type CanOccupy = (position: Vec, feet: number, height: number) => boolean;
@@ -75,9 +76,18 @@ export function advanceActor(
   }
   const wishX = side * Math.cos(actor.yaw) - forward * Math.sin(actor.yaw);
   const wishZ = -side * Math.sin(actor.yaw) - forward * Math.cos(actor.yaw);
-  const speed = runningSpeed * (duckAmount > 0 ? 1 - .66 * duckCurve : walk ? .52 : 1);
+  const tag = clamp(actor.velocityModifier ?? 1, 0, 1);
+  const speed = runningSpeed * (duckAmount > 0 ? 1 - .66 * duckCurve : walk ? .52 : 1) * tag;
   const velocity = (airborne ? airVelocity : groundVelocity)(actor.velocity.x, actor.velocity.z, wishX, wishZ,
     airborne ? runningSpeed : speed, dt);
+  // Ground tagging caps momentum as well as wish speed/acceleration. Do not
+  // multiply velocity every tick, or apply the ground cap to an airborne actor.
+  if (!airborne && tag < 1) {
+    const actualSpeed = Math.hypot(velocity.x, velocity.z);
+    if (actualSpeed > speed) {
+      velocity.x *= speed / actualSpeed; velocity.z *= speed / actualSpeed;
+    }
+  }
   const beforeVertical = feet;
   if (airborne) {
     feet += verticalVelocity * dt - GRAVITY * dt * dt / 2;
@@ -97,5 +107,6 @@ export function advanceActor(
   return {
     position: { x: resolved.x, y: feet + eyeHeight, z: resolved.z }, velocity,
     yaw: actor.yaw, feet, verticalVelocity, eyeHeight, duckAmount, jumpHeld: jump, grounded: contact.grounded,
+    velocityModifier: actor.velocityModifier,
   };
 }

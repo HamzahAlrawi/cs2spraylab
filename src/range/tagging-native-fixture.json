@@ -1,0 +1,169 @@
+{
+  "build": "2000919",
+  "serverSha256": "f95fe0dcd7b526137a8b305dd76a72f624e0508ad42bb5949d05c77a37e1bd70",
+  "weaponSha256": "3289d4dba65b1ef3f884c389448c8a6c6db8691442c18a7aaddb28434aaf250d",
+  "tagRva": "0xab2960",
+  "stackRecoveryRva": "0xac3a40",
+  "movementRecoveryRva": "0xad7d61",
+  "note": "Offline native arithmetic, standard tagging scale 1; lookup/notification calls stubbed. Not a live movement parity measurement.",
+  "cases": [
+    {
+      "attacker": "ak47",
+      "victim": "m4a4",
+      "gapTicks": 12,
+      "hits": [
+        {
+          "stack": 0.4000000059604645,
+          "modifier": 0.29046154022216797
+        },
+        {
+          "stack": 0.08804678916931152,
+          "modifier": 0.23588234186172485
+        },
+        {
+          "stack": -0.07845702767372131,
+          "modifier": 0.23588234186172485
+        },
+        {
+          "stack": -0.07845702767372131,
+          "modifier": 0.23588234186172485
+        }
+      ]
+    },
+    {
+      "attacker": "ak47",
+      "victim": "knife",
+      "gapTicks": 12,
+      "hits": [
+        {
+          "stack": 0.4000000059604645,
+          "modifier": 0.35199999809265137
+        },
+        {
+          "stack": 0.08804678916931152,
+          "modifier": 0.2799999713897705
+        },
+        {
+          "stack": -0.07845702767372131,
+          "modifier": 0.2799999713897705
+        },
+        {
+          "stack": -0.07845702767372131,
+          "modifier": 0.2799999713897705
+        }
+      ]
+    },
+    {
+      "attacker": "usp",
+      "victim": "ak47",
+      "gapTicks": 12,
+      "hits": [
+        {
+          "stack": 0.5,
+          "modifier": 0.33230769634246826
+        },
+        {
+          "stack": 0.1963280439376831,
+          "modifier": 0.2182353138923645
+        },
+        {
+          "stack": -0.0010585784912109375,
+          "modifier": 0.2182353138923645
+        },
+        {
+          "stack": -0.06544917821884155,
+          "modifier": 0.2182353138923645
+        }
+      ]
+    },
+    {
+      "attacker": "mp9",
+      "victim": "ak47",
+      "gapTicks": 12,
+      "hits": [
+        {
+          "stack": 0.0,
+          "modifier": 0.2182353138923645
+        },
+        {
+          "stack": 0.0,
+          "modifier": 0.2182353138923645
+        },
+        {
+          "stack": 0.0,
+          "modifier": 0.2182353138923645
+        },
+        {
+          "stack": 0.0,
+          "modifier": 0.2182353138923645
+        }
+      ]
+    },
+    {
+      "attacker": "knife",
+      "victim": "m4a4",
+      "gapTicks": 12,
+      "hits": [
+        {
+          "stack": 0.30000001192092896,
+          "modifier": 0.23588234186172485
+        },
+        {
+          "stack": 0.09984371066093445,
+          "modifier": 0.23588234186172485
+        },
+        {
+          "stack": 0.0397968590259552,
+          "modifier": 0.23588234186172485
+        },
+        {
+          "stack": 0.03902342915534973,
+          "modifier": 0.23588234186172485
+        }
+      ]
+    },
+    {
+      "attacker": "m4a1s",
+      "victim": "negev",
+      "gapTicks": 12,
+      "hits": [
+        {
+          "stack": 0.4000000059604645,
+          "modifier": 0.19999998807907104
+        },
+        {
+          "stack": 0.17312493920326233,
+          "modifier": 0.19999998807907104
+        },
+        {
+          "stack": 0.08237498998641968,
+          "modifier": 0.19999998807907104
+        },
+        {
+          "stack": 0.052031248807907104,
+          "modifier": 0.19999998807907104
+        }
+      ]
+    }
+  ],
+  "recovery": [
+    {
+      "grounded": true,
+      "ticks": 64,
+      "stack": 0.5749992728233337,
+      "modifier": 0.5000007748603821
+    },
+    {
+      "grounded": false,
+      "ticks": 64,
+      "stack": 0.5749992728233337,
+      "modifier": 0.30000001192092896
+    },
+    {
+      "grounded": true,
+      "ticks": 384,
+      "stack": 1.0,
+      "modifier": 1.0
+    }
+  ]
+}
