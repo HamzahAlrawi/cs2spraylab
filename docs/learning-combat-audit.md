@@ -195,6 +195,29 @@ peek types, and 126 total hits. This does not prove human indistinguishability.
 
 ## Final validation
 
+### Visible engagement fix
+
+Combat peeks now brake and engage a recognized opponent before reaching a
+distant waypoint. Wide/crouch-wide swings retain 0.12 s of movement after
+recognition; fast wide swings retain 0.20 s. Shoulder and jump peeks preserve
+their information-gathering return. An unfired attack no longer expires while
+the target remains visible. A normal retreat that stays exposed for 0.20 s
+reengages; low-health/damage-driven withdrawals and reloads remain deliberate.
+Aim prediction includes the bot's own strafe, and first-shot tolerance accounts
+for the target's angular size at close range.
+
+Twelve new regression cases cover all eight combat peeks, the two information
+peeks, aiming after residual recoil, and exposed versus injured retreats.
+They use the real movement/weapon simulation; nine failed before the fix.
+Afterward `npm run check` passed **483 tests**, TypeScript and build. The Duel
+and round-flow Chromium suite passed **nine tests**, with one mobile-only test
+skipped. Asset checks passed. The same 12-layout audit produced 239 hits
+(previously 126), with zero no-shot rounds and 11 rounds using multiple routes.
+Variety checks accept combat strafes during a sustained fight instead of
+requiring a bot to abandon that fight to perform another scripted peek.
+
+### Earlier full sweep
+
 - `npm run check`: **471 tests / 43 files passed**, TypeScript and production
   build passed. Main JS is 955.90 kB (269.04 kB gzip); Vite's >500 kB chunk
   warning remains. No build error was suppressed.
