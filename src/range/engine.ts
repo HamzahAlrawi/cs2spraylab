@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import {recoilView} from './view-recoil';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
 import { clone as cloneSkeleton } from 'three/examples/jsm/utils/SkeletonUtils.js';
@@ -11,6 +12,8 @@ import { GUIDE_COLORS, SprayDemonstration } from './spray-demonstration';
 import {type Equipment, type Slot} from './equipment';
 import {DrillScenery} from './drill-scene';
 import {HEAD_HEIGHT, peekDirection, type DrillMetrics, type Exposure} from './drills';
+import {guidanceAngles} from './guidance';
+import {ViewAnimation} from './view-animation';
 
 export type RangeStatus = {
   weapon: Weapon;
@@ -18,6 +21,7 @@ export type RangeStatus = {
   reload: number; speed: number; distance: number;
   input: string; audio: string; assets: string; fps: number;
   equipped: Equipment; slot: Slot; equipReady: boolean; magazine: number;
+  targetHealth?: number[];
   drill?: {round:number; completed:number; passed:number; scenario:string; covered:boolean; exposure:Exposure; side:number; peekDirection?:number; phase:'prepare'|'exposed'|'feedback'|'reposition'; accurate:boolean; error:number; remaining?:number; last?:DrillMetrics};
 };
 const vector = (v: Vec) => new THREE.Vector3(v.x, v.y, v.z);
@@ -52,6 +56,8 @@ export class RangeEngine {
   cleanup: (() => void)[] = [];
   clearInput?: () => void;
   modelCache = new Map<Equipment, THREE.Object3D>();
+  viewAnimations = new Map<Equipment, ViewAnimation>();
+  private wasReloading = false;
   loading = new Map<Equipment, Promise<THREE.Object3D>>();
   revision = 0; kick = 0; hitTime = 0;
   markerGeometry = new THREE.SphereGeometry(.018, 6, 4);
@@ -79,6 +85,7 @@ export class RangeEngine {
     this.buildScene();
     this.updateDemonstration();
     this.sim.onShot = s => this.shot(s);
+    this.sim.onSound = landing => this.audio.playStep(this.sim.settings.volume * .45, 0, landing);
     this.observer = new ResizeObserver(() => this.resize()); this.observer.observe(host);
     this.bindInput(); this.resize();
     void this.loadTarget(); void this.setWeapon(settings.weapon);
@@ -236,7 +243,7 @@ export class RangeEngine {
       let model = this.modelCache.get(id);
       if (!model) {
         if (!this.loading.has(id)) {
-          const pending = new GLTFLoader().loadAsync(`/models/view-${id}.glb`).then(({ scene: model }) => {
+          const pending = new GLTFLoader().loadAsync(`/models/view-${id}.glb`).then(({ scene: model, animations }) => {
             if (this.disposed) { this.disposeObject(model); return model; }
             const wrapper = new THREE.Group();
             model.rotation.y = Math.PI;
@@ -249,6 +256,7 @@ export class RangeEngine {
               }
             } });
             wrapper.add(model);
+            this.viewAnimations.set(id, new ViewAnimation(model, animations));
             this.modelCache.set(id, wrapper);
             return wrapper;
           }).finally(() => { this.loading.delete(id); });
@@ -276,7 +284,7 @@ export class RangeEngine {
     for (const [id, model] of this.modelCache) {
       if (this.modelCache.size <= 3) break;
       if (id === this.sim.equipped) continue;
-      this.modelCache.delete(id); this.disposeObject(model);
+      this.modelCache.delete(id); this.viewAnimations.get(id)?.dispose(); this.viewAnimations.delete(id); this.disposeObject(model);
     }
   }
   configure(settings: Settings, measured?: MeasuredProfile) {
@@ -347,6 +355,8 @@ export class RangeEngine {
     this.hitCaption.textContent = head ? 'HEADSHOT' : hit ? 'BODY HIT' : physicalHit ? 'WRONG TARGET' : 'MISS';
     this.hitCaption.style.color = this.hitmarker.style.color;
     if (hit) {
+      this.audio.playHit(head, false, false, this.sim.settings.volume);
+      this.sim.damageTarget(this.sim.targetForShot(shot.index), head, hit.distance);
       this.sim.hits++;
       if (head) this.sim.heads++;
     }
@@ -424,15 +434,15 @@ export class RangeEngine {
     listen(document, 'pointerlockerror', (() => { this.inputStatus = 'Drag aim'; }) as EventListener);
     const keys = new Set<string>();
     const update = () => {
-      this.sim.input = { forward: +keys.has('KeyW') - +keys.has('KeyS'), side: +keys.has('KeyD') - +keys.has('KeyA'), walk: keys.has('ShiftLeft') || keys.has('ShiftRight'), crouch: keys.has('ControlLeft') || keys.has('KeyC'), jump: keys.has('Space') };
+      this.sim.input = { forward: +keys.has('KeyW') - +keys.has('KeyS'), side: +keys.has('KeyD') - +keys.has('KeyA'), walk: keys.has('ShiftLeft') || keys.has('ShiftRight'), crouch: keys.has('ControlLeft') || keys.has('ControlRight') || keys.has('KeyC'), jump: keys.has('Space') };
     };
     this.clearInput = () => { keys.clear(); pointer = null; update(); };
     listen(window, 'keydown', ((e: KeyboardEvent) => {
       if (!this.sim.active || (e.target instanceof HTMLElement && e.target.matches('input,select,textarea,button'))) return;
-      if (['KeyW', 'KeyA', 'KeyS', 'KeyD', 'ShiftLeft', 'ShiftRight', 'ControlLeft', 'KeyC', 'Space'].includes(e.code)) { e.preventDefault(); keys.add(e.code); update(); }
+      if (['KeyW', 'KeyA', 'KeyS', 'KeyD', 'ShiftLeft', 'ShiftRight', 'ControlLeft', 'ControlRight', 'KeyC', 'Space'].includes(e.code)) { e.preventDefault(); keys.add(e.code); update(); }
       if (!e.repeat && ['Digit1','Digit2','Digit3'].includes(e.code)) { e.preventDefault(); void this.equip(+e.code.slice(-1) as Slot); }
       if (!e.repeat && e.code === 'KeyQ') { e.preventDefault(); void this.equip(this.sim.previousSlot); }
-      if (!e.repeat && e.code === 'KeyR') { if(this.sim.slot===2) this.sim.reload(); else {this.sim.reset();this.clearImpacts();} }
+      if (!e.repeat && e.code === 'KeyR') this.sim.reload();
       if (e.code === 'Escape') this.pause();
     }) as EventListener);
     listen(window, 'keyup', ((e: KeyboardEvent) => { keys.delete(e.code); update(); }) as EventListener);
@@ -471,8 +481,10 @@ export class RangeEngine {
       this.targetActions.forEach(actions => { actions.forEach(a => a.stop()); actions[animation]?.reset().play(); });
     }
     this.mixers.forEach(m => m.update(this.sim.active ? dt : 0));
-    this.camera.position.copy(vector(this.sim.position));
-    this.camera.rotation.set(this.sim.pitch, this.sim.yaw, 0, 'YXZ');
+    this.camera.position.copy(vector(this.sim.renderPosition()));
+    const visualRecoil = this.sim.slot === 3 ? {yaw: 0, pitch: 0} : this.sim.recovery.predict(this.sim.accumulator);
+    const view = recoilView(this.sim.yaw, this.sim.pitch, visualRecoil);
+    this.camera.rotation.set(view.pitch, view.yaw, 0, 'YXZ');
     this.camera.updateMatrixWorld();
     this.kick = Math.max(0, this.kick - dt * 10);
     this.muzzle.intensity = ['m4a1s','usp','knife'].includes(this.sim.equipped) ? 0 : this.kick > .65 ? 2 : 0;
@@ -481,15 +493,21 @@ export class RangeEngine {
     this.hitCaption.style.opacity = this.hitTime > 0 ? '1' : '0';
     const moving = Math.hypot(this.sim.velocity.x, this.sim.velocity.z);
     const drawing = Math.max(0,this.sim.equipReadyAt-this.sim.time);
-    const reloading = this.sim.pistolReloadAt>0;
-    this.weaponRoot.position.set(VIEWMODEL_OFFSET.x, VIEWMODEL_OFFSET.y + Math.sin(this.elapsed * 12) * Math.min(moving, 1) * .002 - drawing*.25 - (reloading ? .12 : 0), this.kick * .015);
-    this.weaponRoot.rotation.x = this.kick * (this.sim.slot===3 ? -.6 : .02) - drawing*.3;
-    this.weaponRoot.rotation.z = this.sim.slot===3 ? this.kick*-.45 : reloading ? -.25 : 0;
+    const reloadRemaining = Math.max(0, this.sim.pistolReloadAt - this.sim.time, this.sim.primaryReloadAt - this.sim.time);
+    const reloading = reloadRemaining > 0;
+    this.viewAnimations.get(this.sim.equipped)?.update(reloadRemaining, this.sim.stats.reload);
+    if (reloading && !this.wasReloading) this.audio.playEvent(`${this.sim.equipped}-reload`, this.sim.settings.volume * .55);
+    this.wasReloading = reloading;
+    this.weaponRoot.position.set(VIEWMODEL_OFFSET.x, VIEWMODEL_OFFSET.y + Math.sin(this.elapsed * 12) * Math.min(moving, 1) * .002 - drawing*.25, this.kick * .015);
+    this.weaponRoot.rotation.x = this.kick * (this.sim.slot===3 ? -.6 : .02) - drawing*.3 + view.weaponPitch;
+    this.weaponRoot.rotation.y = view.weaponYaw;
+    this.weaponRoot.rotation.z = this.sim.slot===3 ? this.kick*-.45 : 0;
     const r = this.sim.settings.follow ? this.sim.recoil : { yaw: 0, pitch: 0 };
     const point = new THREE.Vector3(-Math.tan(-this.sim.yaw + r.yaw * DEG), 0, -1);
     // Project the recoil-only direction with the same camera, excluding random spread.
     const yaw = this.sim.yaw - r.yaw * DEG, pitch = this.sim.pitch + r.pitch * DEG;
     point.set(-Math.sin(yaw) * Math.cos(pitch), Math.sin(pitch), -Math.cos(yaw) * Math.cos(pitch)).multiplyScalar(10).add(this.camera.position).project(this.camera);
+    if (!this.sim.settings.follow) point.set(0, 0, 0);
     this.crosshair.style.transform = `translate(${point.x * this.host.clientWidth / 2}px, ${-point.y * this.host.clientHeight / 2}px)`;
     this.crosshair.style.setProperty('--motion-gap', this.sim.settings.crosshair.dynamic ? `${moving * 1.2 + this.kick * 4}px` : '0px');
     const targetPosition = this.targets[activeLane].position;
@@ -499,9 +517,10 @@ export class RangeEngine {
       const index = (this.sim.firing ? this.sim.shots : 0) + i;
       const visible = this.sim.slot===1 && ['guided', 'transfer'].includes(this.sim.settings.mode) && index < this.sim.burstSize;
       const target = this.sim.targetPosition(this.sim.targetForShot(index));
-      const dx = target.x - this.sim.position.x, dz = target.z - this.sim.position.z;
       const p = visible ? this.sim.predictedRecoil(i===1) : {yaw:0,pitch:0};
-      const aim = direction(Math.atan2(-dx, -dz) + p.yaw * DEG, Math.atan2(1.63 - this.sim.position.y, Math.hypot(dx, dz)) - p.pitch * DEG);
+      const angles = guidanceAngles(this.sim.position, target, p,
+        this.sim.settings.follow ? this.sim.recoil : visualRecoil, this.sim.settings.follow);
+      const aim = direction(angles.yaw, angles.pitch);
       const point = vector(aim).multiplyScalar(10).add(this.camera.position).project(this.camera);
       cue.hidden = !visible || point.z > 1 || Math.abs(point.x) > .95 || Math.abs(point.y) > .88;
       cue.style.left = `${(point.x + 1) * 50}%`; cue.style.top = `${(1 - point.y) * 50}%`;
@@ -518,9 +537,9 @@ export class RangeEngine {
       this.statusTime = this.elapsed;
       const drill=this.sim.drill;
       this.onStatus({ weapon: this.sim.settings.weapon, equipped:this.sim.equipped,slot:this.sim.slot,equipReady:this.sim.time>=this.sim.equipReadyAt,
-        magazine:this.sim.slot===1?this.sim.burstSize:this.sim.stats.magazine,
+        magazine:this.sim.slot===1?this.sim.burstSize:this.sim.stats.magazine, targetHealth: [...this.sim.targetHealth],
         active: this.sim.active, firing: this.sim.firing, hitFlash:this.hitTime>0, shots: drill?.shots ?? this.sim.shots, hits: drill?.hits ?? this.sim.hits, heads: drill?.heads ?? this.sim.heads,
-        remaining: this.sim.slot===2 ? this.sim.pistolAmmo : this.sim.slot===3 ? 0 : this.sim.firing ? this.sim.burstSize - this.sim.shots : this.sim.burstSize, reload: Math.max(0,this.sim.pistolReloadAt-this.sim.time),
+        remaining: this.sim.slot===2 ? this.sim.pistolAmmo : this.sim.slot===3 ? 0 : this.sim.firing ? this.sim.burstSize - this.sim.shots : this.sim.burstSize, reload: reloadRemaining,
         ...(drill ? {drill:{round:this.sim.drillRound,completed:this.sim.drillCompleted,passed:this.sim.drillPassed,scenario:drill.scenario.name,covered:drill.scenario.covered,exposure:drill.scenario.exposure,side:drill.scenario.side,
           peekDirection:this.sim.settings.mode==='peek'?peekDirection(this.sim.position,this.sim.yaw,drill.scenario):0,
           phase:drill.finished?(this.sim.repositionFrom?'reposition':'feedback'):drill.visible?'exposed':'prepare',accurate:drill.accurate,error:drill.error,
@@ -547,6 +566,7 @@ export class RangeEngine {
     this.mouseDemonstration.dispose();
     this.drillScenery.dispose();
     this.disposeObject(this.scene); this.modelCache.forEach(m => this.disposeObject(m));
+    this.viewAnimations.forEach(animation => animation.dispose());
     this.markerGeometry.dispose(); this.missMaterial.dispose(); this.hitMaterial.dispose(); this.bodyMaterial.dispose();
     this.cues.forEach(c => c.remove()); this.hitCaption.remove();
     this.environment?.dispose(); this.renderer.dispose(); this.renderer.domElement.remove();

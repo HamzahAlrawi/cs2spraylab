@@ -55,8 +55,8 @@ describe('Source scale and input', () => {
   });
 });
 describe('Shot scheduling and independent drills', () => {
-  it.each([0, 5, 10, 15])('transfer switches at the selected burst midpoint (%s rounds)', burst => {
-    const s = make({ mode: 'transfer', burst }), lanes: number[] = [];
+  it.each([0, 5, 10, 15])('transfer can be set to the selected burst midpoint (%s rounds)', burst => {
+    const s = make({ mode: 'transfer', burst, transferAfter: Math.floor((burst || 30) / 2) }), lanes: number[] = [];
     s.onShot = shot => lanes.push(s.targetForShot(shot.index)); s.start(true); run(s, 5);
     const count = burst || gameData.weapons.ak47.magazine;
     expect(lanes).toEqual(Array.from({ length: count }, (_, i) => i >= Math.floor(count / 2) ? 1 : 0));
@@ -103,7 +103,7 @@ describe('Shot scheduling and independent drills', () => {
   });
   it('consolidates retired training modes into guided spray', () => {
     for (const mode of ['weak', 'ghost', 'trace', 'fade', 'tracking']) expect(migrateMode(mode)).toBe('guided');
-    for (const mode of ['__proto__', 'toString', 'unknown']) expect(migrateMode(mode)).toBe('peek');
+    for (const mode of ['__proto__', 'toString', 'unknown']) expect(migrateMode(mode)).toBe('duel');
     expect(migrateMode('transfer')).toBe('transfer');
   });
   it('the same angular shot grows linearly with distance, including 100m', () => {
@@ -173,6 +173,15 @@ describe('walking distance, jumping and moving lanes', () => {
   });
   it('ships the requested first-run defaults', () => {
     expect(defaults.sensitivity * defaults.dpi).toBe(800); expect(defaults.volume).toBe(.2);
-    expect(defaults.crosshair.color).toBe('#ffeb55'); expect(defaults.mode).toBe('peek');
+    expect(defaults.crosshair.color).toBe('#ffeb55'); expect(defaults.mode).toBe('duel');
+  });
+  it('preserves walking distance across spray modes but resets after a positioned drill', () => {
+    const simulation = make();
+    simulation.position.z = -5;
+    simulation.configure({...simulation.settings, mode: 'spray'});
+    expect(simulation.position.z).toBe(-5);
+    simulation.configure({...simulation.settings, mode: 'peek'});
+    simulation.configure({...simulation.settings, mode: 'guided'});
+    expect(simulation.position.z).toBe(SPAWN_Z);
   });
 });

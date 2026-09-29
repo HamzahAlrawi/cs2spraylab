@@ -4,10 +4,14 @@ import fixture from './native-rng-fixture.json';
 import tables from './native-table-fixture.json';
 import provenance from './recoil-provenance.json';
 import { gameData, weaponIds } from './config';
+import {createHash} from 'node:crypto';
 
 describe('installed CS2 recoil math', () => {
-  it('keeps weapon parameters and inspected native math on the same game build', () => {
-    expect(gameData.build).toBe(provenance.build);
+  it('pins freshly audited weapon data separately from the older native-math fixtures', () => {
+    expect(gameData.build).toBe(provenance.weaponDataAudit.build);
+    expect(createHash('sha256').update(JSON.stringify(gameData.weapons)).digest('hex')).toBe(provenance.weaponDataAudit.parametersSha256);
+    expect(provenance.build).toBe('2000908');
+    expect(provenance.weaponDataAudit.scope).toContain('NOT been re-emulated');
   });
   it('matches every float in independently emulated tier0 RNG fixtures', () => {
     for (const [seed, values] of Object.entries(fixture)) {

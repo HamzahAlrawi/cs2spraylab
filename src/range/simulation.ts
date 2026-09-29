@@ -2,57 +2,42 @@ import { Angle, clamp, gameData, MeasuredProfile, recoilPattern, Settings } from
 import {equipmentForSlot, equipmentStats, equipmentData, type Equipment, type Slot} from './equipment';
 import {createScenario, DrillCoach, isDrillMode, moveWithCover, RANGE_WALLS, REPOSITION_SHOTS, type CoachSample, type DrillMetrics} from './drills';
 import {WeaponRecovery} from './ballistics';
+import {advanceActor, DEG, GRAVITY, JUMP_SPEED, STEP, UNIT, airVelocity, groundVelocity, idleInput, type MoveInput, type Vec} from './actor-physics';
+import {direction, shotDirection} from './shot-model';
+import {fitsHull, verticalContact} from './actor-collision';
+import {resolveDamage} from './duel/damage';
 
-export const UNIT = .0254;
-export const DEG = Math.PI / 180;
+export {DEG, GRAVITY, JUMP_SPEED, STEP, UNIT, airVelocity, groundVelocity, idleInput, direction};
 export const VERTICAL_FOV = 2 * Math.atan(.75) / DEG;
-export const STEP = 1 / 128;
 export const TARGET_Z = -100;
 export const SPAWN_Z = TARGET_Z + 12;
-export const GRAVITY = 800 * UNIT;
-export const JUMP_SPEED = 301.993 * UNIT;
-export type Vec = { x: number; y: number; z: number };
+export type {Vec};
 export type Shot = { index: number; at: number; origin: Vec; direction: Vec; recoil: Angle; equipment?: Equipment; melee?: boolean };
 export type ImpactSample = { x: number; y: number; hit: boolean; head: boolean; bullet: number };
 export type Result = { id: string; weapon: Equipment; mode: Settings['mode'] | 'tracking'; shots: number; hits: number; heads: number; seconds: number; tracking: number; date: string; samples: ImpactSample[]; drill?: DrillMetrics };
-export type Input = { forward: number; side: number; walk: boolean; crouch: boolean; jump: boolean };
-export const idleInput = (): Input => ({ forward: 0, side: 0, walk: false, crouch: false, jump: false });
+export type Input = MoveInput;
 
 export function mouseAngle(count: number, sensitivity: number) { return count * .022 * sensitivity * DEG; }
-export function direction(yaw: number, pitch: number): Vec {
-  return { x: -Math.sin(yaw) * Math.cos(pitch), y: Math.sin(pitch), z: -Math.cos(yaw) * Math.cos(pitch) };
-}
-export function groundVelocity(vx: number, vz: number, x: number, z: number, speed: number, dt: number) {
-  const v = Math.hypot(vx, vz);
-  if (v > 0) {
-    const retained = Math.max(0, v - Math.max(v, 80 * UNIT) * 5.2 * dt) / v;
-    vx *= retained; vz *= retained;
-  }
-  const length = Math.hypot(x, z);
-  if (length > 0) {
-    x /= length; z /= length;
-    const add = Math.min(Math.max(0, speed - (vx * x + vz * z)), 5.5 * speed * dt);
-    vx += x * add; vz += z * add;
-  }
-  return { x: vx, z: vz };
-}
 export function targetSpeed(settings: Settings) {
   return (settings.targetSpeed === 'knife' ? 250 : settings.targetSpeed === 'smg' ? 240 : gameData.weapons[settings.weapon].speed) * UNIT;
 }
-export function airVelocity(vx: number, vz: number, x: number, z: number, speed: number, dt: number) {
-  const length = Math.hypot(x, z);
-  if (!length) return { x: vx, z: vz };
-  x /= length; z /= length;
-  const add = Math.min(Math.max(0, Math.min(speed, 30 * UNIT) - vx * x - vz * z), 12 * speed * dt);
-  return { x: vx + x * add, z: vz + z * add };
-}
-
 export class Simulation {
   time = 0; accumulator = 0;
   position = { x: 0, y: 64 * UNIT, z: SPAWN_Z };
   velocity = { x: 0, z: 0 }; yaw = 0; pitch = 0;
-  feet = 0; verticalVelocity = 0; eyeHeight = 64 * UNIT; jumpHeld = false;
+  feet = 0; verticalVelocity = 0; eyeHeight = 64 * UNIT; duckAmount = 0; jumpHeld = false;
+  grounded = true;
+  private previousPosition?: Vec;
+  renderPosition() {
+    if (!this.active || !this.previousPosition) return this.position;
+    const alpha = clamp(this.accumulator / STEP, 0, 1);
+    return {x: this.previousPosition.x + (this.position.x - this.previousPosition.x) * alpha,
+      y: this.previousPosition.y + (this.position.y - this.previousPosition.y) * alpha,
+      z: this.previousPosition.z + (this.position.z - this.previousPosition.z) * alpha};
+  }
   targetX = 0; targetVelocity = 0; targetSign = 1;
+  targetHealth = [100, 100];
+  private stepDistance = 0;
   input = idleInput(); active = false; firing = false; automatic = false;
   readyAt = 0; nextShot = 0; startedAt = 0; shots = 0; hits = 0; heads = 0;
   recoil: Angle = { yaw: 0, pitch: 0 };
@@ -60,7 +45,7 @@ export class Simulation {
   samples: ImpactSample[] = []; attempts = 0;
   lastShotAt = -Infinity;
   slot: Slot = 1; previousSlot: Slot = 2; equipReadyAt = 0;
-  pistolAmmo = 12; pistolReloadAt = 0; meleeAt = -Infinity;
+  pistolAmmo = 12; pistolReloadAt = 0; primaryReloadAt = 0; meleeAt = -Infinity;
   recoveryStates = new Map<Equipment,WeaponRecovery>();
   drill?: DrillCoach; drillRound = 0; drillPassed = 0; drillCompleted = 0;
   drillResult?: DrillMetrics; nextDrillAt = 0; repositionFrom?: Vec; repositionYaw = 0; drillRevision = 0;
@@ -86,17 +71,28 @@ export class Simulation {
     if (this.settings.mode === 'peek') return Math.min(gameData.weapons[this.settings.weapon].magazine,this.pattern.length);
     return Math.min(this.settings.burst || gameData.weapons[this.settings.weapon].magazine, this.pattern.length);
   }
-  targetForShot(index = this.shots) { return this.settings.mode === 'transfer' && index >= Math.floor(this.burstSize / 2) ? 1 : 0; }
+  targetForShot(index = this.shots) {
+    return this.settings.mode === 'transfer' && (this.settings.transferRule === 'kill' ? this.targetHealth[0] <= 0
+      : index >= Math.min(this.settings.transferAfter, Math.max(1, this.burstSize - 1))) ? 1 : 0;
+  }
+  damageTarget(index: number, head: boolean, distance: number) {
+    if (this.settings.mode !== 'transfer') return;
+    const damage = resolveDamage(this.equipped, head ? 'head' : 'chest', distance, 0, false);
+    this.targetHealth[index] = Math.max(0, this.targetHealth[index] - damage.healthDamage);
+  }
   targetPosition(index: number): Vec {
     if (this.drill) return {...this.drill.scenario.target};
     const transfer = this.settings.mode === 'transfer';
     return { x: this.targetX + (transfer ? index === 0 ? -2 : 2 : 0), y: 0, z: TARGET_Z };
   }
   onShot: (shot: Shot) => void = () => {};
+  onSound: (landing: boolean) => void = () => {};
   onResult: (result: Result) => void = () => {};
   constructor(public settings: Settings) { this.pattern = recoilPattern(settings.weapon); this.configure(settings); }
   configure(s: Settings, measured?: MeasuredProfile) {
+    this.previousPosition = undefined;
     const changedMode = s.mode !== this.settings.mode;
+    const leavingPositionedDrill = isDrillMode(this.settings.mode);
     this.cancel(); this.settings = s; this.measured = measured;
     this.resetRecovery();
     this.pattern = recoilPattern(s.weapon, measured);
@@ -105,28 +101,33 @@ export class Simulation {
     this.drillRound = this.drillPassed = this.drillCompleted = 0;
     this.drillResult = undefined; this.nextDrillAt = 0; this.repositionFrom = undefined;
     if (isDrillMode(s.mode)) this.newDrill(true);
-    else { this.drill = undefined; this.drillRevision++; if (changedMode) { this.position = {x:0,y:64*UNIT,z:SPAWN_Z}; this.yaw = this.pitch = this.feet = this.verticalVelocity = 0; } }
+    else { this.drill = undefined; this.drillRevision++; if (changedMode && leavingPositionedDrill) { this.position = {x:0,y:64*UNIT,z:SPAWN_Z}; this.yaw = this.pitch = this.feet = this.verticalVelocity = 0; } }
   }
   equip(slot: Slot) {
     if (slot === this.slot) return false;
     this.finish(); this.previousSlot = this.slot; this.slot = slot;
-    this.pistolReloadAt = 0;
+    this.pistolReloadAt = this.primaryReloadAt = 0;
     this.equipReadyAt = this.time + (this.active ? 1 : 0);
     return true;
   }
   reload() {
+    if (this.slot === 1 && !this.primaryReloadAt) {
+      this.finish(); this.primaryReloadAt = this.time + this.stats.reload; return true;
+    }
     if (this.slot !== 2 || this.pistolAmmo === 12 || this.pistolReloadAt) return false;
     this.finish(); this.pistolReloadAt = this.time + equipmentData.weapons.usp.reload; return true;
   }
   coachSample(): CoachSample {
-    return {time:this.time,position:this.position,yaw:this.yaw,pitch:this.pitch,velocity:this.velocity,speedCap:this.stats.speed*UNIT,input:this.input,feet:this.feet};
+    return {time:this.time,position:this.position,yaw:this.yaw,pitch:this.pitch,velocity:this.velocity,speedCap:this.stats.speed*UNIT,input:this.input,feet:this.feet,grounded:this.grounded};
   }
   newDrill(resetPosition = false) {
+    this.previousPosition = undefined;
     if (!isDrillMode(this.settings.mode)) return;
     const scenario = createScenario(this.settings.mode, this.drillRound++, this.settings.peekScenario);
     if (resetPosition || this.settings.mode === 'peek') {
       this.position = {...scenario.spawn}; this.yaw = scenario.yaw; this.pitch = scenario.pitch;
-      this.velocity = {x:0,z:0}; this.feet = this.verticalVelocity = 0; this.eyeHeight = 64*UNIT;
+      this.velocity = {x:0,z:0}; this.feet = this.verticalVelocity = this.duckAmount = 0; this.eyeHeight = 64*UNIT;
+      this.grounded = true; this.jumpHeld = false;
     } else scenario.spawn = {...this.position};
     this.drill = new DrillCoach(this.settings.mode, scenario, this.time);
     this.resetRecovery();
@@ -156,7 +157,7 @@ export class Simulation {
     this.pitch = clamp(this.pitch - dy * scale * (this.settings.invertY ? -1 : 1), -89 * DEG, 89 * DEG);
   }
   start(automatic = false) {
-    if (this.firing || this.time < this.equipReadyAt || this.pistolReloadAt || this.drill?.finished) return false;
+    if (this.firing || this.time < this.equipReadyAt || this.pistolReloadAt || this.primaryReloadAt || this.drill?.finished) return false;
     if (this.slot === 3) {
       this.active = true;
       if (this.time-this.meleeAt < .4) return false;
@@ -168,6 +169,7 @@ export class Simulation {
     this.active = true; this.firing = true; this.automatic = automatic;
     this.shots = this.hits = this.heads = 0;
     this.startedAt = this.time; this.nextShot = Math.max(this.time, this.lastShotAt + this.stats.cycle);
+    this.targetHealth = [100, 100];
     this.latest = undefined;
     if (!this.drill) this.samples = [];
     if (this.time >= this.nextShot) this.fire();
@@ -178,6 +180,7 @@ export class Simulation {
     this.finish();
   }
   cancel() {
+    this.previousPosition = undefined;
     if (this.firing) this.finish();
     this.active = false; this.input = idleInput(); this.velocity = { x: 0, z: 0 };
     this.drill?.interruptMovement();
@@ -192,7 +195,7 @@ export class Simulation {
   reset() {
     this.cancel(); this.readyAt = this.time; this.shots = this.hits = this.heads = 0;
     this.latest = undefined;
-    this.pistolAmmo = 12; this.pistolReloadAt = 0; this.resetRecovery();
+    this.pistolAmmo = 12; this.pistolReloadAt = this.primaryReloadAt = 0; this.resetRecovery();
     if (isDrillMode(this.settings.mode)) { this.drillResult = undefined; this.newDrill(true); }
   }
   advance(elapsed: number) {
@@ -201,32 +204,31 @@ export class Simulation {
     while (this.accumulator + 1e-10 >= STEP) { this.step(STEP); this.accumulator -= STEP; }
   }
   step(dt: number) {
+    this.previousPosition = {...this.position};
     this.time += dt;
     const weapon = this.stats;
     if (this.pistolReloadAt && this.time >= this.pistolReloadAt) { this.pistolAmmo = 12; this.pistolReloadAt = 0; }
-    const { forward, side, walk, crouch, jump } = this.input;
-    const wishX = side * Math.cos(this.yaw) - forward * Math.sin(this.yaw);
-    const wishZ = -side * Math.sin(this.yaw) - forward * Math.cos(this.yaw);
-    const speed = weapon.speed * UNIT * (crouch ? .34 : walk ? .52 : 1);
-    if (jump && !this.jumpHeld && this.feet === 0) this.verticalVelocity = JUMP_SPEED;
-    this.jumpHeld = jump;
-    const airborne = this.feet > 0 || this.verticalVelocity > 0;
-    this.velocity = (airborne ? airVelocity : groundVelocity)(this.velocity.x, this.velocity.z, wishX, wishZ, speed, dt);
-    if (airborne) {
-      this.feet = Math.max(0, this.feet + this.verticalVelocity * dt - GRAVITY * dt * dt / 2);
-      this.verticalVelocity -= GRAVITY * dt;
-      if (this.feet === 0) this.verticalVelocity = 0;
-    }
-    const desired = {...this.position,x:clamp(this.position.x+this.velocity.x*dt,-11.3,11.3),z:clamp(this.position.z+this.velocity.z*dt,TARGET_Z+2.2,5)};
-    const resolved = moveWithCover(this.position,desired,this.drill?.scenario.covers ?? RANGE_WALLS,this.feet,crouch ? 54*UNIT : 72*UNIT);
-    const nextX = resolved.x, nextZ = resolved.z;
-    if (nextX === this.position.x) this.velocity.x = 0;
-    if (nextZ === this.position.z) this.velocity.z = 0;
-    this.position.x = nextX; this.position.z = nextZ;
-    this.eyeHeight += ((crouch ? 46 : 64) * UNIT - this.eyeHeight) * Math.min(1, dt * 16);
-    this.position.y = this.feet + this.eyeHeight;
+    if (this.primaryReloadAt && this.time >= this.primaryReloadAt) this.primaryReloadAt = 0;
+    const covers = this.drill?.scenario.covers ?? RANGE_WALLS;
+    const next = advanceActor(this, this.input, weapon.speed * UNIT, dt, (from, desired, feet, height) =>
+      moveWithCover(from, {...desired,x:clamp(desired.x,-11.3,11.3),z:clamp(desired.z,TARGET_Z+2.2,5)},covers,feet,height),
+      (position, feet, height) => fitsHull(position, feet, height, covers),
+      (position, from, to, height) => verticalContact(position, from, to, height, covers));
+    const traveled = Math.hypot(next.position.x - this.position.x, next.position.z - this.position.z);
+    if (next.grounded && !this.grounded) this.onSound(true);
+    const audible = Math.hypot(next.velocity.x, next.velocity.z) > weapon.speed * UNIT * .54;
+    if (next.grounded && audible && traveled > 0) {
+      this.stepDistance += traveled;
+      if (this.stepDistance >= 1.35) {this.stepDistance %= 1.35; this.onSound(false);}
+    } else if (!audible) this.stepDistance = 0;
+    this.velocity = next.velocity;
+    this.position.x = next.position.x; this.position.y = next.position.y; this.position.z = next.position.z;
+    this.feet = next.feet; this.verticalVelocity = next.verticalVelocity;
+    this.eyeHeight = next.eyeHeight; this.duckAmount = next.duckAmount ?? 0; this.jumpHeld = next.jumpHeld;
+    this.grounded = !!next.grounded;
+    const crouch = this.duckAmount >= .95;
     const recovery=this.recovery;
-    for(const state of this.recoveryStates.values())state.advance(dt,crouch,this.feet>0);
+    for(const state of this.recoveryStates.values())state.advance(dt,crouch,!this.grounded);
     this.recoil=this.slot===3?{yaw:0,pitch:0}:recovery.recoil;
     if (this.settings.moving && !this.drill) {
       const extent = this.settings.mode === 'transfer' ? 1.25 : 3;
@@ -254,23 +256,14 @@ export class Simulation {
     const weapon = this.stats;
     if (this.shots >= this.burstSize) { this.finish(); return; }
     this.recoil = this.recovery.recoil;
-    let yaw = this.yaw - this.recoil.yaw * DEG;
-    let pitch = this.pitch + this.recoil.pitch * DEG;
-    if (this.settings.spread) {
-      // Optional practice spread uses the installed weapon cone parameters.
-      // Random sampling and firing inaccuracy are not advertised as engine parity.
-      const speedRatio=Math.hypot(this.velocity.x,this.velocity.z)/(weapon.speed*UNIT);
-      const cone=this.recovery.inaccuracy(speedRatio,this.input.walk,this.feet>0,this.verticalVelocity/UNIT);
-      const a = Math.random() * Math.PI * 2, b = Math.random() * Math.PI * 2;
-      const r = Math.random() * cone, q = Math.random() * weapon.spread;
-      yaw += Math.cos(a) * r + Math.cos(b) * q;
-      pitch += Math.sin(a) * r + Math.sin(b) * q;
-    }
+    const firedDirection = shotDirection({yaw:this.yaw,pitch:this.pitch,recoil:this.recoil,weapon,recovery:this.recovery,
+      speedRatio:Math.hypot(this.velocity.x,this.velocity.z)/(weapon.speed*UNIT),walking:this.input.walk,
+      airborne:!this.grounded,verticalSpeedUnits:this.verticalVelocity/UNIT,spread:this.settings.spread});
     const index = this.shots++;
     if (this.slot===2) this.pistolAmmo--;
     this.recovery.fire();
     this.lastShotAt = this.time;
-    this.onShot({ index, at: this.time, origin: { ...this.position }, direction: direction(yaw, pitch), recoil: this.recoil, equipment:this.equipped });
+    this.onShot({ index, at: this.time, origin: { ...this.position }, direction: firedDirection, recoil: this.recoil, equipment:this.equipped });
     if (this.drill && !this.drill.finished) {
       const sample = this.samples[this.samples.length-1];
       this.drill.record(this.coachSample(),!!sample?.hit,!!sample?.head);

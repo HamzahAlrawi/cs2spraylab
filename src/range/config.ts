@@ -2,12 +2,12 @@ import data from './game-data.json';
 import { nativeRecoilPattern } from './recoil';
 
 export type Weapon = keyof typeof data.weapons;
-export type Mode = 'guided' | 'spray' | 'transfer' | 'peek' | 'precision' | 'burst';
-export const modeNames: Record<Mode, string> = { guided: 'Guided spray', spray: 'Free spray', transfer: 'Spray transfer', peek: 'Peeking practice', precision: 'Counterstrafing practice', burst: 'Burst & reposition' };
+export type Mode = 'duel' | 'guided' | 'spray' | 'transfer' | 'peek' | 'precision' | 'burst';
+export const modeNames: Record<Mode, string> = { duel: 'AI Duel', guided: 'Guided spray', spray: 'Free spray', transfer: 'Spray transfer', peek: 'Peeking practice', precision: 'Counterstrafing practice', burst: 'Burst & reposition' };
 export const historyModeNames = { ...modeNames, tracking: 'Target tracking (retired)' };
 export function migrateMode(mode: unknown): Mode {
   if(typeof mode==='string'&&['weak','ghost','trace','fade','tracking'].includes(mode))return 'guided';
-  return typeof mode === 'string' && Object.prototype.hasOwnProperty.call(modeNames, mode) ? mode as Mode : 'peek';
+  return typeof mode === 'string' && Object.prototype.hasOwnProperty.call(modeNames, mode) ? mode as Mode : 'duel';
 }
 export type Crosshair = { color: string; size: number; gap: number; thickness: number; outline: number; alpha: number; dot: boolean; t: boolean; dynamic: boolean };
 export type Settings = {
@@ -18,6 +18,8 @@ export type Settings = {
   peekScenario: 'mixed' | 'common' | 'deep' | 'off-angle' | 'elevated';
   peekDuration: number;
   impactSize: number;
+  transferAfter: number;
+  transferRule: 'bullet' | 'kill';
   drillPace: 'practice' | 'challenge';
   aspect: 'native' | '16:9' | '16:10' | '4:3' | '5:4';
   crosshair: Crosshair;
@@ -26,9 +28,10 @@ export const weaponNames: Record<Weapon, string> = { ak47: 'AK-47', m4a4: 'M4A4'
 export const weaponIds = Object.keys(weaponNames) as Weapon[];
 export const gameData = data;
 export const defaults: Settings = {
-  weapon: 'ak47', mode: 'peek', sensitivity: 1, dpi: 800, invertY: false,
+  weapon: 'ak47', mode: 'duel', sensitivity: 1, dpi: 800, invertY: false,
   moving: false, targetSpeed: 'rifle', follow: false, volume: 0.2,
   spread: true, burst: 0, quality: 'auto', impactSize: 1.5,
+  transferAfter: 15, transferRule: 'bullet',
   showImpactPattern: true, showMousePath: true,
   peekScenario: 'mixed', peekDuration: 1, drillPace: 'practice',
   aspect: 'native',
@@ -51,8 +54,9 @@ export function sanitizeSettings(raw: unknown): Settings {
     sensitivity: numeric(s.sensitivity, 1, .05, 10), dpi: numeric(s.dpi, 800, 100, 32000),
     invertY: s.invertY === true,
     moving: s.moving === true, targetSpeed: ['rifle', 'smg', 'knife'].includes(s.targetSpeed!) ? s.targetSpeed! : 'rifle',
-    follow: s.follow === true, volume: numeric(s.volume, .2, 0, 1), spread: s.spread !== false,
+    follow: s.follow === true, volume: numeric(s.volume, .2, 0, 1), spread: typeof s.spread === 'boolean' ? s.spread : s.mode !== 'guided',
     impactSize: numeric(s.impactSize,1.5,.5,4),
+    transferAfter: Math.round(numeric(s.transferAfter,15,1,149)), transferRule: s.transferRule === 'kill' ? 'kill' : 'bullet',
     showImpactPattern: s.showImpactPattern !== false, showMousePath: s.showMousePath !== false,
     peekScenario: ['mixed','common','deep','off-angle','elevated'].includes(s.peekScenario!) ? s.peekScenario! : 'mixed',
     peekDuration: numeric(s.peekDuration,1,.5,10),

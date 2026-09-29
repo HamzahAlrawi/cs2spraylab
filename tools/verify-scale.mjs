@@ -23,3 +23,21 @@ const nativeHeight = 1.821905848570168;
 assert(Math.abs(height - nativeHeight) < .002, `Target scale changed: ${height} m, expected ${nativeHeight} m`);
 assert(Math.abs(bounds.min.y) < .005, `Target feet moved from the native ground origin: ${bounds.min.y}`);
 console.log(`Scale verified: native idle ${height.toFixed(6)} m (${(height / .0254).toFixed(3)} units), loading bounds ${loadingHeight.toFixed(6)} m; no runtime height normalization.`);
+
+if (process.argv.includes('--native')) {
+  const raw = fs.readFileSync('research/raw-models/reload-arms.glb'), length = raw.readUInt32LE(12);
+  const j = JSON.parse(raw.subarray(20, 20 + length));
+  j.buffers[0].uri = `data:application/octet-stream;base64,${raw.subarray(28 + length).toString('base64')}`;
+  for (const mesh of j.meshes) for (const p of mesh.primitives) delete p.material;
+  delete j.materials; delete j.textures; delete j.images;
+  const native = await new GLTFLoader().parseAsync(JSON.stringify(j), '');
+  const idle = native.animations.find(a => a.name.includes('/world/') && a.name.endsWith('/idle_rifle'));
+  assert(idle, 'Current native world idle absent');
+  const m = new AnimationMixer(native.scene); m.clipAction(idle).play(); m.update(0); native.scene.updateMatrixWorld(true);
+  const b = new Box3().makeEmpty();
+  native.scene.traverse(o => {if (o.isSkinnedMesh) o.skeleton.update();
+    if (o.isMesh && o.name.includes('thirdperson_body')) b.union(new Box3().setFromObject(o, true));});
+  const current = b.getSize(new Vector3()).y;
+  assert(Math.abs(current - height) < .002, `Runtime/current native scale mismatch: ${height} vs ${current}`);
+  console.log(`Fresh installed-game world pose: ${current.toFixed(6)} m; runtime delta ${(Math.abs(current - height) * 1000).toFixed(4)} mm.`);
+}

@@ -12,10 +12,10 @@ export function DrillReview({value:m}:{value:DrillMetrics}) {
       {m.movementScore!==undefined&&<div><dt>Movement score</dt><dd>{m.movementScore}/100</dd></div>}
       {m.peakSpeed!==undefined&&<div><dt>Speed before shot</dt><dd>{Math.round(m.peakSpeed)} u/s</dd></div>}
       <div><dt>Speed at shot</dt><dd>{Math.round(m.speedAtShot)} u/s</dd></div>
-      <div><dt title="Shots fired while grounded and below the movement accuracy threshold">Settled shots</dt><dd>{m.settledShots}/{m.shots}</dd></div>
-      <div><dt title="Hits landed while movement was settled">Accurate shots</dt><dd title={m.accuracyVerified?undefined:'Older rep: hit-and-movement accuracy was not recorded'}>{m.accuracyVerified?m.accurateShots:'--'}/{m.shots}</dd></div>
+      <div><dt title="Shots fired on the ground and below the movement inaccuracy threshold; they may still miss">Shots after stopping</dt><dd>{m.settledShots}/{m.shots}</dd></div>
+      <div><dt title="Shots that hit AND were fired after movement slowed down">Hits after stopping</dt><dd title={m.accuracyVerified?undefined:'Older rep: hit-and-movement accuracy was not recorded'}>{m.accuracyVerified?m.accurateShots:'--'}/{m.shots}</dd></div>
       <div><dt>Counter-strafe</dt><dd>{m.counterStrafed?<Check size={15}/>:<X size={15}/>} {m.counterStrafed?'Yes':'No'}</dd></div>
-      <div><dt>Aimed at stop</dt><dd>{m.stopError===null?'Not recorded':m.stoppedOnTarget?'On head':'Needs correction'}</dd></div>
+      <div><dt>Aim when you stopped</dt><dd>{m.stopError===null?'Not recorded':m.stoppedOnTarget?'On head':'Needs correction'}</dd></div>
       <div><dt>Aim on reveal</dt><dd>{degrees(m.entryError)}</dd></div>
       <div><dt>Aim at shot</dt><dd>{degrees(m.shotError)}</dd></div>
       <div><dt>Mouse correction</dt><dd>{degrees(m.mouseCorrection)}</dd></div>

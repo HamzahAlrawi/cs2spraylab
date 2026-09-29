@@ -9,6 +9,11 @@ import {equipmentIds,equipmentNames,equipmentStats,type Slot} from './equipment'
 import {isDrillMode,readDrillMetrics} from './drills';
 import {DrillPanel,DrillReview} from './DrillPanel';
 import {makeRepFeedback,type RepFeedback} from './rep-feedback';
+import {DuelStage} from './duel/DuelStage';
+import {GraduationCap} from 'lucide-react';
+import {MovementTutorial} from './MovementTutorial';
+import {modeInfo} from './mode-info';
+import recoilProvenance from './recoil-provenance.json';
 
 function CrosshairView({ value }: { value: Crosshair }) {
   const style = { '--cross-color': value.color, '--cross-size': `${value.size}px`, '--cross-gap': `${value.gap}px`, '--cross-thickness': `${value.thickness}px`, '--cross-outline': `${value.outline}px`, opacity: value.alpha } as CSSProperties;
@@ -19,8 +24,8 @@ function CrosshairView({ value }: { value: Crosshair }) {
 function Slider({ label, value, min, max, step = 1, suffix = '', onChange }: { label: string; value: number; min: number; max: number; step?: number; suffix?: string; onChange: (n: number) => void }) {
   return <label className="slider-row"><span>{label}<output>{value}{suffix}</output></span><input aria-label={label} type="range" min={min} max={max} step={step} value={value} onChange={e => onChange(+e.target.value)} /></label>;
 }
-function Toggle({ label, checked, onChange }: { label: string; checked: boolean; onChange: (v: boolean) => void }) {
-  return <label className="toggle-row"><span>{label}</span><input type="checkbox" role="switch" checked={checked} onChange={e => onChange(e.target.checked)} /><span className="switch" /></label>;
+function Toggle({ label, checked, onChange, disabled = false }: { label: string; checked: boolean; onChange: (v: boolean) => void; disabled?: boolean }) {
+  return <label className="toggle-row"><span>{label}</span><input type="checkbox" role="switch" checked={checked} disabled={disabled} onChange={e => onChange(e.target.checked)} /><span className="switch" /></label>;
 }
 function NumberField({ label, value, min, max, step = 1, onCommit }: { label: string; value: number; min: number; max: number; step?: number; onCommit: (v: number) => void }) {
   const [draft, setDraft] = useState(String(value));
@@ -49,6 +54,7 @@ type Tab = 'game' | 'crosshair' | 'data';
 export default function RangeApp() {
   const [settings, setSettings] = useState(loadSettings);
   const [setupHint, setSetupHint] = useState(needsSetupHint);
+  const [tutorial, setTutorial] = useState(false);
   const settingsButton = useRef<HTMLButtonElement>(null);
   const settingsRef = useRef(settings); settingsRef.current = settings;
   const [status, setStatus] = useState(emptyStatus);
@@ -79,6 +85,7 @@ export default function RangeApp() {
   useEffect(()=>{if(!repFeedback)return;const timer=setTimeout(()=>setRepFeedback(null),4000);return()=>clearTimeout(timer);},[repFeedback]);
   useEffect(()=>setRepFeedback(null),[settings.mode]);
   useEffect(() => {
+    if (settings.mode === 'duel') {engine.current = undefined; return;}
     let range: RangeEngine;
     try {
       range = new RangeEngine(host.current!, setStatus, settingsRef.current, follow.current!, hitmarker.current!, setError);
@@ -88,6 +95,11 @@ export default function RangeApp() {
         if(result.drill&&isDrillMode(result.mode)) {
           const previous=resultsRef.current.filter(r=>r.mode===result.mode&&r.drill).map(r=>r.drill!);
           setRepFeedback({id:result.id,mode:result.mode,...makeRepFeedback(result.mode,result.drill,previous)});
+        } else if (result.shots && result.mode !== 'tracking') {
+          setRepFeedback({id: result.id, mode: result.mode, passed: result.hits / result.shots >= .7,
+            message: `${result.hits}/${result.shots} hits / ${result.heads} head hits`,
+            tip: result.hits / result.shots < .5 ? 'Start on the head, stop moving, then correct recoil as it climbs. Use shorter bursts until the first shots connect.'
+              : 'Keep the same starting aim. Check the wall marks for shots that drifted away as the spray continued.'});
         }
         resultsRef.current=[result,...resultsRef.current].slice(0,100);
         setSelected(result); setReplay(result.samples.length);
@@ -99,7 +111,7 @@ export default function RangeApp() {
       };
       return () => { engine.current = undefined; range.dispose(); };
     } catch { setError('WebGL could not start. Enable browser hardware acceleration, then restart the range.'); }
-  }, [generation]);
+  }, [generation, settings.mode === 'duel']);
   useEffect(() => {
     engine.current?.configure(settings, profiles[settings.weapon]);
     if (!saveSettings(settings)) setNotice('Browser storage unavailable. Settings apply to this session.');
@@ -152,15 +164,20 @@ export default function RangeApp() {
     </header>
     <section className="range-toolbar" aria-label="Range configuration">
       <button className="weapon-select" onClick={() => open('weapons')}><img src={`/models/${settings.weapon}.png`} alt="" /><span><small>LOADOUT</small>{weaponNames[settings.weapon]}</span><ChevronDown size={15} /></button>
-      <label className="mode-select"><small>DRILL</small><select aria-label="Training mode" value={settings.mode} onChange={e => update({ mode: e.target.value as Mode })}>{Object.entries(modeNames).map(([id, name]) => <option key={id} value={id}>{name}</option>)}</select></label>
-      <div className="distance-input"><small>DISTANCE</small><output>{status.distance.toFixed(1)} m</output></div>
-      <div className="toolbar-actions"><button className="icon-button" title="Reset range" aria-label="Reset range" onClick={() => { engine.current?.sim.reset(); engine.current?.clearImpacts(); }}><RotateCcw size={18} /></button><button className="icon-button" title={settings.volume ? 'Mute' : 'Unmute'} aria-label={settings.volume ? 'Mute' : 'Unmute'} onClick={() => update({ volume: settings.volume ? 0 : .2 })}>{settings.volume ? <Volume2 size={18} /> : <VolumeX size={18} />}</button><button className="icon-button fullscreen" title="Fullscreen" aria-label="Fullscreen" onClick={() => { if (document.fullscreenElement) void document.exitFullscreen(); else void host.current?.closest('.range-stage')?.requestFullscreen?.().catch(() => setNotice('Fullscreen unavailable in this browser.')); }}><Maximize size={18} /></button></div>
+      <label className="mode-select"><small>DRILL</small><select aria-label="Training mode" value={settings.mode} onChange={e => {const mode = e.target.value as Mode; update({mode, spread: modeInfo[mode].spread});}}>{Object.entries(modeNames).map(([id, name]) => <option key={id} value={id}>{name}</option>)}</select></label>
+      {settings.mode !== 'duel' && <div className="distance-input"><small>DISTANCE</small><output>{status.distance.toFixed(1)} m</output></div>}
+      <div className="toolbar-actions">{settings.mode !== 'duel' && <button className="icon-button" title="Reset range" aria-label="Reset range" onClick={() => { engine.current?.sim.reset(); engine.current?.clearImpacts(); }}><RotateCcw size={18} /></button>}<button className="icon-button" title={settings.volume ? 'Mute' : 'Unmute'} aria-label={settings.volume ? 'Mute' : 'Unmute'} onClick={() => update({ volume: settings.volume ? 0 : .2 })}>{settings.volume ? <Volume2 size={18} /> : <VolumeX size={18} />}</button><button className="icon-button fullscreen" title="Fullscreen" aria-label="Fullscreen" onClick={() => { if (document.fullscreenElement) void document.exitFullscreen(); else void host.current?.closest('.range-stage')?.requestFullscreen?.().catch(() => setNotice('Fullscreen unavailable in this browser.')); }}><Maximize size={18} /></button></div>
     </section>
-    <section className={`range-stage${isDrillMode(settings.mode)?' with-drill':''}`} aria-label="Practice range">
+    <section className="mode-brief" aria-label="Drill purpose"><div><strong>{modeInfo[settings.mode].benefit}</strong><p>{modeInfo[settings.mode].task}</p></div><button onClick={() => {engine.current?.pause(); setTutorial(true);}}><GraduationCap size={19}/>Learn the fundamentals</button></section>
+    <section className={`range-stage${settings.mode === 'duel' ? ' duel-stage' : isDrillMode(settings.mode)?' with-drill':''}`} aria-label="Practice range">
+      {settings.mode === 'duel' ? <DuelStage settings={settings} openSettings={() => open('settings')} onEnter={() => setSetupHint(false)} suspended={!!panel || tutorial}/> : <>
       <div className={`range-view${showRepFeedback?' has-rep-feedback':''}`}>
       <div className="canvas-host" ref={host} />
       <div className="range-topline"><span className="range-badge"><i />{status.active ? 'LIVE RANGE' : 'RANGE 01'}</span><span>{profiles[settings.weapon] ? 'IMPORTED RECOIL CAPTURE' : 'GAME-DERIVED RECOIL'}</span></div>
       {!isDrillMode(settings.mode)&&<div className="target-label">{modeNames[settings.mode]} <span>{status.distance.toFixed(1)} m</span></div>}
+      {settings.mode === 'transfer' && settings.transferRule === 'kill' && <div className="transfer-health" aria-label="Transfer target health">
+        {(status.targetHealth ?? [100,100]).map((health, i) => <span key={i} className={health === 0 ? 'down' : ''}>{i ? 'B' : 'A'} <b>{health === 0 ? 'DOWN' : `${Math.ceil(health)} HP`}</b></span>)}
+      </div>}
       <div className="equipment-slots" role="group" aria-label="Equipped weapon">
         {([1,2,3] as Slot[]).map(slot=>{const id=slot===1?settings.weapon:slot===2?'usp':'knife';return <button key={slot} aria-pressed={status.slot===slot} aria-label={`Equip ${equipmentNames[id]}`} title={`${equipmentNames[id]} (${slot})`} onClick={()=>{void engine.current?.equip(slot);}}><span>{slot}</span><img src={`/models/${id}.png`} alt=""/></button>;})}
       </div>
@@ -177,12 +194,13 @@ export default function RangeApp() {
       <div className="range-hud">
         <div className="hud-performance"><span className="hud-stat"><Activity size={17} /><b>{Math.round(status.speed)}</b><small>u/s</small></span><span className="hud-stat"><Target size={17} /><b>{status.distance.toFixed(1)}</b><small>m</small></span></div>
         <div className="hud-result"><small>{settings.mode==='precision'?'MOVEMENT SCORE':'HIT RATE'}</small><strong data-testid="accuracy">{Math.round(score)}<em>{settings.mode==='precision'?'/100':'%'}</em></strong><div className="hit-counts"><span className="head-count"><b>{status.heads}</b> HEAD</span><span className="body-count"><b>{status.hits - status.heads}</b> BODY</span><span className="miss-count"><b>{status.shots - status.hits}</b> MISS</span></div></div>
-        <div className="hud-ammo"><small>{equipmentNames[status.equipped]}</small><strong data-testid="ammo">{status.slot===3?'--':status.remaining}{status.slot!==3&&<em>{`/ ${status.magazine}`}</em>}</strong><span>{status.reload?`Reloading ${status.reload.toFixed(1)} s`:!status.equipReady?'Drawing':status.firing ? 'Firing' : 'Ready'}</span>{status.slot===2&&<button className="reload-pistol" disabled={status.remaining===12||!!status.reload} onClick={()=>engine.current?.sim.reload()} title="Reload USP-S (R)"><RotateCcw size={13}/>Reload</button>}</div>
+        <div className="hud-ammo"><small>{equipmentNames[status.equipped]}</small><strong data-testid="ammo">{status.slot===3?'--':status.remaining}{status.slot!==3&&<em>{`/ ${status.magazine}`}</em>}</strong><span>{status.reload?`Reloading ${status.reload.toFixed(1)} s`:!status.equipReady?'Drawing':status.firing ? 'Firing' : 'Ready'}</span>{status.slot!==3&&<button className="reload-pistol" disabled={status.slot===2&&status.remaining===12||!!status.reload} onClick={()=>engine.current?.sim.reload()} title={`Reload ${equipmentNames[status.equipped]} (R)`}><RotateCcw size={13}/>Reload</button>}</div>
       </div>
       </div>
       {isDrillMode(settings.mode)&&<DrillPanel status={status} mode={settings.mode} challenge={settings.drillPace==='challenge'} peekDuration={settings.peekDuration}/>}
+      </>}
     </section>
-    <footer className="statusbar"><span><i className={status.active ? 'online' : ''} />{status.input}<span className="desktop-status">{status.fps} FPS</span></span><span className="status-center">{status.audio === 'unavailable' ? 'Audio unavailable' : status.slot===3?'250 u/s':`${Math.round(60 / equipmentStats(status.equipped).cycle)} RPM`}<span className="desktop-status">Build {gameData.build}</span></span><div className="project-links"><a href="https://github.com/HamzahAlrawi/cs2spraylab" target="_blank" rel="noreferrer"><Github size={14} />Source</a></div></footer>
+    <footer className="statusbar"><span><i className={status.active ? 'online' : ''} />{settings.mode === 'duel' ? 'AI Duel' : status.input}{settings.mode !== 'duel' && <span className="desktop-status">{status.fps} FPS</span>}</span><span className="status-center">{settings.mode === 'duel' ? 'Simulation' : status.audio === 'unavailable' ? 'Audio unavailable' : status.slot===3?'250 u/s':`${Math.round(60 / equipmentStats(status.equipped).cycle)} RPM`}<span className="desktop-status">Build {gameData.build}</span></span><div className="project-links"><a href="https://github.com/HamzahAlrawi/cs2spraylab" target="_blank" rel="noreferrer"><Github size={14} />Source</a></div></footer>
     {notice && <div className="toast" role="status">{notice}<button className="icon-button" aria-label="Dismiss message" onClick={() => setNotice('')}><X size={15} /></button></div>}
     {panel && <div className="drawer-backdrop" onPointerDown={e => { if (e.target === e.currentTarget) setPanel(null); }}>
       <aside className={`drawer ${panel === 'history' ? 'wide' : ''}`} role="dialog" aria-modal="true" aria-labelledby="panel-title" tabIndex={-1} ref={drawer}>
@@ -200,7 +218,11 @@ export default function RangeApp() {
               <Slider label="Peeking target duration" value={settings.peekDuration} min={.5} max={10} step={.25} suffix=" s" onChange={peekDuration=>update({peekDuration})}/>
               <label className="select-row">Counterstrafe / burst pace<select aria-label="Drill pace" value={settings.drillPace} onChange={e=>update({drillPace:e.target.value as Settings['drillPace']})}><option value="practice">Practice / 8 s exposure</option><option value="challenge">Challenge / 1.5 s exposure</option></select></label>
               <Toggle label="Follow recoil" checked={settings.follow} onChange={v => update({ follow: v })} />
-              <Toggle label="Practice spread" checked={settings.spread} onChange={v => update({ spread: v })} />
+              <Toggle label="Practice spread" checked={settings.mode === 'duel' || settings.spread} disabled={settings.mode === 'duel'} onChange={v => update({ spread: v })} />
+              <p className="setting-explanation">Spread adds the weapon's random shot dispersion and the extra inaccuracy from movement, jumping and repeated fire. Turning it off does not remove recoil. Switching drills applies the recommended setting: off for Guided spray, on for other drills. AI Duel always applies it equally to you and the bots.</p>
+              <label className="select-row">Transfer to B<select aria-label="Transfer trigger" value={settings.transferRule} onChange={e => update({transferRule: e.target.value as Settings['transferRule']})}><option value="bullet">After a bullet count</option><option value="kill">After A loses 100 health</option></select></label>
+              {settings.transferRule === 'bullet' && <Slider label="Transfer after bullet" value={settings.transferAfter} min={1} max={weapon.magazine - 1} onChange={transferAfter => update({transferAfter})}/>}
+              <p className="setting-explanation">Transfer targets have 100 health and no armor. Recoil continues across A and B. A short selected burst caps the transfer count before its last round.</p>
               <Slider label="Bullet impact size" value={settings.impactSize} min={.5} max={4} step={.25} suffix="x" onChange={impactSize=>update({impactSize})}/>
               <Toggle label="Moving target" checked={settings.moving} onChange={v => update({ moving: v })} />
               <label className="select-row">Target movement<select aria-label="Target movement" value={settings.targetSpeed} onChange={e => update({ targetSpeed: e.target.value as Settings['targetSpeed'] })}><option value="rifle">{weaponNames[settings.weapon]} / {weapon.speed} u/s</option><option value="smg">MP9 / 240 u/s</option><option value="knife">Knife / 250 u/s</option></select></label>
@@ -227,7 +249,8 @@ export default function RangeApp() {
             {tab === 'data' && <>
               <h2>Audio</h2><Slider label="Weapon volume" value={Math.round(settings.volume * 100)} min={0} max={100} suffix="%" onChange={v => update({ volume: v / 100 })} />
               <button className="secondary" onClick={async () => { await engine.current?.audio.unlock(settings.weapon); engine.current?.audio.play(settings.weapon, settings.volume); }}><Volume2 size={16} />Test {weaponNames[settings.weapon]}</button>
-              <h2>Data provenance</h2><dl className="data-list"><dt>Installed CS2 build</dt><dd>{gameData.build}</dd><dt>Cadence, speed, magazine</dt><dd>Game weapon data</dd><dt>Models & shot samples</dt><dd>Local Valve assets</dd><dt>Spray trajectory</dt><dd>{profiles[settings.weapon] ? 'Capture-fitted impulses' : 'Native seeds + recovered recoil math'}</dd><dt>Recoil recovery</dt><dd>Persistent punch + recoil index</dd></dl>
+              <h2>Data provenance</h2><dl className="data-list"><dt>Weapon data build</dt><dd>{gameData.build}</dd><dt>Recoil math inspected</dt><dd>{recoilProvenance.build}</dd><dt>Cadence, speed, magazine</dt><dd>Game weapon data</dd><dt>Models & shot samples</dt><dd>Local Valve assets</dd><dt>Spray trajectory</dt><dd>{profiles[settings.weapon] ? 'Capture-fitted impulses' : 'Native seeds + recovered recoil math'}</dd><dt>Recoil recovery</dt><dd>Persistent punch + recoil index</dd></dl>
+              <p className="settings-note">Weapon parameters match the latest local export. Recoil math was inspected on an earlier build; full trajectories, camera motion and subtick timing are not an exact CS2 reproduction.</p>
               <p className="data-note">Recoil and firing inaccuracy persist between trigger presses. Recovery math is derived from the installed client; subtick movement, spread RNG and animation blending are not an exact CS2 reproduction.</p>
               <label className="secondary file-button"><Upload size={16} />Import angular capture<input aria-label="Import angular capture" type="file" accept="application/json,.json" onChange={e => { void importProfile(e.target.files?.[0]); e.target.value = ''; }} /></label>
               {profiles[settings.weapon] && <><p className="data-note">{profiles[settings.weapon]?.source} / build {profiles[settings.weapon]?.build}</p><button className="secondary" onClick={() => { const next = { ...profiles }; delete next[settings.weapon]; setProfiles(next); try { localStorage.setItem('spraylab.profiles.v1', JSON.stringify(next)); } catch { setNotice('Storage unavailable.'); } }}>Remove capture</button></>}
@@ -244,5 +267,6 @@ export default function RangeApp() {
         </div>}
       </aside>
     </div>}
+    {tutorial && <MovementTutorial close={() => setTutorial(false)} practice={() => {setTutorial(false); update({mode: 'precision', spread: true, drillPace: 'practice'});}}/>}
   </main>;
 }

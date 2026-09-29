@@ -13,6 +13,7 @@ run('-f', 'scripts/weapons.vdata_c', '-d', '-o', 'research/equipment-weapons.vda
 const raw = fs.readFileSync('research/equipment-weapons.vdata', 'utf8');
 const source = parseKv3(raw);
 const accuracyFields = {
+  damage: 'm_nDamage', range: 'm_flRange', rangeModifier: 'm_flRangeModifier', armorRatio: 'm_flArmorRatio', headshotMultiplier: 'm_flHeadshotMultiplier',
   recoveryFinal: 'm_flRecoveryTimeStandFinal', recoveryCrouch: 'm_flRecoveryTimeCrouch',
   recoveryCrouchFinal: 'm_flRecoveryTimeCrouchFinal', recoveryStart: 'm_nRecoveryTransitionStartBullet', recoveryEnd: 'm_nRecoveryTransitionEndBullet',
   jump: 'm_flInaccuracyJump', jumpInitial: 'm_flInaccuracyJumpInitial', jumpApex: 'm_flInaccuracyJumpApex', land: 'm_flInaccuracyLand'
