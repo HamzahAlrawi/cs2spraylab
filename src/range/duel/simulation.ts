@@ -17,8 +17,9 @@ import {proficiency} from './awareness';
 import {equipmentForSlot, equipmentStats, type Equipment, type Slot} from '../equipment';
 import {DuelCoach} from './coaching';
 import {coveredSpawns} from './spawns';
+import {applyTagging, recoverTagging, type TaggingState} from '../tagging';
 
-type CombatActor = ActorKinematics & {
+type CombatActor = ActorKinematics & TaggingState & {
   id: number;
   generation: number;
   side: 'player' | 'enemy';
@@ -33,7 +34,7 @@ type CombatActor = ActorKinematics & {
   inventory: Map<Equipment, DuelWeaponState>;
   equipReadyAt: number;
 };
-type PendingHit = {victim: CombatActor; event: Extract<DuelEvent, {kind: 'hit'}>};
+type PendingHit = {victim: CombatActor; weapon: Equipment; event: Extract<DuelEvent, {kind: 'hit'}>};
 
 const makeActor = (id: number, side: CombatActor['side'], x: number, z: number, weapon: Weapon,
   health: number, armored: boolean, seed: number): CombatActor => ({
@@ -41,6 +42,7 @@ const makeActor = (id: number, side: CombatActor['side'], x: number, z: number, 
   position: {x, y: 64 * UNIT, z}, velocity: {x: 0, z: 0}, yaw: side === 'player' ? 0 : Math.PI,
   pitch: 0, feet: 0, verticalVelocity: 0, eyeHeight: 64 * UNIT, duckAmount: 0, jumpHeld: false,
   health, armor: armored ? 100 : 0, helmet: armored, alive: true,
+  flinchStack: 1, velocityModifier: 1,
   weapon: new DuelWeaponState(weapon, randomStream(seed, `shot:${id}`)), command: idleCommand(),
   stepDistance: 0,
   inventory: new Map(), equipReadyAt: 0,
@@ -166,6 +168,7 @@ export class DuelSimulation {
       if (actor.id === 0 && command.equipSlot) {this.equipPlayer(command.equipSlot); command.equipSlot = undefined;}
       actor.yaw += command.yawDelta;
       actor.pitch = Math.max(-89 * DEG, Math.min(89 * DEG, actor.pitch + command.pitchDelta));
+      recoverTagging(actor, STEP, actor.grounded ?? actor.feet === 0);
       const next = advanceActor(actor, command, equipmentStats(actor.weapon.id).speed * UNIT, STEP,
         (from, desired, feet, height) => {
           const staticPosition = moveInArena(from, desired, feet, height, this.arena);
@@ -206,7 +209,7 @@ export class DuelSimulation {
     }
     const pending: PendingHit[] = [];
     for (const shot of shots) this.resolveShot(shot.actor, shot.fired, shot.shotId, pending);
-    for (const {victim, event} of pending) {
+    for (const {victim, weapon, event} of pending) {
       if (!victim.alive) continue;
       event.healthDamage = Math.min(victim.health, event.healthDamage);
       event.armorDamage = Math.min(victim.armor, event.armorDamage);
@@ -214,6 +217,7 @@ export class DuelSimulation {
       victim.health = Math.max(0, victim.health - event.healthDamage);
       victim.armor = Math.max(0, victim.armor - event.armorDamage);
       if (victim.health === 0) victim.alive = false;
+      if (victim.alive && event.healthDamage > 0) applyTagging(victim, weapon, victim.weapon.id);
       if (victim.alive && victim.side === 'enemy') {
         const brain = this.brains.get(victim.id);
         if (brain instanceof TacticalBrain) brain.hurt(this.time, victim.health);
@@ -253,7 +257,7 @@ export class DuelSimulation {
     if (nearest.actor && nearest.group) {
       if (nearest.actor.side === shooter.side) return;
       const damage = resolveDamage(fired.weapon, nearest.group, nearest.distance, nearest.actor.armor, nearest.actor.helmet);
-      pending.push({victim: nearest.actor, event: {kind: 'hit', tick: this.tick, shooter: shooter.id,
+      pending.push({victim: nearest.actor, weapon: fired.weapon, event: {kind: 'hit', tick: this.tick, shooter: shooter.id,
         victim: nearest.actor.id, shotId, group: nearest.group,
         point: pointOnRay(fired.origin, fired.direction, nearest.distance), ...damage, lethal: false}});
     } else if (Number.isFinite(surface.distance)) {

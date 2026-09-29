@@ -1,0 +1,102 @@
+{
+  "build": "2000919",
+  "source": "scripts/weapons.vdata_c",
+  "sha256": "3289d4dba65b1ef3f884c389448c8a6c6db8691442c18a7aaddb28434aaf250d",
+  "weapons": {
+    "ak47": {
+      "large": 0.4,
+      "small": 0.55,
+      "speed": 215
+    },
+    "m4a4": {
+      "large": 0.4,
+      "small": 0.55,
+      "speed": 225
+    },
+    "m4a1s": {
+      "large": 0.4,
+      "small": 0.4,
+      "speed": 225
+    },
+    "galil": {
+      "large": 0.4,
+      "small": 0.55,
+      "speed": 215
+    },
+    "famas": {
+      "large": 0.4,
+      "small": 0.55,
+      "speed": 220
+    },
+    "sg553": {
+      "large": 0.4,
+      "small": 0.55,
+      "speed": 210
+    },
+    "aug": {
+      "large": 0.4,
+      "small": 0.55,
+      "speed": 220
+    },
+    "mp9": {
+      "large": 0,
+      "small": 0,
+      "speed": 240
+    },
+    "mp7": {
+      "large": 0,
+      "small": 0,
+      "speed": 220
+    },
+    "mp5sd": {
+      "large": 0,
+      "small": 0,
+      "speed": 235
+    },
+    "mac10": {
+      "large": 0,
+      "small": 0,
+      "speed": 240
+    },
+    "ump45": {
+      "large": 0,
+      "small": 0,
+      "speed": 230
+    },
+    "p90": {
+      "large": 0,
+      "small": 0,
+      "speed": 230
+    },
+    "bizon": {
+      "large": 0,
+      "small": 0,
+      "speed": 240
+    },
+    "m249": {
+      "large": 0.4,
+      "small": 0.55,
+      "speed": 195
+    },
+    "negev": {
+      "large": 0.4,
+      "small": 0.55,
+      "speed": 150
+    },
+    "cz75a": {
+      "large": 0.5,
+      "small": 0.65,
+      "speed": 240
+    },
+    "usp": {
+      "large": 0.5,
+      "small": 0.65,
+      "speed": 240
+    },
+    "knife": {
+      "large": 0.3,
+      "small": 0.3,
+      "speed": 250
+    }
+  }
+}

@@ -73,6 +73,7 @@
 @media(max-width:600px){.damage-arc{width:126px;height:126px}.duel-result p{font-size:11px}.duel-result{top:20%!important}.duel-view .equipment-slots{top:54px}}
 @media(max-width:700px) and (orientation:portrait){.duel-controls{height:300px;display:grid;grid-template-columns:1fr;grid-template-rows:46px 36px minmax(0,1fr)}.duel-controls-head{width:100%;height:46px;padding:6px 14px;border-right:0;border-bottom:1px solid #405047}.duel-controls-head small{display:none}.duel-controls-body{height:auto}.duel-controls>.tabs{margin:0}.duel-analysis,.duel-analysis-empty{grid-column:1/-1}.duel-analysis{min-width:0}}
 .duel-sources{font-size:11px;line-height:1.5;margin-top:14px;color:#b8c5be}.duel-sources summary{cursor:pointer}.duel-sources p{margin:8px 0}.duel-sources a{display:block;color:#a2ead5;text-decoration:underline;margin-top:5px}
-.duel-tools{position:absolute;right:20px;top:60px;max-width:calc(100% - 40px);display:flex;flex-direction:column;align-items:flex-end;gap:6px}
+.duel-tools{position:absolute;right:20px;top:60px;max-width:calc(100% - 40px);display:flex;flex-direction:column;align-items:flex-end;gap:6px;pointer-events:none}
+.duel-tools button{pointer-events:auto}
 .duel-tools>.equipment-slots,.duel-tools>.duel-exit,.duel-tools>.duel-shortcut-warning{position:static}
 @media(max-height:550px) and (orientation:landscape){.duel-tools{left:20px;display:grid;grid-template-columns:1fr auto;align-items:start}.duel-tools>.equipment-slots{grid-column:2;grid-row:1}.duel-tools>.duel-exit{grid-column:1;grid-row:1;justify-self:start}.duel-tools>.duel-shortcut-warning{grid-column:1;grid-row:2;justify-self:start}}
