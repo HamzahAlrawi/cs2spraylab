@@ -1,7 +1,7 @@
 {
-  "build": "2000908",
+  "build": "2000918",
   "source": "scripts/weapons.vdata_c",
-  "sha256": "fbd0d6f754c234efb24ec5c6b8c335f190e67f17ac7ec98dc2cd2ea2ddb4037e",
+  "sha256": "3289d4dba65b1ef3f884c389448c8a6c6db8691442c18a7aaddb28434aaf250d",
   "weapons": {
     "usp": {
       "magazine": 12,
@@ -20,6 +20,11 @@
       "recoilVariance": 0,
       "recoilMagnitude": 23,
       "recoilMagnitudeVariance": 0,
+      "damage": 35,
+      "range": 4096,
+      "rangeModifier": 0.91,
+      "armorRatio": 1.01,
+      "headshotMultiplier": 4,
       "recoveryFinal": 0.349532,
       "recoveryCrouch": 0.291277,
       "recoveryCrouchFinal": 0.291277,
@@ -50,6 +55,11 @@
       "recoilVariance": 0,
       "recoilMagnitude": 0,
       "recoilMagnitudeVariance": 0,
+      "damage": 50,
+      "range": 4096,
+      "rangeModifier": 0.99,
+      "armorRatio": 1.7,
+      "headshotMultiplier": 4,
       "recoveryFinal": -1,
       "recoveryCrouch": 1,
       "recoveryCrouchFinal": -1,

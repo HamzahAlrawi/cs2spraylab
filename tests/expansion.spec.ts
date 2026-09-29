@@ -1,6 +1,12 @@
 import {test,expect} from '@playwright/test';
 import sharp from 'sharp';
 
+test.beforeEach(async ({page}) => {
+  await page.addInitScript(() => {
+    if (!localStorage.getItem('spraylab.range.v2')) localStorage.setItem('spraylab.range.v2', JSON.stringify({mode: 'peek'}));
+  });
+});
+
 async function ready(page: import('@playwright/test').Page) {
   await page.goto('/');
   await expect(page.getByRole('button',{name:'Enter range',exact:true})).toBeEnabled({timeout:45000});
@@ -164,14 +170,14 @@ test('six-shot bursts and configurable timed peeking retain live shot feedback',
   await page.reload();await expect(page.getByRole('button',{name:'Enter range',exact:true})).toBeEnabled({timeout:45000});
   await expect(page.locator('.coach-condition')).toContainText('4 s from first shot');
   await tap();
-  const accurate=page.locator('.drill-metrics div').filter({has:page.locator('dt',{hasText:'Accurate shots'})}).locator('dd');
-  const settled=page.locator('.drill-metrics div').filter({has:page.locator('dt',{hasText:'Settled shots'})}).locator('dd');
+  const accurate=page.locator('.drill-metrics div').filter({has:page.locator('dt',{hasText:'Hits after stopping'})}).locator('dd');
+  const settled=page.locator('.drill-metrics div').filter({has:page.locator('dt',{hasText:'Shots after stopping'})}).locator('dd');
   await expect.poll(async()=>Number((await settled.innerText()).split('/')[0])).toBeGreaterThan(5);
   await expect(accurate).toHaveText(/^0\/\d+$/);
   await expect(page.locator('.coach-heading')).toContainText('REP 1');
   await expect(page.locator('.coach-heading')).toContainText('REP 2',{timeout:15000});
   await expect.poll(()=>page.evaluate(()=>JSON.parse(localStorage.getItem('spraylab.results.v2')||'[]')[0]?.shots)).toBe(30);
-  await expect(page.getByRole('status',{name:'Rep feedback',exact:true})).toContainText('Clear the wall first');
+  await expect(page.getByRole('status',{name:'Rep feedback',exact:true})).toContainText('Your shot was blocked by cover');
 });
 
 test('repeated mistakes produce a central tip and the skin donation label fits narrow screens',async({page},info)=>{
@@ -188,7 +194,7 @@ test('repeated mistakes produce a central tip and the skin donation label fits n
     await expect(page.getByRole('status',{name:'Rep feedback',exact:true})).toBeVisible();
   }
   const feedback=page.getByRole('status',{name:'Rep feedback',exact:true});
-  await expect(feedback).toContainText('Strafe until the exposed head is clear');
+  await expect(feedback).toContainText('Move farther sideways until you can see and hit the head');
   for(const size of [{width:390,height:844},{width:320,height:568},{width:844,height:390}]){
     await page.setViewportSize(size);
     // WebGL dimensions follow ResizeObserver, which can lag the CSS viewport.

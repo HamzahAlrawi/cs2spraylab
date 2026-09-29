@@ -1,5 +1,13 @@
 {
   "build": "2000908",
+  "weaponDataAudit": {
+    "build": "2000918",
+    "inspectedAt": "2026-09-28",
+    "parametersSha256": "d20049b1d72bbc174dbceda0d3171164d0aa55569d56e13546f435eb1f3105d0",
+    "scope": "All 33 exported fields of all 17 weapons are unchanged from 2000908. Static data verified; current DLL math has NOT been re-emulated.",
+    "clientSha256": "9b4f46dbd6a433163b39d7ea0123c321b1ad6d95ceedd40ae121312464833549",
+    "tier0Sha256": "4e0dcb0af3f6953f37ddaed0f4e67a56d031f1e84964a262148f8a6f80547791"
+  },
   "inspectedAt": "2026-09-20",
   "clientSha256": "a0c195f0b6ec00915ef08c548200a010ebbe7982d3a4bc468cad939b67c8c4e3",
   "tier0Sha256": "add398561b7831fc3b59356a3c3e48b87ba8d8db376b156c1b68c4d710136a8a",

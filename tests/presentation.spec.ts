@@ -1,6 +1,13 @@
 import { test, expect } from '@playwright/test';
 import sharp from 'sharp';
 
+test.beforeEach(async ({page}, info) => {
+  if (info.title.startsWith('first-visit')) return;
+  await page.addInitScript(() => {
+    if (!localStorage.getItem('spraylab.range.v2')) localStorage.setItem('spraylab.range.v2', JSON.stringify({mode: 'peek'}));
+  });
+});
+
 test('pausing clears live hit feedback before the entry button returns', async ({page}) => {
   await page.goto('/');
   await expect(page.getByRole('button', {name: 'Enter range', exact: true})).toBeEnabled({timeout: 45000});
@@ -91,6 +98,9 @@ test('viewmodels stay framed across portrait, landscape, ultrawide and stretched
   await page.emulateMedia({reducedMotion: 'reduce'});
   await page.goto('/');
   const reference = await page.context().newPage();
+  await reference.addInitScript(() => {
+    if (!localStorage.getItem('spraylab.range.v2')) localStorage.setItem('spraylab.range.v2', JSON.stringify({mode: 'peek'}));
+  });
   await reference.emulateMedia({reducedMotion: 'reduce'});
   await reference.route('**/models/view-ak47.glb', route => route.fulfill({contentType: 'application/json', body: JSON.stringify({asset: {version: '2.0'}, scene: 0, scenes: [{nodes: []}], nodes: []})}));
   await reference.goto('/');
@@ -144,7 +154,7 @@ test('first-visit Settings hint is noticeable, dismissible and not repeated', as
   const hint = (await page.locator('.settings-hint').boundingBox())!;
   expect(hint.x).toBeGreaterThanOrEqual(0);
   expect(hint.x + hint.width).toBeLessThanOrEqual(page.viewportSize()!.width);
-  await expect(page.getByRole('button', {name: 'Enter range', exact: true})).toBeEnabled({timeout: 45000});
+  await expect(page.getByRole('button', {name: 'Enter duel', exact: true})).toBeEnabled({timeout: 45000});
   await page.screenshot({path: `test-results/${info.project.name}-first-visit.png`});
   await page.getByRole('button', {name: 'Dismiss settings hint', exact: true}).click();
   await expect(page.locator('.settings-hint')).toHaveCount(0);
@@ -170,7 +180,7 @@ test('tracking is retired from the range without relabeling or deleting old resu
   });
   await page.goto('/');
   await expect(page.getByLabel('Training mode')).toHaveValue('guided');
-  await expect(page.getByLabel('Training mode').locator('option')).toHaveCount(6);
+  await expect(page.getByLabel('Training mode').locator('option')).toHaveCount(7);
   await expect(page.getByLabel('Training mode').locator('option[value="tracking"]')).toHaveCount(0);
   await expect(page.locator('.settings-hint')).toHaveCount(0);
   await page.getByRole('button', {name: 'Session', exact: false}).click();

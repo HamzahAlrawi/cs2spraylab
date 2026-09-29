@@ -50,7 +50,7 @@ it.each(Object.keys(modeNames) as Mode[])('shows distinct head/body feedback for
   engine.markerGeometry=new THREE.SphereGeometry(.018,6,4);
   engine.hitMaterial=new THREE.MeshBasicMaterial();engine.bodyMaterial=new THREE.MeshBasicMaterial();engine.missMaterial=new THREE.MeshBasicMaterial();
   engine.hitmarker={style:{}} as HTMLElement;engine.hitCaption={style:{},textContent:''} as HTMLDivElement;
-  engine.audio={play:vi.fn()} as unknown as RangeEngine['audio'];
+  engine.audio={play:vi.fn(),playHit:vi.fn()} as unknown as RangeEngine['audio'];
   try {
     for(const [y,label,color] of [[1.7,'HEADSHOT','#ffdc59'],[1.1,'BODY HIT','#51edee']] as const){
       engine.shot({index:0,at:0,origin:{x:0,y,z:0},direction:{x:0,y:0,z:-1},recoil:{yaw:0,pitch:0}});
@@ -70,6 +70,7 @@ it('bounds the GPU weapon cache and never evicts the selected assembly', () => {
   engine.sim = new Simulation({...defaults, weapon: 'm4a4'});
   engine.modelCache = new Map<Weapon, THREE.Object3D>(['ak47', 'm4a4', 'm4a1s', 'galil', 'famas'].map(id => [id as Weapon, new THREE.Group()]));
   const dispose = vi.fn(); engine.disposeObject = dispose;
+  engine.viewAnimations = new Map();
   engine.trimModelCache();
   expect([...engine.modelCache.keys()]).toEqual(['m4a4', 'galil', 'famas']);
   expect(dispose).toHaveBeenCalledTimes(2);

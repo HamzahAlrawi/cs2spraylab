@@ -3,6 +3,12 @@ import sharp from 'sharp';
 import { readFileSync } from 'node:fs';
 const weaponIds = Object.keys(JSON.parse(readFileSync('src/range/game-data.json', 'utf8')).weapons);
 
+test.beforeEach(async ({page}) => {
+  await page.addInitScript(() => {
+    if (!localStorage.getItem('spraylab.range.v2')) localStorage.setItem('spraylab.range.v2', JSON.stringify({mode: 'peek'}));
+  });
+});
+
 test('target readiness never enables shooting before the weapon has loaded', async ({ page }) => {
   let release!: () => void;
   const gate = new Promise<void>(resolve => { release = resolve; });
@@ -99,7 +105,8 @@ test('moving targets animate in shooting modes without starting a burst', async 
 test('blocked storage still allows rendering and settings changes', async ({ page }) => {
   await page.addInitScript(() => Object.defineProperty(window, 'localStorage', { get: () => { throw new DOMException('Blocked', 'SecurityError'); } }));
   await page.goto('/');
-  await expect(page.getByRole('button', { name: 'Enter range', exact: true })).toBeEnabled({timeout: 45000});
+  await expect(page.getByRole('button', { name: 'Enter duel', exact: true })).toBeEnabled({timeout: 45000});
+  await expect(page.locator('canvas[data-duel]')).toBeVisible();
   await page.getByRole('button', { name: 'Settings', exact: true }).click();
   await page.getByLabel('Invert mouse Y').check();
   await expect(page.getByLabel('Invert mouse Y')).toBeChecked();
@@ -287,6 +294,7 @@ test('mobile landscape keeps shooting, settings and project links within the vie
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth && document.documentElement.scrollHeight <= innerHeight)).toBe(true);
   await expect(page.getByRole('link', { name: 'Donate' })).toBeVisible();
   await expect(page.getByRole('button', { name: 'Settings', exact: true })).toBeVisible();
+  await page.getByLabel('Training mode').selectOption('spray');
   const canvas = page.locator('canvas[data-range]'), b = (await canvas.boundingBox())!;
   expect(b.height).toBeGreaterThan(240);
   const stats = await sharp(await canvas.screenshot()).stats();

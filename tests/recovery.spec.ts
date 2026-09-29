@@ -1,5 +1,11 @@
 import {test,expect} from '@playwright/test';
 
+test.beforeEach(async ({page}) => {
+  await page.addInitScript(() => {
+    if (!localStorage.getItem('spraylab.range.v2')) localStorage.setItem('spraylab.range.v2', JSON.stringify({mode: 'peek'}));
+  });
+});
+
 test('spread defaults on, explicit off is visible, and impact size persists',async({page})=>{
   await page.goto('/');
   await expect(page.getByRole('button',{name:'Enter range',exact:true})).toBeEnabled({timeout:45000});

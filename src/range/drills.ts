@@ -102,6 +102,11 @@ export function createScenario(mode: DrillMode, round: number, selection: PeekSc
     : {x: (random()-.5)*12, y: random() < .25 ? .4 : 0, z: -94-random()*5};
   const preaim = exposedHead({target:{...target,x:mode==='peek'?wall.center.x+side*.6:0},exposure});
   const angles = mode === 'peek' ? angleTo({...spawn, x: firingX}, preaim) : {yaw: 0, pitch: 0};
+  if (mode === 'peek') {
+    // Keep a plausible pre-aim, with a small height correction that strafing alone cannot erase.
+    angles.yaw += (random() - .5) * .7 * RAD;
+    angles.pitch += (random() < .5 ? -1 : 1) * (.65 + random() * .45) * RAD;
+  }
   const covers = mode === 'peek' ? PEEK_WALLS.map(c => ({...c, center: {...c.center}, size: {...c.size}})) : [];
   if (covered) {
     const depth=.45,thickness=.25;
@@ -123,7 +128,7 @@ export type DrillMetrics = {
   diagonal: boolean; feedback: string; verdict: string;
   peakSpeed?:number; movementScore?:number; entrySpeedRatio?:number;
 };
-export type CoachSample = {time: number; position: Vec; yaw: number; pitch: number; velocity: {x:number;z:number}; speedCap: number; input: Input; feet: number};
+export type CoachSample = {time: number; position: Vec; yaw: number; pitch: number; velocity: {x:number;z:number}; speedCap: number; input: Input; feet: number; grounded?: boolean};
 export function readDrillMetrics(raw: unknown): DrillMetrics | undefined {
   if(!raw||typeof raw!=='object')return undefined;
   const m=raw as Record<string,unknown>;
@@ -161,7 +166,7 @@ export class DrillCoach {
     if (this.visible && this.seenAt === null) { this.seenAt = s.time; this.entryError = this.error; }
     const speed = Math.hypot(s.velocity.x,s.velocity.z);
     this.peakSpeed = Math.max(this.peakSpeed,speed);
-    this.accurate = speed <= s.speedCap*.34 && s.feet <= .001;
+    this.accurate = speed <= s.speedCap*.34 && (s.grounded ?? s.feet <= .001);
     this.travelled += Math.hypot(s.position.x-this.lastPosition.x,s.position.z-this.lastPosition.z);
     this.lastPosition = {...s.position};
     this.diagonal ||= this.visible && Math.abs(s.input.side)>0 && Math.abs(s.input.forward)>0;
