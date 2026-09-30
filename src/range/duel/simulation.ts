@@ -194,6 +194,8 @@ export class DuelSimulation {
       actor.position = next.position; actor.velocity = next.velocity; actor.feet = next.feet;
       actor.verticalVelocity = next.verticalVelocity; actor.eyeHeight = next.eyeHeight;
       actor.duckAmount = next.duckAmount; actor.jumpHeld = next.jumpHeld;
+      actor.duckSpeed = next.duckSpeed; actor.crouchHeld = next.crouchHeld;
+      actor.duckCooldown = next.duckCooldown; actor.duckRecoveryOrigin = next.duckRecoveryOrigin;
       actor.grounded = next.grounded;
       for (const state of actor.inventory.values()) if (state !== actor.weapon) state.recovery.advance(STEP, (actor.duckAmount ?? 0) >= .95, !actor.grounded);
       const fired = actor.weapon.advance(this.time, STEP, this.time < actor.equipReadyAt ? {...command, fireHeld: false, firePressed: false} : command, actor);

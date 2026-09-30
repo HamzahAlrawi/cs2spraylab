@@ -118,7 +118,9 @@ describe('cover-based duel arena', () => {
     // Measure a population of geometry/behavior combinations. Finding the
     // opponent during a rotation is valid and need not trigger a scripted peek.
     for (const seed of [1, 2, 3, 4, 5, 6, 19, 42, 101, 208, 431, 9001]) {
-      const sim = new DuelSimulation(sanitizeDuelConfig({roundSeconds: 25}), seed, duelArena(seed));
+      // Keep this population regression at its original level-5 calibration,
+      // independent of the first-visit UI difficulty.
+      const sim = new DuelSimulation(sanitizeDuelConfig({roundSeconds: 25, skill: 5}), seed, duelArena(seed));
       sim.actors[0].health = 10000;
       sim.start();
       const roles = new Set<string>(), peeks = new Set<string>();

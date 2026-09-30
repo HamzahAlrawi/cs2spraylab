@@ -28,7 +28,7 @@ export type DuelConfig = {
 };
 
 export const duelDefaults: DuelConfig = {
-  botCount: 1, skill: 5, weapons: ['ak47'], health: 100, playerHealth: 100, armor: true,
+  botCount: 1, skill: 3, weapons: ['ak47'], health: 100, playerHealth: 100, armor: true,
   accuracy: 1, behavior: 'mixed', roundSeconds: 60, feedbackSeconds: 2,
   shortcutProtection: true, overrides: [],
   arenaScale: 1,

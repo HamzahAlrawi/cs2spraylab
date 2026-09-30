@@ -1,12 +1,21 @@
 {
   "build": "2000908",
   "weaponDataAudit": {
-    "build": "2000918",
-    "inspectedAt": "2026-09-28",
+    "build": "2000919",
+    "inspectedAt": "2026-09-30",
     "parametersSha256": "d20049b1d72bbc174dbceda0d3171164d0aa55569d56e13546f435eb1f3105d0",
-    "scope": "All 33 exported fields of all 17 weapons are unchanged from 2000908. Static data verified; current DLL math has NOT been re-emulated.",
-    "clientSha256": "9b4f46dbd6a433163b39d7ea0123c321b1ad6d95ceedd40ae121312464833549",
+    "scope": "All 33 exported fields of all 17 weapons are unchanged from 2000908. Current RNG and recoil-table arithmetic separately re-emulated; full trajectories remain unverified against native captures.",
+    "clientSha256": "5440adef04e91c282e8d9815f51f8255ad95740920c9e8660fa1ddbb3c07a1f5",
     "tier0Sha256": "4e0dcb0af3f6953f37ddaed0f4e67a56d031f1e84964a262148f8a6f80547791"
+  },
+  "tableAudit": {
+    "build": "2000919",
+    "inspectedAt": "2026-09-30",
+    "clientSha256": "5440adef04e91c282e8d9815f51f8255ad95740920c9e8660fa1ddbb3c07a1f5",
+    "tier0Sha256": "4e0dcb0af3f6953f37ddaed0f4e67a56d031f1e84964a262148f8a6f80547791",
+    "clientRvas": {"tableGenerator": "0x7cd9b0", "tableLoop": "0x7cda4b", "tableLoopEnd": "0x7cdc23"},
+    "tier0Rvas": {"constructor": "0x15e660", "randomFloat": "0x15e740"},
+    "scope": "Existing numeric RNG and all 17 primary recoil-table fixtures exactly match offline native arithmetic. No table rescaling was necessary. Punch integrator constants also inspected at RVA 0x84e880; full native trajectories not emulated."
   },
   "inspectedAt": "2026-09-20",
   "clientSha256": "a0c195f0b6ec00915ef08c548200a010ebbe7982d3a4bc468cad939b67c8c4e3",

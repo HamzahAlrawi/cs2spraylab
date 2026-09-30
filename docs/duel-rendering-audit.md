@@ -11,7 +11,10 @@
   switched crouch at a boolean threshold. `DuelAnimator` blends cardinal clips
   using local velocity, actual speed and continuous stance. Cycles share a
   distance-driven phase. Native run/walk reference speeds (225/136 u/s) came
-  from the inspected rifle graph; the 76.5 u/s crouch stride reference is tuning.
+  from the inspected rifle graph. The former tuned 76.5 u/s crouch reference
+  was replaced with the graph's 96 u/s anchor on 2026-09-30; native rifle idle
+  clips now use the graph's 0.167 playback multiplier. See
+  [the movement and distance audit](movement-distance-audit.md).
   This does not reproduce native foot IK, starts/stops, upper-body aim layers,
   weapon actions or every diagonal clip. Measured source contact/phase matching
   remains necessary for exact animation fidelity.

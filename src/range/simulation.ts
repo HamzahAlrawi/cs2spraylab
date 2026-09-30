@@ -26,6 +26,7 @@ export class Simulation {
   position = { x: 0, y: 64 * UNIT, z: SPAWN_Z };
   velocity = { x: 0, z: 0 }; yaw = 0; pitch = 0;
   feet = 0; verticalVelocity = 0; eyeHeight = 64 * UNIT; duckAmount = 0; jumpHeld = false;
+  duckSpeed = 8; crouchHeld = false; duckCooldown = 0; duckRecoveryOrigin?: {x: number; z: number};
   grounded = true;
   private previousPosition?: Vec;
   renderPosition() {
@@ -101,7 +102,10 @@ export class Simulation {
     this.drillRound = this.drillPassed = this.drillCompleted = 0;
     this.drillResult = undefined; this.nextDrillAt = 0; this.repositionFrom = undefined;
     if (isDrillMode(s.mode)) this.newDrill(true);
-    else { this.drill = undefined; this.drillRevision++; if (changedMode && leavingPositionedDrill) { this.position = {x:0,y:64*UNIT,z:SPAWN_Z}; this.yaw = this.pitch = this.feet = this.verticalVelocity = 0; } }
+    else { this.drill = undefined; this.drillRevision++; if (changedMode && leavingPositionedDrill) {
+      this.position = {x:0,y:64*UNIT,z:SPAWN_Z}; this.yaw = this.pitch = this.feet = this.verticalVelocity = this.duckAmount = 0;
+      this.eyeHeight = 64 * UNIT; this.duckSpeed = 8; this.crouchHeld = false; this.duckCooldown = 0; this.duckRecoveryOrigin = undefined;
+    } }
   }
   equip(slot: Slot) {
     if (slot === this.slot) return false;
@@ -128,6 +132,7 @@ export class Simulation {
       this.position = {...scenario.spawn}; this.yaw = scenario.yaw; this.pitch = scenario.pitch;
       this.velocity = {x:0,z:0}; this.feet = this.verticalVelocity = this.duckAmount = 0; this.eyeHeight = 64*UNIT;
       this.grounded = true; this.jumpHeld = false;
+      this.duckSpeed = 8; this.crouchHeld = false; this.duckCooldown = 0; this.duckRecoveryOrigin = undefined;
     } else scenario.spawn = {...this.position};
     this.drill = new DrillCoach(this.settings.mode, scenario, this.time);
     this.resetRecovery();
@@ -225,6 +230,8 @@ export class Simulation {
     this.position.x = next.position.x; this.position.y = next.position.y; this.position.z = next.position.z;
     this.feet = next.feet; this.verticalVelocity = next.verticalVelocity;
     this.eyeHeight = next.eyeHeight; this.duckAmount = next.duckAmount ?? 0; this.jumpHeld = next.jumpHeld;
+    this.duckSpeed = next.duckSpeed ?? 8; this.crouchHeld = next.crouchHeld ?? false;
+    this.duckCooldown = next.duckCooldown ?? 0; this.duckRecoveryOrigin = next.duckRecoveryOrigin;
     this.grounded = !!next.grounded;
     const crouch = this.duckAmount >= .95;
     const recovery=this.recovery;
