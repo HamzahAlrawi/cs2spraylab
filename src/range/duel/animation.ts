@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import {clamp, UNIT} from '../actor-physics';
+import {clamp, stanceCurve, UNIT} from '../actor-physics';
 import type {DuelActorSnapshot} from './types';
 
 export function locomotionWeights(actor: DuelActorSnapshot) {
@@ -10,7 +10,7 @@ export function locomotionWeights(actor: DuelActorSnapshot) {
   const sector = ((Math.atan2(x, z) / (Math.PI / 4)) + 8) % 8;
   const low = Math.floor(sector), blend = sector - low;
   const directions = speed > .001 ? {[compass[low]]: 1 - blend, [compass[(low + 1) % 8]]: blend} : {n: 1};
-  const duck = actor.duckAmount * actor.duckAmount * (3 - 2 * actor.duckAmount);
+  const duck = stanceCurve(actor.duckAmount);
   const moving = clamp(speed / (32 * UNIT), 0, 1);
   const running = clamp((speed / UNIT - 136) / (225 - 136), 0, 1);
   const weights = new Map<string, number>();
@@ -21,7 +21,9 @@ export function locomotionWeights(actor: DuelActorSnapshot) {
     weights.set(`run_${direction}_rifle`, amount * moving * (1 - duck) * running);
     weights.set(`crouch_${direction}_rifle`, amount * moving * duck);
   }
-  return {weights, speed, authoredSpeed: ((136 + (225 - 136) * running) * (1 - duck) + 76.5 * duck) * UNIT};
+  // Native locomotion graph's crouch blend-space anchor is 96 u/s, not the
+  // weapon's crouched speed cap. Using the cap made the feet cycle too quickly.
+  return {weights, speed, authoredSpeed: ((136 + (225 - 136) * running) * (1 - duck) + 96 * duck) * UNIT};
 }
 
 // Native eight-direction clips share a gait phase. Direction and stance change their
@@ -83,7 +85,7 @@ export class DuelAnimator {
       const takeoff = this.actions.get(this.jumpClip)!.getClip().duration;
       const blend = this.actions.has('inair_stand_rifle') ? clamp((this.airTime - takeoff * .6) / .12, 0, 1) : 0;
       const duck = this.actions.has('inair_crouch_stand_rifle') && this.actions.has('jump_crouch_stand_rifle')
-        ? actor.duckAmount * actor.duckAmount * (3 - 2 * actor.duckAmount) : 0;
+        ? stanceCurve(actor.duckAmount) : 0;
       weights.set(this.jumpClip, (1 - blend) * (1 - duck)); weights.set('inair_stand_rifle', blend * (1 - duck));
       weights.set('jump_crouch_stand_rifle', (1 - blend) * duck); weights.set('inair_crouch_stand_rifle', blend * duck);
     }
@@ -102,8 +104,10 @@ export class DuelAnimator {
       if (!action.enabled) continue;
       action.setEffectiveWeight(weight);
       const length = action.getClip().duration;
-      action.time = name.startsWith('jump') ? Math.min(this.airTime, length - .0001)
-        : name.startsWith('idle') || name.startsWith('inair') ? this.idleTime % length : this.gaitPhase * length;
+      // Native idle clips can be a single pose at t=0, with no duration.
+      action.time = length <= 0 ? 0 : name.startsWith('jump') ? Math.min(this.airTime, Math.max(0, length - .0001))
+        : name.startsWith('idle') ? (this.idleTime * .167) % length
+        : name.startsWith('inair') ? this.idleTime % length : this.gaitPhase * length;
     }
     this.mixer.update(0);
   }

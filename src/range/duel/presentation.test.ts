@@ -1,14 +1,31 @@
 import {describe, expect, it} from 'vitest';
-import {DEG, STEP} from '../actor-physics';
+import {AnimationClip, Object3D, VectorKeyframeTrack} from 'three';
+import {DEG, STEP, UNIT} from '../actor-physics';
 import {sanitizeDuelConfig} from './config';
 import {testArena} from './geometry';
 import {interpolateActors} from './presentation';
 import {DuelSimulation} from './simulation';
-import {locomotionWeights} from './animation';
+import {DuelAnimator, locomotionWeights} from './animation';
 import {aimStep} from './motor';
 import {fullyOccluded} from './visibility';
 
 describe('duel frame presentation', () => {
+  it('samples a native single-frame idle pose at zero instead of taking modulo zero', () => {
+    const model = new Object3D();
+    const clip = new AnimationClip('animation/anims/world/idle_rifle', 0,
+      [new VectorKeyframeTrack('.position', [0], [0, 1, 0])]);
+    const animator = new DuelAnimator(model, [clip]);
+    const actor = new DuelSimulation().snapshot()[1];
+    for (let frame = 0; frame < 60; frame++) animator.update(actor, 1 / 60);
+    expect(animator.mixer.clipAction(clip).time).toBe(0);
+    expect(model.position.y).toBe(1);
+    animator.dispose();
+  });
+  it('uses the native 96 u/s crouch animation reference instead of the weapon speed cap', () => {
+    const actor = new DuelSimulation().snapshot()[1];
+    actor.duckAmount = 1; actor.velocity = {x: 73.1 * UNIT, z: 0};
+    expect(locomotionWeights(actor).authoredSpeed / UNIT).toBeCloseTo(96);
+  });
   it('presents evenly spaced motion at 240 Hz without changing authoritative physics', () => {
     const sim = new DuelSimulation(sanitizeDuelConfig({}), 1, testArena());
     sim.command(1, {side: 1}); sim.start();

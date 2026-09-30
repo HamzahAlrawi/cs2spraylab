@@ -1,0 +1,2168 @@
+{
+  "build": "2000919",
+  "serverSha256": "f95fe0dcd7b526137a8b305dd76a72f624e0508ad42bb5949d05c77a37e1bd70",
+  "accelerateRva": "0xab1ff0",
+  "note": "Native acceleration only; friction/collision/duck-speed state and scoped/water branches excluded.",
+  "cases": [
+    {
+      "weaponSpeed": 150,
+      "stance": "run",
+      "tag": 1,
+      "current": 0,
+      "dt": 0.0078125,
+      "wishSpeed": 150,
+      "result": 6.4453125
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "run",
+      "tag": 1,
+      "current": 0,
+      "dt": 0.015625,
+      "wishSpeed": 150,
+      "result": 12.890625
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "run",
+      "tag": 1,
+      "current": -80,
+      "dt": 0.0078125,
+      "wishSpeed": 150,
+      "result": -73.5546875
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "run",
+      "tag": 1,
+      "current": -80,
+      "dt": 0.015625,
+      "wishSpeed": 150,
+      "result": -67.109375
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "run",
+      "tag": 1,
+      "current": 135.0,
+      "dt": 0.0078125,
+      "wishSpeed": 150,
+      "result": 141.4453125
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "run",
+      "tag": 1,
+      "current": 135.0,
+      "dt": 0.015625,
+      "wishSpeed": 150,
+      "result": 147.890625
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "run",
+      "tag": 1,
+      "current": 150,
+      "dt": 0.0078125,
+      "wishSpeed": 150,
+      "result": 150.0
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "run",
+      "tag": 1,
+      "current": 150,
+      "dt": 0.015625,
+      "wishSpeed": 150,
+      "result": 150.0
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "run",
+      "tag": 0.35,
+      "current": 0,
+      "dt": 0.0078125,
+      "wishSpeed": 52.5,
+      "result": 6.4453125
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "run",
+      "tag": 0.35,
+      "current": 0,
+      "dt": 0.015625,
+      "wishSpeed": 52.5,
+      "result": 12.890625
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "run",
+      "tag": 0.35,
+      "current": -80,
+      "dt": 0.0078125,
+      "wishSpeed": 52.5,
+      "result": -73.5546875
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "run",
+      "tag": 0.35,
+      "current": -80,
+      "dt": 0.015625,
+      "wishSpeed": 52.5,
+      "result": -67.109375
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "run",
+      "tag": 0.35,
+      "current": 135.0,
+      "dt": 0.0078125,
+      "wishSpeed": 52.5,
+      "result": 135.0
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "run",
+      "tag": 0.35,
+      "current": 135.0,
+      "dt": 0.015625,
+      "wishSpeed": 52.5,
+      "result": 135.0
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "run",
+      "tag": 0.35,
+      "current": 150,
+      "dt": 0.0078125,
+      "wishSpeed": 52.5,
+      "result": 150.0
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "run",
+      "tag": 0.35,
+      "current": 150,
+      "dt": 0.015625,
+      "wishSpeed": 52.5,
+      "result": 150.0
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "walk",
+      "tag": 1,
+      "current": 0,
+      "dt": 0.0078125,
+      "wishSpeed": 78.0,
+      "result": 5.5859375
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "walk",
+      "tag": 1,
+      "current": 0,
+      "dt": 0.015625,
+      "wishSpeed": 78.0,
+      "result": 11.171875
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "walk",
+      "tag": 1,
+      "current": -80,
+      "dt": 0.0078125,
+      "wishSpeed": 78.0,
+      "result": -74.4140625
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "walk",
+      "tag": 1,
+      "current": -80,
+      "dt": 0.015625,
+      "wishSpeed": 78.0,
+      "result": -68.828125
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "walk",
+      "tag": 1,
+      "current": 70.2,
+      "dt": 0.0078125,
+      "wishSpeed": 78.0,
+      "result": 75.78593444824219
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "walk",
+      "tag": 1,
+      "current": 70.2,
+      "dt": 0.015625,
+      "wishSpeed": 78.0,
+      "result": 78.0
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "walk",
+      "tag": 1,
+      "current": 78.0,
+      "dt": 0.0078125,
+      "wishSpeed": 78.0,
+      "result": 78.0
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "walk",
+      "tag": 1,
+      "current": 78.0,
+      "dt": 0.015625,
+      "wishSpeed": 78.0,
+      "result": 78.0
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "walk",
+      "tag": 0.35,
+      "current": 0,
+      "dt": 0.0078125,
+      "wishSpeed": 27.299999999999997,
+      "result": 5.5859375
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "walk",
+      "tag": 0.35,
+      "current": 0,
+      "dt": 0.015625,
+      "wishSpeed": 27.299999999999997,
+      "result": 11.171875
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "walk",
+      "tag": 0.35,
+      "current": -80,
+      "dt": 0.0078125,
+      "wishSpeed": 27.299999999999997,
+      "result": -74.4140625
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "walk",
+      "tag": 0.35,
+      "current": -80,
+      "dt": 0.015625,
+      "wishSpeed": 27.299999999999997,
+      "result": -68.828125
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "walk",
+      "tag": 0.35,
+      "current": 70.2,
+      "dt": 0.0078125,
+      "wishSpeed": 27.299999999999997,
+      "result": 70.19999694824219
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "walk",
+      "tag": 0.35,
+      "current": 70.2,
+      "dt": 0.015625,
+      "wishSpeed": 27.299999999999997,
+      "result": 70.19999694824219
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "walk",
+      "tag": 0.35,
+      "current": 78.0,
+      "dt": 0.0078125,
+      "wishSpeed": 27.299999999999997,
+      "result": 78.0
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "walk",
+      "tag": 0.35,
+      "current": 78.0,
+      "dt": 0.015625,
+      "wishSpeed": 27.299999999999997,
+      "result": 78.0
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "crouch",
+      "tag": 1,
+      "current": 0,
+      "dt": 0.0078125,
+      "wishSpeed": 51.00000000000001,
+      "result": 3.65234375
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "crouch",
+      "tag": 1,
+      "current": 0,
+      "dt": 0.015625,
+      "wishSpeed": 51.00000000000001,
+      "result": 7.3046875
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "crouch",
+      "tag": 1,
+      "current": -80,
+      "dt": 0.0078125,
+      "wishSpeed": 51.00000000000001,
+      "result": -76.34765625
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "crouch",
+      "tag": 1,
+      "current": -80,
+      "dt": 0.015625,
+      "wishSpeed": 51.00000000000001,
+      "result": -72.6953125
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "crouch",
+      "tag": 1,
+      "current": 45.900000000000006,
+      "dt": 0.0078125,
+      "wishSpeed": 51.00000000000001,
+      "result": 49.552345275878906
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "crouch",
+      "tag": 1,
+      "current": 45.900000000000006,
+      "dt": 0.015625,
+      "wishSpeed": 51.00000000000001,
+      "result": 51.0
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "crouch",
+      "tag": 1,
+      "current": 51.00000000000001,
+      "dt": 0.0078125,
+      "wishSpeed": 51.00000000000001,
+      "result": 51.0
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "crouch",
+      "tag": 1,
+      "current": 51.00000000000001,
+      "dt": 0.015625,
+      "wishSpeed": 51.00000000000001,
+      "result": 51.0
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "crouch",
+      "tag": 0.35,
+      "current": 0,
+      "dt": 0.0078125,
+      "wishSpeed": 17.85,
+      "result": 3.65234375
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "crouch",
+      "tag": 0.35,
+      "current": 0,
+      "dt": 0.015625,
+      "wishSpeed": 17.85,
+      "result": 7.3046875
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "crouch",
+      "tag": 0.35,
+      "current": -80,
+      "dt": 0.0078125,
+      "wishSpeed": 17.85,
+      "result": -76.34765625
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "crouch",
+      "tag": 0.35,
+      "current": -80,
+      "dt": 0.015625,
+      "wishSpeed": 17.85,
+      "result": -72.6953125
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "crouch",
+      "tag": 0.35,
+      "current": 45.900000000000006,
+      "dt": 0.0078125,
+      "wishSpeed": 17.85,
+      "result": 45.900001525878906
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "crouch",
+      "tag": 0.35,
+      "current": 45.900000000000006,
+      "dt": 0.015625,
+      "wishSpeed": 17.85,
+      "result": 45.900001525878906
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "crouch",
+      "tag": 0.35,
+      "current": 51.00000000000001,
+      "dt": 0.0078125,
+      "wishSpeed": 17.85,
+      "result": 51.0
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "crouch",
+      "tag": 0.35,
+      "current": 51.00000000000001,
+      "dt": 0.015625,
+      "wishSpeed": 17.85,
+      "result": 51.0
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "run",
+      "tag": 1,
+      "current": 0,
+      "dt": 0.0078125,
+      "wishSpeed": 215,
+      "result": 9.23828125
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "run",
+      "tag": 1,
+      "current": 0,
+      "dt": 0.015625,
+      "wishSpeed": 215,
+      "result": 18.4765625
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "run",
+      "tag": 1,
+      "current": -80,
+      "dt": 0.0078125,
+      "wishSpeed": 215,
+      "result": -70.76171875
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "run",
+      "tag": 1,
+      "current": -80,
+      "dt": 0.015625,
+      "wishSpeed": 215,
+      "result": -61.5234375
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "run",
+      "tag": 1,
+      "current": 193.5,
+      "dt": 0.0078125,
+      "wishSpeed": 215,
+      "result": 202.73828125
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "run",
+      "tag": 1,
+      "current": 193.5,
+      "dt": 0.015625,
+      "wishSpeed": 215,
+      "result": 211.9765625
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "run",
+      "tag": 1,
+      "current": 215,
+      "dt": 0.0078125,
+      "wishSpeed": 215,
+      "result": 215.0
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "run",
+      "tag": 1,
+      "current": 215,
+      "dt": 0.015625,
+      "wishSpeed": 215,
+      "result": 215.0
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "run",
+      "tag": 0.35,
+      "current": 0,
+      "dt": 0.0078125,
+      "wishSpeed": 75.25,
+      "result": 9.23828125
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "run",
+      "tag": 0.35,
+      "current": 0,
+      "dt": 0.015625,
+      "wishSpeed": 75.25,
+      "result": 18.4765625
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "run",
+      "tag": 0.35,
+      "current": -80,
+      "dt": 0.0078125,
+      "wishSpeed": 75.25,
+      "result": -70.76171875
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "run",
+      "tag": 0.35,
+      "current": -80,
+      "dt": 0.015625,
+      "wishSpeed": 75.25,
+      "result": -61.5234375
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "run",
+      "tag": 0.35,
+      "current": 193.5,
+      "dt": 0.0078125,
+      "wishSpeed": 75.25,
+      "result": 193.5
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "run",
+      "tag": 0.35,
+      "current": 193.5,
+      "dt": 0.015625,
+      "wishSpeed": 75.25,
+      "result": 193.5
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "run",
+      "tag": 0.35,
+      "current": 215,
+      "dt": 0.0078125,
+      "wishSpeed": 75.25,
+      "result": 215.0
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "run",
+      "tag": 0.35,
+      "current": 215,
+      "dt": 0.015625,
+      "wishSpeed": 75.25,
+      "result": 215.0
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "walk",
+      "tag": 1,
+      "current": 0,
+      "dt": 0.0078125,
+      "wishSpeed": 111.8,
+      "result": 5.5859375
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "walk",
+      "tag": 1,
+      "current": 0,
+      "dt": 0.015625,
+      "wishSpeed": 111.8,
+      "result": 11.171875
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "walk",
+      "tag": 1,
+      "current": -80,
+      "dt": 0.0078125,
+      "wishSpeed": 111.8,
+      "result": -74.4140625
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "walk",
+      "tag": 1,
+      "current": -80,
+      "dt": 0.015625,
+      "wishSpeed": 111.8,
+      "result": -68.828125
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "walk",
+      "tag": 1,
+      "current": 100.62,
+      "dt": 0.0078125,
+      "wishSpeed": 111.8,
+      "result": 106.20594024658203
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "walk",
+      "tag": 1,
+      "current": 100.62,
+      "dt": 0.015625,
+      "wishSpeed": 111.8,
+      "result": 111.79187774658203
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "walk",
+      "tag": 1,
+      "current": 111.8,
+      "dt": 0.0078125,
+      "wishSpeed": 111.8,
+      "result": 111.80000305175781
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "walk",
+      "tag": 1,
+      "current": 111.8,
+      "dt": 0.015625,
+      "wishSpeed": 111.8,
+      "result": 111.80000305175781
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "walk",
+      "tag": 0.35,
+      "current": 0,
+      "dt": 0.0078125,
+      "wishSpeed": 39.129999999999995,
+      "result": 5.5859375
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "walk",
+      "tag": 0.35,
+      "current": 0,
+      "dt": 0.015625,
+      "wishSpeed": 39.129999999999995,
+      "result": 11.171875
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "walk",
+      "tag": 0.35,
+      "current": -80,
+      "dt": 0.0078125,
+      "wishSpeed": 39.129999999999995,
+      "result": -74.4140625
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "walk",
+      "tag": 0.35,
+      "current": -80,
+      "dt": 0.015625,
+      "wishSpeed": 39.129999999999995,
+      "result": -68.828125
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "walk",
+      "tag": 0.35,
+      "current": 100.62,
+      "dt": 0.0078125,
+      "wishSpeed": 39.129999999999995,
+      "result": 100.62000274658203
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "walk",
+      "tag": 0.35,
+      "current": 100.62,
+      "dt": 0.015625,
+      "wishSpeed": 39.129999999999995,
+      "result": 100.62000274658203
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "walk",
+      "tag": 0.35,
+      "current": 111.8,
+      "dt": 0.0078125,
+      "wishSpeed": 39.129999999999995,
+      "result": 111.80000305175781
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "walk",
+      "tag": 0.35,
+      "current": 111.8,
+      "dt": 0.015625,
+      "wishSpeed": 39.129999999999995,
+      "result": 111.80000305175781
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "crouch",
+      "tag": 1,
+      "current": 0,
+      "dt": 0.0078125,
+      "wishSpeed": 73.10000000000001,
+      "result": 3.65234375
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "crouch",
+      "tag": 1,
+      "current": 0,
+      "dt": 0.015625,
+      "wishSpeed": 73.10000000000001,
+      "result": 7.3046875
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "crouch",
+      "tag": 1,
+      "current": -80,
+      "dt": 0.0078125,
+      "wishSpeed": 73.10000000000001,
+      "result": -76.34765625
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "crouch",
+      "tag": 1,
+      "current": -80,
+      "dt": 0.015625,
+      "wishSpeed": 73.10000000000001,
+      "result": -72.6953125
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "crouch",
+      "tag": 1,
+      "current": 65.79,
+      "dt": 0.0078125,
+      "wishSpeed": 73.10000000000001,
+      "result": 69.44234466552734
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "crouch",
+      "tag": 1,
+      "current": 65.79,
+      "dt": 0.015625,
+      "wishSpeed": 73.10000000000001,
+      "result": 73.09468841552734
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "crouch",
+      "tag": 1,
+      "current": 73.10000000000001,
+      "dt": 0.0078125,
+      "wishSpeed": 73.10000000000001,
+      "result": 73.0999984741211
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "crouch",
+      "tag": 1,
+      "current": 73.10000000000001,
+      "dt": 0.015625,
+      "wishSpeed": 73.10000000000001,
+      "result": 73.0999984741211
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "crouch",
+      "tag": 0.35,
+      "current": 0,
+      "dt": 0.0078125,
+      "wishSpeed": 25.585,
+      "result": 3.65234375
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "crouch",
+      "tag": 0.35,
+      "current": 0,
+      "dt": 0.015625,
+      "wishSpeed": 25.585,
+      "result": 7.3046875
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "crouch",
+      "tag": 0.35,
+      "current": -80,
+      "dt": 0.0078125,
+      "wishSpeed": 25.585,
+      "result": -76.34765625
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "crouch",
+      "tag": 0.35,
+      "current": -80,
+      "dt": 0.015625,
+      "wishSpeed": 25.585,
+      "result": -72.6953125
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "crouch",
+      "tag": 0.35,
+      "current": 65.79,
+      "dt": 0.0078125,
+      "wishSpeed": 25.585,
+      "result": 65.79000091552734
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "crouch",
+      "tag": 0.35,
+      "current": 65.79,
+      "dt": 0.015625,
+      "wishSpeed": 25.585,
+      "result": 65.79000091552734
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "crouch",
+      "tag": 0.35,
+      "current": 73.10000000000001,
+      "dt": 0.0078125,
+      "wishSpeed": 25.585,
+      "result": 73.0999984741211
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "crouch",
+      "tag": 0.35,
+      "current": 73.10000000000001,
+      "dt": 0.015625,
+      "wishSpeed": 25.585,
+      "result": 73.0999984741211
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "run",
+      "tag": 1,
+      "current": 0,
+      "dt": 0.0078125,
+      "wishSpeed": 225,
+      "result": 9.66796875
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "run",
+      "tag": 1,
+      "current": 0,
+      "dt": 0.015625,
+      "wishSpeed": 225,
+      "result": 19.3359375
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "run",
+      "tag": 1,
+      "current": -80,
+      "dt": 0.0078125,
+      "wishSpeed": 225,
+      "result": -70.33203125
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "run",
+      "tag": 1,
+      "current": -80,
+      "dt": 0.015625,
+      "wishSpeed": 225,
+      "result": -60.6640625
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "run",
+      "tag": 1,
+      "current": 202.5,
+      "dt": 0.0078125,
+      "wishSpeed": 225,
+      "result": 212.16796875
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "run",
+      "tag": 1,
+      "current": 202.5,
+      "dt": 0.015625,
+      "wishSpeed": 225,
+      "result": 221.8359375
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "run",
+      "tag": 1,
+      "current": 225,
+      "dt": 0.0078125,
+      "wishSpeed": 225,
+      "result": 225.0
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "run",
+      "tag": 1,
+      "current": 225,
+      "dt": 0.015625,
+      "wishSpeed": 225,
+      "result": 225.0
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "run",
+      "tag": 0.35,
+      "current": 0,
+      "dt": 0.0078125,
+      "wishSpeed": 78.75,
+      "result": 9.66796875
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "run",
+      "tag": 0.35,
+      "current": 0,
+      "dt": 0.015625,
+      "wishSpeed": 78.75,
+      "result": 19.3359375
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "run",
+      "tag": 0.35,
+      "current": -80,
+      "dt": 0.0078125,
+      "wishSpeed": 78.75,
+      "result": -70.33203125
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "run",
+      "tag": 0.35,
+      "current": -80,
+      "dt": 0.015625,
+      "wishSpeed": 78.75,
+      "result": -60.6640625
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "run",
+      "tag": 0.35,
+      "current": 202.5,
+      "dt": 0.0078125,
+      "wishSpeed": 78.75,
+      "result": 202.5
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "run",
+      "tag": 0.35,
+      "current": 202.5,
+      "dt": 0.015625,
+      "wishSpeed": 78.75,
+      "result": 202.5
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "run",
+      "tag": 0.35,
+      "current": 225,
+      "dt": 0.0078125,
+      "wishSpeed": 78.75,
+      "result": 225.0
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "run",
+      "tag": 0.35,
+      "current": 225,
+      "dt": 0.015625,
+      "wishSpeed": 78.75,
+      "result": 225.0
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "walk",
+      "tag": 1,
+      "current": 0,
+      "dt": 0.0078125,
+      "wishSpeed": 117.0,
+      "result": 5.5859375
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "walk",
+      "tag": 1,
+      "current": 0,
+      "dt": 0.015625,
+      "wishSpeed": 117.0,
+      "result": 11.171875
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "walk",
+      "tag": 1,
+      "current": -80,
+      "dt": 0.0078125,
+      "wishSpeed": 117.0,
+      "result": -74.4140625
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "walk",
+      "tag": 1,
+      "current": -80,
+      "dt": 0.015625,
+      "wishSpeed": 117.0,
+      "result": -68.828125
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "walk",
+      "tag": 1,
+      "current": 105.3,
+      "dt": 0.0078125,
+      "wishSpeed": 117.0,
+      "result": 110.88594055175781
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "walk",
+      "tag": 1,
+      "current": 105.3,
+      "dt": 0.015625,
+      "wishSpeed": 117.0,
+      "result": 116.47187805175781
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "walk",
+      "tag": 1,
+      "current": 117.0,
+      "dt": 0.0078125,
+      "wishSpeed": 117.0,
+      "result": 117.0
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "walk",
+      "tag": 1,
+      "current": 117.0,
+      "dt": 0.015625,
+      "wishSpeed": 117.0,
+      "result": 117.0
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "walk",
+      "tag": 0.35,
+      "current": 0,
+      "dt": 0.0078125,
+      "wishSpeed": 40.949999999999996,
+      "result": 5.5859375
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "walk",
+      "tag": 0.35,
+      "current": 0,
+      "dt": 0.015625,
+      "wishSpeed": 40.949999999999996,
+      "result": 11.171875
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "walk",
+      "tag": 0.35,
+      "current": -80,
+      "dt": 0.0078125,
+      "wishSpeed": 40.949999999999996,
+      "result": -74.4140625
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "walk",
+      "tag": 0.35,
+      "current": -80,
+      "dt": 0.015625,
+      "wishSpeed": 40.949999999999996,
+      "result": -68.828125
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "walk",
+      "tag": 0.35,
+      "current": 105.3,
+      "dt": 0.0078125,
+      "wishSpeed": 40.949999999999996,
+      "result": 105.30000305175781
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "walk",
+      "tag": 0.35,
+      "current": 105.3,
+      "dt": 0.015625,
+      "wishSpeed": 40.949999999999996,
+      "result": 105.30000305175781
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "walk",
+      "tag": 0.35,
+      "current": 117.0,
+      "dt": 0.0078125,
+      "wishSpeed": 40.949999999999996,
+      "result": 117.0
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "walk",
+      "tag": 0.35,
+      "current": 117.0,
+      "dt": 0.015625,
+      "wishSpeed": 40.949999999999996,
+      "result": 117.0
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "crouch",
+      "tag": 1,
+      "current": 0,
+      "dt": 0.0078125,
+      "wishSpeed": 76.5,
+      "result": 3.65234375
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "crouch",
+      "tag": 1,
+      "current": 0,
+      "dt": 0.015625,
+      "wishSpeed": 76.5,
+      "result": 7.3046875
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "crouch",
+      "tag": 1,
+      "current": -80,
+      "dt": 0.0078125,
+      "wishSpeed": 76.5,
+      "result": -76.34765625
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "crouch",
+      "tag": 1,
+      "current": -80,
+      "dt": 0.015625,
+      "wishSpeed": 76.5,
+      "result": -72.6953125
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "crouch",
+      "tag": 1,
+      "current": 68.85000000000001,
+      "dt": 0.0078125,
+      "wishSpeed": 76.5,
+      "result": 72.5023422241211
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "crouch",
+      "tag": 1,
+      "current": 68.85000000000001,
+      "dt": 0.015625,
+      "wishSpeed": 76.5,
+      "result": 76.1546859741211
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "crouch",
+      "tag": 1,
+      "current": 76.5,
+      "dt": 0.0078125,
+      "wishSpeed": 76.5,
+      "result": 76.5
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "crouch",
+      "tag": 1,
+      "current": 76.5,
+      "dt": 0.015625,
+      "wishSpeed": 76.5,
+      "result": 76.5
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "crouch",
+      "tag": 0.35,
+      "current": 0,
+      "dt": 0.0078125,
+      "wishSpeed": 26.775,
+      "result": 3.65234375
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "crouch",
+      "tag": 0.35,
+      "current": 0,
+      "dt": 0.015625,
+      "wishSpeed": 26.775,
+      "result": 7.3046875
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "crouch",
+      "tag": 0.35,
+      "current": -80,
+      "dt": 0.0078125,
+      "wishSpeed": 26.775,
+      "result": -76.34765625
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "crouch",
+      "tag": 0.35,
+      "current": -80,
+      "dt": 0.015625,
+      "wishSpeed": 26.775,
+      "result": -72.6953125
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "crouch",
+      "tag": 0.35,
+      "current": 68.85000000000001,
+      "dt": 0.0078125,
+      "wishSpeed": 26.775,
+      "result": 68.8499984741211
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "crouch",
+      "tag": 0.35,
+      "current": 68.85000000000001,
+      "dt": 0.015625,
+      "wishSpeed": 26.775,
+      "result": 68.8499984741211
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "crouch",
+      "tag": 0.35,
+      "current": 76.5,
+      "dt": 0.0078125,
+      "wishSpeed": 26.775,
+      "result": 76.5
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "crouch",
+      "tag": 0.35,
+      "current": 76.5,
+      "dt": 0.015625,
+      "wishSpeed": 26.775,
+      "result": 76.5
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "run",
+      "tag": 1,
+      "current": 0,
+      "dt": 0.0078125,
+      "wishSpeed": 240,
+      "result": 10.3125
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "run",
+      "tag": 1,
+      "current": 0,
+      "dt": 0.015625,
+      "wishSpeed": 240,
+      "result": 20.625
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "run",
+      "tag": 1,
+      "current": -80,
+      "dt": 0.0078125,
+      "wishSpeed": 240,
+      "result": -69.6875
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "run",
+      "tag": 1,
+      "current": -80,
+      "dt": 0.015625,
+      "wishSpeed": 240,
+      "result": -59.375
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "run",
+      "tag": 1,
+      "current": 216.0,
+      "dt": 0.0078125,
+      "wishSpeed": 240,
+      "result": 226.3125
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "run",
+      "tag": 1,
+      "current": 216.0,
+      "dt": 0.015625,
+      "wishSpeed": 240,
+      "result": 236.625
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "run",
+      "tag": 1,
+      "current": 240,
+      "dt": 0.0078125,
+      "wishSpeed": 240,
+      "result": 240.0
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "run",
+      "tag": 1,
+      "current": 240,
+      "dt": 0.015625,
+      "wishSpeed": 240,
+      "result": 240.0
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "run",
+      "tag": 0.35,
+      "current": 0,
+      "dt": 0.0078125,
+      "wishSpeed": 84.0,
+      "result": 10.3125
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "run",
+      "tag": 0.35,
+      "current": 0,
+      "dt": 0.015625,
+      "wishSpeed": 84.0,
+      "result": 20.625
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "run",
+      "tag": 0.35,
+      "current": -80,
+      "dt": 0.0078125,
+      "wishSpeed": 84.0,
+      "result": -69.6875
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "run",
+      "tag": 0.35,
+      "current": -80,
+      "dt": 0.015625,
+      "wishSpeed": 84.0,
+      "result": -59.375
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "run",
+      "tag": 0.35,
+      "current": 216.0,
+      "dt": 0.0078125,
+      "wishSpeed": 84.0,
+      "result": 216.0
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "run",
+      "tag": 0.35,
+      "current": 216.0,
+      "dt": 0.015625,
+      "wishSpeed": 84.0,
+      "result": 216.0
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "run",
+      "tag": 0.35,
+      "current": 240,
+      "dt": 0.0078125,
+      "wishSpeed": 84.0,
+      "result": 240.0
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "run",
+      "tag": 0.35,
+      "current": 240,
+      "dt": 0.015625,
+      "wishSpeed": 84.0,
+      "result": 240.0
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "walk",
+      "tag": 1,
+      "current": 0,
+      "dt": 0.0078125,
+      "wishSpeed": 124.80000000000001,
+      "result": 5.5859375
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "walk",
+      "tag": 1,
+      "current": 0,
+      "dt": 0.015625,
+      "wishSpeed": 124.80000000000001,
+      "result": 11.171875
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "walk",
+      "tag": 1,
+      "current": -80,
+      "dt": 0.0078125,
+      "wishSpeed": 124.80000000000001,
+      "result": -74.4140625
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "walk",
+      "tag": 1,
+      "current": -80,
+      "dt": 0.015625,
+      "wishSpeed": 124.80000000000001,
+      "result": -68.828125
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "walk",
+      "tag": 1,
+      "current": 112.32000000000001,
+      "dt": 0.0078125,
+      "wishSpeed": 124.80000000000001,
+      "result": 117.90593719482422
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "walk",
+      "tag": 1,
+      "current": 112.32000000000001,
+      "dt": 0.015625,
+      "wishSpeed": 124.80000000000001,
+      "result": 123.49187469482422
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "walk",
+      "tag": 1,
+      "current": 124.80000000000001,
+      "dt": 0.0078125,
+      "wishSpeed": 124.80000000000001,
+      "result": 124.80000305175781
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "walk",
+      "tag": 1,
+      "current": 124.80000000000001,
+      "dt": 0.015625,
+      "wishSpeed": 124.80000000000001,
+      "result": 124.80000305175781
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "walk",
+      "tag": 0.35,
+      "current": 0,
+      "dt": 0.0078125,
+      "wishSpeed": 43.68,
+      "result": 5.5859375
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "walk",
+      "tag": 0.35,
+      "current": 0,
+      "dt": 0.015625,
+      "wishSpeed": 43.68,
+      "result": 11.171875
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "walk",
+      "tag": 0.35,
+      "current": -80,
+      "dt": 0.0078125,
+      "wishSpeed": 43.68,
+      "result": -74.4140625
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "walk",
+      "tag": 0.35,
+      "current": -80,
+      "dt": 0.015625,
+      "wishSpeed": 43.68,
+      "result": -68.828125
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "walk",
+      "tag": 0.35,
+      "current": 112.32000000000001,
+      "dt": 0.0078125,
+      "wishSpeed": 43.68,
+      "result": 112.31999969482422
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "walk",
+      "tag": 0.35,
+      "current": 112.32000000000001,
+      "dt": 0.015625,
+      "wishSpeed": 43.68,
+      "result": 112.31999969482422
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "walk",
+      "tag": 0.35,
+      "current": 124.80000000000001,
+      "dt": 0.0078125,
+      "wishSpeed": 43.68,
+      "result": 124.80000305175781
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "walk",
+      "tag": 0.35,
+      "current": 124.80000000000001,
+      "dt": 0.015625,
+      "wishSpeed": 43.68,
+      "result": 124.80000305175781
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "crouch",
+      "tag": 1,
+      "current": 0,
+      "dt": 0.0078125,
+      "wishSpeed": 81.60000000000001,
+      "result": 3.65234375
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "crouch",
+      "tag": 1,
+      "current": 0,
+      "dt": 0.015625,
+      "wishSpeed": 81.60000000000001,
+      "result": 7.3046875
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "crouch",
+      "tag": 1,
+      "current": -80,
+      "dt": 0.0078125,
+      "wishSpeed": 81.60000000000001,
+      "result": -76.34765625
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "crouch",
+      "tag": 1,
+      "current": -80,
+      "dt": 0.015625,
+      "wishSpeed": 81.60000000000001,
+      "result": -72.6953125
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "crouch",
+      "tag": 1,
+      "current": 73.44000000000001,
+      "dt": 0.0078125,
+      "wishSpeed": 81.60000000000001,
+      "result": 77.09234619140625
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "crouch",
+      "tag": 1,
+      "current": 73.44000000000001,
+      "dt": 0.015625,
+      "wishSpeed": 81.60000000000001,
+      "result": 80.74468994140625
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "crouch",
+      "tag": 1,
+      "current": 81.60000000000001,
+      "dt": 0.0078125,
+      "wishSpeed": 81.60000000000001,
+      "result": 81.5999984741211
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "crouch",
+      "tag": 1,
+      "current": 81.60000000000001,
+      "dt": 0.015625,
+      "wishSpeed": 81.60000000000001,
+      "result": 81.5999984741211
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "crouch",
+      "tag": 0.35,
+      "current": 0,
+      "dt": 0.0078125,
+      "wishSpeed": 28.560000000000002,
+      "result": 3.65234375
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "crouch",
+      "tag": 0.35,
+      "current": 0,
+      "dt": 0.015625,
+      "wishSpeed": 28.560000000000002,
+      "result": 7.3046875
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "crouch",
+      "tag": 0.35,
+      "current": -80,
+      "dt": 0.0078125,
+      "wishSpeed": 28.560000000000002,
+      "result": -76.34765625
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "crouch",
+      "tag": 0.35,
+      "current": -80,
+      "dt": 0.015625,
+      "wishSpeed": 28.560000000000002,
+      "result": -72.6953125
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "crouch",
+      "tag": 0.35,
+      "current": 73.44000000000001,
+      "dt": 0.0078125,
+      "wishSpeed": 28.560000000000002,
+      "result": 73.44000244140625
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "crouch",
+      "tag": 0.35,
+      "current": 73.44000000000001,
+      "dt": 0.015625,
+      "wishSpeed": 28.560000000000002,
+      "result": 73.44000244140625
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "crouch",
+      "tag": 0.35,
+      "current": 81.60000000000001,
+      "dt": 0.0078125,
+      "wishSpeed": 28.560000000000002,
+      "result": 81.5999984741211
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "crouch",
+      "tag": 0.35,
+      "current": 81.60000000000001,
+      "dt": 0.015625,
+      "wishSpeed": 28.560000000000002,
+      "result": 81.5999984741211
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "run",
+      "tag": 1,
+      "current": 0,
+      "dt": 0.0078125,
+      "wishSpeed": 250,
+      "result": 10.7421875
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "run",
+      "tag": 1,
+      "current": 0,
+      "dt": 0.015625,
+      "wishSpeed": 250,
+      "result": 21.484375
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "run",
+      "tag": 1,
+      "current": -80,
+      "dt": 0.0078125,
+      "wishSpeed": 250,
+      "result": -69.2578125
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "run",
+      "tag": 1,
+      "current": -80,
+      "dt": 0.015625,
+      "wishSpeed": 250,
+      "result": -58.515625
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "run",
+      "tag": 1,
+      "current": 225.0,
+      "dt": 0.0078125,
+      "wishSpeed": 250,
+      "result": 235.7421875
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "run",
+      "tag": 1,
+      "current": 225.0,
+      "dt": 0.015625,
+      "wishSpeed": 250,
+      "result": 246.484375
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "run",
+      "tag": 1,
+      "current": 250,
+      "dt": 0.0078125,
+      "wishSpeed": 250,
+      "result": 250.0
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "run",
+      "tag": 1,
+      "current": 250,
+      "dt": 0.015625,
+      "wishSpeed": 250,
+      "result": 250.0
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "run",
+      "tag": 0.35,
+      "current": 0,
+      "dt": 0.0078125,
+      "wishSpeed": 87.5,
+      "result": 10.7421875
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "run",
+      "tag": 0.35,
+      "current": 0,
+      "dt": 0.015625,
+      "wishSpeed": 87.5,
+      "result": 21.484375
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "run",
+      "tag": 0.35,
+      "current": -80,
+      "dt": 0.0078125,
+      "wishSpeed": 87.5,
+      "result": -69.2578125
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "run",
+      "tag": 0.35,
+      "current": -80,
+      "dt": 0.015625,
+      "wishSpeed": 87.5,
+      "result": -58.515625
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "run",
+      "tag": 0.35,
+      "current": 225.0,
+      "dt": 0.0078125,
+      "wishSpeed": 87.5,
+      "result": 225.0
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "run",
+      "tag": 0.35,
+      "current": 225.0,
+      "dt": 0.015625,
+      "wishSpeed": 87.5,
+      "result": 225.0
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "run",
+      "tag": 0.35,
+      "current": 250,
+      "dt": 0.0078125,
+      "wishSpeed": 87.5,
+      "result": 250.0
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "run",
+      "tag": 0.35,
+      "current": 250,
+      "dt": 0.015625,
+      "wishSpeed": 87.5,
+      "result": 250.0
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "walk",
+      "tag": 1,
+      "current": 0,
+      "dt": 0.0078125,
+      "wishSpeed": 130.0,
+      "result": 5.5859375
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "walk",
+      "tag": 1,
+      "current": 0,
+      "dt": 0.015625,
+      "wishSpeed": 130.0,
+      "result": 11.171875
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "walk",
+      "tag": 1,
+      "current": -80,
+      "dt": 0.0078125,
+      "wishSpeed": 130.0,
+      "result": -74.4140625
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "walk",
+      "tag": 1,
+      "current": -80,
+      "dt": 0.015625,
+      "wishSpeed": 130.0,
+      "result": -68.828125
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "walk",
+      "tag": 1,
+      "current": 117.0,
+      "dt": 0.0078125,
+      "wishSpeed": 130.0,
+      "result": 122.5859375
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "walk",
+      "tag": 1,
+      "current": 117.0,
+      "dt": 0.015625,
+      "wishSpeed": 130.0,
+      "result": 128.171875
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "walk",
+      "tag": 1,
+      "current": 130.0,
+      "dt": 0.0078125,
+      "wishSpeed": 130.0,
+      "result": 130.0
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "walk",
+      "tag": 1,
+      "current": 130.0,
+      "dt": 0.015625,
+      "wishSpeed": 130.0,
+      "result": 130.0
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "walk",
+      "tag": 0.35,
+      "current": 0,
+      "dt": 0.0078125,
+      "wishSpeed": 45.5,
+      "result": 5.5859375
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "walk",
+      "tag": 0.35,
+      "current": 0,
+      "dt": 0.015625,
+      "wishSpeed": 45.5,
+      "result": 11.171875
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "walk",
+      "tag": 0.35,
+      "current": -80,
+      "dt": 0.0078125,
+      "wishSpeed": 45.5,
+      "result": -74.4140625
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "walk",
+      "tag": 0.35,
+      "current": -80,
+      "dt": 0.015625,
+      "wishSpeed": 45.5,
+      "result": -68.828125
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "walk",
+      "tag": 0.35,
+      "current": 117.0,
+      "dt": 0.0078125,
+      "wishSpeed": 45.5,
+      "result": 117.0
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "walk",
+      "tag": 0.35,
+      "current": 117.0,
+      "dt": 0.015625,
+      "wishSpeed": 45.5,
+      "result": 117.0
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "walk",
+      "tag": 0.35,
+      "current": 130.0,
+      "dt": 0.0078125,
+      "wishSpeed": 45.5,
+      "result": 130.0
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "walk",
+      "tag": 0.35,
+      "current": 130.0,
+      "dt": 0.015625,
+      "wishSpeed": 45.5,
+      "result": 130.0
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "crouch",
+      "tag": 1,
+      "current": 0,
+      "dt": 0.0078125,
+      "wishSpeed": 85.0,
+      "result": 3.65234375
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "crouch",
+      "tag": 1,
+      "current": 0,
+      "dt": 0.015625,
+      "wishSpeed": 85.0,
+      "result": 7.3046875
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "crouch",
+      "tag": 1,
+      "current": -80,
+      "dt": 0.0078125,
+      "wishSpeed": 85.0,
+      "result": -76.34765625
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "crouch",
+      "tag": 1,
+      "current": -80,
+      "dt": 0.015625,
+      "wishSpeed": 85.0,
+      "result": -72.6953125
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "crouch",
+      "tag": 1,
+      "current": 76.5,
+      "dt": 0.0078125,
+      "wishSpeed": 85.0,
+      "result": 80.15234375
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "crouch",
+      "tag": 1,
+      "current": 76.5,
+      "dt": 0.015625,
+      "wishSpeed": 85.0,
+      "result": 83.8046875
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "crouch",
+      "tag": 1,
+      "current": 85.0,
+      "dt": 0.0078125,
+      "wishSpeed": 85.0,
+      "result": 85.0
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "crouch",
+      "tag": 1,
+      "current": 85.0,
+      "dt": 0.015625,
+      "wishSpeed": 85.0,
+      "result": 85.0
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "crouch",
+      "tag": 0.35,
+      "current": 0,
+      "dt": 0.0078125,
+      "wishSpeed": 29.749999999999996,
+      "result": 3.65234375
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "crouch",
+      "tag": 0.35,
+      "current": 0,
+      "dt": 0.015625,
+      "wishSpeed": 29.749999999999996,
+      "result": 7.3046875
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "crouch",
+      "tag": 0.35,
+      "current": -80,
+      "dt": 0.0078125,
+      "wishSpeed": 29.749999999999996,
+      "result": -76.34765625
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "crouch",
+      "tag": 0.35,
+      "current": -80,
+      "dt": 0.015625,
+      "wishSpeed": 29.749999999999996,
+      "result": -72.6953125
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "crouch",
+      "tag": 0.35,
+      "current": 76.5,
+      "dt": 0.0078125,
+      "wishSpeed": 29.749999999999996,
+      "result": 76.5
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "crouch",
+      "tag": 0.35,
+      "current": 76.5,
+      "dt": 0.015625,
+      "wishSpeed": 29.749999999999996,
+      "result": 76.5
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "crouch",
+      "tag": 0.35,
+      "current": 85.0,
+      "dt": 0.0078125,
+      "wishSpeed": 29.749999999999996,
+      "result": 85.0
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "crouch",
+      "tag": 0.35,
+      "current": 85.0,
+      "dt": 0.015625,
+      "wishSpeed": 29.749999999999996,
+      "result": 85.0
+    }
+  ]
+}

@@ -11,12 +11,17 @@ import {DuelSimulation} from './simulation';
 import {DuelWeaponState} from './weapon-state';
 
 describe('duel contracts and shared kernels', () => {
+  it('starts new visitors at level 3 without replacing a saved difficulty', () => {
+    expect(duelDefaults.skill).toBe(3);
+    expect(sanitizeDuelConfig({}).skill).toBe(3);
+    expect(sanitizeDuelConfig({skill: 7}).skill).toBe(7);
+  });
   it('validates count, weapon pool, health, armor, rank and per-bot overrides', () => {
     const config = sanitizeDuelConfig({botCount: 999, skill: 20, weapons: ['__proto__', 'mp9', 'mp9'],
       health: -5, armor: false, accuracy: Infinity,
       overrides: [{weapon: 'negev', health: 1000, accuracy: .01}, {weapon: 'forged'}]});
     expect(config.botCount).toBe(5);
-    expect(config.skill).toBe(5);
+    expect(config.skill).toBe(3);
     expect(config.weapons).toEqual(['mp9']);
     expect(config.health).toBe(1);
     expect(botConfig(config, 0)).toMatchObject({weapon: 'negev', health: 500, armor: false, accuracy: .5});

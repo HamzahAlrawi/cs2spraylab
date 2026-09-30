@@ -4,7 +4,7 @@ export const STEP = 1 / 128;
 export const GRAVITY = 800 * UNIT;
 export const JUMP_SPEED = 301.993 * UNIT;
 export const DUCK_SECONDS = 1 / 6.4;
-export const UNDUCK_SECONDS = 1 / 6.4;
+export const UNDUCK_SECONDS = 1 / 8;
 
 export type Vec = { x: number; y: number; z: number };
 export type MoveInput = { forward: number; side: number; walk: boolean; crouch: boolean; jump: boolean };
@@ -16,6 +16,10 @@ export type ActorKinematics = {
   verticalVelocity: number;
   eyeHeight: number;
   duckAmount?: number;
+  duckSpeed?: number;
+  crouchHeld?: boolean;
+  duckCooldown?: number;
+  duckRecoveryOrigin?: {x: number; z: number};
   jumpHeld: boolean;
   grounded?: boolean;
   velocityModifier?: number;
@@ -27,20 +31,36 @@ export type ResolveVertical = (position: Vec, from: number, to: number, height: 
 
 export const idleInput = (): MoveInput => ({ forward: 0, side: 0, walk: false, crouch: false, jump: false });
 export const clamp = (n: number, min: number, max: number) => Math.max(min, Math.min(max, n));
+export const stanceCurve = (amount: number) => amount * amount * (3 - 2 * amount);
 
-export function groundVelocity(vx: number, vz: number, x: number, z: number, speed: number, dt: number) {
+type GroundStance = {weaponSpeed: number; ducking: boolean; walking: boolean};
+
+// Build 2000919, server Accelerate (RVA ab1ff0): wish-speed and acceleration
+// speed are different, especially while ducking, walking or damage-tagged.
+export function accelerateGround(
+  vx: number, vz: number, x: number, z: number, wishSpeed: number, dt: number,
+  {weaponSpeed, ducking, walking}: GroundStance = {weaponSpeed: wishSpeed, ducking: false, walking: false},
+) {
+  const length = Math.hypot(x, z);
+  if (!length) return {x: vx, z: vz};
+  x /= length; z /= length;
+  const current = vx * x + vz * z;
+  const base = Math.max(250 * UNIT, wishSpeed);
+  const weaponScale = Math.min(1, weaponSpeed / (250 * UNIT));
+  const accelerationSpeed = base * (ducking ? .34 : walking ? .52 : weaponScale);
+  const walkCap = base * weaponScale * .52;
+  const taper = walking && !ducking ? clamp((walkCap - Math.max(0, current)) / (5 * UNIT), 0, 1) : 1;
+  const add = Math.min(Math.max(0, wishSpeed - current), 5.5 * accelerationSpeed * taper * dt);
+  return {x: vx + x * add, z: vz + z * add};
+}
+
+export function groundVelocity(vx: number, vz: number, x: number, z: number, speed: number, dt: number, stance?: GroundStance) {
   const v = Math.hypot(vx, vz);
   if (v > 0) {
     const retained = Math.max(0, v - Math.max(v, 80 * UNIT) * 5.2 * dt) / v;
     vx *= retained; vz *= retained;
   }
-  const length = Math.hypot(x, z);
-  if (length > 0) {
-    x /= length; z /= length;
-    const add = Math.min(Math.max(0, speed - (vx * x + vz * z)), 5.5 * speed * dt);
-    vx += x * add; vz += z * add;
-  }
-  return { x: vx, z: vz };
+  return accelerateGround(vx, vz, x, z, speed, dt, stance);
 }
 
 export function airVelocity(vx: number, vz: number, x: number, z: number, speed: number, dt: number) {
@@ -59,13 +79,24 @@ export function advanceActor(
 ): ActorKinematics {
   const { forward, side, walk, crouch, jump } = input;
   const currentDuck = actor.duckAmount ?? 0;
-  const previousCurve = currentDuck * currentDuck * (3 - 2 * currentDuck);
+  // Native CheckParameters consumes 2 on BOTH input edges; Duck recovers 3/s
+  // to 8, with an extra 6/s after travelling 64 units outside a transition.
+  let duckSpeed = Math.min(8, Math.max(0, (actor.duckSpeed ?? 8) - (crouch !== (actor.crouchHeld ?? false) ? 2 : 0)) + 3 * dt);
+  let duckRecoveryOrigin = actor.duckRecoveryOrigin ?? {x: actor.position.x, z: actor.position.z};
+  if (duckSpeed >= 8) duckRecoveryOrigin = {x: actor.position.x, z: actor.position.z};
+  else if ((currentDuck === 0 || currentDuck === 1) &&
+    Math.hypot(actor.position.x - duckRecoveryOrigin.x, actor.position.z - duckRecoveryOrigin.z) > 64 * UNIT) {
+    duckSpeed = Math.min(8, duckSpeed + 6 * dt);
+  }
+  let duckCooldown = Math.max(0, (actor.duckCooldown ?? 0) - dt);
+  const wantsDuck = crouch && duckSpeed >= 1.5 && (duckCooldown === 0 || currentDuck >= .75);
+  const previousCurve = stanceCurve(currentDuck);
   const supported = vertical(actor.position, actor.feet, actor.feet - .001, (72 - 18 * previousCurve) * UNIT).grounded;
   let verticalVelocity = actor.verticalVelocity;
   if (jump && !actor.jumpHeld && supported) verticalVelocity = JUMP_SPEED;
   const airborne = !supported || verticalVelocity > 0;
-  let duckAmount = clamp(currentDuck + (crouch ? dt / DUCK_SECONDS : -dt / UNDUCK_SECONDS), 0, 1);
-  let duckCurve = duckAmount * duckAmount * (3 - 2 * duckAmount);
+  let duckAmount = clamp(currentDuck + (wantsDuck ? .8 * duckSpeed : -Math.max(1.5, duckSpeed)) * dt, 0, 1);
+  let duckCurve = stanceCurve(duckAmount);
   let feet = Math.max(0, actor.feet + (airborne ? (duckCurve - previousCurve) * 18 * UNIT : 0));
   // Releasing crouch requires room for the full standing hull, not just the
   // next interpolation step. In air the hull expands downwards.
@@ -74,12 +105,16 @@ export function advanceActor(
     duckAmount = currentDuck;
     duckCurve = previousCurve; feet = actor.feet;
   }
+  if (duckAmount === 1 && currentDuck < 1) duckCooldown = .4;
   const wishX = side * Math.cos(actor.yaw) - forward * Math.sin(actor.yaw);
   const wishZ = -side * Math.sin(actor.yaw) - forward * Math.cos(actor.yaw);
   const tag = clamp(actor.velocityModifier ?? 1, 0, 1);
-  const speed = runningSpeed * (duckAmount > 0 ? 1 - .66 * duckCurve : walk ? .52 : 1) * tag;
-  const velocity = (airborne ? airVelocity : groundVelocity)(actor.velocity.x, actor.velocity.z, wishX, wishZ,
-    airborne ? runningSpeed : speed, dt);
+  const ducking = crouch || duckAmount > 0;
+  const speed = runningSpeed * (ducking ? 1 - .66 * duckAmount : walk ? .52 : 1) * tag;
+  const velocity = airborne
+    ? airVelocity(actor.velocity.x, actor.velocity.z, wishX, wishZ, runningSpeed, dt)
+    : groundVelocity(actor.velocity.x, actor.velocity.z, wishX, wishZ, speed, dt,
+      {weaponSpeed: runningSpeed, ducking, walking: walk && !ducking});
   // Ground tagging caps momentum as well as wish speed/acceleration. Do not
   // multiply velocity every tick, or apply the ground cap to an airborne actor.
   if (!airborne && tag < 1) {
@@ -107,6 +142,7 @@ export function advanceActor(
   return {
     position: { x: resolved.x, y: feet + eyeHeight, z: resolved.z }, velocity,
     yaw: actor.yaw, feet, verticalVelocity, eyeHeight, duckAmount, jumpHeld: jump, grounded: contact.grounded,
+    duckSpeed, crouchHeld: crouch, duckCooldown, duckRecoveryOrigin,
     velocityModifier: actor.velocityModifier,
   };
 }

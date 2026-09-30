@@ -11,7 +11,9 @@ const contact = (position: ActorKinematics['position'], from: number, to: number
 describe('shared vertical movement', () => {
   it('tucks the feet without pulling the airborne eye down', () => {
     let standing = actor(), ducking = actor();
-    for (let tick = 0; tick < 20; tick++) {
+    // A fresh key edge consumes crouch speed; allow the resulting transition
+    // to finish rather than assuming an always-rested 6.4/s transition.
+    for (let tick = 0; tick < 32; tick++) {
       standing = advanceActor(standing, {...idleInput(), jump: true}, 250 * UNIT, STEP);
       ducking = advanceActor(ducking, {...idleInput(), jump: true, crouch: true}, 250 * UNIT, STEP);
       expect(ducking.position.y).toBeCloseTo(standing.position.y, 8);

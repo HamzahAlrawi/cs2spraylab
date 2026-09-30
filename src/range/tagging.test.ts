@@ -77,17 +77,18 @@ describe('native damage-tagging arithmetic', () => {
 });
 
 describe('tagged movement', () => {
-  it('caps existing ground momentum, wish speed and acceleration without frame-by-frame multiplication', () => {
+  it('caps ground momentum and wish speed without incorrectly scaling weapon acceleration', () => {
     const actor = {...standing(), velocity: {x: 225 * UNIT, z: 0}, velocityModifier: .3};
     const input = {...idleInput(), side: 1};
     const first = advanceActor(actor, input, 225 * UNIT, STEP);
     expect(first.velocity.x).toBeCloseTo(225 * UNIT * .3);
     const second = advanceActor(first, input, 225 * UNIT, STEP);
-    expect(second.velocity).toEqual(groundVelocity(first.velocity.x, 0, 1, 0, 225 * UNIT * .3, STEP));
+    expect(second.velocity).toEqual(groundVelocity(first.velocity.x, 0, 1, 0, 225 * UNIT * .3, STEP,
+      {weaponSpeed: 225 * UNIT, ducking: false, walking: false}));
     expect(second.velocity.x).toBeGreaterThan(first.velocity.x * .95);
     const resting = {...actor, velocity: {x: 0, z: 0}};
     expect(advanceActor(resting, input, 225 * UNIT, STEP).velocity.x)
-      .toBeCloseTo(5.5 * 225 * UNIT * .3 * STEP);
+      .toBeCloseTo(5.5 * 225 * UNIT * STEP);
   });
 
   it('combines tagging with walking and crouching caps', () => {

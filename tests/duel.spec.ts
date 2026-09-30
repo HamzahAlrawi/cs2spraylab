@@ -7,6 +7,7 @@ test('AI Duel is playable from the first visit with adjacent bot controls', asyn
   test.skip(info.project.name !== 'chromium', 'Desktop duel smoke test');
   await page.goto('/');
   await expect(page.getByLabel('Training mode')).toHaveValue('duel');
+  await expect(page.getByLabel('Bot skill level')).toHaveValue('3');
   await expect(page.getByRole('complementary', {name: 'Duel settings'})).toBeVisible();
   const canvas = page.locator('canvas[data-duel]');
   await expect(canvas).toBeVisible();
