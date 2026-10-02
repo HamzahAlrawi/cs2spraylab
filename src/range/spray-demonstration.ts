@@ -50,6 +50,7 @@ export class SprayDemonstration {
     this.canvas.width = this.canvas.height = this.base.width = this.base.height = SIZE;
     this.texture = new THREE.CanvasTexture(this.canvas);
     this.texture.colorSpace = THREE.SRGBColorSpace;
+    this.texture.generateMipmaps = false; this.texture.minFilter = THREE.LinearFilter;
     this.mesh = new THREE.Mesh(new THREE.PlaneGeometry(3.5, 3.5), new THREE.MeshBasicMaterial({ map: this.texture, toneMapped: false }));
     this.mesh.name = `wall-${kind}-demonstration`;
     // In front of the backplate, but behind its physical bullet-mark offset.
@@ -79,12 +80,13 @@ export class SprayDemonstration {
     for (let i = 1; i <= end; i++) ctx.lineTo(this.points[i].x, this.points[i].y);
     ctx.strokeStyle = color; ctx.lineWidth = width; ctx.lineCap = ctx.lineJoin = 'round'; ctx.stroke();
   }
-  update(time: number) {
+  update(time: number, hz = 20, animated = true) {
     if (!this.mesh.visible || !this.points.length) return;
-    const frame = this.reducedMotion ? 0 : Math.floor((time - this.start) * 20);
+    const staticPreview = this.reducedMotion || !animated;
+    const frame = staticPreview ? -2 : Math.floor((time - this.start) * hz);
     if (frame === this.lastFrame) return;
     this.lastFrame = frame;
-    const { index, fraction } = sprayPlayback(time - this.start, this.points.length, this.cycle, this.reducedMotion);
+    const { index, fraction } = sprayPlayback(time - this.start, this.points.length, this.cycle, staticPreview);
     const ctx = this.canvas.getContext('2d')!;
     ctx.drawImage(this.base, 0, 0); this.path(ctx, index, GUIDE_COLORS.now, 7);
     const p = this.points[index], next = this.points[Math.min(index + 1, this.points.length - 1)];

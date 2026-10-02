@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Native Firing Render Audit</title>
+<style>html,body{margin:0;width:100%;height:100%;overflow:hidden}canvas{display:block;width:100%;height:100%}</style>
+<canvas></canvas>
+<script type="module">
+import * as THREE from 'three';
+import {GLTFLoader} from 'three/examples/jsm/loaders/GLTFLoader.js';
+import {RoomEnvironment} from 'three/examples/jsm/environments/RoomEnvironment.js';
+import {ViewAnimation} from '/src/range/view-animation.ts';
+import {prepareNativeViewAssembly} from '/src/range/native-view-actions.ts';
+import {VIEWMODEL_FOV,VIEWMODEL_OFFSET,viewmodelViewport} from '/src/range/viewmodel.ts';
+
+const renderer = new THREE.WebGLRenderer({canvas:document.querySelector('canvas'),antialias:true,preserveDrawingBuffer:true});
+renderer.setPixelRatio(1);
+const scene = new THREE.Scene(); scene.background = new THREE.Color('#79868c');
+const room = new RoomEnvironment(), pmrem = new THREE.PMREMGenerator(renderer);
+const environment = pmrem.fromScene(room,.04); scene.environment = environment.texture; scene.environmentIntensity = .32;
+room.dispose(); pmrem.dispose();
+scene.add(new THREE.HemisphereLight('#ffffff','#696b64',.7));
+const key = new THREE.DirectionalLight('#fff4dd',1.4); key.position.set(-2,4,2); scene.add(key);
+const camera = new THREE.PerspectiveCamera(VIEWMODEL_FOV,1,.01,10);
+const root = new THREE.Group(); root.position.copy(VIEWMODEL_OFFSET); scene.add(root);
+const loader = new GLTFLoader();
+let model, animation, id;
+function draw() {
+  const width = innerWidth, height = innerHeight, view = viewmodelViewport(width,height);
+  renderer.setSize(width,height); camera.aspect = view.aspect; camera.updateProjectionMatrix();
+  renderer.setViewport(0,0,width,height); renderer.clear();
+  renderer.setViewport(view.x,view.y,view.width,view.height); renderer.render(scene,camera);
+  const gl = renderer.getContext(), pixels = new Uint8Array(width * height * 4);
+  gl.readPixels(0,0,width,height,gl.RGBA,gl.UNSIGNED_BYTE,pixels);
+  const colors = new Set(); let hash = 2166136261;
+  for (let i = 0; i < pixels.length; i += 16) {
+    colors.add(`${pixels[i]},${pixels[i+1]},${pixels[i+2]}`);
+    hash = Math.imul(hash ^ pixels[i],16777619);
+    hash = Math.imul(hash ^ pixels[i+1],16777619);
+    hash = Math.imul(hash ^ pixels[i+2],16777619);
+  }
+  return {colors:colors.size,hash:hash >>> 0,drawCalls:renderer.info.render.calls};
+}
+window.fireAudit = {
+  async load(assetKey) {
+    animation?.dispose();
+    if (model) {
+      root.remove(model);
+      const materials = new Set(), textures = new Set();
+      model.traverse(object => {
+        if (!object.isMesh) return;
+        object.geometry.dispose();
+        for (const material of Array.isArray(object.material) ? object.material : [object.material]) {
+          materials.add(material);
+          for (const value of Object.values(material)) if (value?.isTexture) textures.add(value);
+        }
+      });
+      materials.forEach(material => material.dispose()); textures.forEach(texture => texture.dispose());
+    }
+    const gltf = await loader.loadAsync(`/models/view-${assetKey}.glb`);
+    model = gltf.scene; id = assetKey.replace(/-legacy$/,''); prepareNativeViewAssembly(model);
+    model.rotation.y = Math.PI;
+    root.add(model); animation = new ViewAnimation(model,gltf.animations);
+    return {actions:gltf.animations.filter(clip => clip.name.startsWith('fire')).map(clip => clip.name),...draw()};
+  },
+  sample(name,fraction) {
+    const side = name.includes('left') ? 'left' : 'right';
+    const played = animation.playFire(id,{side,lastShot:name.endsWith('last'),alternate:name === 'fire-alt',zoomed:name === 'fire-scoped'});
+    if (!played || animation.activeAction !== name) throw new Error(`${id}: runtime failed ${name}`);
+    animation.update(0,1,animation.duration(name) * fraction);
+    return draw();
+  },
+};
+</script>
+</html>

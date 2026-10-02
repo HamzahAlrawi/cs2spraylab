@@ -1,0 +1,1979 @@
+{
+  "schema": 1,
+  "build": "2000922",
+  "source": "scripts/weapons.vdata_c",
+  "sourceSha256": "c97e58cd9f8fa0cd45b09bbb8116d5da8a108de61d5241dfd6c559d8a7c6e333",
+  "sha256": "3289d4dba65b1ef3f884c389448c8a6c6db8691442c18a7aaddb28434aaf250d",
+  "muzzleTexture": "/textures/weapon-muzzle-flame.webp",
+  "muzzleTextureMetadata": {
+    "source": "materials/effects/muzzleflashx.vtex_c",
+    "sourceSha256": "3a1c8e7cc1a0f366ff22a4c9e160b6bbee3eac47fe4ab8f932c413540cb23068",
+    "decodedPngSha256": "7d793855783fea49d76d8b470076a4c09f1e8abe863b850dd0e4c023002b0d2c",
+    "sha256": "023d9b578f7a0fe90826967b99832141c5211eb41b3a667f57dc4371daf0eab2",
+    "particle": "particles/weapons/cs_weapon_fx/weapon_muzzle_flash_assaultrifle_vent_fp.vpcf",
+    "pixels": {
+      "width": 128,
+      "height": 128,
+      "channels": 4,
+      "alphaMin": 0,
+      "alphaMax": 255,
+      "transparentPixels": 7119,
+      "translucentPixels": 9262,
+      "visiblePixels": 9265
+    },
+    "atlas": false,
+    "colorSpace": "srgb",
+    "alphaMode": "straight",
+    "alphaConversion": "alpha=max(R,G,B); straightRGB=round(RGB*255/alpha); black=transparent",
+    "decoding": "Source2Viewer -d --texture_decode_flags Auto; Sharp lossless WebP; no resize",
+    "nativeRadiusUnitsApprox": [
+      3,
+      6
+    ],
+    "nativeDiameterUnitsApprox": [
+      6,
+      12
+    ],
+    "nativeLifetimeSeconds": [
+      0.028,
+      0.03
+    ],
+    "scaleNote": "Native particle radius, not a measured FP screen size. Caller may use its own 0.06m presentation scale."
+  },
+  "weapons": {
+    "ak47": {
+      "tracerFrequency": 3,
+      "silenced": false,
+      "activeMode": 0,
+      "tracerFrequencyModes": [
+        3
+      ],
+      "silencerType": "WEAPONSILENCER_NONE",
+      "muzzleParticle": "particles/weapons/cs_weapon_fx/weapon_muzzle_flash_assaultrifle_fp.vpcf",
+      "muzzleParticleBasis": "native-weapon-type-family-candidate",
+      "tracerParticle": "particles/weapons/cs_weapon_fx/weapon_tracers_assrifle.vpcf",
+      "nativeKey": "weapon_ak47",
+      "sourceSha256": "c97e58cd9f8fa0cd45b09bbb8116d5da8a108de61d5241dfd6c559d8a7c6e333",
+      "muzzleParticleSourceSha256": "d3c9df56ca9a5bee6ad1417603b8abc79204354fe1618ab4cb76ecfb0361aea5",
+      "tracerParticleSourceSha256": "17ba62e80e75ef3edf252792918ec9a65a83e2018814d1ba3bc34401b76caf6b"
+    },
+    "m4a4": {
+      "tracerFrequency": 3,
+      "silenced": false,
+      "activeMode": 0,
+      "tracerFrequencyModes": [
+        3
+      ],
+      "silencerType": "WEAPONSILENCER_NONE",
+      "muzzleParticle": "particles/weapons/cs_weapon_fx/weapon_muzzle_flash_assaultrifle_fp.vpcf",
+      "muzzleParticleBasis": "native-weapon-type-family-candidate",
+      "tracerParticle": "particles/weapons/cs_weapon_fx/weapon_tracers_assrifle.vpcf",
+      "nativeKey": "weapon_m4a1",
+      "sourceSha256": "c97e58cd9f8fa0cd45b09bbb8116d5da8a108de61d5241dfd6c559d8a7c6e333",
+      "muzzleParticleSourceSha256": "d3c9df56ca9a5bee6ad1417603b8abc79204354fe1618ab4cb76ecfb0361aea5",
+      "tracerParticleSourceSha256": "17ba62e80e75ef3edf252792918ec9a65a83e2018814d1ba3bc34401b76caf6b"
+    },
+    "m4a1s": {
+      "tracerFrequency": 0,
+      "silenced": true,
+      "activeMode": 1,
+      "tracerFrequencyModes": [
+        3,
+        0
+      ],
+      "silencerType": "WEAPONSILENCER_DETACHABLE",
+      "muzzleParticle": "particles/weapons/cs_weapon_fx/weapon_muzzle_flash_assaultrifle_silenced.vpcf",
+      "muzzleParticleBasis": "native-weapon-type-family-candidate",
+      "tracerParticle": "particles/weapons/cs_weapon_fx/weapon_tracers_assrifle.vpcf",
+      "nativeKey": "weapon_m4a1_silencer",
+      "sourceSha256": "c97e58cd9f8fa0cd45b09bbb8116d5da8a108de61d5241dfd6c559d8a7c6e333",
+      "muzzleParticleSourceSha256": "d93ad40aa93997392158ba6f3e55623ac02e9c8f71aa932f6f67122844e920ad",
+      "tracerParticleSourceSha256": "17ba62e80e75ef3edf252792918ec9a65a83e2018814d1ba3bc34401b76caf6b"
+    },
+    "galil": {
+      "tracerFrequency": 3,
+      "silenced": false,
+      "activeMode": 0,
+      "tracerFrequencyModes": [
+        3
+      ],
+      "silencerType": "WEAPONSILENCER_NONE",
+      "muzzleParticle": "particles/weapons/cs_weapon_fx/weapon_muzzle_flash_assaultrifle_fp.vpcf",
+      "muzzleParticleBasis": "native-weapon-type-family-candidate",
+      "tracerParticle": "particles/weapons/cs_weapon_fx/weapon_tracers_assrifle.vpcf",
+      "nativeKey": "weapon_galilar",
+      "sourceSha256": "c97e58cd9f8fa0cd45b09bbb8116d5da8a108de61d5241dfd6c559d8a7c6e333",
+      "muzzleParticleSourceSha256": "d3c9df56ca9a5bee6ad1417603b8abc79204354fe1618ab4cb76ecfb0361aea5",
+      "tracerParticleSourceSha256": "17ba62e80e75ef3edf252792918ec9a65a83e2018814d1ba3bc34401b76caf6b"
+    },
+    "famas": {
+      "tracerFrequency": 3,
+      "silenced": false,
+      "activeMode": 0,
+      "tracerFrequencyModes": [
+        3,
+        3
+      ],
+      "silencerType": "WEAPONSILENCER_NONE",
+      "muzzleParticle": "particles/weapons/cs_weapon_fx/weapon_muzzle_flash_assaultrifle_fp.vpcf",
+      "muzzleParticleBasis": "native-weapon-type-family-candidate",
+      "tracerParticle": "particles/weapons/cs_weapon_fx/weapon_tracers_assrifle.vpcf",
+      "nativeKey": "weapon_famas",
+      "sourceSha256": "c97e58cd9f8fa0cd45b09bbb8116d5da8a108de61d5241dfd6c559d8a7c6e333",
+      "muzzleParticleSourceSha256": "d3c9df56ca9a5bee6ad1417603b8abc79204354fe1618ab4cb76ecfb0361aea5",
+      "tracerParticleSourceSha256": "17ba62e80e75ef3edf252792918ec9a65a83e2018814d1ba3bc34401b76caf6b"
+    },
+    "sg553": {
+      "tracerFrequency": 3,
+      "silenced": false,
+      "activeMode": 0,
+      "tracerFrequencyModes": [
+        3,
+        3
+      ],
+      "silencerType": "WEAPONSILENCER_NONE",
+      "muzzleParticle": "particles/weapons/cs_weapon_fx/weapon_muzzle_flash_assaultrifle_fp.vpcf",
+      "muzzleParticleBasis": "native-weapon-type-family-candidate",
+      "tracerParticle": "particles/weapons/cs_weapon_fx/weapon_tracers_assrifle_aug.vpcf",
+      "nativeKey": "weapon_sg556",
+      "sourceSha256": "c97e58cd9f8fa0cd45b09bbb8116d5da8a108de61d5241dfd6c559d8a7c6e333",
+      "muzzleParticleSourceSha256": "d3c9df56ca9a5bee6ad1417603b8abc79204354fe1618ab4cb76ecfb0361aea5",
+      "tracerParticleSourceSha256": "a13c233b5b90e29375a1ae85c8e471115c0a777a05cf6f264cb077fecfdb3216"
+    },
+    "aug": {
+      "tracerFrequency": 3,
+      "silenced": false,
+      "activeMode": 0,
+      "tracerFrequencyModes": [
+        3,
+        3
+      ],
+      "silencerType": "WEAPONSILENCER_NONE",
+      "muzzleParticle": "particles/weapons/cs_weapon_fx/weapon_muzzle_flash_assaultrifle_fp.vpcf",
+      "muzzleParticleBasis": "native-weapon-type-family-candidate",
+      "tracerParticle": "particles/weapons/cs_weapon_fx/weapon_tracers_assrifle_aug.vpcf",
+      "nativeKey": "weapon_aug",
+      "sourceSha256": "c97e58cd9f8fa0cd45b09bbb8116d5da8a108de61d5241dfd6c559d8a7c6e333",
+      "muzzleParticleSourceSha256": "d3c9df56ca9a5bee6ad1417603b8abc79204354fe1618ab4cb76ecfb0361aea5",
+      "tracerParticleSourceSha256": "a13c233b5b90e29375a1ae85c8e471115c0a777a05cf6f264cb077fecfdb3216"
+    },
+    "mp9": {
+      "tracerFrequency": 3,
+      "silenced": false,
+      "activeMode": 0,
+      "tracerFrequencyModes": [
+        3
+      ],
+      "silencerType": "WEAPONSILENCER_NONE",
+      "muzzleParticle": "particles/weapons/cs_weapon_fx/weapon_muzzle_flash_smg_fp.vpcf",
+      "muzzleParticleBasis": "native-weapon-type-family-candidate",
+      "tracerParticle": "particles/weapons/cs_weapon_fx/weapon_tracers_smg.vpcf",
+      "nativeKey": "weapon_mp9",
+      "sourceSha256": "c97e58cd9f8fa0cd45b09bbb8116d5da8a108de61d5241dfd6c559d8a7c6e333",
+      "muzzleParticleSourceSha256": "d4682fccdced7d4aba60ed514991f23c03c9ca76f32be0cdd42f34aea14a9dae",
+      "tracerParticleSourceSha256": "da30a8f084b58f1404b31559676286ec4e512df2a2d818fa6433104e26cd649a"
+    },
+    "mp7": {
+      "tracerFrequency": 3,
+      "silenced": false,
+      "activeMode": 0,
+      "tracerFrequencyModes": [
+        3
+      ],
+      "silencerType": "WEAPONSILENCER_NONE",
+      "muzzleParticle": "particles/weapons/cs_weapon_fx/weapon_muzzle_flash_smg_fp.vpcf",
+      "muzzleParticleBasis": "native-weapon-type-family-candidate",
+      "tracerParticle": "particles/weapons/cs_weapon_fx/weapon_tracers_smg.vpcf",
+      "nativeKey": "weapon_mp7",
+      "sourceSha256": "c97e58cd9f8fa0cd45b09bbb8116d5da8a108de61d5241dfd6c559d8a7c6e333",
+      "muzzleParticleSourceSha256": "d4682fccdced7d4aba60ed514991f23c03c9ca76f32be0cdd42f34aea14a9dae",
+      "tracerParticleSourceSha256": "da30a8f084b58f1404b31559676286ec4e512df2a2d818fa6433104e26cd649a"
+    },
+    "mp5sd": {
+      "tracerFrequency": 0,
+      "silenced": true,
+      "activeMode": 0,
+      "tracerFrequencyModes": [
+        0
+      ],
+      "silencerType": "WEAPONSILENCER_INTEGRATED",
+      "muzzleParticle": "particles/weapons/cs_weapon_fx/weapon_muzzle_flash_smg_silenced_fp.vpcf",
+      "muzzleParticleBasis": "native-weapon-type-family-candidate",
+      "tracerParticle": "particles/weapons/cs_weapon_fx/weapon_tracers_smg.vpcf",
+      "nativeKey": "weapon_mp5sd",
+      "sourceSha256": "c97e58cd9f8fa0cd45b09bbb8116d5da8a108de61d5241dfd6c559d8a7c6e333",
+      "muzzleParticleSourceSha256": "79e9642653847c37196e5923a5a89862e4f3563acfc8f98dd44748d89b64fcac",
+      "tracerParticleSourceSha256": "da30a8f084b58f1404b31559676286ec4e512df2a2d818fa6433104e26cd649a"
+    },
+    "mac10": {
+      "tracerFrequency": 3,
+      "silenced": false,
+      "activeMode": 0,
+      "tracerFrequencyModes": [
+        3
+      ],
+      "silencerType": "WEAPONSILENCER_NONE",
+      "muzzleParticle": "particles/weapons/cs_weapon_fx/weapon_muzzle_flash_smg_fp.vpcf",
+      "muzzleParticleBasis": "native-weapon-type-family-candidate",
+      "tracerParticle": "particles/weapons/cs_weapon_fx/weapon_tracers_smg.vpcf",
+      "nativeKey": "weapon_mac10",
+      "sourceSha256": "c97e58cd9f8fa0cd45b09bbb8116d5da8a108de61d5241dfd6c559d8a7c6e333",
+      "muzzleParticleSourceSha256": "d4682fccdced7d4aba60ed514991f23c03c9ca76f32be0cdd42f34aea14a9dae",
+      "tracerParticleSourceSha256": "da30a8f084b58f1404b31559676286ec4e512df2a2d818fa6433104e26cd649a"
+    },
+    "ump45": {
+      "tracerFrequency": 3,
+      "silenced": false,
+      "activeMode": 0,
+      "tracerFrequencyModes": [
+        3
+      ],
+      "silencerType": "WEAPONSILENCER_NONE",
+      "muzzleParticle": "particles/weapons/cs_weapon_fx/weapon_muzzle_flash_smg_fp.vpcf",
+      "muzzleParticleBasis": "native-weapon-type-family-candidate",
+      "tracerParticle": "particles/weapons/cs_weapon_fx/weapon_tracers_smg.vpcf",
+      "nativeKey": "weapon_ump45",
+      "sourceSha256": "c97e58cd9f8fa0cd45b09bbb8116d5da8a108de61d5241dfd6c559d8a7c6e333",
+      "muzzleParticleSourceSha256": "d4682fccdced7d4aba60ed514991f23c03c9ca76f32be0cdd42f34aea14a9dae",
+      "tracerParticleSourceSha256": "da30a8f084b58f1404b31559676286ec4e512df2a2d818fa6433104e26cd649a"
+    },
+    "p90": {
+      "tracerFrequency": 3,
+      "silenced": false,
+      "activeMode": 0,
+      "tracerFrequencyModes": [
+        3
+      ],
+      "silencerType": "WEAPONSILENCER_NONE",
+      "muzzleParticle": "particles/weapons/cs_weapon_fx/weapon_muzzle_flash_smg_fp.vpcf",
+      "muzzleParticleBasis": "native-weapon-type-family-candidate",
+      "tracerParticle": "particles/weapons/cs_weapon_fx/weapon_tracers_smg.vpcf",
+      "nativeKey": "weapon_p90",
+      "sourceSha256": "c97e58cd9f8fa0cd45b09bbb8116d5da8a108de61d5241dfd6c559d8a7c6e333",
+      "muzzleParticleSourceSha256": "d4682fccdced7d4aba60ed514991f23c03c9ca76f32be0cdd42f34aea14a9dae",
+      "tracerParticleSourceSha256": "da30a8f084b58f1404b31559676286ec4e512df2a2d818fa6433104e26cd649a"
+    },
+    "bizon": {
+      "tracerFrequency": 3,
+      "silenced": false,
+      "activeMode": 0,
+      "tracerFrequencyModes": [
+        3
+      ],
+      "silencerType": "WEAPONSILENCER_NONE",
+      "muzzleParticle": "particles/weapons/cs_weapon_fx/weapon_muzzle_flash_smg_fp.vpcf",
+      "muzzleParticleBasis": "native-weapon-type-family-candidate",
+      "tracerParticle": "particles/weapons/cs_weapon_fx/weapon_tracers_smg.vpcf",
+      "nativeKey": "weapon_bizon",
+      "sourceSha256": "c97e58cd9f8fa0cd45b09bbb8116d5da8a108de61d5241dfd6c559d8a7c6e333",
+      "muzzleParticleSourceSha256": "d4682fccdced7d4aba60ed514991f23c03c9ca76f32be0cdd42f34aea14a9dae",
+      "tracerParticleSourceSha256": "da30a8f084b58f1404b31559676286ec4e512df2a2d818fa6433104e26cd649a"
+    },
+    "m249": {
+      "tracerFrequency": 1,
+      "silenced": false,
+      "activeMode": 0,
+      "tracerFrequencyModes": [
+        1
+      ],
+      "silencerType": "WEAPONSILENCER_NONE",
+      "muzzleParticle": "particles/weapons/cs_weapon_fx/weapon_muzzle_flash_para_fp.vpcf",
+      "muzzleParticleBasis": "native-weapon-type-family-candidate",
+      "tracerParticle": "particles/weapons/cs_weapon_fx/weapon_tracers_mach.vpcf",
+      "nativeKey": "weapon_m249",
+      "sourceSha256": "c97e58cd9f8fa0cd45b09bbb8116d5da8a108de61d5241dfd6c559d8a7c6e333",
+      "muzzleParticleSourceSha256": "ef6523b37e115839de64a1a9bcfaa75941b3d3ced2f13118162cc4a69e54dbdc",
+      "tracerParticleSourceSha256": "b500984ebb228a953c42d9681396e5545d90f6051be866fa0e06b6bf8eaffb83"
+    },
+    "negev": {
+      "tracerFrequency": 1,
+      "silenced": false,
+      "activeMode": 0,
+      "tracerFrequencyModes": [
+        1
+      ],
+      "silencerType": "WEAPONSILENCER_NONE",
+      "muzzleParticle": "particles/weapons/cs_weapon_fx/weapon_muzzle_flash_para_fp.vpcf",
+      "muzzleParticleBasis": "native-weapon-type-family-candidate",
+      "tracerParticle": "particles/weapons/cs_weapon_fx/weapon_tracers_mach.vpcf",
+      "nativeKey": "weapon_negev",
+      "sourceSha256": "c97e58cd9f8fa0cd45b09bbb8116d5da8a108de61d5241dfd6c559d8a7c6e333",
+      "muzzleParticleSourceSha256": "ef6523b37e115839de64a1a9bcfaa75941b3d3ced2f13118162cc4a69e54dbdc",
+      "tracerParticleSourceSha256": "b500984ebb228a953c42d9681396e5545d90f6051be866fa0e06b6bf8eaffb83"
+    },
+    "cz75a": {
+      "tracerFrequency": 1,
+      "silenced": false,
+      "activeMode": 0,
+      "tracerFrequencyModes": [
+        1
+      ],
+      "silencerType": "WEAPONSILENCER_NONE",
+      "muzzleParticle": "particles/weapons/cs_weapon_fx/weapon_muzzle_flash_pistol_fp.vpcf",
+      "muzzleParticleBasis": "native-weapon-type-family-candidate",
+      "tracerParticle": "particles/weapons/cs_weapon_fx/weapon_tracers_pistol.vpcf",
+      "nativeKey": "weapon_cz75a",
+      "sourceSha256": "c97e58cd9f8fa0cd45b09bbb8116d5da8a108de61d5241dfd6c559d8a7c6e333",
+      "muzzleParticleSourceSha256": "540794f73919e135beda6364173c602cf2d7f456def4f001b1e090cf41fd03a9",
+      "tracerParticleSourceSha256": "1e54ce8fdc194dff3bcb5723f91514278b2c67565f847572407116bf54761ae0"
+    },
+    "usp": {
+      "tracerFrequency": 0,
+      "silenced": true,
+      "activeMode": 1,
+      "tracerFrequencyModes": [
+        1,
+        0
+      ],
+      "silencerType": "WEAPONSILENCER_DETACHABLE",
+      "muzzleParticle": "particles/weapons/cs_weapon_fx/weapon_muzzle_flash_pistol_silenced.vpcf",
+      "muzzleParticleBasis": "native-weapon-type-family-candidate",
+      "tracerParticle": "particles/weapons/cs_weapon_fx/weapon_tracers_pistol.vpcf",
+      "nativeKey": "weapon_usp_silencer",
+      "sourceSha256": "c97e58cd9f8fa0cd45b09bbb8116d5da8a108de61d5241dfd6c559d8a7c6e333",
+      "muzzleParticleSourceSha256": "c40d03c19323b2a0359b525dc395b4c9ca74d7f212cad5463ee39876b648a4f5",
+      "tracerParticleSourceSha256": "1e54ce8fdc194dff3bcb5723f91514278b2c67565f847572407116bf54761ae0"
+    },
+    "glock": {
+      "tracerFrequency": 1,
+      "silenced": false,
+      "activeMode": 0,
+      "tracerFrequencyModes": [
+        1,
+        1
+      ],
+      "silencerType": "WEAPONSILENCER_NONE",
+      "muzzleParticle": "particles/weapons/cs_weapon_fx/weapon_muzzle_flash_pistol_fp.vpcf",
+      "muzzleParticleBasis": "native-weapon-type-family-candidate",
+      "tracerParticle": "particles/weapons/cs_weapon_fx/weapon_tracers_pistol.vpcf",
+      "nativeKey": "weapon_glock",
+      "sourceSha256": "c97e58cd9f8fa0cd45b09bbb8116d5da8a108de61d5241dfd6c559d8a7c6e333",
+      "muzzleParticleSourceSha256": "540794f73919e135beda6364173c602cf2d7f456def4f001b1e090cf41fd03a9",
+      "tracerParticleSourceSha256": "1e54ce8fdc194dff3bcb5723f91514278b2c67565f847572407116bf54761ae0"
+    },
+    "hkp2000": {
+      "tracerFrequency": 1,
+      "silenced": false,
+      "activeMode": 0,
+      "tracerFrequencyModes": [
+        1
+      ],
+      "silencerType": "WEAPONSILENCER_NONE",
+      "muzzleParticle": "particles/weapons/cs_weapon_fx/weapon_muzzle_flash_pistol_fp.vpcf",
+      "muzzleParticleBasis": "native-weapon-type-family-candidate",
+      "tracerParticle": "particles/weapons/cs_weapon_fx/weapon_tracers_pistol.vpcf",
+      "nativeKey": "weapon_hkp2000",
+      "sourceSha256": "c97e58cd9f8fa0cd45b09bbb8116d5da8a108de61d5241dfd6c559d8a7c6e333",
+      "muzzleParticleSourceSha256": "540794f73919e135beda6364173c602cf2d7f456def4f001b1e090cf41fd03a9",
+      "tracerParticleSourceSha256": "1e54ce8fdc194dff3bcb5723f91514278b2c67565f847572407116bf54761ae0"
+    },
+    "p250": {
+      "tracerFrequency": 1,
+      "silenced": false,
+      "activeMode": 0,
+      "tracerFrequencyModes": [
+        1
+      ],
+      "silencerType": "WEAPONSILENCER_NONE",
+      "muzzleParticle": "particles/weapons/cs_weapon_fx/weapon_muzzle_flash_pistol_fp.vpcf",
+      "muzzleParticleBasis": "native-weapon-type-family-candidate",
+      "tracerParticle": "particles/weapons/cs_weapon_fx/weapon_tracers_pistol.vpcf",
+      "nativeKey": "weapon_p250",
+      "sourceSha256": "c97e58cd9f8fa0cd45b09bbb8116d5da8a108de61d5241dfd6c559d8a7c6e333",
+      "muzzleParticleSourceSha256": "540794f73919e135beda6364173c602cf2d7f456def4f001b1e090cf41fd03a9",
+      "tracerParticleSourceSha256": "1e54ce8fdc194dff3bcb5723f91514278b2c67565f847572407116bf54761ae0"
+    },
+    "deagle": {
+      "tracerFrequency": 1,
+      "silenced": false,
+      "activeMode": 0,
+      "tracerFrequencyModes": [
+        1
+      ],
+      "silencerType": "WEAPONSILENCER_NONE",
+      "muzzleParticle": "particles/weapons/cs_weapon_fx/weapon_muzzle_flash_pistol_fp.vpcf",
+      "muzzleParticleBasis": "native-weapon-type-family-candidate",
+      "tracerParticle": "particles/weapons/cs_weapon_fx/weapon_tracers_pistol.vpcf",
+      "nativeKey": "weapon_deagle",
+      "sourceSha256": "c97e58cd9f8fa0cd45b09bbb8116d5da8a108de61d5241dfd6c559d8a7c6e333",
+      "muzzleParticleSourceSha256": "540794f73919e135beda6364173c602cf2d7f456def4f001b1e090cf41fd03a9",
+      "tracerParticleSourceSha256": "1e54ce8fdc194dff3bcb5723f91514278b2c67565f847572407116bf54761ae0"
+    },
+    "elite": {
+      "tracerFrequency": 1,
+      "silenced": false,
+      "activeMode": 0,
+      "tracerFrequencyModes": [
+        1
+      ],
+      "silencerType": "WEAPONSILENCER_NONE",
+      "muzzleParticle": "particles/weapons/cs_weapon_fx/weapon_muzzle_flash_pistol_fp.vpcf",
+      "muzzleParticleBasis": "native-weapon-type-family-candidate",
+      "tracerParticle": "particles/weapons/cs_weapon_fx/weapon_tracers_pistol.vpcf",
+      "nativeKey": "weapon_elite",
+      "sourceSha256": "c97e58cd9f8fa0cd45b09bbb8116d5da8a108de61d5241dfd6c559d8a7c6e333",
+      "muzzleParticleSourceSha256": "540794f73919e135beda6364173c602cf2d7f456def4f001b1e090cf41fd03a9",
+      "tracerParticleSourceSha256": "1e54ce8fdc194dff3bcb5723f91514278b2c67565f847572407116bf54761ae0"
+    },
+    "fiveseven": {
+      "tracerFrequency": 1,
+      "silenced": false,
+      "activeMode": 0,
+      "tracerFrequencyModes": [
+        1
+      ],
+      "silencerType": "WEAPONSILENCER_NONE",
+      "muzzleParticle": "particles/weapons/cs_weapon_fx/weapon_muzzle_flash_pistol_fp.vpcf",
+      "muzzleParticleBasis": "native-weapon-type-family-candidate",
+      "tracerParticle": "particles/weapons/cs_weapon_fx/weapon_tracers_pistol.vpcf",
+      "nativeKey": "weapon_fiveseven",
+      "sourceSha256": "c97e58cd9f8fa0cd45b09bbb8116d5da8a108de61d5241dfd6c559d8a7c6e333",
+      "muzzleParticleSourceSha256": "540794f73919e135beda6364173c602cf2d7f456def4f001b1e090cf41fd03a9",
+      "tracerParticleSourceSha256": "1e54ce8fdc194dff3bcb5723f91514278b2c67565f847572407116bf54761ae0"
+    },
+    "tec9": {
+      "tracerFrequency": 1,
+      "silenced": false,
+      "activeMode": 0,
+      "tracerFrequencyModes": [
+        1
+      ],
+      "silencerType": "WEAPONSILENCER_NONE",
+      "muzzleParticle": "particles/weapons/cs_weapon_fx/weapon_muzzle_flash_pistol_fp.vpcf",
+      "muzzleParticleBasis": "native-weapon-type-family-candidate",
+      "tracerParticle": "particles/weapons/cs_weapon_fx/weapon_tracers_pistol.vpcf",
+      "nativeKey": "weapon_tec9",
+      "sourceSha256": "c97e58cd9f8fa0cd45b09bbb8116d5da8a108de61d5241dfd6c559d8a7c6e333",
+      "muzzleParticleSourceSha256": "540794f73919e135beda6364173c602cf2d7f456def4f001b1e090cf41fd03a9",
+      "tracerParticleSourceSha256": "1e54ce8fdc194dff3bcb5723f91514278b2c67565f847572407116bf54761ae0"
+    },
+    "revolver": {
+      "tracerFrequency": 1,
+      "silenced": false,
+      "activeMode": 0,
+      "tracerFrequencyModes": [
+        1,
+        1
+      ],
+      "silencerType": "WEAPONSILENCER_NONE",
+      "muzzleParticle": "particles/weapons/cs_weapon_fx/weapon_muzzle_flash_pistol_fp.vpcf",
+      "muzzleParticleBasis": "native-weapon-type-family-candidate",
+      "tracerParticle": "particles/weapons/cs_weapon_fx/weapon_tracers_pistol.vpcf",
+      "nativeKey": "weapon_revolver",
+      "sourceSha256": "c97e58cd9f8fa0cd45b09bbb8116d5da8a108de61d5241dfd6c559d8a7c6e333",
+      "muzzleParticleSourceSha256": "540794f73919e135beda6364173c602cf2d7f456def4f001b1e090cf41fd03a9",
+      "tracerParticleSourceSha256": "1e54ce8fdc194dff3bcb5723f91514278b2c67565f847572407116bf54761ae0"
+    },
+    "awp": {
+      "tracerFrequency": 1,
+      "silenced": false,
+      "activeMode": 0,
+      "tracerFrequencyModes": [
+        1
+      ],
+      "silencerType": "WEAPONSILENCER_NONE",
+      "muzzleParticle": "particles/weapons/cs_weapon_fx/weapon_muzzle_flash_huntingrifle_fp.vpcf",
+      "muzzleParticleBasis": "native-weapon-type-family-candidate",
+      "tracerParticle": "particles/weapons/cs_weapon_fx/weapon_tracers_rifle.vpcf",
+      "nativeKey": "weapon_awp",
+      "sourceSha256": "c97e58cd9f8fa0cd45b09bbb8116d5da8a108de61d5241dfd6c559d8a7c6e333",
+      "muzzleParticleSourceSha256": "78e3d07c3169194a3a5bfbfafc4e0a66fa6046439598e8e1cd4287c45d92e5a2",
+      "tracerParticleSourceSha256": "f705029a35920b7eb0b56cef2c3d697d5b85b03c322e76b1949b46fe2b5bed38"
+    },
+    "ssg08": {
+      "tracerFrequency": 1,
+      "silenced": false,
+      "activeMode": 0,
+      "tracerFrequencyModes": [
+        1
+      ],
+      "silencerType": "WEAPONSILENCER_NONE",
+      "muzzleParticle": "particles/weapons/cs_weapon_fx/weapon_muzzle_flash_huntingrifle_fp.vpcf",
+      "muzzleParticleBasis": "native-weapon-type-family-candidate",
+      "tracerParticle": "particles/weapons/cs_weapon_fx/weapon_tracers_rifle_ssg.vpcf",
+      "nativeKey": "weapon_ssg08",
+      "sourceSha256": "c97e58cd9f8fa0cd45b09bbb8116d5da8a108de61d5241dfd6c559d8a7c6e333",
+      "muzzleParticleSourceSha256": "78e3d07c3169194a3a5bfbfafc4e0a66fa6046439598e8e1cd4287c45d92e5a2",
+      "tracerParticleSourceSha256": "8de297d7e15c1a2b482012ef5b80b9bd5684a2fa0a5899cbc309136f1b94bcb8"
+    },
+    "g3sg1": {
+      "tracerFrequency": 1,
+      "silenced": false,
+      "activeMode": 0,
+      "tracerFrequencyModes": [
+        1
+      ],
+      "silencerType": "WEAPONSILENCER_NONE",
+      "muzzleParticle": "particles/weapons/cs_weapon_fx/weapon_muzzle_flash_huntingrifle_fp.vpcf",
+      "muzzleParticleBasis": "native-weapon-type-family-candidate",
+      "tracerParticle": "particles/weapons/cs_weapon_fx/weapon_tracers_rifle_ssg.vpcf",
+      "nativeKey": "weapon_g3sg1",
+      "sourceSha256": "c97e58cd9f8fa0cd45b09bbb8116d5da8a108de61d5241dfd6c559d8a7c6e333",
+      "muzzleParticleSourceSha256": "78e3d07c3169194a3a5bfbfafc4e0a66fa6046439598e8e1cd4287c45d92e5a2",
+      "tracerParticleSourceSha256": "8de297d7e15c1a2b482012ef5b80b9bd5684a2fa0a5899cbc309136f1b94bcb8"
+    },
+    "scar20": {
+      "tracerFrequency": 1,
+      "silenced": false,
+      "activeMode": 0,
+      "tracerFrequencyModes": [
+        1
+      ],
+      "silencerType": "WEAPONSILENCER_NONE",
+      "muzzleParticle": "particles/weapons/cs_weapon_fx/weapon_muzzle_flash_huntingrifle_fp.vpcf",
+      "muzzleParticleBasis": "native-weapon-type-family-candidate",
+      "tracerParticle": "particles/weapons/cs_weapon_fx/weapon_tracers_rifle_scar.vpcf",
+      "nativeKey": "weapon_scar20",
+      "sourceSha256": "c97e58cd9f8fa0cd45b09bbb8116d5da8a108de61d5241dfd6c559d8a7c6e333",
+      "muzzleParticleSourceSha256": "78e3d07c3169194a3a5bfbfafc4e0a66fa6046439598e8e1cd4287c45d92e5a2",
+      "tracerParticleSourceSha256": "02377afa06d866da59263fdce71986bc9d68a39f9dbd8cb069776474c5dc7b0b"
+    },
+    "knife": {
+      "tracerFrequency": 0,
+      "silenced": false,
+      "activeMode": 0,
+      "tracerFrequencyModes": [
+        0
+      ],
+      "silencerType": "WEAPONSILENCER_NONE",
+      "nativeKey": "weapon_knife",
+      "sourceSha256": "c97e58cd9f8fa0cd45b09bbb8116d5da8a108de61d5241dfd6c559d8a7c6e333"
+    }
+  },
+  "particles": {
+    "particles/weapons/cs_weapon_fx/weapon_muzzle_flash_assaultrifle_fp.vpcf": {
+      "source": "particles/weapons/cs_weapon_fx/weapon_muzzle_flash_assaultrifle_fp.vpcf_c",
+      "sourceSha256": "d3c9df56ca9a5bee6ad1417603b8abc79204354fe1618ab4cb76ecfb0361aea5",
+      "sha256": "0e0129c2577b478c7a78af7dd614fd8b8f6fd63dc8e144053ce142087bfb5035",
+      "children": [
+        "particles/weapons/cs_weapon_fx/weapon_muzzle_flash_assaultrifle_vent_fp.vpcf"
+      ],
+      "renderers": []
+    },
+    "particles/weapons/cs_weapon_fx/weapon_muzzle_flash_assaultrifle_glow.vpcf": {
+      "source": "particles/weapons/cs_weapon_fx/weapon_muzzle_flash_assaultrifle_glow.vpcf_c",
+      "sourceSha256": "52894965d15ac21db9c8cbb4636669bd5cc577dcff794da7d90e0d99035737c9",
+      "sha256": "55364c7640f2b443e07268b07d05394a9a47511e206153642b885df66eeb3e0b",
+      "children": [],
+      "renderers": [
+        {
+          "type": "C_OP_RenderSprites",
+          "textures": [
+            "materials/particle/particle_flares/particle_flare_004.vtex"
+          ],
+          "blendMode": "PARTICLE_OUTPUT_BLEND_MODE_ADD"
+        }
+      ]
+    },
+    "particles/weapons/cs_weapon_fx/weapon_muzzle_flash_assaultrifle_main_fp.vpcf": {
+      "source": "particles/weapons/cs_weapon_fx/weapon_muzzle_flash_assaultrifle_main_fp.vpcf_c",
+      "sourceSha256": "46996800b7cfb242e3c8b258d20426af4843260c5522ed8095139c2824574a14",
+      "sha256": "c3f02ad8a243a8087492ce345289c54bfcff8b28d530fb9d5d00245cfd3b8662",
+      "children": [],
+      "renderers": [
+        {
+          "type": "C_OP_RenderSprites",
+          "textures": [
+            "materials/particle/particle_glow_04.vtex"
+          ],
+          "blendMode": "PARTICLE_OUTPUT_BLEND_MODE_ADD"
+        }
+      ]
+    },
+    "particles/weapons/cs_weapon_fx/weapon_muzzle_flash_assaultrifle_main.vpcf": {
+      "source": "particles/weapons/cs_weapon_fx/weapon_muzzle_flash_assaultrifle_main.vpcf_c",
+      "sourceSha256": "f97c6000ae0bda0e4a6c58c3c4c684190434a93d107da9fc421bdc068306e7f6",
+      "sha256": "95c7a9a053d0af24b6c2a36f065287e071d7d76b108dd29a1fb4daabcbbd9268",
+      "children": [
+        "particles/weapons/cs_weapon_fx/weapon_muzzle_flash_assaultrifle_glow.vpcf"
+      ],
+      "renderers": []
+    },
+    "particles/weapons/cs_weapon_fx/weapon_muzzle_flash_assaultrifle_parent_silenced.vpcf": {
+      "source": "particles/weapons/cs_weapon_fx/weapon_muzzle_flash_assaultrifle_parent_silenced.vpcf_c",
+      "sourceSha256": "89fb35c8814cc80549ef7e371af6e8b530e9649d666e7d3ad5aacca0916182d3",
+      "sha256": "e7b95baf86d287978877800bce2ac62caac0ea56e8ac6325014e322d8762ca3a",
+      "children": [
+        "particles/weapons/cs_weapon_fx/weapon_muzzle_flash_smoke_small.vpcf",
+        "particles/weapons/cs_weapon_fx/weapon_muzzle_flash_smoke_small3.vpcf",
+        "particles/weapons/cs_weapon_fx/weapon_muzzle_flash_sparks4.vpcf",
+        "particles/weapons/cs_weapon_fx/weapon_muzzle_flash_smoke_small4.vpcf"
+      ],
+      "renderers": [
+        {
+          "type": "C_OP_RenderSprites",
+          "textures": [
+            "materials/particle/smoke1/smoke1.vtex"
+          ],
+          "blendMode": "PARTICLE_OUTPUT_BLEND_MODE_ADD"
+        }
+      ]
+    },
+    "particles/weapons/cs_weapon_fx/weapon_muzzle_flash_assaultrifle_silenced.vpcf": {
+      "source": "particles/weapons/cs_weapon_fx/weapon_muzzle_flash_assaultrifle_silenced.vpcf_c",
+      "sourceSha256": "d93ad40aa93997392158ba6f3e55623ac02e9c8f71aa932f6f67122844e920ad",
+      "sha256": "d1c6910f5053c3f83b77adde430ee1232a8bb9909580830726f997dcba0a8150",
+      "children": [
+        "particles/weapons/cs_weapon_fx/weapon_muzzle_flash_assaultrifle_parent_silenced.vpcf"
+      ],
+      "renderers": []
+    },
+    "particles/weapons/cs_weapon_fx/weapon_muzzle_flash_assaultrifle_vent_fp.vpcf": {
+      "source": "particles/weapons/cs_weapon_fx/weapon_muzzle_flash_assaultrifle_vent_fp.vpcf_c",
+      "sourceSha256": "4d3de5ccfdaf246874f1bc5eed0f5f8803529b13dfd819e732f09cda50c88a51",
+      "sha256": "68070aea322cc8b98b655b1cf84327d878206de05bf6b3711b1ed2845ad804f2",
+      "children": [
+        "particles/weapons/cs_weapon_fx/weapon_muzzle_flash_smoke_small2.vpcf",
+        "particles/weapons/cs_weapon_fx/weapon_muzzle_flash_assaultrifle_main_fp.vpcf"
+      ],
+      "renderers": [
+        {
+          "type": "C_OP_RenderSprites",
+          "textures": [
+            "materials/effects/muzzleflashx.vtex"
+          ],
+          "blendMode": "PARTICLE_OUTPUT_BLEND_MODE_ADD"
+        }
+      ]
+    },
+    "particles/weapons/cs_weapon_fx/weapon_muzzle_flash_assaultrifle_vent.vpcf": {
+      "source": "particles/weapons/cs_weapon_fx/weapon_muzzle_flash_assaultrifle_vent.vpcf_c",
+      "sourceSha256": "43d4502524c255345a9c708940c8f9996dd71af3277e1747a2fa6eea2f2955d4",
+      "sha256": "8f80a3ef7826f6fd8505f4ad755e5addd80e2ec3593f679eca32f4a31e61a10c",
+      "children": [
+        "particles/weapons/cs_weapon_fx/weapon_muzzle_flash_assaultrifle_main.vpcf"
+      ],
+      "renderers": [
+        {
+          "type": "C_OP_RenderSprites",
+          "textures": [
+            "materials/effects/muzzleflashx.vtex"
+          ],
+          "blendMode": "PARTICLE_OUTPUT_BLEND_MODE_ADD"
+        }
+      ]
+    },
+    "particles/weapons/cs_weapon_fx/weapon_muzzle_flash_assaultrifle.vpcf": {
+      "source": "particles/weapons/cs_weapon_fx/weapon_muzzle_flash_assaultrifle.vpcf_c",
+      "sourceSha256": "8ea03f829c6c421dca1ac7dfb3487139d15e3405edb9b1b597ba1637a95d0f27",
+      "sha256": "3a64ba6cafb6ef4958af58ce8070cb79f23a57134f566f3f7b8fd46fabd6ce54",
+      "children": [
+        "particles/weapons/cs_weapon_fx/weapon_muzzle_flash_assaultrifle_vent.vpcf",
+        "particles/weapons/cs_weapon_fx/weapon_muzzle_flash_assualtrifle_flame.vpcf",
+        "particles/weapons/cs_weapon_fx/weapon_shell_eject_smoke_assrifle2.vpcf",
+        "particles/weapons/cs_weapon_fx/weapon_shell_eject_smoke_assrifle3.vpcf"
+      ],
+      "renderers": []
+    },
+    "particles/weapons/cs_weapon_fx/weapon_muzzle_flash_assualtrifle_flame.vpcf": {
+      "source": "particles/weapons/cs_weapon_fx/weapon_muzzle_flash_assualtrifle_flame.vpcf_c",
+      "sourceSha256": "0d194475014a42549f87e0e42e79a462dace3a854473a4ac496120f9dd255ffd",
+      "sha256": "0ca6b614e0d3d0361bdeef86b6c9e6862ec6b374a044a2698848f7712d08abaf",
+      "children": [],
+      "renderers": []
+    },
+    "particles/weapons/cs_weapon_fx/weapon_muzzle_flash_huntingrifle_fp.vpcf": {
+      "source": "particles/weapons/cs_weapon_fx/weapon_muzzle_flash_huntingrifle_fp.vpcf_c",
+      "sourceSha256": "78e3d07c3169194a3a5bfbfafc4e0a66fa6046439598e8e1cd4287c45d92e5a2",
+      "sha256": "fa8f262d0fcd42ed2ba12f9cb74fe1b93f556e9ec5a7be3fc295bb3094ab9b20",
+      "children": [
+        "particles/weapons/cs_weapon_fx/weapon_muzzle_flash_smoke_small.vpcf",
+        "particles/weapons/cs_weapon_fx/weapon_muzzle_flash_smoke_small3.vpcf",
+        "particles/weapons/cs_weapon_fx/weapon_muzzle_flash_huntingrifle_main2.vpcf"
+      ],
+      "renderers": []
+    },
+    "particles/weapons/cs_weapon_fx/weapon_muzzle_flash_huntingrifle_glow.vpcf": {
+      "source": "particles/weapons/cs_weapon_fx/weapon_muzzle_flash_huntingrifle_glow.vpcf_c",
+      "sourceSha256": "71e3fd918ca73bc74446c51418d284b3c2cc6e4d6981c5f64a5d3d484fb4115d",
+      "sha256": "f30fb867225f94f9e59027ff68cac9479415e812407a7e237465d353a67ebfb1",
+      "children": [],
+      "renderers": [
+        {
+          "type": "C_OP_RenderSprites",
+          "textures": [
+            "materials/particle/particle_glow_04.vtex"
+          ],
+          "blendMode": "PARTICLE_OUTPUT_BLEND_MODE_ADD"
+        }
+      ]
+    },
+    "particles/weapons/cs_weapon_fx/weapon_muzzle_flash_huntingrifle_main2.vpcf": {
+      "source": "particles/weapons/cs_weapon_fx/weapon_muzzle_flash_huntingrifle_main2.vpcf_c",
+      "sourceSha256": "fa0a1809247c81953970fa93858c6b0605ad5a5219ddce01f39e6a3bb74145a7",
+      "sha256": "8e6e7985b7641dfd314c58b9cda0a49478069d3d95e26b587f8a1e11d8c27051",
+      "children": [
+        "particles/weapons/cs_weapon_fx/weapon_muzzle_flash_sparks2.vpcf",
+        "particles/weapons/cs_weapon_fx/weapon_muzzle_flash_huntingrifle_glow.vpcf",
+        "particles/weapons/cs_weapon_fx/weapon_muzzle_flash_sparks4.vpcf"
+      ],
+      "renderers": []
+    },
+    "particles/weapons/cs_weapon_fx/weapon_muzzle_flash_para_b.vpcf": {
+      "source": "particles/weapons/cs_weapon_fx/weapon_muzzle_flash_para_b.vpcf_c",
+      "sourceSha256": "ae68b2ab65791bd2e0b94cbe2a4bf20dc3d82ab73a5524c26aadbb951c7a3a6b",
+      "sha256": "3facce14af640d8b503eebc6285c995a42dcbaa88f90aefc487ace185ca90ba9",
+      "children": [],
+      "renderers": [
+        {
+          "type": "C_OP_RenderSprites",
+          "textures": [
+            "materials/particle/muzzleflashcloud.vtex"
+          ],
+          "blendMode": "PARTICLE_OUTPUT_BLEND_MODE_ADD"
+        }
+      ]
+    },
+    "particles/weapons/cs_weapon_fx/weapon_muzzle_flash_para_flash.vpcf": {
+      "source": "particles/weapons/cs_weapon_fx/weapon_muzzle_flash_para_flash.vpcf_c",
+      "sourceSha256": "1094e016395bab8e570165e74d4f033e3c03c663b4e33e1d47c0308b2e9f16d3",
+      "sha256": "ac58c9e916b6023afe34bf111d57ffc553d6bec37831d08d84b9678ac150bc7c",
+      "children": [],
+      "renderers": [
+        {
+          "type": "C_OP_RenderSprites",
+          "textures": [
+            "materials/particle/muzzleflashcloud.vtex"
+          ],
+          "blendMode": "PARTICLE_OUTPUT_BLEND_MODE_ADD"
+        }
+      ]
+    },
+    "particles/weapons/cs_weapon_fx/weapon_muzzle_flash_para_fp.vpcf": {
+      "source": "particles/weapons/cs_weapon_fx/weapon_muzzle_flash_para_fp.vpcf_c",
+      "sourceSha256": "ef6523b37e115839de64a1a9bcfaa75941b3d3ced2f13118162cc4a69e54dbdc",
+      "sha256": "983ec47b042bde5a29aa6e624c6b34761fb8f4c59cf825b8dec405f8f9630e38",
+      "children": [
+        "particles/weapons/cs_weapon_fx/weapon_muzzle_flash_para_main.vpcf",
+        "particles/weapons/cs_weapon_fx/weapon_muzzle_flash_para_b.vpcf",
+        "particles/weapons/cs_weapon_fx/weapon_muzzle_flash_para_flash.vpcf",
+        "particles/weapons/cs_weapon_fx/weapon_muzzle_flash_smoke_small.vpcf",
+        "particles/weapons/cs_weapon_fx/weapon_muzzle_flash_smoke_small3.vpcf"
+      ],
+      "renderers": []
+    },
+    "particles/weapons/cs_weapon_fx/weapon_muzzle_flash_para_glow.vpcf": {
+      "source": "particles/weapons/cs_weapon_fx/weapon_muzzle_flash_para_glow.vpcf_c",
+      "sourceSha256": "a207f05f58a6fb8d3ec6bd3bbd4a960fe380536f012a8e9a90c4e8b53ea749d3",
+      "sha256": "b2b95f77f08ac4aabc5f93fc9cadaa2d0f0a14bf69ea41386721326f6d72573f",
+      "children": [],
+      "renderers": [
+        {
+          "type": "C_OP_RenderSprites",
+          "textures": [
+            "materials/particle/particle_glow_04.vtex"
+          ],
+          "blendMode": "PARTICLE_OUTPUT_BLEND_MODE_ADD"
+        }
+      ]
+    },
+    "particles/weapons/cs_weapon_fx/weapon_muzzle_flash_para_main.vpcf": {
+      "source": "particles/weapons/cs_weapon_fx/weapon_muzzle_flash_para_main.vpcf_c",
+      "sourceSha256": "5f4602e4880c64e5bf7446acbf40748c3181669444df33e68d34d4cd963c56a7",
+      "sha256": "d2c21820a93d21de7e1954c921fb5f7ff67bac84468c1d58b71ff553e6ae37f9",
+      "children": [
+        "particles/weapons/cs_weapon_fx/weapon_muzzle_flash_para_glow.vpcf"
+      ],
+      "renderers": []
+    },
+    "particles/weapons/cs_weapon_fx/weapon_muzzle_flash_pistol_core2.vpcf": {
+      "source": "particles/weapons/cs_weapon_fx/weapon_muzzle_flash_pistol_core2.vpcf_c",
+      "sourceSha256": "d0e5c976f34af27b8d28245a484e41ad465e08040d26275116e6aecfc1ee819b",
+      "sha256": "768142b8dc0e480e40ea20e6683518240c80408dd86ea4416a42e9cfcd669f0a",
+      "children": [],
+      "renderers": []
+    },
+    "particles/weapons/cs_weapon_fx/weapon_muzzle_flash_pistol_fp.vpcf": {
+      "source": "particles/weapons/cs_weapon_fx/weapon_muzzle_flash_pistol_fp.vpcf_c",
+      "sourceSha256": "540794f73919e135beda6364173c602cf2d7f456def4f001b1e090cf41fd03a9",
+      "sha256": "b4fb1327ee94ae4aa79c1ba3adc7cc8aae3e0fedc0fa76291a3f872ef08bc98a",
+      "children": [
+        "particles/weapons/cs_weapon_fx/weapon_muzzle_flash_sparks5.vpcf",
+        "particles/weapons/cs_weapon_fx/weapon_muzzle_flash_smoke_small.vpcf",
+        "particles/weapons/cs_weapon_fx/weapon_muzzle_flash_pistol_main2.vpcf"
+      ],
+      "renderers": []
+    },
+    "particles/weapons/cs_weapon_fx/weapon_muzzle_flash_pistol_main2_silenced.vpcf": {
+      "source": "particles/weapons/cs_weapon_fx/weapon_muzzle_flash_pistol_main2_silenced.vpcf_c",
+      "sourceSha256": "023a9c7e8c5eba1f474be590f5a6b55d244a038c32b224d520e724e0d8f3d5a7",
+      "sha256": "1dd8f87de178455103fad7230cb2fe71bcdd7178cafc55d70eeb479f3e45606e",
+      "children": [],
+      "renderers": [
+        {
+          "type": "C_OP_RenderSprites",
+          "textures": [
+            "materials/effects/muzzleflash4.vtex"
+          ],
+          "blendMode": "PARTICLE_OUTPUT_BLEND_MODE_ADD"
+        }
+      ]
+    },
+    "particles/weapons/cs_weapon_fx/weapon_muzzle_flash_pistol_main2.vpcf": {
+      "source": "particles/weapons/cs_weapon_fx/weapon_muzzle_flash_pistol_main2.vpcf_c",
+      "sourceSha256": "ff154eae3a1718c346c8d4995d76f57d5d20368e52a142929800a08dc92d1258",
+      "sha256": "12844ee6e94b10386c56731522bceafde44dda5c591efdaa1368093369359cc2",
+      "children": [
+        "particles/weapons/cs_weapon_fx/weapon_muzzle_flash_pistol_core2.vpcf"
+      ],
+      "renderers": [
+        {
+          "type": "C_OP_RenderSprites",
+          "textures": [
+            "materials/effects/muzzleflash4.vtex"
+          ],
+          "blendMode": "PARTICLE_OUTPUT_BLEND_MODE_ADD"
+        }
+      ]
+    },
+    "particles/weapons/cs_weapon_fx/weapon_muzzle_flash_pistol_silenced.vpcf": {
+      "source": "particles/weapons/cs_weapon_fx/weapon_muzzle_flash_pistol_silenced.vpcf_c",
+      "sourceSha256": "c40d03c19323b2a0359b525dc395b4c9ca74d7f212cad5463ee39876b648a4f5",
+      "sha256": "137facad537a85df0df99d46077515b8fa50f1861f5a7b6265d71a26e666079f",
+      "children": [
+        "particles/weapons/cs_weapon_fx/weapon_muzzle_flash_sparks5.vpcf",
+        "particles/weapons/cs_weapon_fx/weapon_muzzle_flash_smoke_smallest.vpcf",
+        "particles/weapons/cs_weapon_fx/weapon_muzzle_flash_pistol_main2_silenced.vpcf"
+      ],
+      "renderers": []
+    },
+    "particles/weapons/cs_weapon_fx/weapon_muzzle_flash_smg_fp.vpcf": {
+      "source": "particles/weapons/cs_weapon_fx/weapon_muzzle_flash_smg_fp.vpcf_c",
+      "sourceSha256": "d4682fccdced7d4aba60ed514991f23c03c9ca76f32be0cdd42f34aea14a9dae",
+      "sha256": "a77a850f87384b3bfc30913162e8e0aedf51b238fa432c9189dfa261373de9f1",
+      "children": [
+        "particles/weapons/cs_weapon_fx/weapon_muzzle_flash_smoke_small2.vpcf",
+        "particles/weapons/cs_weapon_fx/weapon_muzzle_flash_smg_main2.vpcf"
+      ],
+      "renderers": []
+    },
+    "particles/weapons/cs_weapon_fx/weapon_muzzle_flash_smg_glow_silenced.vpcf": {
+      "source": "particles/weapons/cs_weapon_fx/weapon_muzzle_flash_smg_glow_silenced.vpcf_c",
+      "sourceSha256": "739cad41bf1ae1dd67d250e037ec17b2b1e0cf0d94f6872749f8d765d54c59e9",
+      "sha256": "7e3f4a9c4dfffde49419146b3f22aa2984ac8bb47d072b671f996fd9f01ddd74",
+      "children": [],
+      "renderers": [
+        {
+          "type": "C_OP_RenderSprites",
+          "textures": [
+            "materials/particle/smoke1/smoke1.vtex"
+          ]
+        }
+      ]
+    },
+    "particles/weapons/cs_weapon_fx/weapon_muzzle_flash_smg_glow2.vpcf": {
+      "source": "particles/weapons/cs_weapon_fx/weapon_muzzle_flash_smg_glow2.vpcf_c",
+      "sourceSha256": "cd7f18f05a617ff17a17383af295709068c7d58af4b08109df25ffd498b67a30",
+      "sha256": "2b811e2283cde96268ca9da11af17a955ebc67fb2256adaa19f91ecdfd9c8d2f",
+      "children": [],
+      "renderers": [
+        {
+          "type": "C_OP_RenderSprites",
+          "textures": [
+            "materials/effects/muzzleflash4.vtex"
+          ],
+          "blendMode": "PARTICLE_OUTPUT_BLEND_MODE_ADD"
+        }
+      ]
+    },
+    "particles/weapons/cs_weapon_fx/weapon_muzzle_flash_smg_main2.vpcf": {
+      "source": "particles/weapons/cs_weapon_fx/weapon_muzzle_flash_smg_main2.vpcf_c",
+      "sourceSha256": "4af1dcae417098141c79fe0a3f8a014eb474331e0bbc6919be7b5bae99160350",
+      "sha256": "5d9769349f8ba6a717a39dd160f8d4547db9bfe25c5fafe05b34db7a3c405032",
+      "children": [
+        "particles/weapons/cs_weapon_fx/weapon_muzzle_flash_sparks5.vpcf",
+        "particles/weapons/cs_weapon_fx/weapon_muzzle_flash_smg_glow2.vpcf"
+      ],
+      "renderers": []
+    },
+    "particles/weapons/cs_weapon_fx/weapon_muzzle_flash_smg_silenced_fp.vpcf": {
+      "source": "particles/weapons/cs_weapon_fx/weapon_muzzle_flash_smg_silenced_fp.vpcf_c",
+      "sourceSha256": "79e9642653847c37196e5923a5a89862e4f3563acfc8f98dd44748d89b64fcac",
+      "sha256": "02dca026e92eaab80241954d19a2480c2590413aa68e745c19458f0da301c315",
+      "children": [
+        "particles/weapons/cs_weapon_fx/weapon_muzzle_flash_smoke_small2.vpcf",
+        "particles/weapons/cs_weapon_fx/weapon_muzzle_flash_smg_glow_silenced.vpcf",
+        "particles/weapons/cs_weapon_fx/weapon_muzzle_flash_sparks5.vpcf"
+      ],
+      "renderers": []
+    },
+    "particles/weapons/cs_weapon_fx/weapon_muzzle_flash_smoke_small.vpcf": {
+      "source": "particles/weapons/cs_weapon_fx/weapon_muzzle_flash_smoke_small.vpcf_c",
+      "sourceSha256": "cb3dd4e9461ca10d7865e769b963a0fc68a16928f2e4201ced06c19590e181a8",
+      "sha256": "45c8de650053c497d2e58ece6e51d33bc4183295e4330e8f58c051b0ed268146",
+      "children": [],
+      "renderers": [
+        {
+          "type": "C_OP_RenderSprites",
+          "textures": [
+            "materials/particle/vistasmokev1/vistasmokev1_emods.vtex",
+            "materials/particle/vistasmokev1/vistasmokev1_emods.vtex"
+          ]
+        }
+      ]
+    },
+    "particles/weapons/cs_weapon_fx/weapon_muzzle_flash_smoke_small2.vpcf": {
+      "source": "particles/weapons/cs_weapon_fx/weapon_muzzle_flash_smoke_small2.vpcf_c",
+      "sourceSha256": "2de6f5889cd88dc1034376501915a5e60e56630f81a4585b3d25fff7844d1ee7",
+      "sha256": "d1b90101770fa6ecf15081cfc0d3e0513275802bb1a3fed8f1de2afea1246e9e",
+      "children": [],
+      "renderers": [
+        {
+          "type": "C_OP_RenderSprites",
+          "textures": [
+            "materials/particle/smoke1/smoke1.vtex",
+            "materials/particle/vistasmokev1/vistasmokev1_emods.vtex"
+          ]
+        }
+      ]
+    },
+    "particles/weapons/cs_weapon_fx/weapon_muzzle_flash_smoke_small3.vpcf": {
+      "source": "particles/weapons/cs_weapon_fx/weapon_muzzle_flash_smoke_small3.vpcf_c",
+      "sourceSha256": "0f3528826503aeb0a16927c037b00cdb89f10b228bcda5b67724841c6b763ff9",
+      "sha256": "d66d56f082e65031480b37926e4e44c496de6adb9138432c06ffe5db0c04be1d",
+      "children": [],
+      "renderers": [
+        {
+          "type": "C_OP_RenderSprites",
+          "textures": [
+            "materials/particle/smoke1/smoke1.vtex"
+          ]
+        }
+      ]
+    },
+    "particles/weapons/cs_weapon_fx/weapon_muzzle_flash_smoke_small4.vpcf": {
+      "source": "particles/weapons/cs_weapon_fx/weapon_muzzle_flash_smoke_small4.vpcf_c",
+      "sourceSha256": "dca3ae852e9dc45c5bc8c8a2732f7f5be9f1a17b1ee595eaa1517b9ecf3ba484",
+      "sha256": "71f7ce98ca3bd5232993fcca8df3cb25b0eb73e5feb681dd0132f9a52a279314",
+      "children": [],
+      "renderers": [
+        {
+          "type": "C_OP_RenderSprites",
+          "textures": [
+            "materials/particle/vistasmokev1/vistasmokev1_emods.vtex",
+            "materials/particle/vistasmokev1/vistasmokev1_emods.vtex"
+          ]
+        }
+      ]
+    },
+    "particles/weapons/cs_weapon_fx/weapon_muzzle_flash_smoke_smallest.vpcf": {
+      "source": "particles/weapons/cs_weapon_fx/weapon_muzzle_flash_smoke_smallest.vpcf_c",
+      "sourceSha256": "6ff12fe3eff7ede516916734288a5b7684fd623c321dfd66ef6436c053306e73",
+      "sha256": "dea05d320074cf552c741106ecb0f6bc44bb89dc17165e09412cfc82b829327b",
+      "children": [],
+      "renderers": [
+        {
+          "type": "C_OP_RenderSprites",
+          "textures": [
+            "materials/particle/vistasmokev1/vistasmokev1_emods.vtex",
+            "materials/particle/vistasmokev1/vistasmokev1_emods.vtex"
+          ]
+        }
+      ]
+    },
+    "particles/weapons/cs_weapon_fx/weapon_muzzle_flash_sparks2.vpcf": {
+      "source": "particles/weapons/cs_weapon_fx/weapon_muzzle_flash_sparks2.vpcf_c",
+      "sourceSha256": "707fd65e152bbfd6e146d4d6a74cc2574ab82b027baea1e7068afa2ad25b07ac",
+      "sha256": "fbe33d34ebdb8cbf5df4c0c5f95d829dfca7262fea5b6454d49f01c1f8a54d50",
+      "children": [],
+      "renderers": [
+        {
+          "type": "C_OP_RenderTrails",
+          "textures": [
+            "materials/effects/spark.vtex"
+          ],
+          "blendMode": "PARTICLE_OUTPUT_BLEND_MODE_ADD"
+        }
+      ]
+    },
+    "particles/weapons/cs_weapon_fx/weapon_muzzle_flash_sparks4.vpcf": {
+      "source": "particles/weapons/cs_weapon_fx/weapon_muzzle_flash_sparks4.vpcf_c",
+      "sourceSha256": "f509f4f820558d1c0cb5ac3c3aa971572568f1bb02963d482d2dd4d160363a86",
+      "sha256": "f78b74202c1fc33895fc977943d7171fc32fda9164cf1bb09c1b7bb25aaa3070",
+      "children": [],
+      "renderers": [
+        {
+          "type": "C_OP_RenderTrails",
+          "textures": [
+            "materials/effects/spark.vtex"
+          ],
+          "blendMode": "PARTICLE_OUTPUT_BLEND_MODE_ADD"
+        }
+      ]
+    },
+    "particles/weapons/cs_weapon_fx/weapon_muzzle_flash_sparks5.vpcf": {
+      "source": "particles/weapons/cs_weapon_fx/weapon_muzzle_flash_sparks5.vpcf_c",
+      "sourceSha256": "6cf468d613098adb44dbc89f3a6458fa21925843a7d0111ab6b362b5dd61c07c",
+      "sha256": "0e2b919a9cca3a6fdced174572cac673541ae2a8f8e33dd45451a9e373ff308f",
+      "children": [],
+      "renderers": [
+        {
+          "type": "C_OP_RenderTrails",
+          "textures": [
+            "materials/effects/spark.vtex"
+          ],
+          "blendMode": "PARTICLE_OUTPUT_BLEND_MODE_ADD"
+        }
+      ]
+    },
+    "particles/weapons/cs_weapon_fx/weapon_shell_eject_smoke_assrifle2.vpcf": {
+      "source": "particles/weapons/cs_weapon_fx/weapon_shell_eject_smoke_assrifle2.vpcf_c",
+      "sourceSha256": "8133c4cc4341fc6e3f4de5f8bdf40de3e66fa596d91fb0d95a388151c4142a8b",
+      "sha256": "755d642b144b3a2e245ae5e87a92bfdfdb1e23ecbba43c14fa92dd09ec725ba6",
+      "children": [],
+      "renderers": [
+        {
+          "type": "C_OP_RenderSprites",
+          "textures": [
+            "materials/particles/smoke/smoke.vtex"
+          ]
+        }
+      ]
+    },
+    "particles/weapons/cs_weapon_fx/weapon_shell_eject_smoke_assrifle3.vpcf": {
+      "source": "particles/weapons/cs_weapon_fx/weapon_shell_eject_smoke_assrifle3.vpcf_c",
+      "sourceSha256": "52b270ad89ca9af4d1eeb44e6f55fac152e2290bb3a9200379acbb84feb37433",
+      "sha256": "cd7e1995b6040a5b24699473682ce2d738cf08cc2f6cc593377a1db47289b887",
+      "children": [],
+      "renderers": [
+        {
+          "type": "C_OP_RenderSprites",
+          "textures": [
+            "materials/particles/smoke/smoke.vtex"
+          ]
+        }
+      ]
+    },
+    "particles/weapons/cs_weapon_fx/weapon_tracers_assrifle_aug.vpcf": {
+      "source": "particles/weapons/cs_weapon_fx/weapon_tracers_assrifle_aug.vpcf_c",
+      "sourceSha256": "a13c233b5b90e29375a1ae85c8e471115c0a777a05cf6f264cb077fecfdb3216",
+      "sha256": "7c42f2976bff300c77c7a34d697336c10c3530391ab0a0b6b2488eae7b417e2a",
+      "children": [],
+      "renderers": [
+        {
+          "type": "C_OP_RenderRopes",
+          "textures": [
+            "materials/particle/effects/bullet_tracer_tintable.vtex",
+            "materials/particle/effects/simplex_noise_tiled_normal.vtex"
+          ],
+          "blendMode": "PARTICLE_OUTPUT_BLEND_MODE_ADD",
+          "colorGradients": [
+            [
+              {
+                "m_flPosition": 0.031008,
+                "m_Color": [
+                  0,
+                  0,
+                  0
+                ]
+              },
+              {
+                "m_flPosition": 0.152455,
+                "m_Color": [
+                  188,
+                  188,
+                  188
+                ]
+              },
+              {
+                "m_flPosition": 0.397933,
+                "m_Color": [
+                  27,
+                  27,
+                  27
+                ]
+              },
+              {
+                "m_flPosition": 0.576227,
+                "m_Color": [
+                  255,
+                  255,
+                  255
+                ]
+              },
+              {
+                "m_flPosition": 0.821705,
+                "m_Color": [
+                  69,
+                  69,
+                  69
+                ]
+              },
+              {
+                "m_flPosition": 0.943152,
+                "m_Color": [
+                  100,
+                  100,
+                  100
+                ]
+              }
+            ]
+          ]
+        },
+        {
+          "type": "C_OP_RenderRopes",
+          "textures": [
+            "materials/particle/effects/bullet_tracer_tintable.vtex",
+            "materials/particle/effects/simplex_noise_tiled_normal.vtex"
+          ],
+          "blendMode": "PARTICLE_OUTPUT_BLEND_MODE_ADD",
+          "colorGradients": [
+            [
+              {
+                "m_flPosition": 0.031008,
+                "m_Color": [
+                  0,
+                  0,
+                  0
+                ]
+              },
+              {
+                "m_flPosition": 0.152455,
+                "m_Color": [
+                  188,
+                  188,
+                  188
+                ]
+              },
+              {
+                "m_flPosition": 0.397933,
+                "m_Color": [
+                  27,
+                  27,
+                  27
+                ]
+              },
+              {
+                "m_flPosition": 0.576227,
+                "m_Color": [
+                  255,
+                  255,
+                  255
+                ]
+              },
+              {
+                "m_flPosition": 0.821705,
+                "m_Color": [
+                  69,
+                  69,
+                  69
+                ]
+              },
+              {
+                "m_flPosition": 0.943152,
+                "m_Color": [
+                  100,
+                  100,
+                  100
+                ]
+              }
+            ]
+          ]
+        }
+      ]
+    },
+    "particles/weapons/cs_weapon_fx/weapon_tracers_assrifle.vpcf": {
+      "source": "particles/weapons/cs_weapon_fx/weapon_tracers_assrifle.vpcf_c",
+      "sourceSha256": "17ba62e80e75ef3edf252792918ec9a65a83e2018814d1ba3bc34401b76caf6b",
+      "sha256": "479ce943334c64987b658c59d715590ae6c919971985929d89f1ac14ff8ec8db",
+      "children": [],
+      "renderers": [
+        {
+          "type": "C_OP_RenderTrails",
+          "textures": [
+            "materials/effects/spark.vtex"
+          ],
+          "blendMode": "PARTICLE_OUTPUT_BLEND_MODE_ADD",
+          "colorGradients": [
+            [
+              {
+                "m_flPosition": 0.377261,
+                "m_Color": [
+                  255,
+                  68,
+                  21
+                ]
+              },
+              {
+                "m_flPosition": 0.470284,
+                "m_Color": [
+                  255,
+                  165,
+                  0
+                ]
+              },
+              {
+                "m_flPosition": 1,
+                "m_Color": [
+                  255,
+                  255,
+                  255
+                ]
+              }
+            ]
+          ]
+        },
+        {
+          "type": "C_OP_RenderTrails",
+          "textures": [
+            "materials/particle/sparks/sparks.vtex"
+          ],
+          "blendMode": "PARTICLE_OUTPUT_BLEND_MODE_BLEND_ADD",
+          "colorGradients": [
+            [
+              {
+                "m_flPosition": 0.571059,
+                "m_Color": [
+                  0,
+                  0,
+                  0
+                ]
+              },
+              {
+                "m_flPosition": 0.757106,
+                "m_Color": [
+                  255,
+                  68,
+                  21
+                ]
+              },
+              {
+                "m_flPosition": 0.819121,
+                "m_Color": [
+                  255,
+                  165,
+                  0
+                ]
+              },
+              {
+                "m_flPosition": 1,
+                "m_Color": [
+                  255,
+                  255,
+                  255
+                ]
+              }
+            ]
+          ]
+        }
+      ]
+    },
+    "particles/weapons/cs_weapon_fx/weapon_tracers_mach.vpcf": {
+      "source": "particles/weapons/cs_weapon_fx/weapon_tracers_mach.vpcf_c",
+      "sourceSha256": "b500984ebb228a953c42d9681396e5545d90f6051be866fa0e06b6bf8eaffb83",
+      "sha256": "0a42eac5f90a0941d782752af9265343e709a53d6c0d8e74602625cc9045e3de",
+      "children": [],
+      "renderers": [
+        {
+          "type": "C_OP_RenderRopes",
+          "textures": [
+            "materials/particle/effects/bullet_tracer_tintable.vtex",
+            "materials/particle/effects/worley_noise_tiled_normal.vtex"
+          ],
+          "blendMode": "PARTICLE_OUTPUT_BLEND_MODE_ADD",
+          "colorGradients": [
+            [
+              {
+                "m_flPosition": 0.031008,
+                "m_Color": [
+                  0,
+                  0,
+                  0
+                ]
+              },
+              {
+                "m_flPosition": 0.152455,
+                "m_Color": [
+                  188,
+                  188,
+                  188
+                ]
+              },
+              {
+                "m_flPosition": 0.397933,
+                "m_Color": [
+                  27,
+                  27,
+                  27
+                ]
+              },
+              {
+                "m_flPosition": 0.576227,
+                "m_Color": [
+                  255,
+                  255,
+                  255
+                ]
+              },
+              {
+                "m_flPosition": 0.821705,
+                "m_Color": [
+                  69,
+                  69,
+                  69
+                ]
+              },
+              {
+                "m_flPosition": 0.943152,
+                "m_Color": [
+                  100,
+                  100,
+                  100
+                ]
+              }
+            ]
+          ]
+        },
+        {
+          "type": "C_OP_RenderRopes",
+          "textures": [
+            "materials/de_mirage/effects/bullet_tracer.vtex",
+            "materials/particle/effects/worley_noise_tiled_normal.vtex"
+          ],
+          "blendMode": "PARTICLE_OUTPUT_BLEND_MODE_ADD",
+          "colorGradients": [
+            [
+              {
+                "m_flPosition": 0.031008,
+                "m_Color": [
+                  0,
+                  0,
+                  0
+                ]
+              },
+              {
+                "m_flPosition": 0.152455,
+                "m_Color": [
+                  188,
+                  188,
+                  188
+                ]
+              },
+              {
+                "m_flPosition": 0.397933,
+                "m_Color": [
+                  27,
+                  27,
+                  27
+                ]
+              },
+              {
+                "m_flPosition": 0.576227,
+                "m_Color": [
+                  255,
+                  255,
+                  255
+                ]
+              },
+              {
+                "m_flPosition": 0.821705,
+                "m_Color": [
+                  69,
+                  69,
+                  69
+                ]
+              },
+              {
+                "m_flPosition": 0.943152,
+                "m_Color": [
+                  100,
+                  100,
+                  100
+                ]
+              }
+            ]
+          ]
+        }
+      ]
+    },
+    "particles/weapons/cs_weapon_fx/weapon_tracers_pistol.vpcf": {
+      "source": "particles/weapons/cs_weapon_fx/weapon_tracers_pistol.vpcf_c",
+      "sourceSha256": "1e54ce8fdc194dff3bcb5723f91514278b2c67565f847572407116bf54761ae0",
+      "sha256": "1f9686fd22f048e9d66712391802fe47f0b090aec16cbeed1c5a2028a6d08f72",
+      "children": [],
+      "renderers": [
+        {
+          "type": "C_OP_RenderTrails",
+          "textures": [
+            "materials/effects/spark.vtex"
+          ],
+          "blendMode": "PARTICLE_OUTPUT_BLEND_MODE_ADD",
+          "colorGradients": [
+            [
+              {
+                "m_flPosition": 0.377261,
+                "m_Color": [
+                  255,
+                  68,
+                  21
+                ]
+              },
+              {
+                "m_flPosition": 0.470284,
+                "m_Color": [
+                  255,
+                  165,
+                  0
+                ]
+              },
+              {
+                "m_flPosition": 1,
+                "m_Color": [
+                  255,
+                  255,
+                  255
+                ]
+              }
+            ]
+          ]
+        },
+        {
+          "type": "C_OP_RenderTrails",
+          "textures": [
+            "materials/particle/sparks/sparks.vtex"
+          ],
+          "blendMode": "PARTICLE_OUTPUT_BLEND_MODE_BLEND_ADD",
+          "colorGradients": [
+            [
+              {
+                "m_flPosition": 0.571059,
+                "m_Color": [
+                  0,
+                  0,
+                  0
+                ]
+              },
+              {
+                "m_flPosition": 0.757106,
+                "m_Color": [
+                  255,
+                  68,
+                  21
+                ]
+              },
+              {
+                "m_flPosition": 0.819121,
+                "m_Color": [
+                  255,
+                  165,
+                  0
+                ]
+              },
+              {
+                "m_flPosition": 1,
+                "m_Color": [
+                  255,
+                  255,
+                  255
+                ]
+              }
+            ]
+          ]
+        }
+      ]
+    },
+    "particles/weapons/cs_weapon_fx/weapon_tracers_rifle_scar.vpcf": {
+      "source": "particles/weapons/cs_weapon_fx/weapon_tracers_rifle_scar.vpcf_c",
+      "sourceSha256": "02377afa06d866da59263fdce71986bc9d68a39f9dbd8cb069776474c5dc7b0b",
+      "sha256": "0f83ec59edf6ae9696521d4fda3ba3e10a72c606d993d7eb5fca6bd4ce74ec8a",
+      "children": [
+        "particles/weapons/cs_weapon_fx/weapon_tracers_rifle_wisp_scar.vpcf"
+      ],
+      "renderers": [
+        {
+          "type": "C_OP_RenderTrails",
+          "textures": [
+            "materials/effects/spark.vtex"
+          ],
+          "blendMode": "PARTICLE_OUTPUT_BLEND_MODE_ADD",
+          "colorGradients": [
+            [
+              {
+                "m_flPosition": 0.377261,
+                "m_Color": [
+                  255,
+                  68,
+                  21
+                ]
+              },
+              {
+                "m_flPosition": 0.470284,
+                "m_Color": [
+                  255,
+                  165,
+                  0
+                ]
+              },
+              {
+                "m_flPosition": 1,
+                "m_Color": [
+                  255,
+                  255,
+                  255
+                ]
+              }
+            ]
+          ]
+        },
+        {
+          "type": "C_OP_RenderTrails",
+          "textures": [
+            "materials/particle/sparks/sparks.vtex"
+          ],
+          "blendMode": "PARTICLE_OUTPUT_BLEND_MODE_BLEND_ADD",
+          "colorGradients": [
+            [
+              {
+                "m_flPosition": 0.571059,
+                "m_Color": [
+                  0,
+                  0,
+                  0
+                ]
+              },
+              {
+                "m_flPosition": 0.757106,
+                "m_Color": [
+                  255,
+                  68,
+                  21
+                ]
+              },
+              {
+                "m_flPosition": 0.819121,
+                "m_Color": [
+                  255,
+                  165,
+                  0
+                ]
+              },
+              {
+                "m_flPosition": 1,
+                "m_Color": [
+                  255,
+                  255,
+                  255
+                ]
+              }
+            ]
+          ]
+        }
+      ]
+    },
+    "particles/weapons/cs_weapon_fx/weapon_tracers_rifle_ssg.vpcf": {
+      "source": "particles/weapons/cs_weapon_fx/weapon_tracers_rifle_ssg.vpcf_c",
+      "sourceSha256": "8de297d7e15c1a2b482012ef5b80b9bd5684a2fa0a5899cbc309136f1b94bcb8",
+      "sha256": "b374954971d3a54a46eaeca27ebf6d11b92abc5b559651f28599e1f170798a68",
+      "children": [
+        "particles/weapons/cs_weapon_fx/weapon_tracers_rifle_wisp_ssg.vpcf"
+      ],
+      "renderers": [
+        {
+          "type": "C_OP_RenderTrails",
+          "textures": [
+            "materials/effects/spark.vtex"
+          ],
+          "blendMode": "PARTICLE_OUTPUT_BLEND_MODE_ADD",
+          "colorGradients": [
+            [
+              {
+                "m_flPosition": 0.377261,
+                "m_Color": [
+                  255,
+                  68,
+                  21
+                ]
+              },
+              {
+                "m_flPosition": 0.470284,
+                "m_Color": [
+                  255,
+                  165,
+                  0
+                ]
+              },
+              {
+                "m_flPosition": 1,
+                "m_Color": [
+                  255,
+                  255,
+                  255
+                ]
+              }
+            ]
+          ]
+        },
+        {
+          "type": "C_OP_RenderTrails",
+          "textures": [
+            "materials/particle/sparks/sparks.vtex"
+          ],
+          "blendMode": "PARTICLE_OUTPUT_BLEND_MODE_BLEND_ADD",
+          "colorGradients": [
+            [
+              {
+                "m_flPosition": 0.571059,
+                "m_Color": [
+                  0,
+                  0,
+                  0
+                ]
+              },
+              {
+                "m_flPosition": 0.757106,
+                "m_Color": [
+                  255,
+                  68,
+                  21
+                ]
+              },
+              {
+                "m_flPosition": 0.819121,
+                "m_Color": [
+                  255,
+                  165,
+                  0
+                ]
+              },
+              {
+                "m_flPosition": 1,
+                "m_Color": [
+                  255,
+                  255,
+                  255
+                ]
+              }
+            ]
+          ]
+        }
+      ]
+    },
+    "particles/weapons/cs_weapon_fx/weapon_tracers_rifle_wisp_scar.vpcf": {
+      "source": "particles/weapons/cs_weapon_fx/weapon_tracers_rifle_wisp_scar.vpcf_c",
+      "sourceSha256": "25791c43d4eba8023ec63c748078488a8ec9234887b97d86466495597581ab09",
+      "sha256": "6e456f70880abf4111b3824d18330f0f643e8444f78844cc467b7c1de7cdfd4c",
+      "children": [],
+      "renderers": [
+        {
+          "type": "C_OP_RenderRopes",
+          "textures": [
+            "materials/particle/beam_energy_01.vtex",
+            "materials/particle/beam_generic_2.vtex",
+            "materials/particle/beam_crack_04.vtex",
+            "materials/particle/smoke_wisp_breakup_01/smoke_wisp_breakup_01_tile.vtex"
+          ],
+          "blendMode": "PARTICLE_OUTPUT_BLEND_MODE_HALF_BLEND_ADD"
+        },
+        {
+          "type": "C_OP_RenderRopes",
+          "textures": [
+            "materials/particle/beam_smoke_01.vtex",
+            "materials/particle/base_rope.vtex",
+            "materials/particle/beam_crack_04.vtex",
+            "materials/particle/smoke_wisp_breakup_01/smoke_wisp_breakup_01_tile.vtex"
+          ],
+          "blendMode": "PARTICLE_OUTPUT_BLEND_MODE_HALF_BLEND_ADD"
+        },
+        {
+          "type": "C_OP_RenderSprites",
+          "textures": [
+            "materials/particle/env_sun/particle_lightcookie.vtex",
+            "materials/particle/simulated/smoke/smoke_gr_burst_10.vtex",
+            "materials/particle/particle_ring_wave_8.vtex"
+          ],
+          "blendMode": "PARTICLE_OUTPUT_BLEND_MODE_ADD"
+        }
+      ]
+    },
+    "particles/weapons/cs_weapon_fx/weapon_tracers_rifle_wisp_ssg.vpcf": {
+      "source": "particles/weapons/cs_weapon_fx/weapon_tracers_rifle_wisp_ssg.vpcf_c",
+      "sourceSha256": "c99014fb269700d274d00e442583ce4c93f635bfc3bd66f70a9ca32ec5404742",
+      "sha256": "18b2773239ddbea53fd67e07b0619ef77b1367700c3141014fb90771584f9465",
+      "children": [],
+      "renderers": [
+        {
+          "type": "C_OP_RenderRopes",
+          "textures": [
+            "materials/particle/beam_energy_01.vtex",
+            "materials/particle/beam_generic_2.vtex",
+            "materials/particle/beam_crack_04.vtex",
+            "materials/particle/smoke_wisp_breakup_01/smoke_wisp_breakup_01_tile.vtex"
+          ],
+          "blendMode": "PARTICLE_OUTPUT_BLEND_MODE_HALF_BLEND_ADD"
+        },
+        {
+          "type": "C_OP_RenderRopes",
+          "textures": [
+            "materials/particle/beam_smoke_01.vtex",
+            "materials/particle/base_rope.vtex",
+            "materials/particle/beam_crack_04.vtex",
+            "materials/particle/smoke_wisp_breakup_01/smoke_wisp_breakup_01_tile.vtex"
+          ],
+          "blendMode": "PARTICLE_OUTPUT_BLEND_MODE_HALF_BLEND_ADD"
+        },
+        {
+          "type": "C_OP_RenderSprites",
+          "textures": [
+            "materials/particle/env_sun/particle_lightcookie.vtex",
+            "materials/particle/simulated/smoke/smoke_gr_burst_10.vtex",
+            "materials/particle/particle_ring_wave_8.vtex"
+          ],
+          "blendMode": "PARTICLE_OUTPUT_BLEND_MODE_ADD"
+        }
+      ]
+    },
+    "particles/weapons/cs_weapon_fx/weapon_tracers_rifle_wisp.vpcf": {
+      "source": "particles/weapons/cs_weapon_fx/weapon_tracers_rifle_wisp.vpcf_c",
+      "sourceSha256": "f8af9282460e35648651ba7362dbf32522ef4b5f1b1c04be556e78a46efb2e92",
+      "sha256": "c9a4e67933812bfa0a02a0b2d9f56335958d61e7345c32c0f052306165319143",
+      "children": [],
+      "renderers": [
+        {
+          "type": "C_OP_RenderRopes",
+          "textures": [
+            "materials/particle/beam_energy_01.vtex",
+            "materials/particle/beam_generic_2.vtex",
+            "materials/particle/beam_crack_04.vtex",
+            "materials/particle/smoke_wisp_breakup_01/smoke_wisp_breakup_01_tile.vtex"
+          ],
+          "blendMode": "PARTICLE_OUTPUT_BLEND_MODE_HALF_BLEND_ADD"
+        },
+        {
+          "type": "C_OP_RenderRopes",
+          "textures": [
+            "materials/particle/beam_smoke_01.vtex",
+            "materials/particle/base_rope.vtex",
+            "materials/particle/beam_crack_04.vtex",
+            "materials/particle/smoke_wisp_breakup_01/smoke_wisp_breakup_01_tile.vtex"
+          ],
+          "blendMode": "PARTICLE_OUTPUT_BLEND_MODE_HALF_BLEND_ADD"
+        },
+        {
+          "type": "C_OP_RenderSprites",
+          "textures": [
+            "materials/particle/env_sun/particle_lightcookie.vtex",
+            "materials/particle/simulated/smoke/smoke_gr_burst_10.vtex",
+            "materials/particle/particle_ring_wave_8.vtex"
+          ],
+          "blendMode": "PARTICLE_OUTPUT_BLEND_MODE_ADD"
+        }
+      ]
+    },
+    "particles/weapons/cs_weapon_fx/weapon_tracers_rifle.vpcf": {
+      "source": "particles/weapons/cs_weapon_fx/weapon_tracers_rifle.vpcf_c",
+      "sourceSha256": "f705029a35920b7eb0b56cef2c3d697d5b85b03c322e76b1949b46fe2b5bed38",
+      "sha256": "35d3f917e5c4643e2d474c09b1bc7858d09f2ba5726c95c50e57180f169a9672",
+      "children": [
+        "particles/weapons/cs_weapon_fx/weapon_tracers_rifle_wisp.vpcf"
+      ],
+      "renderers": [
+        {
+          "type": "C_OP_RenderTrails",
+          "textures": [
+            "materials/effects/spark.vtex"
+          ],
+          "blendMode": "PARTICLE_OUTPUT_BLEND_MODE_ADD",
+          "colorGradients": [
+            [
+              {
+                "m_flPosition": 0.377261,
+                "m_Color": [
+                  255,
+                  68,
+                  21
+                ]
+              },
+              {
+                "m_flPosition": 0.470284,
+                "m_Color": [
+                  255,
+                  165,
+                  0
+                ]
+              },
+              {
+                "m_flPosition": 1,
+                "m_Color": [
+                  255,
+                  255,
+                  255
+                ]
+              }
+            ]
+          ]
+        },
+        {
+          "type": "C_OP_RenderTrails",
+          "textures": [
+            "materials/particle/sparks/sparks.vtex"
+          ],
+          "blendMode": "PARTICLE_OUTPUT_BLEND_MODE_BLEND_ADD",
+          "colorGradients": [
+            [
+              {
+                "m_flPosition": 0.571059,
+                "m_Color": [
+                  0,
+                  0,
+                  0
+                ]
+              },
+              {
+                "m_flPosition": 0.757106,
+                "m_Color": [
+                  255,
+                  68,
+                  21
+                ]
+              },
+              {
+                "m_flPosition": 0.819121,
+                "m_Color": [
+                  255,
+                  165,
+                  0
+                ]
+              },
+              {
+                "m_flPosition": 1,
+                "m_Color": [
+                  255,
+                  255,
+                  255
+                ]
+              }
+            ]
+          ]
+        }
+      ]
+    },
+    "particles/weapons/cs_weapon_fx/weapon_tracers_smg.vpcf": {
+      "source": "particles/weapons/cs_weapon_fx/weapon_tracers_smg.vpcf_c",
+      "sourceSha256": "da30a8f084b58f1404b31559676286ec4e512df2a2d818fa6433104e26cd649a",
+      "sha256": "94c053319ca71a9e800a14b915d764f60e7eec4d2afcd094d54b29226a8489e3",
+      "children": [],
+      "renderers": [
+        {
+          "type": "C_OP_RenderRopes",
+          "textures": [
+            "materials/particle/effects/bullet_tracer_seq.vtex",
+            "materials/particle/effects/sparse_noise_tiled_normal.vtex"
+          ],
+          "blendMode": "PARTICLE_OUTPUT_BLEND_MODE_ADD",
+          "colorGradients": [
+            [
+              {
+                "m_flPosition": 0.031008,
+                "m_Color": [
+                  0,
+                  0,
+                  0
+                ]
+              },
+              {
+                "m_flPosition": 0.152455,
+                "m_Color": [
+                  188,
+                  188,
+                  188
+                ]
+              },
+              {
+                "m_flPosition": 0.397933,
+                "m_Color": [
+                  27,
+                  27,
+                  27
+                ]
+              },
+              {
+                "m_flPosition": 0.576227,
+                "m_Color": [
+                  255,
+                  255,
+                  255
+                ]
+              },
+              {
+                "m_flPosition": 0.821705,
+                "m_Color": [
+                  69,
+                  69,
+                  69
+                ]
+              },
+              {
+                "m_flPosition": 0.943152,
+                "m_Color": [
+                  100,
+                  100,
+                  100
+                ]
+              }
+            ]
+          ]
+        },
+        {
+          "type": "C_OP_RenderRopes",
+          "textures": [
+            "materials/particle/effects/bullet_tracer_seq.vtex",
+            "materials/particle/effects/sparse_noise_tiled_normal.vtex"
+          ],
+          "blendMode": "PARTICLE_OUTPUT_BLEND_MODE_ADD",
+          "colorGradients": [
+            [
+              {
+                "m_flPosition": 0.031008,
+                "m_Color": [
+                  0,
+                  0,
+                  0
+                ]
+              },
+              {
+                "m_flPosition": 0.152455,
+                "m_Color": [
+                  188,
+                  188,
+                  188
+                ]
+              },
+              {
+                "m_flPosition": 0.397933,
+                "m_Color": [
+                  27,
+                  27,
+                  27
+                ]
+              },
+              {
+                "m_flPosition": 0.576227,
+                "m_Color": [
+                  255,
+                  255,
+                  255
+                ]
+              },
+              {
+                "m_flPosition": 0.821705,
+                "m_Color": [
+                  69,
+                  69,
+                  69
+                ]
+              },
+              {
+                "m_flPosition": 0.943152,
+                "m_Color": [
+                  100,
+                  100,
+                  100
+                ]
+              }
+            ]
+          ]
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,11 @@
+.changelog-content{padding-top:20px;overflow-wrap:anywhere}
+.changelog-release{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;padding-bottom:16px;border-bottom:1px solid #465044}
+.changelog-release strong{font-size:13px;color:#a6e4cd;font-weight:600}
+.changelog-release span{font-size:11px;color:#acbab2;line-height:1.5}
+.changelog-release code{color:#d7dfdc;font-size:11px}
+.changelog-section{padding:18px 0;border-bottom:1px solid #3d473b}
+.changelog-section h2{margin:0 0 10px;font-size:12px;line-height:1.5;color:#e0d399;letter-spacing:0}
+.changelog-section ul{margin:0;padding-left:17px;display:grid;gap:8px}
+.changelog-section li{font-size:12px;line-height:1.6;color:#d0d9d4;padding-left:3px}
+.changelog-section li::marker{color:#91c5ba}
+.changelog-note{margin-top:18px;font-size:11px;line-height:1.6;color:#aab8b0}

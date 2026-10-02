@@ -1,64 +1,103 @@
 import type {Arena, CoverLane, Solid} from './geometry';
 import {clearSegment, routeTo} from './navigation';
 import {randomStream} from './rng';
+import {coveredSpawns} from './spawns';
+import {arenaPOIs, footprintsOverlap, footprintOf, placePOI, poiThemes, reserveFootprint, type Footprint, type POITheme} from './arena-pois';
 
-const snap = (value: number) => Math.round(value * 4) / 4;
 const point = (x: number, z: number) => ({x, y: 0, z});
+export const arenaDesigns = ['Freight yard', 'Service lanes', 'Courtyard', 'Switchback', 'Loading bays', 'Workshop'] as const;
+export function seedForDesign(seed: number, design: string) {
+  const index = arenaDesigns.findIndex(name => name === design);
+  return index < 0 ? seed : seed * arenaDesigns.length + index;
+}
+export type ArenaOptions = {scale?: number; theme?: POITheme};
 
-function candidate(seed: number): Arena {
-  const random = randomStream(seed, 'cover-layout');
-  const between = (low: number, high: number) => snap(low + random() * (high - low));
-  const centerX = between(-1, 1), width = between(5.25, 7.75);
+function candidate(seed: number, design: number, scale: number, theme: POITheme, attempt: number, safe = false): Arena {
+  const random = randomStream(seed, `authored-pois-${attempt}`);
+  const between = (a: number, b: number) => a + random() * (b - a);
+  const centerX = safe ? 0 : between(-.25, .25), width = safe ? 5.25 : between(5.25, 6.5);
   const solids: Solid[] = [{center: {x: centerX, y: 1.6, z: 0}, size: {x: width, y: 3.2, z: .75}, kind: 'concrete'}];
   const lanes: CoverLane[] = [];
-  const pair = (x: number, z: number, sx: number, sy: number, sz: number, kind: Solid['kind']) => {
-    for (const sign of [-1, 1]) solids.push({center: {x, y: sy / 2, z: sign * z}, size: {x: sx, y: sy, z: sz}, kind});
-  };
-  for (const side of [-1, 1] as const) {
-    const cargoX = between(7.25, 8.5), cargoZ = between(3, 4.75), cargoLength = between(2.5, 5.25);
-    pair(side * cargoX, cargoZ, .75, between(2.25, 3), cargoLength, 'cargo');
-    const campX = between(3.75, 5.5), campZ = between(8, 9.25), campWidth = between(3, 4.25);
-    pair(side * campX, campZ, campWidth, between(2.25, 3), .75, random() < .5 ? 'concrete' : 'cargo');
-    const offX = between(4.75, 5.5), offZ = between(3, 4.25), offWidth = between(1, 1.75);
-    pair(side * offX, offZ, offWidth, between(1, 1.5), 1, 'barrier');
-    pair(side * between(9.75, 10.25), between(8.25, 10), between(1.25, 1.75), between(1.25, 2), 1.25, 'crate');
-    solids.push({center: {x: side * 10.75, y: 1.1, z: between(-.5, .5)}, size: {x: 1, y: 2.2, z: between(1, 2)}, kind: 'crate'});
-    // Some layouts add a short perpendicular return, creating a proper pocket
-    // rather than a scattering of isolated boxes. North/south pairing stays fair.
-    if (random() < .6) pair(side * (cargoX + .5), cargoZ + cargoLength / 2 + .4, 1.75, 1.4, .65, 'barrier');
-    const corner = centerX + side * width / 2;
-    lanes.push({side, role: 'entry', anchor: point(corner - side * .8, -1.6),
-      edge: point(corner + side * .95, -1.6), retreat: point(corner - side * 1.4, -2.15), axis: {x: side, z: 0}});
-    const flankX = side * (cargoX + 1.4);
-    lanes.push({side, role: 'flank', anchor: point(flankX, -cargoZ),
-      edge: point(flankX, -cargoZ + cargoLength / 2 + .95), retreat: point(flankX, -cargoZ - .7), axis: {x: 0, z: 1}});
-    lanes.push({side, role: 'camp', anchor: point(side * campX, -campZ - 1),
-      edge: point(side * (campX + campWidth / 2 + .8), -campZ - 1),
-      retreat: point(side * campX, -campZ - 1.7), axis: {x: side, z: 0}});
-    lanes.push({side, role: 'offAngle', anchor: point(side * offX, -offZ - 1.3),
-      edge: point(side * (offX + offWidth / 2 + .75), -offZ - 1.3),
-      retreat: point(side * (offX - .35), -offZ - 1.8), axis: {x: side, z: 0}});
+  const arena: Arena = {minX: -12 * scale, maxX: 12 * scale, minZ: -20 * scale, maxZ: 12 * scale,
+    solids, lanes, pois: [], design: arenaDesigns[design], seed, poiTheme: theme};
+  const reservations: Footprint[] = [reserveFootprint(footprintOf(solids), .6)];
+  const templates = arenaPOIs.filter(p => p.theme === theme);
+  const camps = templates.filter(p => p.spawnCover);
+  const camp = camps[safe ? 0 : Math.floor(random() * camps.length)];
+  const sign = safe ? 1 : random() < .5 ? -1 : 1;
+  const slots = [{template: camp, x: sign * (scale < 1 ? 3 : safe ? 4 : between(3.75, 4.25)),
+    z: scale < 1 ? Math.max(5.01, arena.maxZ - 2.75) : arena.maxZ - 2.1, camp: true}];
+  const shuffled = templates.filter(p => !p.spawnCover).map((template, index) => ({template, order: safe ? index : random()})).sort((a, b) => a.order - b.order);
+  // Compact rounds use two pairs. Full-size rounds get an additional flank;
+  // the assemblies and native hull are never shrunk to make them fit.
+  for (const [index, side] of (scale < 1 ? [-sign] : [-sign, sign]).entries()) {
+    const template = shuffled[index].template;
+    slots.push({template, x: side * (arena.maxX - 1.25 - template.footprint.maxX),
+      // The .7m navigation grid needs more than a hull-width-only slit.
+      z: .375 + 1.9 - template.footprint.minZ + (safe ? 0 : between(0, .1)), camp: false});
   }
-  return {minX: -12, maxX: 12, minZ: -20, maxZ: 12, solids, lanes};
+  for (const [slot, placement] of slots.entries()) {
+    const mirrorX = (placement.x < 0 ? -1 : 1) as -1 | 1;
+    for (const side of [-1, 1] as const) {
+      const placed = placePOI(placement.template, point(placement.x, side * placement.z), mirrorX, side, `poi-${slot}-${side}`, solids.length);
+      const r = placed.instance.reservation;
+      if (r.minX < arena.minX + .6 || r.maxX > arena.maxX - .6 || r.minZ < arena.minZ + .6 || r.maxZ > arena.maxZ - .6 ||
+        reservations.some(other => footprintsOverlap(r, other))) return arena;
+      reservations.push(r); arena.pois!.push(placed.instance); solids.push(...placed.solids);
+      if (side !== -1) continue;
+      const f = placed.instance.footprint;
+      if (placement.camp) {
+        const z = -placement.z - .95;
+        // Both ends of the authored back cover are useful camp peek directions.
+        for (const direction of [-1, 1] as const) {
+          const x = placement.x + direction * .85;
+          lanes.push({side: direction, role: 'camp', anchor: point(x, z),
+            edge: point(direction < 0 ? f.minX - .75 : f.maxX + .75, z), retreat: point(x, z - .75), axis: {x: direction, z: 0}});
+        }
+        if (scale < 1) {
+          const x = mirrorX > 0 ? f.maxX + .75 : f.minX - .75;
+          lanes.push({side: mirrorX, role: 'flank', anchor: point(x, -placement.z),
+            edge: point(x, -1.3), retreat: point(x, -placement.z - .75), axis: {x: 0, z: 1}});
+        }
+      } else {
+        const x = mirrorX > 0 ? f.minX - .75 : f.maxX + .75;
+        lanes.push({side: mirrorX, role: 'flank', anchor: point(x, -placement.z),
+          edge: point(x, -1.3), retreat: point(x, -placement.z - .75), axis: {x: 0, z: 1}});
+        lanes.push({side: mirrorX, role: 'offAngle', anchor: point(x, -1.6),
+          edge: point(x - mirrorX * .6, -1.6), retreat: point(x, -2.4), axis: {x: -mirrorX, z: 0}});
+      }
+    }
+  }
+  for (const side of [-1, 1] as const) {
+    const corner = centerX + side * width / 2;
+    lanes.push({side, role: 'entry', anchor: point(corner - side * .8, -1.3),
+      edge: point(corner + side * .8, -1.3), retreat: point(corner - side * 1.4, -1.3), axis: {x: side, z: 0}});
+  }
+  return arena;
 }
 
-export function createArena(seed: number): Arena {
-  // Validate once per round, never during a frame's actor update. Reject a
-  // blocked pocket instead of letting navigation silently walk into its wall.
-  for (let attempt = 0; attempt < 16; attempt++) {
-    const arena = candidate(seed + attempt * 104729);
-    if (validLayout(arena)) return arena;
+export function createArena(seed: number, options: ArenaOptions = {}): Arena {
+  const scale = Number.isFinite(options.scale) ? Math.max(.65, Math.min(1.5, options.scale!)) : 1;
+  const design = ((Math.floor(seed) % arenaDesigns.length) + arenaDesigns.length) % arenaDesigns.length;
+  const theme = poiThemes.includes(options.theme!) ? options.theme! : poiThemes[design];
+  // Bounded, round-construction-only validation. No new per-frame navigation.
+  for (let attempt = 0; attempt < 24; attempt++) {
+    const arena = candidate(seed, design, scale, theme, attempt);
+    if (arena.pois?.length === (scale < 1 ? 4 : 6) && validLayout(arena, scale)) return arena;
   }
-  const fallback = candidate(6);
-  if (!validLayout(fallback)) throw new Error('Invalid fallback arena');
+  const fallback = candidate(seed, design, scale, theme, 0, true);
+  if (!validLayout(fallback, scale) || fallback.pois?.length !== (scale < 1 ? 4 : 6)) throw new Error(`Invalid authored fallback arena: ${theme}, ${scale}`);
   return fallback;
 }
 
-function validLayout(arena: Arena) {
-  if (arena.solids.some((a, i) => arena.solids.slice(i + 1).some(b =>
-    Math.abs(a.center.x - b.center.x) < (a.size.x + b.size.x) / 2 &&
-    Math.abs(a.center.z - b.center.z) < (a.size.z + b.size.z) / 2))) return false;
+function validLayout(arena: Arena, scale: number) {
+  if (arena.solids.some((a, i) => arena.solids.slice(i + 1).some(b => footprintsOverlap(footprintOf([a]), footprintOf([b]))))) return false;
+  const north = point(0, -8 * scale), south = point(0, 8 * scale);
+  if (!routeTo(north, south, arena).length) return false;
   return arena.lanes!.every(lane => clearSegment(lane.anchor, lane.edge, arena) &&
     clearSegment(lane.anchor, lane.retreat, arena) &&
-    routeTo(point(0, -8), lane.anchor, arena).length > 0 && routeTo(point(0, 8), lane.anchor, arena).length > 0);
+    [lane.anchor, lane.edge, lane.retreat].every(p => arena.solids.every(s =>
+      Math.abs(p.x - s.center.x) >= s.size.x / 2 + .6 - 1e-8 || Math.abs(p.z - s.center.z) >= s.size.z / 2 + .6 - 1e-8)) &&
+    routeTo(north, lane.anchor, arena).length > 0 && routeTo(south, lane.anchor, arena).length > 0) &&
+    !!coveredSpawns(arena, arena.seed ?? 0, 5);
 }

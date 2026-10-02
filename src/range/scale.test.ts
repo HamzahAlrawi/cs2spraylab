@@ -32,6 +32,7 @@ describe('Source-unit world scale', () => {
     for (let i = 0; i < 128; i++) sim.advance(STEP);
     const start = sim.position.z;
     for (let i = 0; i < 128; i++) sim.advance(STEP);
-    expect(start - sim.position.z).toBeCloseTo(gameData.weapons[weapon].speed * UNIT, 8);
+    const cap = weapon === 'revolver' ? gameData.weapons.revolver.alternate.speed : gameData.weapons[weapon].speed;
+    expect(start - sim.position.z).toBeCloseTo(cap * UNIT, 8);
   });
 });

@@ -1,5 +1,6 @@
 import {expect, test} from '@playwright/test';
 import sharp from 'sharp';
+import {canvasColors} from './render-frame';
 
 test('duel keeps render resources bounded across rounds and presents continuous native stance', async ({page}, info) => {
   test.skip(info.project.name !== 'chromium', 'Native presentation and GPU lifecycle regression');
@@ -30,7 +31,7 @@ test('duel keeps render resources bounded across rounds and presents continuous 
   const before = await page.evaluate(() => ({...(window as any).presentationEngine.renderer.info.memory}));
   for (let round = 0; round < 8; round++) {
     await page.evaluate(() => (window as any).presentationEngine.restart());
-    await page.waitForTimeout(50);
+    await canvasColors(page,'canvas[data-duel]');
   }
   const after = await page.evaluate(() => {
     const engine = (window as any).presentationEngine;
@@ -72,7 +73,7 @@ test('duel keeps render resources bounded across rounds and presents continuous 
       const engine = (window as any).presentationEngine;
       engine.sim.actors[1].duckAmount = amount;
     }, duck);
-    await page.waitForTimeout(50);
+    await canvasColors(page,'canvas[data-duel]');
     heads.push(await page.evaluate(() => {
       const model = (window as any).presentationEngine.models.get(1);
       model.updateMatrixWorld(true);

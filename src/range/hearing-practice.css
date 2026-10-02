@@ -1,0 +1,70 @@
+.hearing-practice{width:100%;height:100%;min-height:0;overflow:auto;background:#202522;color:#edf1ec;font:13px/1.45 Inter,Arial,sans-serif;letter-spacing:0;color-scheme:dark}
+.hearing-practice *{box-sizing:border-box}
+.hearing-practice button,.hearing-practice input,.hearing-practice select{font:inherit;letter-spacing:0}
+.hearing-practice button{display:inline-flex;align-items:center;justify-content:center;gap:7px;border:1px solid #56625b;border-radius:4px;background:#303a34;color:#edf1ec;min-height:38px;padding:8px 11px;cursor:pointer;touch-action:manipulation}
+.hearing-practice button:hover:not(:disabled){background:#414d45;border-color:#aab9ad}
+.hearing-practice button:disabled{opacity:.45;cursor:default}
+.hearing-practice button svg{flex-shrink:0}
+.hearing-practice :focus-visible{outline:2px solid #f1d671;outline-offset:3px}
+.hearing-header{display:flex;align-items:center;gap:14px;padding:13px 22px;border-bottom:1px solid #455047;background:#242d26}
+.hearing-header>div,.hearing-header>span{display:flex;align-items:center;gap:9px}
+.hearing-header h1{margin:0;font-size:18px;font-weight:600;line-height:1.3;color:#f2efdb}
+.hearing-header>span{margin-left:auto;color:#b6c5ba;font-size:11px}
+.hearing-practice .hearing-icon{padding:0 9px;min-width:38px;flex-shrink:0}
+.hearing-icon span{font-size:10px}
+.hearing-layout{display:grid;grid-template-columns:minmax(0,1fr) 286px;max-width:1240px;margin:0 auto;align-items:start}
+.hearing-main{padding:17px 24px 22px;min-width:0}
+.hearing-stage-line{display:flex;gap:16px;justify-content:space-between;align-items:center;min-height:35px;margin-bottom:9px;color:#c3cdc5;font-size:11px}
+.hearing-stage-line>span:first-child{overflow-wrap:anywhere;min-width:0}
+.hearing-stage-line>span:last-child{white-space:nowrap;color:#e2d694}
+.hearing-board{position:relative;aspect-ratio:1;width:min(100%,540px);margin:0 auto;border:1px solid #a4aaa0;border-radius:4px;background:#a1a49b url('/textures/floor.webp') center/320px;box-shadow:inset 0 0 0 1px #ffffff30;cursor:crosshair;touch-action:manipulation;isolation:isolate;color:#fff}
+.hearing-board:before{content:'';position:absolute;inset:0;background:#17292122;z-index:-1;border-radius:3px}
+.hearing-board:after{content:'';position:absolute;inset:7%;background:linear-gradient(90deg,transparent calc(50% - .5px),#f0f4e54d calc(50% - .5px),#f0f4e54d calc(50% + .5px),transparent calc(50% + .5px)),linear-gradient(transparent calc(50% - .5px),#f0f4e54d calc(50% - .5px),#f0f4e54d calc(50% + .5px),transparent calc(50% + .5px));pointer-events:none;z-index:-1}
+.hearing-rings{position:absolute;inset:0;pointer-events:none}
+.hearing-rings>div{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);border:1px solid #f1f4e8a8;border-radius:50%}
+.hearing-rings span{position:absolute;left:calc(50% + 7px);top:4px;font-size:10px;color:#fff;text-shadow:0 1px 3px #12231f}
+.hearing-north,.hearing-south,.hearing-east,.hearing-west{position:absolute;font-size:11px;font-weight:700;text-shadow:0 1px 3px #102820}
+.hearing-north{top:2%;left:50%;transform:translateX(-50%)}.hearing-south{bottom:2%;left:50%;transform:translateX(-50%)}.hearing-east{right:2%;top:50%;transform:translateY(-50%)}.hearing-west{left:2%;top:50%;transform:translateY(-50%)}
+.hearing-listener,.hearing-guess,.hearing-actual{position:absolute;display:flex;align-items:center;justify-content:center;pointer-events:none;width:29px;height:29px;transform:translate(-50%,-50%)}
+.hearing-listener{left:50%;top:50%;color:#fff;background:#263b32;border:1px solid #dbe7de;border-radius:50%;width:33px;height:33px}
+.hearing-guess{color:#ffed8e;filter:drop-shadow(0 1px 2px #000)}
+.hearing-actual{color:#85f7f4;background:#163c40;border:1px solid #92f5ed;border-radius:50%}
+.hearing-legend{display:flex;justify-content:center;gap:20px;min-height:31px;font-size:10px;color:#ffe798}
+.hearing-legend span{display:flex;align-items:center;gap:5px}.hearing-legend span+span{color:#93efed}
+.hearing-actions{display:flex;justify-content:center;flex-wrap:wrap;gap:7px;margin:7px 0 16px}
+.hearing-practice .hearing-primary{background:#e4d37a;border-color:#e4d37a;color:#20291f;font-weight:600}
+.hearing-practice .hearing-primary:hover:not(:disabled){background:#f1df85}
+.hearing-answer-controls{display:grid;grid-template-columns:1fr 1fr auto;gap:10px;align-items:end;max-width:540px;margin:0 auto}
+.hearing-field{display:flex;flex-direction:column;gap:5px;min-width:0;color:#b5c2b8;font-size:11px}
+.hearing-field select,.hearing-field input{width:100%;min-width:0;height:37px;padding:7px 9px;border:1px solid #526158;border-radius:3px;background:#29322c;color:#f4f5e9;font-size:12px}
+.hearing-field select{padding-right:3px}
+.hearing-result{min-height:110px;max-width:540px;margin:17px auto 0;padding-top:14px;border-top:1px solid #4a554b}
+.hearing-result>span{color:#a4b0a7;font-size:12px}
+.hearing-metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));margin:0;gap:12px}
+.hearing-metrics dt,.hearing-session dt{font-size:10px;color:#aebbb0}
+.hearing-metrics dd{margin:4px 0 0;font-size:21px;line-height:1.2;font-variant-numeric:tabular-nums;display:flex;flex-wrap:wrap;gap:5px;align-items:baseline}
+.hearing-metrics small{font-size:10px;color:#a8b9ad}
+.hearing-result p{color:#c3d2c7;font-size:11px;margin:14px 0 0;overflow-wrap:anywhere}
+.hearing-settings{padding:19px 20px 24px;border-left:1px solid #445147;background:#232d26;min-width:0}
+.hearing-settings h2{margin:0 0 13px;font-size:11px;font-weight:600;line-height:1.4;text-transform:uppercase;color:#e1d38d}
+.hearing-settings-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px 10px}
+.hearing-gain{display:block;margin:20px 0 12px;color:#bac8be;font-size:11px}
+.hearing-gain>span{display:flex;align-items:center;gap:7px}.hearing-gain output{margin-left:auto;color:#f2df92}
+.hearing-gain input{width:100%;margin:10px 0 0;accent-color:#dbcd7c;cursor:pointer}
+.hearing-toggle{display:flex;gap:8px;align-items:center;font-size:11px;color:#d4ded6;margin-bottom:22px}
+.hearing-toggle input{margin:0;accent-color:#d9cc7d;width:16px;height:16px}
+.hearing-calibration{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:5px}
+.hearing-practice .hearing-calibration button{font-size:10px;padding:7px 3px;gap:4px;text-transform:capitalize}
+.hearing-note{margin:13px 0 21px;color:#aabbb0;font-size:10px;line-height:1.65}
+.hearing-warning{color:#f4d794;border-left:2px solid #c2ad61;padding-left:9px}
+.hearing-section-title{display:flex;align-items:center;justify-content:space-between;border-top:1px solid #48554a;padding-top:15px}
+.hearing-section-title h2{margin:0}.hearing-practice .hearing-section-title button{min-height:30px;min-width:30px;border:0;background:transparent}
+.hearing-session{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:12px 0 22px}
+.hearing-session dd{margin:3px 0 0;font-size:16px;font-variant-numeric:tabular-nums;color:#e4ecdf}
+.hearing-history{border-top:1px solid #48554a;padding-top:14px;font-size:11px;color:#c2cfc4}
+.hearing-history summary{cursor:pointer;min-height:26px}.hearing-history p{margin:8px 0}
+.hearing-history ol{list-style:none;padding:0;margin:12px 0}.hearing-history li{display:flex;justify-content:space-between;gap:8px;border-bottom:1px solid #435045;padding:8px 0}
+.hearing-history li span{min-width:0}.hearing-history small{display:block;font-size:9px;color:#a1b5a8}.hearing-history b{color:#e8d882}
+.hearing-practice .hearing-reset{margin-top:20px;font-size:10px;width:100%;background:transparent;color:#b9cabe}
+@media(max-width:760px){.hearing-layout{grid-template-columns:minmax(0,1fr)}.hearing-settings{border-left:0;border-top:1px solid #445147}.hearing-main{padding:12px 18px 20px}.hearing-settings-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.hearing-calibration{max-width:360px}.hearing-session{grid-template-columns:repeat(4,minmax(0,1fr))}}
+@media(max-width:420px){.hearing-header{padding:12px;gap:8px}.hearing-header h1{font-size:16px}.hearing-header>span{font-size:10px;gap:4px}.hearing-header>span svg{display:none}.hearing-main{padding:10px 12px 18px}.hearing-answer-controls{grid-template-columns:1fr 1fr}.hearing-answer-controls>button{grid-column:1/-1}.hearing-settings{padding:18px 14px}.hearing-settings-grid{grid-template-columns:1fr 1fr}.hearing-metrics{gap:8px}.hearing-metrics dd{font-size:18px}.hearing-metrics dt{font-size:9px}.hearing-session{grid-template-columns:1fr 1fr}.hearing-stage-line{gap:8px}.hearing-actions{gap:6px}.hearing-actions .hearing-primary{padding:8px}.hearing-actions .hearing-icon{padding:0 7px}}

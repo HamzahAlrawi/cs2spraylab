@@ -1,5 +1,6 @@
 import {weaponIds, type Weapon} from '../config';
 import {randomStream} from './rng';
+import {arenaDesigns} from './arena-layout';
 
 export type SkillLevel = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | '10+';
 export type BotBehavior = 'mixed' | 'holder' | 'patient' | 'aggressive';
@@ -23,6 +24,7 @@ export type DuelConfig = {
   roundSeconds: number;
   feedbackSeconds: number;
   arenaScale: number;
+  mapDesign: 'random' | typeof arenaDesigns[number];
   shortcutProtection: boolean;
   overrides: BotOverride[];
 };
@@ -32,6 +34,7 @@ export const duelDefaults: DuelConfig = {
   accuracy: 1, behavior: 'mixed', roundSeconds: 60, feedbackSeconds: 2,
   shortcutProtection: true, overrides: [],
   arenaScale: 1,
+  mapDesign: 'random',
 };
 
 const record = (value: unknown): Record<string, unknown> => value && typeof value === 'object' && !Array.isArray(value)
@@ -66,7 +69,8 @@ export function sanitizeDuelConfig(raw: unknown): DuelConfig {
     accuracy: finite(input.accuracy, duelDefaults.accuracy, .5, 1.5), behavior: behavior(input.behavior),
     roundSeconds: integer(input.roundSeconds, duelDefaults.roundSeconds, 15, 180),
     feedbackSeconds: finite(input.feedbackSeconds, duelDefaults.feedbackSeconds, 1, 3),
-    arenaScale: finite(input.arenaScale, 1, 1, 1.5),
+    arenaScale: finite(input.arenaScale, 1, count <= 2 ? .65 : 1, 1.5),
+    mapDesign: arenaDesigns.find(name => name === input.mapDesign) ?? 'random',
     shortcutProtection: input.shortcutProtection !== false, overrides,
   };
 }

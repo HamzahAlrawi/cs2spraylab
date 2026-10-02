@@ -1,0 +1,17 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Hearing drill test host</title>
+<style>body{margin:0}#root{height:100dvh}</style></head>
+<body><div id="root"></div><script type="module">
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import {HearingPractice} from '../src/range/HearingPractice.tsx';
+function Harness() {
+  const [props,setProps] = React.useState({volume:.7,suspended:false});
+  window.hearingProps = patch => setProps(p => ({...p,...patch}));
+  return React.createElement(HearingPractice,{...props,openSettings:()=>window.hearingProps({suspended:true})});
+}
+const root = ReactDOM.createRoot(document.getElementById('root'));
+window.unmountHearing = () => root.unmount();
+root.render(React.createElement(Harness));
+</script></body></html>

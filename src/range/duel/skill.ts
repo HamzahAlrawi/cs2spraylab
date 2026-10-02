@@ -1,4 +1,4 @@
-import type {Weapon} from '../config';
+import {pistolIds,type Pistol,type Weapon} from '../config';
 import type {SkillLevel} from './config';
 import {randomStream} from './rng';
 
@@ -20,8 +20,8 @@ export const skilledFamilyWeights = {rifle, smg, pistol, lmg};
 const anchors: {level: number; weights: Weights; advancedCap: number; shoulderCap: number}[] = [
   {level: 1, weights: {shoulder: 0, quick: 10, wide: 30, ferrari: 0, crouch: 12, prefire: 0,
     slice: 0, jump: 0, run: 48, crouchWide: 0}, advancedCap: 0, shoulderCap: 0},
-  {level: 3, weights: {shoulder: 1, quick: 17, wide: 27, ferrari: 0, crouch: 12, prefire: 2,
-    slice: 1, jump: 0, run: 40, crouchWide: 0}, advancedCap: .04, shoulderCap: .01},
+  {level: 3, weights: {shoulder: .6, quick: 17, wide: 27, ferrari: 0, crouch: 12, prefire: 1.2,
+    slice: .7, jump: 0, run: 41.5, crouchWide: 0}, advancedCap: .025, shoulderCap: .006},
   {level: 6, weights: {shoulder: 5, quick: 23, wide: 23, ferrari: 2, crouch: 10, prefire: 6,
     slice: 5, jump: 1, run: 21, crouchWide: 4}, advancedCap: .25, shoulderCap: .08},
   {level: 9, weights: {shoulder: 10, quick: 25, wide: 18, ferrari: 4, crouch: 8, prefire: 9,
@@ -45,7 +45,7 @@ export function peekPrior(level: SkillLevel) {
 
 export function weaponFamily(weapon: Weapon): keyof typeof skilledFamilyWeights {
   if (weapon === 'm249' || weapon === 'negev') return 'lmg';
-  if (weapon === 'cz75a') return 'pistol';
+  if (pistolIds.includes(weapon as Pistol)) return 'pistol';
   if (['mp9', 'mp7', 'mp5sd', 'mac10', 'ump45', 'p90', 'bizon'].includes(weapon)) return 'smg';
   return 'rifle';
 }
@@ -107,7 +107,7 @@ export type BotTraits = {
   stopTendency: number;
 };
 
-// User-requested encounter frequencies, not measured FACEIT population statistics.
+// All skill curves are training heuristics, not measured FACEIT population statistics.
 export function combatStyle(level: SkillLevel) {
   const n = level === '10+' ? 10 : level;
   return {
@@ -126,15 +126,16 @@ export function createBotTraits(level: SkillLevel, seed: number, actorId: number
   const recognitionStrength = .5 * general + Math.sqrt(.75) * recognition;
   const aimStrength = .5 * general + Math.sqrt(.75) * aim;
   const movementStrength = .4 * general + Math.sqrt(.84) * movement;
-  const stopBase = interpolate(level, [.45, .72, .93, .96]);
+  const midrank = typeof level === 'number' && level >= 5 && level <= 8 ? 1 : 0;
+  const stopBase = interpolate(level, [.45, .72, .93, .96]) - midrank * .025;
   const logit = Math.log(stopBase / (1 - stopBase));
   return {
-    recognitionMedianMs: interpolate(level, [360, 260, 190, 165]) * Math.exp(-.12 * recognitionStrength),
-    motorSettlingMs: interpolate(level, [300, 220, 150, 125]) * Math.exp(-.12 * aimStrength),
-    endpointErrorDegrees: interpolate(level, [1.8, 1, .45, .3]) * Math.exp(-.18 * aimStrength),
-    preaimErrorDegrees: interpolate(level, [4.5, 2.8, .9, .7]) * Math.exp(-.18 * aimStrength),
-    brakeErrorMs: interpolate(level, [110, 65, 20, 16]) * Math.exp(-.15 * movementStrength),
-    lowAimTendency: interpolate(level, [.7, .4, .1, .08]),
+    recognitionMedianMs: interpolate(level, [360, 260, 190, 165]) * (1 + midrank * .08) * Math.exp(-.12 * recognitionStrength),
+    motorSettlingMs: interpolate(level, [300, 220, 150, 125]) * (1 + midrank * .08) * Math.exp(-.12 * aimStrength),
+    endpointErrorDegrees: interpolate(level, [1.8, 1, .45, .3]) * (1 + midrank * .16) * Math.exp(-.18 * aimStrength),
+    preaimErrorDegrees: interpolate(level, [5.8, 2.8, .9, .7]) * (1 + midrank * .15) * Math.exp(-.18 * aimStrength),
+    brakeErrorMs: interpolate(level, [110, 65, 20, 16]) * (1 + midrank * .12) * Math.exp(-.15 * movementStrength),
+    lowAimTendency: interpolate(level, [.8, .4, .1, .08]) + midrank * .04,
     stopTendency: 1 / (1 + Math.exp(-(logit + .4 * movementStrength))),
   };
 }

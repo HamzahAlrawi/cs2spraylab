@@ -38,8 +38,8 @@ export function recoilTable(w: RecoilParameters) {
   const random = new UniformRandomStream(w.recoilSeed);
   let angle = 0, magnitude = 0;
   return Array.from({ length: 64 }, (_, i) => {
-    const a = f(w.recoilAngle + random.float(-w.recoilVariance, w.recoilVariance));
-    const m = f(w.recoilMagnitude + random.float(-w.recoilMagnitudeVariance, w.recoilMagnitudeVariance));
+    const a = f(f(w.recoilAngle) + random.float(-f(w.recoilVariance), f(w.recoilVariance)));
+    const m = f(f(w.recoilMagnitude) + random.float(-f(w.recoilMagnitudeVariance), f(w.recoilMagnitudeVariance)));
     angle = w.fullAuto && i > 0 ? f(angle + f(f(a - angle) * f(.55))) : a;
     magnitude = w.fullAuto && i > 0 ? f(magnitude + f(f(m - magnitude) * f(.55))) : m;
     if (w.fullAuto && i < 4) magnitude = f(magnitude * f(.75 + i / 16));

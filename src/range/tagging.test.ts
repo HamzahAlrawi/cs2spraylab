@@ -4,6 +4,7 @@ import {equipmentIds, equipmentStats, type Equipment} from './equipment';
 import {applyTagging, recoverTagging} from './tagging';
 import data from './tagging-data.json';
 import fixture from './tagging-native-fixture.json';
+import {gameData} from './config';
 
 const fresh = () => ({flinchStack: 1, velocityModifier: 1});
 const standing = (): ActorKinematics => ({position: {x: 0, y: 64 * UNIT, z: 0},
@@ -13,8 +14,11 @@ const standing = (): ActorKinematics => ({position: {x: 0, y: 64 * UNIT, z: 0},
 describe('native damage-tagging arithmetic', () => {
   it('covers every equipped weapon with audited movement data', () => {
     expect(Object.keys(data.weapons).sort()).toEqual([...equipmentIds].sort());
-    expect(fixture.build).toBe(data.build);
-    expect(fixture.weaponSha256).toBe(data.sha256);
+    expect(data.build).toBe(gameData.build);
+    // Keep the actual DLL audit pinned; refreshed vdata is not a new engine audit.
+    expect(fixture.build).toBe('2000919');
+    expect(fixture.serverSha256).toBe('f95fe0dcd7b526137a8b305dd76a72f624e0508ad42bb5949d05c77a37e1bd70');
+    if (fixture.build === data.build) expect(fixture.weaponSha256).toBe(data.sha256);
     for (const id of equipmentIds) expect(data.weapons[id].speed).toBe(equipmentStats(id).speed);
   });
 

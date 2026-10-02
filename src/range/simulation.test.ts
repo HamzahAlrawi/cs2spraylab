@@ -1,7 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 import { defaults, gameData, migrateLegacySettings, migrateMode, parseProfile, recoilPattern, sanitizeSettings, weaponIds } from './config';
 import { DEG, direction, groundVelocity, mouseAngle, Simulation, STEP, targetSpeed, UNIT, VERTICAL_FOV, TARGET_Z, SPAWN_Z, JUMP_SPEED, GRAVITY } from './simulation';
-import { requestRawLock } from './input';
+import {REVOLVER_WINDUP} from './weapon-actions';
 
 const make = (extra = {}) => new Simulation({ ...defaults, mode:'guided', ...extra, crosshair: { ...defaults.crosshair } });
 const run = (s: Simulation, seconds: number, fps = 60) => { for (let i = 0; i < Math.round(seconds * fps); i++) s.advance(1 / fps); };
@@ -61,12 +61,35 @@ describe('Shot scheduling and independent drills', () => {
     const count = burst || gameData.weapons.ak47.magazine;
     expect(lanes).toEqual(Array.from({ length: count }, (_, i) => i >= Math.floor(count / 2) ? 1 : 0));
   });
-  it.each(weaponIds)('%s fires precisely its installed magazine at its installed cadence', id => {
+  it.each(weaponIds.filter(id => gameData.weapons[id].fullAuto))('%s fires precisely its installed magazine at its installed cadence', id => {
     const s = make({ weapon: id }), times: number[] = [];
     s.onShot = shot => times.push(shot.at); s.start(true); run(s, gameData.weapons[id].cycle * gameData.weapons[id].magazine + 1);
     expect(times.length).toBe(gameData.weapons[id].magazine);
-    times.forEach((t, i) => expect(Math.abs(t - i * gameData.weapons[id].cycle)).toBeLessThanOrEqual(STEP + 1e-9));
+    const windup = id === 'revolver' ? REVOLVER_WINDUP : 0;
+    times.forEach((t, i) => expect(Math.abs(t - windup - i * gameData.weapons[id].cycle)).toBeLessThanOrEqual(STEP + 1e-9));
     expect(s.latest?.shots).toBe(times.length);
+  });
+  it.each(weaponIds.filter(id => !gameData.weapons[id].fullAuto))('%s fires once per press and queues an early second press until the native cycle', id => {
+    const s = make({weapon: id}), times: number[] = [], cycle = gameData.weapons[id].cycle;
+    s.onShot = shot => times.push(shot.at);
+    s.start(true);
+    run(s, cycle * 3);
+    expect(times).toEqual([0]);
+    expect(s.firing).toBe(false);
+    expect(s.latest?.shots).toBe(1);
+
+    expect(s.start()).toBe(true);
+    const second = times[1];
+    expect(times).toHaveLength(2);
+    expect(s.start()).toBe(true);
+    while (s.time + STEP < second + cycle) s.step(STEP);
+    expect(times).toHaveLength(2);
+    s.step(STEP);
+    expect(times).toHaveLength(3);
+    expect(times[2] - second).toBeGreaterThanOrEqual(cycle - 1e-9);
+    expect(times[2] - second).toBeLessThan(cycle + STEP + 1e-9);
+    run(s, cycle * 3);
+    expect(times).toHaveLength(3);
   });
   it('scores only fired bullets after a short release', () => {
     const s = make(); s.start(); run(s, .25, 100); s.release('mouse');
@@ -118,19 +141,6 @@ describe('Compatibility and imported data', () => {
     expect(s.invertY).toBe(true); expect(s.follow).toBe(true); expect(s.sensitivity).toBe(1.2);
     expect(s.aspect).toBe('4:3'); expect(s.crosshair.size).toBe(0); expect(s.crosshair.outline).toBe(0);
     expect(s.crosshair.color).toBe('#abcdef'); expect(s.crosshair.alpha).toBe(.8);
-  });
-  it('falls back when raw input is unsupported', async () => {
-    const requestPointerLock = vi.fn().mockRejectedValueOnce({ name: 'NotSupportedError' }).mockResolvedValueOnce(undefined);
-    expect(await requestRawLock({ requestPointerLock } as unknown as HTMLElement)).toBe('standard');
-    expect(requestPointerLock).toHaveBeenNthCalledWith(1, { unadjustedMovement: true });
-    expect(requestPointerLock).toHaveBeenNthCalledWith(2);
-  });
-  it('falls back to drag for denied or missing Pointer Lock', async () => {
-    expect(await requestRawLock({} as HTMLElement)).toBe('drag');
-    expect(await requestRawLock({ requestPointerLock: () => Promise.reject({ name: 'SecurityError' }) } as unknown as HTMLElement)).toBe('drag');
-  });
-  it('accepts old non-Promise Pointer Lock implementations', async () => {
-    expect(await requestRawLock({ requestPointerLock: () => undefined } as unknown as HTMLElement)).toBe('raw');
   });
   it('rejects invalid profiles and only accepts full, normalized captures', () => {
     const profile = { weapon: 'ak47', source: 'Measured wall capture', build: '2000908', points: Array.from({ length: 30 }, () => ({ yaw: 0, pitch: 0 })) };

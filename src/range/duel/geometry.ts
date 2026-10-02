@@ -1,20 +1,18 @@
 import {UNIT, type Vec} from '../actor-physics';
 import type {Hitgroup} from './types';
 import {createArena} from './arena-layout';
+import type {PlacedPOI, POITheme} from './arena-pois';
 
-export type Solid = {center: Vec; size: Vec; kind?: 'concrete' | 'cargo' | 'crate' | 'barrier'};
+export type PropStyle = 'plain' | 'generator' | 'pallets' | 'vent' | 'cabinet' | 'concrete-stack' | 'roadblock' | 'kiosk' | 'rack' | 'planter' | 'dock' | 'pump' | 'bench';
+export type Solid = {center: Vec; size: Vec; kind?: 'concrete' | 'cargo' | 'crate' | 'barrier'; style?: PropStyle; poiId?: string};
 export type CoverLane = {side: -1 | 1; anchor: Vec; edge: Vec; retreat: Vec;
   axis?: {x: number; z: number}; role?: 'entry' | 'flank' | 'camp' | 'offAngle'};
-export type Arena = {minX: number; maxX: number; minZ: number; maxZ: number; solids: Solid[]; lanes?: CoverLane[]};
+export type Arena = {minX: number; maxX: number; minZ: number; maxZ: number; solids: Solid[]; lanes?: CoverLane[]; design?: string; seed?: number; pois?: PlacedPOI[]; poiTheme?: POITheme};
 export const testArena = (): Arena => ({minX: -12, maxX: 12, minZ: -20, maxZ: 12, solids: []});
 
-export function duelArena(seed: number, scale = 1): Arena {
-  const arena = createArena(seed), factor = Math.max(1, Math.min(1.5, scale));
-  const point = (p: Vec) => ({x: p.x * factor, y: p.y, z: p.z * factor});
-  return {...arena, minX: arena.minX * factor, maxX: arena.maxX * factor,
-    minZ: arena.minZ * factor, maxZ: arena.maxZ * factor,
-    solids: arena.solids.map(solid => ({...solid, center: point(solid.center)})),
-    lanes: arena.lanes?.map(lane => ({...lane, anchor: point(lane.anchor), edge: point(lane.edge), retreat: point(lane.retreat)}))};
+export function duelArena(seed: number, scale = 1, theme?: POITheme): Arena {
+  // Repack full-size cover instead of scaling gaps below the native actor hull.
+  return createArena(seed, {scale, theme});
 }
 
 const intersects = (x: number, z: number, feet: number, height: number, solid: Solid) =>

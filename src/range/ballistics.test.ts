@@ -44,22 +44,25 @@ describe('Recovered accuracy formulas',()=>{
 });
 
 describe('Persistent shot state',()=>{
-  it.each(weaponIds)('%s guides predict the actual fixed-step next two trajectories',weapon=>{
+  it.each(weaponIds.filter(id=>gameData.weapons[id].fullAuto))('%s guides predict the actual fixed-step next two trajectories',weapon=>{
     const s=new Simulation({...defaults,weapon,spread:false});const shots:Shot[]=[];
-    s.onShot=shot=>shots.push(shot);s.start();advance(s,STEP*3);
+    s.onShot=shot=>shots.push(shot);s.start();
+    while (!shots.length && s.time < 1) s.step(STEP);
+    advance(s,STEP*3);
     const now=s.predictedRecoil(),next=s.predictedRecoil(true);
-    while(shots.length<3)s.step(STEP);
+    for(let tick=0;tick<Math.ceil(3/STEP)&&shots.length<3;tick++)s.step(STEP);
+    expect(shots).toHaveLength(3);
     expect(shots[1].recoil.yaw).toBeCloseTo(now.yaw,5);expect(shots[1].recoil.pitch).toBeCloseTo(now.pitch,5);
     expect(shots[2].recoil.yaw).toBeCloseTo(next.yaw,5);expect(shots[2].recoil.pitch).toBeCloseTo(next.pitch,5);
   });
   it.each(weaponIds)('%s rapid taps retain recoil and firing inaccuracy',weapon=>{
     const s=new Simulation({...defaults,weapon,spread:false});const shots:Shot[]=[];
     s.onShot=shot=>shots.push(shot);
-    s.start();s.release('mouse');advance(s,s.stats.cycle+STEP);
-    const before=s.recovery.penalty;s.start();s.release('mouse');
+    s.start(false,weapon==='revolver');s.release('mouse');advance(s,s.stats.cycle+STEP);
+    const before=s.recovery.penalty;s.start(false,weapon==='revolver');s.release('mouse');
     expect(shots).toHaveLength(2);expect(shots[1].recoil.pitch).toBeGreaterThan(0);
     expect(s.recovery.penalty).toBeGreaterThan(before);
-    advance(s,3);expect(s.recovery.index).toBe(0);
+    advance(s,Math.max(3,s.stats.recovery*6));expect(s.recovery.index).toBe(0);
     expect(Math.hypot(s.recovery.recoil.yaw,s.recovery.recoil.pitch)).toBeLessThan(.001);
     expect(s.recovery.penalty).toBeCloseTo(s.stats.stand,5);
   });

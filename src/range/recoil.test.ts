@@ -2,6 +2,8 @@ import { describe, expect, it } from 'vitest';
 import { nativeRecoilPattern, recoilTable, UniformRandomStream } from './recoil';
 import fixture from './native-rng-fixture.json';
 import tables from './native-table-fixture.json';
+import alternateTables from './native-alternate-table-fixture.json';
+import {weaponModeStats} from './equipment';
 import provenance from './recoil-provenance.json';
 import { gameData, weaponIds } from './config';
 import {createHash} from 'node:crypto';
@@ -27,6 +29,9 @@ describe('installed CS2 recoil math', () => {
   });
   it.each(weaponIds)('%s matches all 64 independently emulated native table entries', weapon => {
     expect(recoilTable(gameData.weapons[weapon])).toEqual(tables[weapon]);
+  });
+  it.each(weaponIds)('%s alternate mode matches all 64 offline native table entries', weapon => {
+    expect(recoilTable(weaponModeStats(weapon, true))).toEqual(alternateTables[weapon]);
   });
   it.each(weaponIds)('%s has a deterministic finite full-magazine angular profile', weapon => {
     const a = nativeRecoilPattern(gameData.weapons[weapon]);

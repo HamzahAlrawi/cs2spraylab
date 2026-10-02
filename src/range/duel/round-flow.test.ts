@@ -1,9 +1,17 @@
 import {describe, expect, it} from 'vitest';
-import {RoundFlow, deathView, deathFeet} from './round-flow';
+import {RoundFlow, deathView, deathFeet, deathVariant, PLAYER_COLLAPSE_SECONDS} from './round-flow';
 import {sanitizeDuelConfig} from './config';
 import {DuelSimulation} from './simulation';
 
 describe('continuous duel sessions', () => {
+  it('selects the fall from the shot direction in actor-local space', () => {
+    const actor = {id: 1, yaw: Math.PI, deathDirection: {x: 0, y: 0, z: -1}};
+    expect(deathVariant(actor)).toBe('a');
+    expect(deathVariant({...actor, deathDirection: {x: 0, y: 0, z: 1}})).toBe('c');
+    expect(deathVariant({...actor, deathDirection: {x: 1, y: 0, z: 0}})).toBe('b');
+    expect(deathVariant({...actor, yaw: 0})).toBe('c');
+    expect(deathVariant({id: 2, yaw: 0})).toBe('c');
+  });
   it('restarts only after a finished round and respects a 1-3 second delay', () => {
     const flow = new RoundFlow();
     expect(flow.advance(.25, false, 1)).toBe(false);
@@ -40,6 +48,9 @@ describe('continuous duel sessions', () => {
     }
     expect(height).toBeCloseTo(.28);
     expect(deathView(2, 1.6256)).toEqual(deathView(3, 1.6256));
+    expect(deathView(PLAYER_COLLAPSE_SECONDS, 1.6256).height).toBeCloseTo(.28);
+    expect(deathView(PLAYER_COLLAPSE_SECONDS / 2, 1.6256).height).toBeCloseTo((1.6256 + .28) / 2);
+    expect(deathView(.12, 1.6256).weaponDrop).toBe(1);
   });
   it('settles dead bodies and the player camera on cover instead of falling through it', () => {
     const cover = [{center: {x: 0, y: .5, z: 0}, size: {x: 2, y: 1, z: 2}}];
@@ -49,5 +60,11 @@ describe('continuous duel sessions', () => {
     expect(deathFeet({...actor, feet: 2}, 3, cover)).toBe(1);
     expect(deathFeet({...actor, position: {x: 4, y: 3, z: 0}}, 3, cover)).toBe(0);
     expect(deathFeet({...actor, feet: 0}, 3, cover)).toBe(0);
+  });
+  it('retains the vertical momentum of a victim killed during a jump', () => {
+    const actor = {position: {x: 0, y: 2.2256, z: 0}, feet: .6};
+    expect(deathFeet(actor, .1, [], 4)).toBeCloseTo(.6 + .4 - .1016);
+    expect(deathFeet(actor, 2, [], 4)).toBe(0);
+    expect(deathFeet(actor, .1, [], -2)).toBeLessThan(deathFeet(actor, .1, []));
   });
 });

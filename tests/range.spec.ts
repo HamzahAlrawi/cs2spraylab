@@ -131,7 +131,7 @@ test('all weapon viewmodels render distinctly and native shot samples decode', a
     fingerprints.add(data.toString('base64'));
     await page.screenshot({ path: `test-results/${info.project.name}-${name.replace(/[^a-z0-9]/gi, '')}.png` });
   }
-  expect(fingerprints.size).toBe(17);
+  expect(fingerprints.size).toBe(weaponIds.length);
   await page.locator('.weapon-select').click();
   await page.locator('.weapon-item').filter({has: page.locator('img[src="/models/ak47.png"]')}).click();
   await expect(page.getByRole('button', {name: 'Enter range', exact: true})).toBeEnabled({timeout: 45000});
@@ -139,9 +139,10 @@ test('all weapon viewmodels render distinctly and native shot samples decode', a
     const Constructor = window.AudioContext || (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
     if (!Constructor) return null;
     const ctx = new Constructor(); const results: { id: string; duration: number; peak: number }[] = [];
+    const {events} = await (await fetch('/audio/events.json')).json();
     try {
       for (const id of ids) {
-        const response = await fetch(`/audio/${id}.wav`);
+        const response = await fetch(events[id].samples[0]);
         const audio = await ctx.decodeAudioData(await response.arrayBuffer());
         let peak = 0; for (const s of audio.getChannelData(0)) peak = Math.max(peak, Math.abs(s));
         results.push({ id, duration: audio.duration, peak });
@@ -155,7 +156,7 @@ test('all weapon viewmodels render distinctly and native shot samples decode', a
     await expect(page.locator('.statusbar')).toContainText('Audio unavailable');
     return;
   }
-  expect(decoded).toHaveLength(17);
+  expect(decoded).toHaveLength(weaponIds.length);
   for (const d of decoded) { expect(d.duration).toBeGreaterThan(.05); expect(d.peak).toBeGreaterThan(.01); }
 });
 
@@ -234,19 +235,15 @@ test('walking controls distance, jump changes view and stationary backstop stays
   expect(errors).toEqual([]);
 });
 
-test('mouse Pointer Lock rejection leaves drag aim and keyboard movement usable', async ({ page }, info) => {
+test('mouse Pointer Lock rejection pauses the range with a visible retry message', async ({ page }, info) => {
   test.skip(info.project.name.startsWith('mobile'), 'Desktop mouse workflow');
   await page.addInitScript(() => Object.defineProperty(HTMLElement.prototype, 'requestPointerLock', { value: () => Promise.reject(new DOMException('Denied', 'SecurityError')) }));
   await page.goto('/');
   await page.getByRole('button', { name: 'Enter range', exact: true }).click();
-  await expect(page.locator('.statusbar')).toContainText('Drag aim');
-  await page.keyboard.down('KeyD');
-  await expect.poll(async () => Number(await page.locator('.hud-stat b').first().innerText())).toBeGreaterThan(50);
-  await page.keyboard.up('KeyD');
-  const canvas = page.locator('canvas[data-range]'); const bounds = (await canvas.boundingBox())!;
-  await page.mouse.move(bounds.x + bounds.width * .5, bounds.y + bounds.height * .4);
-  await page.mouse.down(); await page.waitForTimeout(250); await page.mouse.up();
-  await expect.poll(async () => page.evaluate(() => JSON.parse(localStorage.getItem('spraylab.results.v2') || '[]')[0]?.shots)).toBeGreaterThan(0);
+  await expect(page.locator('.statusbar')).toContainText('Mouse capture blocked. Click Enter range again.');
+  await expect(page.getByRole('button', {name: 'Enter range', exact: true})).toBeVisible();
+  await expect(page.getByRole('button', {name: 'Pause range', exact: true})).toHaveCount(0);
+  expect(await page.evaluate(() => document.pointerLockElement)).toBeNull();
 });
 
 test('transfer hands the guide from A to B and restores A for the next attempt', async ({ page }, info) => {
@@ -269,6 +266,7 @@ test('long-range compensation cues remain fixed-size and player distance persist
   await page.goto('/');
   await expect(page.getByRole('button', { name: 'Enter range', exact: true })).toBeEnabled({timeout: 45000});
   await page.getByLabel('Training mode').selectOption('guided');
+  await expect(page.locator('.aim-cue.now')).toBeVisible();
   const nearSize = await page.locator('.aim-cue.now').boundingBox();
   await page.getByRole('button', { name: 'Enter range', exact: true }).click();
   await page.keyboard.down('KeyS');

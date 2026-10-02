@@ -3,6 +3,46 @@ import sharp from 'sharp';
 
 const desktopSmoke = new Set(['chromium', 'brave', 'opera-gx']);
 
+test('compact duel arenas persist for small rosters and safely expand for five bots', async ({page}, info) => {
+  test.skip(info.project.name !== 'chromium', 'Authored arena integration regression');
+  const errors: string[] = [];
+  page.on('pageerror', error => errors.push(error.message));
+  await page.goto('/');
+  await page.getByRole('slider', {name: 'Arena size', exact: true}).press('Home');
+  await expect(page.getByRole('slider', {name: 'Arena size', exact: true})).toHaveValue('0.65');
+  await page.reload();
+  await expect(page.getByRole('slider', {name: 'Arena size', exact: true})).toHaveValue('0.65');
+  await page.evaluate(async () => {
+    const url = performance.getEntriesByType('resource').find(entry => entry.name.includes('/duel/DuelEngine.ts'))!.name;
+    const {DuelEngine} = await import(/* @vite-ignore */ url);
+    const original = DuelEngine.prototype.tick;
+    DuelEngine.prototype.tick = function(time: number) {(window as any).compactArenaEngine = this; return original.call(this, time);};
+  });
+  await page.waitForFunction(() => !!(window as any).compactArenaEngine);
+  const compact = await page.evaluate(() => {
+    const e = (window as any).compactArenaEngine, arena = e.sim.arena;
+    return {width: arena.maxX - arena.minX, depth: arena.maxZ - arena.minZ,
+      pois: arena.pois.length, shellScale: e.shell.scale.x, eyeHeight: e.sim.actors[0].eyeHeight};
+  });
+  expect(compact.width).toBeCloseTo(15.6, 6);
+  expect(compact.depth).toBeCloseTo(20.8, 6);
+  expect(compact.pois).toBe(4);
+  expect(compact.shellScale).toBe(.65);
+  expect(compact.eyeHeight).toBeCloseTo(64 * .0254, 6);
+  await page.getByLabel('Number of bots').press('End');
+  await expect(page.getByRole('slider', {name: 'Arena size', exact: true})).toHaveValue('1');
+  await expect(page.getByRole('slider', {name: 'Arena size', exact: true})).toHaveAttribute('min', '1');
+  await expect.poll(() => page.evaluate(() => (window as any).compactArenaEngine.sim.actors.length)).toBe(6);
+  const regular = await page.evaluate(() => {
+    const e = (window as any).compactArenaEngine, arena = e.sim.arena;
+    return {width: arena.maxX - arena.minX, pois: arena.pois.length, eyeHeight: e.sim.actors[0].eyeHeight};
+  });
+  expect(regular.width).toBe(24);
+  expect(regular.pois).toBe(6);
+  expect(regular.eyeHeight).toBe(compact.eyeHeight);
+  expect(errors).toEqual([]);
+});
+
 test('AI Duel is playable from the first visit with adjacent bot controls', async ({page}, info) => {
   test.skip(info.project.name !== 'chromium', 'Desktop duel smoke test');
   await page.goto('/');
@@ -118,7 +158,7 @@ test('Duel remains playable on a mobile landscape viewport', async ({page}, info
   const canvas = page.locator('canvas[data-duel]');
   const bounds = (await canvas.boundingBox())!;
   expect(bounds.width).toBeGreaterThan(500);
-  expect(bounds.height).toBeGreaterThan(190);
+  expect(bounds.height).toBeGreaterThan(240);
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   await page.getByRole('button', {name: 'Enter duel'}).click();
   await expect(page.getByRole('button', {name: 'Pause duel'})).toBeVisible();

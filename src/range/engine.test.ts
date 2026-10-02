@@ -18,6 +18,21 @@ function rayFixture() {
   return { engine, body, wall, target };
 }
 
+it.each([true, false])('keeps touch or genuinely unsupported capture usable (touch=%s)', async coarse => {
+  const engine = Object.create(RangeEngine.prototype) as RangeEngine;
+  const request = vi.fn().mockRejectedValue(new Error('Touch must not request pointer lock'));
+  const guard = {enter:vi.fn().mockResolvedValue(undefined)};
+  Object.assign(engine,{enterRevision:0,sim:{active:false,equipped:'ak47',settings:defaults},
+    renderer:{domElement:{focus:vi.fn(),requestPointerLock:coarse ? request : undefined}},
+    audio:{unlock:vi.fn().mockResolvedValue(undefined)},shortcuts:guard});
+  vi.stubGlobal('matchMedia',()=>({matches:coarse}));
+  try {
+    await engine.enter();
+    expect(engine.sim.active).toBe(true); expect(engine.inputStatus).toBe(coarse ? 'Touch' : 'Drag aim (mouse capture unsupported)');
+    expect(request).not.toHaveBeenCalled(); expect(guard.enter).toHaveBeenCalledWith(false);
+  } finally {vi.unstubAllGlobals();}
+});
+
 describe('Target line of sight', () => {
   const origin = { x: 0, y: 1, z: 0 }, direction = { x: 0, y: 0, z: -1 };
   it('counts a body before its backplate, but not one behind a solid', () => {
@@ -28,8 +43,10 @@ describe('Target line of sight', () => {
   });
   it('does not score the held weapon or an inactive transfer target', () => {
     const { engine, body, target } = rayFixture();
+    const cast = vi.spyOn(body, 'raycast');
     body.userData.skipScoring = true;
     expect(engine.castTargets(origin, direction)).toHaveLength(0);
+    expect(cast).not.toHaveBeenCalled();
     body.userData.skipScoring = false; target.visible = false;
     expect(engine.castTargets(origin, direction)).toHaveLength(0);
   });
@@ -42,9 +59,25 @@ describe('Target line of sight', () => {
   });
 });
 
-it.each(Object.keys(modeNames) as Mode[])('shows distinct head/body feedback for actual hits in %s mode',mode=>{
+it('R8 secondary icon fires once while held pointer input can repeat at native cadence',()=>{
+  const engine=Object.create(RangeEngine.prototype) as RangeEngine;
+  engine.sim=new Simulation({...defaults,mode:'guided',weapon:'revolver',spread:false});
+  engine.sim.active=true;
+  let shots=0;engine.sim.onShot=()=>shots++;
+  engine.secondary();expect(shots).toBe(1);expect(engine.sim.firing).toBe(false);
+  for(let tick=0;tick<70;tick++)engine.sim.step(1/128);
+  expect(shots).toBe(1);
+  engine.secondary(true);for(let tick=0;tick<140;tick++)engine.sim.step(1/128);
+  expect(shots).toBeGreaterThan(3);
+  engine.sim.release('mouse');const before=shots;
+  for(let tick=0;tick<140;tick++)engine.sim.step(1/128);
+  expect(shots).toBe(before);
+});
+
+it.each(Object.keys(modeNames).filter(mode => mode !== 'hearing') as Mode[])('shows distinct head/body feedback for actual hits in %s mode',mode=>{
   const {engine,body,wall,target}=rayFixture();
   engine.sim=new Simulation({...defaults,mode});
+  Object.assign(engine, {xpTargets: new Set(), viewAnimations: new Map(), viewMuzzles: new Map(), viewFlashes: {fire: vi.fn()}});
   body.position.z=0;target.position.z=-10;
   engine.targets=[target];engine.impacts=new THREE.Group();
   engine.markerGeometry=new THREE.SphereGeometry(.018,6,4);
@@ -71,6 +104,7 @@ it('bounds the GPU weapon cache and never evicts the selected assembly', () => {
   engine.modelCache = new Map<Weapon, THREE.Object3D>(['ak47', 'm4a4', 'm4a1s', 'galil', 'famas'].map(id => [id as Weapon, new THREE.Group()]));
   const dispose = vi.fn(); engine.disposeObject = dispose;
   engine.viewAnimations = new Map();
+  Object.assign(engine, {viewMuzzles: new Map()});
   engine.trimModelCache();
   expect([...engine.modelCache.keys()]).toEqual(['m4a4', 'galil', 'famas']);
   expect(dispose).toHaveBeenCalledTimes(2);

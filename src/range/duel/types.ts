@@ -1,5 +1,6 @@
 import type {Vec, MoveInput} from '../actor-physics';
 import type {Equipment, Slot} from '../equipment';
+import type {PunchAngle} from '../aim-punch';
 
 export type ActorId = number;
 export type ActorCommand = MoveInput & {
@@ -8,6 +9,8 @@ export type ActorCommand = MoveInput & {
   fireHeld: boolean;
   firePressed: boolean;
   reloadPressed: boolean;
+  secondaryPressed?: boolean;
+  secondaryHeld?: boolean;
   equipSlot?: Slot;
 };
 export const idleCommand = (): ActorCommand => ({forward: 0, side: 0, walk: false, crouch: false, jump: false,
@@ -23,6 +26,8 @@ export type DuelActorSnapshot = {
   velocity: {x: number; z: number};
   yaw: number;
   pitch: number;
+  aimPunch?: PunchAngle;
+  deathDirection?: Vec;
   crouched: boolean;
   duckAmount: number;
   health: number;
@@ -34,6 +39,7 @@ export type DuelActorSnapshot = {
   reloading: boolean;
 };
 export type DuelEvent =
+  | {kind: 'pickup'; tick: number; actorId: ActorId; dropId: number; equipment: Equipment}
   | {kind: 'sound'; tick: number; actorId: ActorId; sound: 'footstep' | 'landing'; point: Vec}
   | {kind: 'fire'; tick: number; actorId: ActorId; shotId: number; equipment: Equipment; origin: Vec; direction: Vec}
   | {kind: 'hit'; tick: number; shooter: ActorId; victim: ActorId; shotId: number; group: Hitgroup; point: Vec; healthDamage: number; armorDamage: number; lethal: boolean}

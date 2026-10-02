@@ -6,6 +6,15 @@ import type {DuelActorSnapshot} from './types';
 export type VisibleEnemy = {id: number; aimPoint: Vec; bodyPoint?: Vec; position: Vec};
 export type BotObservation = {time: number; self: DuelActorSnapshot; visible: VisibleEnemy | null};
 
+export const copyVisibleEnemy = (enemy: VisibleEnemy): VisibleEnemy => ({...enemy,
+  position: {...enemy.position}, aimPoint: {...enemy.aimPoint},
+  bodyPoint: enemy.bodyPoint ? {...enemy.bodyPoint} : undefined});
+
+// Sight normally updates every four simulation ticks. A stalled sensor must
+// not leave a live target (and permission to fire) cached indefinitely.
+export const currentVisible = (observation: BotObservation | null, time: number) =>
+  observation && time >= observation.time && time - observation.time <= .075 ? observation.visible : null;
+
 const angleDifference = (a: number, b: number) => Math.atan2(Math.sin(a - b), Math.cos(a - b));
 
 export function observeBot(time: number, self: DuelActorSnapshot, opponents: DuelActorSnapshot[], arena: Arena,

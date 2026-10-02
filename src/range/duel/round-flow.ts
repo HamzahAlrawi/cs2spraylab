@@ -3,6 +3,18 @@ import {verticalContact} from '../actor-collision';
 import type {Solid} from './geometry';
 import type {DuelActorSnapshot} from './types';
 
+export const BOT_COLLAPSE_SECONDS = 1.2;
+export const DEATH_POSE_BLEND_SECONDS = .08;
+export const PLAYER_COLLAPSE_SECONDS = .7;
+
+export function deathVariant(actor: Pick<DuelActorSnapshot, 'id' | 'yaw' | 'deathDirection'>): 'a' | 'b' | 'c' {
+  if (!actor.deathDirection) return (['a', 'b', 'c'] as const)[actor.id % 3];
+  // The native rig faces +Z before the actor group's yaw-minus-PI rotation.
+  const {x, z} = actor.deathDirection, yaw = actor.yaw - Math.PI;
+  const localX = x * Math.cos(yaw) - z * Math.sin(yaw), localZ = x * Math.sin(yaw) + z * Math.cos(yaw);
+  return Math.abs(localX) > Math.abs(localZ) * 1.1 ? 'b' : localZ < 0 ? 'a' : 'c';
+}
+
 export class RoundFlow {
   elapsed = 0;
   ending = false;
@@ -17,14 +29,14 @@ export class RoundFlow {
 }
 
 export function deathView(seconds: number, eyeHeight: number) {
-  const t = clamp(seconds / .85, 0, 1), drop = t * t * (3 - 2 * t);
+  const t = clamp(seconds / PLAYER_COLLAPSE_SECONDS, 0, 1), drop = t * t * (3 - 2 * t);
   return {height: eyeHeight + (.28 - eyeHeight) * drop,
-    pitch: -.18 * drop, roll: .32 * drop, weaponDrop: Math.min(1, seconds / .25)};
+    pitch: .16 * drop, roll: .18 * drop, weaponDrop: clamp(seconds / .12, 0, 1)};
 }
 
-export function deathFeet(actor: Pick<DuelActorSnapshot, 'position' | 'feet'>, seconds: number, solids: readonly Solid[]) {
+export function deathFeet(actor: Pick<DuelActorSnapshot, 'position' | 'feet'>, seconds: number, solids: readonly Solid[], verticalVelocity = 0) {
   // Dead actors no longer advance their movement state, but their presentation
   // still needs a support surface when settling from a jump or on top of cover.
-  const to = actor.feet - .5 * 800 * UNIT * Math.max(0, seconds) ** 2;
+  const time = Math.max(0, seconds), to = actor.feet + verticalVelocity * time - .5 * 800 * UNIT * time ** 2;
   return verticalContact(actor.position, actor.feet, to, 0, solids).feet;
 }

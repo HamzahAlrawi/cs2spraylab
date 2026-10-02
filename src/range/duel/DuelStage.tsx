@@ -1,11 +1,14 @@
 import {useEffect, useRef, useState, type CSSProperties} from 'react';
-import {ArrowRight, ChevronRight, Pause, Play, RotateCcw, Settings2, Shield, Target, X} from 'lucide-react';
-import {gameData, weaponIds, weaponNames, type Settings, type Weapon} from '../config';
+import {ArrowRight, ChevronRight, Eye, Hand, Pause, Play, RotateCcw, ScanLine, Settings2, Shield, Target, X} from 'lucide-react';
+import {gameData, loadoutWeapon, weaponIds, weaponNames, type Settings, type Weapon} from '../config';
 import {botConfig, sanitizeDuelConfig, type BotOverride, type DuelConfig, type SkillLevel} from './config';
 import {DuelEngine, type DuelStatus} from './DuelEngine';
 import './duel.css';
 import {equipmentNames, equipmentStats, type Slot} from '../equipment';
 import {DuelScorecard} from './DuelScorecard';
+import type {ProgressionController} from '../progression';
+import {arenaDesigns} from './arena-layout';
+import {cosmeticPreview, cosmeticLabel} from '../cosmetics';
 
 const initialStatus: DuelStatus = {phase: 'ready', paused: false, health: 100, armor: 100,
   ammo: 30, reloading: false, enemies: 1, seconds: 0, kills: 0, damage: 0, input: 'Ready', caption: '',
@@ -21,7 +24,7 @@ function loadHint() {
   catch {return true;}
 }
 
-export function DuelStage({settings, openSettings, onEnter, suspended}: {settings: Settings; openSettings: () => void; onEnter: () => void; suspended: boolean}) {
+export function DuelStage({settings, openSettings, onEnter, suspended, progression, cosmeticRevision}: {settings: Settings; openSettings: () => void; onEnter: () => void; suspended: boolean; progression?: ProgressionController; cosmeticRevision?: Readonly<Record<string,string>>}) {
   const [config, setConfig] = useState(loadConfig);
   const [status, setStatus] = useState<DuelStatus>(initialStatus);
   const [hint, setHint] = useState(loadHint);
@@ -34,11 +37,12 @@ export function DuelStage({settings, openSettings, onEnter, suspended}: {setting
 
   useEffect(() => {
     if (!canvasHost.current) return;
-    try {engine.current = new DuelEngine(canvasHost.current, crosshair.current!, setStatus, setError, settings, config);}
+    try {engine.current = new DuelEngine(canvasHost.current, crosshair.current!, setStatus, setError, settings, config, progression);}
     catch {setError('WebGL could not start. Enable hardware acceleration and reload.');}
     return () => {engine.current?.dispose(); engine.current = undefined;};
   }, []);
   useEffect(() => {engine.current?.setSettings(settings);}, [settings]);
+  useEffect(() => {void engine.current?.refreshCosmetics();}, [cosmeticRevision]);
   useEffect(() => {if (suspended) engine.current?.pause();}, [suspended]);
   useEffect(() => {
     engine.current?.setConfig(config);
@@ -62,7 +66,9 @@ export function DuelStage({settings, openSettings, onEnter, suspended}: {setting
   };
   const alive = status.phase === 'fighting' && !status.paused;
   const playing = status.phase !== 'ready' && !status.paused;
-  const equipped = status.equipped ?? settings.weapon;
+  const equipped = status.equipped ?? loadoutWeapon(settings);
+  const profile = progression?.getSnapshot().profile;
+  const label = (id: typeof equipped) => profile ? cosmeticLabel(profile, id) : equipmentNames[id];
   const crosshairStyle = {'--cross-color': settings.crosshair.color, '--cross-size': `${settings.crosshair.size}px`,
     '--cross-gap': `${settings.crosshair.gap}px`, '--cross-thickness': `${settings.crosshair.thickness}px`,
     '--cross-outline': `${settings.crosshair.outline}px`, opacity: settings.crosshair.alpha} as CSSProperties;
@@ -72,9 +78,11 @@ export function DuelStage({settings, openSettings, onEnter, suspended}: {setting
       <div className="duel-canvas" ref={canvasHost} />
       <div className="duel-topline"><span className="range-badge"><i />AI DUEL</span><span>{status.enemies} {status.enemies === 1 ? 'ENEMY' : 'ENEMIES'} LEFT</span></div>
       <div className="duel-tools"><div className="equipment-slots" role="group" aria-label="Duel equipment">
-        {([1,2,3] as Slot[]).map(slot => {const id = slot === 1 ? settings.weapon : slot === 2 ? 'usp' : 'knife';
-          return <button key={slot} aria-pressed={equipped === id} title={`${equipmentNames[id]} (${slot})`} aria-label={`Equip ${equipmentNames[id]}`} onClick={() => engine.current?.equip(slot)}><span>{slot}</span><img src={`/models/${id}.png`} alt=""/></button>;})}
+        {([1,2,3] as Slot[]).filter(slot=>slot!==1||(status.loadout ? !!status.loadout.primary : settings.primaryEnabled)).map(slot => {const id = slot === 1 ? status.loadout?.primary ?? settings.weapon : slot === 2 ? status.loadout?.sidearm ?? settings.sidearm : 'knife';
+          return <button key={slot} aria-pressed={equipped === id} title={`${label(id)} (${slot})`} aria-label={`Equip ${equipmentNames[id]}`} onClick={() => engine.current?.equip(slot)}><span>{slot}</span><img src={profile ? cosmeticPreview(profile,id) : `/models/${id}.png`} alt=""/></button>;})}
       </div>
+      <div className="weapon-action-tools"><button className="icon-button" aria-label="Inspect weapon" title="Inspect weapon (F)" onClick={()=>engine.current?.inspect()}><Eye size={16}/></button>
+        {equipped !== 'knife' && (gameData.weapons[equipped].zoomLevels > 0 || gameData.weapons[equipped].hasBurst || gameData.weapons[equipped].isRevolver) && <button className="icon-button" aria-label="Secondary weapon mode" title={equipped === 'revolver' ? 'Quick alternate shot (right click)' : 'Scope / burst mode (right click)'} onClick={()=>engine.current?.secondary()}><ScanLine size={16}/></button>}</div>
       {playing && <div className="duel-exit"><span>Press ESC to exit</span><button className="icon-button" aria-label="Pause duel" title="Pause duel" onClick={() => engine.current?.pause()}><Pause size={16}/></button></div>}
       {alive && !status.shortcutProtected && <div className="duel-shortcut-warning" role="status">C to crouch. Ctrl+W may close this tab.</div>}
       </div>
@@ -82,6 +90,7 @@ export function DuelStage({settings, openSettings, onEnter, suspended}: {setting
         <i className="arm top"/><i className="arm right"/><i className="arm bottom"/><i className="arm left"/>{settings.crosshair.dot&&<i className="dot"/>}
       </div></div>
       {status.phase !== 'ready' && status.caption && <div className="duel-caption" role="status">{status.caption}</div>}
+      {alive && status.pickup && <button className="pickup-prompt" title="Pick up weapon (E)" onClick={()=>engine.current?.pickup()}><Hand size={15}/>E <span>Pick up {equipmentNames[status.pickup]}</span></button>}
       {status.phase === 'result' && <div className={`duel-result ${status.outcome}`} role="status"><strong>{status.outcome === 'won' ? 'Round won' : status.outcome === 'lost' ? 'Round lost' : 'Draw'}</strong>
         <span>{status.paused ? 'Paused' : `Next round in ${status.nextRoundIn.toFixed(1)}s`}</span>
         {status.review && <><b>{status.review.message}</b><p>{status.review.tip}</p></>}</div>}
@@ -94,7 +103,7 @@ export function DuelStage({settings, openSettings, onEnter, suspended}: {setting
       <div className="duel-hud">
         <div className="duel-health"><small>HEALTH</small><strong>{Math.ceil(status.health)}</strong><span><Shield size={13}/>{Math.ceil(status.armor)} armor</span></div>
         <div className="duel-round"><span>{status.kills} KILLS</span><strong>{Math.max(0, Math.ceil(config.roundSeconds - status.seconds))}<small> s</small></strong><span>{Math.round(status.damage)} DAMAGE</span></div>
-        <div className="duel-ammo"><small>{equipmentNames[equipped]}</small><strong>{equipped === 'knife' ? '--' : status.ammo}{equipped !== 'knife' && <em> / {equipmentStats(equipped).magazine}</em>}</strong><span>{status.reloading ? 'Reloading' : status.input}</span>{equipped !== 'knife' && <button className="reload-pistol" title="Reload (R)" disabled={!alive || status.reloading || status.ammo === equipmentStats(equipped).magazine} onClick={() => engine.current?.sim.command(0, {reloadPressed: true})}><RotateCcw size={13}/>Reload</button>}</div>
+        <div className="duel-ammo"><small>{label(equipped)}</small><strong>{equipped === 'knife' ? '--' : status.ammo}{equipped !== 'knife' && <em> / {equipmentStats(equipped).magazine}</em>}</strong><span>{status.reloading ? 'Reloading' : status.input}</span>{equipped !== 'knife' && <button className="reload-pistol" title="Reload (R)" disabled={!alive || status.reloading || status.ammo === equipmentStats(equipped).magazine} onClick={() => engine.current?.sim.command(0, {reloadPressed: true})}><RotateCcw size={13}/>Reload</button>}</div>
       </div>
     </div>
     <aside className="duel-controls" aria-label="Duel settings">
@@ -102,7 +111,9 @@ export function DuelStage({settings, openSettings, onEnter, suspended}: {setting
       <div className="tabs" role="tablist" aria-label="Duel panel"><button role="tab" aria-selected={panel === 'setup'} onClick={() => setPanel('setup')}>Setup</button><button role="tab" aria-selected={panel === 'review'} onClick={() => setPanel('review')}>Scorecard</button></div>
       {hint && <div className="duel-hint" role="status"><ArrowRight size={18}/><span>Set up your opponent here</span><button aria-label="Dismiss duel hint" title="Dismiss hint" onClick={dismissHint}><X size={14}/></button></div>}
       {panel === 'review' ? <div className="duel-controls-body"><DuelScorecard review={status.review} history={status.history ?? []}/></div> : <div className="duel-controls-body">
-        <label className="duel-field"><span>Arena size <output>{(24 * config.arenaScale).toFixed(0)} x {(32 * config.arenaScale).toFixed(0)} m</output></span><input type="range" aria-label="Arena size" min="1" max="1.5" step=".05" value={config.arenaScale} onChange={event => update({arenaScale: +event.target.value})}/></label>
+        <label className="duel-field"><span>Map layout <output>{status.arenaDesign}</output></span><select aria-label="Map layout" value={config.mapDesign} onChange={event=>update({mapDesign:event.target.value as DuelConfig['mapDesign']})}>
+          <option value="random">Varied each round</option>{arenaDesigns.map(design=><option key={design} value={design}>{design}</option>)}</select></label>
+        <label className="duel-field"><span>Arena size <output>{(24 * config.arenaScale).toFixed(0)} x {(32 * config.arenaScale).toFixed(0)} m</output></span><input type="range" aria-label="Arena size" min={config.botCount <= 2 ? '.65' : '1'} max="1.5" step=".05" value={config.arenaScale} onChange={event => update({arenaScale: +event.target.value})}/></label>
         <label className="duel-field"><span>Bots <output>{config.botCount}</output></span><input aria-label="Number of bots" type="range" min="1" max="5" step="1" value={config.botCount} onChange={event => update({botCount: +event.target.value})}/></label>
         <label className="duel-field"><span>FACEIT level <output>{config.skill}</output></span><select aria-label="Bot skill level" value={config.skill} onChange={event => update({skill: event.target.value === '10+' ? '10+' : +event.target.value as SkillLevel})}>
           {[1,2,3,4,5,6,7,8,9,10,'10+'].map(level => <option key={level} value={level}>{level}</option>)}

@@ -69,6 +69,16 @@ export class WeaponRecovery {
     });
   }
   get recoil(){return{yaw:this.angle.yaw*2,pitch:this.angle.pitch*2};}
+  setParameters(weapon: AccuracyParameters) {
+    if (this.weapon === weapon) return;
+    // Preserve accumulated firing error while switching stance/zoom baselines.
+    this.penalty = Math.max(weapon.stand, this.penalty - this.weapon.stand + weapon.stand);
+    this.weapon = weapon;
+    this.impulses = recoilTable(weapon).map(p => {
+      const radians = Math.fround(p.angle * Math.fround(Math.PI / 180));
+      return {yaw: Math.fround(Math.sin(radians) * p.magnitude), pitch: Math.fround(Math.cos(radians) * p.magnitude)};
+    });
+  }
   advance(dt:number,crouch=false,airborne=false){
     const baseline=airborne?this.weapon.stand+(this.weapon.jump ?? 0):crouch?this.weapon.crouch:this.weapon.stand;
     const recovery=recoveryTime(this.weapon,this.index,crouch,airborne);

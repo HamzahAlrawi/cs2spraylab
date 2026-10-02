@@ -1,5 +1,6 @@
 import {test,expect} from '@playwright/test';
 import sharp from 'sharp';
+import {canvasColors} from './render-frame';
 
 test.beforeEach(async ({page}) => {
   await page.addInitScript(() => {
@@ -12,17 +13,7 @@ async function ready(page: import('@playwright/test').Page) {
   await expect(page.getByRole('button',{name:'Enter range',exact:true})).toBeEnabled({timeout:45000});
 }
 async function rendered(page: import('@playwright/test').Page) {
-  // Sample the actual WebGL framebuffer, excluding DOM overlays in screenshots.
-  await expect.poll(()=>page.locator('canvas[data-range]').evaluate(node=>new Promise<number>(resolve=>requestAnimationFrame(()=>{
-    const canvas=node as HTMLCanvasElement,gl=canvas.getContext('webgl2');
-    if(!gl||gl.isContextLost()){resolve(0);return;}
-    const pixel=new Uint8Array(4),colors=new Set<string>();
-    for(let y=1;y<5;y++)for(let x=1;x<5;x++){
-      gl.readPixels(Math.floor(canvas.width*x/5),Math.floor(canvas.height*y/5),1,1,gl.RGBA,gl.UNSIGNED_BYTE,pixel);
-      colors.add(`${pixel[0]},${pixel[1]},${pixel[2]}`);
-    }
-    resolve(colors.size);
-  }))),{timeout:15000}).toBeGreaterThan(3);
+  await expect.poll(()=>canvasColors(page,'canvas[data-range]'),{timeout:15000}).toBeGreaterThan(3);
 }
 
 test('the resized drill canvas remains visible without DOM overlays',async({page,browserName})=>{
@@ -34,7 +25,7 @@ test('the resized drill canvas remains visible without DOM overlays',async({page
   test.fail(browserName==='webkit'&&process.platform==='win32','Windows Playwright WebKit also loses a standalone WebGL canvas after a backing-buffer resize; physical Safari verification is pending.');
   expect(stats.channels.slice(0,3).every(channel=>channel.stdev>8)).toBe(true);
 });
-test('sidearm and emerald knife render, switch back to primary, and USP is semi-automatic',async({page},info)=>{
+test('sidearm and default knife render, switch back to primary, and USP is semi-automatic',async({page},info)=>{
   await ready(page);
   const canvas=page.locator('canvas[data-range]');
   const initial=await canvas.screenshot();
@@ -52,7 +43,7 @@ test('sidearm and emerald knife render, switch back to primary, and USP is semi-
   await page.waitForTimeout(400);await expect(page.getByTestId('ammo')).toContainText('11');
   if(await page.evaluate(()=>!!document.pointerLockElement))await page.keyboard.press('Escape');
   else await page.getByRole('button',{name:'Pause range',exact:true}).click();
-  await page.getByRole('button',{name:'Equip Butterfly | Emerald',exact:true}).click();
+  await page.getByRole('button',{name:'Equip Default knife',exact:true}).click();
   await expect(page.getByRole('button',{name:'Enter range',exact:true})).toBeEnabled({timeout:45000});
   await rendered(page);
   const knife=await canvas.screenshot();expect(knife.equals(pistol)).toBe(false);

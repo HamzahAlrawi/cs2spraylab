@@ -1,6 +1,7 @@
 import type {Vec} from './actor-physics';
 
 export type SpatialSound = {position: Vec; occluded?: boolean; range?: number; distanceMapped?: boolean};
+export type SpatialAudioProfile = {panningModel?: PanningModelType; monoOutput?: boolean};
 
 export function listenerOrientation(yaw: number, pitch: number) {
   return {
@@ -25,9 +26,9 @@ export function positionListener(context: BaseAudioContext, position: Vec, yaw: 
   }
 }
 
-export function spatialChain(context: BaseAudioContext, sound: SpatialSound) {
+export function spatialChain(context: BaseAudioContext, sound: SpatialSound, profile: SpatialAudioProfile = {}) {
   const panner = context.createPanner();
-  panner.panningModel = 'HRTF'; panner.distanceModel = 'inverse';
+  panner.panningModel = profile.panningModel ?? 'HRTF'; panner.distanceModel = 'inverse';
   panner.refDistance = 3; panner.maxDistance = sound.range ?? 55; panner.rolloffFactor = sound.distanceMapped ? 0 : .7;
   panner.positionX.value = sound.position.x; panner.positionY.value = sound.position.y; panner.positionZ.value = sound.position.z;
   const filter = context.createBiquadFilter();
@@ -35,5 +36,8 @@ export function spatialChain(context: BaseAudioContext, sound: SpatialSound) {
   filter.Q.value = .3;
   const gain = context.createGain(); gain.gain.value = sound.occluded ? .58 : 1;
   filter.connect(gain); gain.connect(panner);
-  return {input: filter, output: panner, dispose: () => {filter.disconnect(); gain.disconnect(); panner.disconnect();}};
+  // Downmix after spatialization, then let the destination duplicate the mono signal.
+  const mono = profile.monoOutput ? context.createGain() : undefined;
+  if (mono) {mono.channelCount = 1; mono.channelCountMode = 'explicit'; mono.channelInterpretation = 'speakers'; panner.connect(mono);}
+  return {input: filter, output: mono ?? panner, dispose: () => {filter.disconnect(); gain.disconnect(); panner.disconnect(); mono?.disconnect();}};
 }
