@@ -1,0 +1,1418 @@
+{
+  "build": "2000922",
+  "serverSha256": "3541e46a3193fcf1151e97ce19cd4daf86c5fdb2889033c2bab1d4cc7f555b9c",
+  "damageRva": "0xa82860",
+  "angleServiceRva": "0xa386a0",
+  "recoveryRva": "0xa38bc0",
+  "scale": 3,
+  "note": "Offline native hitgroup arithmetic and 128 Hz angle recovery, pre-armor damage and standard team scales. RNG and angle-service calls stubbed. Angles use trainer up-positive pitch; not live game parity.",
+  "cases": [
+    {
+      "group": "head",
+      "rawDamage": 48,
+      "armor": 0,
+      "helmet": false,
+      "random": 0.09999999999999998,
+      "angle": {
+        "pitch": 28.80000114440918,
+        "yaw": 0.0,
+        "roll": -27.0
+      }
+    },
+    {
+      "group": "head",
+      "rawDamage": 48,
+      "armor": 0,
+      "helmet": false,
+      "random": 0.5,
+      "angle": {
+        "pitch": 28.80000114440918,
+        "yaw": 0.0,
+        "roll": 0.0
+      }
+    },
+    {
+      "group": "head",
+      "rawDamage": 48,
+      "armor": 0,
+      "helmet": false,
+      "random": 0.9,
+      "angle": {
+        "pitch": 28.80000114440918,
+        "yaw": 0.0,
+        "roll": 27.0
+      }
+    },
+    {
+      "group": "head",
+      "rawDamage": 48,
+      "armor": 0,
+      "helmet": true,
+      "random": 0.5,
+      "angle": {
+        "pitch": 0,
+        "yaw": 0,
+        "roll": 0
+      }
+    },
+    {
+      "group": "head",
+      "rawDamage": 48,
+      "armor": 100,
+      "helmet": false,
+      "random": 0.09999999999999998,
+      "angle": {
+        "pitch": 28.80000114440918,
+        "yaw": 0.0,
+        "roll": -27.0
+      }
+    },
+    {
+      "group": "head",
+      "rawDamage": 48,
+      "armor": 100,
+      "helmet": false,
+      "random": 0.5,
+      "angle": {
+        "pitch": 28.80000114440918,
+        "yaw": 0.0,
+        "roll": 0.0
+      }
+    },
+    {
+      "group": "head",
+      "rawDamage": 48,
+      "armor": 100,
+      "helmet": false,
+      "random": 0.9,
+      "angle": {
+        "pitch": 28.80000114440918,
+        "yaw": 0.0,
+        "roll": 27.0
+      }
+    },
+    {
+      "group": "head",
+      "rawDamage": 48,
+      "armor": 100,
+      "helmet": true,
+      "random": 0.5,
+      "angle": {
+        "pitch": 0,
+        "yaw": 0,
+        "roll": 0
+      }
+    },
+    {
+      "group": "head",
+      "rawDamage": 144,
+      "armor": 0,
+      "helmet": false,
+      "random": 0.09999999999999998,
+      "angle": {
+        "pitch": 36.0,
+        "yaw": 0.0,
+        "roll": -27.0
+      }
+    },
+    {
+      "group": "head",
+      "rawDamage": 144,
+      "armor": 0,
+      "helmet": false,
+      "random": 0.5,
+      "angle": {
+        "pitch": 36.0,
+        "yaw": 0.0,
+        "roll": 0.0
+      }
+    },
+    {
+      "group": "head",
+      "rawDamage": 144,
+      "armor": 0,
+      "helmet": false,
+      "random": 0.9,
+      "angle": {
+        "pitch": 36.0,
+        "yaw": 0.0,
+        "roll": 27.0
+      }
+    },
+    {
+      "group": "head",
+      "rawDamage": 144,
+      "armor": 0,
+      "helmet": true,
+      "random": 0.5,
+      "angle": {
+        "pitch": 0,
+        "yaw": 0,
+        "roll": 0
+      }
+    },
+    {
+      "group": "head",
+      "rawDamage": 144,
+      "armor": 100,
+      "helmet": false,
+      "random": 0.09999999999999998,
+      "angle": {
+        "pitch": 36.0,
+        "yaw": 0.0,
+        "roll": -27.0
+      }
+    },
+    {
+      "group": "head",
+      "rawDamage": 144,
+      "armor": 100,
+      "helmet": false,
+      "random": 0.5,
+      "angle": {
+        "pitch": 36.0,
+        "yaw": 0.0,
+        "roll": 0.0
+      }
+    },
+    {
+      "group": "head",
+      "rawDamage": 144,
+      "armor": 100,
+      "helmet": false,
+      "random": 0.9,
+      "angle": {
+        "pitch": 36.0,
+        "yaw": 0.0,
+        "roll": 27.0
+      }
+    },
+    {
+      "group": "head",
+      "rawDamage": 144,
+      "armor": 100,
+      "helmet": true,
+      "random": 0.5,
+      "angle": {
+        "pitch": 0,
+        "yaw": 0,
+        "roll": 0
+      }
+    },
+    {
+      "group": "head",
+      "rawDamage": 480,
+      "armor": 0,
+      "helmet": false,
+      "random": 0.09999999999999998,
+      "angle": {
+        "pitch": 36.0,
+        "yaw": 0.0,
+        "roll": -27.0
+      }
+    },
+    {
+      "group": "head",
+      "rawDamage": 480,
+      "armor": 0,
+      "helmet": false,
+      "random": 0.5,
+      "angle": {
+        "pitch": 36.0,
+        "yaw": 0.0,
+        "roll": 0.0
+      }
+    },
+    {
+      "group": "head",
+      "rawDamage": 480,
+      "armor": 0,
+      "helmet": false,
+      "random": 0.9,
+      "angle": {
+        "pitch": 36.0,
+        "yaw": 0.0,
+        "roll": 27.0
+      }
+    },
+    {
+      "group": "head",
+      "rawDamage": 480,
+      "armor": 0,
+      "helmet": true,
+      "random": 0.5,
+      "angle": {
+        "pitch": 0,
+        "yaw": 0,
+        "roll": 0
+      }
+    },
+    {
+      "group": "head",
+      "rawDamage": 480,
+      "armor": 100,
+      "helmet": false,
+      "random": 0.09999999999999998,
+      "angle": {
+        "pitch": 36.0,
+        "yaw": 0.0,
+        "roll": -27.0
+      }
+    },
+    {
+      "group": "head",
+      "rawDamage": 480,
+      "armor": 100,
+      "helmet": false,
+      "random": 0.5,
+      "angle": {
+        "pitch": 36.0,
+        "yaw": 0.0,
+        "roll": 0.0
+      }
+    },
+    {
+      "group": "head",
+      "rawDamage": 480,
+      "armor": 100,
+      "helmet": false,
+      "random": 0.9,
+      "angle": {
+        "pitch": 36.0,
+        "yaw": 0.0,
+        "roll": 27.0
+      }
+    },
+    {
+      "group": "head",
+      "rawDamage": 480,
+      "armor": 100,
+      "helmet": true,
+      "random": 0.5,
+      "angle": {
+        "pitch": 0,
+        "yaw": 0,
+        "roll": 0
+      }
+    },
+    {
+      "group": "head",
+      "rawDamage": 2800,
+      "armor": 0,
+      "helmet": false,
+      "random": 0.09999999999999998,
+      "angle": {
+        "pitch": 36.0,
+        "yaw": 0.0,
+        "roll": -27.0
+      }
+    },
+    {
+      "group": "head",
+      "rawDamage": 2800,
+      "armor": 0,
+      "helmet": false,
+      "random": 0.5,
+      "angle": {
+        "pitch": 36.0,
+        "yaw": 0.0,
+        "roll": 0.0
+      }
+    },
+    {
+      "group": "head",
+      "rawDamage": 2800,
+      "armor": 0,
+      "helmet": false,
+      "random": 0.9,
+      "angle": {
+        "pitch": 36.0,
+        "yaw": 0.0,
+        "roll": 27.0
+      }
+    },
+    {
+      "group": "head",
+      "rawDamage": 2800,
+      "armor": 0,
+      "helmet": true,
+      "random": 0.5,
+      "angle": {
+        "pitch": 0,
+        "yaw": 0,
+        "roll": 0
+      }
+    },
+    {
+      "group": "head",
+      "rawDamage": 2800,
+      "armor": 100,
+      "helmet": false,
+      "random": 0.09999999999999998,
+      "angle": {
+        "pitch": 36.0,
+        "yaw": 0.0,
+        "roll": -27.0
+      }
+    },
+    {
+      "group": "head",
+      "rawDamage": 2800,
+      "armor": 100,
+      "helmet": false,
+      "random": 0.5,
+      "angle": {
+        "pitch": 36.0,
+        "yaw": 0.0,
+        "roll": 0.0
+      }
+    },
+    {
+      "group": "head",
+      "rawDamage": 2800,
+      "armor": 100,
+      "helmet": false,
+      "random": 0.9,
+      "angle": {
+        "pitch": 36.0,
+        "yaw": 0.0,
+        "roll": 27.0
+      }
+    },
+    {
+      "group": "head",
+      "rawDamage": 2800,
+      "armor": 100,
+      "helmet": true,
+      "random": 0.5,
+      "angle": {
+        "pitch": 0,
+        "yaw": 0,
+        "roll": 0
+      }
+    },
+    {
+      "group": "chest",
+      "rawDamage": 12,
+      "armor": 0,
+      "helmet": false,
+      "random": 0.5,
+      "angle": {
+        "pitch": 1.187999963760376,
+        "yaw": 0.0,
+        "roll": 0.0
+      }
+    },
+    {
+      "group": "chest",
+      "rawDamage": 12,
+      "armor": 100,
+      "helmet": false,
+      "random": 0.5,
+      "angle": {
+        "pitch": 0.17999999225139618,
+        "yaw": 0.0,
+        "roll": 0.0
+      }
+    },
+    {
+      "group": "chest",
+      "rawDamage": 36,
+      "armor": 0,
+      "helmet": false,
+      "random": 0.5,
+      "angle": {
+        "pitch": 3.563999891281128,
+        "yaw": 0.0,
+        "roll": 0.0
+      }
+    },
+    {
+      "group": "chest",
+      "rawDamage": 36,
+      "armor": 100,
+      "helmet": false,
+      "random": 0.5,
+      "angle": {
+        "pitch": 0.5399999618530273,
+        "yaw": 0.0,
+        "roll": 0.0
+      }
+    },
+    {
+      "group": "chest",
+      "rawDamage": 120,
+      "armor": 0,
+      "helmet": false,
+      "random": 0.5,
+      "angle": {
+        "pitch": 11.880000114440918,
+        "yaw": 0.0,
+        "roll": 0.0
+      }
+    },
+    {
+      "group": "chest",
+      "rawDamage": 120,
+      "armor": 100,
+      "helmet": false,
+      "random": 0.5,
+      "angle": {
+        "pitch": 1.7999999523162842,
+        "yaw": 0.0,
+        "roll": 0.0
+      }
+    },
+    {
+      "group": "chest",
+      "rawDamage": 700,
+      "armor": 0,
+      "helmet": false,
+      "random": 0.5,
+      "angle": {
+        "pitch": 12.0,
+        "yaw": 0.0,
+        "roll": 0.0
+      }
+    },
+    {
+      "group": "chest",
+      "rawDamage": 700,
+      "armor": 100,
+      "helmet": false,
+      "random": 0.5,
+      "angle": {
+        "pitch": 10.5,
+        "yaw": 0.0,
+        "roll": 0.0
+      }
+    },
+    {
+      "group": "stomach",
+      "rawDamage": 15.0,
+      "armor": 0,
+      "helmet": false,
+      "random": 0.5,
+      "angle": {
+        "pitch": 1.4850000143051147,
+        "yaw": 0.0,
+        "roll": 0.0
+      }
+    },
+    {
+      "group": "stomach",
+      "rawDamage": 15.0,
+      "armor": 100,
+      "helmet": false,
+      "random": 0.5,
+      "angle": {
+        "pitch": 0.22499999403953552,
+        "yaw": 0.0,
+        "roll": 0.0
+      }
+    },
+    {
+      "group": "stomach",
+      "rawDamage": 45.0,
+      "armor": 0,
+      "helmet": false,
+      "random": 0.5,
+      "angle": {
+        "pitch": 4.454999923706055,
+        "yaw": 0.0,
+        "roll": 0.0
+      }
+    },
+    {
+      "group": "stomach",
+      "rawDamage": 45.0,
+      "armor": 100,
+      "helmet": false,
+      "random": 0.5,
+      "angle": {
+        "pitch": 0.675000011920929,
+        "yaw": 0.0,
+        "roll": 0.0
+      }
+    },
+    {
+      "group": "stomach",
+      "rawDamage": 150.0,
+      "armor": 0,
+      "helmet": false,
+      "random": 0.5,
+      "angle": {
+        "pitch": 12.0,
+        "yaw": 0.0,
+        "roll": 0.0
+      }
+    },
+    {
+      "group": "stomach",
+      "rawDamage": 150.0,
+      "armor": 100,
+      "helmet": false,
+      "random": 0.5,
+      "angle": {
+        "pitch": 2.25,
+        "yaw": 0.0,
+        "roll": 0.0
+      }
+    },
+    {
+      "group": "stomach",
+      "rawDamage": 875.0,
+      "armor": 0,
+      "helmet": false,
+      "random": 0.5,
+      "angle": {
+        "pitch": 12.0,
+        "yaw": 0.0,
+        "roll": 0.0
+      }
+    },
+    {
+      "group": "stomach",
+      "rawDamage": 875.0,
+      "armor": 100,
+      "helmet": false,
+      "random": 0.5,
+      "angle": {
+        "pitch": 12.0,
+        "yaw": 0.0,
+        "roll": 0.0
+      }
+    },
+    {
+      "group": "arm",
+      "rawDamage": 12,
+      "armor": 0,
+      "helmet": false,
+      "random": 0.5,
+      "angle": {
+        "pitch": 0,
+        "yaw": 0,
+        "roll": 0
+      }
+    },
+    {
+      "group": "arm",
+      "rawDamage": 12,
+      "armor": 100,
+      "helmet": false,
+      "random": 0.5,
+      "angle": {
+        "pitch": 0,
+        "yaw": 0,
+        "roll": 0
+      }
+    },
+    {
+      "group": "arm",
+      "rawDamage": 36,
+      "armor": 0,
+      "helmet": false,
+      "random": 0.5,
+      "angle": {
+        "pitch": 0,
+        "yaw": 0,
+        "roll": 0
+      }
+    },
+    {
+      "group": "arm",
+      "rawDamage": 36,
+      "armor": 100,
+      "helmet": false,
+      "random": 0.5,
+      "angle": {
+        "pitch": 0,
+        "yaw": 0,
+        "roll": 0
+      }
+    },
+    {
+      "group": "arm",
+      "rawDamage": 120,
+      "armor": 0,
+      "helmet": false,
+      "random": 0.5,
+      "angle": {
+        "pitch": 0,
+        "yaw": 0,
+        "roll": 0
+      }
+    },
+    {
+      "group": "arm",
+      "rawDamage": 120,
+      "armor": 100,
+      "helmet": false,
+      "random": 0.5,
+      "angle": {
+        "pitch": 0,
+        "yaw": 0,
+        "roll": 0
+      }
+    },
+    {
+      "group": "arm",
+      "rawDamage": 700,
+      "armor": 0,
+      "helmet": false,
+      "random": 0.5,
+      "angle": {
+        "pitch": 0,
+        "yaw": 0,
+        "roll": 0
+      }
+    },
+    {
+      "group": "arm",
+      "rawDamage": 700,
+      "armor": 100,
+      "helmet": false,
+      "random": 0.5,
+      "angle": {
+        "pitch": 0,
+        "yaw": 0,
+        "roll": 0
+      }
+    },
+    {
+      "group": "leg",
+      "rawDamage": 9.0,
+      "armor": 0,
+      "helmet": false,
+      "random": 0.5,
+      "angle": {
+        "pitch": 0,
+        "yaw": 0,
+        "roll": 0
+      }
+    },
+    {
+      "group": "leg",
+      "rawDamage": 9.0,
+      "armor": 100,
+      "helmet": false,
+      "random": 0.5,
+      "angle": {
+        "pitch": 0,
+        "yaw": 0,
+        "roll": 0
+      }
+    },
+    {
+      "group": "leg",
+      "rawDamage": 27.0,
+      "armor": 0,
+      "helmet": false,
+      "random": 0.5,
+      "angle": {
+        "pitch": 0,
+        "yaw": 0,
+        "roll": 0
+      }
+    },
+    {
+      "group": "leg",
+      "rawDamage": 27.0,
+      "armor": 100,
+      "helmet": false,
+      "random": 0.5,
+      "angle": {
+        "pitch": 0,
+        "yaw": 0,
+        "roll": 0
+      }
+    },
+    {
+      "group": "leg",
+      "rawDamage": 90.0,
+      "armor": 0,
+      "helmet": false,
+      "random": 0.5,
+      "angle": {
+        "pitch": 0,
+        "yaw": 0,
+        "roll": 0
+      }
+    },
+    {
+      "group": "leg",
+      "rawDamage": 90.0,
+      "armor": 100,
+      "helmet": false,
+      "random": 0.5,
+      "angle": {
+        "pitch": 0,
+        "yaw": 0,
+        "roll": 0
+      }
+    },
+    {
+      "group": "leg",
+      "rawDamage": 525.0,
+      "armor": 0,
+      "helmet": false,
+      "random": 0.5,
+      "angle": {
+        "pitch": 0,
+        "yaw": 0,
+        "roll": 0
+      }
+    },
+    {
+      "group": "leg",
+      "rawDamage": 525.0,
+      "armor": 100,
+      "helmet": false,
+      "random": 0.5,
+      "angle": {
+        "pitch": 0,
+        "yaw": 0,
+        "roll": 0
+      }
+    }
+  ],
+  "recovery": [
+    {
+      "tick": 1,
+      "before": {
+        "pitch": 0.0,
+        "yaw": 0.0,
+        "roll": 0.0
+      },
+      "after": {
+        "pitch": 0.0,
+        "yaw": 0.0,
+        "roll": 0.0
+      }
+    },
+    {
+      "tick": 2,
+      "before": {
+        "pitch": 0.0,
+        "yaw": 0.0,
+        "roll": 0.0
+      },
+      "after": {
+        "pitch": 0.0,
+        "yaw": 0.0,
+        "roll": 0.0
+      }
+    },
+    {
+      "tick": 4,
+      "before": {
+        "pitch": 0.0,
+        "yaw": 0.0,
+        "roll": 0.0
+      },
+      "after": {
+        "pitch": 0.0,
+        "yaw": 0.0,
+        "roll": 0.0
+      }
+    },
+    {
+      "tick": 16,
+      "before": {
+        "pitch": 0.0,
+        "yaw": 0.0,
+        "roll": 0.0
+      },
+      "after": {
+        "pitch": 0.0,
+        "yaw": 0.0,
+        "roll": 0.0
+      }
+    },
+    {
+      "tick": 32,
+      "before": {
+        "pitch": 0.0,
+        "yaw": 0.0,
+        "roll": 0.0
+      },
+      "after": {
+        "pitch": 0.0,
+        "yaw": 0.0,
+        "roll": 0.0
+      }
+    },
+    {
+      "tick": 64,
+      "before": {
+        "pitch": 0.0,
+        "yaw": 0.0,
+        "roll": 0.0
+      },
+      "after": {
+        "pitch": 0.0,
+        "yaw": 0.0,
+        "roll": 0.0
+      }
+    },
+    {
+      "tick": 128,
+      "before": {
+        "pitch": 0.0,
+        "yaw": 0.0,
+        "roll": 0.0
+      },
+      "after": {
+        "pitch": 0.0,
+        "yaw": 0.0,
+        "roll": 0.0
+      }
+    },
+    {
+      "tick": 1,
+      "before": {
+        "pitch": 0.14000000059604645,
+        "yaw": 0.0,
+        "roll": 0.0
+      },
+      "after": {
+        "pitch": 0.0,
+        "yaw": 0.0,
+        "roll": 0.0
+      }
+    },
+    {
+      "tick": 2,
+      "before": {
+        "pitch": 0.0,
+        "yaw": 0.0,
+        "roll": 0.0
+      },
+      "after": {
+        "pitch": 0.0,
+        "yaw": 0.0,
+        "roll": 0.0
+      }
+    },
+    {
+      "tick": 4,
+      "before": {
+        "pitch": 0.0,
+        "yaw": 0.0,
+        "roll": 0.0
+      },
+      "after": {
+        "pitch": 0.0,
+        "yaw": 0.0,
+        "roll": 0.0
+      }
+    },
+    {
+      "tick": 16,
+      "before": {
+        "pitch": 0.0,
+        "yaw": 0.0,
+        "roll": 0.0
+      },
+      "after": {
+        "pitch": 0.0,
+        "yaw": 0.0,
+        "roll": 0.0
+      }
+    },
+    {
+      "tick": 32,
+      "before": {
+        "pitch": 0.0,
+        "yaw": 0.0,
+        "roll": 0.0
+      },
+      "after": {
+        "pitch": 0.0,
+        "yaw": 0.0,
+        "roll": 0.0
+      }
+    },
+    {
+      "tick": 64,
+      "before": {
+        "pitch": 0.0,
+        "yaw": 0.0,
+        "roll": 0.0
+      },
+      "after": {
+        "pitch": 0.0,
+        "yaw": 0.0,
+        "roll": 0.0
+      }
+    },
+    {
+      "tick": 128,
+      "before": {
+        "pitch": 0.0,
+        "yaw": 0.0,
+        "roll": 0.0
+      },
+      "after": {
+        "pitch": 0.0,
+        "yaw": 0.0,
+        "roll": 0.0
+      }
+    },
+    {
+      "tick": 1,
+      "before": {
+        "pitch": 0.15000000596046448,
+        "yaw": 0.0,
+        "roll": 0.0
+      },
+      "after": {
+        "pitch": 0.0002869688905775547,
+        "yaw": 0.0,
+        "roll": 0.0
+      }
+    },
+    {
+      "tick": 2,
+      "before": {
+        "pitch": 0.0002869688905775547,
+        "yaw": 0.0,
+        "roll": 0.0
+      },
+      "after": {
+        "pitch": 0.0,
+        "yaw": 0.0,
+        "roll": 0.0
+      }
+    },
+    {
+      "tick": 4,
+      "before": {
+        "pitch": 0.0,
+        "yaw": 0.0,
+        "roll": 0.0
+      },
+      "after": {
+        "pitch": 0.0,
+        "yaw": 0.0,
+        "roll": 0.0
+      }
+    },
+    {
+      "tick": 16,
+      "before": {
+        "pitch": 0.0,
+        "yaw": 0.0,
+        "roll": 0.0
+      },
+      "after": {
+        "pitch": 0.0,
+        "yaw": 0.0,
+        "roll": 0.0
+      }
+    },
+    {
+      "tick": 32,
+      "before": {
+        "pitch": 0.0,
+        "yaw": 0.0,
+        "roll": 0.0
+      },
+      "after": {
+        "pitch": 0.0,
+        "yaw": 0.0,
+        "roll": 0.0
+      }
+    },
+    {
+      "tick": 64,
+      "before": {
+        "pitch": 0.0,
+        "yaw": 0.0,
+        "roll": 0.0
+      },
+      "after": {
+        "pitch": 0.0,
+        "yaw": 0.0,
+        "roll": 0.0
+      }
+    },
+    {
+      "tick": 128,
+      "before": {
+        "pitch": 0.0,
+        "yaw": 0.0,
+        "roll": 0.0
+      },
+      "after": {
+        "pitch": 0.0,
+        "yaw": 0.0,
+        "roll": 0.0
+      }
+    },
+    {
+      "tick": 1,
+      "before": {
+        "pitch": 0.5400000214576721,
+        "yaw": 0.0,
+        "roll": 0.0
+      },
+      "after": {
+        "pitch": 0.366658091545105,
+        "yaw": 0.0,
+        "roll": 0.0
+      }
+    },
+    {
+      "tick": 2,
+      "before": {
+        "pitch": 0.366658091545105,
+        "yaw": 0.0,
+        "roll": 0.0
+      },
+      "after": {
+        "pitch": 0.2038183957338333,
+        "yaw": 0.0,
+        "roll": 0.0
+      }
+    },
+    {
+      "tick": 4,
+      "before": {
+        "pitch": 0.050844673067331314,
+        "yaw": 0.0,
+        "roll": 0.0
+      },
+      "after": {
+        "pitch": 0.0,
+        "yaw": 0.0,
+        "roll": 0.0
+      }
+    },
+    {
+      "tick": 16,
+      "before": {
+        "pitch": 0.0,
+        "yaw": 0.0,
+        "roll": 0.0
+      },
+      "after": {
+        "pitch": 0.0,
+        "yaw": 0.0,
+        "roll": 0.0
+      }
+    },
+    {
+      "tick": 32,
+      "before": {
+        "pitch": 0.0,
+        "yaw": 0.0,
+        "roll": 0.0
+      },
+      "after": {
+        "pitch": 0.0,
+        "yaw": 0.0,
+        "roll": 0.0
+      }
+    },
+    {
+      "tick": 64,
+      "before": {
+        "pitch": 0.0,
+        "yaw": 0.0,
+        "roll": 0.0
+      },
+      "after": {
+        "pitch": 0.0,
+        "yaw": 0.0,
+        "roll": 0.0
+      }
+    },
+    {
+      "tick": 128,
+      "before": {
+        "pitch": 0.0,
+        "yaw": 0.0,
+        "roll": 0.0
+      },
+      "after": {
+        "pitch": 0.0,
+        "yaw": 0.0,
+        "roll": 0.0
+      }
+    },
+    {
+      "tick": 1,
+      "before": {
+        "pitch": 3.563999891281128,
+        "yaw": 0.0,
+        "roll": 0.0
+      },
+      "after": {
+        "pitch": 3.2074429988861084,
+        "yaw": 0.0,
+        "roll": 0.0
+      }
+    },
+    {
+      "tick": 2,
+      "before": {
+        "pitch": 3.2074429988861084,
+        "yaw": 0.0,
+        "roll": 0.0
+      },
+      "after": {
+        "pitch": 2.8724889755249023,
+        "yaw": 0.0,
+        "roll": 0.0
+      }
+    },
+    {
+      "tick": 4,
+      "before": {
+        "pitch": 2.557828664779663,
+        "yaw": 0.0,
+        "roll": 0.0
+      },
+      "after": {
+        "pitch": 2.262232780456543,
+        "yaw": 0.0,
+        "roll": 0.0
+      }
+    },
+    {
+      "tick": 16,
+      "before": {
+        "pitch": 0.0,
+        "yaw": 0.0,
+        "roll": 0.0
+      },
+      "after": {
+        "pitch": 0.0,
+        "yaw": 0.0,
+        "roll": 0.0
+      }
+    },
+    {
+      "tick": 32,
+      "before": {
+        "pitch": 0.0,
+        "yaw": 0.0,
+        "roll": 0.0
+      },
+      "after": {
+        "pitch": 0.0,
+        "yaw": 0.0,
+        "roll": 0.0
+      }
+    },
+    {
+      "tick": 64,
+      "before": {
+        "pitch": 0.0,
+        "yaw": 0.0,
+        "roll": 0.0
+      },
+      "after": {
+        "pitch": 0.0,
+        "yaw": 0.0,
+        "roll": 0.0
+      }
+    },
+    {
+      "tick": 128,
+      "before": {
+        "pitch": 0.0,
+        "yaw": 0.0,
+        "roll": 0.0
+      },
+      "after": {
+        "pitch": 0.0,
+        "yaw": 0.0,
+        "roll": 0.0
+      }
+    },
+    {
+      "tick": 1,
+      "before": {
+        "pitch": 36.0,
+        "yaw": 0.0,
+        "roll": 27.0
+      },
+      "after": {
+        "pitch": 33.70637130737305,
+        "yaw": 0.0,
+        "roll": 25.27977752685547
+      }
+    },
+    {
+      "tick": 2,
+      "before": {
+        "pitch": 33.70637130737305,
+        "yaw": 0.0,
+        "roll": 25.27977752685547
+      },
+      "after": {
+        "pitch": 31.551706314086914,
+        "yaw": 0.0,
+        "roll": 23.66377830505371
+      }
+    },
+    {
+      "tick": 4,
+      "before": {
+        "pitch": 29.527584075927734,
+        "yaw": 0.0,
+        "roll": 22.145687103271484
+      },
+      "after": {
+        "pitch": 27.626096725463867,
+        "yaw": 0.0,
+        "roll": 20.719572067260742
+      }
+    },
+    {
+      "tick": 16,
+      "before": {
+        "pitch": 12.968116760253906,
+        "yaw": 0.0,
+        "roll": 9.726086616516113
+      },
+      "after": {
+        "pitch": 12.069918632507324,
+        "yaw": 0.0,
+        "roll": 9.052438735961914
+      }
+    },
+    {
+      "tick": 32,
+      "before": {
+        "pitch": 3.596959114074707,
+        "yaw": 0.0,
+        "roll": 2.6977202892303467
+      },
+      "after": {
+        "pitch": 3.2665305137634277,
+        "yaw": 0.0,
+        "roll": 2.4498987197875977
+      }
+    },
+    {
+      "tick": 64,
+      "before": {
+        "pitch": 0.0,
+        "yaw": 0.0,
+        "roll": 0.0
+      },
+      "after": {
+        "pitch": 0.0,
+        "yaw": 0.0,
+        "roll": 0.0
+      }
+    },
+    {
+      "tick": 128,
+      "before": {
+        "pitch": 0.0,
+        "yaw": 0.0,
+        "roll": 0.0
+      },
+      "after": {
+        "pitch": 0.0,
+        "yaw": 0.0,
+        "roll": 0.0
+      }
+    },
+    {
+      "tick": 1,
+      "before": {
+        "pitch": 4.400000095367432,
+        "yaw": -2.200000047683716,
+        "roll": -6.599999904632568
+      },
+      "after": {
+        "pitch": 4.058250427246094,
+        "yaw": -2.029125213623047,
+        "roll": -6.087375164031982
+      }
+    },
+    {
+      "tick": 2,
+      "before": {
+        "pitch": 4.058250427246094,
+        "yaw": -2.029125213623047,
+        "roll": -6.087375164031982
+      },
+      "after": {
+        "pitch": 3.737206220626831,
+        "yaw": -1.8686031103134155,
+        "roll": -5.605809211730957
+      }
+    },
+    {
+      "tick": 4,
+      "before": {
+        "pitch": 3.4356131553649902,
+        "yaw": -1.7178065776824951,
+        "roll": -5.153419494628906
+      },
+      "after": {
+        "pitch": 3.1522927284240723,
+        "yaw": -1.5761463642120361,
+        "roll": -4.728438854217529
+      }
+    },
+    {
+      "tick": 16,
+      "before": {
+        "pitch": 0.9682601094245911,
+        "yaw": -0.48413005471229553,
+        "roll": -1.452390432357788
+      },
+      "after": {
+        "pitch": 0.8344289660453796,
+        "yaw": -0.4172144830226898,
+        "roll": -1.2516436576843262
+      }
+    },
+    {
+      "tick": 32,
+      "before": {
+        "pitch": 0.0,
+        "yaw": 0.0,
+        "roll": 0.0
+      },
+      "after": {
+        "pitch": 0.0,
+        "yaw": 0.0,
+        "roll": 0.0
+      }
+    },
+    {
+      "tick": 64,
+      "before": {
+        "pitch": 0.0,
+        "yaw": 0.0,
+        "roll": 0.0
+      },
+      "after": {
+        "pitch": 0.0,
+        "yaw": 0.0,
+        "roll": 0.0
+      }
+    },
+    {
+      "tick": 128,
+      "before": {
+        "pitch": 0.0,
+        "yaw": 0.0,
+        "roll": 0.0
+      },
+      "after": {
+        "pitch": 0.0,
+        "yaw": 0.0,
+        "roll": 0.0
+      }
+    }
+  ]
+}

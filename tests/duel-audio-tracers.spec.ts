@@ -60,8 +60,8 @@ test('live player and enemy tracers begin at barrels and preserve physical endpo
     const endpoint = {x: 1, y: 1.6, z: -10};
     e.processEvents([{kind: 'fire', actorId: 0, shotId: 900, equipment: 'ak47', origin: {x: 0, y: 1.6256, z: 8},
       direction: {x: 0, y: 0, z: -1}}, {kind: 'surface', shooter: 0, shotId: 900, point: endpoint}]);
-    const line = e.effects.children.find((object: any) => object.isLine);
-    const positions = Array.from(line.geometry.getAttribute('position').array) as number[];
+    const line = e.shotEffects.tracers;
+    const positions = Array.from(line.geometry.getAttribute('position').array).slice(0, 6) as number[];
     const start = new Vector3(...positions.slice(0, 3));
     const muzzle = e.viewMuzzle.getWorldPosition(new Vector3());
     const viewNdc = muzzle.clone().project(e.viewCamera);
@@ -72,8 +72,7 @@ test('live player and enemy tracers begin at barrels and preserve physical endpo
     const y = (vp.y + (viewNdc.y + 1) * vp.height / 2) / e.height * 2 - 1;
     e.processEvents([{kind: 'fire', actorId: 1, shotId: 901, equipment: 'ak47', origin: {x: 1, y: 1.6256, z: 3},
       direction: {x: 0, y: 0, z: 1}}, {kind: 'surface', shooter: 1, shotId: 901, point: {x: -.5, y: 1.4, z: 7}}]);
-    const enemyLine = e.effects.children.filter((object: any) => object.isLine)[1];
-    const enemyStart = Array.from(enemyLine.geometry.getAttribute('position').array).slice(0, 3) as number[];
+    const enemyStart = Array.from(line.geometry.getAttribute('position').array).slice(6, 9) as number[];
     const enemyMuzzle = e.botMuzzles.get(1).getWorldPosition(new Vector3());
     return {positions, delta: [ndc.x - x, ndc.y - y],
       ahead: start.sub(e.camera.position).dot(e.camera.getWorldDirection(new Vector3())),

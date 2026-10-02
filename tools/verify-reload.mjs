@@ -4,7 +4,7 @@ import {AnimationMixer, Vector3, Triangle, SkinnedMesh, Mesh} from 'three';
 import {GLTFLoader} from 'three/examples/jsm/loaders/GLTFLoader.js';
 globalThis.ProgressEvent ??= class {constructor(type, init) {Object.assign(this, init);}};
 const ids = process.argv.slice(2).length ? process.argv.slice(2) :
-  [...Object.keys(JSON.parse(fs.readFileSync('src/range/game-data.json')).weapons), 'usp'];
+  [...Object.keys(JSON.parse(fs.readFileSync('src/range/game-data.json')).weapons), 'knife', ...Object.keys(JSON.parse(fs.readFileSync('docs/knife-asset-inventory.json')).knives)];
 for (const id of ids) {
   const data = fs.readFileSync(`public/revamp/models/view-${id}.glb`), length = data.readUInt32LE(12);
   const json = JSON.parse(data.subarray(20, 20 + length));
@@ -13,7 +13,9 @@ for (const id of ids) {
   delete json.materials; delete json.textures; delete json.images;
   json.extensionsRequired = (json.extensionsRequired ?? []).filter(name => name !== 'EXT_texture_webp');
   const {scene, animations} = await new GLTFLoader().parseAsync(JSON.stringify(json), '');
-  assert(animations.some(a => a.name === 'reload') && animations.some(a => a.name === 'idle'), `${id}: missing clips`);
+  const knife = id.startsWith('knife');
+  const required = ['idle', 'draw', 'inspect', ...(knife ? [] : ['reload'])];
+  assert(required.every(name => animations.some(a => a.name === name)), `${id}: missing clips`);
   const mixer = new AnimationMixer(scene), idle = mixer.clipAction(animations.find(a => a.name === 'idle'));
   idle.play(); mixer.update(0); scene.updateMatrixWorld(true);
   const weapons = [];
@@ -37,11 +39,21 @@ for (const id of ids) {
     }
     return gap;
   });
-  assert(Math.max(...grips) < .045, `${id}: detached idle grip ${grips}`);
-  const hand = scene.getObjectByName('hand_L'), before = hand.getWorldPosition(new Vector3());
-  idle.stop(); const reload = mixer.clipAction(animations.find(a => a.name === 'reload')); reload.play();
-  mixer.update(reload.getClip().duration * .45); scene.updateMatrixWorld(true);
-  const travel = hand.getWorldPosition(point).distanceTo(before);
-  assert(travel > .05, `${id}: reload hand did not move`);
-  console.log(`${id}: native clips, idle grips ${grips.map(g => (g * 100).toFixed(2)).join('/')} cm, reload hand travel ${(travel * 100).toFixed(1)} cm`);
+  assert(Math.max(...(knife ? grips.slice(1) : grips)) < .045, `${id}: detached idle grip ${grips}`);
+  const hands = ['hand_L', 'hand_R'].map(name => scene.getObjectByName(name));
+  assert(hands.every(Boolean), `${id}: missing hands`);
+  const before = hands.map(hand => hand.getWorldPosition(new Vector3()));
+  const travels = {};
+  for (const name of required.filter(name => name !== 'idle')) {
+    mixer.stopAllAction();
+    const action = mixer.clipAction(animations.find(a => a.name === name)); action.reset().play();
+    let travel = 0;
+    for (const fraction of [.2, .45, .7]) {
+      mixer.setTime(action.getClip().duration * fraction); scene.updateMatrixWorld(true);
+      travel = Math.max(travel, ...hands.map((hand, i) => hand.getWorldPosition(point).distanceTo(before[i])));
+    }
+    assert(travel > (name === 'reload' ? .05 : .02), `${id}: ${name} hands did not move (${travel}m)`);
+    travels[name] = `${(travel * 100).toFixed(1)}cm`;
+  }
+  console.log(`${id}: idle grips ${grips.map(g => (g * 100).toFixed(2)).join('/')} cm; native motion ${JSON.stringify(travels)}`);
 }

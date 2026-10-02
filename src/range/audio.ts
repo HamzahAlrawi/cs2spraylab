@@ -1,9 +1,10 @@
 import type {Equipment} from './equipment';
 import type {Vec} from './actor-physics';
-import {positionListener, spatialChain, type SpatialSound} from './spatial-audio';
+import {positionListener, spatialChain, type SpatialSound, type SpatialAudioProfile} from './spatial-audio';
 import {curveGain, sampleIndex} from './sound-model';
 
 type NativeEvent = {samples: string[]; volume: number; pitch: number; distanceCurve?: number[][]};
+export type RangeAudioProfile = SpatialAudioProfile & {nativeDistanceCurves?: boolean};
 export class RangeAudio {
   context?: AudioContext;
   buffers = new Map<Equipment, AudioBuffer>();
@@ -20,19 +21,47 @@ export class RangeAudio {
   private listenerPose = '';
   private listenerPosition: Vec = {x: 0, y: 0, z: 0};
   private master?: DynamicsCompressorNode;
+  private voiceCleanup = new Map<AudioBufferSourceNode, () => void>();
+
+  constructor(private readonly profile: RangeAudioProfile = {}) {}
+
+  private async unlockContext() {
+    const Constructor = window.AudioContext || (window as unknown as {webkitAudioContext?: typeof AudioContext}).webkitAudioContext;
+    if (!Constructor || this.disposed) throw new Error('Web Audio unavailable');
+    this.context ??= new Constructor({latencyHint: 'interactive'});
+    await this.context.resume();
+    if (!this.master) {
+      this.master = this.context.createDynamicsCompressor();
+      this.master.threshold.value = -3; this.master.knee.value = 0; this.master.ratio.value = 12;
+      this.master.attack.value = .003; this.master.release.value = .08;
+      this.master.connect(this.context.destination);
+    }
+  }
+
+  /** Strict, opt-in loading for drills that must not silently play missing samples. */
+  async unlockEvents(keys: string[]) {
+    try {
+      await this.unlockContext();
+      if (!Object.keys(this.events).length) {
+        const response = await fetch('/audio/events.json');
+        if (!response.ok) throw new Error('Native audio manifest unavailable');
+        this.events = (await response.json()).events;
+      }
+      const urls = [...new Set(keys.flatMap(key => {
+        const event = this.events[key];
+        if (!event?.samples.length) throw new Error(`Native audio unavailable: ${key}`);
+        return event.samples;
+      }))];
+      for (let i = 0; i < urls.length; i += 4) await Promise.all(urls.slice(i, i + 4).map(url => this.decode(url)));
+      if (this.disposed || this.context?.state !== 'running') return false;
+      this.status = 'ready'; return true;
+    } catch {this.status = 'unavailable'; return false;}
+  }
 
   async unlock(weapon: Equipment) {
     try {
-      const Constructor = window.AudioContext || (window as unknown as {webkitAudioContext?: typeof AudioContext}).webkitAudioContext;
-      if (!Constructor || this.disposed) return;
-      this.context ??= new Constructor({latencyHint: 'interactive'});
-      await this.context.resume();
-      if (!this.master) {
-        this.master = this.context.createDynamicsCompressor();
-        this.master.threshold.value = -3; this.master.knee.value = 0; this.master.ratio.value = 12;
-        this.master.attack.value = .003; this.master.release.value = .08;
-        this.master.connect(this.context.destination);
-      }
+      if (this.disposed || !(window.AudioContext || (window as unknown as {webkitAudioContext?: typeof AudioContext}).webkitAudioContext)) return;
+      await this.unlockContext();
       this.manifest ??= fetch('/audio/events.json').then(async response => {
         if (response.ok) this.events = (await response.json()).events;
       }).catch(() => {});
@@ -83,17 +112,18 @@ export class RangeAudio {
   }
   private emit(buffer: AudioBuffer, volume: number, pitch: number, spatial?: SpatialSound, pan = 0) {
     if (!this.context || this.context.state !== 'running' || !volume || this.disposed) return;
-    if (this.voices.size >= 24) {const oldest = this.voices.values().next().value!; this.voices.delete(oldest); oldest.stop();}
+    if (this.voices.size >= 24) {const oldest = this.voices.values().next().value!; oldest.stop(); this.voiceCleanup.get(oldest)?.();}
     const voice = this.context.createBufferSource(), gain = this.context.createGain();
     voice.buffer = spatial ? this.monoBuffer(buffer) : buffer; voice.playbackRate.value = pitch;
     gain.gain.value = Math.max(0, Math.min(1, volume)); voice.connect(gain);
-    const chain = spatial ? spatialChain(this.context, spatial) : undefined;
+    const chain = spatial ? spatialChain(this.context, spatial, this.profile) : undefined;
     const stereo = !spatial && pan ? this.context.createStereoPanner() : undefined;
     if (chain) {gain.connect(chain.input); chain.output.connect(this.master!);}
     else if (stereo) {stereo.pan.value = pan; gain.connect(stereo); stereo.connect(this.master!);}
     else gain.connect(this.master!);
     this.voices.add(voice);
-    voice.onended = () => {voice.disconnect(); gain.disconnect(); stereo?.disconnect(); chain?.dispose(); this.voices.delete(voice);};
+    const cleanup = () => {voice.disconnect(); gain.disconnect(); stereo?.disconnect(); chain?.dispose(); this.voices.delete(voice); this.voiceCleanup.delete(voice);};
+    this.voiceCleanup.set(voice, cleanup); voice.onended = cleanup;
     voice.start();
   }
   playEvent(key: string, volume: number, spatial?: SpatialSound, pan = 0) {
@@ -105,9 +135,10 @@ export class RangeAudio {
     this.previous.set(key, index);
     const distance = spatial ? Math.hypot(spatial.position.x - this.listenerPosition.x,
       spatial.position.y - this.listenerPosition.y, spatial.position.z - this.listenerPosition.z) : 0;
-    const attenuation = spatial && event.distanceCurve ? curveGain(distance / .0254, event.distanceCurve) : 1;
+    const mapped = spatial && event.distanceCurve && this.profile.nativeDistanceCurves !== false;
+    const attenuation = mapped ? curveGain(distance / .0254, event.distanceCurve!) : 1;
     this.emit(buffer, volume * event.volume * attenuation, event.pitch,
-      spatial && event.distanceCurve ? {...spatial, distanceMapped: true} : spatial, pan);
+      mapped ? {...spatial, distanceMapped: true} : spatial, pan);
     return true;
   }
   play(weapon: Equipment, volume: number, spatial?: SpatialSound) {
@@ -121,5 +152,6 @@ export class RangeAudio {
   playHit(head: boolean, armor: boolean, victim: boolean, volume: number, spatial?: SpatialSound) {
     this.playEvent(`${victim ? 'hurt' : 'hit'}-${head ? armor ? 'helmet' : 'head' : armor ? 'armor' : 'body'}`, volume * .55, spatial);
   }
-  dispose() {this.disposed = true; for (const v of this.voices) v.stop(); void this.context?.close().catch(() => {});}
+  stopVoices() {for (const v of this.voices) {try {v.stop();} catch {} this.voiceCleanup.get(v)?.();}}
+  dispose() {this.disposed = true; this.stopVoices(); void this.context?.close().catch(() => {});}
 }

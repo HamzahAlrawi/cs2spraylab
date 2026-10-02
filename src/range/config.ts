@@ -2,8 +2,8 @@ import data from './game-data.json';
 import { nativeRecoilPattern } from './recoil';
 
 export type Weapon = keyof typeof data.weapons;
-export type Mode = 'duel' | 'guided' | 'spray' | 'transfer' | 'peek' | 'precision' | 'burst';
-export const modeNames: Record<Mode, string> = { duel: 'AI Duel', guided: 'Guided spray', spray: 'Free spray', transfer: 'Spray transfer', peek: 'Peeking practice', precision: 'Counterstrafing practice', burst: 'Burst & reposition' };
+export type Mode = 'duel' | 'guided' | 'spray' | 'transfer' | 'peek' | 'precision' | 'burst' | 'hearing';
+export const modeNames: Record<Mode, string> = { duel: 'AI Duel', guided: 'Guided spray', spray: 'Free spray', transfer: 'Spray transfer', peek: 'Peeking practice', precision: 'Counterstrafing practice', burst: 'Burst & reposition', hearing: 'Hearing practice' };
 export const historyModeNames = { ...modeNames, tracking: 'Target tracking (retired)' };
 export function migrateMode(mode: unknown): Mode {
   if(typeof mode==='string'&&['weak','ghost','trace','fade','tracking'].includes(mode))return 'guided';
@@ -11,9 +11,10 @@ export function migrateMode(mode: unknown): Mode {
 }
 export type Crosshair = { color: string; size: number; gap: number; thickness: number; outline: number; alpha: number; dot: boolean; t: boolean; dynamic: boolean };
 export type Settings = {
-  weapon: Weapon; mode: Mode; sensitivity: number; dpi: number; invertY: boolean;
+  weapon: Weapon; sidearm: Pistol; primaryEnabled: boolean; mode: Mode; sensitivity: number; dpi: number; invertY: boolean;
   moving: boolean; targetSpeed: 'rifle' | 'smg' | 'knife';
-  follow: boolean; volume: number; spread: boolean; burst: number; quality: 'auto' | 'low' | 'high';
+  follow: boolean; volume: number; spread: boolean; burst: number; quality: 'auto' | 'low' | 'high' | 'performance';
+  frameLimit: number; showFps: boolean; animatedGuides: boolean; protectShortcuts: boolean;
   showImpactPattern: boolean; showMousePath: boolean;
   peekScenario: 'mixed' | 'common' | 'deep' | 'off-angle' | 'elevated';
   peekDuration: number;
@@ -24,13 +25,20 @@ export type Settings = {
   aspect: 'native' | '16:9' | '16:10' | '4:3' | '5:4';
   crosshair: Crosshair;
 };
-export const weaponNames: Record<Weapon, string> = { ak47: 'AK-47', m4a4: 'M4A4', m4a1s: 'M4A1-S', galil: 'Galil AR', famas: 'FAMAS', sg553: 'SG 553', aug: 'AUG', mp9: 'MP9', mp7: 'MP7', mp5sd: 'MP5-SD', mac10: 'MAC-10', ump45: 'UMP-45', p90: 'P90', bizon: 'PP-Bizon', m249: 'M249', negev: 'Negev', cz75a: 'CZ75-Auto' };
+export const weaponNames: Record<Weapon, string> = { ak47: 'AK-47', m4a4: 'M4A4', m4a1s: 'M4A1-S', galil: 'Galil AR', famas: 'FAMAS', sg553: 'SG 553', aug: 'AUG', mp9: 'MP9', mp7: 'MP7', mp5sd: 'MP5-SD', mac10: 'MAC-10', ump45: 'UMP-45', p90: 'P90', bizon: 'PP-Bizon', m249: 'M249', negev: 'Negev', cz75a: 'CZ75-Auto',
+  usp: 'USP-S', glock: 'Glock-18', hkp2000: 'P2000', p250: 'P250', deagle: 'Desert Eagle', elite: 'Dual Berettas',
+  fiveseven: 'Five-SeveN', tec9: 'Tec-9', revolver: 'R8 Revolver', awp: 'AWP', ssg08: 'SSG 08', g3sg1: 'G3SG1', scar20: 'SCAR-20' };
+export const pistolIds = ['usp', 'glock', 'hkp2000', 'p250', 'deagle', 'elite', 'fiveseven', 'tec9', 'cz75a', 'revolver'] as const;
+export type Pistol = typeof pistolIds[number];
+export const sniperIds: Weapon[] = ['awp', 'ssg08', 'g3sg1', 'scar20'];
 export const weaponIds = Object.keys(weaponNames) as Weapon[];
 export const gameData = data;
+export const loadoutWeapon = (settings: Pick<Settings, 'weapon' | 'sidearm' | 'primaryEnabled'>): Weapon => settings.primaryEnabled ? settings.weapon : settings.sidearm;
 export const defaults: Settings = {
-  weapon: 'ak47', mode: 'duel', sensitivity: 1, dpi: 800, invertY: false,
+  weapon: 'ak47', sidearm: 'usp', primaryEnabled: true, mode: 'duel', sensitivity: 1, dpi: 800, invertY: false,
   moving: false, targetSpeed: 'rifle', follow: false, volume: 0.2,
   spread: true, burst: 0, quality: 'auto', impactSize: 1.5,
+  frameLimit: 0, showFps: false, animatedGuides: true, protectShortcuts: true,
   transferAfter: 15, transferRule: 'bullet',
   showImpactPattern: true, showMousePath: true,
   peekScenario: 'mixed', peekDuration: 1, drillPace: 'practice',
@@ -50,6 +58,8 @@ export function sanitizeSettings(raw: unknown): Settings {
   const c = s.crosshair && typeof s.crosshair === 'object' ? s.crosshair : defaults.crosshair;
   return {
     weapon: weaponIds.includes(s.weapon!) ? s.weapon! : defaults.weapon,
+    sidearm: pistolIds.includes(s.sidearm!) ? s.sidearm! : 'usp',
+    primaryEnabled: s.primaryEnabled !== false,
     mode: migrateMode(s.mode),
     sensitivity: numeric(s.sensitivity, 1, .05, 10), dpi: numeric(s.dpi, 800, 100, 32000),
     invertY: s.invertY === true,
@@ -62,7 +72,9 @@ export function sanitizeSettings(raw: unknown): Settings {
     peekDuration: numeric(s.peekDuration,1,.5,10),
     drillPace: s.drillPace === 'challenge' ? 'challenge' : 'practice',
     burst: [0, 5, 10, 15].includes(s.burst!) ? s.burst! : 0,
-    quality: ['auto', 'low', 'high'].includes(s.quality!) ? s.quality! : 'auto',
+    quality: ['auto', 'low', 'high', 'performance'].includes(s.quality!) ? s.quality! : 'auto',
+    frameLimit: [0,30,60,120,144,240].includes(s.frameLimit!) ? s.frameLimit! : s.quality === 'performance' ? 60 : 0,
+    showFps: s.showFps === true, animatedGuides: s.animatedGuides !== false, protectShortcuts: s.protectShortcuts !== false,
     aspect: ['native', '16:9', '16:10', '4:3', '5:4'].includes(s.aspect!) ? s.aspect! : 'native',
     crosshair: {
       color: /^#[\da-f]{6}$/i.test(c.color) ? c.color : defaults.crosshair.color,

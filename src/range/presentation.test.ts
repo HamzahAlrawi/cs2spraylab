@@ -3,7 +3,7 @@ import { PerspectiveCamera, Vector3 } from 'three';
 import { defaults, presets, sanitizeSettings, recoilPattern, weaponIds, gameData } from './config';
 import { GUIDE_COLORS, layoutSprayPattern, mouseCompensation, sprayPlayback } from './spray-demonstration';
 import { VIEWMODEL_FOV, viewmodelViewport } from './viewmodel';
-import { Simulation, Vec } from './simulation';
+import { Simulation, STEP, Vec } from './simulation';
 
 describe('viewmodel presentation', () => {
   it.each([[1920, 1080], [1440, 1080], [1280, 1024], [3440, 1440], [390, 660], [844, 260]])('fits %i x %i without changing proportions or exposing the arm ends', (width, height) => {
@@ -80,6 +80,7 @@ describe('wall spray demonstration', () => {
     for (const invertY of [false, true]) for (const sensitivity of [.5, 2]) {
       const sim = new Simulation({...defaults, mode:'guided', weapon, invertY, sensitivity,spread:false});
       const rays: Vec[] = []; sim.onShot = shot => rays.push(shot.direction); sim.start();
+      while (!rays.length && sim.time < 1) sim.step(STEP);
       let previous = {x: 0, y: 0};
       for (let i = 1; i < sim.pattern.length; i++) {
         sim.recovery.advance(sim.stats.cycle);

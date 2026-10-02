@@ -4,12 +4,13 @@ import {defaults, gameData, weaponIds} from '../config';
 import {Simulation} from '../simulation';
 import {DuelWeaponState} from './weapon-state';
 import {idleCommand} from './types';
+import {REVOLVER_WINDUP} from '../weapon-actions';
 
 const actor = () => ({position: {x: 0, y: 64 * UNIT, z: 0}, velocity: {x: 0, z: 0}, yaw: 0,
   pitch: 0, feet: 0, verticalVelocity: 0, duckAmount: 0});
 
 describe('duel and range ballistic parity', () => {
-  for (const weapon of weaponIds) it(`${weapon}: preserves fractional automatic cadence and shared recoil`, () => {
+  for (const weapon of weaponIds.filter(id => gameData.weapons[id].fullAuto)) it(`${weapon}: preserves fractional automatic cadence and shared recoil`, () => {
     const range = new Simulation({...defaults, mode: 'guided', weapon, spread: false, burst: 0});
     const duel = new DuelWeaponState(weapon, () => 0);
     const command = {...idleCommand(), fireHeld: true, firePressed: true};
@@ -28,11 +29,58 @@ describe('duel and range ballistic parity', () => {
     expect(duelShots).toHaveLength(gameData.weapons[weapon].magazine);
     expect(rangeShots).toHaveLength(duelShots.length);
     duelShots.forEach((shot, i) => {
-      expect(shot.time - i * gameData.weapons[weapon].cycle).toBeGreaterThanOrEqual(-1e-8);
-      expect(shot.time - i * gameData.weapons[weapon].cycle).toBeLessThan(STEP + 1e-8);
+      const windup = weapon === 'revolver' ? REVOLVER_WINDUP : 0;
+      expect(shot.time - windup - i * gameData.weapons[weapon].cycle).toBeGreaterThanOrEqual(-1e-8);
+      expect(shot.time - windup - i * gameData.weapons[weapon].cycle).toBeLessThan(STEP + 1e-8);
       expect(shot.time).toBeCloseTo(rangeShots[i].time, 8);
       for (const axis of ['x', 'y', 'z'] as const) expect(shot.direction[axis]).toBeCloseTo(rangeShots[i].direction[axis], 7);
     });
+  });
+
+  it.each(weaponIds.filter(id => !gameData.weapons[id].fullAuto))('%s preserves range/duel recoil through a manually tapped magazine', weapon => {
+    const range = new Simulation({...defaults, mode: 'guided', weapon, spread: false, burst: 0});
+    const duel = new DuelWeaponState(weapon, () => 0), stats = gameData.weapons[weapon];
+    const rangeShots: {time: number; direction: {x: number; y: number; z: number}}[] = [];
+    const duelShots: typeof rangeShots = [];
+    const period = Math.ceil(stats.cycle / STEP) + 1;
+    range.onShot = shot => rangeShots.push({time: shot.at, direction: shot.direction});
+    for (let tick = 0; tick < period * stats.magazine; tick++) {
+      if (tick) range.step(STEP);
+      const pressed = tick % period === 0;
+      if (pressed) expect(range.start()).toBe(true);
+      const shot = duel.advance(tick * STEP, tick ? STEP : 0,
+        {...idleCommand(), fireHeld: pressed, firePressed: pressed}, actor());
+      if (shot) duelShots.push({time: tick * STEP, direction: shot.direction});
+    }
+    expect(duelShots).toHaveLength(stats.magazine);
+    expect(rangeShots).toHaveLength(stats.magazine);
+    expect(duel.ammo).toBe(0);
+    duelShots.forEach((shot, index) => {
+      expect(shot.time).toBeCloseTo(index * period * STEP, 8);
+      expect(shot.time).toBeCloseTo(rangeShots[index].time, 8);
+      for (const axis of ['x', 'y', 'z'] as const)
+        expect(shot.direction[axis]).toBeCloseTo(rangeShots[index].direction[axis], 7);
+    });
+  });
+
+  it.each(weaponIds.filter(id => !gameData.weapons[id].fullAuto))('%s does not repeat on hold and respects cooldown for a queued press', weapon => {
+    const duel = new DuelWeaponState(weapon, () => 0), stats = gameData.weapons[weapon];
+    const command = {...idleCommand(), fireHeld: true, firePressed: true};
+    expect(duel.advance(0, 0, command, actor())).toBeDefined();
+    command.firePressed = false;
+    const heldTicks = Math.ceil(stats.cycle * 3 / STEP);
+    for (let tick = 1; tick <= heldTicks; tick++)
+      expect(duel.advance(tick * STEP, STEP, command, actor())).toBeUndefined();
+    expect(duel.ammo).toBe(stats.magazine - 1);
+    const pressedAt = (heldTicks + 1) * STEP;
+    expect(duel.advance(pressedAt, STEP, {...command, firePressed: true}, actor())).toBeDefined();
+    const intervalTicks = Math.ceil(stats.cycle / STEP);
+    for (let tick = 1; tick < intervalTicks; tick++)
+      expect(duel.advance(pressedAt + tick * STEP, STEP, {...command, firePressed: tick === 1}, actor())).toBeUndefined();
+    expect(duel.advance(pressedAt + intervalTicks * STEP, STEP, command, actor())).toBeDefined();
+    expect(duel.ammo).toBe(stats.magazine - 3);
+    for (let tick = intervalTicks + 1; tick < intervalTicks * 3; tick++)
+      expect(duel.advance(pressedAt + tick * STEP, STEP, command, actor())).toBeUndefined();
   });
 
   it('does not bank shots across a trigger gap or reload', () => {

@@ -1,21 +1,29 @@
 {
   "build": "2000908",
   "weaponDataAudit": {
-    "build": "2000919",
-    "inspectedAt": "2026-09-30",
-    "parametersSha256": "d20049b1d72bbc174dbceda0d3171164d0aa55569d56e13546f435eb1f3105d0",
-    "scope": "All 33 exported fields of all 17 weapons are unchanged from 2000908. Current RNG and recoil-table arithmetic separately re-emulated; full trajectories remain unverified against native captures.",
-    "clientSha256": "5440adef04e91c282e8d9815f51f8255ad95740920c9e8660fa1ddbb3c07a1f5",
+    "build": "2000922",
+    "inspectedAt": "2026-10-01",
+    "parametersSha256": "45d467f30e8efc6e395668375378b4ccf1119b57978f6fbd2413efab07f70c7d",
+    "scope": "Thirty guns: primary/alternate weapon parameters and crosshair visibility freshly extracted and independently compared with weapons.vdata. Numeric primary/alternate recoil tables and RNG verified against current offline native arithmetic. Full trajectories remain unverified against native captures.",
+    "clientSha256": "9ddf30d68b8ef66607783d418c4f74a6004cf2104572e6c630625e52c1c1202d",
     "tier0Sha256": "4e0dcb0af3f6953f37ddaed0f4e67a56d031f1e84964a262148f8a6f80547791"
   },
   "tableAudit": {
-    "build": "2000919",
-    "inspectedAt": "2026-09-30",
-    "clientSha256": "5440adef04e91c282e8d9815f51f8255ad95740920c9e8660fa1ddbb3c07a1f5",
+    "build": "2000922",
+    "inspectedAt": "2026-10-01",
+    "clientSha256": "9ddf30d68b8ef66607783d418c4f74a6004cf2104572e6c630625e52c1c1202d",
     "tier0Sha256": "4e0dcb0af3f6953f37ddaed0f4e67a56d031f1e84964a262148f8a6f80547791",
-    "clientRvas": {"tableGenerator": "0x7cd9b0", "tableLoop": "0x7cda4b", "tableLoopEnd": "0x7cdc23"},
-    "tier0Rvas": {"constructor": "0x15e660", "randomFloat": "0x15e740"},
-    "scope": "Existing numeric RNG and all 17 primary recoil-table fixtures exactly match offline native arithmetic. No table rescaling was necessary. Punch integrator constants also inspected at RVA 0x84e880; full native trajectories not emulated."
+    "clientRvas": {
+      "tableLoop": "0x7cb72b",
+      "tableLoopEnd": "0x7cb903",
+      "rngConstructorImport": "0x19a8d37",
+      "rngFloatImport": "0x19a8d25"
+    },
+    "tier0Rvas": {
+      "constructor": "0x15e660",
+      "randomFloat": "0x15e740"
+    },
+    "scope": "All thirty primary 64-entry recoil tables and tier0 RNG fixtures exactly match hash-pinned offline emulation. Desert Eagle base magnitude now rounded to native float32 before addition."
   },
   "inspectedAt": "2026-09-20",
   "clientSha256": "a0c195f0b6ec00915ef08c548200a010ebbe7982d3a4bc468cad939b67c8c4e3",
@@ -34,16 +42,36 @@
     "firingInaccuracyAddition": "0x7e5b37",
     "recoilIndexIncrement": "0x7e5ba9"
   },
-  "tier0Rvas": { "constructor": "0x15ea30", "randomFloat": "0x15eb10" },
+  "tier0Rvas": {
+    "constructor": "0x15ea30",
+    "randomFloat": "0x15eb10"
+  },
   "constants": {
-    "tableSize": 64, "smoothing": 0.55, "suppressionShots": 4,
-    "suppressionStart": 0.75, "punchRateHz": 128,
-    "angleExponentialDecay": 8, "angleLinearDecay": 18,
-    "velocityDecay": 4.5, "velocityThreshold": 0.03125, "trajectoryScale": 2,
-    "movementStartRatio": 0.34, "movementEndRatio": 0.95, "runningInaccuracyExponent": 0.25,
-    "indexRecoveryDelayAfterCycle": 0.015625, "indexRecoveryBase10Rate": 2,
-    "indexZeroThreshold": 0.1, "nativeAccuracyStepHz": 64
+    "tableSize": 64,
+    "smoothing": 0.55,
+    "suppressionShots": 4,
+    "suppressionStart": 0.75,
+    "punchRateHz": 128,
+    "angleExponentialDecay": 8,
+    "angleLinearDecay": 18,
+    "velocityDecay": 4.5,
+    "velocityThreshold": 0.03125,
+    "trajectoryScale": 2,
+    "movementStartRatio": 0.34,
+    "movementEndRatio": 0.95,
+    "runningInaccuracyExponent": 0.25,
+    "indexRecoveryDelayAfterCycle": 0.015625,
+    "indexRecoveryBase10Rate": 2,
+    "indexZeroThreshold": 0.1,
+    "nativeAccuracyStepHz": 64
   },
   "verification": "Numeric RNG and full recoil tables match isolated, hash-pinned machine-code emulation. Full angular trajectories require native capture validation.",
-  "limitations": ["Euler rather than quaternion interpolation", "Recovery formulas inspected, not end-to-end native-capture verified", "Approximate random spread without native RNG or Negev special transformation", "128 Hz continuous recovery evaluation rather than native 64 Hz accuracy updates", "Fixed-step rather than subtick shot timing", "Imported capture interruption behavior uses fitted impulses"]
+  "limitations": [
+    "Euler rather than quaternion interpolation",
+    "Recovery formulas inspected, not end-to-end native-capture verified",
+    "Approximate random spread without native RNG or Negev special transformation",
+    "128 Hz continuous recovery evaluation rather than native 64 Hz accuracy updates",
+    "Fixed-step rather than subtick shot timing",
+    "Imported capture interruption behavior uses fitted impulses"
+  ]
 }

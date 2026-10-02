@@ -3,11 +3,11 @@ import {GLTFLoader} from 'three/examples/jsm/loaders/GLTFLoader.js';
 import {clone as cloneSkeleton} from 'three/examples/jsm/utils/SkeletonUtils.js';
 import {DEG, UNIT, type Vec} from '../actor-physics';
 import {RangeAudio} from '../audio';
-import {type Settings, type Weapon} from '../config';
+import {gameData,loadoutWeapon, type Settings, type Weapon} from '../config';
 import {requestRawLock} from '../input';
 import {mouseAngle, VERTICAL_FOV} from '../simulation';
 import {VIEWMODEL_FOV, VIEWMODEL_OFFSET, viewmodelViewport} from '../viewmodel';
-import {type DuelConfig} from './config';
+import {botConfig, type DuelConfig} from './config';
 import {duelArena, traceSolid} from './geometry';
 import {DuelSimulation} from './simulation';
 import type {DuelActorSnapshot, DuelEvent} from './types';
@@ -24,6 +24,18 @@ import {loadDuelHistory, type DuelReview, type DuelHistory} from './coaching';
 import {FOOTSTEP_RANGE} from '../sound-model';
 import {ViewAnimation} from '../view-animation';
 import {equipmentStats} from '../equipment';
+import {ScopeOverlay} from '../scope-overlay';
+import {addArenaCover} from './arena-props';
+import {seedForDesign} from './arena-layout';
+import {applyCosmetic, cosmeticAsset, cosmeticCatalog} from '../cosmetics';
+import weaponMounts from '../weapon-mounts.json';
+import {equippedCosmetic,type DuelXpSetup,type ProgressionController} from '../progression';
+import {prepareNativeViewAssembly} from '../native-view-actions';
+import {ActorCosmeticLoader, loadAgent, type ActorCosmeticInstance} from '../actor-cosmetics';
+import {REVOLVER_WINDUP} from '../weapon-actions';
+import {FrameMetrics, FramePacer, PerformanceMeter, qualityPolicy, renderPixelRatio} from '../performance';
+import {ShortcutGuard} from '../shortcut-guard';
+import {MuzzleFlashes, ShotEffects} from '../weapon-effects';
 
 export type DuelStatus = {
   phase: 'ready' | 'fighting' | 'result'; paused: boolean; outcome?: 'won' | 'lost' | 'draw';
@@ -32,10 +44,9 @@ export type DuelStatus = {
   shortcutProtected: boolean;
   nextRoundIn: number;
   equipped?: Equipment; review?: DuelReview; history?: DuelHistory[];
+  loadout?: {primary: Weapon | null; sidearm: Settings['sidearm']}; pickup?: Equipment;
+  arenaDesign?: string;
 };
-
-type KeyboardLock = {lock(keys: string[]): Promise<void>; unlock(): void};
-const keyboardLock = () => (navigator as Navigator & {keyboard?: KeyboardLock}).keyboard;
 
 const v3 = (point: Vec) => new THREE.Vector3(point.x, point.y, point.z);
 const surface = (color: string, roughness = .86) => new THREE.MeshStandardMaterial({color, roughness});
@@ -69,11 +80,13 @@ export class DuelEngine {
   private inputName = 'Ready';
   private caption = '';
   private captionUntil = 0;
-  private ownsFullscreen = false;
-  private shortcutProtected = false;
+  private shortcuts: ShortcutGuard;
+  private entering = false;
+  private enterRevision = 0;
   private kills = 0;
   private damage = 0;
   private models = new Map<number, THREE.Group>();
+  private heldWeapons = new Map<number, THREE.Object3D>();
   private animators = new Map<number, DuelAnimator>();
   private targetScene?: THREE.Object3D;
   private targetClips: THREE.AnimationClip[] = [];
@@ -81,7 +94,11 @@ export class DuelEngine {
   private worldWeapons = new Map<Weapon, THREE.Object3D>();
   private worldLoading = new Set<Weapon>();
   private viewRevision = 0;
-  private effectLife: {object: THREE.Object3D; until: number}[] = [];
+  private shotEffects: ShotEffects;
+  private viewFlashes: MuzzleFlashes;
+  private shotCounts = new Map<number, number>();
+  private ownTraceColor = new THREE.Color('#fff0c9');
+  private enemyTraceColor = new THREE.Color('#ffd0a4');
   private width = 1;
   private height = 1;
   private readonly followPoint = new THREE.Vector3();
@@ -90,6 +107,10 @@ export class DuelEngine {
   private readonly actorBounds = new THREE.Sphere(new THREE.Vector3(), 1.9);
   private animationTimes = new Map<number, number>();
   private animationClock = 0;
+  private viewAnimationElapsed = 0;
+  private pacer = new FramePacer();
+  private metrics = new FrameMetrics();
+  private meter: PerformanceMeter;
   private viewMuzzle?: THREE.Object3D;
   private botMuzzles = new Map<number, THREE.Object3D>();
   private readonly roundFlow = new RoundFlow();
@@ -100,17 +121,31 @@ export class DuelEngine {
   private renderedEquipment?: Equipment;
   private history = loadDuelHistory();
   private wasReloading = false;
+  private scope: ScopeOverlay;
+  private dropModels = new Map<number, THREE.Object3D>();
+  private pickupDrawing = false;
+  private cosmeticKey = '';
+  private xpAttempt: string | null = null;
+  private xpRevision = 0;
+  private xpDamage = new Map<number, number>();
+  private actorLoader = new ActorCosmeticLoader();
+  private agentInstance?: ActorCosmeticInstance;
+  private agentRevision = 0;
 
   constructor(private readonly host: HTMLElement, private readonly crosshair: HTMLElement,
     private readonly onStatus: (status: DuelStatus) => void,
-    private readonly onError: (message: string) => void, private settings: Settings, private config: DuelConfig) {
+    private readonly onError: (message: string) => void, private settings: Settings, private config: DuelConfig,
+    private readonly progression?: ProgressionController) {
+    this.cosmeticKey = JSON.stringify(progression?.getSnapshot().profile.equipped);
     this.sim = this.createSimulation();
+    this.scope = new ScopeOverlay(host);
     this.damageFeedback = new DamageFeedback(host);
-    this.renderer = new THREE.WebGLRenderer({antialias: settings.quality !== 'low', powerPreference: 'high-performance'});
+    this.meter = new PerformanceMeter(host); this.meter.configure(settings.showFps);
+    this.shortcuts = new ShortcutGuard(host.closest('.range-stage'));
+    this.renderer = new THREE.WebGLRenderer({antialias: qualityPolicy(settings.quality).shadows, powerPreference: 'high-performance'});
     this.renderer.outputColorSpace = THREE.SRGBColorSpace;
     this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
     this.renderer.toneMappingExposure = 1.08;
-    this.renderer.setPixelRatio(Math.min(devicePixelRatio || 1, settings.quality === 'low' ? 1 : 1.5));
     this.renderer.domElement.dataset.duel = 'true';
     this.renderer.domElement.setAttribute('aria-label', 'AI Duel arena');
     this.renderer.domElement.tabIndex = 0;
@@ -160,18 +195,19 @@ export class DuelEngine {
     this.shell.scale.set(config.arenaScale, 1, config.arenaScale);
     this.scene.add(this.shell); batchStaticMeshes(this.shell);
     this.scene.add(this.actors, this.covers, this.effects);
+    this.shotEffects = new ShotEffects(this.effects); this.viewFlashes = new MuzzleFlashes(this.viewScene, 2);
     this.rebuildCovers();
     this.bindInput();
     this.observer = new ResizeObserver(() => this.resize()); this.observer.observe(host);
     this.resize();
-    void this.loadTarget(); void this.loadViewModel(settings.weapon);
+    void this.loadTarget(); void this.loadViewModel(loadoutWeapon(settings));
     this.report();
     this.frame = requestAnimationFrame(time => this.tick(time));
   }
 
   private createSimulation() {
-    const seed = this.seed++;
-    const simulation = new DuelSimulation(this.config, seed, duelArena(seed, this.config.arenaScale), this.settings.weapon);
+    const seed = seedForDesign(this.seed++, this.config.mapDesign);
+    const simulation = new DuelSimulation(this.config, seed, duelArena(seed, this.config.arenaScale), this.settings.weapon, this.settings.sidearm, this.settings.primaryEnabled);
     simulation.playerAspect = this.camera.aspect;
     return simulation;
   }
@@ -190,35 +226,7 @@ export class DuelEngine {
       barrier: surface('#b3ad91'), cap: surface('#a8b7b1', .55), trim: surface('#354e52', .55),
       hazard: surface('#ddbf70', .62), crateEdge: surface('#654e38'),
     };
-    const add = (size: [number, number, number], point: [number, number, number], material: THREE.Material) => {
-      const mesh = new THREE.Mesh(new THREE.BoxGeometry(...size), material);
-      mesh.position.set(...point); this.covers.add(mesh);
-    };
-    for (const {center, size, kind = 'concrete'} of this.sim.arena.solids) {
-      add([size.x, size.y, size.z], [center.x, center.y, center.z], materials[kind]);
-      const horizontal = size.x >= size.z;
-      if (kind === 'crate') {
-        add([size.x + .035, .07, size.z + .035], [center.x, center.y + size.y / 2, center.z], materials.crateEdge);
-        add([size.x + .05, .07, size.z + .05], [center.x, center.y - size.y / 2 + .06, center.z], materials.crateEdge);
-      } else {
-        add([size.x + .04, .06, size.z + .04], [center.x, center.y + size.y / 2, center.z], materials.cap);
-      }
-      if (kind === 'cargo') {
-        const length = horizontal ? size.x : size.z;
-        for (let n = 1; n < Math.ceil(length / 1.3); n++) {
-          const shift = -length / 2 + n * length / Math.ceil(length / 1.3);
-          add(horizontal ? [.035, size.y * .9, size.z + .03] : [size.x + .03, size.y * .9, .035],
-            [center.x + (horizontal ? shift : 0), center.y, center.z + (horizontal ? 0 : shift)], materials.trim);
-        }
-      } else if (kind === 'barrier') {
-        add(horizontal ? [size.x + .035, .06, size.z + .04] : [size.x + .04, .06, size.z + .035],
-          [center.x, center.y + size.y / 2 - .12, center.z], materials.hazard);
-      } else if (kind === 'concrete') {
-        for (const face of [-1, 1]) add(horizontal ? [size.x * .82, .04, .025] : [.025, .04, size.z * .82],
-          [center.x + (horizontal ? 0 : face * (size.x / 2 + .014)), .48,
-            center.z + (horizontal ? face * (size.z / 2 + .014) : 0)], materials.hazard);
-      }
-    }
+    for (const solid of this.sim.arena.solids) addArenaCover(solid, this.covers, materials);
     batchStaticMeshes(this.covers);
   }
 
@@ -265,15 +273,22 @@ export class DuelEngine {
   }
 
   private async loadTarget() {
+    const revision = ++this.agentRevision;
     try {
-      const {scene, animations} = await new GLTFLoader().loadAsync('/models/target.glb');
-      if (this.disposed) {disposeResources([scene]); return;}
+      const profile=this.progression?.getSnapshot().profile;
+      const id = profile ? equippedCosmetic(profile,cosmeticCatalog,'agent')?.id : undefined;
+      const instance = id && id !== 'agent-standard' ? await loadAgent(id, undefined, this.actorLoader) : undefined;
+      const {scene, animations} = instance ?? await new GLTFLoader().loadAsync('/models/target.glb');
+      if (this.disposed || revision !== this.agentRevision) {if (instance) instance.dispose(); else disposeResources([scene]); return;}
+      const oldScene = this.targetScene, oldInstance = this.agentInstance;
+      this.agentInstance = instance;
       this.targetScene = scene; this.targetClips = animations;
       this.rebuildActors();
+      if (oldInstance) oldInstance.dispose(); else if (oldScene) disposeResources([oldScene]);
       this.loadWorldWeapons();
       try {
-        const motion = await new GLTFLoader().loadAsync('/models/duel-motion.glb');
-        if (this.disposed) return;
+        const motion = await new GLTFLoader().loadAsync('/models/duel-motion.glb?v=constrained-deaths-1');
+        if (this.disposed || revision !== this.agentRevision) {disposeResources([motion.scene]);return;}
         this.targetClips = motion.animations;
         this.motionReady = true;
         this.rebuildActors();
@@ -286,46 +301,60 @@ export class DuelEngine {
     this.animationTimes.clear();
     this.botMuzzles.clear();
     disposeSkeletons(this.actors);
-    this.actors.clear(); this.models.clear();
+    this.actors.clear(); this.models.clear(); this.heldWeapons.clear();
     if (!this.targetScene) return;
     for (const actor of this.sim.snapshot().slice(1)) {
       const root = new THREE.Group();
       const model = cloneSkeleton(this.targetScene);
       const held = this.attachWorldWeapon(model, actor.equipment as Weapon);
+      if (held) {held.visible = actor.alive; this.heldWeapons.set(actor.id, held);}
       const muzzle = held ? muzzleAnchor(held) : undefined;
       if (muzzle) this.botMuzzles.set(actor.id, muzzle);
       root.add(model); this.actors.add(root); this.models.set(actor.id, root);
-      this.animators.set(actor.id, new DuelAnimator(model, this.targetClips, (actor.id * .317) % 1));
+      this.animators.set(actor.id, new DuelAnimator(model, this.targetClips, (actor.id * .317) % 1, actor.equipment));
     }
   }
 
   private loadWorldWeapons() {
     for (const weapon of new Set(this.sim.snapshot().slice(1).map(actor => actor.equipment as Weapon))) {
-      if (weapon === 'm4a1s' || this.worldWeapons.has(weapon) || this.worldLoading.has(weapon)) continue;
+      const cached = this.worldWeapons.get(weapon);
+      if (cached) {this.worldWeapons.delete(weapon); this.worldWeapons.set(weapon, cached); continue;}
+      if (this.worldLoading.has(weapon)) continue;
       this.worldLoading.add(weapon);
       void new GLTFLoader().loadAsync(`/models/${weapon}.glb`).then(({scene}) => {
         if (this.disposed) {disposeResources([scene]); return;}
         this.worldWeapons.set(weapon, scene);
         this.rebuildActors();
+        this.trimWorldWeapons();
       }).catch(() => {
         if (!this.disposed) this.onError(`The ${weapon} world model is unavailable. Run npm run assets:build, then reload.`);
       }).finally(() => this.worldLoading.delete(weapon));
+    }
+    this.trimWorldWeapons();
+  }
+
+  private trimWorldWeapons() {
+    const active = new Set(this.sim.snapshot().slice(1).map(actor => actor.equipment));
+    for (const drop of this.sim.drops) if (!drop.picked) active.add(drop.equipment);
+    for (const [weapon, scene] of this.worldWeapons) {
+      if (this.worldWeapons.size <= 8) break;
+      if (active.has(weapon)) continue;
+      this.worldWeapons.delete(weapon); disposeResources([scene]);
     }
   }
 
   private attachWorldWeapon(model: THREE.Object3D, weapon: Weapon) {
     // GLTFLoader sanitizes periods in animation node names.
     const held = model.getObjectByName('held_weapon_target001') ?? model.getObjectByName('held_weapon_target.001');
-    if (weapon === 'm4a1s') return held;
+    if (weapon === 'm4a1s' && held) return held;
     const mount = model.getObjectByName('wpn');
     const source = this.worldWeapons.get(weapon);
-    if (!held || !mount || !source) return held;
-    held.visible = false;
+    if (!mount || !source) return held;
+    if (held) held.visible = false;
     const replacement = source.clone(true);
     replacement.name = `held_${weapon}`;
-    replacement.position.copy(held.position);
-    replacement.quaternion.copy(held.quaternion);
-    replacement.scale.copy(held.scale);
+    new THREE.Matrix4().fromArray(weaponMounts.mounts[weapon].inverseBind).decompose(
+      replacement.position, replacement.quaternion, replacement.scale);
     mount.add(replacement);
     return replacement;
   }
@@ -334,24 +363,53 @@ export class DuelEngine {
     this.renderedEquipment = weapon;
     const revision = ++this.viewRevision;
     try {
-      const {scene, animations} = await new GLTFLoader().loadAsync(`/models/view-${weapon}.glb`);
+      const profile = this.progression?.getSnapshot().profile;
+      const asset = profile ? cosmeticAsset(profile, weapon) : weapon;
+      const {scene, animations} = await new GLTFLoader().loadAsync(`/models/view-${asset}.glb`);
+      prepareNativeViewAssembly(scene);
+      try {if (profile) await applyCosmetic(scene, profile, weapon);}
+      catch {disposeResources([scene]); throw new Error('Cosmetic could not load');}
       if (this.disposed || revision !== this.viewRevision) {disposeResources([scene]); return;}
       this.viewAnimation?.dispose();
       disposeResources([this.viewRoot]);
       this.viewRoot.clear(); scene.rotation.y = Math.PI; this.viewRoot.add(scene);
       this.viewAnimation = new ViewAnimation(scene, animations);
       this.viewMuzzle = muzzleAnchor(scene);
+      if (weapon === 'elite') {muzzleAnchor(scene, 'left'); muzzleAnchor(scene, 'right');}
+      const duration = Math.max(.01, this.sim.actors[0].equipReadyAt - this.sim.time);
+      if (this.pickupDrawing) this.viewAnimation.playPickup(duration); else this.viewAnimation.playDraw(duration);
+      this.pickupDrawing = false;
     } catch { if (!this.disposed && revision === this.viewRevision) this.onError('The weapon model is unavailable. Run npm run assets:build, then reload.'); }
+  }
+
+  async refreshCosmetics() {
+    const key = JSON.stringify(this.progression?.getSnapshot().profile.equipped);
+    if (key === this.cosmeticKey) return;
+    const oldAgent = JSON.parse(this.cosmeticKey || '{}')?.agent;
+    this.cosmeticKey = key;
+    if (oldAgent !== this.progression?.getSnapshot().profile.equipped.agent) await this.loadTarget();
+    await this.loadViewModel(this.sim.actors[0].weapon.id);
+  }
+
+  private xpSetup(): DuelXpSetup {
+    return {playerHealth: this.config.playerHealth, playerArmor: true,
+      bots: this.sim.actors.slice(1).map((actor, index) => ({id: String(actor.id), ...botConfig(this.config, index)}))};
+  }
+
+  private beginProgression() {
+    this.xpDamage.clear();
+    this.xpAttempt = this.progression?.beginDuel(this.xpSetup(), String(this.xpRevision)) ?? null;
   }
 
   setSettings(settings: Settings) {
     if (settings === this.settings) return;
-    const weaponChanged = settings.weapon !== this.settings.weapon;
+    const weaponChanged = settings.weapon !== this.settings.weapon || settings.sidearm !== this.settings.sidearm || settings.primaryEnabled !== this.settings.primaryEnabled;
     const qualityChanged = settings.quality !== this.settings.quality;
     this.settings = settings;
-    if (weaponChanged) void this.loadViewModel(settings.weapon);
+    if (weaponChanged) void this.loadViewModel(loadoutWeapon(settings));
     if (weaponChanged) this.restart();
-    if (qualityChanged) this.renderer.setPixelRatio(Math.min(devicePixelRatio || 1, settings.quality === 'low' ? 1 : 1.5));
+    if (qualityChanged) this.metrics.resetResolution();
+    this.meter.configure(settings.showFps);
     this.resize();
   }
 
@@ -362,7 +420,11 @@ export class DuelEngine {
   }
 
   restart(continuous = false) {
-    this.paused = false; this.pointer = null;
+    if (this.xpAttempt) this.progression?.cancelAttempt(this.xpAttempt);
+    this.xpAttempt = null; this.xpRevision++;
+    this.paused = false; this.pointer = null; this.pickupDrawing = false; this.viewAnimation?.cancel();
+    for (const object of this.dropModels.values()) this.scene.remove(object);
+    this.dropModels.clear();
     if (!continuous) {
       this.keys.clear();
       this.sessionStarted = false;
@@ -376,43 +438,41 @@ export class DuelEngine {
     this.caption = ''; this.captionUntil = 0; this.kick = 0;
     this.clearEffects(); this.rebuildCovers(); this.rebuildActors(); this.report();
     this.loadWorldWeapons();
-    if (continuous) {this.sim.start(); this.updateMovement(); this.report();}
+    if (continuous) {this.sim.start(); this.beginProgression(); this.updateMovement(); this.report();}
   }
 
   async enter() {
-    if (this.sim.phase === 'ready') this.sim.start(); else this.sim.resume();
+    if (this.disposed || this.entering) return;
+    const revision = ++this.enterRevision; this.entering = true;
+    if (this.sim.phase === 'ready') {this.sim.start(); this.beginProgression();} else this.sim.resume();
     this.sessionStarted = true;
     this.paused = false;
     this.renderer.domElement.focus({preventScroll: true});
     const coarse = matchMedia('(pointer: coarse)').matches;
+    const supported = typeof this.renderer.domElement.requestPointerLock === 'function';
     this.inputName = coarse ? 'Touch' : 'Mouse';
-    const stage = this.host.closest('.range-stage') as HTMLElement | null;
     const pointerLock = !coarse ? requestRawLock(this.renderer.domElement) : Promise.resolve<'drag'>('drag');
-    const fullscreen = !coarse && this.config.shortcutProtection && !document.fullscreenElement && stage?.requestFullscreen
-      ? stage.requestFullscreen().then(() => {this.ownsFullscreen = true; return true;}).catch(() => false)
-      : Promise.resolve(!!document.fullscreenElement);
+    const guard = this.shortcuts.enter(!coarse && supported && this.config.shortcutProtection);
     void this.audio.unlock(this.settings.weapon);
-    void this.audio.unlock('usp'); void this.audio.unlock('knife');
+    void this.audio.unlock(this.settings.sidearm); void this.audio.unlock('knife');
     for (const actor of this.sim.actors.slice(1)) if (actor.weapon.id !== this.settings.weapon) void this.audio.unlock(actor.weapon.id);
-    if (!coarse) {
-      const full = await fullscreen;
-      if (full && keyboardLock()) {
-        try {await keyboardLock()!.lock(['KeyW']); this.shortcutProtected = true;}
-        catch {this.shortcutProtected = false;}
-      }
+    try {
       const mode = await pointerLock;
-      if (mode === 'drag') this.inputName = 'Drag aim';
+      await guard;
+      if (revision !== this.enterRevision || this.disposed || this.paused) return;
+      if (!coarse && supported && (mode === 'drag' || document.pointerLockElement !== this.renderer.domElement)) {
+        this.pause(); this.inputName = 'Mouse capture blocked. Click Resume duel again.';
+      } else this.inputName = coarse ? 'Touch' : !supported ? 'Drag aim (mouse capture unsupported)' : mode === 'raw' ? 'Raw mouse' : 'Standard mouse';
+      this.report();
+    } finally {
+      if (revision === this.enterRevision) this.entering = false;
+      if ((this.disposed || this.paused) && document.pointerLockElement === this.renderer.domElement) document.exitPointerLock();
     }
-    this.report();
   }
 
   private releaseShortcuts() {
-    if (this.shortcutProtected) keyboardLock()?.unlock();
-    this.shortcutProtected = false;
-    if (this.ownsFullscreen) {
-      this.ownsFullscreen = false;
-      if (document.fullscreenElement) void document.exitFullscreen().catch(() => {});
-    }
+    this.enterRevision++; this.entering = false;
+    this.shortcuts?.release();
   }
 
   pause() {
@@ -433,6 +493,9 @@ export class DuelEngine {
   private bindInput() {
     const canvas = this.renderer.domElement;
     this.listen(canvas, 'pointerdown', ((event: PointerEvent) => {
+      if (event.button === 2 && this.sim.phase === 'fighting' && !this.paused) {
+        event.preventDefault(); this.sim.command(0, {secondaryPressed: true, secondaryHeld: true}); return;
+      }
       if (event.button !== 0) return;
       if (this.sim.phase === 'ready' || this.paused) { void this.enter(); return; }
       if (this.sim.phase !== 'fighting') return;
@@ -450,11 +513,12 @@ export class DuelEngine {
         dx = event.clientX - this.pointerX; dy = event.clientY - this.pointerY;
         this.pointerX = event.clientX; this.pointerY = event.clientY;
       }
-      const scale = event.pointerType === 'mouse' ? mouseAngle(1, this.settings.sensitivity) : .0025;
+      const scale = (event.pointerType === 'mouse' ? mouseAngle(1, this.settings.sensitivity) : .0025) * this.sim.actors[0].weapon.actions.sensitivityScale;
       if (dx || dy) this.sim.command(0, {yawDelta: -dx * scale,
         pitchDelta: -dy * scale * (this.settings.invertY ? -1 : 1)});
     }) as EventListener);
     this.listen(document, 'pointerup', ((event: PointerEvent) => {
+      if (event.button === 2) {this.sim.command(0, {secondaryHeld: false}); return;}
       if (this.pointer !== event.pointerId) return;
       this.pointer = null; this.sim.command(0, {fireHeld: false});
     }) as EventListener);
@@ -468,19 +532,19 @@ export class DuelEngine {
         event.preventDefault(); this.keys.add(event.code); this.updateMovement();
       }
       if (event.code === 'KeyR' && !event.repeat) this.sim.command(0, {reloadPressed: true});
+      if (event.code === 'KeyF' && !event.repeat) {event.preventDefault(); this.inspect();}
+      if (event.code === 'KeyE' && !event.repeat) {event.preventDefault(); this.pickup();}
       if (['Digit1', 'Digit2', 'Digit3'].includes(event.code) && !event.repeat) this.equip(Number(event.code.slice(-1)) as Slot);
     }) as EventListener);
     this.listen(window, 'keyup', ((event: KeyboardEvent) => {this.keys.delete(event.code); this.updateMovement();}) as EventListener);
-    this.listen(window, 'blur', (() => this.pause()) as EventListener);
+    this.listen(window, 'blur', (() => {if (!this.entering) this.pause();}) as EventListener);
     this.listen(document, 'visibilitychange', (() => {if (document.hidden) this.pause();}) as EventListener);
     this.listen(document, 'pointerlockchange', (() => {
+      if (this.entering) return;
       if (document.pointerLockElement !== canvas && this.inputName !== 'Drag aim' && this.sim.phase !== 'ready') this.pause();
     }) as EventListener);
     this.listen(document, 'fullscreenchange', (() => {
-      if (this.ownsFullscreen && !document.fullscreenElement && this.sim.phase !== 'ready') {
-        this.ownsFullscreen = false;
-        this.pause();
-      }
+      if (!this.entering && this.shortcuts.protected && !document.fullscreenElement && this.sim.phase !== 'ready') this.pause();
     }) as EventListener);
   }
 
@@ -492,6 +556,15 @@ export class DuelEngine {
   }
 
   equip(slot: Slot) {this.sim.equipPlayer(slot); this.report(); this.renderer.domElement.focus({preventScroll: true});}
+  pickup() {
+    if (!this.sim.pickupPlayer()) return;
+    const id = this.sim.actors[0].weapon.id;
+    this.pickupDrawing = true; void this.loadViewModel(id);
+    void this.audio.unlock(id).then(() => {if (!this.disposed) this.audio.playEvent(`${id}-draw`, this.settings.volume * .5);});
+    this.report(); this.renderer.domElement.focus({preventScroll: true});
+  }
+  inspect() {const actor = this.sim.actors[0]; if (actor.alive && !actor.weapon.reloadUntil && !actor.command.fireHeld && this.sim.time >= actor.equipReadyAt) this.viewAnimation?.playInspect();}
+  secondary() {this.sim.command(0, {secondaryPressed: true});}
 
   private processEvents(events: DuelEvent[]) {
     if (!events.length) return;
@@ -499,9 +572,18 @@ export class DuelEngine {
     const endpoints = new Map<number, Vec>();
     const player = this.sim.snapshot()[0];
     for (const event of events) {
-      if (event.kind === 'fire') {
+      if (event.kind === 'pickup') {
+        const model = this.dropModels.get(event.dropId);
+        if (model) this.scene.remove(model);
+        this.dropModels.delete(event.dropId);
+      } else if (event.kind === 'fire') {
         shots.set(event.shotId, event);
-        if (event.actorId === 0) {this.kick = 1; this.audio.play(event.equipment, this.settings.volume);}
+        if (event.actorId === 0) {
+          const weapon = this.sim.actors[0].weapon;
+          this.viewAnimation?.playFire(event.equipment,{side:weapon.ammo%2?'right':'left',lastShot:weapon.ammo===0,alternate:weapon.actions.alternateFire,zoomed:weapon.actions.zoom>0,
+            ...(['awp','ssg08'].includes(event.equipment)?{duration:weapon.actions.base.cycle}:{})});
+          this.kick = 1;this.audio.play(event.equipment, this.settings.volume);
+        }
         else this.audio.play(event.equipment, this.settings.volume, this.soundLocation(event.origin));
       } else if (event.kind === 'sound') {
         const dx = event.point.x - player.position.x, dz = event.point.z - player.position.z;
@@ -519,7 +601,15 @@ export class DuelEngine {
       else if (event.kind === 'hit') {
         endpoints.set(event.shotId, event.point);
         if (event.lethal && !this.deaths.has(event.victim)) this.deaths.set(event.victim, this.animationClock);
+        if (event.lethal && event.victim > 0) {
+          const held = this.heldWeapons.get(event.victim);
+          if (held) held.visible = false;
+          const drop = this.sim.drops.find(item => item.id === event.victim);
+          const source = drop && this.worldWeapons.get(drop.equipment);
+          if (source && drop) {const model = source.clone(true); model.position.copy(v3(drop.position)); model.rotation.set(0, this.sim.actors[event.victim].yaw, Math.PI / 2); this.scene.add(model); this.dropModels.set(drop.id, model);}
+        }
         if (event.shooter === 0) {
+          this.xpDamage.set(event.victim, (this.xpDamage.get(event.victim) ?? 0) + event.healthDamage);
           this.audio.playHit(event.group === 'head', event.armorDamage > 0, false, this.settings.volume);
           this.damage += event.healthDamage;
           if (event.lethal) this.kills++;
@@ -536,22 +626,33 @@ export class DuelEngine {
           event.victim === 0 ? undefined : this.soundLocation(event.point));
       } else if (event.kind === 'round') {
         this.roundFlow.finish();
+        if (this.xpAttempt) this.progression?.completeDuel(this.xpAttempt, {
+          completion: 'completed', outcome: event.outcome, activeSeconds:this.sim.time, review: this.sim.coach.review(),
+          opponents: this.sim.actors.slice(1).map(actor => ({id: String(actor.id), healthDamage: this.xpDamage.get(actor.id) ?? 0, killed: !actor.alive})),
+        }, this.xpSetup(), String(this.xpRevision));
+        this.xpAttempt = null;
         this.history.unshift({date: new Date().toISOString(), outcome: event.outcome, review: this.sim.coach.review()});
         this.history = this.history.slice(0, 50);
         try {localStorage.setItem('spraylab.duel.history.v1', JSON.stringify(this.history));} catch { /* Session-only history. */ }
       }
     }
     for (const [id, shot] of shots) {
+      const count = this.shotCounts.get(shot.actorId) ?? 0;
+      this.shotCounts.set(shot.actorId, count + 1);
       const trail = shot.actorId === 0 ? 10 : 5;
       const end = endpoints.get(id) ?? {x: shot.origin.x + shot.direction.x * trail,
         y: shot.origin.y + shot.direction.y * trail, z: shot.origin.z + shot.direction.z * trail};
       let start: THREE.Vector3 | undefined;
       if (shot.actorId === 0 && this.viewMuzzle) {
+        const ammo = this.sim.actors[0].weapon.ammo;
+        const barrel = shot.equipment === 'elite' ? this.viewRoot.getObjectByName(`spraylab-muzzle-${ammo % 2 ? 'right' : 'left'}`) ?? this.viewMuzzle : this.viewMuzzle;
+        this.viewFlashes.fire(barrel, shot.equipment, this.animationClock);
         this.viewScene.updateMatrixWorld(true);
-        start = viewMuzzleToWorld(this.viewMuzzle.getWorldPosition(new THREE.Vector3()), this.viewCamera,
+        start = viewMuzzleToWorld(barrel.getWorldPosition(new THREE.Vector3()), this.viewCamera,
           this.camera, this.width, this.height);
       } else if (shot.actorId > 0) {
         const muzzle = this.botMuzzles.get(shot.actorId);
+        this.shotEffects.flashes.fire(muzzle, shot.equipment, this.animationClock, true);
         muzzle?.updateWorldMatrix(true, false);
         start = muzzle?.getWorldPosition(new THREE.Vector3());
       }
@@ -560,15 +661,13 @@ export class DuelEngine {
         const endpointAhead = v3(end).sub(this.camera.position).dot(this.camera.getWorldDirection(new THREE.Vector3())) > .1;
         const obstruction = traceSolid(start, delta.clone().normalize(), this.sim.arena, length);
         if (length > .15 && endpointAhead && obstruction.distance >= length - .08) {
-          const line = new THREE.Line(new THREE.BufferGeometry().setFromPoints([start, v3(end)]),
-            new THREE.LineBasicMaterial({color: shot.actorId === 0 ? '#e5d177' : '#ed8c66', transparent: true, opacity: .65}));
-          this.effects.add(line); this.effectLife.push({object: line, until: this.animationClock + .065});
+          this.shotEffects.trace(shot.equipment, count, start, v3(end), this.animationClock,
+            shot.actorId === 0 ? this.ownTraceColor : this.enemyTraceColor);
         }
       }
       if (endpoints.has(id)) {
-        const impact = new THREE.Mesh(new THREE.SphereGeometry(.023 * this.settings.impactSize, 6, 4),
-          new THREE.MeshBasicMaterial({color: shot.actorId === 0 ? '#e6d170' : '#e99b78'}));
-        impact.position.copy(v3(end)); this.effects.add(impact); this.effectLife.push({object: impact, until: this.animationClock + 2});
+        this.shotEffects.impact(v3(end), this.settings.impactSize,
+          shot.actorId === 0 ? this.ownTraceColor : this.enemyTraceColor, this.animationClock);
       }
     }
   }
@@ -580,14 +679,7 @@ export class DuelEngine {
   }
 
   private clearEffects() {
-    for (const effect of this.effectLife) {
-      this.effects.remove(effect.object);
-      if (effect.object instanceof THREE.Line || effect.object instanceof THREE.Mesh) {
-        effect.object.geometry.dispose();
-        (effect.object.material as THREE.Material).dispose();
-      }
-    }
-    this.effectLife = [];
+    this.shotEffects.clear(); this.viewFlashes.clear(); this.shotCounts.clear();
   }
 
   private syncActors(snapshots: DuelActorSnapshot[], dt: number) {
@@ -600,10 +692,12 @@ export class DuelEngine {
       model.visible = this.frustum.intersectsSphere(this.actorBounds) &&
         (!this.covers.visible || !fullyOccluded(this.camera.position, actor, this.sim.arena));
       const deathAge = this.animationClock - (this.deaths.get(actor.id) ?? this.animationClock);
-      model.position.set(actor.position.x, actor.alive ? actor.feet : deathFeet(actor, deathAge, this.sim.arena.solids), actor.position.z);
+      model.position.set(actor.position.x, actor.alive ? actor.feet : deathFeet(actor, deathAge, this.sim.arena.solids,
+        this.sim.actors[actor.id].verticalVelocity), actor.position.z);
       model.rotation.y = actor.yaw - Math.PI;
       if (model.visible) {
         const elapsed = this.animationTimes.has(actor.id) ? this.animationClock - this.animationTimes.get(actor.id)! : dt;
+        if (dt > 0 && this.animationTimes.has(actor.id) && elapsed < 1 / qualityPolicy(this.settings.quality).animationHz) continue;
         this.animators.get(actor.id)?.update(this.sim.phase === 'result' && actor.alive
           ? {...actor, velocity: {x: 0, z: 0}} : actor, dt > 0 ? elapsed : 0, actor.alive ? undefined : deathAge);
         this.animationTimes.set(actor.id, this.animationClock);
@@ -615,6 +709,7 @@ export class DuelEngine {
     const width = this.host.clientWidth, height = this.host.clientHeight;
     if (!width || !height) return;
     this.width = width; this.height = height;
+    this.renderer.setPixelRatio(renderPixelRatio(width, height, devicePixelRatio || 1, this.settings.quality, this.metrics.adaptive));
     this.renderer.setSize(width, height);
     this.camera.aspect = this.settings.aspect === 'native' ? width / height
       : this.settings.aspect.split(':').map(Number).reduce((a, b) => a / b);
@@ -630,17 +725,29 @@ export class DuelEngine {
       health: player.health, armor: player.armor, ammo: player.ammo, reloading: player.reloading,
       enemies: bots.filter(bot => bot.alive).length, seconds: this.sim.time, kills: this.kills,
       damage: this.damage, input: this.inputName, caption: this.animationClock < this.captionUntil ? this.caption : '',
-      shortcutProtected: this.shortcutProtected, nextRoundIn: this.roundFlow.remaining(this.config.feedbackSeconds),
-      equipped: player.equipment, review: this.sim.coach.review(), history: this.history});
+      shortcutProtected: this.shortcuts.protected, nextRoundIn: this.roundFlow.remaining(this.config.feedbackSeconds),
+      equipped: player.equipment, review: this.sim.coach.review(), history: this.history,
+      loadout: this.sim.loadout, pickup: this.sim.nearestPickup()?.equipment, arenaDesign: this.sim.arena.design});
   }
 
   private tick(timestamp: number) {
     if (this.disposed) return;
+    this.frame = requestAnimationFrame(time => this.tick(time));
+    const active = this.sim.phase !== 'ready' && !this.paused;
+    if (document.hidden || !this.pacer.ready(timestamp, active ? this.settings.frameLimit : 15)) {
+      if (document.hidden) this.last = timestamp;
+      return;
+    }
+    const cpuStart = performance.now();
     const dt = this.last ? Math.min((timestamp - this.last) / 1000, .25) : 0;
     this.last = timestamp;
     if (this.sessionStarted && this.roundFlow.advance(dt, this.paused, this.config.feedbackSeconds)) this.restart(true);
     this.sim.advance(dt);
     const events = this.sim.drainEvents();
+    for (const event of events) if (event.kind === 'hit' && event.lethal) {
+      if (!this.deaths.has(event.victim)) this.deaths.set(event.victim, this.animationClock);
+      this.animationTimes.delete(event.victim);
+    }
     const snapshots = this.sim.renderSnapshot();
     const player = snapshots[0];
     if (player.equipment !== this.renderedEquipment) {
@@ -652,61 +759,71 @@ export class DuelEngine {
     }
     if (player.reloading && !this.wasReloading) this.audio.playEvent(`${player.equipment}-reload`, this.settings.volume * .55);
     this.wasReloading = player.reloading;
-    this.viewAnimation?.update(Math.max(0, this.sim.actors[0].weapon.reloadUntil - this.sim.time), equipmentStats(player.equipment).reload);
+    this.viewAnimationElapsed += active ? dt : 0;
+    if (this.viewAnimationElapsed >= 1 / qualityPolicy(this.settings.quality).animationHz) {
+    this.viewAnimation?.update(Math.max(0, this.sim.actors[0].weapon.reloadUntil - this.sim.time), equipmentStats(player.equipment).reload, this.viewAnimationElapsed,
+      {reloadEmpty: this.sim.actors[0].weapon.reloadEmpty,ammo:this.sim.actors[0].weapon.ammo,
+        charging:this.sim.actors[0].weapon.actions.charging,chargeDuration:REVOLVER_WINDUP});
+    this.viewAnimationElapsed = 0;
+    }
     const visualRecoil = this.sim.actors[0].weapon.recovery.predict(this.sim.accumulator);
-    const view = recoilView(player.yaw, player.pitch, visualRecoil);
+    const punch = this.sim.actors[0].punch.predict(this.paused || this.sim.phase !== 'fighting' ? 0 : this.sim.accumulator,
+      this.sim.actors[0].weapon.recovery.angle);
+    const view = recoilView(player.yaw - punch.yaw * DEG, player.pitch + punch.pitch * DEG, visualRecoil);
     const deathAge = this.animationClock - (this.deaths.get(0) ?? this.animationClock);
     const death = deathView(deathAge, player.position.y - player.feet);
     this.camera.position.set(player.position.x, player.position.y, player.position.z);
-    if (!player.alive) this.camera.position.y = deathFeet(player, deathAge, this.sim.arena.solids) + death.height;
-    this.camera.rotation.set(view.pitch + (player.alive ? 0 : death.pitch), view.yaw, player.alive ? 0 : death.roll, 'YXZ');
+    if (!player.alive) this.camera.position.y = deathFeet(player, deathAge, this.sim.arena.solids,
+      this.sim.actors[0].verticalVelocity) + death.height;
+    this.camera.rotation.set(view.pitch + (player.alive ? 0 : death.pitch), view.yaw, punch.roll * DEG + (player.alive ? 0 : death.roll), 'YXZ');
+    const scoped = this.scope.update(this.sim.actors[0].weapon.actions, this.camera, player.alive);
     this.camera.updateMatrixWorld();
     this.syncActors(snapshots, this.sim.phase !== 'ready' && !this.paused ? dt : 0);
     this.kick = Math.max(0, this.kick - dt * 8);
     const speed = Math.hypot(player.velocity.x, player.velocity.z);
     this.viewRoot.position.set(VIEWMODEL_OFFSET.x,
       VIEWMODEL_OFFSET.y + Math.sin(this.sim.time * 12) * Math.min(speed, 1) * .002 - (player.alive ? 0 : death.weaponDrop * .5), this.kick * .018);
-    this.viewRoot.visible = player.alive || deathAge < .25;
-    this.viewRoot.rotation.x = this.kick * (player.equipment === 'knife' ? -.6 : .035) + view.weaponPitch;
+    this.viewRoot.visible = !scoped && (player.alive || deathAge < .25);
+    this.viewRoot.rotation.x = this.kick * (player.equipment === 'knife' ? 0 : .035) + view.weaponPitch;
     this.viewRoot.rotation.y = view.weaponYaw;
-    this.viewRoot.rotation.z = player.equipment === 'knife' ? this.kick * -.45 : 0;
+    this.viewRoot.rotation.z = 0;
     this.audio.updateListener(this.camera.position, view.yaw, view.pitch);
     this.processEvents(events);
     this.damageFeedback.update(this.animationClock, player.yaw);
     const recoil = this.settings.follow ? this.sim.actors[0].weapon.recovery.recoil : {yaw: 0, pitch: 0};
-    const yaw = player.yaw - recoil.yaw * DEG, pitch = player.pitch + recoil.pitch * DEG;
+    const yaw = player.yaw - (recoil.yaw + punch.yaw) * DEG, pitch = player.pitch + (recoil.pitch + punch.pitch) * DEG;
     const followPoint = this.followPoint.set(-Math.sin(yaw) * Math.cos(pitch), Math.sin(pitch),
       -Math.cos(yaw) * Math.cos(pitch)).multiplyScalar(10).add(this.camera.position).project(this.camera);
     if (!this.settings.follow) followPoint.set(0, 0, 0);
-    this.crosshair.style.visibility = player.alive ? '' : 'hidden';
+    this.crosshair.style.visibility = player.alive && !scoped && (player.equipment==='knife'||gameData.weapons[player.equipment].showCrosshair) ? '' : 'hidden';
     this.crosshair.style.transform = `translate(${followPoint.x * this.width / 2}px, ${-followPoint.y * this.height / 2}px)`;
     this.crosshair.style.setProperty('--motion-gap', this.settings.crosshair.dynamic ? `${speed * 1.2 + this.kick * 4}px` : '0px');
-    for (let i = this.effectLife.length - 1; i >= 0; i--) {
-      const effect = this.effectLife[i];
-      if (effect.object instanceof THREE.Line) (effect.object.material as THREE.LineBasicMaterial).opacity =
-        Math.max(0, (effect.until - this.animationClock) / .065) * .65;
-      if (this.animationClock < effect.until) continue;
-      this.effects.remove(effect.object);
-      if (effect.object instanceof THREE.Line || effect.object instanceof THREE.Mesh) {
-        effect.object.geometry.dispose(); (effect.object.material as THREE.Material).dispose();
-      }
-      this.effectLife.splice(i, 1);
-    }
+    this.shotEffects.update(this.animationClock); this.viewFlashes.update(this.animationClock);
     this.renderer.setViewport(0, 0, this.width, this.height);
     this.renderer.autoClear = true; this.renderer.render(this.scene, this.camera);
     this.renderer.autoClear = false; this.renderer.clearDepth();
     const viewport = viewmodelViewport(this.width, this.height);
     this.renderer.setViewport(viewport.x, viewport.y, viewport.width, viewport.height);
     this.renderer.render(this.viewScene, this.viewCamera);
-    if (timestamp - this.statusAt > 100) {this.statusAt = timestamp; this.report();}
-    this.frame = requestAnimationFrame(time => this.tick(time));
+    const oldResolution = this.metrics.adaptive;
+    if (this.metrics.sample(dt, performance.now() - cpuStart, this.settings.quality === 'auto', active, this.settings.frameLimit)) {
+      this.meter.update(this.metrics, this.renderer.getPixelRatio());
+      if (oldResolution !== this.metrics.adaptive) this.resize();
+    }
+    if (events.some(event => event.kind === 'hit' || event.kind === 'round') || timestamp - this.statusAt > 100) {
+      this.statusAt = timestamp; this.report();
+    }
   }
 
   dispose() {
+    if (this.xpAttempt) this.progression?.cancelAttempt(this.xpAttempt);
     this.disposed = true; cancelAnimationFrame(this.frame); this.pause(); this.releaseShortcuts(); this.observer.disconnect();
     this.cleanup.forEach(fn => fn()); this.clearEffects(); this.audio.dispose(); this.damageFeedback.dispose();
-    this.animators.forEach(animator => animator.dispose()); this.viewAnimation?.dispose();
-    disposeResources([this.scene, this.viewScene, ...this.worldWeapons.values(), ...(this.targetScene ? [this.targetScene] : [])]);
+    this.animators.forEach(animator => animator.dispose()); this.viewAnimation?.dispose(); this.scope.dispose();
+    this.meter.dispose();
+    this.shotEffects.dispose(); this.viewFlashes.dispose();
+    disposeResources([this.scene, this.viewScene, ...this.worldWeapons.values(), ...(this.targetScene && !this.agentInstance ? [this.targetScene] : [])]);
+    this.agentRevision++;this.agentInstance?.dispose();this.actorLoader.dispose();
     this.renderer.dispose(); this.renderer.domElement.remove();
   }
 }

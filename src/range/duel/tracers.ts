@@ -3,11 +3,23 @@ import {viewmodelViewport} from '../viewmodel';
 
 // Baked view models omit attachment bones. Locate the muzzle at the forward
 // end of the weapon mesh, excluding hands; the result is cosmetic only.
-export function muzzleAnchor(root: THREE.Object3D) {
+export function muzzleAnchor(root: THREE.Object3D, side?: 'left' | 'right') {
   root.updateMatrixWorld(true);
   const inverse = root.matrixWorld.clone().invert();
   const meshes: {object: THREE.Mesh; count: number; matrix: THREE.Matrix4}[] = [];
   const point = new THREE.Vector3();
+  const barrelBone = root.getObjectByName(side ? `weapon_${side === 'left' ? 'l' : 'r'}` : 'weapon');
+  const belongsToBarrel = (mesh: THREE.Mesh, index: number) => {
+    if (!side || !(mesh instanceof THREE.SkinnedMesh) || !barrelBone) return true;
+    const joints = mesh.geometry.getAttribute('skinIndex'), weights = mesh.geometry.getAttribute('skinWeight');
+    if (!joints || !weights) return true;
+    for (let component = 0; component < 4; component++) {
+      if (weights.getComponent(index, component) < .05) continue;
+      for (let bone: THREE.Object3D | null = mesh.skeleton.bones[joints.getComponent(index, component)]; bone; bone = bone.parent)
+        if (bone === barrelBone) return true;
+    }
+    return false;
+  };
   let front = -Infinity;
   root.traverse(object => {
     if (!(object instanceof THREE.Mesh) || !/held_weapon|weapons.*weapon_/i.test(object.name)) return;
@@ -16,6 +28,7 @@ export function muzzleAnchor(root: THREE.Object3D) {
     const matrix = new THREE.Matrix4().multiplyMatrices(inverse, object.matrixWorld);
     meshes.push({object, count: position.count, matrix});
     for (let index = 0; index < position.count; index++) {
+      if (!belongsToBarrel(object, index)) continue;
       object.getVertexPosition(index, point).applyMatrix4(matrix);
       front = Math.max(front, point.z);
     }
@@ -24,11 +37,16 @@ export function muzzleAnchor(root: THREE.Object3D) {
   const center = new THREE.Vector3();
   let count = 0;
   for (const {object, count: vertices, matrix} of meshes) for (let index = 0; index < vertices; index++) {
+    if (!belongsToBarrel(object, index)) continue;
     object.getVertexPosition(index, point).applyMatrix4(matrix);
     if (point.z > front - .008) {center.add(point); count++;}
   }
-  const anchor = new THREE.Object3D(); anchor.name = 'spraylab-muzzle'; anchor.position.copy(center).divideScalar(count);
-  root.add(anchor);
+  const anchor = new THREE.Object3D(); anchor.name = side ? `spraylab-muzzle-${side}` : 'spraylab-muzzle'; anchor.position.copy(center).divideScalar(count);
+  if (barrelBone) {
+    root.localToWorld(anchor.position);
+    barrelBone.worldToLocal(anchor.position);
+    barrelBone.add(anchor);
+  } else root.add(anchor);
   return anchor;
 }
 

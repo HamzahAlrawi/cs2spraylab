@@ -77,6 +77,21 @@ describe('duel contracts and shared kernels', () => {
 });
 
 describe('headless combat fixtures', () => {
+  it.each([2, 20, 60, 100])('applies damage and death on the firing tick at %sm without waiting for a tracer', distance => {
+    const arena = {...testArena(), minZ: -150, maxZ: 150};
+    const sim = new DuelSimulation(sanitizeDuelConfig({health: 1}), 42, arena);
+    sim.actors[0].position = {x: 0, y: 64 * UNIT, z: distance};
+    sim.actors[1].position = {x: 0, y: 64 * UNIT, z: 0};
+    sim.actors[0].weapon = new DuelWeaponState('ak47', () => 0);
+    sim.command(1, {}); sim.start(); sim.command(0, {firePressed: true});
+    sim.step();
+    const events = sim.drainEvents(), fire = events.find(event => event.kind === 'fire'), hit = events.find(event => event.kind === 'hit');
+    expect(fire).toBeDefined();
+    expect(hit).toMatchObject({tick: fire!.tick, shooter: 0, victim: 1, lethal: true});
+    expect(sim.snapshot()[1]).toMatchObject({health: 0, alive: false});
+    expect(sim.phase).toBe('result');
+  });
+
   it('resolves nearer cover before a hittable actor', () => {
     const arena = testArena();
     arena.solids.push({center: {x: 0, y: 1.5, z: 0}, size: {x: 2, y: 3, z: .4}});

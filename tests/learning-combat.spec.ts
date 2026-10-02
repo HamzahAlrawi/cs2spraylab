@@ -116,7 +116,7 @@ test('Duel size, equipment, damage arcs and scorecard work without blocking the 
   await page.getByRole('button', {name: 'Equip USP-S', exact: true}).click();
   await expect(page.locator('.duel-ammo small')).toHaveText('USP-S');
   await page.waitForFunction(() => (window as any).lessonEngine.renderedEquipment === 'usp' && (window as any).lessonEngine.viewRoot.children.length);
-  await page.getByRole('button', {name: /Equip Butterfly/}).click();
+  await page.getByRole('button', {name: 'Equip Default knife', exact: true}).click();
   await expect(page.locator('.duel-ammo strong')).toHaveText('--');
   await page.getByRole('button', {name: 'Equip AK-47', exact: true}).click();
   await page.evaluate(() => {
@@ -214,7 +214,7 @@ test('native reload moves the hands and magazine, returns to idle, and keeps HUD
     const boxes = await page.locator('.duel-tools > *').evaluateAll(elements => elements.map(el => {
       const r = el.getBoundingClientRect(); return {x: r.x, y: r.y, w: r.width, h: r.height};
     }));
-    expect(boxes).toHaveLength(3);
+    expect(boxes).toHaveLength(4);
     for (let i = 0; i < boxes.length; i++) for (let j = i + 1; j < boxes.length; j++) {
       const a = boxes[i], b = boxes[j];
       expect(a.x + a.w <= b.x || b.x + b.w <= a.x || a.y + a.h <= b.y || b.y + b.h <= a.y).toBe(true);

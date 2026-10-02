@@ -38,7 +38,8 @@ describe('cover-based duel arena', () => {
     for (const seed of [1, 2, 3]) {
       const arena = duelArena(seed);
       expect(arena.solids.length).toBeGreaterThanOrEqual(18);
-      expect(new Set(arena.solids.map(solid => solid.kind)).size).toBeGreaterThanOrEqual(4);
+      expect(arena.pois).toHaveLength(6);
+      expect(new Set(arena.solids.map(solid => solid.poiId).filter(Boolean)).size).toBe(6);
       for (const role of ['entry', 'flank', 'camp']) for (const side of [-1, 1]) {
         const lane = arena.lanes?.find(candidate => candidate.role === role && candidate.side === side);
         expect(lane).toBeDefined();

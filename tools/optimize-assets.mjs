@@ -2,9 +2,11 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { execFileSync } from 'node:child_process';
 import sharp from 'sharp';
-const weapons = [...Object.keys(JSON.parse(fs.readFileSync('src/range/game-data.json', 'utf8')).weapons),'usp','knife'];
+const weapons = [...Object.keys(JSON.parse(fs.readFileSync('src/range/game-data.json', 'utf8')).weapons),'knife','knife-butterfly'];
 const allIds = [...weapons, ...weapons.map(id => `view-${id}`), 'target', 'range-kit'];
-const ids = process.argv.slice(2).length ? process.argv.slice(2) : allIds;
+const args = process.argv.slice(2);
+const worldOnly = args.length === 1 && args[0] === '--world-only';
+const ids = worldOnly ? [...weapons, 'target', 'range-kit'] : args.length ? args : allIds;
 if (ids.some(id => !allIds.includes(id))) throw new Error('Unknown asset ID');
 fs.mkdirSync('research/blender-exports', { recursive: true });
 for (const id of ids) {
@@ -16,7 +18,7 @@ for (const id of ids) {
     '--compress', 'false', '--texture-compress', 'webp', '--texture-size', '1024', '--simplify-error', '0.0002', '--instance', 'false'], { stdio: 'inherit' });
 }
 fs.mkdirSync('public/revamp/textures', { recursive: true });
-for (const [name, source] of (process.argv.length > 2 ? [] : [['wall', 'hr_concrete_wall_001_color'], ['wall-normal', 'hr_concrete_wall_001_normal'], ['floor', 'hr_concrete_floor_001_color'], ['floor-normal', 'hr_concrete_floor_001_normals_normal']])) {
+for (const [name, source] of (args.length && !worldOnly ? [] : [['wall', 'hr_concrete_wall_001_color'], ['wall-normal', 'hr_concrete_wall_001_normal'], ['floor', 'hr_concrete_floor_001_color'], ['floor-normal', 'hr_concrete_floor_001_normals_normal']])) {
   const input = path.resolve('research', `${source}.png`);
   if (fs.existsSync(input)) await sharp(input).resize(1024, 1024, { fit: 'inside' }).webp({ quality: 85 }).toFile(`public/revamp/textures/${name}.webp`);
 }

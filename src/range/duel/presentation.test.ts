@@ -1,5 +1,5 @@
 import {describe, expect, it} from 'vitest';
-import {AnimationClip, Object3D, VectorKeyframeTrack} from 'three';
+import {AnimationClip, Bone, Object3D, VectorKeyframeTrack} from 'three';
 import {DEG, STEP, UNIT} from '../actor-physics';
 import {sanitizeDuelConfig} from './config';
 import {testArena} from './geometry';
@@ -8,8 +8,60 @@ import {DuelSimulation} from './simulation';
 import {DuelAnimator, locomotionWeights} from './animation';
 import {aimStep} from './motor';
 import {fullyOccluded} from './visibility';
+import {BOT_COLLAPSE_SECONDS} from './round-flow';
 
 describe('duel frame presentation', () => {
+  it('restores constant death tracks after blending from the hit pose', () => {
+    const model = new Object3D(), bone = new Bone(); bone.name = 'spine'; model.add(bone);
+    const idle = new AnimationClip('animation/anims/world/idle_rifle', 0,
+      [new VectorKeyframeTrack('spine.position', [0], [1, 0, 0])]);
+    const death = new AnimationClip('animation/anims/world/death_chest_b', 1,
+      [new VectorKeyframeTrack('spine.position', [0, 1], [0, 0, 0, 0, 0, 0])]);
+    const animator = new DuelAnimator(model, [idle, death]), actor = new DuelSimulation().snapshot()[1];
+    animator.update(actor, 0); expect(bone.position.x).toBe(1);
+    actor.alive = false;
+    animator.update(actor, .02, .02); expect(bone.position.x).toBeCloseTo(.75);
+    animator.update(actor, .1, BOT_COLLAPSE_SECONDS); expect(bone.position.x).toBeCloseTo(0);
+    animator.update(actor, .1, 2); expect(bone.position.x).toBeCloseTo(0);
+    animator.dispose();
+  });
+
+  it('samples death clips in real seconds without compressing them, then holds the final pose', () => {
+    const model = new Object3D();
+    const clip = new AnimationClip('animation/anims/world/death_chest_b', 3,
+      [new VectorKeyframeTrack('.position', [0, 3], [0, 0, 0, 3, 0, 0])]);
+    const animator = new DuelAnimator(model, [clip]);
+    const actor = new DuelSimulation().snapshot()[1]; actor.alive = false;
+    animator.update(actor, 0, 0);
+    expect(model.position.x).toBe(0);
+    animator.update(actor, .1, BOT_COLLAPSE_SECONDS / 2);
+    expect(model.position.x).toBeCloseTo(BOT_COLLAPSE_SECONDS / 2, 3);
+    animator.update(actor, .1, BOT_COLLAPSE_SECONDS);
+    expect(model.position.x).toBeCloseTo(BOT_COLLAPSE_SECONDS, 3);
+    animator.update(actor, .1, 3);
+    expect(model.position.x).toBeCloseTo(3, 3);
+    const settled = model.position.clone();
+    animator.update(actor, .1, 4);
+    expect(model.position).toEqual(settled);
+    animator.dispose();
+  });
+
+  it('blends the standing and crouching baked falls at the victim stance and freezes the choice', () => {
+    const model = new Object3D(), pelvis = new Bone(); pelvis.name = 'pelvis'; model.add(pelvis);
+    const clip = (name: string, start: number) => new AnimationClip(`animation/anims/world/shared/${name}`, 1.4,
+      [new VectorKeyframeTrack('pelvis.position', [0, 1.4], [0, start, 0, 0, .2, 1])]);
+    const animator = new DuelAnimator(model, [clip('death_fall_b', 1), clip('death_crouch_fall_b', .6)]);
+    const actor = new DuelSimulation().snapshot()[1]; actor.alive = false; actor.duckAmount = .5;
+    animator.update(actor, 0, 0); animator.update(actor, .1, .1);
+    expect(pelvis.position.y).toBeCloseTo(.8 + (.2 - .8) * .1 / 1.4, 4);
+    actor.duckAmount = 0;
+    animator.update(actor, .1, .2);
+    expect(pelvis.position.y).toBeCloseTo(.8 + (.2 - .8) * .2 / 1.4, 4);
+    animator.update(actor, .1, 2);
+    expect(pelvis.position.y).toBeCloseTo(.2, 4);
+    animator.dispose();
+  });
+
   it('samples a native single-frame idle pose at zero instead of taking modulo zero', () => {
     const model = new Object3D();
     const clip = new AnimationClip('animation/anims/world/idle_rifle', 0,
@@ -25,6 +77,28 @@ describe('duel frame presentation', () => {
     const actor = new DuelSimulation().snapshot()[1];
     actor.duckAmount = 1; actor.velocity = {x: 73.1 * UNIT, z: 0};
     expect(locomotionWeights(actor).authoredSpeed / UNIT).toBeCloseTo(96);
+  });
+  it('keeps native pistol weapon layers additive instead of replacing the locomotion pose', () => {
+    const model = new Object3D();
+    const base = new AnimationClip('animation/anims/world/idle_pistol', 0,
+      [new VectorKeyframeTrack('.position', [0], [0, 1, 0])]);
+    const layer = new AnimationClip('animation/anims/world/idle_usp', 1,
+      [new VectorKeyframeTrack('.position', [0, 1], [0, 50, 0, 0, 51, 0])]);
+    const actor = new DuelSimulation().snapshot()[1]; actor.equipment = 'usp';
+    const animator = new DuelAnimator(model, [base, layer]);
+    animator.update(actor, 0);
+    expect(model.position.y).toBeCloseTo(1);
+    animator.update(actor, 1);
+    expect(model.position.y).toBeCloseTo(1.167);
+    animator.dispose();
+  });
+  it('selects pistol walking and crouching clips without changing normalized gait weights', () => {
+    const actor = new DuelSimulation().snapshot()[1]; actor.equipment = 'deagle';
+    actor.yaw = 0; actor.velocity = {x: 2, z: 0}; actor.duckAmount = .6;
+    const {weights} = locomotionWeights(actor, 'pistol');
+    expect([...weights.keys()].every(name => name.endsWith('_pistol'))).toBe(true);
+    expect([...weights.values()].reduce((sum, value) => sum + value, 0)).toBeCloseTo(1);
+    expect(weights.get('crouch_e_pistol')).toBeGreaterThan(.6);
   });
   it('presents evenly spaced motion at 240 Hz without changing authoritative physics', () => {
     const sim = new DuelSimulation(sanitizeDuelConfig({}), 1, testArena());

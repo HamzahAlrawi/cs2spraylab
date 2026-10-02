@@ -10,6 +10,7 @@ public/revamp/audio/
 public/revamp/textures/
 *.zip
 *.log
+exceptions.txt
 test-results*/
 .sites-runtime/
 playwright-report/

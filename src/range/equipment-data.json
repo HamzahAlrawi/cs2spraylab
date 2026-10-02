@@ -1,5 +1,5 @@
 {
-  "build": "2000918",
+  "build": "2000922",
   "source": "scripts/weapons.vdata_c",
   "sha256": "3289d4dba65b1ef3f884c389448c8a6c6db8691442c18a7aaddb28434aaf250d",
   "weapons": {
@@ -70,8 +70,8 @@
       "jumpApex": 0,
       "land": 0,
       "fullAuto": false,
-      "worldModel": "weapons/models/knife/knife_butterfly/weapon_knife_butterfly.vmdl",
-      "skeleton": "animation/skeletons/weapons/knife_butterfly.vnmskel"
+      "worldModel": "weapons/models/knife/knife_default_ct/weapon_knife_default_ct.vmdl",
+      "skeleton": "animation/skeletons/weapons/knife_default_ct.vnmskel"
     }
   }
 }

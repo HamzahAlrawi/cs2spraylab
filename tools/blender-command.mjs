@@ -1,7 +1,7 @@
 import net from 'node:net';
 import fs from 'node:fs';
 const file = process.argv[2];
-const selection = process.argv[3] ? `SPRAYLAB_WEAPONS = ${JSON.stringify(process.argv[3].split(','))}\n` : '';
+const selection = process.argv[3] ? `SPRAYLAB_WEAPONS = ${JSON.stringify(process.argv[3] === '--target-only' ? [] : process.argv[3].split(','))}\n` : '';
 const command = file ? { type: 'execute_code', params: { code: `SPRAYLAB_ROOT = ${JSON.stringify(process.cwd().replaceAll('\\', '/'))}\n${selection}` + fs.readFileSync(file, 'utf8') } } : { type: 'get_scene_info', params: {} };
 const socket = net.connect(9876, '127.0.0.1', () => socket.write(JSON.stringify(command)));
 let buffer = '';

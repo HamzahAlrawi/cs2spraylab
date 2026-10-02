@@ -54,7 +54,9 @@ describe('autonomous duel perception and execution', () => {
     expect(brain.command(bot, 0).fireHeld).toBe(false);
     const otherBrain = new BotBrain(createBotTraits(10, 17, 1), 'holder', 1, randomStream(17, 'brain'));
     otherBrain.perceive(observeBot(0, bot, [{...player, position: {...player.position, x: 4}}], testArena()));
-    expect(brain.command(bot, 0)).toEqual(otherBrain.command(bot, 0));
+    // Seeing a target can redirect gaze immediately, but cannot skip recognition.
+    expect(otherBrain.command(bot, 0).fireHeld).toBe(false);
+    expect(brain.command(bot, 0).yawDelta).not.toEqual(otherBrain.command(bot, 0).yawDelta);
     brain.perceive({...observation, time: .1});
     expect(brain.command(bot, .1).fireHeld).toBe(false);
   });

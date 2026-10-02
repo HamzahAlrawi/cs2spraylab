@@ -14,5 +14,5 @@ export default defineConfig({
       use: { ...devices['Desktop Chrome'], launchOptions: { executablePath: resolve(`.local-tools/${name}/${name === 'brave' ? 'brave' : 'opera'}.exe`) } }
     }))
   ],
-  webServer: { command: 'npm run dev -- --host 127.0.0.1 --port 5176 --strictPort', url: 'http://localhost:5176', reuseExistingServer: true }
+  webServer: { command: 'node node_modules/vite/bin/vite.js --host 127.0.0.1 --port 5176 --strictPort', url: 'http://localhost:5176', reuseExistingServer: true }
 });

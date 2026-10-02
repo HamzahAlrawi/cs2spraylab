@@ -24,7 +24,11 @@ const definitions = [
   ['bizon', 'weapon_bizon', 'bizon/weapon_smg_bizon', 'bizon/bizon_01'],
   ['m249', 'weapon_m249', 'm249/weapon_mach_m249', 'm249/m249_01'],
   ['negev', 'weapon_negev', 'negev/weapon_mach_negev', 'negev/negev_01'],
-  ['cz75a', 'weapon_cz75a', 'cz75a/weapon_pist_cz75a', 'cz75a/cz75_01']
+  ['cz75a', 'weapon_cz75a', 'cz75a/weapon_pist_cz75a', 'cz75a/cz75_01'],
+  ['usp', 'weapon_usp_silencer'], ['glock', 'weapon_glock'], ['hkp2000', 'weapon_hkp2000'],
+  ['p250', 'weapon_p250'], ['deagle', 'weapon_deagle'], ['elite', 'weapon_elite'],
+  ['fiveseven', 'weapon_fiveseven'], ['tec9', 'weapon_tec9'], ['revolver', 'weapon_revolver'],
+  ['awp', 'weapon_awp'], ['ssg08', 'weapon_ssg08'], ['g3sg1', 'weapon_g3sg1'], ['scar20', 'weapon_scar20']
 ];
 const run = (...args) => execFileSync(cli, ['-i', vpk, ...args], { stdio: 'pipe', maxBuffer: 20e6 });
 fs.mkdirSync('research/raw-models', { recursive: true });
@@ -36,7 +40,7 @@ run('-f', 'scripts/weapons.vdata_c', '-d', '-o', 'research/weapons.vdata');
 const raw = fs.readFileSync('research/weapons.vdata', 'utf8');
 const data = parseKv3(raw);
 const fields = {
-  magazine: 'm_iMaxClip1', cycle: 'm_flCycleTime', speed: 'm_flMaxSpeed',
+  magazine: 'm_iMaxClip1', cycle: 'm_flCycleTime', speed: 'm_flMaxSpeed', deploy: 'm_flDeployDuration',
   spread: 'm_flSpread', stand: 'm_flInaccuracyStand', crouch: 'm_flInaccuracyCrouch', move: 'm_flInaccuracyMove',
   fire: 'm_flInaccuracyFire', recovery: 'm_flRecoveryTimeStand', recoveryFinal: 'm_flRecoveryTimeStandFinal',
   recoveryCrouch: 'm_flRecoveryTimeCrouch', recoilSeed: 'm_nRecoilSeed',
@@ -50,24 +54,29 @@ const output = { build: fs.readFileSync(`${game}/game/csgo/steam.inf`, 'utf8').m
 for (const [id, key, model, sound] of definitions) {
   const source = data[key];
   if (!source) throw new Error(`Missing weapon ${key}`);
-  output.weapons[id] = Object.fromEntries(Object.entries(fields).map(([name, field]) => {
+  const readMode = mode => Object.fromEntries(Object.entries(fields).map(([name, field]) => {
     let v = source[field];
-    if (Array.isArray(v)) v = v[id === 'm4a1s' ? 1 : 0];
+    if (Array.isArray(v)) v = v[mode];
     if (!Number.isFinite(v)) throw new Error(`${key}.${field} is not numeric`);
     return [name, v];
   }));
-  Object.assign(output.weapons[id], { fullAuto: source.m_bIsFullAuto, worldModel: source.m_szWorldModel, skeleton: source.m_szAnimSkeleton, fireModes: source.m_flInaccuracyFire });
+  output.weapons[id] = readMode(id === 'm4a1s' || id === 'usp' ? 1 : 0);
+  Object.assign(output.weapons[id], { fullAuto: source.m_bIsFullAuto, worldModel: source.m_szWorldModel, skeleton: source.m_szAnimSkeleton, fireModes: source.m_flInaccuracyFire,
+    alternate: readMode(1), zoomLevels: source.m_nZoomLevels, zoomFov: [source.m_nZoomFOV1, source.m_nZoomFOV2],
+    zoomTime: [source.m_flZoomTime0, source.m_flZoomTime1, source.m_flZoomTime2], hideWhenZoomed: source.m_bHideViewModelWhenZoomed,
+    hasBurst: source.m_bHasBurstMode, burstCycle: source.m_flCycleTimeWhenInBurstMode, burstInterval: source.m_flTimeBetweenBurstShots,
+    unzoomsAfterShot: source.m_bUnzoomsAfterShot, isRevolver: source.m_bIsRevolver, showCrosshair:source.m_bShowCrosshair ?? true });
   console.log(id, output.weapons[id].magazine, output.weapons[id].cycle, 'seed', output.weapons[id].recoilSeed);
   if (!process.argv.includes('--data-only')) {
     if (!fs.existsSync(`research/raw-models/${id}.glb`)) run('-f', `${source.m_szWorldModel}_c`, '-o', `research/raw-models/${id}.glb`, '-d', '--gltf_export_format', 'glb', '--gltf_export_materials', '--gltf_textures_adapt');
     // Even without clips, animation export preserves the weapon's bind skeleton.
     if (!fs.existsSync(`research/raw-models/${id}-rigged.glb`)) run('-f', `${source.m_szWorldModel}_c`, '-o', `research/raw-models/${id}-rigged.glb`, '-d', '--gltf_export_format', 'glb', '--gltf_export_materials', '--gltf_textures_adapt', '--gltf_export_animations', '--gltf_animation_list', '__bind_pose_only__');
-    if (!fs.existsSync(`public/revamp/audio/${id}.wav`)) run('-f', `sounds/weapons/${sound}.vsnd_c`, '-o', `public/revamp/audio/${id}.wav`, '-d');
+    if (sound && !fs.existsSync(`public/revamp/audio/${id}.wav`)) run('-f', `sounds/weapons/${sound}.vsnd_c`, '-o', `public/revamp/audio/${id}.wav`, '-d');
     console.log(`Exported ${id} model and sound`);
   }
 }
 fs.writeFileSync('src/range/game-data.json', JSON.stringify(output, null, 2) + '\n');
-if (!process.argv.includes('--data-only')) {
+if (!process.argv.includes('--data-only') && !process.argv.includes('--bind-only')) {
   run('-f', 'agents/models/ctm_sas/ctm_sas.vmdl_c', '-o', 'research/raw-models/target-native.glb', '-d', '--gltf_export_format', 'glb', '--gltf_export_materials', '--gltf_textures_adapt', '--gltf_export_animations', '--gltf_compose_additive', '--gltf_animation_list', 'idle_rifle,run_e_rifle,run_w_rifle');
   run('-f', 'agents/models/ctm_sas/ctm_sas.vmdl_c', '-o', 'research/raw-models/view-arms.glb', '-d', '--gltf_export_format', 'glb', '--gltf_export_materials', '--gltf_textures_adapt', '--gltf_export_animations', '--gltf_compose_additive', '--gltf_animation_list', 'idle_ak,idle_m4a4,idle_rifle,idle_galilar,idle_famas,idle_sg556,idle_aug,idle_mp9,idle_mp7,idle_mp5sd,idle_mac10,idle_ump45,idle_p90,idle_bizon,idle1_m249,idle_negev,idle_cz75a');
   run('-f', 'materials/concrete/hr_c/hr_concrete_wall_001.vmat_c', '-o', 'research/wall.vmat', '-d');

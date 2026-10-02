@@ -1,5 +1,5 @@
 {
-  "build": "2000919",
+  "build": "2000922",
   "source": "scripts/weapons.vdata_c",
   "sha256": "3289d4dba65b1ef3f884c389448c8a6c6db8691442c18a7aaddb28434aaf250d",
   "weapons": {
@@ -92,6 +92,66 @@
       "large": 0.5,
       "small": 0.65,
       "speed": 240
+    },
+    "glock": {
+      "large": 0.5,
+      "small": 0.65,
+      "speed": 240
+    },
+    "hkp2000": {
+      "large": 0.5,
+      "small": 0.65,
+      "speed": 240
+    },
+    "p250": {
+      "large": 0.5,
+      "small": 0.65,
+      "speed": 240
+    },
+    "deagle": {
+      "large": 0.4,
+      "small": 0.55,
+      "speed": 230
+    },
+    "elite": {
+      "large": 0.5,
+      "small": 0.65,
+      "speed": 240
+    },
+    "fiveseven": {
+      "large": 0.5,
+      "small": 0.65,
+      "speed": 240
+    },
+    "tec9": {
+      "large": 0.5,
+      "small": 0.65,
+      "speed": 240
+    },
+    "revolver": {
+      "large": 0.4,
+      "small": 0.4,
+      "speed": 180
+    },
+    "awp": {
+      "large": 0.35,
+      "small": 0.4,
+      "speed": 200
+    },
+    "ssg08": {
+      "large": 0.35,
+      "small": 0.4,
+      "speed": 230
+    },
+    "g3sg1": {
+      "large": 0.5,
+      "small": 0.65,
+      "speed": 215
+    },
+    "scar20": {
+      "large": 0.35,
+      "small": 0.4,
+      "speed": 215
     },
     "knife": {
       "large": 0.3,

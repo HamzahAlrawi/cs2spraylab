@@ -1,0 +1,3588 @@
+{
+  "schema": 1,
+  "build": "2000922",
+  "itemsSha256": "1edea31ef2af0a46d1b38b4e4a6337de534bb61629f4b527137617ef03879fed",
+  "knives": {
+    "knife-bayonet": {
+      "label": "Bayonet",
+      "definitionId": "500",
+      "finishes": 34,
+      "paintMask": {
+        "path": "weapons/models/knife/knife_bayonet/materials/composite_inputs/knife_bayonet_masks_psd_a9b3443b.vtex_c",
+        "crc": "003f275d35",
+        "bytes": 7056
+      },
+      "selected": [
+        {
+          "id": "knife-bayonet-hy_ddpat",
+          "kitId": "5",
+          "name": "hy_ddpat",
+          "imageSource": "panorama/images/econ/default_generated/weapon_bayonet_hy_ddpat_light_png.vtex_c"
+        },
+        {
+          "id": "knife-bayonet-hy_webs",
+          "kitId": "12",
+          "name": "hy_webs",
+          "imageSource": "panorama/images/econ/default_generated/weapon_bayonet_hy_webs_light_png.vtex_c"
+        },
+        {
+          "id": "knife-bayonet-aa_fade",
+          "kitId": "38",
+          "name": "aa_fade",
+          "imageSource": "panorama/images/econ/default_generated/weapon_bayonet_aa_fade_light_png.vtex_c"
+        },
+        {
+          "id": "knife-bayonet-so_night",
+          "kitId": "40",
+          "name": "so_night",
+          "imageSource": "panorama/images/econ/default_generated/weapon_bayonet_so_night_light_png.vtex_c"
+        },
+        {
+          "id": "knife-bayonet-aq_blued",
+          "kitId": "42",
+          "name": "aq_blued",
+          "imageSource": "panorama/images/econ/default_generated/weapon_bayonet_aq_blued_light_png.vtex_c"
+        },
+        {
+          "id": "knife-bayonet-aq_forced",
+          "kitId": "43",
+          "name": "aq_forced",
+          "imageSource": "panorama/images/econ/default_generated/weapon_bayonet_aq_forced_light_png.vtex_c"
+        },
+        {
+          "id": "knife-bayonet-aq_oiled",
+          "kitId": "44",
+          "name": "aq_oiled",
+          "imageSource": "panorama/images/econ/default_generated/weapon_bayonet_aq_oiled_light_png.vtex_c"
+        },
+        {
+          "id": "knife-bayonet-am_zebra",
+          "kitId": "59",
+          "name": "am_zebra",
+          "imageSource": "panorama/images/econ/default_generated/weapon_bayonet_am_zebra_light_png.vtex_c"
+        },
+        {
+          "id": "knife-bayonet-sp_mesh_tan",
+          "kitId": "72",
+          "name": "sp_mesh_tan",
+          "imageSource": "panorama/images/econ/default_generated/weapon_bayonet_sp_mesh_tan_light_png.vtex_c"
+        },
+        {
+          "id": "knife-bayonet-hy_forest_boreal",
+          "kitId": "77",
+          "name": "hy_forest_boreal",
+          "imageSource": "panorama/images/econ/default_generated/weapon_bayonet_hy_forest_boreal_light_png.vtex_c"
+        },
+        {
+          "id": "knife-bayonet-so_purple",
+          "kitId": "98",
+          "name": "so_purple",
+          "imageSource": "panorama/images/econ/default_generated/weapon_bayonet_so_purple_light_png.vtex_c"
+        },
+        {
+          "id": "knife-bayonet-sp_tape_urban",
+          "kitId": "143",
+          "name": "sp_tape_urban",
+          "imageSource": "panorama/images/econ/default_generated/weapon_bayonet_sp_tape_urban_light_png.vtex_c"
+        },
+        {
+          "id": "knife-bayonet-sp_dapple",
+          "kitId": "175",
+          "name": "sp_dapple",
+          "imageSource": "panorama/images/econ/default_generated/weapon_bayonet_sp_dapple_light_png.vtex_c"
+        },
+        {
+          "id": "knife-bayonet-an_tiger_orange",
+          "kitId": "409",
+          "name": "an_tiger_orange",
+          "imageSource": "panorama/images/econ/default_generated/weapon_bayonet_an_tiger_orange_light_png.vtex_c"
+        },
+        {
+          "id": "knife-bayonet-aq_damascus",
+          "kitId": "410",
+          "name": "aq_damascus",
+          "imageSource": "panorama/images/econ/default_generated/weapon_bayonet_aq_damascus_light_png.vtex_c"
+        },
+        {
+          "id": "knife-bayonet-am_marble_fade",
+          "kitId": "413",
+          "name": "am_marble_fade",
+          "imageSource": "panorama/images/econ/default_generated/weapon_bayonet_am_marble_fade_light_png.vtex_c"
+        },
+        {
+          "id": "knife-bayonet-aq_steel_knife",
+          "kitId": "414",
+          "name": "aq_steel_knife",
+          "imageSource": "panorama/images/econ/default_generated/weapon_bayonet_aq_steel_knife_light_png.vtex_c"
+        },
+        {
+          "id": "knife-bayonet-am_ruby_marbleized",
+          "kitId": "415",
+          "name": "am_ruby_marbleized",
+          "imageSource": "panorama/images/econ/default_generated/weapon_bayonet_am_ruby_marbleized_light_png.vtex_c"
+        },
+        {
+          "id": "knife-bayonet-am_sapphire_marbleized",
+          "kitId": "416",
+          "name": "am_sapphire_marbleized",
+          "imageSource": "panorama/images/econ/default_generated/weapon_bayonet_am_sapphire_marbleized_light_png.vtex_c"
+        },
+        {
+          "id": "knife-bayonet-am_blackpearl_marbleized",
+          "kitId": "417",
+          "name": "am_blackpearl_marbleized",
+          "imageSource": "panorama/images/econ/default_generated/weapon_bayonet_am_blackpearl_marbleized_light_png.vtex_c"
+        },
+        {
+          "id": "knife-bayonet-am_doppler_phase1",
+          "kitId": "418",
+          "name": "am_doppler_phase1",
+          "imageSource": "panorama/images/econ/default_generated/weapon_bayonet_am_doppler_phase1_light_png.vtex_c"
+        },
+        {
+          "id": "knife-bayonet-am_doppler_phase2",
+          "kitId": "419",
+          "name": "am_doppler_phase2",
+          "imageSource": "panorama/images/econ/default_generated/weapon_bayonet_am_doppler_phase2_light_png.vtex_c"
+        },
+        {
+          "id": "knife-bayonet-am_doppler_phase3",
+          "kitId": "420",
+          "name": "am_doppler_phase3",
+          "imageSource": "panorama/images/econ/default_generated/weapon_bayonet_am_doppler_phase3_light_png.vtex_c"
+        },
+        {
+          "id": "knife-bayonet-am_doppler_phase4",
+          "kitId": "421",
+          "name": "am_doppler_phase4",
+          "imageSource": "panorama/images/econ/default_generated/weapon_bayonet_am_doppler_phase4_light_png.vtex_c"
+        },
+        {
+          "id": "knife-bayonet-cu_bayonet_lore",
+          "kitId": "558",
+          "name": "cu_bayonet_lore",
+          "imageSource": "panorama/images/econ/default_generated/weapon_bayonet_cu_bayonet_lore_light_png.vtex_c"
+        },
+        {
+          "id": "knife-bayonet-cu_bayonet_stonewash",
+          "kitId": "563",
+          "name": "cu_bayonet_stonewash",
+          "imageSource": "panorama/images/econ/default_generated/weapon_bayonet_cu_bayonet_stonewash_light_png.vtex_c"
+        },
+        {
+          "id": "knife-bayonet-am_emerald_marbleized",
+          "kitId": "568",
+          "name": "am_emerald_marbleized",
+          "imageSource": "panorama/images/econ/default_generated/weapon_bayonet_am_emerald_marbleized_light_png.vtex_c"
+        },
+        {
+          "id": "knife-bayonet-am_gamma_doppler_phase1",
+          "kitId": "569",
+          "name": "am_gamma_doppler_phase1",
+          "imageSource": "panorama/images/econ/default_generated/weapon_bayonet_am_gamma_doppler_phase1_light_png.vtex_c"
+        },
+        {
+          "id": "knife-bayonet-am_gamma_doppler_phase2",
+          "kitId": "570",
+          "name": "am_gamma_doppler_phase2",
+          "imageSource": "panorama/images/econ/default_generated/weapon_bayonet_am_gamma_doppler_phase2_light_png.vtex_c"
+        },
+        {
+          "id": "knife-bayonet-am_gamma_doppler_phase3",
+          "kitId": "571",
+          "name": "am_gamma_doppler_phase3",
+          "imageSource": "panorama/images/econ/default_generated/weapon_bayonet_am_gamma_doppler_phase3_light_png.vtex_c"
+        },
+        {
+          "id": "knife-bayonet-am_gamma_doppler_phase4",
+          "kitId": "572",
+          "name": "am_gamma_doppler_phase4",
+          "imageSource": "panorama/images/econ/default_generated/weapon_bayonet_am_gamma_doppler_phase4_light_png.vtex_c"
+        },
+        {
+          "id": "knife-bayonet-gs_bayonet_autotronic",
+          "kitId": "573",
+          "name": "gs_bayonet_autotronic",
+          "imageSource": "panorama/images/econ/default_generated/weapon_bayonet_gs_bayonet_autotronic_light_png.vtex_c"
+        },
+        {
+          "id": "knife-bayonet-hy_ocean_knife",
+          "kitId": "578",
+          "name": "hy_ocean_knife",
+          "imageSource": "panorama/images/econ/default_generated/weapon_bayonet_hy_ocean_knife_light_png.vtex_c"
+        },
+        {
+          "id": "knife-bayonet-am_marked_up",
+          "kitId": "580",
+          "name": "am_marked_up",
+          "imageSource": "panorama/images/econ/default_generated/weapon_bayonet_am_marked_up_light_png.vtex_c"
+        }
+      ]
+    },
+    "knife-classic": {
+      "label": "Classic Knife",
+      "definitionId": "503",
+      "finishes": 12,
+      "paintMask": {
+        "path": "weapons/models/knife/knife_css/materials/composite_inputs/knife_css_masks_psd_af683099.vtex_c",
+        "crc": "00e5d67a23",
+        "bytes": 31060
+      },
+      "selected": [
+        {
+          "id": "knife-classic-hy_ddpat",
+          "kitId": "5",
+          "name": "hy_ddpat",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_css_hy_ddpat_light_png.vtex_c"
+        },
+        {
+          "id": "knife-classic-hy_webs",
+          "kitId": "12",
+          "name": "hy_webs",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_css_hy_webs_light_png.vtex_c"
+        },
+        {
+          "id": "knife-classic-aa_fade",
+          "kitId": "38",
+          "name": "aa_fade",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_css_aa_fade_light_png.vtex_c"
+        },
+        {
+          "id": "knife-classic-aq_blued",
+          "kitId": "42",
+          "name": "aq_blued",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_css_aq_blued_light_png.vtex_c"
+        },
+        {
+          "id": "knife-classic-aq_forced",
+          "kitId": "43",
+          "name": "aq_forced",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_css_aq_forced_light_png.vtex_c"
+        },
+        {
+          "id": "knife-classic-aq_oiled",
+          "kitId": "44",
+          "name": "aq_oiled",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_css_aq_oiled_light_png.vtex_c"
+        },
+        {
+          "id": "knife-classic-am_zebra",
+          "kitId": "59",
+          "name": "am_zebra",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_css_am_zebra_light_png.vtex_c"
+        },
+        {
+          "id": "knife-classic-sp_mesh_tan",
+          "kitId": "72",
+          "name": "sp_mesh_tan",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_css_sp_mesh_tan_light_png.vtex_c"
+        },
+        {
+          "id": "knife-classic-hy_forest_boreal",
+          "kitId": "77",
+          "name": "hy_forest_boreal",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_css_hy_forest_boreal_light_png.vtex_c"
+        },
+        {
+          "id": "knife-classic-sp_tape_urban",
+          "kitId": "143",
+          "name": "sp_tape_urban",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_css_sp_tape_urban_light_png.vtex_c"
+        },
+        {
+          "id": "knife-classic-sp_dapple",
+          "kitId": "175",
+          "name": "sp_dapple",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_css_sp_dapple_light_png.vtex_c"
+        },
+        {
+          "id": "knife-classic-sp_nightstripe",
+          "kitId": "735",
+          "name": "sp_nightstripe",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_css_sp_nightstripe_light_png.vtex_c"
+        }
+      ]
+    },
+    "knife-flip": {
+      "label": "Flip Knife",
+      "definitionId": "505",
+      "finishes": 34,
+      "paintMask": {
+        "path": "weapons/models/knife/knife_flip/materials/composite_inputs/knife_flip_masks_psd_291e59e4.vtex_c",
+        "crc": "0024014c21",
+        "bytes": 22586
+      },
+      "selected": [
+        {
+          "id": "knife-flip-hy_ddpat",
+          "kitId": "5",
+          "name": "hy_ddpat",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_flip_hy_ddpat_light_png.vtex_c"
+        },
+        {
+          "id": "knife-flip-hy_webs",
+          "kitId": "12",
+          "name": "hy_webs",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_flip_hy_webs_light_png.vtex_c"
+        },
+        {
+          "id": "knife-flip-aa_fade",
+          "kitId": "38",
+          "name": "aa_fade",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_flip_aa_fade_light_png.vtex_c"
+        },
+        {
+          "id": "knife-flip-so_night",
+          "kitId": "40",
+          "name": "so_night",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_flip_so_night_light_png.vtex_c"
+        },
+        {
+          "id": "knife-flip-aq_blued",
+          "kitId": "42",
+          "name": "aq_blued",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_flip_aq_blued_light_png.vtex_c"
+        },
+        {
+          "id": "knife-flip-aq_forced",
+          "kitId": "43",
+          "name": "aq_forced",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_flip_aq_forced_light_png.vtex_c"
+        },
+        {
+          "id": "knife-flip-aq_oiled",
+          "kitId": "44",
+          "name": "aq_oiled",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_flip_aq_oiled_light_png.vtex_c"
+        },
+        {
+          "id": "knife-flip-am_zebra",
+          "kitId": "59",
+          "name": "am_zebra",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_flip_am_zebra_light_png.vtex_c"
+        },
+        {
+          "id": "knife-flip-sp_mesh_tan",
+          "kitId": "72",
+          "name": "sp_mesh_tan",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_flip_sp_mesh_tan_light_png.vtex_c"
+        },
+        {
+          "id": "knife-flip-hy_forest_boreal",
+          "kitId": "77",
+          "name": "hy_forest_boreal",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_flip_hy_forest_boreal_light_png.vtex_c"
+        },
+        {
+          "id": "knife-flip-so_purple",
+          "kitId": "98",
+          "name": "so_purple",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_flip_so_purple_light_png.vtex_c"
+        },
+        {
+          "id": "knife-flip-sp_tape_urban",
+          "kitId": "143",
+          "name": "sp_tape_urban",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_flip_sp_tape_urban_light_png.vtex_c"
+        },
+        {
+          "id": "knife-flip-sp_dapple",
+          "kitId": "175",
+          "name": "sp_dapple",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_flip_sp_dapple_light_png.vtex_c"
+        },
+        {
+          "id": "knife-flip-an_tiger_orange",
+          "kitId": "409",
+          "name": "an_tiger_orange",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_flip_an_tiger_orange_light_png.vtex_c"
+        },
+        {
+          "id": "knife-flip-aq_damascus",
+          "kitId": "410",
+          "name": "aq_damascus",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_flip_aq_damascus_light_png.vtex_c"
+        },
+        {
+          "id": "knife-flip-am_marble_fade",
+          "kitId": "413",
+          "name": "am_marble_fade",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_flip_am_marble_fade_light_png.vtex_c"
+        },
+        {
+          "id": "knife-flip-aq_steel_knife",
+          "kitId": "414",
+          "name": "aq_steel_knife",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_flip_aq_steel_knife_light_png.vtex_c"
+        },
+        {
+          "id": "knife-flip-am_ruby_marbleized",
+          "kitId": "415",
+          "name": "am_ruby_marbleized",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_flip_am_ruby_marbleized_light_png.vtex_c"
+        },
+        {
+          "id": "knife-flip-am_sapphire_marbleized",
+          "kitId": "416",
+          "name": "am_sapphire_marbleized",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_flip_am_sapphire_marbleized_light_png.vtex_c"
+        },
+        {
+          "id": "knife-flip-am_blackpearl_marbleized",
+          "kitId": "417",
+          "name": "am_blackpearl_marbleized",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_flip_am_blackpearl_marbleized_light_png.vtex_c"
+        },
+        {
+          "id": "knife-flip-am_doppler_phase1",
+          "kitId": "418",
+          "name": "am_doppler_phase1",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_flip_am_doppler_phase1_light_png.vtex_c"
+        },
+        {
+          "id": "knife-flip-am_doppler_phase2",
+          "kitId": "419",
+          "name": "am_doppler_phase2",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_flip_am_doppler_phase2_light_png.vtex_c"
+        },
+        {
+          "id": "knife-flip-am_doppler_phase3",
+          "kitId": "420",
+          "name": "am_doppler_phase3",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_flip_am_doppler_phase3_light_png.vtex_c"
+        },
+        {
+          "id": "knife-flip-am_doppler_phase4",
+          "kitId": "421",
+          "name": "am_doppler_phase4",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_flip_am_doppler_phase4_light_png.vtex_c"
+        },
+        {
+          "id": "knife-flip-cu_flip_lore",
+          "kitId": "559",
+          "name": "cu_flip_lore",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_flip_cu_flip_lore_light_png.vtex_c"
+        },
+        {
+          "id": "knife-flip-cu_flip_stonewash",
+          "kitId": "564",
+          "name": "cu_flip_stonewash",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_flip_cu_flip_stonewash_light_png.vtex_c"
+        },
+        {
+          "id": "knife-flip-am_emerald_marbleized",
+          "kitId": "568",
+          "name": "am_emerald_marbleized",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_flip_am_emerald_marbleized_light_png.vtex_c"
+        },
+        {
+          "id": "knife-flip-am_gamma_doppler_phase1",
+          "kitId": "569",
+          "name": "am_gamma_doppler_phase1",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_flip_am_gamma_doppler_phase1_light_png.vtex_c"
+        },
+        {
+          "id": "knife-flip-am_gamma_doppler_phase2",
+          "kitId": "570",
+          "name": "am_gamma_doppler_phase2",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_flip_am_gamma_doppler_phase2_light_png.vtex_c"
+        },
+        {
+          "id": "knife-flip-am_gamma_doppler_phase3",
+          "kitId": "571",
+          "name": "am_gamma_doppler_phase3",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_flip_am_gamma_doppler_phase3_light_png.vtex_c"
+        },
+        {
+          "id": "knife-flip-am_gamma_doppler_phase4",
+          "kitId": "572",
+          "name": "am_gamma_doppler_phase4",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_flip_am_gamma_doppler_phase4_light_png.vtex_c"
+        },
+        {
+          "id": "knife-flip-gs_flip_autotronic",
+          "kitId": "574",
+          "name": "gs_flip_autotronic",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_flip_gs_flip_autotronic_light_png.vtex_c"
+        },
+        {
+          "id": "knife-flip-hy_ocean_knife",
+          "kitId": "578",
+          "name": "hy_ocean_knife",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_flip_hy_ocean_knife_light_png.vtex_c"
+        },
+        {
+          "id": "knife-flip-am_marked_up",
+          "kitId": "580",
+          "name": "am_marked_up",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_flip_am_marked_up_light_png.vtex_c"
+        }
+      ]
+    },
+    "knife-gut": {
+      "label": "Gut Knife",
+      "definitionId": "506",
+      "finishes": 34,
+      "paintMask": {
+        "path": "weapons/models/knife/knife_gut/materials/composite_inputs/knife_gut_masks_psd_f77e2bba.vtex_c",
+        "crc": "00f539124c",
+        "bytes": 8225
+      },
+      "selected": [
+        {
+          "id": "knife-gut-hy_ddpat",
+          "kitId": "5",
+          "name": "hy_ddpat",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_gut_hy_ddpat_light_png.vtex_c"
+        },
+        {
+          "id": "knife-gut-hy_webs",
+          "kitId": "12",
+          "name": "hy_webs",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_gut_hy_webs_light_png.vtex_c"
+        },
+        {
+          "id": "knife-gut-aa_fade",
+          "kitId": "38",
+          "name": "aa_fade",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_gut_aa_fade_light_png.vtex_c"
+        },
+        {
+          "id": "knife-gut-so_night",
+          "kitId": "40",
+          "name": "so_night",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_gut_so_night_light_png.vtex_c"
+        },
+        {
+          "id": "knife-gut-aq_blued",
+          "kitId": "42",
+          "name": "aq_blued",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_gut_aq_blued_light_png.vtex_c"
+        },
+        {
+          "id": "knife-gut-aq_forced",
+          "kitId": "43",
+          "name": "aq_forced",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_gut_aq_forced_light_png.vtex_c"
+        },
+        {
+          "id": "knife-gut-aq_oiled",
+          "kitId": "44",
+          "name": "aq_oiled",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_gut_aq_oiled_light_png.vtex_c"
+        },
+        {
+          "id": "knife-gut-am_zebra",
+          "kitId": "59",
+          "name": "am_zebra",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_gut_am_zebra_light_png.vtex_c"
+        },
+        {
+          "id": "knife-gut-sp_mesh_tan",
+          "kitId": "72",
+          "name": "sp_mesh_tan",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_gut_sp_mesh_tan_light_png.vtex_c"
+        },
+        {
+          "id": "knife-gut-hy_forest_boreal",
+          "kitId": "77",
+          "name": "hy_forest_boreal",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_gut_hy_forest_boreal_light_png.vtex_c"
+        },
+        {
+          "id": "knife-gut-so_purple",
+          "kitId": "98",
+          "name": "so_purple",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_gut_so_purple_light_png.vtex_c"
+        },
+        {
+          "id": "knife-gut-sp_tape_urban",
+          "kitId": "143",
+          "name": "sp_tape_urban",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_gut_sp_tape_urban_light_png.vtex_c"
+        },
+        {
+          "id": "knife-gut-sp_dapple",
+          "kitId": "175",
+          "name": "sp_dapple",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_gut_sp_dapple_light_png.vtex_c"
+        },
+        {
+          "id": "knife-gut-an_tiger_orange",
+          "kitId": "409",
+          "name": "an_tiger_orange",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_gut_an_tiger_orange_light_png.vtex_c"
+        },
+        {
+          "id": "knife-gut-aq_damascus",
+          "kitId": "410",
+          "name": "aq_damascus",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_gut_aq_damascus_light_png.vtex_c"
+        },
+        {
+          "id": "knife-gut-am_marble_fade",
+          "kitId": "413",
+          "name": "am_marble_fade",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_gut_am_marble_fade_light_png.vtex_c"
+        },
+        {
+          "id": "knife-gut-aq_steel_knife",
+          "kitId": "414",
+          "name": "aq_steel_knife",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_gut_aq_steel_knife_light_png.vtex_c"
+        },
+        {
+          "id": "knife-gut-am_ruby_marbleized",
+          "kitId": "415",
+          "name": "am_ruby_marbleized",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_gut_am_ruby_marbleized_light_png.vtex_c"
+        },
+        {
+          "id": "knife-gut-am_sapphire_marbleized",
+          "kitId": "416",
+          "name": "am_sapphire_marbleized",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_gut_am_sapphire_marbleized_light_png.vtex_c"
+        },
+        {
+          "id": "knife-gut-am_blackpearl_marbleized",
+          "kitId": "417",
+          "name": "am_blackpearl_marbleized",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_gut_am_blackpearl_marbleized_light_png.vtex_c"
+        },
+        {
+          "id": "knife-gut-am_doppler_phase1",
+          "kitId": "418",
+          "name": "am_doppler_phase1",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_gut_am_doppler_phase1_light_png.vtex_c"
+        },
+        {
+          "id": "knife-gut-am_doppler_phase2",
+          "kitId": "419",
+          "name": "am_doppler_phase2",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_gut_am_doppler_phase2_light_png.vtex_c"
+        },
+        {
+          "id": "knife-gut-am_doppler_phase3",
+          "kitId": "420",
+          "name": "am_doppler_phase3",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_gut_am_doppler_phase3_light_png.vtex_c"
+        },
+        {
+          "id": "knife-gut-am_doppler_phase4",
+          "kitId": "421",
+          "name": "am_doppler_phase4",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_gut_am_doppler_phase4_light_png.vtex_c"
+        },
+        {
+          "id": "knife-gut-cu_gut_lore",
+          "kitId": "560",
+          "name": "cu_gut_lore",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_gut_cu_gut_lore_light_png.vtex_c"
+        },
+        {
+          "id": "knife-gut-cu_gut_stonewash",
+          "kitId": "565",
+          "name": "cu_gut_stonewash",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_gut_cu_gut_stonewash_light_png.vtex_c"
+        },
+        {
+          "id": "knife-gut-am_emerald_marbleized",
+          "kitId": "568",
+          "name": "am_emerald_marbleized",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_gut_am_emerald_marbleized_light_png.vtex_c"
+        },
+        {
+          "id": "knife-gut-am_gamma_doppler_phase1",
+          "kitId": "569",
+          "name": "am_gamma_doppler_phase1",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_gut_am_gamma_doppler_phase1_light_png.vtex_c"
+        },
+        {
+          "id": "knife-gut-am_gamma_doppler_phase2",
+          "kitId": "570",
+          "name": "am_gamma_doppler_phase2",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_gut_am_gamma_doppler_phase2_light_png.vtex_c"
+        },
+        {
+          "id": "knife-gut-am_gamma_doppler_phase3",
+          "kitId": "571",
+          "name": "am_gamma_doppler_phase3",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_gut_am_gamma_doppler_phase3_light_png.vtex_c"
+        },
+        {
+          "id": "knife-gut-am_gamma_doppler_phase4",
+          "kitId": "572",
+          "name": "am_gamma_doppler_phase4",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_gut_am_gamma_doppler_phase4_light_png.vtex_c"
+        },
+        {
+          "id": "knife-gut-gs_gut_autotronic",
+          "kitId": "575",
+          "name": "gs_gut_autotronic",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_gut_gs_gut_autotronic_light_png.vtex_c"
+        },
+        {
+          "id": "knife-gut-hy_ocean_knife",
+          "kitId": "578",
+          "name": "hy_ocean_knife",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_gut_hy_ocean_knife_light_png.vtex_c"
+        },
+        {
+          "id": "knife-gut-am_marked_up",
+          "kitId": "580",
+          "name": "am_marked_up",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_gut_am_marked_up_light_png.vtex_c"
+        }
+      ]
+    },
+    "knife-karambit": {
+      "label": "Karambit",
+      "definitionId": "507",
+      "finishes": 34,
+      "paintMask": {
+        "path": "weapons/models/knife/knife_karambit/materials/composite_inputs/knife_karam_masks_psd_23f61c1c.vtex_c",
+        "crc": "00d49433cc",
+        "bytes": 21088
+      },
+      "selected": [
+        {
+          "id": "knife-karambit-hy_ddpat",
+          "kitId": "5",
+          "name": "hy_ddpat",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_karambit_hy_ddpat_light_png.vtex_c"
+        },
+        {
+          "id": "knife-karambit-hy_webs",
+          "kitId": "12",
+          "name": "hy_webs",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_karambit_hy_webs_light_png.vtex_c"
+        },
+        {
+          "id": "knife-karambit-aa_fade",
+          "kitId": "38",
+          "name": "aa_fade",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_karambit_aa_fade_light_png.vtex_c"
+        },
+        {
+          "id": "knife-karambit-so_night",
+          "kitId": "40",
+          "name": "so_night",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_karambit_so_night_light_png.vtex_c"
+        },
+        {
+          "id": "knife-karambit-aq_blued",
+          "kitId": "42",
+          "name": "aq_blued",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_karambit_aq_blued_light_png.vtex_c"
+        },
+        {
+          "id": "knife-karambit-aq_forced",
+          "kitId": "43",
+          "name": "aq_forced",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_karambit_aq_forced_light_png.vtex_c"
+        },
+        {
+          "id": "knife-karambit-aq_oiled",
+          "kitId": "44",
+          "name": "aq_oiled",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_karambit_aq_oiled_light_png.vtex_c"
+        },
+        {
+          "id": "knife-karambit-am_zebra",
+          "kitId": "59",
+          "name": "am_zebra",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_karambit_am_zebra_light_png.vtex_c"
+        },
+        {
+          "id": "knife-karambit-sp_mesh_tan",
+          "kitId": "72",
+          "name": "sp_mesh_tan",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_karambit_sp_mesh_tan_light_png.vtex_c"
+        },
+        {
+          "id": "knife-karambit-hy_forest_boreal",
+          "kitId": "77",
+          "name": "hy_forest_boreal",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_karambit_hy_forest_boreal_light_png.vtex_c"
+        },
+        {
+          "id": "knife-karambit-so_purple",
+          "kitId": "98",
+          "name": "so_purple",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_karambit_so_purple_light_png.vtex_c"
+        },
+        {
+          "id": "knife-karambit-sp_tape_urban",
+          "kitId": "143",
+          "name": "sp_tape_urban",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_karambit_sp_tape_urban_light_png.vtex_c"
+        },
+        {
+          "id": "knife-karambit-sp_dapple",
+          "kitId": "175",
+          "name": "sp_dapple",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_karambit_sp_dapple_light_png.vtex_c"
+        },
+        {
+          "id": "knife-karambit-an_tiger_orange",
+          "kitId": "409",
+          "name": "an_tiger_orange",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_karambit_an_tiger_orange_light_png.vtex_c"
+        },
+        {
+          "id": "knife-karambit-aq_damascus",
+          "kitId": "410",
+          "name": "aq_damascus",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_karambit_aq_damascus_light_png.vtex_c"
+        },
+        {
+          "id": "knife-karambit-am_marble_fade",
+          "kitId": "413",
+          "name": "am_marble_fade",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_karambit_am_marble_fade_light_png.vtex_c"
+        },
+        {
+          "id": "knife-karambit-aq_steel_knife",
+          "kitId": "414",
+          "name": "aq_steel_knife",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_karambit_aq_steel_knife_light_png.vtex_c"
+        },
+        {
+          "id": "knife-karambit-am_ruby_marbleized",
+          "kitId": "415",
+          "name": "am_ruby_marbleized",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_karambit_am_ruby_marbleized_light_png.vtex_c"
+        },
+        {
+          "id": "knife-karambit-am_sapphire_marbleized",
+          "kitId": "416",
+          "name": "am_sapphire_marbleized",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_karambit_am_sapphire_marbleized_light_png.vtex_c"
+        },
+        {
+          "id": "knife-karambit-am_blackpearl_marbleized",
+          "kitId": "417",
+          "name": "am_blackpearl_marbleized",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_karambit_am_blackpearl_marbleized_light_png.vtex_c"
+        },
+        {
+          "id": "knife-karambit-am_doppler_phase1",
+          "kitId": "418",
+          "name": "am_doppler_phase1",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_karambit_am_doppler_phase1_light_png.vtex_c"
+        },
+        {
+          "id": "knife-karambit-am_doppler_phase2",
+          "kitId": "419",
+          "name": "am_doppler_phase2",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_karambit_am_doppler_phase2_light_png.vtex_c"
+        },
+        {
+          "id": "knife-karambit-am_doppler_phase3",
+          "kitId": "420",
+          "name": "am_doppler_phase3",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_karambit_am_doppler_phase3_light_png.vtex_c"
+        },
+        {
+          "id": "knife-karambit-am_doppler_phase4",
+          "kitId": "421",
+          "name": "am_doppler_phase4",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_karambit_am_doppler_phase4_light_png.vtex_c"
+        },
+        {
+          "id": "knife-karambit-cu_karam_lore",
+          "kitId": "561",
+          "name": "cu_karam_lore",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_karambit_cu_karam_lore_light_png.vtex_c"
+        },
+        {
+          "id": "knife-karambit-cu_karam_stonewash",
+          "kitId": "566",
+          "name": "cu_karam_stonewash",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_karambit_cu_karam_stonewash_light_png.vtex_c"
+        },
+        {
+          "id": "knife-karambit-am_emerald_marbleized",
+          "kitId": "568",
+          "name": "am_emerald_marbleized",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_karambit_am_emerald_marbleized_light_png.vtex_c"
+        },
+        {
+          "id": "knife-karambit-am_gamma_doppler_phase1",
+          "kitId": "569",
+          "name": "am_gamma_doppler_phase1",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_karambit_am_gamma_doppler_phase1_light_png.vtex_c"
+        },
+        {
+          "id": "knife-karambit-am_gamma_doppler_phase2",
+          "kitId": "570",
+          "name": "am_gamma_doppler_phase2",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_karambit_am_gamma_doppler_phase2_light_png.vtex_c"
+        },
+        {
+          "id": "knife-karambit-am_gamma_doppler_phase3",
+          "kitId": "571",
+          "name": "am_gamma_doppler_phase3",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_karambit_am_gamma_doppler_phase3_light_png.vtex_c"
+        },
+        {
+          "id": "knife-karambit-am_gamma_doppler_phase4",
+          "kitId": "572",
+          "name": "am_gamma_doppler_phase4",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_karambit_am_gamma_doppler_phase4_light_png.vtex_c"
+        },
+        {
+          "id": "knife-karambit-gs_karam_autotronic",
+          "kitId": "576",
+          "name": "gs_karam_autotronic",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_karambit_gs_karam_autotronic_light_png.vtex_c"
+        },
+        {
+          "id": "knife-karambit-hy_ocean_knife",
+          "kitId": "578",
+          "name": "hy_ocean_knife",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_karambit_hy_ocean_knife_light_png.vtex_c"
+        },
+        {
+          "id": "knife-karambit-am_marked_up_fine",
+          "kitId": "582",
+          "name": "am_marked_up_fine",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_karambit_am_marked_up_fine_light_png.vtex_c"
+        }
+      ]
+    },
+    "knife-m9-bayonet": {
+      "label": "M9 Bayonet",
+      "definitionId": "508",
+      "finishes": 34,
+      "paintMask": {
+        "path": "weapons/models/knife/knife_m9/materials/composite_inputs/knife_m9_bay_masks_psd_6286649c.vtex_c",
+        "crc": "002877736a",
+        "bytes": 11592
+      },
+      "selected": [
+        {
+          "id": "knife-m9-bayonet-hy_ddpat",
+          "kitId": "5",
+          "name": "hy_ddpat",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_m9_bayonet_hy_ddpat_light_png.vtex_c"
+        },
+        {
+          "id": "knife-m9-bayonet-hy_webs",
+          "kitId": "12",
+          "name": "hy_webs",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_m9_bayonet_hy_webs_light_png.vtex_c"
+        },
+        {
+          "id": "knife-m9-bayonet-aa_fade",
+          "kitId": "38",
+          "name": "aa_fade",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_m9_bayonet_aa_fade_light_png.vtex_c"
+        },
+        {
+          "id": "knife-m9-bayonet-so_night",
+          "kitId": "40",
+          "name": "so_night",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_m9_bayonet_so_night_light_png.vtex_c"
+        },
+        {
+          "id": "knife-m9-bayonet-aq_blued",
+          "kitId": "42",
+          "name": "aq_blued",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_m9_bayonet_aq_blued_light_png.vtex_c"
+        },
+        {
+          "id": "knife-m9-bayonet-aq_forced",
+          "kitId": "43",
+          "name": "aq_forced",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_m9_bayonet_aq_forced_light_png.vtex_c"
+        },
+        {
+          "id": "knife-m9-bayonet-aq_oiled",
+          "kitId": "44",
+          "name": "aq_oiled",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_m9_bayonet_aq_oiled_light_png.vtex_c"
+        },
+        {
+          "id": "knife-m9-bayonet-am_zebra",
+          "kitId": "59",
+          "name": "am_zebra",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_m9_bayonet_am_zebra_light_png.vtex_c"
+        },
+        {
+          "id": "knife-m9-bayonet-sp_mesh_tan",
+          "kitId": "72",
+          "name": "sp_mesh_tan",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_m9_bayonet_sp_mesh_tan_light_png.vtex_c"
+        },
+        {
+          "id": "knife-m9-bayonet-hy_forest_boreal",
+          "kitId": "77",
+          "name": "hy_forest_boreal",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_m9_bayonet_hy_forest_boreal_light_png.vtex_c"
+        },
+        {
+          "id": "knife-m9-bayonet-so_purple",
+          "kitId": "98",
+          "name": "so_purple",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_m9_bayonet_so_purple_light_png.vtex_c"
+        },
+        {
+          "id": "knife-m9-bayonet-sp_tape_urban",
+          "kitId": "143",
+          "name": "sp_tape_urban",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_m9_bayonet_sp_tape_urban_light_png.vtex_c"
+        },
+        {
+          "id": "knife-m9-bayonet-sp_dapple",
+          "kitId": "175",
+          "name": "sp_dapple",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_m9_bayonet_sp_dapple_light_png.vtex_c"
+        },
+        {
+          "id": "knife-m9-bayonet-an_tiger_orange",
+          "kitId": "409",
+          "name": "an_tiger_orange",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_m9_bayonet_an_tiger_orange_light_png.vtex_c"
+        },
+        {
+          "id": "knife-m9-bayonet-aq_damascus_90",
+          "kitId": "411",
+          "name": "aq_damascus_90",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_m9_bayonet_aq_damascus_90_light_png.vtex_c"
+        },
+        {
+          "id": "knife-m9-bayonet-am_marble_fade",
+          "kitId": "413",
+          "name": "am_marble_fade",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_m9_bayonet_am_marble_fade_light_png.vtex_c"
+        },
+        {
+          "id": "knife-m9-bayonet-aq_steel_knife",
+          "kitId": "414",
+          "name": "aq_steel_knife",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_m9_bayonet_aq_steel_knife_light_png.vtex_c"
+        },
+        {
+          "id": "knife-m9-bayonet-am_ruby_marbleized",
+          "kitId": "415",
+          "name": "am_ruby_marbleized",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_m9_bayonet_am_ruby_marbleized_light_png.vtex_c"
+        },
+        {
+          "id": "knife-m9-bayonet-am_sapphire_marbleized",
+          "kitId": "416",
+          "name": "am_sapphire_marbleized",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_m9_bayonet_am_sapphire_marbleized_light_png.vtex_c"
+        },
+        {
+          "id": "knife-m9-bayonet-am_blackpearl_marbleized",
+          "kitId": "417",
+          "name": "am_blackpearl_marbleized",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_m9_bayonet_am_blackpearl_marbleized_light_png.vtex_c"
+        },
+        {
+          "id": "knife-m9-bayonet-am_doppler_phase1",
+          "kitId": "418",
+          "name": "am_doppler_phase1",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_m9_bayonet_am_doppler_phase1_light_png.vtex_c"
+        },
+        {
+          "id": "knife-m9-bayonet-am_doppler_phase2",
+          "kitId": "419",
+          "name": "am_doppler_phase2",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_m9_bayonet_am_doppler_phase2_light_png.vtex_c"
+        },
+        {
+          "id": "knife-m9-bayonet-am_doppler_phase3",
+          "kitId": "420",
+          "name": "am_doppler_phase3",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_m9_bayonet_am_doppler_phase3_light_png.vtex_c"
+        },
+        {
+          "id": "knife-m9-bayonet-am_doppler_phase4",
+          "kitId": "421",
+          "name": "am_doppler_phase4",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_m9_bayonet_am_doppler_phase4_light_png.vtex_c"
+        },
+        {
+          "id": "knife-m9-bayonet-cu_m9_bay_lore",
+          "kitId": "562",
+          "name": "cu_m9_bay_lore",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_m9_bayonet_cu_m9_bay_lore_light_png.vtex_c"
+        },
+        {
+          "id": "knife-m9-bayonet-cu_m9_bay_stonewash",
+          "kitId": "567",
+          "name": "cu_m9_bay_stonewash",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_m9_bayonet_cu_m9_bay_stonewash_light_png.vtex_c"
+        },
+        {
+          "id": "knife-m9-bayonet-am_emerald_marbleized",
+          "kitId": "568",
+          "name": "am_emerald_marbleized",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_m9_bayonet_am_emerald_marbleized_light_png.vtex_c"
+        },
+        {
+          "id": "knife-m9-bayonet-am_gamma_doppler_phase1",
+          "kitId": "569",
+          "name": "am_gamma_doppler_phase1",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_m9_bayonet_am_gamma_doppler_phase1_light_png.vtex_c"
+        },
+        {
+          "id": "knife-m9-bayonet-am_gamma_doppler_phase2",
+          "kitId": "570",
+          "name": "am_gamma_doppler_phase2",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_m9_bayonet_am_gamma_doppler_phase2_light_png.vtex_c"
+        },
+        {
+          "id": "knife-m9-bayonet-am_gamma_doppler_phase3",
+          "kitId": "571",
+          "name": "am_gamma_doppler_phase3",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_m9_bayonet_am_gamma_doppler_phase3_light_png.vtex_c"
+        },
+        {
+          "id": "knife-m9-bayonet-am_gamma_doppler_phase4",
+          "kitId": "572",
+          "name": "am_gamma_doppler_phase4",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_m9_bayonet_am_gamma_doppler_phase4_light_png.vtex_c"
+        },
+        {
+          "id": "knife-m9-bayonet-gs_m9_bay_autotronic",
+          "kitId": "577",
+          "name": "gs_m9_bay_autotronic",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_m9_bayonet_gs_m9_bay_autotronic_light_png.vtex_c"
+        },
+        {
+          "id": "knife-m9-bayonet-hy_ocean_knife_90",
+          "kitId": "579",
+          "name": "hy_ocean_knife_90",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_m9_bayonet_hy_ocean_knife_90_light_png.vtex_c"
+        },
+        {
+          "id": "knife-m9-bayonet-am_marked_up_90",
+          "kitId": "581",
+          "name": "am_marked_up_90",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_m9_bayonet_am_marked_up_90_light_png.vtex_c"
+        }
+      ]
+    },
+    "knife-huntsman": {
+      "label": "Huntsman Knife",
+      "definitionId": "509",
+      "finishes": 34,
+      "paintMask": {
+        "path": "weapons/models/knife/knife_tactical/materials/composite_inputs/knife_tactical_masks_psd_9d161968.vtex_c",
+        "crc": "004f79c964",
+        "bytes": 12708
+      },
+      "selected": [
+        {
+          "id": "knife-huntsman-hy_ddpat",
+          "kitId": "5",
+          "name": "hy_ddpat",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_tactical_hy_ddpat_light_png.vtex_c"
+        },
+        {
+          "id": "knife-huntsman-hy_webs",
+          "kitId": "12",
+          "name": "hy_webs",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_tactical_hy_webs_light_png.vtex_c"
+        },
+        {
+          "id": "knife-huntsman-aa_fade",
+          "kitId": "38",
+          "name": "aa_fade",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_tactical_aa_fade_light_png.vtex_c"
+        },
+        {
+          "id": "knife-huntsman-so_night",
+          "kitId": "40",
+          "name": "so_night",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_tactical_so_night_light_png.vtex_c"
+        },
+        {
+          "id": "knife-huntsman-aq_blued",
+          "kitId": "42",
+          "name": "aq_blued",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_tactical_aq_blued_light_png.vtex_c"
+        },
+        {
+          "id": "knife-huntsman-aq_forced",
+          "kitId": "43",
+          "name": "aq_forced",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_tactical_aq_forced_light_png.vtex_c"
+        },
+        {
+          "id": "knife-huntsman-aq_oiled",
+          "kitId": "44",
+          "name": "aq_oiled",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_tactical_aq_oiled_light_png.vtex_c"
+        },
+        {
+          "id": "knife-huntsman-am_zebra",
+          "kitId": "59",
+          "name": "am_zebra",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_tactical_am_zebra_light_png.vtex_c"
+        },
+        {
+          "id": "knife-huntsman-sp_mesh_tan",
+          "kitId": "72",
+          "name": "sp_mesh_tan",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_tactical_sp_mesh_tan_light_png.vtex_c"
+        },
+        {
+          "id": "knife-huntsman-hy_forest_boreal",
+          "kitId": "77",
+          "name": "hy_forest_boreal",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_tactical_hy_forest_boreal_light_png.vtex_c"
+        },
+        {
+          "id": "knife-huntsman-sp_tape_urban",
+          "kitId": "143",
+          "name": "sp_tape_urban",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_tactical_sp_tape_urban_light_png.vtex_c"
+        },
+        {
+          "id": "knife-huntsman-sp_dapple",
+          "kitId": "175",
+          "name": "sp_dapple",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_tactical_sp_dapple_light_png.vtex_c"
+        },
+        {
+          "id": "knife-huntsman-an_tiger_orange",
+          "kitId": "409",
+          "name": "an_tiger_orange",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_tactical_an_tiger_orange_light_png.vtex_c"
+        },
+        {
+          "id": "knife-huntsman-aq_damascus_90",
+          "kitId": "411",
+          "name": "aq_damascus_90",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_tactical_aq_damascus_90_light_png.vtex_c"
+        },
+        {
+          "id": "knife-huntsman-am_marble_fade",
+          "kitId": "413",
+          "name": "am_marble_fade",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_tactical_am_marble_fade_light_png.vtex_c"
+        },
+        {
+          "id": "knife-huntsman-aq_steel_knife",
+          "kitId": "414",
+          "name": "aq_steel_knife",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_tactical_aq_steel_knife_light_png.vtex_c"
+        },
+        {
+          "id": "knife-huntsman-am_ruby_marbleized",
+          "kitId": "415",
+          "name": "am_ruby_marbleized",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_tactical_am_ruby_marbleized_light_png.vtex_c"
+        },
+        {
+          "id": "knife-huntsman-am_sapphire_marbleized",
+          "kitId": "416",
+          "name": "am_sapphire_marbleized",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_tactical_am_sapphire_marbleized_light_png.vtex_c"
+        },
+        {
+          "id": "knife-huntsman-am_blackpearl_marbleized",
+          "kitId": "417",
+          "name": "am_blackpearl_marbleized",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_tactical_am_blackpearl_marbleized_light_png.vtex_c"
+        },
+        {
+          "id": "knife-huntsman-am_doppler_phase1",
+          "kitId": "418",
+          "name": "am_doppler_phase1",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_tactical_am_doppler_phase1_light_png.vtex_c"
+        },
+        {
+          "id": "knife-huntsman-am_doppler_phase2",
+          "kitId": "419",
+          "name": "am_doppler_phase2",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_tactical_am_doppler_phase2_light_png.vtex_c"
+        },
+        {
+          "id": "knife-huntsman-am_doppler_phase3",
+          "kitId": "420",
+          "name": "am_doppler_phase3",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_tactical_am_doppler_phase3_light_png.vtex_c"
+        },
+        {
+          "id": "knife-huntsman-am_doppler_phase4",
+          "kitId": "421",
+          "name": "am_doppler_phase4",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_tactical_am_doppler_phase4_light_png.vtex_c"
+        },
+        {
+          "id": "knife-huntsman-am_emerald_marbleized",
+          "kitId": "568",
+          "name": "am_emerald_marbleized",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_tactical_am_emerald_marbleized_light_png.vtex_c"
+        },
+        {
+          "id": "knife-huntsman-am_gamma_doppler_phase1",
+          "kitId": "569",
+          "name": "am_gamma_doppler_phase1",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_tactical_am_gamma_doppler_phase1_light_png.vtex_c"
+        },
+        {
+          "id": "knife-huntsman-am_gamma_doppler_phase2",
+          "kitId": "570",
+          "name": "am_gamma_doppler_phase2",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_tactical_am_gamma_doppler_phase2_light_png.vtex_c"
+        },
+        {
+          "id": "knife-huntsman-am_gamma_doppler_phase3",
+          "kitId": "571",
+          "name": "am_gamma_doppler_phase3",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_tactical_am_gamma_doppler_phase3_light_png.vtex_c"
+        },
+        {
+          "id": "knife-huntsman-am_gamma_doppler_phase4",
+          "kitId": "572",
+          "name": "am_gamma_doppler_phase4",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_tactical_am_gamma_doppler_phase4_light_png.vtex_c"
+        },
+        {
+          "id": "knife-huntsman-hy_ocean_knife_90",
+          "kitId": "579",
+          "name": "hy_ocean_knife_90",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_tactical_hy_ocean_knife_90_light_png.vtex_c"
+        },
+        {
+          "id": "knife-huntsman-am_marked_up_90",
+          "kitId": "581",
+          "name": "am_marked_up_90",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_tactical_am_marked_up_90_light_png.vtex_c"
+        },
+        {
+          "id": "knife-huntsman-cu_purple_huntsman",
+          "kitId": "620",
+          "name": "cu_purple_huntsman",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_tactical_cu_purple_huntsman_light_png.vtex_c"
+        },
+        {
+          "id": "knife-huntsman-cu_huntsman_lore",
+          "kitId": "1107",
+          "name": "cu_huntsman_lore",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_tactical_cu_huntsman_lore_light_png.vtex_c"
+        },
+        {
+          "id": "knife-huntsman-gs_huntsman_black_laminate",
+          "kitId": "1112",
+          "name": "gs_huntsman_black_laminate",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_tactical_gs_huntsman_black_laminate_light_png.vtex_c"
+        },
+        {
+          "id": "knife-huntsman-gs_huntsman_autotronic",
+          "kitId": "1117",
+          "name": "gs_huntsman_autotronic",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_tactical_gs_huntsman_autotronic_light_png.vtex_c"
+        }
+      ]
+    },
+    "knife-falchion": {
+      "label": "Falchion Knife",
+      "definitionId": "512",
+      "finishes": 34,
+      "paintMask": {
+        "path": "weapons/models/knife/knife_falchion/materials/composite_inputs/knife_falchion_advanced_masks_psd_a2755259.vtex_c",
+        "crc": "003b861dde",
+        "bytes": 34366
+      },
+      "selected": [
+        {
+          "id": "knife-falchion-hy_ddpat",
+          "kitId": "5",
+          "name": "hy_ddpat",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_falchion_hy_ddpat_light_png.vtex_c"
+        },
+        {
+          "id": "knife-falchion-hy_webs",
+          "kitId": "12",
+          "name": "hy_webs",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_falchion_hy_webs_light_png.vtex_c"
+        },
+        {
+          "id": "knife-falchion-aa_fade",
+          "kitId": "38",
+          "name": "aa_fade",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_falchion_aa_fade_light_png.vtex_c"
+        },
+        {
+          "id": "knife-falchion-so_night",
+          "kitId": "40",
+          "name": "so_night",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_falchion_so_night_light_png.vtex_c"
+        },
+        {
+          "id": "knife-falchion-aq_blued",
+          "kitId": "42",
+          "name": "aq_blued",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_falchion_aq_blued_light_png.vtex_c"
+        },
+        {
+          "id": "knife-falchion-aq_forced",
+          "kitId": "43",
+          "name": "aq_forced",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_falchion_aq_forced_light_png.vtex_c"
+        },
+        {
+          "id": "knife-falchion-aq_oiled",
+          "kitId": "44",
+          "name": "aq_oiled",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_falchion_aq_oiled_light_png.vtex_c"
+        },
+        {
+          "id": "knife-falchion-am_zebra",
+          "kitId": "59",
+          "name": "am_zebra",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_falchion_am_zebra_light_png.vtex_c"
+        },
+        {
+          "id": "knife-falchion-sp_mesh_tan",
+          "kitId": "72",
+          "name": "sp_mesh_tan",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_falchion_sp_mesh_tan_light_png.vtex_c"
+        },
+        {
+          "id": "knife-falchion-hy_forest_boreal",
+          "kitId": "77",
+          "name": "hy_forest_boreal",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_falchion_hy_forest_boreal_light_png.vtex_c"
+        },
+        {
+          "id": "knife-falchion-sp_tape_urban",
+          "kitId": "143",
+          "name": "sp_tape_urban",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_falchion_sp_tape_urban_light_png.vtex_c"
+        },
+        {
+          "id": "knife-falchion-sp_dapple",
+          "kitId": "175",
+          "name": "sp_dapple",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_falchion_sp_dapple_light_png.vtex_c"
+        },
+        {
+          "id": "knife-falchion-an_tiger_orange",
+          "kitId": "409",
+          "name": "an_tiger_orange",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_falchion_an_tiger_orange_light_png.vtex_c"
+        },
+        {
+          "id": "knife-falchion-aq_damascus_90",
+          "kitId": "411",
+          "name": "aq_damascus_90",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_falchion_aq_damascus_90_light_png.vtex_c"
+        },
+        {
+          "id": "knife-falchion-am_marble_fade",
+          "kitId": "413",
+          "name": "am_marble_fade",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_falchion_am_marble_fade_light_png.vtex_c"
+        },
+        {
+          "id": "knife-falchion-aq_steel_knife",
+          "kitId": "414",
+          "name": "aq_steel_knife",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_falchion_aq_steel_knife_light_png.vtex_c"
+        },
+        {
+          "id": "knife-falchion-am_ruby_marbleized",
+          "kitId": "415",
+          "name": "am_ruby_marbleized",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_falchion_am_ruby_marbleized_light_png.vtex_c"
+        },
+        {
+          "id": "knife-falchion-am_sapphire_marbleized",
+          "kitId": "416",
+          "name": "am_sapphire_marbleized",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_falchion_am_sapphire_marbleized_light_png.vtex_c"
+        },
+        {
+          "id": "knife-falchion-am_blackpearl_marbleized",
+          "kitId": "417",
+          "name": "am_blackpearl_marbleized",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_falchion_am_blackpearl_marbleized_light_png.vtex_c"
+        },
+        {
+          "id": "knife-falchion-am_doppler_phase1",
+          "kitId": "418",
+          "name": "am_doppler_phase1",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_falchion_am_doppler_phase1_light_png.vtex_c"
+        },
+        {
+          "id": "knife-falchion-am_doppler_phase2",
+          "kitId": "419",
+          "name": "am_doppler_phase2",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_falchion_am_doppler_phase2_light_png.vtex_c"
+        },
+        {
+          "id": "knife-falchion-am_doppler_phase3",
+          "kitId": "420",
+          "name": "am_doppler_phase3",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_falchion_am_doppler_phase3_light_png.vtex_c"
+        },
+        {
+          "id": "knife-falchion-am_doppler_phase4",
+          "kitId": "421",
+          "name": "am_doppler_phase4",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_falchion_am_doppler_phase4_light_png.vtex_c"
+        },
+        {
+          "id": "knife-falchion-am_emerald_marbleized",
+          "kitId": "568",
+          "name": "am_emerald_marbleized",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_falchion_am_emerald_marbleized_light_png.vtex_c"
+        },
+        {
+          "id": "knife-falchion-am_gamma_doppler_phase1",
+          "kitId": "569",
+          "name": "am_gamma_doppler_phase1",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_falchion_am_gamma_doppler_phase1_light_png.vtex_c"
+        },
+        {
+          "id": "knife-falchion-am_gamma_doppler_phase2",
+          "kitId": "570",
+          "name": "am_gamma_doppler_phase2",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_falchion_am_gamma_doppler_phase2_light_png.vtex_c"
+        },
+        {
+          "id": "knife-falchion-am_gamma_doppler_phase3",
+          "kitId": "571",
+          "name": "am_gamma_doppler_phase3",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_falchion_am_gamma_doppler_phase3_light_png.vtex_c"
+        },
+        {
+          "id": "knife-falchion-am_gamma_doppler_phase4",
+          "kitId": "572",
+          "name": "am_gamma_doppler_phase4",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_falchion_am_gamma_doppler_phase4_light_png.vtex_c"
+        },
+        {
+          "id": "knife-falchion-hy_ocean_knife_90",
+          "kitId": "579",
+          "name": "hy_ocean_knife_90",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_falchion_hy_ocean_knife_90_light_png.vtex_c"
+        },
+        {
+          "id": "knife-falchion-am_marked_up_90",
+          "kitId": "581",
+          "name": "am_marked_up_90",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_falchion_am_marked_up_90_light_png.vtex_c"
+        },
+        {
+          "id": "knife-falchion-so_purple_falchion",
+          "kitId": "621",
+          "name": "so_purple_falchion",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_falchion_so_purple_falchion_light_png.vtex_c"
+        },
+        {
+          "id": "knife-falchion-cu_falchion_lore",
+          "kitId": "1106",
+          "name": "cu_falchion_lore",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_falchion_cu_falchion_lore_light_png.vtex_c"
+        },
+        {
+          "id": "knife-falchion-gs_falchion_black_laminate",
+          "kitId": "1111",
+          "name": "gs_falchion_black_laminate",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_falchion_gs_falchion_black_laminate_light_png.vtex_c"
+        },
+        {
+          "id": "knife-falchion-gs_falchion_autotronic",
+          "kitId": "1116",
+          "name": "gs_falchion_autotronic",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_falchion_gs_falchion_autotronic_light_png.vtex_c"
+        }
+      ]
+    },
+    "knife-bowie": {
+      "label": "Bowie Knife",
+      "definitionId": "514",
+      "finishes": 34,
+      "paintMask": {
+        "path": "weapons/models/knife/knife_bowie/materials/composite_inputs/knife_survival_bowie_masks_psd_d8a9837f.vtex_c",
+        "crc": "000a7426dc",
+        "bytes": 81572
+      },
+      "selected": [
+        {
+          "id": "knife-bowie-hy_ddpat",
+          "kitId": "5",
+          "name": "hy_ddpat",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_survival_bowie_hy_ddpat_light_png.vtex_c"
+        },
+        {
+          "id": "knife-bowie-hy_webs",
+          "kitId": "12",
+          "name": "hy_webs",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_survival_bowie_hy_webs_light_png.vtex_c"
+        },
+        {
+          "id": "knife-bowie-aa_fade",
+          "kitId": "38",
+          "name": "aa_fade",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_survival_bowie_aa_fade_light_png.vtex_c"
+        },
+        {
+          "id": "knife-bowie-so_night",
+          "kitId": "40",
+          "name": "so_night",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_survival_bowie_so_night_light_png.vtex_c"
+        },
+        {
+          "id": "knife-bowie-aq_blued",
+          "kitId": "42",
+          "name": "aq_blued",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_survival_bowie_aq_blued_light_png.vtex_c"
+        },
+        {
+          "id": "knife-bowie-aq_forced",
+          "kitId": "43",
+          "name": "aq_forced",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_survival_bowie_aq_forced_light_png.vtex_c"
+        },
+        {
+          "id": "knife-bowie-aq_oiled",
+          "kitId": "44",
+          "name": "aq_oiled",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_survival_bowie_aq_oiled_light_png.vtex_c"
+        },
+        {
+          "id": "knife-bowie-am_zebra",
+          "kitId": "59",
+          "name": "am_zebra",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_survival_bowie_am_zebra_light_png.vtex_c"
+        },
+        {
+          "id": "knife-bowie-sp_mesh_tan",
+          "kitId": "72",
+          "name": "sp_mesh_tan",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_survival_bowie_sp_mesh_tan_light_png.vtex_c"
+        },
+        {
+          "id": "knife-bowie-hy_forest_boreal",
+          "kitId": "77",
+          "name": "hy_forest_boreal",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_survival_bowie_hy_forest_boreal_light_png.vtex_c"
+        },
+        {
+          "id": "knife-bowie-so_purple",
+          "kitId": "98",
+          "name": "so_purple",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_survival_bowie_so_purple_light_png.vtex_c"
+        },
+        {
+          "id": "knife-bowie-sp_tape_urban",
+          "kitId": "143",
+          "name": "sp_tape_urban",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_survival_bowie_sp_tape_urban_light_png.vtex_c"
+        },
+        {
+          "id": "knife-bowie-sp_dapple",
+          "kitId": "175",
+          "name": "sp_dapple",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_survival_bowie_sp_dapple_light_png.vtex_c"
+        },
+        {
+          "id": "knife-bowie-an_tiger_orange",
+          "kitId": "409",
+          "name": "an_tiger_orange",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_survival_bowie_an_tiger_orange_light_png.vtex_c"
+        },
+        {
+          "id": "knife-bowie-aq_damascus_90",
+          "kitId": "411",
+          "name": "aq_damascus_90",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_survival_bowie_aq_damascus_90_light_png.vtex_c"
+        },
+        {
+          "id": "knife-bowie-am_marble_fade",
+          "kitId": "413",
+          "name": "am_marble_fade",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_survival_bowie_am_marble_fade_light_png.vtex_c"
+        },
+        {
+          "id": "knife-bowie-aq_steel_knife",
+          "kitId": "414",
+          "name": "aq_steel_knife",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_survival_bowie_aq_steel_knife_light_png.vtex_c"
+        },
+        {
+          "id": "knife-bowie-am_ruby_marbleized",
+          "kitId": "415",
+          "name": "am_ruby_marbleized",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_survival_bowie_am_ruby_marbleized_light_png.vtex_c"
+        },
+        {
+          "id": "knife-bowie-am_sapphire_marbleized",
+          "kitId": "416",
+          "name": "am_sapphire_marbleized",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_survival_bowie_am_sapphire_marbleized_light_png.vtex_c"
+        },
+        {
+          "id": "knife-bowie-am_blackpearl_marbleized",
+          "kitId": "417",
+          "name": "am_blackpearl_marbleized",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_survival_bowie_am_blackpearl_marbleized_light_png.vtex_c"
+        },
+        {
+          "id": "knife-bowie-am_doppler_phase1",
+          "kitId": "418",
+          "name": "am_doppler_phase1",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_survival_bowie_am_doppler_phase1_light_png.vtex_c"
+        },
+        {
+          "id": "knife-bowie-am_doppler_phase2",
+          "kitId": "419",
+          "name": "am_doppler_phase2",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_survival_bowie_am_doppler_phase2_light_png.vtex_c"
+        },
+        {
+          "id": "knife-bowie-am_doppler_phase3",
+          "kitId": "420",
+          "name": "am_doppler_phase3",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_survival_bowie_am_doppler_phase3_light_png.vtex_c"
+        },
+        {
+          "id": "knife-bowie-am_doppler_phase4",
+          "kitId": "421",
+          "name": "am_doppler_phase4",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_survival_bowie_am_doppler_phase4_light_png.vtex_c"
+        },
+        {
+          "id": "knife-bowie-am_emerald_marbleized",
+          "kitId": "568",
+          "name": "am_emerald_marbleized",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_survival_bowie_am_emerald_marbleized_light_png.vtex_c"
+        },
+        {
+          "id": "knife-bowie-am_gamma_doppler_phase1",
+          "kitId": "569",
+          "name": "am_gamma_doppler_phase1",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_survival_bowie_am_gamma_doppler_phase1_light_png.vtex_c"
+        },
+        {
+          "id": "knife-bowie-am_gamma_doppler_phase2",
+          "kitId": "570",
+          "name": "am_gamma_doppler_phase2",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_survival_bowie_am_gamma_doppler_phase2_light_png.vtex_c"
+        },
+        {
+          "id": "knife-bowie-am_gamma_doppler_phase3",
+          "kitId": "571",
+          "name": "am_gamma_doppler_phase3",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_survival_bowie_am_gamma_doppler_phase3_light_png.vtex_c"
+        },
+        {
+          "id": "knife-bowie-am_gamma_doppler_phase4",
+          "kitId": "572",
+          "name": "am_gamma_doppler_phase4",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_survival_bowie_am_gamma_doppler_phase4_light_png.vtex_c"
+        },
+        {
+          "id": "knife-bowie-hy_ocean_knife_90",
+          "kitId": "579",
+          "name": "hy_ocean_knife_90",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_survival_bowie_hy_ocean_knife_90_light_png.vtex_c"
+        },
+        {
+          "id": "knife-bowie-am_marked_up_90",
+          "kitId": "581",
+          "name": "am_marked_up_90",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_survival_bowie_am_marked_up_90_light_png.vtex_c"
+        },
+        {
+          "id": "knife-bowie-cu_bowie_lore",
+          "kitId": "1104",
+          "name": "cu_bowie_lore",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_survival_bowie_cu_bowie_lore_light_png.vtex_c"
+        },
+        {
+          "id": "knife-bowie-gs_bowie_black_laminate",
+          "kitId": "1109",
+          "name": "gs_bowie_black_laminate",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_survival_bowie_gs_bowie_black_laminate_light_png.vtex_c"
+        },
+        {
+          "id": "knife-bowie-gs_bowie_autotronic",
+          "kitId": "1114",
+          "name": "gs_bowie_autotronic",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_survival_bowie_gs_bowie_autotronic_light_png.vtex_c"
+        }
+      ]
+    },
+    "knife-butterfly": {
+      "label": "Butterfly Knife",
+      "definitionId": "515",
+      "finishes": 34,
+      "paintMask": {
+        "path": "weapons/models/knife/knife_butterfly/materials/composite_inputs/knife_butterfly_masks_psd_20dc150a.vtex_c",
+        "crc": "00f251ae25",
+        "bytes": 17343
+      },
+      "selected": [
+        {
+          "id": "knife-butterfly-hy_ddpat",
+          "kitId": "5",
+          "name": "hy_ddpat",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_butterfly_hy_ddpat_light_png.vtex_c"
+        },
+        {
+          "id": "knife-butterfly-hy_webs",
+          "kitId": "12",
+          "name": "hy_webs",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_butterfly_hy_webs_light_png.vtex_c"
+        },
+        {
+          "id": "knife-butterfly-aa_fade",
+          "kitId": "38",
+          "name": "aa_fade",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_butterfly_aa_fade_light_png.vtex_c"
+        },
+        {
+          "id": "knife-butterfly-so_night",
+          "kitId": "40",
+          "name": "so_night",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_butterfly_so_night_light_png.vtex_c"
+        },
+        {
+          "id": "knife-butterfly-aq_blued",
+          "kitId": "42",
+          "name": "aq_blued",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_butterfly_aq_blued_light_png.vtex_c"
+        },
+        {
+          "id": "knife-butterfly-aq_forced",
+          "kitId": "43",
+          "name": "aq_forced",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_butterfly_aq_forced_light_png.vtex_c"
+        },
+        {
+          "id": "knife-butterfly-aq_oiled",
+          "kitId": "44",
+          "name": "aq_oiled",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_butterfly_aq_oiled_light_png.vtex_c"
+        },
+        {
+          "id": "knife-butterfly-am_zebra",
+          "kitId": "59",
+          "name": "am_zebra",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_butterfly_am_zebra_light_png.vtex_c"
+        },
+        {
+          "id": "knife-butterfly-sp_mesh_tan",
+          "kitId": "72",
+          "name": "sp_mesh_tan",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_butterfly_sp_mesh_tan_light_png.vtex_c"
+        },
+        {
+          "id": "knife-butterfly-hy_forest_boreal",
+          "kitId": "77",
+          "name": "hy_forest_boreal",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_butterfly_hy_forest_boreal_light_png.vtex_c"
+        },
+        {
+          "id": "knife-butterfly-so_purple",
+          "kitId": "98",
+          "name": "so_purple",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_butterfly_so_purple_light_png.vtex_c"
+        },
+        {
+          "id": "knife-butterfly-sp_tape_urban",
+          "kitId": "143",
+          "name": "sp_tape_urban",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_butterfly_sp_tape_urban_light_png.vtex_c"
+        },
+        {
+          "id": "knife-butterfly-sp_dapple",
+          "kitId": "175",
+          "name": "sp_dapple",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_butterfly_sp_dapple_light_png.vtex_c"
+        },
+        {
+          "id": "knife-butterfly-an_tiger_orange",
+          "kitId": "409",
+          "name": "an_tiger_orange",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_butterfly_an_tiger_orange_light_png.vtex_c"
+        },
+        {
+          "id": "knife-butterfly-aq_damascus_90",
+          "kitId": "411",
+          "name": "aq_damascus_90",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_butterfly_aq_damascus_90_light_png.vtex_c"
+        },
+        {
+          "id": "knife-butterfly-am_marble_fade",
+          "kitId": "413",
+          "name": "am_marble_fade",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_butterfly_am_marble_fade_light_png.vtex_c"
+        },
+        {
+          "id": "knife-butterfly-aq_steel_knife",
+          "kitId": "414",
+          "name": "aq_steel_knife",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_butterfly_aq_steel_knife_light_png.vtex_c"
+        },
+        {
+          "id": "knife-butterfly-am_ruby_marbleized",
+          "kitId": "415",
+          "name": "am_ruby_marbleized",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_butterfly_am_ruby_marbleized_light_png.vtex_c"
+        },
+        {
+          "id": "knife-butterfly-am_doppler_phase1",
+          "kitId": "418",
+          "name": "am_doppler_phase1",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_butterfly_am_doppler_phase1_light_png.vtex_c"
+        },
+        {
+          "id": "knife-butterfly-am_doppler_phase3",
+          "kitId": "420",
+          "name": "am_doppler_phase3",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_butterfly_am_doppler_phase3_light_png.vtex_c"
+        },
+        {
+          "id": "knife-butterfly-am_doppler_phase4",
+          "kitId": "421",
+          "name": "am_doppler_phase4",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_butterfly_am_doppler_phase4_light_png.vtex_c"
+        },
+        {
+          "id": "knife-butterfly-emerald",
+          "kitId": "568",
+          "name": "am_emerald_marbleized",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_butterfly_am_emerald_marbleized_light_png.vtex_c"
+        },
+        {
+          "id": "knife-butterfly-am_gamma_doppler_phase1",
+          "kitId": "569",
+          "name": "am_gamma_doppler_phase1",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_butterfly_am_gamma_doppler_phase1_light_png.vtex_c"
+        },
+        {
+          "id": "knife-butterfly-am_gamma_doppler_phase2",
+          "kitId": "570",
+          "name": "am_gamma_doppler_phase2",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_butterfly_am_gamma_doppler_phase2_light_png.vtex_c"
+        },
+        {
+          "id": "knife-butterfly-am_gamma_doppler_phase3",
+          "kitId": "571",
+          "name": "am_gamma_doppler_phase3",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_butterfly_am_gamma_doppler_phase3_light_png.vtex_c"
+        },
+        {
+          "id": "knife-butterfly-am_gamma_doppler_phase4",
+          "kitId": "572",
+          "name": "am_gamma_doppler_phase4",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_butterfly_am_gamma_doppler_phase4_light_png.vtex_c"
+        },
+        {
+          "id": "knife-butterfly-hy_ocean_knife_90",
+          "kitId": "579",
+          "name": "hy_ocean_knife_90",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_butterfly_hy_ocean_knife_90_light_png.vtex_c"
+        },
+        {
+          "id": "knife-butterfly-am_marked_up_90",
+          "kitId": "581",
+          "name": "am_marked_up_90",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_butterfly_am_marked_up_90_light_png.vtex_c"
+        },
+        {
+          "id": "knife-butterfly-am_blackpearl_marbleized",
+          "kitId": "617",
+          "name": "am_blackpearl_marbleized_b",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_butterfly_am_blackpearl_marbleized_b_light_png.vtex_c"
+        },
+        {
+          "id": "knife-butterfly-am_doppler_phase2",
+          "kitId": "618",
+          "name": "am_doppler_phase2_b",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_butterfly_am_doppler_phase2_b_light_png.vtex_c"
+        },
+        {
+          "id": "knife-butterfly-am_sapphire_marbleized_b",
+          "kitId": "619",
+          "name": "am_sapphire_marbleized_b",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_butterfly_am_sapphire_marbleized_b_light_png.vtex_c"
+        },
+        {
+          "id": "knife-butterfly-cu_butterfly_lore",
+          "kitId": "1105",
+          "name": "cu_butterfly_lore",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_butterfly_cu_butterfly_lore_light_png.vtex_c"
+        },
+        {
+          "id": "knife-butterfly-gs_butterfly_black_laminate",
+          "kitId": "1110",
+          "name": "gs_butterfly_black_laminate",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_butterfly_gs_butterfly_black_laminate_light_png.vtex_c"
+        },
+        {
+          "id": "knife-butterfly-gs_butterfly_autotronic",
+          "kitId": "1115",
+          "name": "gs_butterfly_autotronic",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_butterfly_gs_butterfly_autotronic_light_png.vtex_c"
+        }
+      ]
+    },
+    "knife-shadow-daggers": {
+      "label": "Shadow Daggers",
+      "definitionId": "516",
+      "finishes": 34,
+      "paintMask": {
+        "path": "weapons/models/knife/knife_push/materials/composite_inputs/knife_push_masks_psd_a15b0b22.vtex_c",
+        "crc": "001ba45437",
+        "bytes": 60360
+      },
+      "selected": [
+        {
+          "id": "knife-shadow-daggers-hy_ddpat",
+          "kitId": "5",
+          "name": "hy_ddpat",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_push_hy_ddpat_light_png.vtex_c"
+        },
+        {
+          "id": "knife-shadow-daggers-hy_webs",
+          "kitId": "12",
+          "name": "hy_webs",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_push_hy_webs_light_png.vtex_c"
+        },
+        {
+          "id": "knife-shadow-daggers-aa_fade",
+          "kitId": "38",
+          "name": "aa_fade",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_push_aa_fade_light_png.vtex_c"
+        },
+        {
+          "id": "knife-shadow-daggers-so_night",
+          "kitId": "40",
+          "name": "so_night",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_push_so_night_light_png.vtex_c"
+        },
+        {
+          "id": "knife-shadow-daggers-aq_blued",
+          "kitId": "42",
+          "name": "aq_blued",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_push_aq_blued_light_png.vtex_c"
+        },
+        {
+          "id": "knife-shadow-daggers-aq_forced",
+          "kitId": "43",
+          "name": "aq_forced",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_push_aq_forced_light_png.vtex_c"
+        },
+        {
+          "id": "knife-shadow-daggers-aq_oiled",
+          "kitId": "44",
+          "name": "aq_oiled",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_push_aq_oiled_light_png.vtex_c"
+        },
+        {
+          "id": "knife-shadow-daggers-am_zebra",
+          "kitId": "59",
+          "name": "am_zebra",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_push_am_zebra_light_png.vtex_c"
+        },
+        {
+          "id": "knife-shadow-daggers-sp_mesh_tan",
+          "kitId": "72",
+          "name": "sp_mesh_tan",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_push_sp_mesh_tan_light_png.vtex_c"
+        },
+        {
+          "id": "knife-shadow-daggers-hy_forest_boreal",
+          "kitId": "77",
+          "name": "hy_forest_boreal",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_push_hy_forest_boreal_light_png.vtex_c"
+        },
+        {
+          "id": "knife-shadow-daggers-so_purple",
+          "kitId": "98",
+          "name": "so_purple",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_push_so_purple_light_png.vtex_c"
+        },
+        {
+          "id": "knife-shadow-daggers-sp_tape_urban",
+          "kitId": "143",
+          "name": "sp_tape_urban",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_push_sp_tape_urban_light_png.vtex_c"
+        },
+        {
+          "id": "knife-shadow-daggers-sp_dapple",
+          "kitId": "175",
+          "name": "sp_dapple",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_push_sp_dapple_light_png.vtex_c"
+        },
+        {
+          "id": "knife-shadow-daggers-an_tiger_orange",
+          "kitId": "409",
+          "name": "an_tiger_orange",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_push_an_tiger_orange_light_png.vtex_c"
+        },
+        {
+          "id": "knife-shadow-daggers-aq_damascus_90",
+          "kitId": "411",
+          "name": "aq_damascus_90",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_push_aq_damascus_90_light_png.vtex_c"
+        },
+        {
+          "id": "knife-shadow-daggers-am_marble_fade",
+          "kitId": "413",
+          "name": "am_marble_fade",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_push_am_marble_fade_light_png.vtex_c"
+        },
+        {
+          "id": "knife-shadow-daggers-aq_steel_knife",
+          "kitId": "414",
+          "name": "aq_steel_knife",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_push_aq_steel_knife_light_png.vtex_c"
+        },
+        {
+          "id": "knife-shadow-daggers-am_ruby_marbleized",
+          "kitId": "415",
+          "name": "am_ruby_marbleized",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_push_am_ruby_marbleized_light_png.vtex_c"
+        },
+        {
+          "id": "knife-shadow-daggers-am_doppler_phase1",
+          "kitId": "418",
+          "name": "am_doppler_phase1",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_push_am_doppler_phase1_light_png.vtex_c"
+        },
+        {
+          "id": "knife-shadow-daggers-am_doppler_phase3",
+          "kitId": "420",
+          "name": "am_doppler_phase3",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_push_am_doppler_phase3_light_png.vtex_c"
+        },
+        {
+          "id": "knife-shadow-daggers-am_doppler_phase4",
+          "kitId": "421",
+          "name": "am_doppler_phase4",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_push_am_doppler_phase4_light_png.vtex_c"
+        },
+        {
+          "id": "knife-shadow-daggers-am_emerald_marbleized",
+          "kitId": "568",
+          "name": "am_emerald_marbleized",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_push_am_emerald_marbleized_light_png.vtex_c"
+        },
+        {
+          "id": "knife-shadow-daggers-am_gamma_doppler_phase1",
+          "kitId": "569",
+          "name": "am_gamma_doppler_phase1",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_push_am_gamma_doppler_phase1_light_png.vtex_c"
+        },
+        {
+          "id": "knife-shadow-daggers-am_gamma_doppler_phase2",
+          "kitId": "570",
+          "name": "am_gamma_doppler_phase2",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_push_am_gamma_doppler_phase2_light_png.vtex_c"
+        },
+        {
+          "id": "knife-shadow-daggers-am_gamma_doppler_phase3",
+          "kitId": "571",
+          "name": "am_gamma_doppler_phase3",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_push_am_gamma_doppler_phase3_light_png.vtex_c"
+        },
+        {
+          "id": "knife-shadow-daggers-am_gamma_doppler_phase4",
+          "kitId": "572",
+          "name": "am_gamma_doppler_phase4",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_push_am_gamma_doppler_phase4_light_png.vtex_c"
+        },
+        {
+          "id": "knife-shadow-daggers-hy_ocean_knife_90",
+          "kitId": "579",
+          "name": "hy_ocean_knife_90",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_push_hy_ocean_knife_90_light_png.vtex_c"
+        },
+        {
+          "id": "knife-shadow-daggers-am_marked_up_90",
+          "kitId": "581",
+          "name": "am_marked_up_90",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_push_am_marked_up_90_light_png.vtex_c"
+        },
+        {
+          "id": "knife-shadow-daggers-am_blackpearl_marbleized_b",
+          "kitId": "617",
+          "name": "am_blackpearl_marbleized_b",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_push_am_blackpearl_marbleized_b_light_png.vtex_c"
+        },
+        {
+          "id": "knife-shadow-daggers-am_doppler_phase2_b",
+          "kitId": "618",
+          "name": "am_doppler_phase2_b",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_push_am_doppler_phase2_b_light_png.vtex_c"
+        },
+        {
+          "id": "knife-shadow-daggers-am_sapphire_marbleized_b",
+          "kitId": "619",
+          "name": "am_sapphire_marbleized_b",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_push_am_sapphire_marbleized_b_light_png.vtex_c"
+        },
+        {
+          "id": "knife-shadow-daggers-cu_push_lore",
+          "kitId": "1108",
+          "name": "cu_push_lore",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_push_cu_push_lore_light_png.vtex_c"
+        },
+        {
+          "id": "knife-shadow-daggers-gs_push_black_laminate",
+          "kitId": "1113",
+          "name": "gs_push_black_laminate",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_push_gs_push_black_laminate_light_png.vtex_c"
+        },
+        {
+          "id": "knife-shadow-daggers-gs_push_autotronic",
+          "kitId": "1118",
+          "name": "gs_push_autotronic",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_push_gs_push_autotronic_light_png.vtex_c"
+        }
+      ]
+    },
+    "knife-paracord": {
+      "label": "Paracord Knife",
+      "definitionId": "517",
+      "finishes": 24,
+      "paintMask": {
+        "path": "weapons/models/knife/knife_cord/materials/composite_inputs/knife_cord_masks_psd_8491d831.vtex_c",
+        "crc": "00f6edbd72",
+        "bytes": 8994
+      },
+      "selected": [
+        {
+          "id": "knife-paracord-hy_ddpat",
+          "kitId": "5",
+          "name": "hy_ddpat",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_cord_hy_ddpat_light_png.vtex_c"
+        },
+        {
+          "id": "knife-paracord-hy_webs",
+          "kitId": "12",
+          "name": "hy_webs",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_cord_hy_webs_light_png.vtex_c"
+        },
+        {
+          "id": "knife-paracord-aa_fade",
+          "kitId": "38",
+          "name": "aa_fade",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_cord_aa_fade_light_png.vtex_c"
+        },
+        {
+          "id": "knife-paracord-aq_blued",
+          "kitId": "42",
+          "name": "aq_blued",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_cord_aq_blued_light_png.vtex_c"
+        },
+        {
+          "id": "knife-paracord-aq_forced",
+          "kitId": "43",
+          "name": "aq_forced",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_cord_aq_forced_light_png.vtex_c"
+        },
+        {
+          "id": "knife-paracord-aq_oiled",
+          "kitId": "44",
+          "name": "aq_oiled",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_cord_aq_oiled_light_png.vtex_c"
+        },
+        {
+          "id": "knife-paracord-am_zebra",
+          "kitId": "59",
+          "name": "am_zebra",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_cord_am_zebra_light_png.vtex_c"
+        },
+        {
+          "id": "knife-paracord-sp_mesh_tan",
+          "kitId": "72",
+          "name": "sp_mesh_tan",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_cord_sp_mesh_tan_light_png.vtex_c"
+        },
+        {
+          "id": "knife-paracord-hy_forest_boreal",
+          "kitId": "77",
+          "name": "hy_forest_boreal",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_cord_hy_forest_boreal_light_png.vtex_c"
+        },
+        {
+          "id": "knife-paracord-sp_tape_urban",
+          "kitId": "143",
+          "name": "sp_tape_urban",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_cord_sp_tape_urban_light_png.vtex_c"
+        },
+        {
+          "id": "knife-paracord-sp_dapple",
+          "kitId": "175",
+          "name": "sp_dapple",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_cord_sp_dapple_light_png.vtex_c"
+        },
+        {
+          "id": "knife-paracord-an_tiger_orange",
+          "kitId": "409",
+          "name": "an_tiger_orange",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_cord_an_tiger_orange_light_png.vtex_c"
+        },
+        {
+          "id": "knife-paracord-aq_damascus",
+          "kitId": "410",
+          "name": "aq_damascus",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_cord_aq_damascus_light_png.vtex_c"
+        },
+        {
+          "id": "knife-paracord-am_marble_fade",
+          "kitId": "413",
+          "name": "am_marble_fade",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_cord_am_marble_fade_light_png.vtex_c"
+        },
+        {
+          "id": "knife-paracord-aq_steel_knife",
+          "kitId": "414",
+          "name": "aq_steel_knife",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_cord_aq_steel_knife_light_png.vtex_c"
+        },
+        {
+          "id": "knife-paracord-am_ruby_marbleized",
+          "kitId": "415",
+          "name": "am_ruby_marbleized",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_cord_am_ruby_marbleized_light_png.vtex_c"
+        },
+        {
+          "id": "knife-paracord-am_sapphire_marbleized",
+          "kitId": "416",
+          "name": "am_sapphire_marbleized",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_cord_am_sapphire_marbleized_light_png.vtex_c"
+        },
+        {
+          "id": "knife-paracord-am_blackpearl_marbleized",
+          "kitId": "417",
+          "name": "am_blackpearl_marbleized",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_cord_am_blackpearl_marbleized_light_png.vtex_c"
+        },
+        {
+          "id": "knife-paracord-am_doppler_phase1",
+          "kitId": "418",
+          "name": "am_doppler_phase1",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_cord_am_doppler_phase1_light_png.vtex_c"
+        },
+        {
+          "id": "knife-paracord-am_doppler_phase2",
+          "kitId": "419",
+          "name": "am_doppler_phase2",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_cord_am_doppler_phase2_light_png.vtex_c"
+        },
+        {
+          "id": "knife-paracord-am_doppler_phase3",
+          "kitId": "420",
+          "name": "am_doppler_phase3",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_cord_am_doppler_phase3_light_png.vtex_c"
+        },
+        {
+          "id": "knife-paracord-am_doppler_phase4",
+          "kitId": "421",
+          "name": "am_doppler_phase4",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_cord_am_doppler_phase4_light_png.vtex_c"
+        },
+        {
+          "id": "knife-paracord-so_purple_falchion",
+          "kitId": "621",
+          "name": "so_purple_falchion",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_cord_so_purple_falchion_light_png.vtex_c"
+        },
+        {
+          "id": "knife-paracord-sp_nightstripe",
+          "kitId": "735",
+          "name": "sp_nightstripe",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_cord_sp_nightstripe_light_png.vtex_c"
+        }
+      ]
+    },
+    "knife-survival": {
+      "label": "Survival Knife",
+      "definitionId": "518",
+      "finishes": 24,
+      "paintMask": {
+        "path": "weapons/models/knife/knife_canis/materials/composite_inputs/knife_canis_masks_psd_e2923735.vtex_c",
+        "crc": "00212a3fa1",
+        "bytes": 23433
+      },
+      "selected": [
+        {
+          "id": "knife-survival-hy_ddpat",
+          "kitId": "5",
+          "name": "hy_ddpat",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_canis_hy_ddpat_light_png.vtex_c"
+        },
+        {
+          "id": "knife-survival-hy_webs",
+          "kitId": "12",
+          "name": "hy_webs",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_canis_hy_webs_light_png.vtex_c"
+        },
+        {
+          "id": "knife-survival-aa_fade",
+          "kitId": "38",
+          "name": "aa_fade",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_canis_aa_fade_light_png.vtex_c"
+        },
+        {
+          "id": "knife-survival-aq_blued",
+          "kitId": "42",
+          "name": "aq_blued",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_canis_aq_blued_light_png.vtex_c"
+        },
+        {
+          "id": "knife-survival-aq_forced",
+          "kitId": "43",
+          "name": "aq_forced",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_canis_aq_forced_light_png.vtex_c"
+        },
+        {
+          "id": "knife-survival-aq_oiled",
+          "kitId": "44",
+          "name": "aq_oiled",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_canis_aq_oiled_light_png.vtex_c"
+        },
+        {
+          "id": "knife-survival-am_zebra",
+          "kitId": "59",
+          "name": "am_zebra",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_canis_am_zebra_light_png.vtex_c"
+        },
+        {
+          "id": "knife-survival-sp_mesh_tan",
+          "kitId": "72",
+          "name": "sp_mesh_tan",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_canis_sp_mesh_tan_light_png.vtex_c"
+        },
+        {
+          "id": "knife-survival-hy_forest_boreal",
+          "kitId": "77",
+          "name": "hy_forest_boreal",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_canis_hy_forest_boreal_light_png.vtex_c"
+        },
+        {
+          "id": "knife-survival-so_purple",
+          "kitId": "98",
+          "name": "so_purple",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_canis_so_purple_light_png.vtex_c"
+        },
+        {
+          "id": "knife-survival-sp_tape_urban",
+          "kitId": "143",
+          "name": "sp_tape_urban",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_canis_sp_tape_urban_light_png.vtex_c"
+        },
+        {
+          "id": "knife-survival-sp_dapple",
+          "kitId": "175",
+          "name": "sp_dapple",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_canis_sp_dapple_light_png.vtex_c"
+        },
+        {
+          "id": "knife-survival-an_tiger_orange",
+          "kitId": "409",
+          "name": "an_tiger_orange",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_canis_an_tiger_orange_light_png.vtex_c"
+        },
+        {
+          "id": "knife-survival-aq_damascus",
+          "kitId": "410",
+          "name": "aq_damascus",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_canis_aq_damascus_light_png.vtex_c"
+        },
+        {
+          "id": "knife-survival-am_marble_fade",
+          "kitId": "413",
+          "name": "am_marble_fade",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_canis_am_marble_fade_light_png.vtex_c"
+        },
+        {
+          "id": "knife-survival-aq_steel_knife",
+          "kitId": "414",
+          "name": "aq_steel_knife",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_canis_aq_steel_knife_light_png.vtex_c"
+        },
+        {
+          "id": "knife-survival-am_ruby_marbleized",
+          "kitId": "415",
+          "name": "am_ruby_marbleized",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_canis_am_ruby_marbleized_light_png.vtex_c"
+        },
+        {
+          "id": "knife-survival-am_sapphire_marbleized",
+          "kitId": "416",
+          "name": "am_sapphire_marbleized",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_canis_am_sapphire_marbleized_light_png.vtex_c"
+        },
+        {
+          "id": "knife-survival-am_blackpearl_marbleized",
+          "kitId": "417",
+          "name": "am_blackpearl_marbleized",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_canis_am_blackpearl_marbleized_light_png.vtex_c"
+        },
+        {
+          "id": "knife-survival-am_doppler_phase1",
+          "kitId": "418",
+          "name": "am_doppler_phase1",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_canis_am_doppler_phase1_light_png.vtex_c"
+        },
+        {
+          "id": "knife-survival-am_doppler_phase2",
+          "kitId": "419",
+          "name": "am_doppler_phase2",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_canis_am_doppler_phase2_light_png.vtex_c"
+        },
+        {
+          "id": "knife-survival-am_doppler_phase3",
+          "kitId": "420",
+          "name": "am_doppler_phase3",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_canis_am_doppler_phase3_light_png.vtex_c"
+        },
+        {
+          "id": "knife-survival-am_doppler_phase4",
+          "kitId": "421",
+          "name": "am_doppler_phase4",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_canis_am_doppler_phase4_light_png.vtex_c"
+        },
+        {
+          "id": "knife-survival-sp_nightstripe",
+          "kitId": "735",
+          "name": "sp_nightstripe",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_canis_sp_nightstripe_light_png.vtex_c"
+        }
+      ]
+    },
+    "knife-ursus": {
+      "label": "Ursus Knife",
+      "definitionId": "519",
+      "finishes": 24,
+      "paintMask": {
+        "path": "weapons/models/knife/knife_ursus/materials/composite_inputs/knife_ursus_masks_psd_8b9ddddb.vtex_c",
+        "crc": "00f50fdaaa",
+        "bytes": 11520
+      },
+      "selected": [
+        {
+          "id": "knife-ursus-hy_ddpat",
+          "kitId": "5",
+          "name": "hy_ddpat",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_ursus_hy_ddpat_light_png.vtex_c"
+        },
+        {
+          "id": "knife-ursus-hy_webs",
+          "kitId": "12",
+          "name": "hy_webs",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_ursus_hy_webs_light_png.vtex_c"
+        },
+        {
+          "id": "knife-ursus-aa_fade",
+          "kitId": "38",
+          "name": "aa_fade",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_ursus_aa_fade_light_png.vtex_c"
+        },
+        {
+          "id": "knife-ursus-aq_blued",
+          "kitId": "42",
+          "name": "aq_blued",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_ursus_aq_blued_light_png.vtex_c"
+        },
+        {
+          "id": "knife-ursus-aq_forced",
+          "kitId": "43",
+          "name": "aq_forced",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_ursus_aq_forced_light_png.vtex_c"
+        },
+        {
+          "id": "knife-ursus-aq_oiled",
+          "kitId": "44",
+          "name": "aq_oiled",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_ursus_aq_oiled_light_png.vtex_c"
+        },
+        {
+          "id": "knife-ursus-am_zebra",
+          "kitId": "59",
+          "name": "am_zebra",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_ursus_am_zebra_light_png.vtex_c"
+        },
+        {
+          "id": "knife-ursus-sp_mesh_tan",
+          "kitId": "72",
+          "name": "sp_mesh_tan",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_ursus_sp_mesh_tan_light_png.vtex_c"
+        },
+        {
+          "id": "knife-ursus-hy_forest_boreal",
+          "kitId": "77",
+          "name": "hy_forest_boreal",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_ursus_hy_forest_boreal_light_png.vtex_c"
+        },
+        {
+          "id": "knife-ursus-so_purple",
+          "kitId": "98",
+          "name": "so_purple",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_ursus_so_purple_light_png.vtex_c"
+        },
+        {
+          "id": "knife-ursus-sp_tape_urban",
+          "kitId": "143",
+          "name": "sp_tape_urban",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_ursus_sp_tape_urban_light_png.vtex_c"
+        },
+        {
+          "id": "knife-ursus-sp_dapple",
+          "kitId": "175",
+          "name": "sp_dapple",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_ursus_sp_dapple_light_png.vtex_c"
+        },
+        {
+          "id": "knife-ursus-an_tiger_orange",
+          "kitId": "409",
+          "name": "an_tiger_orange",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_ursus_an_tiger_orange_light_png.vtex_c"
+        },
+        {
+          "id": "knife-ursus-am_marble_fade",
+          "kitId": "413",
+          "name": "am_marble_fade",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_ursus_am_marble_fade_light_png.vtex_c"
+        },
+        {
+          "id": "knife-ursus-aq_steel_knife",
+          "kitId": "414",
+          "name": "aq_steel_knife",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_ursus_aq_steel_knife_light_png.vtex_c"
+        },
+        {
+          "id": "knife-ursus-am_ruby_marbleized",
+          "kitId": "415",
+          "name": "am_ruby_marbleized",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_ursus_am_ruby_marbleized_light_png.vtex_c"
+        },
+        {
+          "id": "knife-ursus-am_sapphire_marbleized",
+          "kitId": "416",
+          "name": "am_sapphire_marbleized",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_ursus_am_sapphire_marbleized_light_png.vtex_c"
+        },
+        {
+          "id": "knife-ursus-am_blackpearl_marbleized",
+          "kitId": "417",
+          "name": "am_blackpearl_marbleized",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_ursus_am_blackpearl_marbleized_light_png.vtex_c"
+        },
+        {
+          "id": "knife-ursus-am_doppler_phase1",
+          "kitId": "418",
+          "name": "am_doppler_phase1",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_ursus_am_doppler_phase1_light_png.vtex_c"
+        },
+        {
+          "id": "knife-ursus-am_doppler_phase2",
+          "kitId": "419",
+          "name": "am_doppler_phase2",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_ursus_am_doppler_phase2_light_png.vtex_c"
+        },
+        {
+          "id": "knife-ursus-am_doppler_phase3",
+          "kitId": "420",
+          "name": "am_doppler_phase3",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_ursus_am_doppler_phase3_light_png.vtex_c"
+        },
+        {
+          "id": "knife-ursus-am_doppler_phase4",
+          "kitId": "421",
+          "name": "am_doppler_phase4",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_ursus_am_doppler_phase4_light_png.vtex_c"
+        },
+        {
+          "id": "knife-ursus-sp_nightstripe",
+          "kitId": "735",
+          "name": "sp_nightstripe",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_ursus_sp_nightstripe_light_png.vtex_c"
+        },
+        {
+          "id": "knife-ursus-aq_damascus_prisma",
+          "kitId": "857",
+          "name": "aq_damascus_prisma",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_ursus_aq_damascus_prisma_light_png.vtex_c"
+        }
+      ]
+    },
+    "knife-navaja": {
+      "label": "Navaja Knife",
+      "definitionId": "520",
+      "finishes": 24,
+      "paintMask": {
+        "path": "weapons/models/knife/knife_navaja/materials/composite_inputs/knife_gypsy_jack_masks_psd_a7b24d2.vtex_c",
+        "crc": "00aeb8c372",
+        "bytes": 15679
+      },
+      "selected": [
+        {
+          "id": "knife-navaja-hy_ddpat",
+          "kitId": "5",
+          "name": "hy_ddpat",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_gypsy_jackknife_hy_ddpat_light_png.vtex_c"
+        },
+        {
+          "id": "knife-navaja-hy_webs",
+          "kitId": "12",
+          "name": "hy_webs",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_gypsy_jackknife_hy_webs_light_png.vtex_c"
+        },
+        {
+          "id": "knife-navaja-aa_fade",
+          "kitId": "38",
+          "name": "aa_fade",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_gypsy_jackknife_aa_fade_light_png.vtex_c"
+        },
+        {
+          "id": "knife-navaja-aq_blued",
+          "kitId": "42",
+          "name": "aq_blued",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_gypsy_jackknife_aq_blued_light_png.vtex_c"
+        },
+        {
+          "id": "knife-navaja-aq_forced",
+          "kitId": "43",
+          "name": "aq_forced",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_gypsy_jackknife_aq_forced_light_png.vtex_c"
+        },
+        {
+          "id": "knife-navaja-aq_oiled",
+          "kitId": "44",
+          "name": "aq_oiled",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_gypsy_jackknife_aq_oiled_light_png.vtex_c"
+        },
+        {
+          "id": "knife-navaja-am_zebra",
+          "kitId": "59",
+          "name": "am_zebra",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_gypsy_jackknife_am_zebra_light_png.vtex_c"
+        },
+        {
+          "id": "knife-navaja-sp_mesh_tan",
+          "kitId": "72",
+          "name": "sp_mesh_tan",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_gypsy_jackknife_sp_mesh_tan_light_png.vtex_c"
+        },
+        {
+          "id": "knife-navaja-hy_forest_boreal",
+          "kitId": "77",
+          "name": "hy_forest_boreal",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_gypsy_jackknife_hy_forest_boreal_light_png.vtex_c"
+        },
+        {
+          "id": "knife-navaja-so_purple",
+          "kitId": "98",
+          "name": "so_purple",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_gypsy_jackknife_so_purple_light_png.vtex_c"
+        },
+        {
+          "id": "knife-navaja-sp_tape_urban",
+          "kitId": "143",
+          "name": "sp_tape_urban",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_gypsy_jackknife_sp_tape_urban_light_png.vtex_c"
+        },
+        {
+          "id": "knife-navaja-sp_dapple",
+          "kitId": "175",
+          "name": "sp_dapple",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_gypsy_jackknife_sp_dapple_light_png.vtex_c"
+        },
+        {
+          "id": "knife-navaja-an_tiger_orange",
+          "kitId": "409",
+          "name": "an_tiger_orange",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_gypsy_jackknife_an_tiger_orange_light_png.vtex_c"
+        },
+        {
+          "id": "knife-navaja-am_marble_fade",
+          "kitId": "413",
+          "name": "am_marble_fade",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_gypsy_jackknife_am_marble_fade_light_png.vtex_c"
+        },
+        {
+          "id": "knife-navaja-aq_steel_knife",
+          "kitId": "414",
+          "name": "aq_steel_knife",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_gypsy_jackknife_aq_steel_knife_light_png.vtex_c"
+        },
+        {
+          "id": "knife-navaja-am_ruby_marbleized",
+          "kitId": "415",
+          "name": "am_ruby_marbleized",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_gypsy_jackknife_am_ruby_marbleized_light_png.vtex_c"
+        },
+        {
+          "id": "knife-navaja-am_sapphire_marbleized",
+          "kitId": "416",
+          "name": "am_sapphire_marbleized",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_gypsy_jackknife_am_sapphire_marbleized_light_png.vtex_c"
+        },
+        {
+          "id": "knife-navaja-am_blackpearl_marbleized",
+          "kitId": "417",
+          "name": "am_blackpearl_marbleized",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_gypsy_jackknife_am_blackpearl_marbleized_light_png.vtex_c"
+        },
+        {
+          "id": "knife-navaja-am_doppler_phase1",
+          "kitId": "418",
+          "name": "am_doppler_phase1",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_gypsy_jackknife_am_doppler_phase1_light_png.vtex_c"
+        },
+        {
+          "id": "knife-navaja-am_doppler_phase2",
+          "kitId": "419",
+          "name": "am_doppler_phase2",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_gypsy_jackknife_am_doppler_phase2_light_png.vtex_c"
+        },
+        {
+          "id": "knife-navaja-am_doppler_phase3",
+          "kitId": "420",
+          "name": "am_doppler_phase3",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_gypsy_jackknife_am_doppler_phase3_light_png.vtex_c"
+        },
+        {
+          "id": "knife-navaja-am_doppler_phase4",
+          "kitId": "421",
+          "name": "am_doppler_phase4",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_gypsy_jackknife_am_doppler_phase4_light_png.vtex_c"
+        },
+        {
+          "id": "knife-navaja-sp_nightstripe",
+          "kitId": "735",
+          "name": "sp_nightstripe",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_gypsy_jackknife_sp_nightstripe_light_png.vtex_c"
+        },
+        {
+          "id": "knife-navaja-aq_damascus_prisma",
+          "kitId": "857",
+          "name": "aq_damascus_prisma",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_gypsy_jackknife_aq_damascus_prisma_light_png.vtex_c"
+        }
+      ]
+    },
+    "knife-nomad": {
+      "label": "Nomad Knife",
+      "definitionId": "521",
+      "finishes": 24,
+      "paintMask": {
+        "path": "weapons/models/knife/knife_outdoor/materials/composite_inputs/knife_outdoor_masks_psd_3e46b7ef.vtex_c",
+        "crc": "002ef824f9",
+        "bytes": 16878
+      },
+      "selected": [
+        {
+          "id": "knife-nomad-hy_ddpat",
+          "kitId": "5",
+          "name": "hy_ddpat",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_outdoor_hy_ddpat_light_png.vtex_c"
+        },
+        {
+          "id": "knife-nomad-hy_webs",
+          "kitId": "12",
+          "name": "hy_webs",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_outdoor_hy_webs_light_png.vtex_c"
+        },
+        {
+          "id": "knife-nomad-aa_fade",
+          "kitId": "38",
+          "name": "aa_fade",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_outdoor_aa_fade_light_png.vtex_c"
+        },
+        {
+          "id": "knife-nomad-aq_blued",
+          "kitId": "42",
+          "name": "aq_blued",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_outdoor_aq_blued_light_png.vtex_c"
+        },
+        {
+          "id": "knife-nomad-aq_forced",
+          "kitId": "43",
+          "name": "aq_forced",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_outdoor_aq_forced_light_png.vtex_c"
+        },
+        {
+          "id": "knife-nomad-aq_oiled",
+          "kitId": "44",
+          "name": "aq_oiled",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_outdoor_aq_oiled_light_png.vtex_c"
+        },
+        {
+          "id": "knife-nomad-am_zebra",
+          "kitId": "59",
+          "name": "am_zebra",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_outdoor_am_zebra_light_png.vtex_c"
+        },
+        {
+          "id": "knife-nomad-sp_mesh_tan",
+          "kitId": "72",
+          "name": "sp_mesh_tan",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_outdoor_sp_mesh_tan_light_png.vtex_c"
+        },
+        {
+          "id": "knife-nomad-hy_forest_boreal",
+          "kitId": "77",
+          "name": "hy_forest_boreal",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_outdoor_hy_forest_boreal_light_png.vtex_c"
+        },
+        {
+          "id": "knife-nomad-so_purple",
+          "kitId": "98",
+          "name": "so_purple",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_outdoor_so_purple_light_png.vtex_c"
+        },
+        {
+          "id": "knife-nomad-sp_tape_urban",
+          "kitId": "143",
+          "name": "sp_tape_urban",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_outdoor_sp_tape_urban_light_png.vtex_c"
+        },
+        {
+          "id": "knife-nomad-sp_dapple",
+          "kitId": "175",
+          "name": "sp_dapple",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_outdoor_sp_dapple_light_png.vtex_c"
+        },
+        {
+          "id": "knife-nomad-an_tiger_orange",
+          "kitId": "409",
+          "name": "an_tiger_orange",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_outdoor_an_tiger_orange_light_png.vtex_c"
+        },
+        {
+          "id": "knife-nomad-aq_damascus",
+          "kitId": "410",
+          "name": "aq_damascus",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_outdoor_aq_damascus_light_png.vtex_c"
+        },
+        {
+          "id": "knife-nomad-am_marble_fade",
+          "kitId": "413",
+          "name": "am_marble_fade",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_outdoor_am_marble_fade_light_png.vtex_c"
+        },
+        {
+          "id": "knife-nomad-aq_steel_knife",
+          "kitId": "414",
+          "name": "aq_steel_knife",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_outdoor_aq_steel_knife_light_png.vtex_c"
+        },
+        {
+          "id": "knife-nomad-am_ruby_marbleized",
+          "kitId": "415",
+          "name": "am_ruby_marbleized",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_outdoor_am_ruby_marbleized_light_png.vtex_c"
+        },
+        {
+          "id": "knife-nomad-am_sapphire_marbleized",
+          "kitId": "416",
+          "name": "am_sapphire_marbleized",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_outdoor_am_sapphire_marbleized_light_png.vtex_c"
+        },
+        {
+          "id": "knife-nomad-am_blackpearl_marbleized",
+          "kitId": "417",
+          "name": "am_blackpearl_marbleized",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_outdoor_am_blackpearl_marbleized_light_png.vtex_c"
+        },
+        {
+          "id": "knife-nomad-am_doppler_phase1",
+          "kitId": "418",
+          "name": "am_doppler_phase1",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_outdoor_am_doppler_phase1_light_png.vtex_c"
+        },
+        {
+          "id": "knife-nomad-am_doppler_phase2",
+          "kitId": "419",
+          "name": "am_doppler_phase2",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_outdoor_am_doppler_phase2_light_png.vtex_c"
+        },
+        {
+          "id": "knife-nomad-am_doppler_phase3",
+          "kitId": "420",
+          "name": "am_doppler_phase3",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_outdoor_am_doppler_phase3_light_png.vtex_c"
+        },
+        {
+          "id": "knife-nomad-am_doppler_phase4",
+          "kitId": "421",
+          "name": "am_doppler_phase4",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_outdoor_am_doppler_phase4_light_png.vtex_c"
+        },
+        {
+          "id": "knife-nomad-sp_nightstripe",
+          "kitId": "735",
+          "name": "sp_nightstripe",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_outdoor_sp_nightstripe_light_png.vtex_c"
+        }
+      ]
+    },
+    "knife-stiletto": {
+      "label": "Stiletto Knife",
+      "definitionId": "522",
+      "finishes": 24,
+      "paintMask": {
+        "path": "weapons/models/knife/knife_stiletto/materials/composite_inputs/knife_stiletto_masks_psd_728baec5.vtex_c",
+        "crc": "00b9c87684",
+        "bytes": 9869
+      },
+      "selected": [
+        {
+          "id": "knife-stiletto-hy_ddpat",
+          "kitId": "5",
+          "name": "hy_ddpat",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_stiletto_hy_ddpat_light_png.vtex_c"
+        },
+        {
+          "id": "knife-stiletto-hy_webs",
+          "kitId": "12",
+          "name": "hy_webs",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_stiletto_hy_webs_light_png.vtex_c"
+        },
+        {
+          "id": "knife-stiletto-aa_fade",
+          "kitId": "38",
+          "name": "aa_fade",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_stiletto_aa_fade_light_png.vtex_c"
+        },
+        {
+          "id": "knife-stiletto-aq_blued",
+          "kitId": "42",
+          "name": "aq_blued",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_stiletto_aq_blued_light_png.vtex_c"
+        },
+        {
+          "id": "knife-stiletto-aq_forced",
+          "kitId": "43",
+          "name": "aq_forced",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_stiletto_aq_forced_light_png.vtex_c"
+        },
+        {
+          "id": "knife-stiletto-aq_oiled",
+          "kitId": "44",
+          "name": "aq_oiled",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_stiletto_aq_oiled_light_png.vtex_c"
+        },
+        {
+          "id": "knife-stiletto-am_zebra",
+          "kitId": "59",
+          "name": "am_zebra",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_stiletto_am_zebra_light_png.vtex_c"
+        },
+        {
+          "id": "knife-stiletto-sp_mesh_tan",
+          "kitId": "72",
+          "name": "sp_mesh_tan",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_stiletto_sp_mesh_tan_light_png.vtex_c"
+        },
+        {
+          "id": "knife-stiletto-hy_forest_boreal",
+          "kitId": "77",
+          "name": "hy_forest_boreal",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_stiletto_hy_forest_boreal_light_png.vtex_c"
+        },
+        {
+          "id": "knife-stiletto-so_purple",
+          "kitId": "98",
+          "name": "so_purple",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_stiletto_so_purple_light_png.vtex_c"
+        },
+        {
+          "id": "knife-stiletto-sp_tape_urban",
+          "kitId": "143",
+          "name": "sp_tape_urban",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_stiletto_sp_tape_urban_light_png.vtex_c"
+        },
+        {
+          "id": "knife-stiletto-sp_dapple",
+          "kitId": "175",
+          "name": "sp_dapple",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_stiletto_sp_dapple_light_png.vtex_c"
+        },
+        {
+          "id": "knife-stiletto-an_tiger_orange",
+          "kitId": "409",
+          "name": "an_tiger_orange",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_stiletto_an_tiger_orange_light_png.vtex_c"
+        },
+        {
+          "id": "knife-stiletto-am_marble_fade",
+          "kitId": "413",
+          "name": "am_marble_fade",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_stiletto_am_marble_fade_light_png.vtex_c"
+        },
+        {
+          "id": "knife-stiletto-aq_steel_knife",
+          "kitId": "414",
+          "name": "aq_steel_knife",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_stiletto_aq_steel_knife_light_png.vtex_c"
+        },
+        {
+          "id": "knife-stiletto-am_ruby_marbleized",
+          "kitId": "415",
+          "name": "am_ruby_marbleized",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_stiletto_am_ruby_marbleized_light_png.vtex_c"
+        },
+        {
+          "id": "knife-stiletto-am_sapphire_marbleized",
+          "kitId": "416",
+          "name": "am_sapphire_marbleized",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_stiletto_am_sapphire_marbleized_light_png.vtex_c"
+        },
+        {
+          "id": "knife-stiletto-am_blackpearl_marbleized",
+          "kitId": "417",
+          "name": "am_blackpearl_marbleized",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_stiletto_am_blackpearl_marbleized_light_png.vtex_c"
+        },
+        {
+          "id": "knife-stiletto-am_doppler_phase1",
+          "kitId": "418",
+          "name": "am_doppler_phase1",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_stiletto_am_doppler_phase1_light_png.vtex_c"
+        },
+        {
+          "id": "knife-stiletto-am_doppler_phase2",
+          "kitId": "419",
+          "name": "am_doppler_phase2",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_stiletto_am_doppler_phase2_light_png.vtex_c"
+        },
+        {
+          "id": "knife-stiletto-am_doppler_phase3",
+          "kitId": "420",
+          "name": "am_doppler_phase3",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_stiletto_am_doppler_phase3_light_png.vtex_c"
+        },
+        {
+          "id": "knife-stiletto-am_doppler_phase4",
+          "kitId": "421",
+          "name": "am_doppler_phase4",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_stiletto_am_doppler_phase4_light_png.vtex_c"
+        },
+        {
+          "id": "knife-stiletto-sp_nightstripe",
+          "kitId": "735",
+          "name": "sp_nightstripe",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_stiletto_sp_nightstripe_light_png.vtex_c"
+        },
+        {
+          "id": "knife-stiletto-aq_damascus_prisma",
+          "kitId": "857",
+          "name": "aq_damascus_prisma",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_stiletto_aq_damascus_prisma_light_png.vtex_c"
+        }
+      ]
+    },
+    "knife-talon": {
+      "label": "Talon Knife",
+      "definitionId": "523",
+      "finishes": 24,
+      "paintMask": {
+        "path": "weapons/models/knife/knife_talon/materials/composite_inputs/knife_widowmaker_masks_psd_d6f573cd.vtex_c",
+        "crc": "00c0691fed",
+        "bytes": 15154
+      },
+      "selected": [
+        {
+          "id": "knife-talon-hy_ddpat",
+          "kitId": "5",
+          "name": "hy_ddpat",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_widowmaker_hy_ddpat_light_png.vtex_c"
+        },
+        {
+          "id": "knife-talon-hy_webs",
+          "kitId": "12",
+          "name": "hy_webs",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_widowmaker_hy_webs_light_png.vtex_c"
+        },
+        {
+          "id": "knife-talon-aa_fade",
+          "kitId": "38",
+          "name": "aa_fade",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_widowmaker_aa_fade_light_png.vtex_c"
+        },
+        {
+          "id": "knife-talon-aq_blued",
+          "kitId": "42",
+          "name": "aq_blued",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_widowmaker_aq_blued_light_png.vtex_c"
+        },
+        {
+          "id": "knife-talon-aq_forced",
+          "kitId": "43",
+          "name": "aq_forced",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_widowmaker_aq_forced_light_png.vtex_c"
+        },
+        {
+          "id": "knife-talon-aq_oiled",
+          "kitId": "44",
+          "name": "aq_oiled",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_widowmaker_aq_oiled_light_png.vtex_c"
+        },
+        {
+          "id": "knife-talon-am_zebra",
+          "kitId": "59",
+          "name": "am_zebra",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_widowmaker_am_zebra_light_png.vtex_c"
+        },
+        {
+          "id": "knife-talon-sp_mesh_tan",
+          "kitId": "72",
+          "name": "sp_mesh_tan",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_widowmaker_sp_mesh_tan_light_png.vtex_c"
+        },
+        {
+          "id": "knife-talon-hy_forest_boreal",
+          "kitId": "77",
+          "name": "hy_forest_boreal",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_widowmaker_hy_forest_boreal_light_png.vtex_c"
+        },
+        {
+          "id": "knife-talon-so_purple",
+          "kitId": "98",
+          "name": "so_purple",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_widowmaker_so_purple_light_png.vtex_c"
+        },
+        {
+          "id": "knife-talon-sp_tape_urban",
+          "kitId": "143",
+          "name": "sp_tape_urban",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_widowmaker_sp_tape_urban_light_png.vtex_c"
+        },
+        {
+          "id": "knife-talon-sp_dapple",
+          "kitId": "175",
+          "name": "sp_dapple",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_widowmaker_sp_dapple_light_png.vtex_c"
+        },
+        {
+          "id": "knife-talon-an_tiger_orange",
+          "kitId": "409",
+          "name": "an_tiger_orange",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_widowmaker_an_tiger_orange_light_png.vtex_c"
+        },
+        {
+          "id": "knife-talon-aq_steel_knife",
+          "kitId": "414",
+          "name": "aq_steel_knife",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_widowmaker_aq_steel_knife_light_png.vtex_c"
+        },
+        {
+          "id": "knife-talon-am_ruby_marbleized",
+          "kitId": "415",
+          "name": "am_ruby_marbleized",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_widowmaker_am_ruby_marbleized_light_png.vtex_c"
+        },
+        {
+          "id": "knife-talon-am_sapphire_marbleized",
+          "kitId": "416",
+          "name": "am_sapphire_marbleized",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_widowmaker_am_sapphire_marbleized_light_png.vtex_c"
+        },
+        {
+          "id": "knife-talon-am_blackpearl_marbleized",
+          "kitId": "417",
+          "name": "am_blackpearl_marbleized",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_widowmaker_am_blackpearl_marbleized_light_png.vtex_c"
+        },
+        {
+          "id": "knife-talon-sp_nightstripe",
+          "kitId": "735",
+          "name": "sp_nightstripe",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_widowmaker_sp_nightstripe_light_png.vtex_c"
+        },
+        {
+          "id": "knife-talon-am_doppler_phase1_widow",
+          "kitId": "852",
+          "name": "am_doppler_phase1_widow",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_widowmaker_am_doppler_phase1_widow_light_png.vtex_c"
+        },
+        {
+          "id": "knife-talon-am_doppler_phase2_widow",
+          "kitId": "853",
+          "name": "am_doppler_phase2_widow",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_widowmaker_am_doppler_phase2_widow_light_png.vtex_c"
+        },
+        {
+          "id": "knife-talon-am_doppler_phase3_widow",
+          "kitId": "854",
+          "name": "am_doppler_phase3_widow",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_widowmaker_am_doppler_phase3_widow_light_png.vtex_c"
+        },
+        {
+          "id": "knife-talon-am_doppler_phase4_widow",
+          "kitId": "855",
+          "name": "am_doppler_phase4_widow",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_widowmaker_am_doppler_phase4_widow_light_png.vtex_c"
+        },
+        {
+          "id": "knife-talon-am_marble_fade_widow",
+          "kitId": "856",
+          "name": "am_marble_fade_widow",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_widowmaker_am_marble_fade_widow_light_png.vtex_c"
+        },
+        {
+          "id": "knife-talon-aq_damascus_widow",
+          "kitId": "858",
+          "name": "aq_damascus_widow",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_widowmaker_aq_damascus_widow_light_png.vtex_c"
+        }
+      ]
+    },
+    "knife-skeleton": {
+      "label": "Skeleton Knife",
+      "definitionId": "525",
+      "finishes": 24,
+      "paintMask": {
+        "path": "weapons/models/knife/knife_skeleton/materials/composite_inputs/knife_skeleton_masks_psd_798b9a9a.vtex_c",
+        "crc": "008aad1a00",
+        "bytes": 8560
+      },
+      "selected": [
+        {
+          "id": "knife-skeleton-hy_ddpat",
+          "kitId": "5",
+          "name": "hy_ddpat",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_skeleton_hy_ddpat_light_png.vtex_c"
+        },
+        {
+          "id": "knife-skeleton-hy_webs",
+          "kitId": "12",
+          "name": "hy_webs",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_skeleton_hy_webs_light_png.vtex_c"
+        },
+        {
+          "id": "knife-skeleton-aa_fade",
+          "kitId": "38",
+          "name": "aa_fade",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_skeleton_aa_fade_light_png.vtex_c"
+        },
+        {
+          "id": "knife-skeleton-aq_blued",
+          "kitId": "42",
+          "name": "aq_blued",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_skeleton_aq_blued_light_png.vtex_c"
+        },
+        {
+          "id": "knife-skeleton-aq_forced",
+          "kitId": "43",
+          "name": "aq_forced",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_skeleton_aq_forced_light_png.vtex_c"
+        },
+        {
+          "id": "knife-skeleton-aq_oiled",
+          "kitId": "44",
+          "name": "aq_oiled",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_skeleton_aq_oiled_light_png.vtex_c"
+        },
+        {
+          "id": "knife-skeleton-am_zebra",
+          "kitId": "59",
+          "name": "am_zebra",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_skeleton_am_zebra_light_png.vtex_c"
+        },
+        {
+          "id": "knife-skeleton-sp_mesh_tan",
+          "kitId": "72",
+          "name": "sp_mesh_tan",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_skeleton_sp_mesh_tan_light_png.vtex_c"
+        },
+        {
+          "id": "knife-skeleton-hy_forest_boreal",
+          "kitId": "77",
+          "name": "hy_forest_boreal",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_skeleton_hy_forest_boreal_light_png.vtex_c"
+        },
+        {
+          "id": "knife-skeleton-so_purple",
+          "kitId": "98",
+          "name": "so_purple",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_skeleton_so_purple_light_png.vtex_c"
+        },
+        {
+          "id": "knife-skeleton-sp_tape_urban",
+          "kitId": "143",
+          "name": "sp_tape_urban",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_skeleton_sp_tape_urban_light_png.vtex_c"
+        },
+        {
+          "id": "knife-skeleton-sp_dapple",
+          "kitId": "175",
+          "name": "sp_dapple",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_skeleton_sp_dapple_light_png.vtex_c"
+        },
+        {
+          "id": "knife-skeleton-an_tiger_orange",
+          "kitId": "409",
+          "name": "an_tiger_orange",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_skeleton_an_tiger_orange_light_png.vtex_c"
+        },
+        {
+          "id": "knife-skeleton-aq_damascus",
+          "kitId": "410",
+          "name": "aq_damascus",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_skeleton_aq_damascus_light_png.vtex_c"
+        },
+        {
+          "id": "knife-skeleton-am_marble_fade",
+          "kitId": "413",
+          "name": "am_marble_fade",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_skeleton_am_marble_fade_light_png.vtex_c"
+        },
+        {
+          "id": "knife-skeleton-aq_steel_knife",
+          "kitId": "414",
+          "name": "aq_steel_knife",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_skeleton_aq_steel_knife_light_png.vtex_c"
+        },
+        {
+          "id": "knife-skeleton-am_ruby_marbleized",
+          "kitId": "415",
+          "name": "am_ruby_marbleized",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_skeleton_am_ruby_marbleized_light_png.vtex_c"
+        },
+        {
+          "id": "knife-skeleton-am_sapphire_marbleized",
+          "kitId": "416",
+          "name": "am_sapphire_marbleized",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_skeleton_am_sapphire_marbleized_light_png.vtex_c"
+        },
+        {
+          "id": "knife-skeleton-am_blackpearl_marbleized",
+          "kitId": "417",
+          "name": "am_blackpearl_marbleized",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_skeleton_am_blackpearl_marbleized_light_png.vtex_c"
+        },
+        {
+          "id": "knife-skeleton-am_doppler_phase1",
+          "kitId": "418",
+          "name": "am_doppler_phase1",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_skeleton_am_doppler_phase1_light_png.vtex_c"
+        },
+        {
+          "id": "knife-skeleton-am_doppler_phase2",
+          "kitId": "419",
+          "name": "am_doppler_phase2",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_skeleton_am_doppler_phase2_light_png.vtex_c"
+        },
+        {
+          "id": "knife-skeleton-am_doppler_phase3",
+          "kitId": "420",
+          "name": "am_doppler_phase3",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_skeleton_am_doppler_phase3_light_png.vtex_c"
+        },
+        {
+          "id": "knife-skeleton-am_doppler_phase4",
+          "kitId": "421",
+          "name": "am_doppler_phase4",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_skeleton_am_doppler_phase4_light_png.vtex_c"
+        },
+        {
+          "id": "knife-skeleton-sp_nightstripe",
+          "kitId": "735",
+          "name": "sp_nightstripe",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_skeleton_sp_nightstripe_light_png.vtex_c"
+        }
+      ]
+    },
+    "knife-kukri": {
+      "label": "Kukri Knife",
+      "definitionId": "526",
+      "finishes": 12,
+      "paintMask": {
+        "path": "weapons/models/knife/knife_kukri/materials/composite_inputs/knife_kukri_masks_psd_79f3c937.vtex_c",
+        "crc": "0019316cf6",
+        "bytes": 14911
+      },
+      "selected": [
+        {
+          "id": "knife-kukri-hy_ddpat",
+          "kitId": "5",
+          "name": "hy_ddpat",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_kukri_hy_ddpat_light_png.vtex_c"
+        },
+        {
+          "id": "knife-kukri-hy_webs",
+          "kitId": "12",
+          "name": "hy_webs",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_kukri_hy_webs_light_png.vtex_c"
+        },
+        {
+          "id": "knife-kukri-aa_fade",
+          "kitId": "38",
+          "name": "aa_fade",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_kukri_aa_fade_light_png.vtex_c"
+        },
+        {
+          "id": "knife-kukri-aq_blued",
+          "kitId": "42",
+          "name": "aq_blued",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_kukri_aq_blued_light_png.vtex_c"
+        },
+        {
+          "id": "knife-kukri-aq_forced",
+          "kitId": "43",
+          "name": "aq_forced",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_kukri_aq_forced_light_png.vtex_c"
+        },
+        {
+          "id": "knife-kukri-aq_oiled",
+          "kitId": "44",
+          "name": "aq_oiled",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_kukri_aq_oiled_light_png.vtex_c"
+        },
+        {
+          "id": "knife-kukri-am_zebra",
+          "kitId": "59",
+          "name": "am_zebra",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_kukri_am_zebra_light_png.vtex_c"
+        },
+        {
+          "id": "knife-kukri-sp_mesh_tan",
+          "kitId": "72",
+          "name": "sp_mesh_tan",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_kukri_sp_mesh_tan_light_png.vtex_c"
+        },
+        {
+          "id": "knife-kukri-hy_forest_boreal",
+          "kitId": "77",
+          "name": "hy_forest_boreal",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_kukri_hy_forest_boreal_light_png.vtex_c"
+        },
+        {
+          "id": "knife-kukri-sp_tape_urban",
+          "kitId": "143",
+          "name": "sp_tape_urban",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_kukri_sp_tape_urban_light_png.vtex_c"
+        },
+        {
+          "id": "knife-kukri-sp_dapple",
+          "kitId": "175",
+          "name": "sp_dapple",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_kukri_sp_dapple_light_png.vtex_c"
+        },
+        {
+          "id": "knife-kukri-sp_nightstripe",
+          "kitId": "735",
+          "name": "sp_nightstripe",
+          "imageSource": "panorama/images/econ/default_generated/weapon_knife_kukri_sp_nightstripe_light_png.vtex_c"
+        }
+      ]
+    },
+    "knife-default-t": {
+      "label": "Default T Knife",
+      "stockOnly": true,
+      "finishes": 0
+    }
+  }
+}

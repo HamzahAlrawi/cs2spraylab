@@ -1,7 +1,7 @@
 import {describe, expect, it} from 'vitest';
-import {weaponIds} from '../config';
-import {createBotTraits, peekDistribution, peekPrior, peekTypes, samplePeek, skilledFamilyWeights,
-  type PeekType} from './skill';
+import {pistolIds,weaponIds} from '../config';
+import {combatStyle, createBotTraits, peekDistribution, peekPrior, peekTypes, samplePeek, skilledFamilyWeights,
+  weaponFamily,type PeekType} from './skill';
 import type {SkillLevel} from './config';
 import {randomStream} from './rng';
 
@@ -10,6 +10,10 @@ const advanced: PeekType[] = ['shoulder', 'ferrari', 'prefire', 'slice', 'jump',
 const caps = new Map([[1, [0, 0]], [3, [.04, .01]], [6, [.25, .08]], [9, [.45, .18]], [10, [1, 1]]]);
 
 describe('rank repertoire', () => {
+  it.each(pistolIds)('%s uses pistol peek priors rather than rifle defaults',weapon=>{
+    expect(weaponFamily(weapon)).toBe('pistol');
+    expect(peekDistribution(10,weapon)).toEqual(peekDistribution(10,'cz75a'));
+  });
   it('keeps all authored family and anchor priors normalized', () => {
     for (const weights of Object.values(skilledFamilyWeights))
       expect(peekTypes.reduce((total, type) => total + weights[type], 0)).toBe(100);
@@ -82,5 +86,64 @@ describe('provisional individual variance', () => {
       expect(mean(1, key)).toBeGreaterThan(mean(10, key));
     const level5 = Array.from({length: 200}, (_, id) => createBotTraits(5, 17, id).preaimErrorDegrees);
     expect(Math.max(...level5)).toBeGreaterThan(Math.min(...level5));
+  });
+});
+
+describe('heuristic difficulty rebalance', () => {
+  it('preserves pre-rebalance 10 and 10+ identity fixtures and combat style', () => {
+    const fixtures = [
+      {level: 10 as const, recognitionMedianMs: 233.29582801364438, motorSettlingMs: 144.6864424048991,
+        endpointErrorDegrees: .4263020121239995, preaimErrorDegrees: .852604024247999,
+        brakeErrorMs: 21.24283242351702, lowAimTendency: .1, stopTendency: .918782844403387},
+      {level: '10+' as const, recognitionMedianMs: 202.59900853816487, motorSettlingMs: 120.57203533741594,
+        endpointErrorDegrees: .2842013414159997, preaimErrorDegrees: .6631364633039992,
+        brakeErrorMs: 16.994265938813616, lowAimTendency: .08, stopTendency: .9533490488860945},
+    ];
+    for (const {level, ...fixture} of fixtures) {
+      const actual = createBotTraits(level, 17, 1);
+      for (const key of Object.keys(fixture) as (keyof typeof fixture)[]) expect(actual[key]).toBeCloseTo(fixture[key], 12);
+    }
+    expect(combatStyle(10)).toMatchObject({recoilControl: .98, recoilResponse: .018, recoilVariation: .022, fireTolerance: .55});
+    expect(combatStyle('10+')).toMatchObject({recoilControl: .99, recoilResponse: .014, recoilVariation: .012, fireTolerance: .4});
+    expect(peekDistribution(10, 'ak47')).toEqual(peekDistribution('10+', 'ak47'));
+    for (const weapon of ['ak47', 'mp9', 'cz75a', 'negev'] as const) for (const type of peekTypes) {
+      const expected = skilledFamilyWeights[weaponFamily(weapon)][type] / 100;
+      expect(peekDistribution(10, weapon)[type]).toBeCloseTo(expected, 12);
+      expect(peekDistribution('10+', weapon)[type]).toBeCloseTo(expected, 12);
+    }
+  });
+
+  it.each([5, 6, 7, 8] as const)('moderately weakens level %s identity without touching recoil', level => {
+    const index = level - 5;
+    const before = {
+      recognitionMedianMs: [319.24692254498706, 302.05670363871855, 284.86648473245, 267.67626582618146][index],
+      motorSettlingMs: [212.20678219385204, 198.70271423606147, 185.19864627827087, 171.6945783204803][index],
+      endpointErrorDegrees: [.947337804719999, .843130646200799, .7389234876815992, .6347163291623993][index],
+      preaimErrorDegrees: [2.652545853215997, 2.2925574874223975, 1.932569121628798, 1.5725807558351983][index],
+      brakeErrorMs: [69.03920537643032, 59.47993078584766, 49.920656195264996, 40.361381604682336][index],
+    };
+    const actual = createBotTraits(level, 17, 1), elite = createBotTraits(10, 17, 1);
+    for (const key of Object.keys(before) as (keyof typeof before)[]) {
+      expect(actual[key] / before[key]).toBeGreaterThanOrEqual(1.079999);
+      expect(actual[key] / before[key]).toBeLessThanOrEqual(1.160001);
+      expect(actual[key]).toBeGreaterThan(elite[key]);
+    }
+    expect(actual.stopTendency).toBeLessThan(elite.stopTendency);
+    expect(combatStyle(level).recoilControl).toBeCloseTo(.84 + (.98 - .84) * index / 5);
+  });
+
+  it('keeps seeded novice advanced-peek frequency rare even in favorable contexts', () => {
+    for (const level of [1, 2, 3] as const) for (const weapon of ['ak47', 'mp9', 'cz75a', 'm249'] as const) {
+      const distribution = peekDistribution(level, weapon, {}, {shoulder: 80, slice: 30, prefire: 40});
+      const draw = () => {
+        const random = randomStream(731, `novice:${level}:${weapon}`);
+        return Array.from({length: 10000}, () => samplePeek(distribution, random));
+      };
+      const samples = draw();
+      expect(samples).toEqual(draw());
+      expect(samples.filter(type => advanced.includes(type as PeekType)).length / samples.length).toBeLessThan(.03);
+      expect(samples.filter(type => type === 'shoulder').length / samples.length).toBeLessThan(.009);
+      expect(samples.some(type => ['ferrari', 'jump', 'crouchWide'].includes(type))).toBe(false);
+    }
   });
 });

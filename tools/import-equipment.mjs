@@ -27,15 +27,21 @@ for (const [id, key, sound] of [['usp', 'weapon_usp_silencer', 'usp/usp_01'], ['
     if (!Number.isFinite(v)) throw new Error(`Missing ${key}.${field}`);
     return [name, v];
   }));
-  Object.assign(stats, {fullAuto: data.m_bIsFullAuto, worldModel: id === 'knife' ? 'weapons/models/knife/knife_butterfly/weapon_knife_butterfly.vmdl' : data.m_szWorldModel, skeleton: id === 'knife' ? 'animation/skeletons/weapons/knife_butterfly.vnmskel' : data.m_szAnimSkeleton});
+  Object.assign(stats, {fullAuto: data.m_bIsFullAuto, worldModel: data.m_szWorldModel, skeleton: data.m_szAnimSkeleton});
   output.weapons[id] = stats;
   console.log(id, JSON.stringify(stats));
   if (process.argv.includes('--data-only')) continue;
   for (const rigged of [false, true]) {
     const file = `research/raw-models/${id}${rigged ? '-rigged' : ''}.glb`;
-    if (!fs.existsSync(file)) run('-f', `${stats.worldModel}_c`, '-o', file, '-d', '--gltf_export_format', 'glb', '--gltf_export_materials', '--gltf_textures_adapt', ...(rigged ? ['--gltf_export_animations', '--gltf_animation_list', '__bind_pose_only__'] : []));
+    if (!fs.existsSync(file) || process.argv.includes('--refresh-knife') && id === 'knife') run('-f', `${stats.worldModel}_c`, '-o', file, '-d', '--gltf_export_format', 'glb', '--gltf_export_materials', '--gltf_textures_adapt', ...(rigged ? ['--gltf_export_animations', '--gltf_animation_list', '__bind_pose_only__'] : []));
   }
   run('-f', `sounds/weapons/${sound}.vsnd_c`, '-o', `public/revamp/audio/${id}.wav`, '-d');
 }
 fs.writeFileSync('src/range/equipment-data.json', JSON.stringify(output, null, 2) + '\n');
-if (!process.argv.includes('--data-only')) run('-f', 'agents/models/ctm_sas/ctm_sas.vmdl_c', '-o', 'research/raw-models/equipment-arms.glb', '-d', '--gltf_export_format', 'glb', '--gltf_export_materials', '--gltf_textures_adapt', '--gltf_export_animations', '--gltf_compose_additive', '--gltf_animation_list', 'idle_pistol,idle1_butterfly');
+if (!process.argv.includes('--data-only')) for (const rigged of [false, true]) {
+  const file = `research/raw-models/knife-butterfly${rigged ? '-rigged' : ''}.glb`;
+  if (!fs.existsSync(file)) run('-f', 'weapons/models/knife/knife_butterfly/weapon_knife_butterfly.vmdl_c', '-o', file, '-d',
+    '--gltf_export_format', 'glb', '--gltf_export_materials', '--gltf_textures_adapt',
+    ...(rigged ? ['--gltf_export_animations', '--gltf_animation_list', '__bind_pose_only__'] : []));
+}
+if (!process.argv.includes('--data-only')) run('-f', 'agents/models/ctm_sas/ctm_sas.vmdl_c', '-o', 'research/raw-models/equipment-arms.glb', '-d', '--gltf_export_format', 'glb', '--gltf_export_materials', '--gltf_textures_adapt', '--gltf_export_animations', '--gltf_compose_additive', '--gltf_animation_list', 'idle_pistol,idle_knife');

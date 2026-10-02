@@ -62,7 +62,7 @@ test('rounds restart without another click or viewport changes; Escape pauses th
   expect(errors).toEqual([]);
 });
 
-test('native bot deaths lower the skeleton, settle on the floor, and keep a rendered corpse', async ({page}, info) => {
+test('baked bot deaths lower the skeleton, settle on the floor, and keep a rendered corpse', async ({page}, info) => {
   await enginePage(page);
   await page.addStyleTag({content: '.duel-entry {display:none}'});
   const samples = await page.evaluate(() => {
@@ -81,7 +81,7 @@ test('native bot deaths lower the skeleton, settle on the floor, and keep a rend
     };};
     samples.push(sample());
     actor.alive = false;
-    for (const age of [.1, .3, .7, 1.2, 2, 2.6, 3]) {
+    for (const age of [.05, .15, .35, .65, 1.2, 1.5, 2]) {
       animator.update(actor, 1 / 60, age); samples.push(sample());
     }
     e.sim.actors[1].alive = false;
@@ -89,6 +89,8 @@ test('native bot deaths lower the skeleton, settle on the floor, and keep a rend
     return samples;
   });
   expect(samples[0].head).toBeGreaterThan(1.4);
+  expect(samples[4].head).toBeLessThan(samples[0].head - .2);
+  expect(samples[4].pelvis).toBeLessThan(samples[0].pelvis - .1);
   expect(samples[6].head).toBeLessThan(.55);
   expect(samples[6].pelvis).toBeLessThan(.5);
   expect(samples[6].head).toBeGreaterThan(0);
@@ -100,14 +102,14 @@ test('native bot deaths lower the skeleton, settle on the floor, and keep a rend
   expect(await page.evaluate(() => (window as any).roundEngine.models.get(1).visible)).toBe(true);
 });
 
-test('all native death variants stay low when crouched and respect raised support surfaces', async ({page}) => {
+test('all constrained death variants preserve stance, avoid joint flips and respect raised support surfaces', async ({page}) => {
   await enginePage(page);
   const variants = await page.evaluate(() => {
     const e = (window as any).roundEngine;
     e.covers.visible = false;
     const results: {id: number; duck: number; initialHead: number; maxHead: number; finalHead: number; root: number;
-      peakTime: number; clipStart: number}[] = [];
-    for (const duck of [0, 1]) for (const id of [0, 1, 2]) {
+      peakTime: number; clipStart: number; maxJointStep: number; clips: string[]}[] = [];
+    for (const duck of [0, .5, 1]) for (const id of [0, 1, 2]) {
       e.rebuildActors();
       const base = e.sim.actors[1];
       base.feet = 1; base.duckAmount = duck; base.alive = true; base.yaw = Math.PI;
@@ -118,16 +120,21 @@ test('all native death variants stay low when crouched and respect raised suppor
       const actor = {...e.sim.snapshot()[1], id, alive: false};
       const head = () => {model.updateMatrixWorld(true); return model.getObjectByName('head_0').matrixWorld.elements[13] - 1;};
       const initialHead = head();
-      let maxHead = initialHead, peakTime = 0;
+      let maxHead = initialHead, peakTime = 0, maxJointStep = 0;
+      const bones = ['pelvis', 'spine_0', 'spine_1', 'spine_2', 'head_0'].map(name => model.getObjectByName(name));
+      let previous = bones.map(bone => bone.quaternion.clone());
       for (let frame = 0; frame <= 180; frame++) {
         animator.update(actor, 1 / 60, frame / 60);
+        if (frame > 5) maxJointStep = Math.max(maxJointStep, ...bones.map((bone, index) => bone.quaternion.angleTo(previous[index])));
+        previous = bones.map(bone => bone.quaternion.clone());
         if (head() > maxHead) {maxHead = head(); peakTime = frame / 60;}
       }
       const finalHead = head();
       base.alive = false;
       e.deaths.set(1, e.animationClock - 3);
       e.syncActors(e.sim.snapshot(), 0);
-      results.push({id, duck, initialHead, maxHead, finalHead, root: model.position.y, peakTime, clipStart: animator.deathStart});
+      results.push({id, duck, initialHead, maxHead, finalHead, root: model.position.y, peakTime, clipStart: animator.deathStart,
+        maxJointStep, clips: animator.deathActions.map((value: any) => value.action.getClip().name)});
     }
     return results;
   });
@@ -136,5 +143,7 @@ test('all native death variants stay low when crouched and respect raised suppor
     expect.soft(variant.maxHead, JSON.stringify(variant)).toBeLessThan(variant.initialHead + .15);
     expect(variant.finalHead, JSON.stringify(variant)).toBeGreaterThan(0);
     expect(variant.finalHead, JSON.stringify(variant)).toBeLessThan(.8);
+    expect(variant.maxJointStep, JSON.stringify(variant)).toBeLessThan(55 * Math.PI / 180);
+    expect(variant.clips.every(name => /death_(?:crouch_)?fall_[abc]$/.test(name))).toBe(true);
   }
 });

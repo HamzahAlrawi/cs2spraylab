@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><title>Knife Asset QA</title><style>html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#252627}canvas{display:block;width:100%;height:100%}</style></head>
+<body><script type="module">
+import * as THREE from 'three';
+import {GLTFLoader} from 'three/examples/jsm/loaders/GLTFLoader.js';
+import {RoomEnvironment} from 'three/examples/jsm/environments/RoomEnvironment.js';
+import {applyCosmetic,cosmeticCatalog} from '../src/range/cosmetics.ts';
+import {sanitizeProgression} from '../src/range/progression.ts';
+import {disposeResources} from '../src/range/duel/render-resources.ts';
+import {prepareNativeViewAssembly} from '../src/range/native-view-actions.ts';
+import {VIEWMODEL_FOV,VIEWMODEL_OFFSET,viewmodelViewport} from '../src/range/viewmodel.ts';
+
+const renderer=new THREE.WebGLRenderer({antialias:true,preserveDrawingBuffer:true});
+renderer.setPixelRatio(1);renderer.outputColorSpace=THREE.SRGBColorSpace;
+renderer.toneMapping=THREE.ACESFilmicToneMapping;
+document.body.append(renderer.domElement);
+const scene=new THREE.Scene();scene.background=new THREE.Color('#252627');
+const environment=new RoomEnvironment(),pmrem=new THREE.PMREMGenerator(renderer),target=pmrem.fromScene(environment,.04);
+scene.environment=target.texture;scene.environmentIntensity=.4;environment.dispose();pmrem.dispose();
+scene.add(new THREE.HemisphereLight('#ffffff','#696b64',.9));
+const light=new THREE.DirectionalLight('#fff4dd',1.8);light.position.set(-2,4,2);scene.add(light);
+const camera=new THREE.PerspectiveCamera(VIEWMODEL_FOV,1,.01,10);
+const holder=new THREE.Group();holder.position.set(VIEWMODEL_OFFSET.x,VIEWMODEL_OFFSET.y,0);scene.add(holder);
+let current,mixer,clips=[],world=false;
+function resize(){renderer.setSize(innerWidth,innerHeight);const viewport=viewmodelViewport(innerWidth,innerHeight);camera.aspect=viewport.aspect;camera.updateProjectionMatrix();renderer.setViewport(viewport.x,viewport.y,viewport.width,viewport.height);}
+window.addEventListener('resize',resize);resize();
+function frame(label='idle',fraction=.3){
+  if(mixer){mixer.stopAllAction();const clip=clips.find(clip=>clip.name===label);if(!clip)throw new Error(`Missing clip ${label}`);const action=mixer.clipAction(clip);action.play();action.paused=true;action.time=clip.duration*fraction;mixer.update(0);}
+  scene.updateMatrixWorld(true);renderer.render(scene,camera);
+  const gl=renderer.getContext(),pixels=new Uint8Array(innerWidth*innerHeight*4);gl.readPixels(0,0,innerWidth,innerHeight,gl.RGBA,gl.UNSIGNED_BYTE,pixels);
+  let visible=0;for(let i=0;i<pixels.length;i+=4)if(pixels[i]>65||pixels[i+1]>65||pixels[i+2]>65)visible++;
+  return {visible,geometries:renderer.info.memory.geometries,textures:renderer.info.memory.textures,programs:renderer.info.programs.length};
+}
+window.knifeQA={
+  async load(id,mode='view'){
+    if(current){mixer?.stopAllAction();mixer?.uncacheRoot(current);holder.remove(current);disposeResources([current]);}
+    const item=cosmeticCatalog.find(item=>item.id===id);if(!item)throw new Error(`No cosmetic ${id}`);
+    world=mode==='world';const gltf=await new GLTFLoader().loadAsync(`/models/${world?'':'view-'}${item.assetKey}.glb`);
+    current=gltf.scene;prepareNativeViewAssembly(current);
+    const profile=sanitizeProgression({version:2,owned:[id],equipped:{knife:id}},cosmeticCatalog);
+    await applyCosmetic(current,profile,'knife');holder.add(current);clips=gltf.animations;
+    current.rotation.y=world?0:Math.PI;mixer=world?undefined:new THREE.AnimationMixer(current);
+    if(world){holder.position.set(0,0,0);const box=new THREE.Box3().setFromObject(current),center=box.getCenter(new THREE.Vector3()),size=box.getSize(new THREE.Vector3()).length();camera.position.copy(center).add(new THREE.Vector3(size*.2,size*.3,size*1.5));camera.lookAt(center);camera.fov=45;}
+    else{holder.position.set(VIEWMODEL_OFFSET.x,VIEWMODEL_OFFSET.y,0);camera.position.set(0,0,0);camera.rotation.set(0,0,0);camera.fov=VIEWMODEL_FOV;}
+    resize();return frame();
+  },frame,
+  clear(){if(current){holder.remove(current);mixer?.stopAllAction();mixer?.uncacheRoot(current);disposeResources([current]);current=undefined;mixer=undefined;}renderer.render(scene,camera);return {...renderer.info.memory};},
+};
+</script></body></html>

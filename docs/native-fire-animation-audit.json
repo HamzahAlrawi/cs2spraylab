@@ -1,0 +1,1286 @@
+{
+  "schema": 1,
+  "build": "2000922",
+  "scope": "Static local VPK resources only; no game process, memory, hooks or automation.",
+  "source": "pak01_dir.vpk; Source2Viewer-CLI; background Blender; existing glTF Transform optimization",
+  "sourceClipCount": 46,
+  "assemblyCount": 45,
+  "weapons": {
+    "ak47": {
+      "graph": "animation/graphs/viewmodel/viewmodel_gun.vnmgraph+ak47.vnmgraph_c",
+      "graphSha256": "7cce0a43b8db3954fad24931dc3cce102c0e6140ad5d4648ee0cd99fdfd9829c",
+      "clips": {
+        "fire": "animation/anims/viewmodel/rifle/rifle_ak/shoot1_ak.vnmclip_c"
+      },
+      "scopedFire": null,
+      "lastShot": null,
+      "emptyIdle": null,
+      "silenced": null,
+      "exports": [
+        {
+          "assetKey": "ak47",
+          "path": "public/revamp/models/view-ak47.glb",
+          "sha256": "f2d69baa08e5418b7e11d5adeeba26e194b9fc3858b5f89de3e3984c0748f660",
+          "bytes": 2514784
+        }
+      ]
+    },
+    "m4a4": {
+      "graph": "animation/graphs/viewmodel/viewmodel_gun.vnmgraph+m4a4.vnmgraph_c",
+      "graphSha256": "b356142976e08c6c77bdf7aad3e43beaa551183df5d35827c5ce9d688972f567",
+      "clips": {
+        "fire": "animation/anims/viewmodel/rifle/rifle_m4a4/shoot1_m4a4.vnmclip_c"
+      },
+      "scopedFire": null,
+      "lastShot": null,
+      "emptyIdle": null,
+      "silenced": null,
+      "exports": [
+        {
+          "assetKey": "m4a4",
+          "path": "public/revamp/models/view-m4a4.glb",
+          "sha256": "cd5719e56565b57430f0038a69541d80ecc3246514144b24eb0eff3a890bfaed",
+          "bytes": 3347484
+        }
+      ]
+    },
+    "m4a1s": {
+      "graph": "animation/graphs/viewmodel/viewmodel_gun.vnmgraph+m4a1s.vnmgraph_c",
+      "graphSha256": "6d4c8bd3085b26b320c490803bc087fd97d06d5540980561c8e2ac8301c2b712",
+      "clips": {
+        "fire": "animation/anims/viewmodel/rifle/_default_rifle/shoot1_rifle.vnmclip_c"
+      },
+      "scopedFire": null,
+      "lastShot": null,
+      "emptyIdle": null,
+      "silenced": "native primary clip; no separate silenced shoot resource",
+      "exports": [
+        {
+          "assetKey": "m4a1s",
+          "path": "public/revamp/models/view-m4a1s.glb",
+          "sha256": "a38408022e952f0d5405f82e0994df27ac81164ebde226f143b5f2bedd94af98",
+          "bytes": 3001052
+        }
+      ]
+    },
+    "galil": {
+      "graph": "animation/graphs/viewmodel/viewmodel_gun.vnmgraph+galil.vnmgraph_c",
+      "graphSha256": "b1a3b4103af992ce201dd2d48c33b99c5168e363f1d5812cf720e12ab0a28070",
+      "clips": {
+        "fire": "animation/anims/viewmodel/rifle/rifle_galilar/shoot1_galilar.vnmclip_c"
+      },
+      "scopedFire": null,
+      "lastShot": null,
+      "emptyIdle": null,
+      "silenced": null,
+      "exports": [
+        {
+          "assetKey": "galil",
+          "path": "public/revamp/models/view-galil.glb",
+          "sha256": "c6f29af3cbcf635e510c496f6c5bffdac96dbdc5fdbfc474b8900d81a30cdd3d",
+          "bytes": 3262760
+        }
+      ]
+    },
+    "famas": {
+      "graph": "animation/graphs/viewmodel/viewmodel_gun.vnmgraph+famas.vnmgraph_c",
+      "graphSha256": "4bfcebe2407e4c5a2d4d9db356ca9414a58bfe0535547f7899eb6fa3f1e827c1",
+      "clips": {
+        "fire": "animation/anims/viewmodel/rifle/rifle_famas/shoot1_famas.vnmclip_c"
+      },
+      "scopedFire": null,
+      "lastShot": null,
+      "emptyIdle": null,
+      "silenced": null,
+      "exports": [
+        {
+          "assetKey": "famas",
+          "path": "public/revamp/models/view-famas.glb",
+          "sha256": "125d5f7a6622ec6812f484660002ba41288c42f3ba0de428a928c3aa6628cd92",
+          "bytes": 2765080
+        }
+      ]
+    },
+    "sg553": {
+      "graph": "animation/graphs/viewmodel/viewmodel_gun.vnmgraph+sg556.vnmgraph_c",
+      "graphSha256": "541a24edac73dc190a04e45e26ff365c87eb5605025c4e14b740f11a048fd721",
+      "clips": {
+        "fire": "animation/anims/viewmodel/rifle/rifle_sg556/shoot1_sg556.vnmclip_c",
+        "fire-scoped": "animation/anims/viewmodel/rifle/rifle_sg556/ironsight_shoot_sg556.vnmclip_c"
+      },
+      "scopedFire": "animation/anims/viewmodel/rifle/rifle_sg556/ironsight_shoot_sg556.vnmclip_c",
+      "lastShot": null,
+      "emptyIdle": null,
+      "silenced": null,
+      "exports": [
+        {
+          "assetKey": "sg553",
+          "path": "public/revamp/models/view-sg553.glb",
+          "sha256": "aab1ee0d58c3c8a341d91f0610a05d25ab8055d84863fd6cfbeeec6b4fb1676a",
+          "bytes": 3633468
+        },
+        {
+          "assetKey": "sg553-legacy",
+          "path": "public/revamp/models/view-sg553-legacy.glb",
+          "sha256": "6bd50ab85d89c1684f9a6f63fb025f71e38158b0a9eb4c9fc5479ebb9a5cfe52",
+          "bytes": 2234572
+        }
+      ]
+    },
+    "aug": {
+      "graph": "animation/graphs/viewmodel/viewmodel_gun.vnmgraph+aug.vnmgraph_c",
+      "graphSha256": "5d9e9bb235954472368de2bcb6dcc226c4a96c0365365d7e960beb53c8938679",
+      "clips": {
+        "fire": "animation/anims/viewmodel/rifle/rifle_aug/shoot1_aug.vnmclip_c",
+        "fire-scoped": "animation/anims/viewmodel/rifle/rifle_aug/ironsight_shoot_aug.vnmclip_c"
+      },
+      "scopedFire": "animation/anims/viewmodel/rifle/rifle_aug/ironsight_shoot_aug.vnmclip_c",
+      "lastShot": null,
+      "emptyIdle": null,
+      "silenced": null,
+      "exports": [
+        {
+          "assetKey": "aug",
+          "path": "public/revamp/models/view-aug.glb",
+          "sha256": "1c758795cdc1184f8908e3c6ddee23294690825bbe2fa163b8c643bf344aa910",
+          "bytes": 3213196
+        },
+        {
+          "assetKey": "aug-legacy",
+          "path": "public/revamp/models/view-aug-legacy.glb",
+          "sha256": "dc172e62de1e7e0827afd7e4e7f2314aba978d038ceaf494b63196852c94dc73",
+          "bytes": 2366092
+        }
+      ]
+    },
+    "mp9": {
+      "graph": "animation/graphs/viewmodel/viewmodel_gun.vnmgraph+mp9.vnmgraph_c",
+      "graphSha256": "452d5d549efb8b1a81baa51e10f7690c2047c2baea7d44e80da7c5db1142b5ee",
+      "clips": {
+        "fire": "animation/anims/viewmodel/rifle/rifle_mp9/shoot1_mp9.vnmclip_c"
+      },
+      "scopedFire": null,
+      "lastShot": null,
+      "emptyIdle": null,
+      "silenced": null,
+      "exports": [
+        {
+          "assetKey": "mp9",
+          "path": "public/revamp/models/view-mp9.glb",
+          "sha256": "3e62ecbe2f3700684f3933667d8fbe0a8c856ce21f0fe0fb3d3f94699dbfb320",
+          "bytes": 2671008
+        }
+      ]
+    },
+    "mp7": {
+      "graph": "animation/graphs/viewmodel/viewmodel_gun.vnmgraph+mp7.vnmgraph_c",
+      "graphSha256": "64fadafb3e4960dc842d5b419ac6adb27709352501c923bf4cf8dcf763e20926",
+      "clips": {
+        "fire": "animation/anims/viewmodel/rifle/rifle_mp7/shoot1_mp7.vnmclip_c"
+      },
+      "scopedFire": null,
+      "lastShot": null,
+      "emptyIdle": null,
+      "silenced": null,
+      "exports": [
+        {
+          "assetKey": "mp7",
+          "path": "public/revamp/models/view-mp7.glb",
+          "sha256": "10ed34e6eff7c6deb28689958b1224a055c14f356ba2af01c767808d251e8080",
+          "bytes": 2958824
+        },
+        {
+          "assetKey": "mp7-legacy",
+          "path": "public/revamp/models/view-mp7-legacy.glb",
+          "sha256": "1a9bf79ca109d55a62fb4456e40c118e1619b72c7d8ec552c0118db4b092ec33",
+          "bytes": 2414932
+        }
+      ]
+    },
+    "mp5sd": {
+      "graph": "animation/graphs/viewmodel/viewmodel_gun.vnmgraph+mp5sd.vnmgraph_c",
+      "graphSha256": "2ebfbcd4e45d6f9c5c93ce6059a16fea687d2c9d467299f3885cd660ed608e54",
+      "clips": {
+        "fire": "animation/anims/viewmodel/rifle/rifle_mp5sd/shoot1_mp5sd.vnmclip_c"
+      },
+      "scopedFire": null,
+      "lastShot": null,
+      "emptyIdle": null,
+      "silenced": "native primary clip; no separate silenced shoot resource",
+      "exports": [
+        {
+          "assetKey": "mp5sd",
+          "path": "public/revamp/models/view-mp5sd.glb",
+          "sha256": "0f1b8148c7daac8767cf6afc2cc11aa06e80663cc420837f981612a0a779392a",
+          "bytes": 2838976
+        },
+        {
+          "assetKey": "mp5sd-legacy",
+          "path": "public/revamp/models/view-mp5sd-legacy.glb",
+          "sha256": "f9c73aa30bf99de1686ad55483c4e24796369a6cba92b11b16706d4df9f5a54e",
+          "bytes": 2296732
+        }
+      ]
+    },
+    "mac10": {
+      "graph": "animation/graphs/viewmodel/viewmodel_gun.vnmgraph+mac10.vnmgraph_c",
+      "graphSha256": "8f595ab41d785a6b6c66b6da5a6cd49293c61c87799ed57b86dffcdcda80ef2e",
+      "clips": {
+        "fire": "animation/anims/viewmodel/rifle/rifle_mac10/shoot1_mac10.vnmclip_c"
+      },
+      "scopedFire": null,
+      "lastShot": null,
+      "emptyIdle": null,
+      "silenced": null,
+      "exports": [
+        {
+          "assetKey": "mac10",
+          "path": "public/revamp/models/view-mac10.glb",
+          "sha256": "cd43e47759b400ed82ab6cafd701ad40251064e8cf04059961433841cc41c61d",
+          "bytes": 2559832
+        }
+      ]
+    },
+    "ump45": {
+      "graph": "animation/graphs/viewmodel/viewmodel_gun.vnmgraph+ump45.vnmgraph_c",
+      "graphSha256": "6f1ade8f8e61ba7554841a377d0ddf0df39b766f98ce6067f7451c51c0dc6aaf",
+      "clips": {
+        "fire": "animation/anims/viewmodel/rifle/rifle_ump45/shoot1_ump45.vnmclip_c"
+      },
+      "scopedFire": null,
+      "lastShot": null,
+      "emptyIdle": null,
+      "silenced": null,
+      "exports": [
+        {
+          "assetKey": "ump45",
+          "path": "public/revamp/models/view-ump45.glb",
+          "sha256": "61ecd9e2e42ad33af2a3d4474ac5e78089188d06da8ba0d6d9d9edb9b6a7cbab",
+          "bytes": 2838704
+        },
+        {
+          "assetKey": "ump45-legacy",
+          "path": "public/revamp/models/view-ump45-legacy.glb",
+          "sha256": "d6e5c31f62651ffc38da11379750d9186b7d32e0d10660983bf7faaa8000137d",
+          "bytes": 2066016
+        }
+      ]
+    },
+    "p90": {
+      "graph": "animation/graphs/viewmodel/viewmodel_gun.vnmgraph+p90.vnmgraph_c",
+      "graphSha256": "79b5227a5c62a42191dda477bb8bf0e8bb2f445d93fde82e70042823b44b4001",
+      "clips": {
+        "fire": "animation/anims/viewmodel/rifle/rifle_p90/shoot1_p90.vnmclip_c"
+      },
+      "scopedFire": null,
+      "lastShot": null,
+      "emptyIdle": null,
+      "silenced": null,
+      "exports": [
+        {
+          "assetKey": "p90",
+          "path": "public/revamp/models/view-p90.glb",
+          "sha256": "8ac57c90f21c5d6c3735b0583f944cff0cd78570a5c05b255758e59e93941eea",
+          "bytes": 2644684
+        }
+      ]
+    },
+    "bizon": {
+      "graph": "animation/graphs/viewmodel/viewmodel_gun.vnmgraph+bizon.vnmgraph_c",
+      "graphSha256": "09ce685227cfd2aae5c0810072ab3221c2071ad7ce7560ae116c7794580e8b6f",
+      "clips": {
+        "fire": "animation/anims/viewmodel/rifle/rifle_bizon/shoot1_bizon.vnmclip_c"
+      },
+      "scopedFire": null,
+      "lastShot": null,
+      "emptyIdle": null,
+      "silenced": null,
+      "exports": [
+        {
+          "assetKey": "bizon",
+          "path": "public/revamp/models/view-bizon.glb",
+          "sha256": "6bdf79c64de185c40e03a72bb46a288a2ad78eeefb70584d6270d609b47aa725",
+          "bytes": 2585824
+        },
+        {
+          "assetKey": "bizon-legacy",
+          "path": "public/revamp/models/view-bizon-legacy.glb",
+          "sha256": "c70fd46451eda838942e54173ed6906246c8c5c17baa7d1ff470ea3b11de022f",
+          "bytes": 2161504
+        }
+      ]
+    },
+    "m249": {
+      "graph": "animation/graphs/viewmodel/viewmodel_gun.vnmgraph+m249.vnmgraph_c",
+      "graphSha256": "7ec3af0443e40976a4f10fae802cd6a52fa89946ceb0b00e4c7c94b883d47841",
+      "clips": {
+        "fire": "animation/anims/viewmodel/rifle/rifle_m249/shoot1_m249.vnmclip_c"
+      },
+      "scopedFire": null,
+      "lastShot": null,
+      "emptyIdle": null,
+      "silenced": null,
+      "exports": [
+        {
+          "assetKey": "m249",
+          "path": "public/revamp/models/view-m249.glb",
+          "sha256": "c455eb5915a1f07864d14587204fec362c1e7399529e7542ffcadb9bba27ff54",
+          "bytes": 4454580
+        },
+        {
+          "assetKey": "m249-legacy",
+          "path": "public/revamp/models/view-m249-legacy.glb",
+          "sha256": "177d5be7290c514749536b06d9c587e5788d30dba90bb8493e1501df2b8cfa62",
+          "bytes": 3169976
+        }
+      ]
+    },
+    "negev": {
+      "graph": "animation/graphs/viewmodel/viewmodel_gun.vnmgraph+negev.vnmgraph_c",
+      "graphSha256": "ee4a218192d2fd8546317de90cf422f5897e5c1c25bcf04247b114ca62692e82",
+      "clips": {
+        "fire": "animation/anims/viewmodel/rifle/rifle_negev/shoot1_negev.vnmclip_c",
+        "fire-last": "animation/anims/viewmodel/rifle/rifle_negev/shoot_empty_negev.vnmclip_c"
+      },
+      "scopedFire": null,
+      "lastShot": "animation/anims/viewmodel/rifle/rifle_negev/shoot_empty_negev.vnmclip_c",
+      "emptyIdle": null,
+      "silenced": null,
+      "exports": [
+        {
+          "assetKey": "negev",
+          "path": "public/revamp/models/view-negev.glb",
+          "sha256": "09d1f08474e9bce5eb571b8f702cd9dd2dc2846d7ad27f914119ff5d2a391387",
+          "bytes": 4308108
+        },
+        {
+          "assetKey": "negev-legacy",
+          "path": "public/revamp/models/view-negev-legacy.glb",
+          "sha256": "334cb63158a422f92e7a2dff638581326ca28b591666b58d4632cf5cbd2b6524",
+          "bytes": 3619848
+        }
+      ]
+    },
+    "cz75a": {
+      "graph": "animation/graphs/viewmodel/viewmodel_gun_cz75.vnmgraph_c",
+      "graphSha256": "ed2a3289c1dfe02676c1ad0efb2b9a9479d1a1cfd05b96a835f6efef4a5895f7",
+      "clips": {
+        "fire": "animation/anims/viewmodel/pistol/pistol_cz75a/shoot1_cz75a.vnmclip_c",
+        "fire-last": "animation/anims/viewmodel/pistol/pistol_cz75a/shoot_empty_cz75a.vnmclip_c"
+      },
+      "scopedFire": null,
+      "lastShot": "animation/anims/viewmodel/pistol/pistol_cz75a/shoot_empty_cz75a.vnmclip_c",
+      "emptyIdle": "animation/anims/viewmodel/pistol/pistol_cz75a/idle_slide_back_cz75a.vnmclip_c",
+      "silenced": null,
+      "exports": [
+        {
+          "assetKey": "cz75a",
+          "path": "public/revamp/models/view-cz75a.glb",
+          "sha256": "9504137879e57dd78e357384640ffc3ae8814714af3645915db235cdb0e78a81",
+          "bytes": 2777312
+        },
+        {
+          "assetKey": "cz75a-legacy",
+          "path": "public/revamp/models/view-cz75a-legacy.glb",
+          "sha256": "e4faae8aa959fb5ee0389fe7a63946d9aeaefb4bfb470a17e5094527420ca807",
+          "bytes": 2398620
+        }
+      ]
+    },
+    "usp": {
+      "graph": "animation/graphs/viewmodel/viewmodel_gun.vnmgraph+usp.vnmgraph_c",
+      "graphSha256": "642d5b2c4d9eda38eb9cc88894ed1457e0b41cbace823ab7d4394c699f6a50e9",
+      "clips": {
+        "fire": "animation/anims/viewmodel/pistol/_default_pistol/shoot1_pistol.vnmclip_c",
+        "fire-last": "animation/anims/viewmodel/pistol/_default_pistol/shoot_empty_pistol.vnmclip_c"
+      },
+      "scopedFire": null,
+      "lastShot": "animation/anims/viewmodel/pistol/_default_pistol/shoot_empty_pistol.vnmclip_c",
+      "emptyIdle": "animation/anims/viewmodel/pistol/_default_pistol/idle_slide_back_pistol.vnmclip_c",
+      "silenced": "native primary clip; no separate silenced shoot resource",
+      "exports": [
+        {
+          "assetKey": "usp",
+          "path": "public/revamp/models/view-usp.glb",
+          "sha256": "37c1b78efb8f238eb21a12c46b8f46508e3b76ae9da5c73c7a0e38ade754cbdb",
+          "bytes": 2468836
+        }
+      ]
+    },
+    "glock": {
+      "graph": "animation/graphs/viewmodel/viewmodel_gun.vnmgraph+glock.vnmgraph_c",
+      "graphSha256": "3c1ce514dd173d40f7ec05739de148561bcfce59948f9e5a2fe81907882abca9",
+      "clips": {
+        "fire": "animation/anims/viewmodel/pistol/pistol_glock18/shoot1_glock.vnmclip_c",
+        "fire-last": "animation/anims/viewmodel/pistol/pistol_glock18/shoot_empty_glock.vnmclip_c"
+      },
+      "scopedFire": null,
+      "lastShot": "animation/anims/viewmodel/pistol/pistol_glock18/shoot_empty_glock.vnmclip_c",
+      "emptyIdle": "animation/anims/viewmodel/pistol/pistol_glock18/idle_slide_back_glock.vnmclip_c",
+      "silenced": null,
+      "exports": [
+        {
+          "assetKey": "glock",
+          "path": "public/revamp/models/view-glock.glb",
+          "sha256": "3438e686a9179c68d995579d615415d55d7a87dc57c86f08c153f1c3f0b9073e",
+          "bytes": 2413868
+        }
+      ]
+    },
+    "hkp2000": {
+      "graph": "animation/graphs/viewmodel/viewmodel_gun.vnmgraph+hkp2000.vnmgraph_c",
+      "graphSha256": "1532743b1bbf08128e43aea28893f08b1c565ee365fdce5ccd0c221dc520a0ee",
+      "clips": {
+        "fire": "animation/anims/viewmodel/pistol/pistol_hkp2000/shoot1_hkp.vnmclip_c",
+        "fire-last": "animation/anims/viewmodel/pistol/pistol_hkp2000/shoot_empty_hkp.vnmclip_c"
+      },
+      "scopedFire": null,
+      "lastShot": "animation/anims/viewmodel/pistol/pistol_hkp2000/shoot_empty_hkp.vnmclip_c",
+      "emptyIdle": "animation/anims/viewmodel/pistol/pistol_hkp2000/idle_slide_back_hkp.vnmclip_c",
+      "silenced": null,
+      "exports": [
+        {
+          "assetKey": "hkp2000",
+          "path": "public/revamp/models/view-hkp2000.glb",
+          "sha256": "cb35bf81bd9dc62378f806b33c29d264813719e9ea2f774cf2c40b56cc8fda99",
+          "bytes": 2541284
+        },
+        {
+          "assetKey": "hkp2000-legacy",
+          "path": "public/revamp/models/view-hkp2000-legacy.glb",
+          "sha256": "c54500c3db078eaf4e2f9feeabc74eed95b53bb6cf40767afb954d1e692e44a1",
+          "bytes": 2218912
+        }
+      ]
+    },
+    "p250": {
+      "graph": "animation/graphs/viewmodel/viewmodel_gun.vnmgraph+p250.vnmgraph_c",
+      "graphSha256": "3786b3503ba5de47925c4b9fc08ce2d5fe0f020d63597bcf06b1b621b114cff6",
+      "clips": {
+        "fire": "animation/anims/viewmodel/pistol/pistol_p250/shoot1_p250.vnmclip_c",
+        "fire-last": "animation/anims/viewmodel/pistol/pistol_p250/shoot_empty_p250.vnmclip_c"
+      },
+      "scopedFire": null,
+      "lastShot": "animation/anims/viewmodel/pistol/pistol_p250/shoot_empty_p250.vnmclip_c",
+      "emptyIdle": "animation/anims/viewmodel/pistol/pistol_p250/idle_slide_back_p250.vnmclip_c",
+      "silenced": null,
+      "exports": [
+        {
+          "assetKey": "p250",
+          "path": "public/revamp/models/view-p250.glb",
+          "sha256": "a77916e25636e44c2996c2fb7dbd48fa59c210fb2559dbcbc4ce64502996e9b9",
+          "bytes": 2523544
+        }
+      ]
+    },
+    "deagle": {
+      "graph": "animation/graphs/viewmodel/viewmodel_gun.vnmgraph+deagle.vnmgraph_c",
+      "graphSha256": "46761c8386ba6a22f9f32962f1bbe791e9c56832247a39f8fab96dd73041b352",
+      "clips": {
+        "fire": "animation/anims/viewmodel/pistol/pistol_deagle/shoot1_deagle.vnmclip_c",
+        "fire-last": "animation/anims/viewmodel/pistol/pistol_deagle/shoot_empty_deagle.vnmclip_c"
+      },
+      "scopedFire": null,
+      "lastShot": "animation/anims/viewmodel/pistol/pistol_deagle/shoot_empty_deagle.vnmclip_c",
+      "emptyIdle": "animation/anims/viewmodel/pistol/pistol_deagle/idle_slide_back_deagle.vnmclip_c",
+      "silenced": null,
+      "exports": [
+        {
+          "assetKey": "deagle",
+          "path": "public/revamp/models/view-deagle.glb",
+          "sha256": "3bcc2bdc57fdea8ab13a009278df9c6b116caa72b7fef1af8f1e9bad6a6435b4",
+          "bytes": 2638604
+        }
+      ]
+    },
+    "elite": {
+      "graph": "animation/graphs/viewmodel/viewmodel_gun_elites.vnmgraph_c",
+      "graphSha256": "b8a6271bbbba3875662006a3e5426e04dda21dfbceb214d235c03cb76c4930ee",
+      "clips": {
+        "fire-left": "animation/anims/viewmodel/pistol/pistol_elite/shoot_left1_elite.vnmclip_c",
+        "fire-left-last": "animation/anims/viewmodel/pistol/pistol_elite/shoot_leftlast_elite.vnmclip_c",
+        "fire-right": "animation/anims/viewmodel/pistol/pistol_elite/shoot_right1_elite.vnmclip_c",
+        "fire-right-last": "animation/anims/viewmodel/pistol/pistol_elite/shoot_rightlast_elite.vnmclip_c"
+      },
+      "scopedFire": null,
+      "lastShot": null,
+      "emptyIdle": "animation/anims/viewmodel/pistol/pistol_elite/idle_leftrightempty_elite.vnmclip_c",
+      "silenced": null,
+      "exports": [
+        {
+          "assetKey": "elite",
+          "path": "public/revamp/models/view-elite.glb",
+          "sha256": "c5d0b130d9bca46acaadd22e1a1aa54c631c7d61450ebeac96f2d1e300e236c9",
+          "bytes": 3604072
+        },
+        {
+          "assetKey": "elite-legacy",
+          "path": "public/revamp/models/view-elite-legacy.glb",
+          "sha256": "a3321ab4af74a45531ef48e4945ff7d615669977e5dae9a99b1d958cc5b76720",
+          "bytes": 2539540
+        }
+      ]
+    },
+    "fiveseven": {
+      "graph": "animation/graphs/viewmodel/viewmodel_gun.vnmgraph+five_seven.vnmgraph_c",
+      "graphSha256": "8c34797c9fd091e4113474cb49af661d007e5ac2db6b3137d6c7d02b25e28279",
+      "clips": {
+        "fire": "animation/anims/viewmodel/pistol/pistol_fiveseven/shoot1_fiveseven.vnmclip_c",
+        "fire-last": "animation/anims/viewmodel/pistol/pistol_fiveseven/shoot_empty_fiveseven.vnmclip_c"
+      },
+      "scopedFire": null,
+      "lastShot": "animation/anims/viewmodel/pistol/pistol_fiveseven/shoot_empty_fiveseven.vnmclip_c",
+      "emptyIdle": "animation/anims/viewmodel/pistol/pistol_fiveseven/idle_slide_back_fiveseven.vnmclip_c",
+      "silenced": null,
+      "exports": [
+        {
+          "assetKey": "fiveseven",
+          "path": "public/revamp/models/view-fiveseven.glb",
+          "sha256": "63b5999660fb4b0d3eb754b2e4c7a7ab0865e71e61629350fbb9fcc3a390dd51",
+          "bytes": 2871868
+        },
+        {
+          "assetKey": "fiveseven-legacy",
+          "path": "public/revamp/models/view-fiveseven-legacy.glb",
+          "sha256": "869f3a1870a8e18efd53dee5090b5fe89c394a9dc3bf516fdd4667b0bc395191",
+          "bytes": 2143332
+        }
+      ]
+    },
+    "tec9": {
+      "graph": "animation/graphs/viewmodel/viewmodel_gun.vnmgraph+tec9.vnmgraph_c",
+      "graphSha256": "e612fb99e3c927a3403f24344a505f41b455585fa2844836f7f6f759b0267d11",
+      "clips": {
+        "fire": "animation/anims/viewmodel/pistol/pistol_tec9/shoot1_tec9.vnmclip_c",
+        "fire-last": "animation/anims/viewmodel/pistol/pistol_tec9/shoot_empty_tec9.vnmclip_c"
+      },
+      "scopedFire": null,
+      "lastShot": "animation/anims/viewmodel/pistol/pistol_tec9/shoot_empty_tec9.vnmclip_c",
+      "emptyIdle": null,
+      "silenced": null,
+      "exports": [
+        {
+          "assetKey": "tec9",
+          "path": "public/revamp/models/view-tec9.glb",
+          "sha256": "06da0b7569155b6ed32cbe647d33a14eaf4c035adcf8a317c0556625ccf4f468",
+          "bytes": 2454592
+        }
+      ]
+    },
+    "revolver": {
+      "graph": "animation/graphs/viewmodel/viewmodel_gun_revolver.vnmgraph_c",
+      "graphSha256": "54676054d7fd5442782da78fc3a3e16e6ecedf680b510e54672f98623510b3c6",
+      "clips": {
+        "fire": "animation/anims/viewmodel/pistol/pistol_revolver/shoot1_revolver.vnmclip_c",
+        "fire-alt": "animation/anims/viewmodel/pistol/pistol_revolver/shoot_alt1_revolver.vnmclip_c"
+      },
+      "scopedFire": null,
+      "lastShot": null,
+      "emptyIdle": null,
+      "silenced": null,
+      "exports": [
+        {
+          "assetKey": "revolver",
+          "path": "public/revamp/models/view-revolver.glb",
+          "sha256": "6d5b633c935fcb32a9b9ae2181dcfc0d00644eba4d1a4be7f76c2b4f4779a615",
+          "bytes": 3125968
+        },
+        {
+          "assetKey": "revolver-legacy",
+          "path": "public/revamp/models/view-revolver-legacy.glb",
+          "sha256": "baf0f38a8a91d4ec63d34c1bb2705d16ad48bdb65250df364eeaec3c25c9eb7a",
+          "bytes": 3067064
+        }
+      ]
+    },
+    "awp": {
+      "graph": "animation/graphs/viewmodel/viewmodel_gun.vnmgraph+awp.vnmgraph_c",
+      "graphSha256": "f8569a8ffc75a2184214d4b38bb15f975b22967c57c04512498437763ca13bc8",
+      "clips": {
+        "fire": "animation/anims/viewmodel/rifle/rifle_awp/shoot1_awp.vnmclip_c"
+      },
+      "scopedFire": null,
+      "lastShot": null,
+      "emptyIdle": null,
+      "silenced": null,
+      "exports": [
+        {
+          "assetKey": "awp",
+          "path": "public/revamp/models/view-awp.glb",
+          "sha256": "c96a5324b824475989e826931f21b1f0a376bb0e5f0da3097568ce425e45a7d0",
+          "bytes": 3108336
+        }
+      ]
+    },
+    "ssg08": {
+      "graph": "animation/graphs/viewmodel/viewmodel_gun.vnmgraph+ssg08.vnmgraph_c",
+      "graphSha256": "a33f0a15e5ebafadc9c0e335c0caeab5b23eb98d3ff57fe145e3842ffcee4906",
+      "clips": {
+        "fire": "animation/anims/viewmodel/rifle/rifle_ssg08/shoot1_ssg08.vnmclip_c"
+      },
+      "scopedFire": null,
+      "lastShot": null,
+      "emptyIdle": null,
+      "silenced": null,
+      "exports": [
+        {
+          "assetKey": "ssg08",
+          "path": "public/revamp/models/view-ssg08.glb",
+          "sha256": "e0ec9e08718220410978af117466b38e26b113cc01ad9fe658cd6bca0c53db88",
+          "bytes": 3412072
+        }
+      ]
+    },
+    "g3sg1": {
+      "graph": "animation/graphs/viewmodel/viewmodel_gun.vnmgraph+g3sg1.vnmgraph_c",
+      "graphSha256": "386456d9ebfad8db16f4dd3b8983b158efb04ad91eb6a5364afb82a78542cf3c",
+      "clips": {
+        "fire": "animation/anims/viewmodel/rifle/rifle_g3sg1/shoot1_g3sg1.vnmclip_c"
+      },
+      "scopedFire": null,
+      "lastShot": null,
+      "emptyIdle": null,
+      "silenced": null,
+      "exports": [
+        {
+          "assetKey": "g3sg1",
+          "path": "public/revamp/models/view-g3sg1.glb",
+          "sha256": "0b6b032a5dadb84ca33007c8aac4dd045ce953b6bc617b5268a5e1365daf2d3c",
+          "bytes": 3247224
+        },
+        {
+          "assetKey": "g3sg1-legacy",
+          "path": "public/revamp/models/view-g3sg1-legacy.glb",
+          "sha256": "b443e2d1c029601bd294078b0dcb940cd52ffab4365c5241c3c1852b023e7c89",
+          "bytes": 2244132
+        }
+      ]
+    },
+    "scar20": {
+      "graph": "animation/graphs/viewmodel/viewmodel_gun.vnmgraph+scar20.vnmgraph_c",
+      "graphSha256": "d412ac7b989eff6c781ce7b1b53eb356582a0bdc97cd79a812c2053ad5b6f38e",
+      "clips": {
+        "fire": "animation/anims/viewmodel/rifle/rifle_scar20/shoot1_scar20.vnmclip_c",
+        "fire-last": "animation/anims/viewmodel/rifle/rifle_scar20/shoot_empty_scar20.vnmclip_c"
+      },
+      "scopedFire": null,
+      "lastShot": "animation/anims/viewmodel/rifle/rifle_scar20/shoot_empty_scar20.vnmclip_c",
+      "emptyIdle": "animation/anims/viewmodel/rifle/rifle_scar20/idle_slide_back_scar20.vnmclip_c",
+      "silenced": null,
+      "exports": [
+        {
+          "assetKey": "scar20",
+          "path": "public/revamp/models/view-scar20.glb",
+          "sha256": "dc633f565c8055e6cd857aab785e18783b0462bf8dad4e1014155129f9e94ab9",
+          "bytes": 3696880
+        },
+        {
+          "assetKey": "scar20-legacy",
+          "path": "public/revamp/models/view-scar20-legacy.glb",
+          "sha256": "196ac7f1fcde53f35261a25ce8780444661cbaf945cc3a9df21165890479fa5d",
+          "bytes": 2231872
+        }
+      ]
+    }
+  },
+  "native": {
+    "animation/anims/viewmodel/rifle/rifle_ak/shoot1_ak.vnmclip_c": {
+      "path": "animation/anims/viewmodel/rifle/rifle_ak/shoot1_ak.vnmclip_c",
+      "crc": "00becc091d",
+      "bytes": 8253,
+      "sha256": "7ed167a9274424dd26f3b44cc9759237892afd605531f91fb3716576b785e736",
+      "seconds": 0.7667,
+      "frames": 24,
+      "additive": false,
+      "skeleton": "animation/skeletons/characters/viewmodel.vnmskel",
+      "secondary": [
+        "animation/skeletons/weapons/ak47.vnmskel"
+      ]
+    },
+    "animation/anims/viewmodel/rifle/rifle_m4a4/shoot1_m4a4.vnmclip_c": {
+      "path": "animation/anims/viewmodel/rifle/rifle_m4a4/shoot1_m4a4.vnmclip_c",
+      "crc": "005010b2ae",
+      "bytes": 7066,
+      "sha256": "aaeff0d0b3041bf5db76fc9672ccb031fa7b06f55c69340e4c42e06110c8f93d",
+      "seconds": 0.4,
+      "frames": 13,
+      "additive": false,
+      "skeleton": "animation/skeletons/characters/viewmodel.vnmskel",
+      "secondary": [
+        "animation/skeletons/weapons/m4a4.vnmskel"
+      ]
+    },
+    "animation/anims/viewmodel/rifle/_default_rifle/shoot1_rifle.vnmclip_c": {
+      "path": "animation/anims/viewmodel/rifle/_default_rifle/shoot1_rifle.vnmclip_c",
+      "crc": "007ecd5390",
+      "bytes": 7076,
+      "sha256": "32e1afb1adb6bd8d191a0b406b00c1ee6dc333503352e30f5f7f4e86391ffcc8",
+      "seconds": 0.4,
+      "frames": 13,
+      "additive": false,
+      "skeleton": "animation/skeletons/characters/viewmodel.vnmskel",
+      "secondary": [
+        "animation/skeletons/weapons/m4a1_silencer.vnmskel"
+      ]
+    },
+    "animation/anims/viewmodel/rifle/rifle_galilar/shoot1_galilar.vnmclip_c": {
+      "path": "animation/anims/viewmodel/rifle/rifle_galilar/shoot1_galilar.vnmclip_c",
+      "crc": "0024b715f6",
+      "bytes": 12180,
+      "sha256": "f5cb268d006890ce851f7d74dc947c2db8f0dbfa902e681c6afe4829a59b3ce3",
+      "seconds": 0.8,
+      "frames": 25,
+      "additive": false,
+      "skeleton": "animation/skeletons/characters/viewmodel.vnmskel",
+      "secondary": [
+        "animation/skeletons/weapons/galil.vnmskel"
+      ]
+    },
+    "animation/anims/viewmodel/rifle/rifle_famas/shoot1_famas.vnmclip_c": {
+      "path": "animation/anims/viewmodel/rifle/rifle_famas/shoot1_famas.vnmclip_c",
+      "crc": "0049ed1151",
+      "bytes": 10844,
+      "sha256": "1c48cca8ba30c6fce7c725fa845e06efa130b00b209f7b727a7409f8fb08f432",
+      "seconds": 0.8667,
+      "frames": 27,
+      "additive": false,
+      "skeleton": "animation/skeletons/characters/viewmodel.vnmskel",
+      "secondary": [
+        "animation/skeletons/weapons/famas.vnmskel"
+      ]
+    },
+    "animation/anims/viewmodel/rifle/rifle_sg556/shoot1_sg556.vnmclip_c": {
+      "path": "animation/anims/viewmodel/rifle/rifle_sg556/shoot1_sg556.vnmclip_c",
+      "crc": "0017854135",
+      "bytes": 9303,
+      "sha256": "bad3be9a8eaa794501ad59841c619ad9bcf90f3b586dcea4f5df411af4e5f900",
+      "seconds": 0.7,
+      "frames": 22,
+      "additive": false,
+      "skeleton": "animation/skeletons/characters/viewmodel.vnmskel",
+      "secondary": [
+        "animation/skeletons/weapons/sg556.vnmskel"
+      ]
+    },
+    "animation/anims/viewmodel/rifle/rifle_sg556/ironsight_shoot_sg556.vnmclip_c": {
+      "path": "animation/anims/viewmodel/rifle/rifle_sg556/ironsight_shoot_sg556.vnmclip_c",
+      "crc": "00b12accfe",
+      "bytes": 6658,
+      "sha256": "e2a0d679da3f467a1c5c7dff9f4f6759111235eeeef0aabd11e6038fe26ba544",
+      "seconds": 0.2667,
+      "frames": 9,
+      "additive": false,
+      "skeleton": "animation/skeletons/characters/viewmodel.vnmskel",
+      "secondary": [
+        "animation/skeletons/weapons/sg556.vnmskel"
+      ]
+    },
+    "animation/anims/viewmodel/rifle/rifle_aug/shoot1_aug.vnmclip_c": {
+      "path": "animation/anims/viewmodel/rifle/rifle_aug/shoot1_aug.vnmclip_c",
+      "crc": "00dbf0a127",
+      "bytes": 14259,
+      "sha256": "ebe9544f66580e3a9e1cb1f1c7e0a5c2684d28b061b67c1857112506bddcea7a",
+      "seconds": 0.9333,
+      "frames": 29,
+      "additive": false,
+      "skeleton": "animation/skeletons/characters/viewmodel.vnmskel",
+      "secondary": [
+        "animation/skeletons/weapons/aug.vnmskel"
+      ]
+    },
+    "animation/anims/viewmodel/rifle/rifle_aug/ironsight_shoot_aug.vnmclip_c": {
+      "path": "animation/anims/viewmodel/rifle/rifle_aug/ironsight_shoot_aug.vnmclip_c",
+      "crc": "001c40575c",
+      "bytes": 5685,
+      "sha256": "f53caeb18f390a9adbd90cc01388df0bcbf6cdfffc1d91dd6a930cedaa318496",
+      "seconds": 0.2667,
+      "frames": 9,
+      "additive": false,
+      "skeleton": "animation/skeletons/characters/viewmodel.vnmskel",
+      "secondary": [
+        "animation/skeletons/weapons/aug.vnmskel"
+      ]
+    },
+    "animation/anims/viewmodel/rifle/rifle_mp9/shoot1_mp9.vnmclip_c": {
+      "path": "animation/anims/viewmodel/rifle/rifle_mp9/shoot1_mp9.vnmclip_c",
+      "crc": "00d1258287",
+      "bytes": 8668,
+      "sha256": "23965c74fd3d3e12c5e47bb548111c935122007a293abff291b8554b1348ab73",
+      "seconds": 0.8333,
+      "frames": 26,
+      "additive": false,
+      "skeleton": "animation/skeletons/characters/viewmodel.vnmskel",
+      "secondary": [
+        "animation/skeletons/weapons/mp9.vnmskel"
+      ]
+    },
+    "animation/anims/viewmodel/rifle/rifle_mp7/shoot1_mp7.vnmclip_c": {
+      "path": "animation/anims/viewmodel/rifle/rifle_mp7/shoot1_mp7.vnmclip_c",
+      "crc": "00f447928b",
+      "bytes": 8290,
+      "sha256": "7abc043e4f5daf18d2f85a2ad93e8cf868ae8e6fdf78d22e41002f7575406ced",
+      "seconds": 0.8,
+      "frames": 25,
+      "additive": false,
+      "skeleton": "animation/skeletons/characters/viewmodel.vnmskel",
+      "secondary": [
+        "animation/skeletons/weapons/mp7.vnmskel"
+      ]
+    },
+    "animation/anims/viewmodel/rifle/rifle_mp5sd/shoot1_mp5sd.vnmclip_c": {
+      "path": "animation/anims/viewmodel/rifle/rifle_mp5sd/shoot1_mp5sd.vnmclip_c",
+      "crc": "004e7fcb0f",
+      "bytes": 6300,
+      "sha256": "2c73af99f47a94320a4b27e0ce1619ce72ce3f1ac2a6911673f119cd8246bd92",
+      "seconds": 0.4,
+      "frames": 13,
+      "additive": false,
+      "skeleton": "animation/skeletons/characters/viewmodel.vnmskel",
+      "secondary": [
+        "animation/skeletons/weapons/mp5sd.vnmskel"
+      ]
+    },
+    "animation/anims/viewmodel/rifle/rifle_mac10/shoot1_mac10.vnmclip_c": {
+      "path": "animation/anims/viewmodel/rifle/rifle_mac10/shoot1_mac10.vnmclip_c",
+      "crc": "00235df499",
+      "bytes": 10569,
+      "sha256": "5edcd3e0296469ac9603b8936c3f495bebacca36283669bf7dfe9d67e869a986",
+      "seconds": 0.8,
+      "frames": 25,
+      "additive": false,
+      "skeleton": "animation/skeletons/characters/viewmodel.vnmskel",
+      "secondary": [
+        "animation/skeletons/weapons/mac10.vnmskel"
+      ]
+    },
+    "animation/anims/viewmodel/rifle/rifle_ump45/shoot1_ump45.vnmclip_c": {
+      "path": "animation/anims/viewmodel/rifle/rifle_ump45/shoot1_ump45.vnmclip_c",
+      "crc": "00e4a627e8",
+      "bytes": 10159,
+      "sha256": "0d0630b42a9e93fa73f14e3d0e165f33ed91bd26fba9d93701beb7c5f4aecf03",
+      "seconds": 1,
+      "frames": 31,
+      "additive": false,
+      "skeleton": "animation/skeletons/characters/viewmodel.vnmskel",
+      "secondary": [
+        "animation/skeletons/weapons/ump45.vnmskel"
+      ]
+    },
+    "animation/anims/viewmodel/rifle/rifle_p90/shoot1_p90.vnmclip_c": {
+      "path": "animation/anims/viewmodel/rifle/rifle_p90/shoot1_p90.vnmclip_c",
+      "crc": "00e7bf698c",
+      "bytes": 12466,
+      "sha256": "87995a7796860b79e29062391093816f865cb335089f6672c284e73c205030e6",
+      "seconds": 0.8333,
+      "frames": 26,
+      "additive": false,
+      "skeleton": "animation/skeletons/characters/viewmodel.vnmskel",
+      "secondary": [
+        "animation/skeletons/weapons/p90.vnmskel"
+      ]
+    },
+    "animation/anims/viewmodel/rifle/rifle_bizon/shoot1_bizon.vnmclip_c": {
+      "path": "animation/anims/viewmodel/rifle/rifle_bizon/shoot1_bizon.vnmclip_c",
+      "crc": "00a6972fe5",
+      "bytes": 10081,
+      "sha256": "d828cc701ea6249f16bd08b2edf0a41a972a14b8bd8fa931ec59eafe64c9c71f",
+      "seconds": 0.8667,
+      "frames": 27,
+      "additive": false,
+      "skeleton": "animation/skeletons/characters/viewmodel.vnmskel",
+      "secondary": [
+        "animation/skeletons/weapons/bizon.vnmskel"
+      ]
+    },
+    "animation/anims/viewmodel/rifle/rifle_m249/shoot1_m249.vnmclip_c": {
+      "path": "animation/anims/viewmodel/rifle/rifle_m249/shoot1_m249.vnmclip_c",
+      "crc": "00857f6582",
+      "bytes": 31317,
+      "sha256": "e8a131eaefebfea6a10327c9f2d38e6f01edc7837a566b58e15c170e091a0e29",
+      "seconds": 1.7333,
+      "frames": 53,
+      "additive": false,
+      "skeleton": "animation/skeletons/characters/viewmodel.vnmskel",
+      "secondary": [
+        "animation/skeletons/weapons/m249.vnmskel"
+      ]
+    },
+    "animation/anims/viewmodel/rifle/rifle_negev/shoot1_negev.vnmclip_c": {
+      "path": "animation/anims/viewmodel/rifle/rifle_negev/shoot1_negev.vnmclip_c",
+      "crc": "00ffd63702",
+      "bytes": 19699,
+      "sha256": "13dfb468c957d544b5ccf7b44860084e6801d538db8b625e9f1dd0e0483520f8",
+      "seconds": 0.8667,
+      "frames": 27,
+      "additive": false,
+      "skeleton": "animation/skeletons/characters/viewmodel.vnmskel",
+      "secondary": [
+        "animation/skeletons/weapons/negev.vnmskel"
+      ]
+    },
+    "animation/anims/viewmodel/rifle/rifle_negev/shoot_empty_negev.vnmclip_c": {
+      "path": "animation/anims/viewmodel/rifle/rifle_negev/shoot_empty_negev.vnmclip_c",
+      "crc": "0003d1e93f",
+      "bytes": 14697,
+      "sha256": "992a95db58b81b976c8dd58619f48ba60e67e7085e684a58ce1d8ed7e5867002",
+      "seconds": 0.8667,
+      "frames": 27,
+      "additive": false,
+      "skeleton": "animation/skeletons/characters/viewmodel.vnmskel",
+      "secondary": [
+        "animation/skeletons/weapons/negev.vnmskel"
+      ]
+    },
+    "animation/anims/viewmodel/pistol/pistol_cz75a/shoot1_cz75a.vnmclip_c": {
+      "path": "animation/anims/viewmodel/pistol/pistol_cz75a/shoot1_cz75a.vnmclip_c",
+      "crc": "00bf638f0f",
+      "bytes": 9010,
+      "sha256": "43a58a14df7b7af2de59a8087ac093e49f97f5261bdd399dbeca930a4b9b8dc3",
+      "seconds": 0.4,
+      "frames": 13,
+      "additive": false,
+      "skeleton": "animation/skeletons/characters/viewmodel.vnmskel",
+      "secondary": [
+        "animation/skeletons/weapons/cz75a.vnmskel"
+      ]
+    },
+    "animation/anims/viewmodel/pistol/pistol_cz75a/shoot_empty_cz75a.vnmclip_c": {
+      "path": "animation/anims/viewmodel/pistol/pistol_cz75a/shoot_empty_cz75a.vnmclip_c",
+      "crc": "004850c04f",
+      "bytes": 8925,
+      "sha256": "145afe008b8b479ee525537598a0d460cfb992320debf4c3e99548cf76f2455e",
+      "seconds": 0.4,
+      "frames": 13,
+      "additive": false,
+      "skeleton": "animation/skeletons/characters/viewmodel.vnmskel",
+      "secondary": [
+        "animation/skeletons/weapons/cz75a.vnmskel"
+      ]
+    },
+    "animation/anims/viewmodel/pistol/_default_pistol/shoot1_pistol.vnmclip_c": {
+      "path": "animation/anims/viewmodel/pistol/_default_pistol/shoot1_pistol.vnmclip_c",
+      "crc": "0059953f6c",
+      "bytes": 8868,
+      "sha256": "4dcbce948efd94e47f1da6bb5467c2e95217a5c7b9f961e12795d4476b87fa46",
+      "seconds": 0.4,
+      "frames": 13,
+      "additive": false,
+      "skeleton": "animation/skeletons/characters/viewmodel.vnmskel",
+      "secondary": [
+        "animation/skeletons/weapons/usp_silencer.vnmskel"
+      ]
+    },
+    "animation/anims/viewmodel/pistol/_default_pistol/shoot_empty_pistol.vnmclip_c": {
+      "path": "animation/anims/viewmodel/pistol/_default_pistol/shoot_empty_pistol.vnmclip_c",
+      "crc": "0073f96b9e",
+      "bytes": 8888,
+      "sha256": "30c930f5b4519ff625b8a5c7883ef20e3c488a2f6191ff1fc50bdada20df71dc",
+      "seconds": 0.4,
+      "frames": 13,
+      "additive": false,
+      "skeleton": "animation/skeletons/characters/viewmodel.vnmskel",
+      "secondary": [
+        "animation/skeletons/weapons/usp_silencer.vnmskel"
+      ]
+    },
+    "animation/anims/viewmodel/pistol/pistol_glock18/shoot1_glock.vnmclip_c": {
+      "path": "animation/anims/viewmodel/pistol/pistol_glock18/shoot1_glock.vnmclip_c",
+      "crc": "00e9d607da",
+      "bytes": 8442,
+      "sha256": "96c532ee07a406b9d0fb216edd432f4b5a88ecfc0431b257d169915e755c72f2",
+      "seconds": 0.4,
+      "frames": 13,
+      "additive": false,
+      "skeleton": "animation/skeletons/characters/viewmodel.vnmskel",
+      "secondary": [
+        "animation/skeletons/weapons/glock18.vnmskel"
+      ]
+    },
+    "animation/anims/viewmodel/pistol/pistol_glock18/shoot_empty_glock.vnmclip_c": {
+      "path": "animation/anims/viewmodel/pistol/pistol_glock18/shoot_empty_glock.vnmclip_c",
+      "crc": "006a982846",
+      "bytes": 8479,
+      "sha256": "f4effc2062832cb1ad2e8660baef79fc8743f0830ba07ef5556ea06003c3ccfa",
+      "seconds": 0.4,
+      "frames": 13,
+      "additive": false,
+      "skeleton": "animation/skeletons/characters/viewmodel.vnmskel",
+      "secondary": [
+        "animation/skeletons/weapons/glock18.vnmskel"
+      ]
+    },
+    "animation/anims/viewmodel/pistol/pistol_hkp2000/shoot1_hkp.vnmclip_c": {
+      "path": "animation/anims/viewmodel/pistol/pistol_hkp2000/shoot1_hkp.vnmclip_c",
+      "crc": "00db96ce47",
+      "bytes": 8517,
+      "sha256": "c8b92944445af835cd285e5561a5ababb7165206f9a2e1e481b10cc410b95bc0",
+      "seconds": 0.4,
+      "frames": 13,
+      "additive": false,
+      "skeleton": "animation/skeletons/characters/viewmodel.vnmskel",
+      "secondary": [
+        "animation/skeletons/weapons/hkp2000.vnmskel"
+      ]
+    },
+    "animation/anims/viewmodel/pistol/pistol_hkp2000/shoot_empty_hkp.vnmclip_c": {
+      "path": "animation/anims/viewmodel/pistol/pistol_hkp2000/shoot_empty_hkp.vnmclip_c",
+      "crc": "00a93c3c49",
+      "bytes": 8807,
+      "sha256": "78713631937158802608a4fff74a26f4147f3eaef6609b2ba126c8d0663e642a",
+      "seconds": 0.4,
+      "frames": 13,
+      "additive": false,
+      "skeleton": "animation/skeletons/characters/viewmodel.vnmskel",
+      "secondary": [
+        "animation/skeletons/weapons/hkp2000.vnmskel"
+      ]
+    },
+    "animation/anims/viewmodel/pistol/pistol_p250/shoot1_p250.vnmclip_c": {
+      "path": "animation/anims/viewmodel/pistol/pistol_p250/shoot1_p250.vnmclip_c",
+      "crc": "00ad306965",
+      "bytes": 8445,
+      "sha256": "70af17d207ebe34c4c58b9ca4716f49c18526e9d4f881b8369df5938287344d4",
+      "seconds": 0.4,
+      "frames": 13,
+      "additive": false,
+      "skeleton": "animation/skeletons/characters/viewmodel.vnmskel",
+      "secondary": [
+        "animation/skeletons/weapons/p250.vnmskel"
+      ]
+    },
+    "animation/anims/viewmodel/pistol/pistol_p250/shoot_empty_p250.vnmclip_c": {
+      "path": "animation/anims/viewmodel/pistol/pistol_p250/shoot_empty_p250.vnmclip_c",
+      "crc": "002f541702",
+      "bytes": 8431,
+      "sha256": "94eb5195e47345e5ad879b9a9bbb205414a4b060b1052120cacd2b4b2f689134",
+      "seconds": 0.4,
+      "frames": 13,
+      "additive": false,
+      "skeleton": "animation/skeletons/characters/viewmodel.vnmskel",
+      "secondary": [
+        "animation/skeletons/weapons/p250.vnmskel"
+      ]
+    },
+    "animation/anims/viewmodel/pistol/pistol_deagle/shoot1_deagle.vnmclip_c": {
+      "path": "animation/anims/viewmodel/pistol/pistol_deagle/shoot1_deagle.vnmclip_c",
+      "crc": "00a4474643",
+      "bytes": 8361,
+      "sha256": "c6348f085999abda88d01150bfb3ce14aa34ca5421964235e5fa7cc7a927f605",
+      "seconds": 0.7,
+      "frames": 22,
+      "additive": false,
+      "skeleton": "animation/skeletons/characters/viewmodel.vnmskel",
+      "secondary": [
+        "animation/skeletons/weapons/deagle.vnmskel"
+      ]
+    },
+    "animation/anims/viewmodel/pistol/pistol_deagle/shoot_empty_deagle.vnmclip_c": {
+      "path": "animation/anims/viewmodel/pistol/pistol_deagle/shoot_empty_deagle.vnmclip_c",
+      "crc": "0024c50f80",
+      "bytes": 8563,
+      "sha256": "6616b3a62daf2e007bdefbd8749a09cbe3ed9688208041b57b9ff43df75dcc1b",
+      "seconds": 0.7,
+      "frames": 22,
+      "additive": false,
+      "skeleton": "animation/skeletons/characters/viewmodel.vnmskel",
+      "secondary": [
+        "animation/skeletons/weapons/deagle.vnmskel"
+      ]
+    },
+    "animation/anims/viewmodel/pistol/pistol_elite/shoot_left1_elite.vnmclip_c": {
+      "path": "animation/anims/viewmodel/pistol/pistol_elite/shoot_left1_elite.vnmclip_c",
+      "crc": "00da41baa2",
+      "bytes": 8331,
+      "sha256": "f5c58d53b1554f38b3c01cf565dbfc5bcac85062e9b0c4fc8ebd426807fc8303",
+      "seconds": 0.8333,
+      "frames": 26,
+      "additive": false,
+      "skeleton": "animation/skeletons/characters/viewmodel.vnmskel",
+      "secondary": [
+        "animation/skeletons/weapons/elite.vnmskel"
+      ]
+    },
+    "animation/anims/viewmodel/pistol/pistol_elite/shoot_leftlast_elite.vnmclip_c": {
+      "path": "animation/anims/viewmodel/pistol/pistol_elite/shoot_leftlast_elite.vnmclip_c",
+      "crc": "00f578e66f",
+      "bytes": 8637,
+      "sha256": "e9355c8f6a043979db81b475cd2f2ccce98ac8b419bb8a5a23bdbf060f8e2237",
+      "seconds": 0.8333,
+      "frames": 26,
+      "additive": false,
+      "skeleton": "animation/skeletons/characters/viewmodel.vnmskel",
+      "secondary": [
+        "animation/skeletons/weapons/elite.vnmskel"
+      ]
+    },
+    "animation/anims/viewmodel/pistol/pistol_elite/shoot_right1_elite.vnmclip_c": {
+      "path": "animation/anims/viewmodel/pistol/pistol_elite/shoot_right1_elite.vnmclip_c",
+      "crc": "00f1796555",
+      "bytes": 8032,
+      "sha256": "f28a416279e9e60a581eae2ec87ace78fa5f49c1fb25e1da903420182aaa22b3",
+      "seconds": 0.8333,
+      "frames": 26,
+      "additive": false,
+      "skeleton": "animation/skeletons/characters/viewmodel.vnmskel",
+      "secondary": [
+        "animation/skeletons/weapons/elite.vnmskel"
+      ]
+    },
+    "animation/anims/viewmodel/pistol/pistol_elite/shoot_rightlast_elite.vnmclip_c": {
+      "path": "animation/anims/viewmodel/pistol/pistol_elite/shoot_rightlast_elite.vnmclip_c",
+      "crc": "00cd2da5eb",
+      "bytes": 8010,
+      "sha256": "442594b2314cb164525859a04d717c1dbac9d9d49f2453e31e9f96829886b252",
+      "seconds": 0.8333,
+      "frames": 26,
+      "additive": false,
+      "skeleton": "animation/skeletons/characters/viewmodel.vnmskel",
+      "secondary": [
+        "animation/skeletons/weapons/elite.vnmskel"
+      ]
+    },
+    "animation/anims/viewmodel/pistol/pistol_fiveseven/shoot1_fiveseven.vnmclip_c": {
+      "path": "animation/anims/viewmodel/pistol/pistol_fiveseven/shoot1_fiveseven.vnmclip_c",
+      "crc": "00eaad9e30",
+      "bytes": 8446,
+      "sha256": "9a01ae57d73e7a727e50a0b5070f970464615c720bb8d21d840d06116d062fd7",
+      "seconds": 0.4,
+      "frames": 13,
+      "additive": false,
+      "skeleton": "animation/skeletons/characters/viewmodel.vnmskel",
+      "secondary": [
+        "animation/skeletons/weapons/fiveseven.vnmskel"
+      ]
+    },
+    "animation/anims/viewmodel/pistol/pistol_fiveseven/shoot_empty_fiveseven.vnmclip_c": {
+      "path": "animation/anims/viewmodel/pistol/pistol_fiveseven/shoot_empty_fiveseven.vnmclip_c",
+      "crc": "007e307163",
+      "bytes": 8490,
+      "sha256": "674c70d996ccd96f2d7fb35daaa13ac5db1515b44456d9d117f9b457f1c152a1",
+      "seconds": 0.4,
+      "frames": 13,
+      "additive": false,
+      "skeleton": "animation/skeletons/characters/viewmodel.vnmskel",
+      "secondary": [
+        "animation/skeletons/weapons/fiveseven.vnmskel"
+      ]
+    },
+    "animation/anims/viewmodel/pistol/pistol_tec9/shoot1_tec9.vnmclip_c": {
+      "path": "animation/anims/viewmodel/pistol/pistol_tec9/shoot1_tec9.vnmclip_c",
+      "crc": "00727fe73d",
+      "bytes": 6496,
+      "sha256": "08376d94d6f10dd20121e1d0598e2fbb5bc1943bfdde95bd5b2285bbfa480f29",
+      "seconds": 0.4,
+      "frames": 13,
+      "additive": false,
+      "skeleton": "animation/skeletons/characters/viewmodel.vnmskel",
+      "secondary": [
+        "animation/skeletons/weapons/tec9.vnmskel"
+      ]
+    },
+    "animation/anims/viewmodel/pistol/pistol_tec9/shoot_empty_tec9.vnmclip_c": {
+      "path": "animation/anims/viewmodel/pistol/pistol_tec9/shoot_empty_tec9.vnmclip_c",
+      "crc": "0089319d3c",
+      "bytes": 6512,
+      "sha256": "06daeb42e8e4d7dc6648849b1e2fa8cc9b17f74fe2c04fb72c2a3534c0ab7ef9",
+      "seconds": 0.4,
+      "frames": 13,
+      "additive": false,
+      "skeleton": "animation/skeletons/characters/viewmodel.vnmskel",
+      "secondary": [
+        "animation/skeletons/weapons/tec9.vnmskel"
+      ]
+    },
+    "animation/anims/viewmodel/pistol/pistol_revolver/shoot1_revolver.vnmclip_c": {
+      "path": "animation/anims/viewmodel/pistol/pistol_revolver/shoot1_revolver.vnmclip_c",
+      "crc": "00da94bd62",
+      "bytes": 9277,
+      "sha256": "8fd3dc758badecac8601015fd58d91f071040618903c002e87e0815f8769b4d8",
+      "seconds": 0.7,
+      "frames": 22,
+      "additive": false,
+      "skeleton": "animation/skeletons/characters/viewmodel.vnmskel",
+      "secondary": [
+        "animation/skeletons/weapons/revolver.vnmskel"
+      ]
+    },
+    "animation/anims/viewmodel/pistol/pistol_revolver/shoot_alt1_revolver.vnmclip_c": {
+      "path": "animation/anims/viewmodel/pistol/pistol_revolver/shoot_alt1_revolver.vnmclip_c",
+      "crc": "000b0c9a18",
+      "bytes": 13952,
+      "sha256": "900dabfcfb72afdcf2dd5f0cb6d1dcfeb1188049ff784d4729564fa5a00dcaab",
+      "seconds": 1,
+      "frames": 31,
+      "additive": false,
+      "skeleton": "animation/skeletons/characters/viewmodel.vnmskel",
+      "secondary": [
+        "animation/skeletons/weapons/revolver.vnmskel"
+      ]
+    },
+    "animation/anims/viewmodel/rifle/rifle_awp/shoot1_awp.vnmclip_c": {
+      "path": "animation/anims/viewmodel/rifle/rifle_awp/shoot1_awp.vnmclip_c",
+      "crc": "000186d631",
+      "bytes": 15636,
+      "sha256": "cf25fc8fafa694d1d7b77ca78881473fc5659dde52bf1badfee75be1f4370087",
+      "seconds": 1.6,
+      "frames": 49,
+      "additive": false,
+      "skeleton": "animation/skeletons/characters/viewmodel.vnmskel",
+      "secondary": [
+        "animation/skeletons/weapons/awp.vnmskel"
+      ]
+    },
+    "animation/anims/viewmodel/rifle/rifle_ssg08/shoot1_ssg08.vnmclip_c": {
+      "path": "animation/anims/viewmodel/rifle/rifle_ssg08/shoot1_ssg08.vnmclip_c",
+      "crc": "00af488321",
+      "bytes": 16745,
+      "sha256": "a720d0ead99283411e61aa892d5181617a4ff2bb838c790d35a6c3820c26aedf",
+      "seconds": 1.6667,
+      "frames": 51,
+      "additive": false,
+      "skeleton": "animation/skeletons/characters/viewmodel.vnmskel",
+      "secondary": [
+        "animation/skeletons/weapons/ssg08.vnmskel"
+      ]
+    },
+    "animation/anims/viewmodel/rifle/rifle_g3sg1/shoot1_g3sg1.vnmclip_c": {
+      "path": "animation/anims/viewmodel/rifle/rifle_g3sg1/shoot1_g3sg1.vnmclip_c",
+      "crc": "00c9bcd532",
+      "bytes": 10052,
+      "sha256": "5f956ec76d4cbfb3783970734e66f078e437cea6d395aabf51b2d09e71015e7d",
+      "seconds": 0.7333,
+      "frames": 23,
+      "additive": false,
+      "skeleton": "animation/skeletons/characters/viewmodel.vnmskel",
+      "secondary": [
+        "animation/skeletons/weapons/g3sg1.vnmskel"
+      ]
+    },
+    "animation/anims/viewmodel/rifle/rifle_scar20/shoot1_scar20.vnmclip_c": {
+      "path": "animation/anims/viewmodel/rifle/rifle_scar20/shoot1_scar20.vnmclip_c",
+      "crc": "0058c3dff1",
+      "bytes": 10659,
+      "sha256": "3058165a005e68cc7bb8b32e2f232b1914787a2bc344fc8e3b1624f6b065f3b0",
+      "seconds": 0.8333,
+      "frames": 26,
+      "additive": false,
+      "skeleton": "animation/skeletons/characters/viewmodel.vnmskel",
+      "secondary": [
+        "animation/skeletons/weapons/scar20.vnmskel"
+      ]
+    },
+    "animation/anims/viewmodel/rifle/rifle_scar20/shoot_empty_scar20.vnmclip_c": {
+      "path": "animation/anims/viewmodel/rifle/rifle_scar20/shoot_empty_scar20.vnmclip_c",
+      "crc": "009c69d40c",
+      "bytes": 10426,
+      "sha256": "1756f4152fda292bea8582300d5283f0876ce764c9e4fab51234cfe94aef528f",
+      "seconds": 0.8333,
+      "frames": 26,
+      "additive": false,
+      "skeleton": "animation/skeletons/characters/viewmodel.vnmskel",
+      "secondary": [
+        "animation/skeletons/weapons/scar20.vnmskel"
+      ]
+    }
+  }
+}

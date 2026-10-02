@@ -1,5 +1,6 @@
 import type {Mode} from './config';
 export const modeInfo: Record<Mode, {benefit: string; task: string; spread: boolean}> = {
+  hearing: {benefit: 'Locate opponents before you see them', task: 'Listen to the hidden footsteps or gunfire, then mark their direction and distance. Compare your estimate with the revealed source.', spread: true},
   duel: {benefit: 'Turn practice into better duels', task: 'Read the opponent, isolate an angle, stop and shoot. Review your shot timing and aim after each fight.', spread: true},
   guided: {benefit: 'Learn the recoil correction', task: 'Move your crosshair to the green NOW ring. The pink NEXT ring previews the following correction. Start with a stationary target.', spread: false},
   spray: {benefit: 'Build a repeatable spray', task: 'Start at head height and keep your bullets on the target. Use the wall marks to judge your correction, not the crosshair alone.', spread: true},
