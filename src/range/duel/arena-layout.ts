@@ -2,7 +2,7 @@ import type {Arena, CoverLane, Solid} from './geometry';
 import {clearSegment, routeTo} from './navigation';
 import {randomStream} from './rng';
 import {coveredSpawns} from './spawns';
-import {arenaPOIs, footprintsOverlap, footprintOf, placePOI, poiThemes, reserveFootprint, type Footprint, type POITheme} from './arena-pois';
+import {arenaPOIs, environmentPOIs, footprintsOverlap, footprintOf, placePOI, poiThemes, reserveFootprint, type Footprint, type POITheme} from './arena-pois';
 
 const point = (x: number, z: number) => ({x, y: 0, z});
 export const arenaDesigns = ['Freight yard', 'Service lanes', 'Courtyard', 'Switchback', 'Loading bays', 'Workshop'] as const;
@@ -16,10 +16,10 @@ function candidate(seed: number, design: number, scale: number, theme: POITheme,
   const random = randomStream(seed, `authored-pois-${attempt}`);
   const between = (a: number, b: number) => a + random() * (b - a);
   const centerX = safe ? 0 : between(-.25, .25), width = safe ? 5.25 : between(5.25, 6.5);
-  const solids: Solid[] = [{center: {x: centerX, y: 1.6, z: 0}, size: {x: width, y: 3.2, z: .75}, kind: 'concrete'}];
+  const solids: Solid[] = [{id: 'arena/central-screen', material: 'concrete', center: {x: centerX, y: 1.6, z: 0}, size: {x: width, y: 3.2, z: .75}, kind: 'concrete'}];
   const lanes: CoverLane[] = [];
   const arena: Arena = {minX: -12 * scale, maxX: 12 * scale, minZ: -20 * scale, maxZ: 12 * scale,
-    solids, lanes, pois: [], design: arenaDesigns[design], seed, poiTheme: theme};
+    solids, lanes, pois: [], traversalVolumes: [], traversalLinks: [], design: arenaDesigns[design], seed, poiTheme: theme};
   const reservations: Footprint[] = [reserveFootprint(footprintOf(solids), .6)];
   const templates = arenaPOIs.filter(p => p.theme === theme);
   const camps = templates.filter(p => p.spawnCover);
@@ -28,10 +28,12 @@ function candidate(seed: number, design: number, scale: number, theme: POITheme,
   const slots = [{template: camp, x: sign * (scale < 1 ? 3 : safe ? 4 : between(3.75, 4.25)),
     z: scale < 1 ? Math.max(5.01, arena.maxZ - 2.75) : arena.maxZ - 2.1, camp: true}];
   const shuffled = templates.filter(p => !p.spawnCover).map((template, index) => ({template, order: safe ? index : random()})).sort((a, b) => a.order - b.order);
+  const environmentTemplates = environmentPOIs.filter(p => p.theme === theme);
+  const environment = environmentTemplates[safe ? 0 : Math.floor(random() * environmentTemplates.length)];
   // Compact rounds use two pairs. Full-size rounds get an additional flank;
   // the assemblies and native hull are never shrunk to make them fit.
   for (const [index, side] of (scale < 1 ? [-sign] : [-sign, sign]).entries()) {
-    const template = shuffled[index].template;
+    const template = index === 0 ? environment : shuffled[index - 1].template;
     slots.push({template, x: side * (arena.maxX - 1.25 - template.footprint.maxX),
       // The .7m navigation grid needs more than a hull-width-only slit.
       z: .375 + 1.9 - template.footprint.minZ + (safe ? 0 : between(0, .1)), camp: false});
@@ -44,6 +46,7 @@ function candidate(seed: number, design: number, scale: number, theme: POITheme,
       if (r.minX < arena.minX + .6 || r.maxX > arena.maxX - .6 || r.minZ < arena.minZ + .6 || r.maxZ > arena.maxZ - .6 ||
         reservations.some(other => footprintsOverlap(r, other))) return arena;
       reservations.push(r); arena.pois!.push(placed.instance); solids.push(...placed.solids);
+      arena.traversalVolumes!.push(...placed.volumes); arena.traversalLinks!.push(...placed.links);
       if (side !== -1) continue;
       const f = placed.instance.footprint;
       if (placement.camp) {
@@ -91,7 +94,8 @@ export function createArena(seed: number, options: ArenaOptions = {}): Arena {
 }
 
 function validLayout(arena: Arena, scale: number) {
-  if (arena.solids.some((a, i) => arena.solids.slice(i + 1).some(b => footprintsOverlap(footprintOf([a]), footprintOf([b]))))) return false;
+  // An overhead lintel can share a footprint with its panel without intersecting it.
+  if (arena.solids.some((a, i) => arena.solids.slice(i + 1).some(b => solidsOverlap(a, b)))) return false;
   const north = point(0, -8 * scale), south = point(0, 8 * scale);
   if (!routeTo(north, south, arena).length) return false;
   return arena.lanes!.every(lane => clearSegment(lane.anchor, lane.edge, arena) &&
@@ -100,4 +104,8 @@ function validLayout(arena: Arena, scale: number) {
       Math.abs(p.x - s.center.x) >= s.size.x / 2 + .6 - 1e-8 || Math.abs(p.z - s.center.z) >= s.size.z / 2 + .6 - 1e-8)) &&
     routeTo(north, lane.anchor, arena).length > 0 && routeTo(south, lane.anchor, arena).length > 0) &&
     !!coveredSpawns(arena, arena.seed ?? 0, 5);
+}
+
+export function solidsOverlap(a: Solid, b: Solid) {
+  return (['x', 'y', 'z'] as const).every(axis => Math.abs(a.center[axis] - b.center[axis]) < (a.size[axis] + b.size[axis]) / 2 - 1e-8);
 }

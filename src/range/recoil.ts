@@ -12,7 +12,12 @@ export class UniformRandomStream {
   private state: number;
   private shuffle = new Int32Array(32);
   private previous = 0;
-  constructor(seed: number) { this.state = -Math.abs(seed); }
+  constructor(seed: number) {
+    if (!Number.isInteger(seed) || seed < -2147483647 || seed > 2147483647) {
+      throw new RangeError('Source random seed must be an integer in [-2147483647, 2147483647]');
+    }
+    this.state = -Math.abs(seed);
+  }
   private nextInteger() {
     if (this.state <= 0 || this.previous === 0) {
       this.state = Math.max(1, -this.state);
@@ -32,6 +37,25 @@ export class UniformRandomStream {
     const unit = Math.min(.9999998807907104, f(f(this.nextInteger()) * f(1 / 2147483647)));
     return f(f(unit * f(high - low)) + low);
   }
+}
+
+// The caller supplies the numeric shot seed, not a recoil-table seed or a
+// prediction of a live game's command seed. One closure owns one stream.
+export function sourceRandom(seed: number): () => number {
+  const stream = new UniformRandomStream(seed);
+  return () => stream.float(0, 1);
+}
+
+// Installed build 2000924, client 7cbad0..7cbb48. The first 64 shotgun
+// spread entries stratify radii by pellet number, without sqrt area sampling.
+export function shotgunSpreadTable(seed: number, pellets: number) {
+  if (!Number.isInteger(pellets) || pellets < 2 || pellets > 64) throw new RangeError('Shotgun pellet count must be 2..64');
+  const random = new UniformRandomStream(seed), step = f(1 / pellets);
+  return Array.from({length: 64}, (_, index) => {
+    const angle = random.float(0, f(Math.PI * 2)), pellet = index % pellets;
+    const radius = random.float(f(pellet * step), f((pellet + 1) * step));
+    return {angle, radius: Math.max(0, Math.min(1, radius))};
+  });
 }
 
 export function recoilTable(w: RecoilParameters) {

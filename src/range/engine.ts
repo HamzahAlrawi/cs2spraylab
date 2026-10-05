@@ -26,11 +26,16 @@ import {FrameMetrics, FramePacer, PerformanceMeter, qualityPolicy, renderPixelRa
 import {ShortcutGuard} from './shortcut-guard';
 import {MuzzleFlashes, ShotEffects} from './weapon-effects';
 import {muzzleAnchor, viewMuzzleToWorld} from './duel/tracers';
+import {resolveBulletRay,type PenetrationSolid,type SurfaceContact} from './duel/penetration';
+import {resolveDamage} from './duel/damage';
+import {equipmentStats} from './equipment';
+import {AcousticScene} from './spatial-audio';
 
 export type RangeStatus = {
   weapon: Weapon;
   active: boolean; firing: boolean; hitFlash?:boolean; shots: number; hits: number; heads: number; remaining: number;
   reload: number; speed: number; distance: number;
+  reserve?:number;reloadSilent?:boolean;recharge?:number;
   input: string; audio: string; assets: string; fps: number; shortcutProtected?: boolean;
   equipped: Equipment; slot: Slot; equipReady: boolean; magazine: number;
   targetHealth?: number[];
@@ -78,6 +83,9 @@ export class RangeEngine {
   impacts = new THREE.Group();
   ray = new THREE.Raycaster();
   audio = new RangeAudio();
+  private readonly acoustics=new AcousticScene([], 'warehouse');
+  private coverRevision=-1;
+  private coverSolids:PenetrationSolid[]=[];
   observer: ResizeObserver;
   disposed = false; frame = 0; previous = 0; elapsed = 0; statusTime = 0;
   inputStatus = 'Ready'; assetStatus = 'Loading models'; loadedTarget = false;
@@ -128,6 +136,7 @@ export class RangeEngine {
     this.renderer.domElement.dataset.range = 'true';
     host.prepend(this.renderer.domElement);
     this.buildScene();
+    this.audio.setAcoustics(this.acoustics);
     this.shotEffects = new ShotEffects(this.scene); this.viewFlashes = new MuzzleFlashes(this.viewScene, 2);
     this.updateDemonstration();
     this.sim.onShot = s => this.shot(s);
@@ -298,12 +307,20 @@ export class RangeEngine {
     void this.audio.unlock(this.sim.equipped);
     await this.setWeapon(this.sim.equipped);
     this.viewAnimations.get(this.sim.equipped)?.playDraw(Math.max(.01, this.sim.equipReadyAt - this.sim.time));
+    this.audio.playAction('range-player',this.sim.equipped,'draw',this.sim.time,{local:true,volume:this.sim.settings.volume*.5,duration:this.sim.stats.deploy});
   }
-  inspect() {if (!this.sim.firing && !this.sim.pistolReloadAt && !this.sim.primaryReloadAt && this.sim.time >= this.sim.equipReadyAt) this.viewAnimations.get(this.sim.equipped)?.playInspect();}
+  inspect() {if (!this.sim.firing && !this.sim.reloadState.active && this.sim.time >= this.sim.equipReadyAt) {
+    this.viewAnimations.get(this.sim.equipped)?.playInspect();
+    this.audio.playAction('range-player',this.sim.equipped,'inspect',this.sim.time,{local:true,volume:this.sim.settings.volume*.5});
+  }}
   secondary(held = false) {
-    if (this.sim.firing || this.sim.pistolReloadAt || this.sim.primaryReloadAt) return;
-    if (this.sim.actions.isRevolver) {this.sim.start(false, true); if(!held) this.sim.release('mouse');}
-    else this.sim.actions.secondary(this.sim.time);
+    if (this.sim.firing || this.sim.reloadState.active) return;
+    if (this.sim.equipped==='knife'||this.sim.actions.isRevolver) {this.sim.start(false, true); if(!held) this.sim.release('mouse');}
+    else {
+      const zoom=this.sim.actions.zoom;
+      this.sim.actions.secondary(this.sim.time);
+      if(zoom!==this.sim.actions.zoom)this.audio.playScope(this.sim.equipped,!!this.sim.actions.zoom,this.sim.settings.volume*.4);
+    }
   }
   async setWeapon(id: Equipment) {
     const revision = ++this.revision;
@@ -446,70 +463,127 @@ export class RangeEngine {
   visibleSolids() {
     return this.solids.filter(o=>{ for(let node:THREE.Object3D|null=o;node;node=node.parent) if(!node.visible) return false; return true; });
   }
+  private physicalCover() {
+    if(this.coverRevision===this.sim.drillRevision)return this.coverSolids;
+    this.coverRevision=this.sim.drillRevision;
+    this.coverSolids=this.visibleSolids().flatMap(object=>{
+      if(!(object instanceof THREE.Mesh))return[];
+      object.geometry.computeBoundingBox();
+      const bounds=object.geometry.boundingBox?.clone().applyMatrix4(object.matrixWorld);
+      if(!bounds)return[];
+      const center=bounds.getCenter(new THREE.Vector3()),size=bounds.getSize(new THREE.Vector3());
+      return [{id:`range-cover:${object.id}`,center:{x:center.x,y:center.y,z:center.z},size:{x:size.x,y:size.y,z:size.z},material:object.userData.material??'concrete'}];
+    });
+    this.acoustics.setBoxes(this.coverSolids);return this.coverSolids;
+  }
   shot(shot: Shot) {
     if (!shot.melee && !this.xpAttempt) {
       this.xpTargets.clear();
       this.xpAttempt = this.progression?.beginDrill(this.sim.settings.mode as DrillMode, String(this.xpRevision)) ?? null;
     }
-    const animationAmmo = this.sim.slot === 2 ? this.sim.pistolAmmo : this.sim.burstSize - this.sim.shots;
+    const animationAmmo = this.sim.loadedAmmo;
     this.viewAnimations.get(this.sim.equipped)?.playFire(this.sim.equipped, {side:animationAmmo % 2 ? 'right' : 'left',lastShot:animationAmmo===0,
       alternate:this.sim.actions.alternateFire, zoomed:this.sim.actions.zoom > 0, ...(['awp','ssg08'].includes(this.sim.equipped) ? {duration:this.sim.stats.cycle} : {})});
-    const targetHit = this.castTargets(shot.origin, shot.direction)[0];
-    this.ray.set(vector(shot.origin), vector(shot.direction));
-    const wallHit = this.ray.intersectObjects(this.visibleSolids(), false)[0];
-    const physicalHit = targetHit && (!shot.melee || targetHit.distance<=48*.0254) && (!wallHit || targetHit.distance < wallHit.distance) ? targetHit : undefined;
-    const expectedTarget = this.targets[this.sim.targetForShot(shot.index)];
-    const hit = physicalHit && expectedTarget.getObjectById(physicalHit.object.id) ? physicalHit : undefined;
+    this.syncTargets();
+    const expectedIndex=this.sim.targetForShot(shot.index);
+    const expectedTarget = this.targets[expectedIndex];
+    const meshes=this.targetModels.filter(model=>model.parent?.visible).flatMap(scoringMeshes);
+    const covers=this.physicalCover();
+    const rays=(shot.pelletDirections??[shot.direction]).map(dir=>{
+      this.ray.set(vector(shot.origin),vector(dir));
+      const intersections=this.ray.intersectObjects(meshes,false).filter(hit=>hit.distance<=shot.maxDistance);
+      const target=intersections[0];
+      const wall=this.ray.intersectObjects(this.visibleSolids(),false)[0];
+      if(shot.kind==='melee'||shot.kind==='zeus') {
+        const physical=target&&(!wall||target.distance<wall.distance)?target:undefined;
+        const targetIndex=physical?this.targets.findIndex(parent=>!!parent.getObjectById(physical.object.id)):-1;
+        const head=!!physical&&physical.point.y>this.targets[targetIndex].position.y+1.52;
+        const healthDamage=physical?resolveDamage(this.sim.equipped,head?'head':'chest',physical.distance,0,false,
+          {attack:shot.attack,firstSlash:shot.firstSlash}).healthDamage:0;
+        return {dir,physical,wall,hits:physical?[{physical,targetIndex,head,healthDamage}]:[],contacts:[] as SurfaceContact[]};
+      }
+      const crossings=this.targets.flatMap((parent,targetIndex)=>{
+        const physical=intersections.find(hit=>!!parent.getObjectById(hit.object.id));
+        if(!physical)return[];
+        // Reverse raycasting the same scoring meshes gives a physical flesh
+        // chord. Neither hit position nor scoring is replaced with a proxy.
+        const beyond=physical.distance+3;
+        this.ray.set(vector(shot.origin).addScaledVector(vector(dir),beyond),vector(dir).negate());
+        const back=this.ray.intersectObjects(scoringMeshes(this.targetModels[targetIndex]),false)[0];
+        return [{physical,targetIndex,exit:Math.max(physical.distance,back?beyond-back.distance:physical.distance),
+          head:physical.point.y>parent.position.y+1.52}];
+      });
+      const ray=resolveBulletRay({origin:shot.origin,direction:dir,range:shot.maxDistance,
+        equipment:this.sim.equipped,stats:this.sim.stats,arena:{solids:covers},
+        actors:crossings.map(crossing=>({id:crossing.targetIndex,side:'target',alive:true,feet:0,
+          position:this.sim.targetPosition(crossing.targetIndex),armor:0,helmet:false})),
+        physicalActorIntervals:crossings.map(crossing=>({actorId:crossing.targetIndex,entry:crossing.physical.distance,
+          exit:crossing.exit,group:crossing.head?'head':'chest'}))});
+      const hits=ray.hits.map(hit=>{
+        const crossing=crossings.find(crossing=>crossing.targetIndex===hit.actorId)!;
+        return {...crossing,healthDamage:hit.healthDamage};
+      });
+      return {dir,physical:hits[0]?.physical,wall,hits,contacts:ray.surfaces};
+    });
+    const physicalHit=rays.find(ray=>ray.physical)?.physical;
+    const accepted=rays.flatMap(ray=>ray.hits).filter(hit=>hit.targetIndex===expectedIndex);
+    const hit=accepted[0]?.physical;
+    const head=accepted.some(hit=>hit.head);
     if (shot.melee) {
-      this.kick=1; this.audio.play('knife',this.sim.settings.volume);
+      this.sim.resolveMeleeHit(shot.ordinal,!!physicalHit);
+      this.kick=1;this.audio.playKnife(shot.attack==='secondary'?'stab':'slash',this.sim.settings.volume);
+      if(physicalHit)this.audio.playKnife('hit',this.sim.settings.volume);
       this.hitCaption.textContent=hit?'KNIFE HIT':'';this.hitTime=hit ? .45 : 0;
       this.hitmarker.style.color=this.hitCaption.style.color='#51edee';
       return;
     }
-    const impact = physicalHit || wallHit;
     const muzzles = this.viewMuzzles.get(this.sim.equipped), muzzle = muzzles?.main ?? muzzles?.[animationAmmo % 2 ? 'right' : 'left'];
     this.viewFlashes.fire(muzzle, this.sim.equipped, this.elapsed);
+    for(const ray of rays) {
+    const impact=ray.physical??ray.wall;
     if (muzzle) {
       this.viewScene.updateMatrixWorld(true);
       const start = viewMuzzleToWorld(muzzle.getWorldPosition(new THREE.Vector3()), this.viewCamera, this.camera, this.width, this.height);
-      const end = impact?.point ?? vector(shot.origin).addScaledVector(vector(shot.direction), 80);
+      const end = ray.contacts[0]?vector(ray.contacts[0].point):impact?.point ?? vector(shot.origin).addScaledVector(vector(ray.dir), Math.min(80,shot.maxDistance));
       const delta = end.clone().sub(start), length = delta.length();
       this.ray.set(start, delta.normalize());
       const obstruction = this.ray.intersectObjects(this.visibleSolids(), false)[0];
       if (length > .15 && (!obstruction || obstruction.distance >= length - .08))
         this.shotEffects.trace(this.sim.equipped, shot.index, start, end, this.elapsed, this.traceColor);
     }
+    for(const {physical,targetIndex,head:isHead,healthDamage} of ray.hits) {
+      const parent=this.targets[targetIndex];
+      const point=parent.worldToLocal(physical.point.clone().addScaledVector(vector(ray.dir),-.012));
+      this.addImpact(parent,point,physical.distance,parent===expectedTarget?(isHead?this.hitMaterial.color:this.bodyMaterial.color):this.missMaterial.color);
+      this.sim.damageTarget(targetIndex,isHead,physical.distance,healthDamage);
+    }
+    for(const contact of ray.contacts)this.addImpact(this.impacts,vector(contact.point).addScaledVector(vector(ray.dir),contact.phase==='entry'?-.012:.012),contact.distance,this.missMaterial.color);
+    if(!ray.contacts.length&&!ray.physical&&ray.wall)this.addImpact(this.impacts,ray.wall.point.clone().addScaledVector(vector(ray.dir),-.012),ray.wall.distance,this.missMaterial.color);
+    }
     const target = expectedTarget;
     const t = (target.position.z - shot.origin.z) / shot.direction.z;
     this.sim.samples.push({ x: t > 0 ? shot.origin.x + shot.direction.x * t - target.position.x : 100,
-      y: t > 0 ? shot.origin.y + shot.direction.y * t - target.position.y - HEAD_HEIGHT : 100, hit: !!hit, head: !!hit && hit.point.y > target.position.y+1.52,
+      y: t > 0 ? shot.origin.y + shot.direction.y * t - target.position.y - HEAD_HEIGHT : 100, hit: !!hit, head,
       bullet: this.sim.drill ? this.sim.drill.shots+1 : shot.index + 1 });
-    const head = !!hit && hit.point.y > target.position.y+1.52;
     this.hitTime = .45;
     this.hitmarker.style.color = head ? '#ffdc59' : hit ? '#51edee' : '#ff7469';
     this.hitCaption.textContent = head ? 'HEADSHOT' : hit ? 'BODY HIT' : physicalHit ? 'WRONG TARGET' : 'MISS';
     this.hitCaption.style.color = this.hitmarker.style.color;
     if (hit) {
-      this.xpTargets.add(this.sim.targetForShot(shot.index));
+      this.xpTargets.add(expectedIndex);
       this.audio.playHit(head, false, false, this.sim.settings.volume);
-      this.sim.damageTarget(this.sim.targetForShot(shot.index), head, hit.distance);
       this.sim.hits++;
       if (head) this.sim.heads++;
     }
-    if (impact) {
-      const point = impact.point.clone().addScaledVector(vector(shot.direction), -.012);
-      const parent = physicalHit ? this.targets.find(t => t.getObjectById(physicalHit.object.id)) : this.impacts;
-      if (parent) {
-        if (physicalHit) parent.worldToLocal(point);
-        this.impactClouds ??= new Map();
-        let cloud = this.impactClouds.get(parent);
-        if (!cloud) {cloud = new ImpactCloud(this.markerGeometry, parent === this.impacts ? 200 : 60, parent); this.impactClouds.set(parent, cloud);}
-        cloud.add(point, Math.max(1, impact.distance / 18), this.sim.settings.impactSize,
-          (head ? this.hitMaterial : hit ? this.bodyMaterial : this.missMaterial).color);
-      }
-    }
     this.kick = 1;
     this.audio.play(this.sim.equipped, this.sim.settings.volume);
+    this.audio.playAction('range-player',this.sim.equipped,shot.attack==='secondary'?'fire-alt':'fire',this.sim.time,
+      {local:true,volume:this.sim.settings.volume*.45});
+  }
+  private addImpact(parent:THREE.Object3D,point:THREE.Vector3,distance:number,color:THREE.Color) {
+    this.impactClouds??=new Map();let cloud=this.impactClouds.get(parent);
+    if(!cloud){cloud=new ImpactCloud(this.markerGeometry,parent===this.impacts?200:60,parent);this.impactClouds.set(parent,cloud);}
+    cloud.add(point,Math.max(1,distance/18),this.sim.settings.impactSize,color);
   }
   async enter() {
     if (this.disposed || this.entering) return;
@@ -597,19 +671,20 @@ export class RangeEngine {
     }) as EventListener);
     const keys = new Set<string>();
     const update = () => {
-      this.sim.input = { forward: +keys.has('KeyW') - +keys.has('KeyS'), side: +keys.has('KeyD') - +keys.has('KeyA'), walk: keys.has('ShiftLeft') || keys.has('ShiftRight'), crouch: keys.has('ControlLeft') || keys.has('ControlRight') || keys.has('KeyC'), jump: keys.has('Space') };
+      this.sim.input = { ...this.sim.input, forward: +keys.has('KeyW') - +keys.has('KeyS'), side: +keys.has('KeyD') - +keys.has('KeyA'), walk: keys.has('ShiftLeft') || keys.has('ShiftRight'), crouch: keys.has('ControlLeft') || keys.has('ControlRight') || keys.has('KeyC'), jump: keys.has('Space') };
     };
-    this.clearInput = () => { keys.clear(); pointer = null; update(); };
+    this.clearInput = () => { keys.clear(); pointer = null;this.sim.input.jumpPressed=false;this.sim.reloadHeld=false; update(); };
     listen(window, 'keydown', ((e: KeyboardEvent) => {
       if (!this.sim.active || (e.target instanceof HTMLElement && e.target.matches('input,select,textarea,button'))) return;
       if (['KeyW', 'KeyA', 'KeyS', 'KeyD', 'ShiftLeft', 'ShiftRight', 'ControlLeft', 'ControlRight', 'KeyC', 'Space'].includes(e.code)) { e.preventDefault(); keys.add(e.code); update(); }
-      if (!e.repeat && ['Digit1','Digit2','Digit3'].includes(e.code)) { e.preventDefault(); void this.equip(+e.code.slice(-1) as Slot); }
+      if (!e.repeat && ['Digit1','Digit2','Digit3','Digit4'].includes(e.code)) { e.preventDefault(); void this.equip(+e.code.slice(-1) as Slot); }
+      if(!e.repeat&&e.code==='Space')this.sim.input.jumpPressed=true;
       if (!e.repeat && e.code === 'KeyQ') { e.preventDefault(); void this.equip(this.sim.previousSlot); }
-      if (!e.repeat && e.code === 'KeyR') this.sim.reload();
+      if (!e.repeat && e.code === 'KeyR') {this.sim.reloadHeld=true;this.sim.reload(true);}
       if (!e.repeat && e.code === 'KeyF') {e.preventDefault(); this.inspect();}
       if (e.code === 'Escape') this.pause();
     }) as EventListener);
-    listen(window, 'keyup', ((e: KeyboardEvent) => { keys.delete(e.code); update(); }) as EventListener);
+    listen(window, 'keyup', ((e: KeyboardEvent) => { keys.delete(e.code);if(e.code==='KeyR')this.sim.reloadHeld=false; update(); }) as EventListener);
     const blur = () => { keys.clear(); pointer = null; if (!this.entering || document.hidden) this.pause(); };
     listen(window, 'blur', blur);
     listen(document, 'visibilitychange', () => { if (document.hidden) blur(); });
@@ -653,7 +728,7 @@ export class RangeEngine {
       this.targetActions.forEach(actions => { actions.forEach(a => a.stop()); actions[animation]?.reset().play(); });
     }
     this.animationElapsed += this.sim.active ? dt : 0;
-    const animate = this.animationElapsed >= 1 / policy.animationHz || animationChanged;
+    const animate = this.animationElapsed >= 1 / this.metrics.animationRate(this.sim.settings.quality) || animationChanged;
     if (animate) {
       this.mixers.forEach((m, i) => {if (this.targets[i].visible) m.update(this.animationElapsed);});
       if (animationChanged) this.renderer.shadowMap.needsUpdate = true;
@@ -673,13 +748,20 @@ export class RangeEngine {
     this.hitCaption.style.opacity = this.hitTime > 0 ? '1' : '0';
     const moving = Math.hypot(this.sim.velocity.x, this.sim.velocity.z);
     const drawing = Math.max(0,this.sim.equipReadyAt-this.sim.time);
-    const reloadRemaining = Math.max(0, this.sim.pistolReloadAt - this.sim.time, this.sim.primaryReloadAt - this.sim.time);
+    const reloadRemaining = Math.max(0, this.sim.reloadState.until - this.sim.time);
     const reloading = reloadRemaining > 0;
-    if (animate) this.viewAnimations.get(this.sim.equipped)?.update(reloadRemaining, this.sim.stats.reload, this.animationElapsed, {reloadEmpty: this.sim.reloadEmpty,
-      ammo:this.sim.slot===2?this.sim.pistolAmmo:this.sim.burstSize-this.sim.shots,charging:this.sim.actions.charging,chargeDuration:REVOLVER_WINDUP});
+    if (animate) this.viewAnimations.get(this.sim.equipped)?.update(reloadRemaining, this.sim.reloadState.phaseDuration||this.sim.stats.reload, this.animationElapsed, {reloadEmpty: this.sim.reloadEmpty,
+      equipment:this.sim.equipped,reloadPhase:this.sim.reloadState.phase,reloadProgress:this.sim.reloadState.progress,
+      ammo:this.sim.loadedAmmo,charging:this.sim.actions.charging,chargeDuration:REVOLVER_WINDUP});
     if (animate) this.animationElapsed = 0;
-    if (reloading && !this.wasReloading) this.audio.playEvent(`${this.sim.equipped}-reload`, this.sim.settings.volume * .55);
     this.wasReloading = reloading;
+    this.audio.updateListener(this.sim.position,this.sim.yaw,this.sim.pitch);
+    this.audio.syncActor({id:'range-player',generation:this.sim.drillRevision,equipment:this.sim.equipped,alive:true,local:true,
+      reloading,silent:this.sim.reloadSilent,reloadEmpty:this.sim.reloadEmpty,reloadRemaining,reloadDuration:this.sim.reloadState.phaseDuration||this.sim.stats.reload,
+      reloadPhase:this.sim.reloadPhase,reloadProgress:this.sim.reloadState.progress},
+      this.sim.time,this.sim.settings.volume*.55);
+    for(const action of this.sim.drainActionEvents())if(action.kind==='reload-cancel')this.audio.cancelAction('range-player');
+    this.audio.updateActions(this.sim.time);
     this.weaponRoot.position.set(VIEWMODEL_OFFSET.x, VIEWMODEL_OFFSET.y + Math.sin(this.elapsed * 12) * Math.min(moving, 1) * .002, this.kick * .015);
     this.weaponRoot.rotation.x = this.kick * (this.sim.slot===3 ? 0 : .02) + view.weaponPitch;
     this.weaponRoot.rotation.y = view.weaponYaw;
@@ -732,7 +814,8 @@ export class RangeEngine {
       this.onStatus({ weapon: loadoutWeapon(this.sim.settings), equipped:this.sim.equipped,slot:this.sim.slot,equipReady:this.sim.time>=this.sim.equipReadyAt,
         magazine:this.sim.slot===1?this.sim.burstSize:this.sim.stats.magazine, targetHealth: [...this.sim.targetHealth],
         active: this.sim.active, firing: this.sim.firing, hitFlash:this.hitTime>0, shots: drill?.shots ?? this.sim.shots, hits: drill?.hits ?? this.sim.hits, heads: drill?.heads ?? this.sim.heads,
-        remaining: this.sim.slot===2 ? this.sim.pistolAmmo : this.sim.slot===3 ? 0 : this.sim.firing ? this.sim.burstSize - this.sim.shots : this.sim.burstSize, reload: reloadRemaining,
+        remaining:this.sim.slot===3?0:this.sim.loadedAmmo,reserve:this.sim.reserveAmmo,reloadSilent:this.sim.reloadSilent,
+        recharge:Math.max(0,this.sim.rechargeUntil-this.sim.time),reload: reloadRemaining,
         ...(drill ? {drill:{round:this.sim.drillRound,completed:this.sim.drillCompleted,passed:this.sim.drillPassed,scenario:drill.scenario.name,covered:drill.scenario.covered,exposure:drill.scenario.exposure,side:drill.scenario.side,
           peekDirection:this.sim.settings.mode==='peek'?peekDirection(this.sim.position,this.sim.yaw,drill.scenario):0,
           phase:drill.finished?(this.sim.repositionFrom?'reposition':'feedback'):drill.visible?'exposed':'prepare',accurate:drill.accurate,error:drill.error,

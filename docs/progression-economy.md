@@ -19,8 +19,10 @@ Each bot's difficulty is `0.4 + (skill - 1) * 0.15` for levels 1..10, and `2.0` 
 The remaining formula is unchanged:
 
 ```text
+condition = botArmor ? (botArmorPoints ?? 100) / 100 : 0
+protection = 0.8 + condition * (0.12 + ((botHelmet ?? true) ? 0.08 : 0))
 threat = difficulty * min(1, botHealth / 100)
-         * (botArmor ? 1 : 0.8) * min(1.15, botAccuracy)
+         * protection * min(1.15, botAccuracy)
 engagedThreat = sum(threat * min(1, healthDamage / botHealth))
 opposition = engagedThreat / max(1, sum(threat))^0.38
 XP = floor((55 + 95 * score / 100) * opposition
@@ -28,7 +30,7 @@ XP = floor((55 + 95 * score / 100) * opposition
 outcome = 1.2 for wins, 0.65 for losses, 0.75 for draws
 ```
 
-A null coaching score counts as zero. At score 75 against one 100-HP armored bot with accuracy 1 and player health 100, wins pay 60 / 151 / 214 / 232 XP at levels 1 / 5 / 10 / 10+. Losses with 50 damage pay 16 / 41 / 58 / 63 XP respectively. The `10+` versus level-1 win differential is about 3.87x, previously about 1.83x. These are formula examples, not claims about measured CS2 difficulty. Multi-bot rewards still use each bot's actual damaged-health fraction and the same roster denominator; untouched opponents cannot inflate a reward. Health, armor, accuracy, score, outcome, lifecycle validation and all anti-farming caps are unchanged.
+A null coaching score counts as zero. At score 75 against one 100-HP armored bot with accuracy 1 and player health 100, wins pay 60 / 151 / 214 / 232 XP at levels 1 / 5 / 10 / 10+. Losses with 50 damage pay 16 / 41 / 58 / 63 XP respectively. The `10+` versus level-1 win differential is about 3.87x, previously about 1.83x. These are formula examples, not claims about measured CS2 difficulty. Multi-bot rewards still use each bot's actual damaged-health fraction and the same roster denominator; untouched opponents cannot inflate a reward. Missing legacy helmet/condition fields mean helmet plus 100 armor, preserving normal rewards. Depleted or partial armor and missing helmets reduce threat; protection weighting is an economy heuristic, not the damage formula. The other weights, lifecycle validation and anti-farming caps are unchanged.
 
 ### After Level 100
 

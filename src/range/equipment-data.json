@@ -1,5 +1,5 @@
 {
-  "build": "2000922",
+  "build": "2000924",
   "source": "scripts/weapons.vdata_c",
   "sha256": "3289d4dba65b1ef3f884c389448c8a6c6db8691442c18a7aaddb28434aaf250d",
   "weapons": {
@@ -21,6 +21,7 @@
       "recoilMagnitude": 23,
       "recoilMagnitudeVariance": 0,
       "damage": 35,
+      "penetration": 1,
       "range": 4096,
       "rangeModifier": 0.91,
       "armorRatio": 1.01,
@@ -36,7 +37,11 @@
       "land": 0.000198,
       "fullAuto": false,
       "worldModel": "weapons/models/usp_silencer/weapon_pist_usp_silencer.vmdl",
-      "skeleton": "animation/skeletons/weapons/usp_silencer.vnmskel"
+      "skeleton": "animation/skeletons/weapons/usp_silencer.vnmskel",
+      "pellets": 1,
+      "reserveAsClips": true,
+      "reserve": 24,
+      "reloadsSingleShells": false
     },
     "knife": {
       "magazine": 0,
@@ -56,6 +61,7 @@
       "recoilMagnitude": 0,
       "recoilMagnitudeVariance": 0,
       "damage": 50,
+      "penetration": 1,
       "range": 4096,
       "rangeModifier": 0.99,
       "armorRatio": 1.7,
@@ -71,7 +77,11 @@
       "land": 0,
       "fullAuto": false,
       "worldModel": "weapons/models/knife/knife_default_ct/weapon_knife_default_ct.vmdl",
-      "skeleton": "animation/skeletons/weapons/knife_default_ct.vnmskel"
+      "skeleton": "animation/skeletons/weapons/knife_default_ct.vnmskel",
+      "pellets": 1,
+      "reserveAsClips": false,
+      "reserve": 0,
+      "reloadsSingleShells": false
     }
   }
 }

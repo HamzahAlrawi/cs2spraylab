@@ -1,0 +1,69 @@
+{
+  "build": "2000924",
+  "source": "Installed static VPK; native HD meshes and authored inventory images",
+  "weapons": {
+    "nova": {
+      "worldSource": "weapons/models/nova/weapon_shot_nova.vmdl_c",
+      "sourceGlbSha256": "b4cf7f55cb3d56591f8f31ac8d742117a182e0318e69655c1f12831f903fbf97",
+      "worldSha256": "e67cdb1661fa62c6512d58f2a6ef8131090fa72d1024799f575ba4372e0b11b7",
+      "worldBytes": 1257988,
+      "previewSource": "panorama/images/econ/weapons/base_weapons/weapon_nova_png.vtex_c",
+      "previewSha256": "0ce1f9c34a302dd0a96fef339ad8b87f1db014c1a1b26a8584c3d110434ec54c",
+      "removedLegacyNodes": 1,
+      "meshes": 1,
+      "legacyWorldSha256": "badfb935db8d5ed465b3df3e2c6e1073765f2b4e374661cba43df3bb05e240f7",
+      "legacyWorldBytes": 1101156,
+      "viewStatus": "Animation worker integration required; no viewclip files modified"
+    },
+    "xm1014": {
+      "worldSource": "weapons/models/xm1014/weapon_shot_xm1014.vmdl_c",
+      "sourceGlbSha256": "23dbc5398a31d514506131f495c9ed4727870d53285778f02ed126795d23b75b",
+      "worldSha256": "75d97e6cee6ee8015e883862486af1f294273898b40c81cb0128e269bf9aa119",
+      "worldBytes": 1438984,
+      "previewSource": "panorama/images/econ/weapons/base_weapons/weapon_xm1014_png.vtex_c",
+      "previewSha256": "7c1c5683c4a6f796e37ab999040554dfcd63c1839dc378e96a5db4a1caba7983",
+      "removedLegacyNodes": 1,
+      "meshes": 1,
+      "legacyWorldSha256": "c49ea51f1739c8c0c7677caf3e4ba725cee6b0ab55cf1181d9ca2d7b2f4cce63",
+      "legacyWorldBytes": 1666184,
+      "viewStatus": "Animation worker integration required; no viewclip files modified"
+    },
+    "mag7": {
+      "worldSource": "weapons/models/mag7/weapon_shot_mag7.vmdl_c",
+      "sourceGlbSha256": "31481869b6ade46371e694d6a49ce3dd1e548d808f3e5d139692bd376ebf227a",
+      "worldSha256": "a606848e376c441ad853b21bf5019fb5e4317be563bb729763f00d53adeabbe9",
+      "worldBytes": 1162604,
+      "previewSource": "panorama/images/econ/weapons/base_weapons/weapon_mag7_png.vtex_c",
+      "previewSha256": "290c6c0e17d52686d8107b5fdc8607d1a325b3564493a37c84edc012a781f53b",
+      "removedLegacyNodes": 1,
+      "meshes": 1,
+      "legacyWorldSha256": "a67ba01b4ba8585849c48102e34481f595318dbb4a8d0a40e6d5a2b9b626c3d7",
+      "legacyWorldBytes": 728320,
+      "viewStatus": "Animation worker integration required; no viewclip files modified"
+    },
+    "sawedoff": {
+      "worldSource": "weapons/models/sawedoff/weapon_shot_sawedoff.vmdl_c",
+      "sourceGlbSha256": "6136730f157a3843e582bbb289f4500eb4b6249c4a2ea49aa32a0d096fc638a9",
+      "worldSha256": "c57f2eacf17c5c24344f89aa1da94692874885291c5b9f4d3d67de875df7fff6",
+      "worldBytes": 891196,
+      "previewSource": "panorama/images/econ/weapons/base_weapons/weapon_sawedoff_png.vtex_c",
+      "previewSha256": "b067675dab309a556f6339df1c823e1fd60f2422d8ada6888c4a28c588f113aa",
+      "removedLegacyNodes": 1,
+      "meshes": 1,
+      "legacyWorldSha256": "1a114528fa5406ab62cadc780523cead430f5bde4a9c64084f7c0301652d7d52",
+      "legacyWorldBytes": 499932,
+      "viewStatus": "Animation worker integration required; no viewclip files modified"
+    },
+    "zeus": {
+      "worldSource": "weapons/models/taser/weapon_pist_taser.vmdl_c",
+      "sourceGlbSha256": "b23b6b6c9fa8bce887864dc3616922b70c3e4e68ce3ea9930ffff80afd9b7067",
+      "worldSha256": "840a593569ac896ccb76bed3a5a6165cd6597c9351f3f60b62abe70210acb506",
+      "worldBytes": 665652,
+      "previewSource": "panorama/images/econ/weapons/base_weapons/weapon_taser_png.vtex_c",
+      "previewSha256": "07fe4aba3dcd0a83079dc46b8f90aca57eb33cfee0cd49df62b0f3e48a4e4ad7",
+      "removedLegacyNodes": 0,
+      "meshes": 1,
+      "viewStatus": "Animation worker integration required; no viewclip files modified"
+    }
+  }
+}

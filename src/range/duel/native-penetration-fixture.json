@@ -1,0 +1,106 @@
+{
+  "build": "2000924",
+  "clientSha256": "d7db25d48f1d10c5e0b0296e20ed803426eb9509da41760daeda39dd35ba89b9",
+  "rvas": {
+    "start": "0x8a2129",
+    "end": "0x8a21d2",
+    "stopStart": "0x8a2276",
+    "stopEnd": "0x8a22b5"
+  },
+  "scope": "Isolated scalar loss and residual-damage stop arithmetic only",
+  "samples": [
+    {
+      "damage": 36,
+      "thicknessUnits": 4,
+      "power": 2,
+      "modifier": 0.5,
+      "damageLoss": 0.16,
+      "lostDamage": 18.343334197998047
+    },
+    {
+      "damage": 100,
+      "thicknessUnits": 2,
+      "power": 2,
+      "modifier": 3,
+      "damageLoss": 0.05,
+      "lostDamage": 6.93055534362793
+    },
+    {
+      "damage": 36,
+      "thicknessUnits": 13.385827,
+      "power": 2,
+      "modifier": 0.9,
+      "damageLoss": 0.16,
+      "lostDamage": 20.305387496948242
+    },
+    {
+      "damage": 115,
+      "thicknessUnits": 40,
+      "power": 3,
+      "modifier": 0.4,
+      "damageLoss": 0.16,
+      "lostDamage": 194.44166564941406
+    },
+    {
+      "damage": 30,
+      "thicknessUnits": 6,
+      "power": 1,
+      "modifier": 0.99,
+      "damageLoss": 0.16,
+      "lostDamage": 17.678787231445312
+    },
+    {
+      "damage": 100,
+      "thicknessUnits": 20,
+      "power": 2,
+      "modifier": 3,
+      "damageLoss": 0.16,
+      "lostDamage": 23.43055534362793
+    },
+    {
+      "damage": 50,
+      "thicknessUnits": 8,
+      "power": 1,
+      "modifier": 2,
+      "damageLoss": 0.16,
+      "lostDamage": 14.958333015441895
+    }
+  ],
+  "stopSamples": [
+    {
+      "damage": 5,
+      "lostDamage": 3.999,
+      "residualDamage": 1.000999927520752,
+      "continued": true,
+      "remainingPenetrations": 3
+    },
+    {
+      "damage": 5,
+      "lostDamage": 4,
+      "residualDamage": 1.0,
+      "continued": true,
+      "remainingPenetrations": 3
+    },
+    {
+      "damage": 5,
+      "lostDamage": 4.001,
+      "residualDamage": 0.999000072479248,
+      "continued": false,
+      "remainingPenetrations": 4
+    },
+    {
+      "damage": 5,
+      "lostDamage": 5,
+      "residualDamage": 0.0,
+      "continued": false,
+      "remainingPenetrations": 4
+    },
+    {
+      "damage": 5,
+      "lostDamage": 6,
+      "residualDamage": -1.0,
+      "continued": false,
+      "remainingPenetrations": 4
+    }
+  ]
+}

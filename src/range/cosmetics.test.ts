@@ -4,6 +4,7 @@ import {cosmeticCatalog,cosmeticAsset,cosmeticPreview,cosmeticLabel,applyCosmeti
 import data from './cosmetics-data.json';
 import knifeAssets from '../../docs/knife-asset-inventory.json';
 import knifeAudit from '../../docs/knife-cosmetics-inventory.json';
+import weaponAudit from '../../docs/weapon-cosmetics-inventory.json';
 import {readFileSync} from 'node:fs';
 import {createHash} from 'node:crypto';
 import {disposeResources} from './duel/render-resources';
@@ -12,9 +13,12 @@ import {prepareCosmeticCatalog,sanitizeProgression,xpForLevel,createProgressionC
 
 describe('native finish catalog and migration',()=>{
   const catalog=prepareCosmeticCatalog(cosmeticCatalog);
-  it.each(equipmentIds)('%s has at least ten distinct purchasable finishes with previews',id=>{
+  it.each(equipmentIds)('%s has distinct purchasable native finishes with previews',id=>{
     const items=catalog.filter(item=>item.equipment===id&&!item.isDefault);
-    expect(items.length).toBeGreaterThanOrEqual(10);
+    if (id === 'zeus') {
+      expect(weaponAudit.weapons.zeus.nativeAvailable).toBe(7);
+      expect(items).toHaveLength(weaponAudit.weapons.zeus.nativeAvailable);
+    } else expect(items.length).toBeGreaterThanOrEqual(10);
     expect(new Set(items.map(item=>item.id)).size).toBe(items.length);
     expect(items.every(item=>item.imageUrl&&item.assetKey&&item.price!>0)).toBe(true);
   });

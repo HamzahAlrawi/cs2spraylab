@@ -1,0 +1,516 @@
+{
+  "weapons": {
+    "nova": {
+      "nativeAvailable": 48,
+      "exported": 10,
+      "minimumExpected": 10,
+      "finishes": [
+        {
+          "id": "nova-nova_morning_sun",
+          "kitId": "1474",
+          "kitName": "nova_morning_sun",
+          "legacy": false,
+          "imageSource": "panorama/images/econ/default_generated/weapon_nova_nova_morning_sun_light_png.vtex_c",
+          "imageSha256": "9d9e1f9a82ccb80606f8507232199753475359c9dfd70589cd26d01f944e46b3",
+          "materialSource": "weapons/paints/set_arabesque/nova_morning_sun.vcompmat",
+          "materialSha256": "6eedbd5e11b6cd873f7931d07dfa1c2cf4017b289aec9884df0458d75e1a8875"
+        },
+        {
+          "id": "nova-nova_smart",
+          "kitId": "1442",
+          "kitName": "nova_smart",
+          "legacy": false,
+          "imageSource": "panorama/images/econ/default_generated/weapon_nova_nova_smart_light_png.vtex_c",
+          "imageSha256": "4370ca734976f3b43a30c167a20471de0c112ed80bc2b1aba925ed4f0c52f856",
+          "materialSource": "weapons/paints/set_spy_tech/nova_smart.vcompmat",
+          "materialSha256": "99910b646a46bb411b5b37b297f25e0713f812b9f123debfcc7f675f7a2bcabb"
+        },
+        {
+          "id": "nova-nova_ocular",
+          "kitId": "1350",
+          "kitName": "nova_ocular",
+          "legacy": false,
+          "imageSource": "panorama/images/econ/default_generated/weapon_nova_nova_ocular_light_png.vtex_c",
+          "imageSha256": "f4244028b7c379b4815d2d6bd85771bc70351f3d78d39b334ba269bdc1431f41",
+          "materialSource": "weapons/paints/community/community_36/nova_ocular.vcompmat",
+          "materialSha256": "f2c7c891a278673d432bf91a76e3eb657059e4b5c8943fd001ab7c158359f3a6"
+        },
+        {
+          "id": "nova-nova_rising_sun",
+          "kitId": "1192",
+          "kitName": "nova_rising_sun",
+          "legacy": false,
+          "imageSource": "panorama/images/econ/default_generated/weapon_nova_nova_rising_sun_light_png.vtex_c",
+          "imageSha256": "25097416237978f2c69a5f4aa5547f8e1de08418e44a26c1e857b0e8aab761d2",
+          "materialSource": "weapons/paints/community/community_35/nova_rising_sun.vcompmat",
+          "materialSha256": "4414756868633eaf3979a9916bf174e5288e3ff968758441f234883d45403dbd"
+        },
+        {
+          "id": "nova-nova_drakkar",
+          "kitId": "1162",
+          "kitName": "nova_drakkar",
+          "legacy": false,
+          "imageSource": "panorama/images/econ/default_generated/weapon_nova_nova_drakkar_light_png.vtex_c",
+          "imageSha256": "8412b360ad77d04744fbec57c0b3668c3c53e38e6f3209a437edab6cb18b729c",
+          "materialSource": "weapons/paints/community/community_33/nova_drakkar.vcompmat",
+          "materialSha256": "c1748c3eb6d27863e7a097e6941c2065a1c01be13521b7506717eab20f4df818"
+        },
+        {
+          "id": "nova-gs_ripple_nova",
+          "kitId": "324",
+          "kitName": "gs_ripple_nova",
+          "legacy": false,
+          "imageSource": "panorama/images/econ/default_generated/weapon_nova_gs_ripple_nova_light_png.vtex_c",
+          "imageSha256": "34509ea3056d1211c6382fd42f40f5836a002a0d217b2332d6d637f7e362e07e",
+          "materialSource": "weapons/paints/set_realism_camo/gs_ripple_nova.vcompmat",
+          "materialSha256": "7f0bf8265bb2c49fc4b423801f7e301fce69268bcc79844ee840c5276d954efc"
+        },
+        {
+          "id": "nova-cu_overpass_wurst_nova",
+          "kitId": "145",
+          "kitName": "cu_overpass_wurst_nova",
+          "legacy": false,
+          "imageSource": "panorama/images/econ/default_generated/weapon_nova_cu_overpass_wurst_nova_light_png.vtex_c",
+          "imageSha256": "3e1473850c6b9d485da15933e174f37ed8de68e0236d749b3a8b192df209489e",
+          "materialSource": "weapons/paints/set_overpass_2024/cu_overpass_wurst_nova.vcompmat",
+          "materialSha256": "a9f5544df307931342fa2801279fd8ed0ecaafbabf2616c4729bd4373a625291"
+        },
+        {
+          "id": "nova-hye_geobirds",
+          "kitId": "1368",
+          "kitName": "hye_geobirds",
+          "legacy": false,
+          "imageSource": "panorama/images/econ/default_generated/weapon_nova_hye_geobirds_light_png.vtex_c",
+          "imageSha256": "f942e68dfaa549b2c7d14686cdd3c761b82e54813bd3f30e4d0015ae8e25d932",
+          "materialSource": "weapons/paints/timed_drops/hye_geobirds.vcompmat",
+          "materialSha256": "3c8376f521d19bf86f473682bbe9a6820356c7a25bc68b9953ed058ec5c96b18"
+        },
+        {
+          "id": "nova-train_shapes_01",
+          "kitId": "1337",
+          "kitName": "train_shapes_01",
+          "legacy": false,
+          "imageSource": "panorama/images/econ/default_generated/weapon_nova_train_shapes_01_light_png.vtex_c",
+          "imageSha256": "b1f3137384241ea9fd16fcb8bdbbfb32c5739a30fb313588dc33e9a42e6108ff",
+          "materialSource": "weapons/paints/set_train_2025/train_shapes_01.vcompmat",
+          "materialSha256": "f890f7ad76ead04c5a83645a0e8a0e514566339547cf607fb1a6647f860ced44"
+        },
+        {
+          "id": "nova-soo_grass_photo_camo",
+          "kitId": "1331",
+          "kitName": "soo_grass_photo_camo",
+          "legacy": false,
+          "imageSource": "panorama/images/econ/default_generated/weapon_nova_soo_grass_photo_camo_light_png.vtex_c",
+          "imageSha256": "5d25da9182bb619a0470c95614fe95ef748d86cd04b70a2db3c2e7a3e1db1c3f",
+          "materialSource": "weapons/paints/timed_drops/soo_grass_photo_camo.vcompmat",
+          "materialSha256": "556cf0274d6388f5a090d5c889d9df667e4ac3dd09018238953b83fb196ce18a"
+        }
+      ],
+      "limitation": null
+    },
+    "xm1014": {
+      "nativeAvailable": 46,
+      "exported": 10,
+      "minimumExpected": 10,
+      "finishes": [
+        {
+          "id": "xm1014-xm1014_black_site",
+          "kitId": "1471",
+          "kitName": "xm1014_black_site",
+          "legacy": false,
+          "imageSource": "panorama/images/econ/default_generated/weapon_xm1014_xm1014_black_site_light_png.vtex_c",
+          "imageSha256": "fc1f13155027277237448d8dbbd1a862b5eb2d4109d11c9021ec47057f2c974d",
+          "materialSource": "weapons/paints/set_spy_tech/xm1014_black_site.vcompmat",
+          "materialSha256": "0ae8ebc5520dd4267d26576b2e320479bfe854fda38122bfbd40a0ba73c2cc7f"
+        },
+        {
+          "id": "xm1014-xm1014_freight",
+          "kitId": "1201",
+          "kitName": "xm1014_freight",
+          "legacy": false,
+          "imageSource": "panorama/images/econ/default_generated/weapon_xm1014_xm1014_freight_light_png.vtex_c",
+          "imageSha256": "a046de2b78ec29ce3338fe2d9249a282250ce26aeb4d8a50a069f0e19df0ae34",
+          "materialSource": "weapons/paints/set_train_2025/xm1014_freight.vcompmat",
+          "materialSha256": "323773b8891f20256272d842558d661fa156cbaa7044c0e8f4fd05c52148b889"
+        },
+        {
+          "id": "xm1014-xm1014_mockingbird",
+          "kitId": "1182",
+          "kitName": "xm1014_mockingbird",
+          "legacy": false,
+          "imageSource": "panorama/images/econ/default_generated/weapon_xm1014_xm1014_mockingbird_light_png.vtex_c",
+          "imageSha256": "f67762747b404ec758bb40621ac2b7a24e887a2cb9dc6b0224c3c8203f8c58b9",
+          "materialSource": "weapons/paints/community/community_35/xm1014_mockingbird.vcompmat",
+          "materialSha256": "277e6fcfe6c7152fd524469b233fcc22aef8d4ebe488d2e79d507a7e9965f772"
+        },
+        {
+          "id": "xm1014-xm1014_irezumi",
+          "kitId": "1174",
+          "kitName": "xm1014_irezumi",
+          "legacy": false,
+          "imageSource": "panorama/images/econ/default_generated/weapon_xm1014_xm1014_irezumi_light_png.vtex_c",
+          "imageSha256": "5be48f42ee492a5c0bf179b91f5a7d060bcf3b8be517ea529912e8ddd5b8cd7a",
+          "materialSource": "weapons/paints/community/community_33/xm1014_irezumi.vcompmat",
+          "materialSha256": "55d8546b77594c3eaf0d5d74c6be06688d587e4c6f7e0731ee18412389992170"
+        },
+        {
+          "id": "xm1014-cu_overpass_monsters_xm",
+          "kitId": "146",
+          "kitName": "cu_overpass_monsters_xm",
+          "legacy": false,
+          "imageSource": "panorama/images/econ/default_generated/weapon_xm1014_cu_overpass_monsters_xm_light_png.vtex_c",
+          "imageSha256": "f842b62355a5f62eec83d4e767f574156a2d05f88b2a1a9dc00f372200f24a5b",
+          "materialSource": "weapons/paints/set_overpass_2024/cu_overpass_monsters_xm.vcompmat",
+          "materialSha256": "3bc8ff89ebae453fc7915eb2f74009176c1d922a72c618dfbb93fb1174aea63a"
+        },
+        {
+          "id": "xm1014-soe_yellow_xm",
+          "kitId": "1381",
+          "kitName": "soe_yellow_xm",
+          "legacy": false,
+          "imageSource": "panorama/images/econ/default_generated/weapon_xm1014_soe_yellow_xm_light_png.vtex_c",
+          "imageSha256": "c6db7591332806b57858f97c868ca084e66bd6183feb8c12e5c8dad60b4cc470",
+          "materialSource": "weapons/paints/timed_drops/soe_yellow_xm.vcompmat",
+          "materialSha256": "33a169704ccba996ac5180d9a3a2d4c60f993ad118345ec701f4764022b0def4"
+        },
+        {
+          "id": "xm1014-hy_cloud_camo",
+          "kitId": "1333",
+          "kitName": "hy_cloud_camo",
+          "legacy": false,
+          "imageSource": "panorama/images/econ/default_generated/weapon_xm1014_hy_cloud_camo_light_png.vtex_c",
+          "imageSha256": "8ecbfc6056d2f8d24ad8a8e223f91d8946102fb4befaf737cd27eca2485a66ba",
+          "materialSource": "weapons/paints/timed_drops/hy_cloud_camo.vcompmat",
+          "materialSha256": "b416c45b0348699b923a37d2ba7e79873eb4f66428ba251dc2eae85022df137a"
+        },
+        {
+          "id": "xm1014-ht_copper_edges",
+          "kitId": "1287",
+          "kitName": "ht_copper_edges",
+          "legacy": false,
+          "imageSource": "panorama/images/econ/default_generated/weapon_xm1014_ht_copper_edges_light_png.vtex_c",
+          "imageSha256": "2b0eb551c0c15c9e51e0b828dade22a04c6b7a426b60e9a638d56b5a5b86c57a",
+          "materialSource": "weapons/paints/timed_drops/ht_copper_edges.vcompmat",
+          "materialSha256": "74b88cee5d4fcf8989a437da8b8d5d886200639108844ca729a870ef9fa5c49a"
+        },
+        {
+          "id": "xm1014-hye_drippy_camo",
+          "kitId": "1267",
+          "kitName": "hye_drippy_camo",
+          "legacy": false,
+          "imageSource": "panorama/images/econ/default_generated/weapon_xm1014_hye_drippy_camo_light_png.vtex_c",
+          "imageSha256": "91e4c30b63b255db8e28b3b69f3f30d425516efa6043add75ef121cdfc59c02f",
+          "materialSource": "weapons/paints/timed_drops/hye_drippy_camo.vcompmat",
+          "materialSha256": "3f8bb0e3ea44827b25a8f27ba6cb4d6254ea82d9b725c1616062b33039a57ebd"
+        },
+        {
+          "id": "xm1014-soch_mountains_limited_time",
+          "kitId": "1215",
+          "kitName": "soch_mountains_limited_time",
+          "legacy": false,
+          "imageSource": "panorama/images/econ/default_generated/weapon_xm1014_soch_mountains_limited_time_light_png.vtex_c",
+          "imageSha256": "22e8d866fdbbc4eea5ea46b1c5d0aa40114183ffba8294ac0cc60d3386d226c9",
+          "materialSource": "weapons/paints/limited_time/soch_mountains_limited_time.vcompmat",
+          "materialSha256": "d5e6c1147b9a8abb1878a6745c9ffe509aa9c309c89cf8d575b7eab14a915a83"
+        }
+      ],
+      "limitation": null
+    },
+    "mag7": {
+      "nativeAvailable": 39,
+      "exported": 10,
+      "minimumExpected": 10,
+      "finishes": [
+        {
+          "id": "mag7-mag7_circle_copper",
+          "kitId": "1355",
+          "kitName": "mag7_circle_copper",
+          "legacy": false,
+          "imageSource": "panorama/images/econ/default_generated/weapon_mag7_mag7_circle_copper_light_png.vtex_c",
+          "imageSha256": "c64a637e356983d733b1d35f478fa3131f1bf55a28696bdc5c75f149e58c99aa",
+          "materialSource": "weapons/paints/community/community_36/mag7_circle_copper.vcompmat",
+          "materialSha256": "b32c5c6537ea5a61bb5e4088a2316f5b3a5b63b5d049e390d0a1f6c1de08ac61"
+        },
+        {
+          "id": "mag7-mag7_ammo_box",
+          "kitId": "1188",
+          "kitName": "mag7_ammo_box",
+          "legacy": false,
+          "imageSource": "panorama/images/econ/default_generated/weapon_mag7_mag7_ammo_box_light_png.vtex_c",
+          "imageSha256": "87ff28c9acfef698f4f80f9fc8f3fcd23e07fde68f981fe6b3aa38e7141c22b7",
+          "materialSource": "weapons/paints/community/community_35/mag7_ammo_box.vcompmat",
+          "materialSha256": "a56bb520ba3f431c04c0368814df9f58ba0f8664e33d1c2e879486db1170a8c6"
+        },
+        {
+          "id": "mag7-so_greyblue",
+          "kitId": "1306",
+          "kitName": "so_greyblue",
+          "legacy": false,
+          "imageSource": "panorama/images/econ/default_generated/weapon_mag7_so_greyblue_light_png.vtex_c",
+          "imageSha256": "b78ec9fc12c61ea9c05c872359bb84914df6593eca5794d0c6e33fa528b31d8d",
+          "materialSource": "weapons/paints/timed_drops/so_greyblue.vcompmat",
+          "materialSha256": "110c782b659541667b941071532da87af1003f9f9d2e8fb22abb2fbfd26942c8"
+        },
+        {
+          "id": "mag7-soch_wildwood_mag7",
+          "kitId": "773",
+          "kitName": "soch_wildwood_mag7",
+          "legacy": false,
+          "imageSource": "panorama/images/econ/default_generated/weapon_mag7_soch_wildwood_mag7_light_png.vtex_c",
+          "imageSha256": "c281b96cf174c0299e6492269489786c81c42ff118ab8aac9a9dd28a48073c8b",
+          "materialSource": "weapons/paints/set_realism_camo/soch_wildwood_mag7.vcompmat",
+          "materialSha256": "8686be1d2265756883d644c9e4dca94f916dd76ead1eeedf1ff326d90c2eea5a"
+        },
+        {
+          "id": "mag7-gs_mag7_goold",
+          "kitId": "1245",
+          "kitName": "gs_mag7_goold",
+          "legacy": true,
+          "imageSource": "panorama/images/econ/default_generated/weapon_mag7_gs_mag7_goold_light_png.vtex_c",
+          "imageSha256": "4121af811d2c362653aadb5a7a35b092d8a7fe3643c77f73b81250258b8852cd",
+          "materialSource": "materials/models/weapons/customization/paints/vmats/gs_mag7_goold.vmat",
+          "materialSha256": "b39235d46f4120c64312010db6f80efda04136b37e6b9126aaa1ecf32a822271"
+        },
+        {
+          "id": "mag7-cu_mag7_insomnia",
+          "kitId": "1220",
+          "kitName": "cu_mag7_insomnia",
+          "legacy": true,
+          "imageSource": "panorama/images/econ/default_generated/weapon_mag7_cu_mag7_insomnia_light_png.vtex_c",
+          "imageSha256": "0fafcaad2e8e2426f476c3be3f56ac0dc01a71408180e0a89781caac8078bdf0",
+          "materialSource": "materials/models/weapons/customization/paints/vmats/cu_mag7_insomnia.vmat",
+          "materialSha256": "a7c1bb6b4e794e9371ee4a019493bd779162bf15ce0d127e9e6fd8480c6df212"
+        },
+        {
+          "id": "mag7-cu_mag7_predictor",
+          "kitId": "1132",
+          "kitName": "cu_mag7_predictor",
+          "legacy": true,
+          "imageSource": "panorama/images/econ/default_generated/weapon_mag7_cu_mag7_predictor_light_png.vtex_c",
+          "imageSha256": "9fa8091af57fcd064bfc7fffc086f3b75f75d41fae6b6273eee821c0c32888e5",
+          "materialSource": "materials/models/weapons/customization/paints/vmats/cu_mag7_predictor.vmat",
+          "materialSha256": "306986cb15d9c1f5bcb396303d9df1893ae072f59a612dae387b5646b9a275d9"
+        },
+        {
+          "id": "mag7-gs_mag7_bismuth",
+          "kitId": "1089",
+          "kitName": "gs_mag7_bismuth",
+          "legacy": true,
+          "imageSource": "panorama/images/econ/default_generated/weapon_mag7_gs_mag7_bismuth_light_png.vtex_c",
+          "imageSha256": "f86ec7aa9e0fd8f989b0130aa3e1aacc3c1f85a4aecc2aebc4b0f2e64f44195f",
+          "materialSource": "materials/models/weapons/customization/paints/vmats/gs_mag7_bismuth.vmat",
+          "materialSha256": "c93b0eaa8b24e78fa6151519911dd5e1a70057e4b082e746c9f49dadfaab2925"
+        },
+        {
+          "id": "mag7-cu_mag7_monster_call",
+          "kitId": "961",
+          "kitName": "cu_mag7_monster_call",
+          "legacy": true,
+          "imageSource": "panorama/images/econ/default_generated/weapon_mag7_cu_mag7_monster_call_light_png.vtex_c",
+          "imageSha256": "e7d1ca4210c9d72359f378b3b8e8fa67817f83c4b8e0b38de8e25aa9f840b72d",
+          "materialSource": "materials/models/weapons/customization/paints/vmats/cu_mag7_monster_call.vmat",
+          "materialSha256": "530cbc4857b0f84aeeae2c3a7b6a2a9840003785a3c9f5b5636108817d3d8289"
+        },
+        {
+          "id": "mag7-gs_mag7_justice",
+          "kitId": "948",
+          "kitName": "gs_mag7_justice",
+          "legacy": true,
+          "imageSource": "panorama/images/econ/default_generated/weapon_mag7_gs_mag7_justice_light_png.vtex_c",
+          "imageSha256": "219bfbea3f75d2ac979f7e006061efe0acb5f8e14c9125bda237345eb2683d3b",
+          "materialSource": "materials/models/weapons/customization/paints/vmats/gs_mag7_justice.vmat",
+          "materialSha256": "ddf44d9e296997576191683c7269f717174a3c12828cee172aed2185daff1b83"
+        }
+      ],
+      "limitation": null
+    },
+    "sawedoff": {
+      "nativeAvailable": 36,
+      "exported": 10,
+      "minimumExpected": 10,
+      "finishes": [
+        {
+          "id": "sawedoff-sawedoff_lunar_wyrm",
+          "kitId": "1475",
+          "kitName": "sawedoff_lunar_wyrm",
+          "legacy": false,
+          "imageSource": "panorama/images/econ/default_generated/weapon_sawedoff_sawedoff_lunar_wyrm_light_png.vtex_c",
+          "imageSha256": "c3142927ee762309980cd4e47d0b4171b6d4a77a1d7bc2a3070bec9fc0e35767",
+          "materialSource": "weapons/paints/set_arabesque/sawedoff_lunar_wyrm.vcompmat",
+          "materialSha256": "ef0ec1457516674090c650edee23a5ff6aa7c589807a4421f55d2e1c80e44a17"
+        },
+        {
+          "id": "sawedoff-sawedoff_fusion",
+          "kitId": "1427",
+          "kitName": "sawedoff_fusion",
+          "legacy": false,
+          "imageSource": "panorama/images/econ/default_generated/weapon_sawedoff_sawedoff_fusion_light_png.vtex_c",
+          "imageSha256": "3f175839a54d4d23bc215e4f77de1a8a9f4b76a9acf510d35e6302e3f46d4b40",
+          "materialSource": "weapons/paints/community/community_37/sawedoff_fusion.vcompmat",
+          "materialSha256": "9d56b0fe34aba1f01076fb73043b78bd8daae665d1f099538f930727f32d0529"
+        },
+        {
+          "id": "sawedoff-sawedoff_gamer",
+          "kitId": "1160",
+          "kitName": "sawedoff_gamer",
+          "legacy": false,
+          "imageSource": "panorama/images/econ/default_generated/weapon_sawedoff_sawedoff_gamer_light_png.vtex_c",
+          "imageSha256": "b343f6c8a49a2215c5d4ac41aaee91531109c97cb8780493dafafc6379825eeb",
+          "materialSource": "weapons/paints/community/community_33/sawedoff_gamer.vcompmat",
+          "materialSha256": "d3e56e9b04d366314ccb878eacdbd50513497dac2cce8551b1ed115f614f1fe5"
+        },
+        {
+          "id": "sawedoff-hye_batik_eyes",
+          "kitId": "1391",
+          "kitName": "hye_batik_eyes",
+          "legacy": false,
+          "imageSource": "panorama/images/econ/default_generated/weapon_sawedoff_hye_batik_eyes_light_png.vtex_c",
+          "imageSha256": "34895467efcbf8d474f9d6105c77b1fae503ad81af548d4d6e62c9e1cccce001",
+          "materialSource": "weapons/paints/timed_drops/hye_batik_eyes.vcompmat",
+          "materialSha256": "a692192a6077d10c0c52dfd6075071e58fab5765d5588cb584af85a0b7815782"
+        },
+        {
+          "id": "sawedoff-gsch_ripple",
+          "kitId": "1272",
+          "kitName": "gsch_ripple",
+          "legacy": false,
+          "imageSource": "panorama/images/econ/default_generated/weapon_sawedoff_gsch_ripple_light_png.vtex_c",
+          "imageSha256": "a37af17d8400eb33d4b45a0ef70fe266ffec306aa60e8d07c98d97072dc109e1",
+          "materialSource": "weapons/paints/timed_drops/gsch_ripple.vcompmat",
+          "materialSha256": "31b6308459954f9feba47d632ecf559b809fcfb8f61bda4cf0b0765b486f6b85"
+        },
+        {
+          "id": "sawedoff-cu_sawedoff_kisslove",
+          "kitId": "1155",
+          "kitName": "cu_sawedoff_kisslove",
+          "legacy": true,
+          "imageSource": "panorama/images/econ/default_generated/weapon_sawedoff_cu_sawedoff_kisslove_light_png.vtex_c",
+          "imageSha256": "3e1f34f119660bb826388acdf439c0736ecc3b1eb4df9faae3d2d3a27c3cb159",
+          "materialSource": "materials/models/weapons/customization/paints/vmats/cu_sawedoff_kisslove.vmat",
+          "materialSha256": "f0ea9aae85d2227b343cfb9d824fdd0c3f47c22f33ec8b71ad3e8e57a3504e3a"
+        },
+        {
+          "id": "sawedoff-cu_sawedoff_ouija",
+          "kitId": "1140",
+          "kitName": "cu_sawedoff_ouija",
+          "legacy": true,
+          "imageSource": "panorama/images/econ/default_generated/weapon_sawedoff_cu_sawedoff_ouija_light_png.vtex_c",
+          "imageSha256": "810026a246ab29e063ea633145033ecd1f76753e36a7f7b1d1a1c75aba787dff",
+          "materialSource": "materials/models/weapons/customization/paints/vmats/cu_sawedoff_ouija.vmat",
+          "materialSha256": "f9c8b7d33ea6fbafcc5fcfec2931fc6d4194414b78ebcaa05e510f003b00ed84"
+        },
+        {
+          "id": "sawedoff-cu_sawedoff_apocalypto",
+          "kitId": "953",
+          "kitName": "cu_sawedoff_apocalypto",
+          "legacy": true,
+          "imageSource": "panorama/images/econ/default_generated/weapon_sawedoff_cu_sawedoff_apocalypto_light_png.vtex_c",
+          "imageSha256": "43f4f295742fdc7014b2b8fb8a7c7d8327a8f31e7eb7e2940eb80e77a1c83d51",
+          "materialSource": "materials/models/weapons/customization/paints/vmats/cu_sawedoff_apocalypto.vmat",
+          "materialSha256": "accf6312ea162e62f30bde16895f6ed25fa8acd1cf2fde7422103ad66ed241b7"
+        },
+        {
+          "id": "sawedoff-cu_sawedoff_black_sand",
+          "kitId": "814",
+          "kitName": "cu_sawedoff_black_sand",
+          "legacy": true,
+          "imageSource": "panorama/images/econ/default_generated/weapon_sawedoff_cu_sawedoff_black_sand_light_png.vtex_c",
+          "imageSha256": "6128e46bff3ac9b6b6d22f741cc005f8c6554a1410565ae2d7f139244e70a9a1",
+          "materialSource": "materials/models/weapons/customization/paints/vmats/cu_sawedoff_black_sand.vmat",
+          "materialSha256": "dba3620ef7f94bf99af2c962c6d3d8bd922b7ec2f1c9c055fef322166ab29d8c"
+        },
+        {
+          "id": "sawedoff-cu_sawedoff_devourer",
+          "kitId": "720",
+          "kitName": "cu_sawedoff_devourer",
+          "legacy": true,
+          "imageSource": "panorama/images/econ/default_generated/weapon_sawedoff_cu_sawedoff_devourer_light_png.vtex_c",
+          "imageSha256": "38a952e838a9ef7e3811deac6696c57f12ecd49552f56a19d1ad819fa86ce736",
+          "materialSource": "materials/models/weapons/customization/paints/vmats/cu_sawedoff_devourer.vmat",
+          "materialSha256": "ef178c42dcde78ea8c1f5e4e47dad8c48ed1c4ec9a81c273a4d90b2a457fd1f2"
+        }
+      ],
+      "limitation": null
+    },
+    "zeus": {
+      "nativeAvailable": 7,
+      "exported": 7,
+      "minimumExpected": 7,
+      "finishes": [
+        {
+          "id": "zeus-zeus_standard_issue",
+          "kitId": "1205",
+          "kitName": "zeus_standard_issue",
+          "legacy": false,
+          "imageSource": "panorama/images/econ/default_generated/weapon_taser_zeus_standard_issue_light_png.vtex_c",
+          "imageSha256": "56c61c125a28ae09eacffba69e63cfe9a5913439535b9bc05a1f9c33c7a38811",
+          "materialSource": "weapons/paints/set_train_2025/zeus_standard_issue.vcompmat",
+          "materialSha256": "818156cbee1f90adeeb48b2e737e0a8bdf1df21d7f366ba8b01dd6f4703ad698"
+        },
+        {
+          "id": "zeus-zeus_tosai",
+          "kitId": "1183",
+          "kitName": "zeus_tosai",
+          "legacy": false,
+          "imageSource": "panorama/images/econ/default_generated/weapon_taser_zeus_tosai_light_png.vtex_c",
+          "imageSha256": "cdf022410f22dabfc6f51a73f1fb41a4995d94c5aa60e50f8d99d0e85f6de124",
+          "materialSource": "weapons/paints/community/community_35/zeus_tosai.vcompmat",
+          "materialSha256": "0683dfb28f20a4d6bb502173b252c9faa9fae0c747df100e8566b1e1e87a6753"
+        },
+        {
+          "id": "zeus-zeus_thunder_god",
+          "kitId": "1172",
+          "kitName": "zeus_thunder_god",
+          "legacy": false,
+          "imageSource": "panorama/images/econ/default_generated/weapon_taser_zeus_thunder_god_light_png.vtex_c",
+          "imageSha256": "09e48e9d0356e0af07f8fed5d190064dd49e89ac0c79ce342bdff4d1dd5079aa",
+          "materialSource": "weapons/paints/community/community_33/zeus_thunder_god.vcompmat",
+          "materialSha256": "be2416d56b68cd00f33d2ed766faca6f58ef7b7f6e3911fe2ce0e1a99d4f936c"
+        },
+        {
+          "id": "zeus-cu_overpass_dragon_zeus",
+          "kitId": "292",
+          "kitName": "cu_overpass_dragon_zeus",
+          "legacy": false,
+          "imageSource": "panorama/images/econ/default_generated/weapon_taser_cu_overpass_dragon_zeus_light_png.vtex_c",
+          "imageSha256": "a06212c8142724a0de5d7e065972833a95c8f41d2d10067d25770e559b4f1f66",
+          "materialSource": "weapons/paints/set_overpass_2024/cu_overpass_dragon_zeus.vcompmat",
+          "materialSha256": "e65589483a2f3754399410a0deb47bfa3ba117239ce96452f8c9bcaad0b5515c"
+        },
+        {
+          "id": "zeus-hye_earth_mandala_lc",
+          "kitId": "1382",
+          "kitName": "hye_earth_mandala_lc",
+          "legacy": false,
+          "imageSource": "panorama/images/econ/default_generated/weapon_taser_hye_earth_mandala_lc_light_png.vtex_c",
+          "imageSha256": "969e7ecab4ebd8f3ae9726228ccd3aee99a31e9cb2b75d5e24864ee1acc7ad98",
+          "materialSource": "weapons/paints/timed_drops/hye_earth_mandala_lc.vcompmat",
+          "materialSha256": "76dc3e0e43705e0727d3feb2e95af68df5f0116e4e13119d93a5081d0fd4f713"
+        },
+        {
+          "id": "zeus-hy_digicam_forest",
+          "kitId": "1297",
+          "kitName": "hy_digicam_forest",
+          "legacy": false,
+          "imageSource": "panorama/images/econ/default_generated/weapon_taser_hy_digicam_forest_light_png.vtex_c",
+          "imageSha256": "a40119e100f3b6d50ba343c6a75c4e4abfba6b3109f6f58e14c5bcb08ebdd2a1",
+          "materialSource": "weapons/paints/timed_drops/hy_digicam_forest.vcompmat",
+          "materialSha256": "f4d07c9ea95b6471d5a682ec75a3a79b7cfde011121504d38bd970d9ffb994fd"
+        },
+        {
+          "id": "zeus-soe_electric_blue",
+          "kitId": "1268",
+          "kitName": "soe_electric_blue",
+          "legacy": false,
+          "imageSource": "panorama/images/econ/default_generated/weapon_taser_soe_electric_blue_light_png.vtex_c",
+          "imageSha256": "9ebbba93016abb3f468b4b92348f06fdc0882c8cca2520e4520cbb949c2867dd",
+          "materialSource": "weapons/paints/timed_drops/soe_electric_blue.vcompmat",
+          "materialSha256": "be652c158b4ab77ceb15a24bdd45edaddca7ffd5f5b1bec95c7f0cf980f1feca"
+        }
+      ],
+      "limitation": "Installed archive has fewer than ten authored Zeus finish previews; no fabricated finishes added."
+    }
+  },
+  "build": "2000924",
+  "itemsSha256": "1edea31ef2af0a46d1b38b4e4a6337de534bb61629f4b527137617ef03879fed"
+}

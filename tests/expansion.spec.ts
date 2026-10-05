@@ -200,10 +200,11 @@ test('repeated mistakes produce a central tip and the skin donation label fits n
     });
     expect(boxes.feedback.y+boxes.feedback.height).toBeLessThanOrEqual(boxes.canvas.y+boxes.canvas.height-4);
     expect(boxes.feedback.y).toBeGreaterThan(boxes.canvas.y+boxes.canvas.height/2+15);
-    expect(boxes.brand.x+boxes.brand.width).toBeLessThanOrEqual(boxes.history.x);
-    expect(boxes.history.x+boxes.history.width).toBeLessThanOrEqual(boxes.donate.x);
-    expect(boxes.donate.x+boxes.donate.width).toBeLessThanOrEqual(boxes.settings.x);
-    expect(boxes.settings.x+boxes.settings.width).toBeLessThanOrEqual(size.width);
+    const header=[boxes.brand,boxes.history,boxes.donate,boxes.settings];
+    for(let i=0;i<header.length;i++) {
+      const a=header[i];expect(a.x).toBeGreaterThanOrEqual(0);expect(a.x+a.width).toBeLessThanOrEqual(size.width);
+      for(const b of header.slice(i+1)) expect(a.x+a.width<=b.x||b.x+b.width<=a.x||a.y+a.height<=b.y||b.y+b.height<=a.y).toBe(true);
+    }
     await expect(page.getByRole('link',{name:'Donate unwanted CS2 skins',exact:true})).toBeVisible();
     await page.screenshot({path:`test-results/${info.project.name}-rep-tip-${size.width}.png`});
   }

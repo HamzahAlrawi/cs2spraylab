@@ -55,7 +55,7 @@ describe('Persistent shot state',()=>{
     expect(shots[1].recoil.yaw).toBeCloseTo(now.yaw,5);expect(shots[1].recoil.pitch).toBeCloseTo(now.pitch,5);
     expect(shots[2].recoil.yaw).toBeCloseTo(next.yaw,5);expect(shots[2].recoil.pitch).toBeCloseTo(next.pitch,5);
   });
-  it.each(weaponIds)('%s rapid taps retain recoil and firing inaccuracy',weapon=>{
+  it.each(weaponIds.filter(id=>gameData.weapons[id].recoilMagnitude>0))('%s rapid taps retain recoil and firing inaccuracy',weapon=>{
     const s=new Simulation({...defaults,weapon,spread:false});const shots:Shot[]=[];
     s.onShot=shot=>shots.push(shot);
     s.start(false,weapon==='revolver');s.release('mouse');advance(s,s.stats.cycle+STEP);
@@ -65,6 +65,15 @@ describe('Persistent shot state',()=>{
     advance(s,Math.max(3,s.stats.recovery*6));expect(s.recovery.index).toBe(0);
     expect(Math.hypot(s.recovery.recoil.yaw,s.recovery.recoil.pitch)).toBeLessThan(.001);
     expect(s.recovery.penalty).toBeCloseTo(s.stats.stand,5);
+  });
+  it('keeps Zeus recoil zero while retaining its extracted firing penalty',()=>{
+    const weapon=gameData.weapons.zeus,state=new WeaponRecovery(weapon);
+    expect(weapon.recoilMagnitude).toBe(0);expect(weapon.fire).toBe(.05);
+    state.fire();expect(state.penalty).toBeCloseTo(weapon.stand+weapon.fire,12);
+    state.advance(0);expect(state.penalty).toBeCloseTo(weapon.stand+weapon.fire,12);
+    expect(state.predict(0)).toEqual({yaw:0,pitch:0});
+    state.advance(weapon.cycle);
+    expect(state.recoil).toEqual({yaw:0,pitch:0});expect(state.penalty).toBe(weapon.stand);
   });
   it('predicts guidance without mutating weapon state',()=>{
     const s=new Simulation(defaults);s.start();s.release('mouse');advance(s,.2);

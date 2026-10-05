@@ -1,0 +1,48 @@
+{
+  "definitionBuild": "2000922",
+  "installedBuild": "2000924",
+  "weapons": {
+    "nova": {
+      "intro": {
+        "start": 0,
+        "duration": 0.36666666666666664
+      },
+      "loop": {
+        "start": 0.36666666666666664,
+        "duration": 0.43333333333333335
+      },
+      "outro": {
+        "start": 0.8,
+        "duration": 0.8333333333333334
+      }
+    },
+    "xm1014": {
+      "intro": {
+        "start": 0,
+        "duration": 0.7
+      },
+      "loop": {
+        "start": 0.7,
+        "duration": 0.6
+      },
+      "outro": {
+        "start": 1.3,
+        "duration": 0.43333333333333335
+      }
+    },
+    "sawedoff": {
+      "intro": {
+        "start": 0,
+        "duration": 0.4
+      },
+      "loop": {
+        "start": 0.4,
+        "duration": 0.5333333333333333
+      },
+      "outro": {
+        "start": 0.9333333333333333,
+        "duration": 0.8
+      }
+    }
+  }
+}

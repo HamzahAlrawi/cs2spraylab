@@ -15,8 +15,8 @@ const raw = fs.readFileSync(file,'utf8'), native = parseKv3(raw);
 const runtime = JSON.parse(fs.readFileSync('src/range/game-data.json','utf8'));
 const build = fs.readFileSync(`${game}/game/csgo/steam.inf`,'utf8').match(/ClientVersion=(\d+)/)[1];
 assert.equal(runtime.build,build,'Runtime weapon data was exported from a different game build');
-const aliases={m4a4:'m4a1',m4a1s:'m4a1_silencer',galil:'galilar',sg553:'sg556',usp:'usp_silencer'};
-const fields={damage:'m_nDamage',armorRatio:'m_flArmorRatio',headshotMultiplier:'m_flHeadshotMultiplier',
+const aliases={m4a4:'m4a1',m4a1s:'m4a1_silencer',galil:'galilar',sg553:'sg556',usp:'usp_silencer',zeus:'taser'};
+const fields={damage:'m_nDamage',penetration:'m_flPenetration',armorRatio:'m_flArmorRatio',headshotMultiplier:'m_flHeadshotMultiplier',
   range:'m_flRange',rangeModifier:'m_flRangeModifier',magazine:'m_iMaxClip1',cycle:'m_flCycleTime',speed:'m_flMaxSpeed',
   deploy:'m_flDeployDuration',reload:'m_flDisallowAttackAfterReloadStartDuration',spread:'m_flSpread',
   stand:'m_flInaccuracyStand',crouch:'m_flInaccuracyCrouch',move:'m_flInaccuracyMove',fire:'m_flInaccuracyFire',
@@ -43,7 +43,11 @@ for(const [id,weapon] of Object.entries(runtime.weapons)) {
   const controls=Object.fromEntries(Object.entries(flags).map(([key,field])=>[key,key==='showCrosshair'?source[field]??true:source[field]]));
   controls.zoomFov=[source.m_nZoomFOV1,source.m_nZoomFOV2];controls.zoomTime=[source.m_flZoomTime0,source.m_flZoomTime1,source.m_flZoomTime2];
   for(const [key,value] of Object.entries(controls)) assert.deepEqual(weapon[key],value,`${id}.${key}`);
-  fixture.weapons[id]={primary,alternate,...controls};
+  const ammo = {pellets:source.m_nNumBullets, reserveAsClips:source.m_bReserveAmmoAsClips ?? false,
+    reserve:source.m_nPrimaryReserveAmmoMax*(source.m_bReserveAmmoAsClips?source.m_iMaxClip1:1),
+    reloadsSingleShells:source.m_bReloadsSingleShells ?? false, spreadSeed:source.m_nSpreadSeed};
+  for(const [key,value] of Object.entries(ammo)) assert.deepEqual(weapon[key],value,`${id}.${key}`);
+  fixture.weapons[id]={primary,alternate,...controls,...ammo};
   console.log(`${id}: ${primary.damage} damage; ${primary.armorRatio/2*100}% armor penetration; ${primary.magazine} rounds; ${primary.cycle}s cycle. Both modes verified.`);
 }
 if(process.argv.includes('--write-fixture')) fs.writeFileSync('src/range/native-weapon-stats-fixture.json',JSON.stringify(fixture,null,2)+'\n');

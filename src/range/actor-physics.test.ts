@@ -8,6 +8,13 @@ const standing = (): ActorKinematics => ({
 });
 
 describe('shared actor crouch stance', () => {
+  it('returns only kinematics so parent bookkeeping cannot be overwritten by Object.assign', () => {
+    const source = {...standing(), stepDistance: 1, health: 100, command: {fireHeld: true}};
+    const next = advanceActor(source, idleInput(), 250 * UNIT, STEP);
+    expect(next).not.toHaveProperty('stepDistance');
+    expect(next).not.toHaveProperty('health'); expect(next).not.toHaveProperty('command');
+    expect(next).toHaveProperty('movementTime');
+  });
   it('moves the camera and hull gradually and caps crouched travel speed', () => {
     let actor = standing();
     const input = {...idleInput(), crouch: true, forward: 1};

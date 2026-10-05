@@ -4,6 +4,7 @@ export type AccuracyParameters=RecoilParameters&{
   stand:number;crouch:number;move:number;fire:number;spread:number;recovery:number;
   recoveryFinal?:number;recoveryCrouch?:number;recoveryCrouchFinal?:number;
   recoveryStart?:number;recoveryEnd?:number;jump?:number;jumpInitial?:number;jumpApex?:number;
+  spreadSeed?:number;pellets?:number;
 };
 const clamp=(x:number,lo=0,hi=1)=>Math.max(lo,Math.min(hi,x));
 const ZERO=()=>({yaw:0,pitch:0});
@@ -82,7 +83,8 @@ export class WeaponRecovery {
   advance(dt:number,crouch=false,airborne=false){
     const baseline=airborne?this.weapon.stand+(this.weapon.jump ?? 0):crouch?this.weapon.crouch:this.weapon.stand;
     const recovery=recoveryTime(this.weapon,this.index,crouch,airborne);
-    this.penalty=baseline+Math.max(0,this.penalty-baseline)*Math.pow(10,-dt/recovery);
+    const decay=dt===0?1:recovery>0?Math.pow(10,-dt/recovery):0;
+    this.penalty=baseline+Math.max(0,this.penalty-baseline)*decay;
     // Native index decay starts after last shot + cycle + one 64 Hz tick.
     const decayTime=Math.max(0,this.time+dt-Math.max(this.time,this.lastShot+this.weapon.cycle+1/64));
     this.index*=Math.pow(10,-2*decayTime);

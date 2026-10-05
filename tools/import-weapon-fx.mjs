@@ -30,6 +30,7 @@ const aliases = {
   m249: 'm249', negev: 'negev', cz75a: 'cz75a', usp: 'usp_silencer', glock: 'glock', hkp2000: 'hkp2000',
   p250: 'p250', deagle: 'deagle', elite: 'elite', fiveseven: 'fiveseven', tec9: 'tec9', revolver: 'revolver',
   awp: 'awp', ssg08: 'ssg08', g3sg1: 'g3sg1', scar20: 'scar20', knife: 'knife',
+  nova: 'nova', xm1014: 'xm1014', mag7: 'mag7', sawedoff: 'sawedoff', zeus: 'taser',
 };
 
 export function weaponFxRow(id, source) {

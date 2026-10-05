@@ -59,7 +59,7 @@ test('live player and enemy tracers begin at barrels and preserve physical endpo
     e.syncActors(e.sim.snapshot(), 0); e.viewScene.updateMatrixWorld(true);
     const endpoint = {x: 1, y: 1.6, z: -10};
     e.processEvents([{kind: 'fire', actorId: 0, shotId: 900, equipment: 'ak47', origin: {x: 0, y: 1.6256, z: 8},
-      direction: {x: 0, y: 0, z: -1}}, {kind: 'surface', shooter: 0, shotId: 900, point: endpoint}]);
+      direction: new Vector3(endpoint.x,endpoint.y-1.6256,endpoint.z-8).normalize()}, {kind: 'surface', shooter: 0, shotId: 900, point: endpoint}]);
     const line = e.shotEffects.tracers;
     const positions = Array.from(line.geometry.getAttribute('position').array).slice(0, 6) as number[];
     const start = new Vector3(...positions.slice(0, 3));
@@ -71,7 +71,7 @@ test('live player and enemy tracers begin at barrels and preserve physical endpo
     const x = (vp.x + (viewNdc.x + 1) * vp.width / 2) / e.width * 2 - 1;
     const y = (vp.y + (viewNdc.y + 1) * vp.height / 2) / e.height * 2 - 1;
     e.processEvents([{kind: 'fire', actorId: 1, shotId: 901, equipment: 'ak47', origin: {x: 1, y: 1.6256, z: 3},
-      direction: {x: 0, y: 0, z: 1}}, {kind: 'surface', shooter: 1, shotId: 901, point: {x: -.5, y: 1.4, z: 7}}]);
+      direction: new Vector3(-1.5,1.4-1.6256,4).normalize()}, {kind: 'surface', shooter: 1, shotId: 901, point: {x: -.5, y: 1.4, z: 7}}]);
     const enemyStart = Array.from(line.geometry.getAttribute('position').array).slice(6, 9) as number[];
     const enemyMuzzle = e.botMuzzles.get(1).getWorldPosition(new Vector3());
     return {positions, delta: [ndc.x - x, ndc.y - y],

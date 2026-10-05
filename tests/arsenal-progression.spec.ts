@@ -3,6 +3,7 @@ import sharp from 'sharp';
 import {readFileSync} from 'node:fs';
 import {canvasColors} from './render-frame';
 const desktopProjects=['chromium','brave','opera-gx'];
+const emeraldDefinition=JSON.parse(readFileSync('src/range/cosmetics-data.json','utf8')).cosmetics.find((item:any)=>item.id==='knife-butterfly-emerald');
 
 async function duelEngine(page: Page) {
   await page.goto('/');
@@ -33,7 +34,8 @@ test('stock knife, locked cosmetics and armory fit small screens without hiding 
     await expect(dialog).toBeVisible();
     await dialog.getByRole('button',{name:'Unlocks',exact:true}).click();
     await dialog.getByRole('tab',{name:'Knives',exact:true}).click();
-    const emerald = dialog.getByRole('button', {name: /Butterfly.*locked until level 75/});
+    await dialog.getByLabel('Knife type', {exact: true}).selectOption('knife-butterfly');
+    const emerald = dialog.getByRole('button', {name: new RegExp(`Butterfly.*Emerald.*locked until level ${emeraldDefinition.unlockLevel}`)});
     await expect(emerald).toHaveAttribute('aria-disabled', 'true');
     await emerald.dispatchEvent('click');
     expect(await page.evaluate(() => JSON.parse(localStorage.getItem('spraylab.progression.v1') || '{}').equipped?.knife)).not.toBe('knife-butterfly-emerald');
@@ -100,7 +102,7 @@ test('unlocked emerald uses its native model, compiles its shader and persists e
   });
   await nonblank(page);
   await expect(page.locator('.duel-ammo small')).toContainText('Butterfly');
-  await expect(page.getByRole('button', {name: 'Equip Default knife', exact: true}).locator('img')).toHaveAttribute('src', '/models/knife-butterfly.png');
+  await expect(page.getByRole('button', {name: 'Equip Default knife', exact: true}).locator('img')).toHaveAttribute('src', emeraldDefinition.imageUrl);
   const stats = await sharp(await page.locator('canvas[data-duel]').screenshot()).stats();
   expect(stats.channels[1].stdev).toBeGreaterThan(15);
   await page.screenshot({path: `test-results/${info.project.name}-unlocked-emerald.png`});
@@ -287,6 +289,7 @@ test('legacy UV assemblies and native procedural finish styles render with their
   const items=await page.evaluate(async()=>{
     const data=await fetch('/src/range/cosmetics-data.json').then(r=>r.json()),seen=new Set<string>();
     return data.cosmetics.filter((item:any)=>{
+      if(item.stockOnly)return false;
       const key=item.assetKey.endsWith('-legacy')?item.assetKey:`style-${item.style}`;
       if(seen.has(key))return false;seen.add(key);return true;
     }).map((item:any)=>({id:item.id,equipment:item.equipment,asset:item.assetKey}));

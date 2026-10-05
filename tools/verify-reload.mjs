@@ -14,7 +14,7 @@ for (const id of ids) {
   json.extensionsRequired = (json.extensionsRequired ?? []).filter(name => name !== 'EXT_texture_webp');
   const {scene, animations} = await new GLTFLoader().parseAsync(JSON.stringify(json), '');
   const knife = id.startsWith('knife');
-  const required = ['idle', 'draw', 'inspect', ...(knife ? [] : ['reload'])];
+  const required = ['idle', 'draw', 'inspect', ...(knife || id==='zeus' ? [] : ['reload'])];
   assert(required.every(name => animations.some(a => a.name === name)), `${id}: missing clips`);
   const mixer = new AnimationMixer(scene), idle = mixer.clipAction(animations.find(a => a.name === 'idle'));
   idle.play(); mixer.update(0); scene.updateMatrixWorld(true);

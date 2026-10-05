@@ -1,13 +1,17 @@
 import * as THREE from 'three';
-import {nativeFireAction, type NativeFireOptions, type NativeViewAction} from './native-view-actions';
+import {nativeFireAction, nativeReloadWindow, type NativeFireOptions, type NativeViewAction} from './native-view-actions';
+import type {ReloadPhase} from './weapon-actions';
+import {syncAnimationActions} from './animation-actions';
 
 export type ViewAction = 'idle' | 'reload' | 'reload-empty' | 'draw' | 'pickup' | 'inspect' | NativeViewAction;
-export interface ViewAnimationOptions {reloadEmpty?: boolean; ammo?: number; charging?: boolean; chargeDuration?: number}
+export interface ViewAnimationOptions {reloadEmpty?: boolean; ammo?: number; charging?: boolean; chargeDuration?: number;
+  equipment?: string; reloadPhase?: ReloadPhase; reloadProgress?: number}
 
 /** Presentation only: gameplay still owns ammo, deploy delays, and firing permissions. */
 export class ViewAnimation {
   private mixer: THREE.AnimationMixer;
   private actions = new Map<ViewAction, THREE.AnimationAction>();
+  private activeActions = new Set<THREE.AnimationAction>();
   private transient?: {name: ViewAction; elapsed: number; duration: number};
   private idleTime = 0;
   private reloading = false;
@@ -20,7 +24,7 @@ export class ViewAnimation {
       if (!Number.isFinite(clip.duration) || clip.duration < 0) continue;
       const action = this.mixer.clipAction(clip);
       action.setLoop(THREE.LoopOnce, 1); action.clampWhenFinished = true;
-      action.play(); action.paused = true; action.enabled = false;
+      action.paused = true; action.enabled = false;
       this.actions.set(clip.name as ViewAction, action);
     }
     this.update(0, 1);
@@ -63,7 +67,8 @@ export class ViewAnimation {
     const delta = Number.isFinite(dt) ? Math.max(0, dt) : 0;
     const idleDuration = this.duration('idle');
     this.idleTime = idleDuration > 0 ? (this.idleTime + delta) % idleDuration : 0;
-    this.reloading = Number.isFinite(remaining) && remaining > 0 && Number.isFinite(duration) && duration > 0;
+    this.reloading = Number.isFinite(duration) && duration > 0 &&
+      (Number.isFinite(remaining) && remaining > 0 || !!options.reloadPhase && options.reloadPhase !== 'idle' && Number.isFinite(options.reloadProgress));
     if (options.charging && this.has('charge') && !this.reloading && this.transient?.name !== 'charge') {
       this.transient = {name:'charge', elapsed:0, duration:options.chargeDuration ?? this.duration('charge')};
     } else if (!options.charging && this.transient?.name === 'charge') this.transient = undefined;
@@ -74,9 +79,13 @@ export class ViewAnimation {
     if (this.reloading) {
       this.transient = undefined;
       name = options.reloadEmpty && this.has('reload-empty') ? 'reload-empty' : 'reload';
-      const progress = THREE.MathUtils.clamp(1 - remaining / duration, 0, 1);
-      time = progress * this.duration(name);
+      const progress = THREE.MathUtils.clamp(Number.isFinite(options.reloadProgress) ? options.reloadProgress! : 1 - remaining / duration, 0, 1);
+      const window = nativeReloadWindow(options.equipment, options.reloadPhase);
+      time = window ? Math.min(this.duration(name), window.start + progress * window.duration) : progress * this.duration(name);
       weight = Math.max(0, Math.min(1, progress * duration / .06, remaining / .08));
+      // Native shell phases join each other directly, never fade back to loaded idle between inserts.
+      if (window) weight = options.reloadPhase === 'start' ? Math.min(1, progress * duration / .06)
+        : options.reloadPhase === 'finish' ? Math.min(1, remaining / .08) : 1;
     } else if (this.transient) {
       const action = this.transient;
       action.elapsed += delta;
@@ -96,12 +105,13 @@ export class ViewAnimation {
       action.setEffectiveWeight(value);
       action.time = key === base ? (base === 'idle' ? this.idleTime : 0) : key === name ? time : 0;
     }
+    syncAnimationActions(this.actions.values(), this.activeActions);
     this.mixer.update(0);
   }
 
   dispose() {
     if (this.disposed) return;
     this.disposed = true; this.transient = undefined; this.reloading = false;
-    this.mixer.stopAllAction(); this.mixer.uncacheRoot(this.mixer.getRoot()); this.actions.clear();
+    this.mixer.stopAllAction(); this.mixer.uncacheRoot(this.mixer.getRoot()); this.actions.clear(); this.activeActions.clear();
   }
 }

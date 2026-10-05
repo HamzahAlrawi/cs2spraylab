@@ -72,6 +72,8 @@ export type XpBot = Readonly<{
   skill: SkillLevel;
   health: number;
   armor: boolean;
+  helmet?: boolean;
+  armorPoints?: number;
   accuracy: number;
   weapon: string;
 }>;
@@ -234,12 +236,14 @@ function validSetup(setup: DuelXpSetup): boolean {
     Array.isArray(setup.bots) && setup.bots.length >= 1 && setup.bots.length <= 5 &&
     new Set(setup.bots.map(bot => bot?.id)).size === setup.bots.length && setup.bots.every(bot => bot && identifier(bot.id) &&
       (bot.skill === '10+' || integer(bot.skill, 1, 10)) && finite(bot.health, 1, 500) && typeof bot.armor === 'boolean' &&
+      (bot.helmet === undefined || typeof bot.helmet === 'boolean') &&
+      (bot.armorPoints === undefined || finite(bot.armorPoints, 0, 100)) &&
       finite(bot.accuracy, .5, 1.5) && identifier(bot.weapon));
 }
 
 function setupKey(setup: DuelXpSetup): string {
   return JSON.stringify([setup.playerHealth, setup.playerArmor, [...setup.bots].sort((a, b) => a.id.localeCompare(b.id)).map(bot =>
-    [bot.id, bot.skill, bot.health, bot.armor, bot.accuracy, bot.weapon])]);
+    [bot.id, bot.skill, bot.health, bot.armor, bot.helmet ?? true, bot.armorPoints ?? 100, bot.accuracy, bot.weapon])]);
 }
 
 /** Pure, deterministic reward calculation. Only the controller can settle a live attempt. */
@@ -260,7 +264,9 @@ export function evaluateDuelXp(setup: DuelXpSetup, result: DuelXpResult): XpEval
     kills += +dealt.killed;
     // Keep level 5 neutral while making actual bot skill carry more reward weight.
     const difficulty = bot.skill === '10+' ? 2 : .4 + (bot.skill - 1) * .15;
-    const threat = difficulty * Math.min(1, bot.health / 100) * (bot.armor ? 1 : .8) * Math.min(1.15, bot.accuracy);
+    const condition = bot.armor ? (bot.armorPoints ?? 100) / 100 : 0;
+    const protection = .8 + condition * (.12 + ((bot.helmet ?? true) ? .08 : 0));
+    const threat = difficulty * Math.min(1, bot.health / 100) * protection * Math.min(1.15, bot.accuracy);
     rosterThreat += threat;
     engagedThreat += threat * Math.min(1, dealt.healthDamage / bot.health);
   }

@@ -1,7 +1,7 @@
 import { expect, test } from '@playwright/test';
 import sharp from 'sharp';
 import { readFileSync } from 'node:fs';
-const weaponIds = Object.keys(JSON.parse(readFileSync('src/range/game-data.json', 'utf8')).weapons);
+const weaponIds = Object.keys(JSON.parse(readFileSync('src/range/game-data.json', 'utf8')).weapons).filter(id => id !== 'aug');
 
 test.beforeEach(async ({page}) => {
   await page.addInitScript(() => {

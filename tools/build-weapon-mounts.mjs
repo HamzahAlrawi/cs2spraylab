@@ -4,7 +4,7 @@ import {Matrix4, Quaternion, Vector3} from 'three';
 
 const data = JSON.parse(fs.readFileSync('src/range/game-data.json'));
 const mounts = {};
-for (const id of Object.keys(data.weapons)) {
+for (const id of [...Object.keys(data.weapons), 'knife']) {
   const file = `research/raw-models/${id}-rigged.glb`, bytes = fs.readFileSync(file);
   const document = JSON.parse(bytes.subarray(20, 20 + bytes.readUInt32LE(12)));
   const index = document.nodes.findIndex(node => node.name === 'weapon');

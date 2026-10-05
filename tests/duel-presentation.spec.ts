@@ -24,13 +24,14 @@ test('duel keeps render resources bounded across rounds and presents continuous 
   });
   await page.evaluate(() => {
     const engine = (window as any).presentationEngine;
+    engine.seed = 431;
     engine.setConfig({...engine.config, botCount: 5});
-    engine.covers.visible = false;
   });
-  await page.waitForTimeout(150);
+  await page.waitForFunction(() => (window as any).presentationEngine.gestureClips.has('ak47'));
+  await canvasColors(page,'canvas[data-duel]');
   const before = await page.evaluate(() => ({...(window as any).presentationEngine.renderer.info.memory}));
   for (let round = 0; round < 8; round++) {
-    await page.evaluate(() => (window as any).presentationEngine.restart());
+    await page.evaluate(() => {const engine = (window as any).presentationEngine; engine.seed = 431; engine.restart();});
     await canvasColors(page,'canvas[data-duel]');
   }
   const after = await page.evaluate(() => {
@@ -118,7 +119,7 @@ test('native airborne crouch tucks the body and keeps the world-space head near 
     return result;
   });
   expect(Math.max(...heads) - Math.min(...heads)).toBeLessThan(.25);
-  expect(heads.every(height => height > 1.9 && height < 2.5)).toBe(true);
+  expect(heads.every(height => height > 1.9 && height < 2.5),JSON.stringify(heads)).toBe(true);
   await page.addStyleTag({content: '.duel-entry {display:none}'});
   await page.locator('canvas[data-duel]').screenshot({path: 'test-results/duel-crouch-jump.png'});
 });

@@ -1,10 +1,12 @@
-import {DEG, type Vec} from '../actor-physics';
+import {type Vec} from '../actor-physics';
 import type {Arena} from './geometry';
 import {traceSolid} from './geometry';
 import type {DuelActorSnapshot} from './types';
+import {observeShadows, pointInView, type EnemyShadowProxy, type SensorView, type ShadowCue} from './shadows';
 
 export type VisibleEnemy = {id: number; aimPoint: Vec; bodyPoint?: Vec; position: Vec};
-export type BotObservation = {time: number; self: DuelActorSnapshot; visible: VisibleEnemy | null};
+export type BotObservation = {time: number; self: DuelActorSnapshot; visible: VisibleEnemy | null;
+  shadowCues?: readonly ShadowCue[]};
 
 export const copyVisibleEnemy = (enemy: VisibleEnemy): VisibleEnemy => ({...enemy,
   position: {...enemy.position}, aimPoint: {...enemy.aimPoint},
@@ -15,10 +17,8 @@ export const copyVisibleEnemy = (enemy: VisibleEnemy): VisibleEnemy => ({...enem
 export const currentVisible = (observation: BotObservation | null, time: number) =>
   observation && time >= observation.time && time - observation.time <= .075 ? observation.visible : null;
 
-const angleDifference = (a: number, b: number) => Math.atan2(Math.sin(a - b), Math.cos(a - b));
-
 export function observeBot(time: number, self: DuelActorSnapshot, opponents: DuelActorSnapshot[], arena: Arena,
-  view?: {aspect: number; verticalFov: number}): BotObservation {
+  view?: SensorView, shadows: readonly EnemyShadowProxy[] = []): BotObservation {
   let visible: VisibleEnemy | null = null;
   let nearest = Infinity;
   for (const opponent of opponents) {
@@ -34,14 +34,7 @@ export function observeBot(time: number, self: DuelActorSnapshot, opponents: Due
       const dx = point.x - self.position.x, dy = point.y - self.position.y, dz = point.z - self.position.z;
       const distance = Math.hypot(dx, dy, dz);
       if (distance >= nearest || distance < 1e-6) continue;
-      const yaw = Math.atan2(-dx, -dz);
-      if (view) {
-        const sy = Math.sin(self.yaw), cy = Math.cos(self.yaw), sp = Math.sin(self.pitch), cp = Math.cos(self.pitch);
-        const forward = -dx * sy * cp + dy * sp - dz * cy * cp;
-        const right = dx * cy - dz * sy, up = dx * sy * sp + dy * cp + dz * cy * sp;
-        const halfHeight = forward * Math.tan(view.verticalFov / 2);
-        if (forward <= 0 || Math.abs(right) > halfHeight * view.aspect || Math.abs(up) > halfHeight) continue;
-      } else if (Math.abs(angleDifference(yaw, self.yaw)) > 60 * DEG) continue;
+      if (!pointInView(self, point, view)) continue;
       const direction = {x: dx / distance, y: dy / distance, z: dz / distance};
       if (traceSolid(self.position, direction, arena, distance - .01).distance < distance - .01) continue;
       if (!firstPoint) firstPoint = point;
@@ -52,5 +45,6 @@ export function observeBot(time: number, self: DuelActorSnapshot, opponents: Due
       visible = {id: opponent.id, aimPoint: firstPoint, bodyPoint, position: {...opponent.position}};
     }
   }
-  return {time, self, visible};
+  return shadows.length ? {time, self, visible, shadowCues: observeShadows(time, self, shadows, arena, view)}
+    : {time, self, visible};
 }

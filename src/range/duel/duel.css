@@ -1,8 +1,11 @@
 .range-stage.duel-stage{background:#697d76}
 .duel-layout{display:flex;width:100%;height:100%;min-height:0}
+.duel-radar{position:absolute;left:20px;top:62px;width:144px;height:144px;pointer-events:none;opacity:.9;z-index:1}
+@media(max-height:550px),(max-width:600px){.duel-radar{left:12px;top:51px;width:98px;height:98px}}
 .duel-view{position:relative;flex:1;min-width:0;min-height:0;overflow:hidden;isolation:isolate}
 .duel-canvas{position:absolute;inset:0;touch-action:none}
-.duel-canvas canvas{display:block;width:100%;height:100%;touch-action:none;outline:none}
+.duel-canvas canvas[data-duel]{display:block;width:100%;height:100%;touch-action:none;outline:none}
+.duel-canvas canvas.duel-radar[hidden]{display:none}
 .duel-topline{position:absolute;top:18px;left:20px;right:20px;display:flex;align-items:start;justify-content:space-between;pointer-events:none;color:#f3f4df;font-size:10px;text-shadow:0 1px 5px #26332e}
 .duel-topline>span:last-child{padding:10px 12px;background:#263930b3;border-left:2px solid #d3a481}
 .duel-caption{position:absolute;left:50%;top:calc(50% + 44px);transform:translateX(-50%);font-size:17px;font-weight:700;color:#f3d873;text-shadow:0 2px 7px #17251e;pointer-events:none;white-space:nowrap}
@@ -75,5 +78,7 @@
 .duel-sources{font-size:11px;line-height:1.5;margin-top:14px;color:#b8c5be}.duel-sources summary{cursor:pointer}.duel-sources p{margin:8px 0}.duel-sources a{display:block;color:#a2ead5;text-decoration:underline;margin-top:5px}
 .duel-tools{position:absolute;right:20px;top:60px;max-width:calc(100% - 40px);display:flex;flex-direction:column;align-items:flex-end;gap:6px;pointer-events:none}
 .duel-tools button{pointer-events:auto}
+.duel-view:has(.performance-meter:not([hidden])) .duel-hud{bottom:34px}
 .duel-tools>.equipment-slots,.duel-tools>.duel-exit,.duel-tools>.duel-shortcut-warning{position:static}
 @media(max-height:550px) and (orientation:landscape){.duel-tools{left:20px;display:grid;grid-template-columns:1fr auto;align-items:start}.duel-tools>.equipment-slots{grid-column:2;grid-row:1}.duel-tools>.duel-exit{grid-column:1;grid-row:1;justify-self:start}.duel-tools>.duel-shortcut-warning{grid-column:1;grid-row:2;justify-self:start}}
+@media(max-width:700px) and (orientation:portrait){.range-app:has(.settings-hint) .duel-view{min-height:0}.range-app:has(.settings-hint) .duel-controls{height:min(300px,40%)}}

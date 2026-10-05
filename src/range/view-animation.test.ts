@@ -18,6 +18,24 @@ function viewFixture(names = ['idle', 'reload', 'reload-empty', 'draw', 'inspect
 }
 
 describe('native first-person action runtime', () => {
+  it('samples authored intro/shell/outro ranges and loops inserts without idle dips', () => {
+    const root = new THREE.Group(), hand = new THREE.Object3D(); hand.name = 'hand'; root.add(hand);
+    const animation = new ViewAnimation(root, [
+      new THREE.AnimationClip('idle', 0, [new THREE.NumberKeyframeTrack('hand.position[x]', [0], [0])]),
+      new THREE.AnimationClip('reload', 2, [new THREE.NumberKeyframeTrack('hand.position[x]', [0, 2], [0, 2])]),
+    ]);
+    animation.update(.5, 1, 0, {equipment: 'nova', reloadPhase: 'start', reloadProgress: .5});
+    expect(hand.position.x).toBeCloseTo(11 / 60);
+    for (let shell = 0; shell < 4; shell++) {
+      animation.update(.5, 1, 0, {equipment: 'nova', reloadPhase: 'shell', reloadProgress: .5});
+      expect(hand.position.x).toBeCloseTo(11 / 30 + 13 / 60);
+      animation.update(1, 1, 0, {equipment: 'nova', reloadPhase: 'shell', reloadProgress: 0});
+      expect(hand.position.x).toBeCloseTo(11 / 30);
+    }
+    animation.update(.5, 1, 0, {equipment: 'nova', reloadPhase: 'finish', reloadProgress: .5});
+    expect(hand.position.x).toBeCloseTo(24 / 30 + 25 / 60);
+    animation.update(0, 1, 0, {reloadPhase: 'idle'}); expect(hand.position.x).toBe(0); animation.dispose();
+  });
   it('restarts high-RPM native fire with one mixer evaluation and no intermediate idle', () => {
     const {animation, hand, weapon} = viewFixture(['idle','fire','inspect']);
     const update = vi.spyOn(THREE.AnimationMixer.prototype, 'update');
@@ -190,10 +208,11 @@ describe('reload and lesson continuity', () => {
   });
   it('blocks range fire during reload and cancels reload when changing slots', () => {
     const sim = new Simulation({...defaults, mode: 'spray'}); sim.active = true;
+    sim.ammoFor(defaults.weapon).ammo--;
     expect(sim.reload()).toBe(true); expect(sim.start()).toBe(false);
     for (let n = 0; n < 400; n++) sim.step(STEP);
     expect(sim.primaryReloadAt).toBe(0); expect(sim.start()).toBe(true);
-    sim.reload(); sim.equip(2); expect(sim.primaryReloadAt).toBe(0);
+    expect(sim.reload()).toBe(true); sim.equip(2); expect(sim.primaryReloadAt).toBe(0);
   });
   it('keeps tutorial braking identical to the range instead of freezing at the accuracy threshold', () => {
     const lesson = new MovementLesson(0); let speed = 0;

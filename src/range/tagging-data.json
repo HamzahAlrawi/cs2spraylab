@@ -1,5 +1,5 @@
 {
-  "build": "2000922",
+  "build": "2000924",
   "source": "scripts/weapons.vdata_c",
   "sha256": "3289d4dba65b1ef3f884c389448c8a6c6db8691442c18a7aaddb28434aaf250d",
   "weapons": {
@@ -152,6 +152,31 @@
       "large": 0.35,
       "small": 0.4,
       "speed": 215
+    },
+    "nova": {
+      "large": 0.4,
+      "small": 0.45,
+      "speed": 220
+    },
+    "xm1014": {
+      "large": 0.4,
+      "small": 0.45,
+      "speed": 215
+    },
+    "mag7": {
+      "large": 0.4,
+      "small": 0.45,
+      "speed": 225
+    },
+    "sawedoff": {
+      "large": 0.4,
+      "small": 0.45,
+      "speed": 210
+    },
+    "zeus": {
+      "large": 0.5,
+      "small": 0.65,
+      "speed": 230
     },
     "knife": {
       "large": 0.3,

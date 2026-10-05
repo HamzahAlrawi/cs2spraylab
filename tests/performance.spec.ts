@@ -25,15 +25,18 @@ test('guided Deagle survives repeated taps, reloads and weapon switching', async
   await expect(page.getByRole('button',{name:'Pause range',exact:true})).toBeVisible();
   if (!mobile) await expect(page.locator('.range-shortcut-warning')).toContainText('C to crouch');
   for (let i = 0; i < 5; i++) {
+    // Native readiness uses simulation time, not wall time on a loaded CI GPU.
+    await page.waitForFunction(() => {const s = (window as any).performanceEngine.sim;
+      return s.time >= Math.max(s.equipReadyAt,s.actions.readyAt,s.shotReady.get(s.equipped) ?? 0);});
     if (mobile) await canvas.tap(); else {await page.mouse.down(); await page.mouse.up();}
     await page.waitForTimeout(260);
   }
-  await expect(page.getByTestId('ammo')).toHaveText('2/ 7');
+  await expect(page.getByTestId('ammo')).toHaveText('2/ 21');
   const recoil = await page.evaluate(() => (window as any).performanceEngine.sim.recoil.pitch);
   expect(recoil).toBeGreaterThan(0);
   if (mobile) await page.getByRole('button',{name:'Reload',exact:true}).click(); else await page.keyboard.press('r');
   await expect(page.locator('.hud-ammo')).toContainText('Reloading');
-  await expect(page.getByTestId('ammo')).toHaveText('7/ 7',{timeout:10000});
+  await expect(page.getByTestId('ammo')).toHaveText('7/ 16',{timeout:10000});
   for (let i = 0; i < 10; i++) {
     if (mobile) await canvas.tap(); else {await page.mouse.down(); await page.mouse.up();}
     await page.waitForTimeout(40);
@@ -84,6 +87,80 @@ test('performance preset and opt-in FPS work in both engines and persist', async
   await page.getByLabel('Show FPS counter').uncheck();
   await page.getByRole('button',{name:'Done',exact:true}).click();
   await expect(page.getByLabel('Performance monitor')).toBeHidden();
+});
+
+test('toolbar FPS toggle stays synchronized with settings and mode changes', async ({page},info) => {
+  test.skip(!['chromium','mobile-chromium'].includes(info.project.name));
+  await page.goto('/');
+  const toggle = page.getByRole('button',{name:'Toggle FPS counter',exact:true});
+  await expect(page.getByRole('button',{name:'Customize your CS2 settings',exact:true})).toBeVisible();
+  const hint = (await page.locator('.settings-hint').boundingBox())!;
+  const toolbar = (await page.getByRole('region',{name:'Range configuration',exact:true}).boundingBox())!;
+  expect(hint.y+hint.height).toBeLessThanOrEqual(toolbar.y);
+  const stage = (await page.getByRole('region',{name:'Practice range',exact:true}).boundingBox())!;
+  const controls = (await page.getByRole('complementary',{name:'Duel settings',exact:true}).boundingBox())!;
+  expect(controls.y+controls.height).toBeLessThanOrEqual(stage.y+stage.height+.5);
+  await expect(toggle).toHaveAttribute('aria-pressed','false');
+  await expect(toggle).toHaveAttribute('title','Show FPS counter');
+  await expect(page.getByLabel('Performance monitor')).toBeHidden();
+  await toggle.click();
+  await expect(toggle).toHaveAttribute('aria-pressed','true');
+  await expect(page.getByLabel('Performance monitor')).toBeVisible();
+  await page.getByRole('button',{name:'Settings',exact:true}).click();
+  await expect(page.getByLabel('Show FPS counter')).toBeChecked();
+  await page.getByLabel('Show FPS counter').uncheck();
+  await page.getByRole('button',{name:'Done',exact:true}).click();
+  await expect(toggle).toHaveAttribute('aria-pressed','false');
+  await expect(page.getByLabel('Performance monitor')).toBeHidden();
+  await toggle.click();
+  await page.getByLabel('Training mode').selectOption('guided');
+  await expect(page.getByLabel('Performance monitor')).toBeVisible();
+  await expect(toggle).toHaveAttribute('aria-pressed','true');
+  await page.reload();
+  await expect(toggle).toHaveAttribute('aria-pressed','true');
+  await expect(page.getByLabel('Performance monitor')).toBeVisible();
+  const meter = (await page.getByLabel('Performance monitor').boundingBox())!;
+  const viewport = page.viewportSize()!;
+  expect(meter.x).toBeGreaterThanOrEqual(0);
+  expect(meter.x+meter.width).toBeLessThanOrEqual(viewport.width);
+  expect(meter.height).toBeGreaterThanOrEqual(20);
+  await page.getByLabel('Training mode').selectOption('duel');
+  await expect(toggle).toHaveAttribute('aria-pressed','true');
+  await expect(page.getByLabel('Performance monitor')).toBeVisible();
+  await toggle.click();
+  await expect(page.getByLabel('Performance monitor')).toBeHidden();
+});
+
+test('memoized Duel setup keeps weapons, overrides and radar controls editable', async ({page},info) => {
+  test.skip(!['chromium','mobile-chromium'].includes(info.project.name));
+  await page.goto('/');
+  await page.getByLabel('Bot skill level',{exact:true}).selectOption('5');
+  await page.getByLabel('Player health',{exact:true}).fill('175');
+  await page.getByLabel('Add bot weapon',{exact:true}).selectOption('mag7');
+  await page.getByRole('tab',{name:'Scorecard',exact:true}).click();
+  await page.getByRole('tab',{name:'Setup',exact:true}).click();
+  await expect(page.getByLabel('Add bot weapon',{exact:true})).toHaveValue('mag7');
+  await page.getByRole('button',{name:'Add weapon to bot pool',exact:true}).click();
+  await page.locator('.duel-roster summary').first().click();
+  await page.getByLabel('Customize bot 1',{exact:true}).check();
+  await page.getByLabel('Bot 1 skill',{exact:true}).selectOption('8');
+  await page.getByLabel('Bot 1 weapon',{exact:true}).selectOption('usp');
+  await page.getByLabel('Bot 1 behavior',{exact:true}).selectOption('patient');
+  await page.getByLabel('Bot 1 armor points',{exact:true}).fill('50');
+  await page.locator('.duel-bot-details > summary').filter({hasText:/^Radar$/}).click();
+  await page.getByLabel('Rotate radar',{exact:true}).uncheck();
+  await expect.poll(() => page.evaluate(() => {
+    const config = JSON.parse(localStorage.getItem('spraylab.duel.v1')!);
+    return {skill:config.skill,playerHealth:config.playerHealth,rotate:config.radarRotate,
+      hasMag7:config.weapons.includes('mag7'),bot:config.overrides[0]};
+  })).toMatchObject({skill:5,playerHealth:175,rotate:false,hasMag7:true,
+    bot:{skill:8,weapon:'usp',behavior:'patient',armorPoints:50}});
+  await page.reload();
+  await expect(page.getByLabel('Bot skill level',{exact:true})).toHaveValue('5');
+  await expect(page.getByLabel('Player health',{exact:true})).toHaveValue('175');
+  await page.locator('.duel-roster summary').first().click();
+  await expect(page.getByLabel('Bot 1 weapon',{exact:true})).toHaveValue('usp');
+  await expect(page.getByLabel('Bot 1 skill',{exact:true})).toHaveValue('8');
 });
 
 test('range reserves Ctrl+W when supported and releases protection on pause', async ({page},info) => {

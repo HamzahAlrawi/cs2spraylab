@@ -43,8 +43,22 @@ describe('instant-shot cosmetic effects', () => {
     expect(flashes.sprites[0].position.toArray()).toEqual(anchor.position.toArray());
     flashes.update(.2); expect(flashes.sprites[0].visible).toBe(false);
     flashes.fire(anchor, 'knife', .3); expect(flashes.sprites.every(s => !s.visible)).toBe(true);
+    flashes.fire(anchor, 'zeus', .3); expect(flashes.sprites.every(s => !s.visible)).toBe(true);
     flashes.fire(anchor, 'usp', .4); expect(flashes.sprites[1].scale.x).toBeLessThan(.04);
     flashes.clear(); expect(flashes.sprites.every(s => !s.visible)).toBe(true);
     flashes.dispose(); expect(dispose).toHaveBeenCalledOnce();
+  });
+  it('renders Zeus as two pooled electrical wires, not a firearm flame or bullet tracer',()=>{
+    const fx=new ShotEffects(new Group(),4,4),from=new Vector3(1,1,1),to=new Vector3(1,1,-2);
+    const geometry=fx.discharges.wires.geometry,positions=geometry.getAttribute('position').array;
+    expect(fx.trace('zeus',0,from,to,0,new Color())).toBe(true);
+    expect(fx.tracers.visible).toBe(false);expect(fx.discharges.wires.visible).toBe(true);
+    expect(Array.from(positions).slice(0,3)).toEqual(from.toArray());
+    expect(Array.from(positions).slice(69,72)).toEqual(to.toArray());
+    from.set(9,9,9);fx.update(.2);expect(fx.discharges.wires.visible).toBe(true);
+    fx.update(.3);expect(fx.discharges.wires.visible).toBe(false);
+    for(let shot=1;shot<100;shot++)fx.trace('zeus',shot,from,to,shot/60,new Color());
+    expect(fx.discharges.wires.geometry).toBe(geometry);expect(geometry.getAttribute('position').array).toBe(positions);
+    fx.dispose();
   });
 });

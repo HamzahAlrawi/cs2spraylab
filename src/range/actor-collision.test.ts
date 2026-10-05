@@ -1,6 +1,7 @@
 import {describe, expect, it} from 'vitest';
 import {advanceActor, GRAVITY, idleInput, JUMP_SPEED, STEP, UNIT, type ActorKinematics} from './actor-physics';
 import {fitsHull, verticalContact} from './actor-collision';
+import {jumpLandingFactor} from './actor-jump';
 
 const actor = (): ActorKinematics => ({position: {x: 0, y: 64 * UNIT, z: 0}, velocity: {x: 0, z: 0},
   yaw: 0, feet: 0, verticalVelocity: 0, eyeHeight: 64 * UNIT, jumpHeld: false});
@@ -37,7 +38,8 @@ describe('shared vertical movement', () => {
     expect(a.position.y).toBeCloseTo(1 + 64 * UNIT);
     const jumping = advanceActor(a, {...idleInput(), jump: true}, 250 * UNIT, STEP, undefined, undefined, contact);
     expect(jumping.grounded).toBe(false);
-    expect(jumping.verticalVelocity).toBeCloseTo(JUMP_SPEED - GRAVITY * STEP);
+    expect(jumping.verticalVelocity).toBeCloseTo(JUMP_SPEED * jumpLandingFactor(a.landingVelocity ?? 0,
+      (a.movementTime ?? 0) - (a.landedAt ?? 0)) - GRAVITY * STEP);
   });
 
   it('falls when walking off a prop, even if the previous tick was grounded', () => {

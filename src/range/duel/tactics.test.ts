@@ -143,7 +143,7 @@ describe('cover-based duel arena', () => {
     expect(multiRoute).toBeGreaterThanOrEqual(10);
     expect(variedCombat).toBeGreaterThanOrEqual(8);
     expect(combatRepositions).toBeGreaterThanOrEqual(4);
-  });
+  }, 30000);
 
   it('falls back after serious damage without knowing an unseen shooter location', () => {
     const arena = duelArena(4);

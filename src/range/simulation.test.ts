@@ -69,7 +69,7 @@ describe('Shot scheduling and independent drills', () => {
     times.forEach((t, i) => expect(Math.abs(t - windup - i * gameData.weapons[id].cycle)).toBeLessThanOrEqual(STEP + 1e-9));
     expect(s.latest?.shots).toBe(times.length);
   });
-  it.each(weaponIds.filter(id => !gameData.weapons[id].fullAuto))('%s fires once per press and queues an early second press until the native cycle', id => {
+  it.each(weaponIds.filter(id => id !== 'zeus' && !gameData.weapons[id].fullAuto))('%s fires once per press and queues an early second press until the native cycle', id => {
     const s = make({weapon: id}), times: number[] = [], cycle = gameData.weapons[id].cycle;
     s.onShot = shot => times.push(shot.at);
     s.start(true);

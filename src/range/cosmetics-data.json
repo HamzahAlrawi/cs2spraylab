@@ -1,5 +1,5 @@
 {
-  "build": "2000922",
+  "build": "2000924",
   "itemsSha256": "1edea31ef2af0a46d1b38b4e4a6337de534bb61629f4b527137617ef03879fed",
   "cosmetics": [
     {
@@ -45266,8 +45266,1651 @@
       "imageSource": "panorama/images/econ/weapons/base_weapons/weapon_knife_t_png.vtex_c",
       "imageSourceSha256": "a504cf92bdd3c5480d23b468115e293d7485f514610ccdd6dc9cd9145bc0a192",
       "imageSha256": "4f8c7c105742b3287a620a1e4459ce61d6ca5cfc22ff9d9f0c8f17c818f51fb2"
+    },
+    {
+      "id": "nova-nova_morning_sun",
+      "equipment": "nova",
+      "category": "weapon",
+      "label": "Morning Sun",
+      "unlockLevel": 2,
+      "price": 350,
+      "imageUrl": "/textures/cosmetics/nova-nova_morning_sun-preview.webp",
+      "assetKey": "nova",
+      "map": "/textures/cosmetics/kit-1474-albedo.webp",
+      "colors": [
+        [
+          1,
+          1,
+          1
+        ],
+        [
+          1,
+          1,
+          1
+        ],
+        [
+          0.9803921568627451,
+          0.6980392156862745,
+          0.6470588235294118
+        ],
+        [
+          0.3333333333333333,
+          0.33725490196078434,
+          0.3411764705882353
+        ]
+      ],
+      "patternScale": 1,
+      "style": 9,
+      "legacy": false,
+      "kitId": "1474",
+      "source": "weapons/paints/set_arabesque/nova_morning_sun.vcompmat",
+      "texture": "items/assets/paintkits/set_arabesque/nova_morning_sun_albedo_texture_tga_2a9a5401.vtex",
+      "sourceSha256": "6eedbd5e11b6cd873f7931d07dfa1c2cf4017b289aec9884df0458d75e1a8875",
+      "rendering": "native albedo, matching native mesh UVs; simplified factory-new PBR"
+    },
+    {
+      "id": "nova-nova_smart",
+      "equipment": "nova",
+      "category": "weapon",
+      "label": "Smart Gun",
+      "unlockLevel": 4,
+      "price": 700,
+      "imageUrl": "/textures/cosmetics/nova-nova_smart-preview.webp",
+      "assetKey": "nova",
+      "map": "/textures/cosmetics/kit-1442-albedo.webp",
+      "colors": [
+        [
+          1,
+          1,
+          1
+        ],
+        [
+          1,
+          1,
+          1
+        ],
+        [
+          0.3803921568627451,
+          0.807843137254902,
+          0.9176470588235294
+        ],
+        [
+          0.8274509803921568,
+          0.5450980392156862,
+          0.7294117647058823
+        ]
+      ],
+      "patternScale": 1,
+      "style": 9,
+      "legacy": false,
+      "kitId": "1442",
+      "source": "weapons/paints/set_spy_tech/nova_smart.vcompmat",
+      "texture": "items/assets/paintkits/set_spy_tech/nova_smart_albedo_texture_tga_89615cbd.vtex",
+      "sourceSha256": "99910b646a46bb411b5b37b297f25e0713f812b9f123debfcc7f675f7a2bcabb",
+      "rendering": "native albedo, matching native mesh UVs; simplified factory-new PBR"
+    },
+    {
+      "id": "nova-nova_ocular",
+      "equipment": "nova",
+      "category": "weapon",
+      "label": "Ocular",
+      "unlockLevel": 7,
+      "price": 1200,
+      "imageUrl": "/textures/cosmetics/nova-nova_ocular-preview.webp",
+      "assetKey": "nova",
+      "map": "/textures/cosmetics/kit-1350-albedo.webp",
+      "colors": [
+        [
+          0.37254901960784315,
+          0.37254901960784315,
+          0.37254901960784315
+        ],
+        [
+          0.8823529411764706,
+          0.8823529411764706,
+          0.8823529411764706
+        ],
+        [
+          0.8470588235294118,
+          0.5725490196078431,
+          0.39215686274509803
+        ],
+        [
+          0.6784313725490196,
+          0.5725490196078431,
+          0.19607843137254902
+        ]
+      ],
+      "patternScale": 1,
+      "style": 9,
+      "legacy": false,
+      "kitId": "1350",
+      "source": "weapons/paints/community/community_36/nova_ocular.vcompmat",
+      "texture": "items/assets/paintkits/community/community_36/nova_ocular_albedo_texture_adjusted_psd_476c7c26.vtex",
+      "sourceSha256": "f2c7c891a278673d432bf91a76e3eb657059e4b5c8943fd001ab7c158359f3a6",
+      "rendering": "native albedo, matching native mesh UVs; simplified factory-new PBR"
+    },
+    {
+      "id": "nova-nova_rising_sun",
+      "equipment": "nova",
+      "category": "weapon",
+      "label": "Rising Sun",
+      "unlockLevel": 12,
+      "price": 1900,
+      "imageUrl": "/textures/cosmetics/nova-nova_rising_sun-preview.webp",
+      "assetKey": "nova",
+      "map": "/textures/cosmetics/kit-1192-albedo.webp",
+      "colors": [
+        [
+          0.9254901960784314,
+          0.9254901960784314,
+          0.9254901960784314
+        ],
+        [
+          0.9254901960784314,
+          0.9254901960784314,
+          0.9254901960784314
+        ],
+        [
+          0.5529411764705883,
+          0.5529411764705883,
+          0.5529411764705883
+        ],
+        [
+          0.5843137254901961,
+          0.6549019607843137,
+          0.7176470588235294
+        ]
+      ],
+      "patternScale": 1,
+      "style": 9,
+      "legacy": false,
+      "kitId": "1192",
+      "source": "weapons/paints/community/community_35/nova_rising_sun.vcompmat",
+      "texture": "items/assets/paintkits/community/community_35/nova_rising_sun_albedo_texture_tga_66b5c8e8.vtex",
+      "sourceSha256": "4414756868633eaf3979a9916bf174e5288e3ff968758441f234883d45403dbd",
+      "rendering": "native albedo, matching native mesh UVs; simplified factory-new PBR"
+    },
+    {
+      "id": "nova-nova_drakkar",
+      "equipment": "nova",
+      "category": "weapon",
+      "label": "Dark Sigil",
+      "unlockLevel": 18,
+      "price": 2800,
+      "imageUrl": "/textures/cosmetics/nova-nova_drakkar-preview.webp",
+      "assetKey": "nova",
+      "map": "/textures/cosmetics/kit-1162-albedo.webp",
+      "colors": [],
+      "patternScale": 1,
+      "style": 7,
+      "legacy": false,
+      "kitId": "1162",
+      "source": "weapons/paints/community/community_33/nova_drakkar.vcompmat",
+      "texture": "items/assets/paintkits/community/community_33/nova_drakkar_albedo_texture_tga_a14bf32e.vtex",
+      "sourceSha256": "c1748c3eb6d27863e7a097e6941c2065a1c01be13521b7506717eab20f4df818",
+      "rendering": "native albedo, matching native mesh UVs; simplified factory-new PBR"
+    },
+    {
+      "id": "nova-gs_ripple_nova",
+      "equipment": "nova",
+      "category": "weapon",
+      "label": "Yorkshire",
+      "unlockLevel": 26,
+      "price": 4000,
+      "imageUrl": "/textures/cosmetics/nova-gs_ripple_nova-preview.webp",
+      "assetKey": "nova",
+      "map": "/textures/cosmetics/kit-324-albedo.webp",
+      "colors": [
+        [
+          0.7764705882352941,
+          0.7764705882352941,
+          0.7764705882352941
+        ],
+        [
+          0.8549019607843137,
+          0.8549019607843137,
+          0.8549019607843137
+        ],
+        [
+          0.792156862745098,
+          0.8235294117647058,
+          0.7490196078431373
+        ],
+        [
+          0,
+          0,
+          0
+        ]
+      ],
+      "patternScale": 1,
+      "style": 9,
+      "legacy": false,
+      "kitId": "324",
+      "source": "weapons/paints/set_realism_camo/gs_ripple_nova.vcompmat",
+      "texture": "items/assets/paintkits/set_realism_camo/gs_ripple_nova_albedo_texture_psd_f9260807.vtex",
+      "sourceSha256": "7f0bf8265bb2c49fc4b423801f7e301fce69268bcc79844ee840c5276d954efc",
+      "rendering": "native albedo, matching native mesh UVs; simplified factory-new PBR"
+    },
+    {
+      "id": "nova-cu_overpass_wurst_nova",
+      "equipment": "nova",
+      "category": "weapon",
+      "label": "Wurst Hölle",
+      "unlockLevel": 38,
+      "price": 5500,
+      "imageUrl": "/textures/cosmetics/nova-cu_overpass_wurst_nova-preview.webp",
+      "assetKey": "nova",
+      "map": "/textures/cosmetics/kit-145-albedo.webp",
+      "colors": [],
+      "patternScale": 1,
+      "style": 7,
+      "legacy": false,
+      "kitId": "145",
+      "source": "weapons/paints/set_overpass_2024/cu_overpass_wurst_nova.vcompmat",
+      "texture": "items/assets/paintkits/set_overpass_2024/cu_overpass_wurst_nova_albedo_texture_psd_807b31b7.vtex",
+      "sourceSha256": "a9f5544df307931342fa2801279fd8ed0ecaafbabf2616c4729bd4373a625291",
+      "rendering": "native albedo, matching native mesh UVs; simplified factory-new PBR"
+    },
+    {
+      "id": "nova-hye_geobirds",
+      "equipment": "nova",
+      "category": "weapon",
+      "label": "Currents",
+      "unlockLevel": 52,
+      "price": 7500,
+      "imageUrl": "/textures/cosmetics/nova-hye_geobirds-preview.webp",
+      "assetKey": "nova",
+      "map": "/textures/cosmetics/kit-1368-albedo.webp",
+      "colors": [
+        [
+          0.3058823529411765,
+          0.3058823529411765,
+          0.3058823529411765
+        ],
+        [
+          0.5725490196078431,
+          0.5764705882352941,
+          0.5411764705882353
+        ],
+        [
+          0.8431372549019608,
+          0.8470588235294118,
+          0.803921568627451
+        ],
+        [
+          0.34901960784313724,
+          0.34901960784313724,
+          0.34901960784313724
+        ]
+      ],
+      "patternScale": 4,
+      "style": 2,
+      "legacy": false,
+      "kitId": "1368",
+      "source": "weapons/paints/timed_drops/hye_geobirds.vcompmat",
+      "texture": "items/assets/paintkits/timed_drops/geobirds_psd_dbed77b.vtex",
+      "sourceSha256": "3c8376f521d19bf86f473682bbe9a6820356c7a25bc68b9953ed058ec5c96b18",
+      "rendering": "native pattern/palette; approximate procedural finish, fixed seed"
+    },
+    {
+      "id": "nova-train_shapes_01",
+      "equipment": "nova",
+      "category": "weapon",
+      "label": "Rain Station",
+      "unlockLevel": 70,
+      "price": 10000,
+      "imageUrl": "/textures/cosmetics/nova-train_shapes_01-preview.webp",
+      "assetKey": "nova",
+      "map": "/textures/cosmetics/kit-1337-albedo.webp",
+      "colors": [
+        [
+          0.3411764705882353,
+          0.3607843137254902,
+          0.37254901960784315
+        ],
+        [
+          0.5725490196078431,
+          0.6862745098039216,
+          0.7019607843137254
+        ],
+        [
+          0.4196078431372549,
+          0.4235294117647059,
+          0.4745098039215686
+        ],
+        [
+          0.4392156862745098,
+          0.5254901960784314,
+          0.6392156862745098
+        ]
+      ],
+      "patternScale": 0.47,
+      "style": 3,
+      "legacy": false,
+      "kitId": "1337",
+      "source": "weapons/paints/set_train_2025/train_shapes_01.vcompmat",
+      "texture": "items/assets/paintkits/set_train_2025/train_shapes_01_tga_293af9a4.vtex",
+      "sourceSha256": "f890f7ad76ead04c5a83645a0e8a0e514566339547cf607fb1a6647f860ced44",
+      "rendering": "native pattern/palette; approximate procedural finish, fixed seed"
+    },
+    {
+      "id": "nova-soo_grass_photo_camo",
+      "equipment": "nova",
+      "category": "weapon",
+      "label": "Marsh Grass",
+      "unlockLevel": 90,
+      "price": 13000,
+      "imageUrl": "/textures/cosmetics/nova-soo_grass_photo_camo-preview.webp",
+      "assetKey": "nova",
+      "map": null,
+      "colors": [
+        [
+          0.20392156862745098,
+          0.20392156862745098,
+          0.20392156862745098
+        ],
+        [
+          0.6588235294117647,
+          0.5725490196078431,
+          0.43529411764705883
+        ],
+        [
+          0.2235294117647059,
+          0.21176470588235294,
+          0.17254901960784313
+        ],
+        [
+          0.6588235294117647,
+          0.5725490196078431,
+          0.43529411764705883
+        ]
+      ],
+      "patternScale": 1.35,
+      "style": 2,
+      "legacy": false,
+      "kitId": "1331",
+      "source": "weapons/paints/timed_drops/soo_grass_photo_camo.vcompmat",
+      "texture": null,
+      "sourceSha256": "556cf0274d6388f5a090d5c889d9df667e4ac3dd09018238953b83fb196ce18a",
+      "rendering": "native pattern/palette; approximate procedural finish, fixed seed"
+    },
+    {
+      "id": "xm1014-xm1014_black_site",
+      "equipment": "xm1014",
+      "category": "weapon",
+      "label": "Black Site",
+      "unlockLevel": 2,
+      "price": 350,
+      "imageUrl": "/textures/cosmetics/xm1014-xm1014_black_site-preview.webp",
+      "assetKey": "xm1014",
+      "map": "/textures/cosmetics/kit-1471-albedo.webp",
+      "colors": [
+        [
+          0.596078431372549,
+          0.4745098039215686,
+          0.40784313725490196
+        ],
+        [
+          1,
+          1,
+          1
+        ],
+        [
+          0.6588235294117647,
+          0.7019607843137254,
+          0.6745098039215687
+        ],
+        [
+          0.5450980392156862,
+          0.5058823529411764,
+          0.4235294117647059
+        ]
+      ],
+      "patternScale": 1,
+      "style": 9,
+      "legacy": false,
+      "kitId": "1471",
+      "source": "weapons/paints/set_spy_tech/xm1014_black_site.vcompmat",
+      "texture": "items/assets/paintkits/set_spy_tech/xm1014_black_site_albedo_texture_psd_bdef7d39.vtex",
+      "sourceSha256": "0ae8ebc5520dd4267d26576b2e320479bfe854fda38122bfbd40a0ba73c2cc7f",
+      "rendering": "native albedo, matching native mesh UVs; simplified factory-new PBR"
+    },
+    {
+      "id": "xm1014-xm1014_freight",
+      "equipment": "xm1014",
+      "category": "weapon",
+      "label": "Run Run Run",
+      "unlockLevel": 4,
+      "price": 700,
+      "imageUrl": "/textures/cosmetics/xm1014-xm1014_freight-preview.webp",
+      "assetKey": "xm1014",
+      "map": "/textures/cosmetics/kit-1201-albedo.webp",
+      "colors": [
+        [
+          1,
+          1,
+          1
+        ],
+        [
+          0.8823529411764706,
+          0.8823529411764706,
+          0.8823529411764706
+        ],
+        [
+          1,
+          0.6784313725490196,
+          0.49411764705882355
+        ],
+        [
+          1,
+          0.8549019607843137,
+          0.42745098039215684
+        ]
+      ],
+      "patternScale": 1,
+      "style": 9,
+      "legacy": false,
+      "kitId": "1201",
+      "source": "weapons/paints/set_train_2025/xm1014_freight.vcompmat",
+      "texture": "items/assets/paintkits/set_train_2025/xm1014_freight_albedo_texture_tga_bfc00009.vtex",
+      "sourceSha256": "323773b8891f20256272d842558d661fa156cbaa7044c0e8f4fd05c52148b889",
+      "rendering": "native albedo, matching native mesh UVs; simplified factory-new PBR"
+    },
+    {
+      "id": "xm1014-xm1014_mockingbird",
+      "equipment": "xm1014",
+      "category": "weapon",
+      "label": "Mockingbird",
+      "unlockLevel": 7,
+      "price": 1200,
+      "imageUrl": "/textures/cosmetics/xm1014-xm1014_mockingbird-preview.webp",
+      "assetKey": "xm1014",
+      "map": "/textures/cosmetics/kit-1182-albedo.webp",
+      "colors": [
+        [
+          0.8666666666666667,
+          0.8666666666666667,
+          0.8666666666666667
+        ],
+        [
+          0.8588235294117647,
+          0.8588235294117647,
+          0.8588235294117647
+        ],
+        [
+          0.7176470588235294,
+          0.6745098039215687,
+          0.6470588235294118
+        ],
+        [
+          0.5607843137254902,
+          0.5254901960784314,
+          0.41568627450980394
+        ]
+      ],
+      "patternScale": 1,
+      "style": 9,
+      "legacy": false,
+      "kitId": "1182",
+      "source": "weapons/paints/community/community_35/xm1014_mockingbird.vcompmat",
+      "texture": "items/assets/paintkits/community/community_35/xm1014_mockingbird_albedo_texture_psd_cfca4ba9.vtex",
+      "sourceSha256": "277e6fcfe6c7152fd524469b233fcc22aef8d4ebe488d2e79d507a7e9965f772",
+      "rendering": "native albedo, matching native mesh UVs; simplified factory-new PBR"
+    },
+    {
+      "id": "xm1014-xm1014_irezumi",
+      "equipment": "xm1014",
+      "category": "weapon",
+      "label": "Irezumi",
+      "unlockLevel": 12,
+      "price": 1900,
+      "imageUrl": "/textures/cosmetics/xm1014-xm1014_irezumi-preview.webp",
+      "assetKey": "xm1014",
+      "map": "/textures/cosmetics/kit-1174-albedo.webp",
+      "colors": [
+        [
+          0.7137254901960784,
+          0.7215686274509804,
+          0.5333333333333333
+        ],
+        [
+          1,
+          1,
+          1
+        ],
+        [
+          0.6941176470588235,
+          0.5725490196078431,
+          0.4470588235294118
+        ],
+        [
+          0.28627450980392155,
+          0.16470588235294117,
+          0.058823529411764705
+        ]
+      ],
+      "patternScale": 1,
+      "style": 9,
+      "legacy": false,
+      "kitId": "1174",
+      "source": "weapons/paints/community/community_33/xm1014_irezumi.vcompmat",
+      "texture": "items/assets/paintkits/community/community_33/xm1014_irezumi_albedo_texture_tga_7f067488.vtex",
+      "sourceSha256": "55d8546b77594c3eaf0d5d74c6be06688d587e4c6f7e0731ee18412389992170",
+      "rendering": "native albedo, matching native mesh UVs; simplified factory-new PBR"
+    },
+    {
+      "id": "xm1014-cu_overpass_monsters_xm",
+      "equipment": "xm1014",
+      "category": "weapon",
+      "label": "Monster Melt",
+      "unlockLevel": 18,
+      "price": 2800,
+      "imageUrl": "/textures/cosmetics/xm1014-cu_overpass_monsters_xm-preview.webp",
+      "assetKey": "xm1014",
+      "map": "/textures/cosmetics/kit-146-albedo.webp",
+      "colors": [],
+      "patternScale": 1,
+      "style": 7,
+      "legacy": false,
+      "kitId": "146",
+      "source": "weapons/paints/set_overpass_2024/cu_overpass_monsters_xm.vcompmat",
+      "texture": "items/assets/paintkits/set_overpass_2024/cu_overpass_monsters_xm_albedo_texture_psd_45998c7a.vtex",
+      "sourceSha256": "3bc8ff89ebae453fc7915eb2f74009176c1d922a72c618dfbb93fb1174aea63a",
+      "rendering": "native albedo, matching native mesh UVs; simplified factory-new PBR"
+    },
+    {
+      "id": "xm1014-soe_yellow_xm",
+      "equipment": "xm1014",
+      "category": "weapon",
+      "label": "XoooM",
+      "unlockLevel": 26,
+      "price": 4000,
+      "imageUrl": "/textures/cosmetics/xm1014-soe_yellow_xm-preview.webp",
+      "assetKey": "xm1014",
+      "map": null,
+      "colors": [
+        [
+          0.24705882352941178,
+          0.24705882352941178,
+          0.24705882352941178
+        ],
+        [
+          0.807843137254902,
+          0.7176470588235294,
+          0.22745098039215686
+        ],
+        [
+          0.6823529411764706,
+          0.6705882352941176,
+          0.6509803921568628
+        ],
+        [
+          0.6274509803921569,
+          0.5019607843137255,
+          0.12941176470588237
+        ]
+      ],
+      "patternScale": 4,
+      "style": 1,
+      "legacy": false,
+      "kitId": "1381",
+      "source": "weapons/paints/timed_drops/soe_yellow_xm.vcompmat",
+      "texture": null,
+      "sourceSha256": "33a169704ccba996ac5180d9a3a2d4c60f993ad118345ec701f4764022b0def4",
+      "rendering": "native pattern/palette; approximate procedural finish, fixed seed"
+    },
+    {
+      "id": "xm1014-hy_cloud_camo",
+      "equipment": "xm1014",
+      "category": "weapon",
+      "label": "Canvas Cloud",
+      "unlockLevel": 38,
+      "price": 5500,
+      "imageUrl": "/textures/cosmetics/xm1014-hy_cloud_camo-preview.webp",
+      "assetKey": "xm1014",
+      "map": "/textures/cosmetics/kit-1333-albedo.webp",
+      "colors": [
+        [
+          0.6941176470588235,
+          0.6941176470588235,
+          0.6941176470588235
+        ],
+        [
+          0.6666666666666666,
+          0.5411764705882353,
+          0.4117647058823529
+        ],
+        [
+          0.5843137254901961,
+          0.34901960784313724,
+          0.2235294117647059
+        ],
+        [
+          0.43137254901960786,
+          0.2627450980392157,
+          0.21568627450980393
+        ]
+      ],
+      "patternScale": 2,
+      "style": 2,
+      "legacy": false,
+      "kitId": "1333",
+      "source": "weapons/paints/timed_drops/hy_cloud_camo.vcompmat",
+      "texture": "items/assets/paintkits/timed_drops/cloud_camo_01_psd_71d71f6f.vtex",
+      "sourceSha256": "b416c45b0348699b923a37d2ba7e79873eb4f66428ba251dc2eae85022df137a",
+      "rendering": "native pattern/palette; approximate procedural finish, fixed seed"
+    },
+    {
+      "id": "xm1014-ht_copper_edges",
+      "equipment": "xm1014",
+      "category": "weapon",
+      "label": "Copperflage",
+      "unlockLevel": 52,
+      "price": 7500,
+      "imageUrl": "/textures/cosmetics/xm1014-ht_copper_edges-preview.webp",
+      "assetKey": "xm1014",
+      "map": "/textures/cosmetics/kit-1287-albedo.webp",
+      "colors": [
+        [
+          0.8784313725490196,
+          0.5764705882352941,
+          0.4588235294117647
+        ],
+        [
+          0.33725490196078434,
+          0.24313725490196078,
+          0.19215686274509805
+        ],
+        [
+          0.3686274509803922,
+          0.3686274509803922,
+          0.3686274509803922
+        ],
+        [
+          0.36470588235294116,
+          0.27450980392156865,
+          0.25882352941176473
+        ]
+      ],
+      "patternScale": 2,
+      "style": 3,
+      "legacy": false,
+      "kitId": "1287",
+      "source": "weapons/paints/timed_drops/ht_copper_edges.vcompmat",
+      "texture": "items/assets/paintkits/timed_drops/paint_wear_edges_psd_a5b66bfe.vtex",
+      "sourceSha256": "74b88cee5d4fcf8989a437da8b8d5d886200639108844ca729a870ef9fa5c49a",
+      "rendering": "native pattern/palette; approximate procedural finish, fixed seed"
+    },
+    {
+      "id": "xm1014-hye_drippy_camo",
+      "equipment": "xm1014",
+      "category": "weapon",
+      "label": "Gum Wall Camo",
+      "unlockLevel": 70,
+      "price": 10000,
+      "imageUrl": "/textures/cosmetics/xm1014-hye_drippy_camo-preview.webp",
+      "assetKey": "xm1014",
+      "map": "/textures/cosmetics/kit-1267-albedo.webp",
+      "colors": [
+        [
+          0.18823529411764706,
+          0.1607843137254902,
+          0.3333333333333333
+        ],
+        [
+          0.5137254901960784,
+          0.3137254901960784,
+          0.4235294117647059
+        ],
+        [
+          0.2235294117647059,
+          0.25098039215686274,
+          0.38823529411764707
+        ],
+        [
+          0.4,
+          0.42745098039215684,
+          0.5137254901960784
+        ]
+      ],
+      "patternScale": 3,
+      "style": 2,
+      "legacy": false,
+      "kitId": "1267",
+      "source": "weapons/paints/timed_drops/hye_drippy_camo.vcompmat",
+      "texture": "items/assets/paintkits/timed_drops/camo_drippy_psd_ef1c3caa.vtex",
+      "sourceSha256": "3f8bb0e3ea44827b25a8f27ba6cb4d6254ea82d9b725c1616062b33039a57ebd",
+      "rendering": "native pattern/palette; approximate procedural finish, fixed seed"
+    },
+    {
+      "id": "xm1014-soch_mountains_limited_time",
+      "equipment": "xm1014",
+      "category": "weapon",
+      "label": "Solitude",
+      "unlockLevel": 90,
+      "price": 13000,
+      "imageUrl": "/textures/cosmetics/xm1014-soch_mountains_limited_time-preview.webp",
+      "assetKey": "xm1014",
+      "map": "/textures/cosmetics/kit-1215-albedo.webp",
+      "colors": [
+        [
+          0.20784313725490197,
+          0.20784313725490197,
+          0.2196078431372549
+        ],
+        [
+          0.26666666666666666,
+          0.26666666666666666,
+          0.3058823529411765
+        ],
+        [
+          0.3764705882352941,
+          0.36470588235294116,
+          0.3568627450980392
+        ],
+        [
+          0.5333333333333333,
+          0.5137254901960784,
+          0.5098039215686274
+        ]
+      ],
+      "patternScale": 3,
+      "style": 2,
+      "legacy": false,
+      "kitId": "1215",
+      "source": "weapons/paints/limited_time/soch_mountains_limited_time.vcompmat",
+      "texture": "items/assets/paintkits/limited_time/soch_mountains_limited_time_albedo_texture_psd_e173db01.vtex",
+      "sourceSha256": "d5e6c1147b9a8abb1878a6745c9ffe509aa9c309c89cf8d575b7eab14a915a83",
+      "rendering": "native pattern/palette; approximate procedural finish, fixed seed"
+    },
+    {
+      "id": "mag7-mag7_circle_copper",
+      "equipment": "mag7",
+      "category": "weapon",
+      "label": "MAGnitude",
+      "unlockLevel": 2,
+      "price": 350,
+      "imageUrl": "/textures/cosmetics/mag7-mag7_circle_copper-preview.webp",
+      "assetKey": "mag7",
+      "map": "/textures/cosmetics/kit-1355-albedo.webp",
+      "colors": [
+        [
+          0.6235294117647059,
+          0.6235294117647059,
+          0.6235294117647059
+        ],
+        [
+          0.8823529411764706,
+          0.8823529411764706,
+          0.8823529411764706
+        ],
+        [
+          0.984313725490196,
+          0.8117647058823529,
+          0.7019607843137254
+        ],
+        [
+          0.9686274509803922,
+          0.9254901960784314,
+          0.7803921568627451
+        ]
+      ],
+      "patternScale": 1,
+      "style": 9,
+      "legacy": false,
+      "kitId": "1355",
+      "source": "weapons/paints/community/community_36/mag7_circle_copper.vcompmat",
+      "texture": "items/assets/paintkits/community/community_36/mag7_circle_copper_albedo_texture_adjusted_psd_327a434d.vtex",
+      "sourceSha256": "b32c5c6537ea5a61bb5e4088a2316f5b3a5b63b5d049e390d0a1f6c1de08ac61",
+      "rendering": "native albedo, matching native mesh UVs; simplified factory-new PBR"
+    },
+    {
+      "id": "mag7-mag7_ammo_box",
+      "equipment": "mag7",
+      "category": "weapon",
+      "label": "Resupply",
+      "unlockLevel": 4,
+      "price": 700,
+      "imageUrl": "/textures/cosmetics/mag7-mag7_ammo_box-preview.webp",
+      "assetKey": "mag7",
+      "map": "/textures/cosmetics/kit-1188-albedo.webp",
+      "colors": [
+        [
+          0.8588235294117647,
+          0.8588235294117647,
+          0.8588235294117647
+        ],
+        [
+          1,
+          1,
+          1
+        ],
+        [
+          1,
+          1,
+          1
+        ],
+        [
+          0.6823529411764706,
+          0.5607843137254902,
+          0.07450980392156863
+        ]
+      ],
+      "patternScale": 1,
+      "style": 9,
+      "legacy": false,
+      "kitId": "1188",
+      "source": "weapons/paints/community/community_35/mag7_ammo_box.vcompmat",
+      "texture": "items/assets/paintkits/community/community_35/mag7_ammo_box_albedo_texture_tga_9256b9b2.vtex",
+      "sourceSha256": "a56bb520ba3f431c04c0368814df9f58ba0f8664e33d1c2e879486db1170a8c6",
+      "rendering": "native albedo, matching native mesh UVs; simplified factory-new PBR"
+    },
+    {
+      "id": "mag7-so_greyblue",
+      "equipment": "mag7",
+      "category": "weapon",
+      "label": "Copper Oxide",
+      "unlockLevel": 7,
+      "price": 1200,
+      "imageUrl": "/textures/cosmetics/mag7-so_greyblue-preview.webp",
+      "assetKey": "mag7",
+      "map": null,
+      "colors": [
+        [
+          0.27058823529411763,
+          0.30196078431372547,
+          0.3333333333333333
+        ],
+        [
+          0.43529411764705883,
+          0.49411764705882355,
+          0.4980392156862745
+        ],
+        [
+          0.5215686274509804,
+          0.403921568627451,
+          0.396078431372549
+        ],
+        [
+          0.2196078431372549,
+          0.27058823529411763,
+          0.2901960784313726
+        ]
+      ],
+      "patternScale": 1,
+      "style": 1,
+      "legacy": false,
+      "kitId": "1306",
+      "source": "weapons/paints/timed_drops/so_greyblue.vcompmat",
+      "texture": null,
+      "sourceSha256": "110c782b659541667b941071532da87af1003f9f9d2e8fb22abb2fbfd26942c8",
+      "rendering": "native pattern/palette; approximate procedural finish, fixed seed"
+    },
+    {
+      "id": "mag7-soch_wildwood_mag7",
+      "equipment": "mag7",
+      "category": "weapon",
+      "label": "Wildwood",
+      "unlockLevel": 12,
+      "price": 1900,
+      "imageUrl": "/textures/cosmetics/mag7-soch_wildwood_mag7-preview.webp",
+      "assetKey": "mag7",
+      "map": "/textures/cosmetics/kit-773-albedo.webp",
+      "colors": [
+        [
+          0.29411764705882354,
+          0.3607843137254902,
+          0.32941176470588235
+        ],
+        [
+          0.7411764705882353,
+          0.7137254901960784,
+          0.596078431372549
+        ],
+        [
+          0.3137254901960784,
+          0.3137254901960784,
+          0.3137254901960784
+        ],
+        [
+          0.8235294117647058,
+          0.5882352941176471,
+          0.5294117647058824
+        ]
+      ],
+      "patternScale": 2.5,
+      "style": 1,
+      "legacy": false,
+      "kitId": "773",
+      "source": "weapons/paints/set_realism_camo/soch_wildwood_mag7.vcompmat",
+      "texture": "materials/default/default_color_tga_11c1db2c.vtex",
+      "sourceSha256": "8686be1d2265756883d644c9e4dca94f916dd76ead1eeedf1ff326d90c2eea5a",
+      "rendering": "native pattern/palette; approximate procedural finish, fixed seed"
+    },
+    {
+      "id": "mag7-gs_mag7_goold",
+      "equipment": "mag7",
+      "category": "weapon",
+      "label": "Copper Coated",
+      "unlockLevel": 18,
+      "price": 2800,
+      "imageUrl": "/textures/cosmetics/mag7-gs_mag7_goold-preview.webp",
+      "assetKey": "mag7-legacy",
+      "map": "/textures/cosmetics/kit-1245-albedo.webp",
+      "colors": [
+        [
+          0.921569,
+          0.803922,
+          0.6,
+          1
+        ],
+        [
+          1,
+          1,
+          1,
+          1
+        ],
+        [
+          0.85098,
+          0.85098,
+          0.85098,
+          1
+        ],
+        [
+          0.576471,
+          0.54902,
+          0.403922,
+          1
+        ]
+      ],
+      "patternScale": 1,
+      "style": 9,
+      "legacy": true,
+      "kitId": "1245",
+      "source": "materials/models/weapons/customization/paints/vmats/gs_mag7_goold.vmat",
+      "texture": "materials/models/weapons/customization/paints/gunsmith/mag7_goold_tga_252216e1.vtex",
+      "sourceSha256": "b39235d46f4120c64312010db6f80efda04136b37e6b9126aaa1ecf32a822271",
+      "rendering": "native albedo, matching native mesh UVs; simplified factory-new PBR"
+    },
+    {
+      "id": "mag7-cu_mag7_insomnia",
+      "equipment": "mag7",
+      "category": "weapon",
+      "label": "Insomnia",
+      "unlockLevel": 26,
+      "price": 4000,
+      "imageUrl": "/textures/cosmetics/mag7-cu_mag7_insomnia-preview.webp",
+      "assetKey": "mag7-legacy",
+      "map": "/textures/cosmetics/kit-1220-albedo.webp",
+      "colors": [],
+      "patternScale": 1,
+      "style": 7,
+      "legacy": true,
+      "kitId": "1220",
+      "source": "materials/models/weapons/customization/paints/vmats/cu_mag7_insomnia.vmat",
+      "texture": "materials/models/weapons/customization/paints/custom/workshop/mag7_insomnia_tga_bccd36e3.vtex",
+      "sourceSha256": "a7c1bb6b4e794e9371ee4a019493bd779162bf15ce0d127e9e6fd8480c6df212",
+      "rendering": "native albedo, matching native mesh UVs; simplified factory-new PBR"
+    },
+    {
+      "id": "mag7-cu_mag7_predictor",
+      "equipment": "mag7",
+      "category": "weapon",
+      "label": "Foresight",
+      "unlockLevel": 38,
+      "price": 5500,
+      "imageUrl": "/textures/cosmetics/mag7-cu_mag7_predictor-preview.webp",
+      "assetKey": "mag7-legacy",
+      "map": "/textures/cosmetics/kit-1132-albedo.webp",
+      "colors": [],
+      "patternScale": 1,
+      "style": 7,
+      "legacy": true,
+      "kitId": "1132",
+      "source": "materials/models/weapons/customization/paints/vmats/cu_mag7_predictor.vmat",
+      "texture": "materials/models/weapons/customization/paints/custom/workshop/mag7_predictor_psd_e2973851.vtex",
+      "sourceSha256": "306986cb15d9c1f5bcb396303d9df1893ae072f59a612dae387b5646b9a275d9",
+      "rendering": "native albedo, matching native mesh UVs; simplified factory-new PBR"
+    },
+    {
+      "id": "mag7-gs_mag7_bismuth",
+      "equipment": "mag7",
+      "category": "weapon",
+      "label": "BI83 Spectrum",
+      "unlockLevel": 52,
+      "price": 7500,
+      "imageUrl": "/textures/cosmetics/mag7-gs_mag7_bismuth-preview.webp",
+      "assetKey": "mag7-legacy",
+      "map": "/textures/cosmetics/kit-1089-albedo.webp",
+      "colors": [
+        [
+          0.827451,
+          0.827451,
+          0.827451,
+          1
+        ],
+        [
+          0.866667,
+          0.866667,
+          0.866667,
+          1
+        ],
+        [
+          0.172549,
+          0.188235,
+          0.192157,
+          1
+        ],
+        [
+          0.470588,
+          0.760784,
+          0.835294,
+          1
+        ]
+      ],
+      "patternScale": 1,
+      "style": 9,
+      "legacy": true,
+      "kitId": "1089",
+      "source": "materials/models/weapons/customization/paints/vmats/gs_mag7_bismuth.vmat",
+      "texture": "materials/models/weapons/customization/paints/gunsmith/workshop/mag7_bismuth_tga_32fe940.vtex",
+      "sourceSha256": "c93b0eaa8b24e78fa6151519911dd5e1a70057e4b082e746c9f49dadfaab2925",
+      "rendering": "native albedo, matching native mesh UVs; simplified factory-new PBR"
+    },
+    {
+      "id": "mag7-cu_mag7_monster_call",
+      "equipment": "mag7",
+      "category": "weapon",
+      "label": "Monster Call",
+      "unlockLevel": 70,
+      "price": 10000,
+      "imageUrl": "/textures/cosmetics/mag7-cu_mag7_monster_call-preview.webp",
+      "assetKey": "mag7-legacy",
+      "map": "/textures/cosmetics/kit-961-albedo.webp",
+      "colors": [],
+      "patternScale": 1,
+      "style": 7,
+      "legacy": true,
+      "kitId": "961",
+      "source": "materials/models/weapons/customization/paints/vmats/cu_mag7_monster_call.vmat",
+      "texture": "materials/models/weapons/customization/paints/custom/workshop/mag7_monster_call_psd_1bc18d0c.vtex",
+      "sourceSha256": "530cbc4857b0f84aeeae2c3a7b6a2a9840003785a3c9f5b5636108817d3d8289",
+      "rendering": "native albedo, matching native mesh UVs; simplified factory-new PBR"
+    },
+    {
+      "id": "mag7-gs_mag7_justice",
+      "equipment": "mag7",
+      "category": "weapon",
+      "label": "Justice",
+      "unlockLevel": 90,
+      "price": 13000,
+      "imageUrl": "/textures/cosmetics/mag7-gs_mag7_justice-preview.webp",
+      "assetKey": "mag7-legacy",
+      "map": "/textures/cosmetics/kit-948-albedo.webp",
+      "colors": [
+        [
+          0.662745,
+          0.92549,
+          1,
+          1
+        ],
+        [
+          1,
+          1,
+          1,
+          1
+        ],
+        [
+          0.87451,
+          0.768628,
+          0.635294,
+          1
+        ],
+        [
+          0.717647,
+          0.560784,
+          0.560784,
+          1
+        ]
+      ],
+      "patternScale": 1,
+      "style": 9,
+      "legacy": true,
+      "kitId": "948",
+      "source": "materials/models/weapons/customization/paints/vmats/gs_mag7_justice.vmat",
+      "texture": "materials/models/weapons/customization/paints/gunsmith/workshop/mag7_justice_tga_1949b560.vtex",
+      "sourceSha256": "ddf44d9e296997576191683c7269f717174a3c12828cee172aed2185daff1b83",
+      "rendering": "native albedo, matching native mesh UVs; simplified factory-new PBR"
+    },
+    {
+      "id": "sawedoff-sawedoff_lunar_wyrm",
+      "equipment": "sawedoff",
+      "category": "weapon",
+      "label": "Lunar Wyrm",
+      "unlockLevel": 2,
+      "price": 350,
+      "imageUrl": "/textures/cosmetics/sawedoff-sawedoff_lunar_wyrm-preview.webp",
+      "assetKey": "sawedoff",
+      "map": "/textures/cosmetics/kit-1475-albedo.webp",
+      "colors": [
+        [
+          1,
+          1,
+          1
+        ],
+        [
+          1,
+          1,
+          1
+        ],
+        [
+          0.8156862745098039,
+          0.8156862745098039,
+          0.788235294117647
+        ],
+        [
+          0.3333333333333333,
+          0.33725490196078434,
+          0.3411764705882353
+        ]
+      ],
+      "patternScale": 1,
+      "style": 9,
+      "legacy": false,
+      "kitId": "1475",
+      "source": "weapons/paints/set_arabesque/sawedoff_lunar_wyrm.vcompmat",
+      "texture": "items/assets/paintkits/set_arabesque/sawedoff_lunar_wyrm_albedo_texture_psd_d3015451.vtex",
+      "sourceSha256": "ef0ec1457516674090c650edee23a5ff6aa7c589807a4421f55d2e1c80e44a17",
+      "rendering": "native albedo, matching native mesh UVs; simplified factory-new PBR"
+    },
+    {
+      "id": "sawedoff-sawedoff_fusion",
+      "equipment": "sawedoff",
+      "category": "weapon",
+      "label": "Fusion",
+      "unlockLevel": 4,
+      "price": 700,
+      "imageUrl": "/textures/cosmetics/sawedoff-sawedoff_fusion-preview.webp",
+      "assetKey": "sawedoff",
+      "map": "/textures/cosmetics/kit-1427-albedo.webp",
+      "colors": [
+        [
+          1,
+          1,
+          1
+        ],
+        [
+          0.8313725490196079,
+          0.8313725490196079,
+          0.8313725490196079
+        ],
+        [
+          0.6588235294117647,
+          0.6588235294117647,
+          0.6588235294117647
+        ],
+        [
+          0.8862745098039215,
+          0.8862745098039215,
+          0.8862745098039215
+        ]
+      ],
+      "patternScale": 1,
+      "style": 9,
+      "legacy": false,
+      "kitId": "1427",
+      "source": "weapons/paints/community/community_37/sawedoff_fusion.vcompmat",
+      "texture": "items/assets/paintkits/community/community_37/sawedoff_fusion_albedo_texture_psd_1c3d44.vtex",
+      "sourceSha256": "9d56b0fe34aba1f01076fb73043b78bd8daae665d1f099538f930727f32d0529",
+      "rendering": "native albedo, matching native mesh UVs; simplified factory-new PBR"
+    },
+    {
+      "id": "sawedoff-sawedoff_gamer",
+      "equipment": "sawedoff",
+      "category": "weapon",
+      "label": "Analog Input",
+      "unlockLevel": 7,
+      "price": 1200,
+      "imageUrl": "/textures/cosmetics/sawedoff-sawedoff_gamer-preview.webp",
+      "assetKey": "sawedoff",
+      "map": "/textures/cosmetics/kit-1160-albedo.webp",
+      "colors": [],
+      "patternScale": 1,
+      "style": 7,
+      "legacy": false,
+      "kitId": "1160",
+      "source": "weapons/paints/community/community_33/sawedoff_gamer.vcompmat",
+      "texture": "items/assets/paintkits/community/community_33/sawedoff_gamer_albedo_texture_tga_8262d35a.vtex",
+      "sourceSha256": "d3e56e9b04d366314ccb878eacdbd50513497dac2cce8551b1ed115f614f1fe5",
+      "rendering": "native albedo, matching native mesh UVs; simplified factory-new PBR"
+    },
+    {
+      "id": "sawedoff-hye_batik_eyes",
+      "equipment": "sawedoff",
+      "category": "weapon",
+      "label": "Crimson Batik",
+      "unlockLevel": 12,
+      "price": 1900,
+      "imageUrl": "/textures/cosmetics/sawedoff-hye_batik_eyes-preview.webp",
+      "assetKey": "sawedoff",
+      "map": "/textures/cosmetics/kit-1391-albedo.webp",
+      "colors": [
+        [
+          0.29411764705882354,
+          0.3411764705882353,
+          0.3686274509803922
+        ],
+        [
+          0.7333333333333333,
+          0.403921568627451,
+          0.35294117647058826
+        ],
+        [
+          0.6549019607843137,
+          0.16470588235294117,
+          0.11764705882352941
+        ],
+        [
+          0.2196078431372549,
+          0.19607843137254902,
+          0.2
+        ]
+      ],
+      "patternScale": 3,
+      "style": 2,
+      "legacy": false,
+      "kitId": "1391",
+      "source": "weapons/paints/timed_drops/hye_batik_eyes.vcompmat",
+      "texture": "items/assets/paintkits/timed_drops/batik_eyes_psd_59b874cb.vtex",
+      "sourceSha256": "a692192a6077d10c0c52dfd6075071e58fab5765d5588cb584af85a0b7815782",
+      "rendering": "native pattern/palette; approximate procedural finish, fixed seed"
+    },
+    {
+      "id": "sawedoff-gsch_ripple",
+      "equipment": "sawedoff",
+      "category": "weapon",
+      "label": "Runoff",
+      "unlockLevel": 18,
+      "price": 2800,
+      "imageUrl": "/textures/cosmetics/sawedoff-gsch_ripple-preview.webp",
+      "assetKey": "sawedoff",
+      "map": "/textures/cosmetics/kit-1272-albedo.webp",
+      "colors": [
+        [
+          1,
+          1,
+          1
+        ],
+        [
+          1,
+          1,
+          1
+        ],
+        [
+          0.6862745098039216,
+          0.6470588235294118,
+          0.611764705882353
+        ],
+        [
+          0.4588235294117647,
+          0.4588235294117647,
+          0.4588235294117647
+        ]
+      ],
+      "patternScale": 1.5,
+      "style": 10,
+      "legacy": false,
+      "kitId": "1272",
+      "source": "weapons/paints/timed_drops/gsch_ripple.vcompmat",
+      "texture": "items/assets/paintkits/timed_drops/aq_case_hardened_ripple_psd_daca1dd1.vtex",
+      "sourceSha256": "31b6308459954f9feba47d632ecf559b809fcfb8f61bda4cf0b0765b486f6b85",
+      "rendering": "native pattern/palette; approximate procedural finish, fixed seed"
+    },
+    {
+      "id": "sawedoff-cu_sawedoff_kisslove",
+      "equipment": "sawedoff",
+      "category": "weapon",
+      "label": "Kiss♥Love",
+      "unlockLevel": 26,
+      "price": 4000,
+      "imageUrl": "/textures/cosmetics/sawedoff-cu_sawedoff_kisslove-preview.webp",
+      "assetKey": "sawedoff-legacy",
+      "map": "/textures/cosmetics/kit-1155-albedo.webp",
+      "colors": [],
+      "patternScale": 1,
+      "style": 7,
+      "legacy": true,
+      "kitId": "1155",
+      "source": "materials/models/weapons/customization/paints/vmats/cu_sawedoff_kisslove.vmat",
+      "texture": "materials/models/weapons/customization/paints/custom/workshop/sawedoff_kisslove_tga_9d9248d5.vtex",
+      "sourceSha256": "f0ea9aae85d2227b343cfb9d824fdd0c3f47c22f33ec8b71ad3e8e57a3504e3a",
+      "rendering": "native albedo, matching native mesh UVs; simplified factory-new PBR"
+    },
+    {
+      "id": "sawedoff-cu_sawedoff_ouija",
+      "equipment": "sawedoff",
+      "category": "weapon",
+      "label": "Spirit Board",
+      "unlockLevel": 38,
+      "price": 5500,
+      "imageUrl": "/textures/cosmetics/sawedoff-cu_sawedoff_ouija-preview.webp",
+      "assetKey": "sawedoff-legacy",
+      "map": "/textures/cosmetics/kit-1140-albedo.webp",
+      "colors": [],
+      "patternScale": 1,
+      "style": 7,
+      "legacy": true,
+      "kitId": "1140",
+      "source": "materials/models/weapons/customization/paints/vmats/cu_sawedoff_ouija.vmat",
+      "texture": "materials/models/weapons/customization/paints/custom/workshop/sawedoff_ouija_psd_656e1870.vtex",
+      "sourceSha256": "f9c8b7d33ea6fbafcc5fcfec2931fc6d4194414b78ebcaa05e510f003b00ed84",
+      "rendering": "native albedo, matching native mesh UVs; simplified factory-new PBR"
+    },
+    {
+      "id": "sawedoff-cu_sawedoff_apocalypto",
+      "equipment": "sawedoff",
+      "category": "weapon",
+      "label": "Apocalypto",
+      "unlockLevel": 52,
+      "price": 7500,
+      "imageUrl": "/textures/cosmetics/sawedoff-cu_sawedoff_apocalypto-preview.webp",
+      "assetKey": "sawedoff-legacy",
+      "map": "/textures/cosmetics/kit-953-albedo.webp",
+      "colors": [],
+      "patternScale": 1,
+      "style": 7,
+      "legacy": true,
+      "kitId": "953",
+      "source": "materials/models/weapons/customization/paints/vmats/cu_sawedoff_apocalypto.vmat",
+      "texture": "materials/models/weapons/customization/paints/custom/workshop/sawedoff_apocalypto_tga_8d67b7a7.vtex",
+      "sourceSha256": "accf6312ea162e62f30bde16895f6ed25fa8acd1cf2fde7422103ad66ed241b7",
+      "rendering": "native albedo, matching native mesh UVs; simplified factory-new PBR"
+    },
+    {
+      "id": "sawedoff-cu_sawedoff_black_sand",
+      "equipment": "sawedoff",
+      "category": "weapon",
+      "label": "Black Sand",
+      "unlockLevel": 70,
+      "price": 10000,
+      "imageUrl": "/textures/cosmetics/sawedoff-cu_sawedoff_black_sand-preview.webp",
+      "assetKey": "sawedoff-legacy",
+      "map": "/textures/cosmetics/kit-814-albedo.webp",
+      "colors": [],
+      "patternScale": 1,
+      "style": 7,
+      "legacy": true,
+      "kitId": "814",
+      "source": "materials/models/weapons/customization/paints/vmats/cu_sawedoff_black_sand.vmat",
+      "texture": "materials/models/weapons/customization/paints/custom/workshop/sawedoff_black_sand_tga_f93b8d6a.vtex",
+      "sourceSha256": "dba3620ef7f94bf99af2c962c6d3d8bd922b7ec2f1c9c055fef322166ab29d8c",
+      "rendering": "native albedo, matching native mesh UVs; simplified factory-new PBR"
+    },
+    {
+      "id": "sawedoff-cu_sawedoff_devourer",
+      "equipment": "sawedoff",
+      "category": "weapon",
+      "label": "Devourer",
+      "unlockLevel": 90,
+      "price": 13000,
+      "imageUrl": "/textures/cosmetics/sawedoff-cu_sawedoff_devourer-preview.webp",
+      "assetKey": "sawedoff-legacy",
+      "map": "/textures/cosmetics/kit-720-albedo.webp",
+      "colors": [],
+      "patternScale": 1,
+      "style": 7,
+      "legacy": true,
+      "kitId": "720",
+      "source": "materials/models/weapons/customization/paints/vmats/cu_sawedoff_devourer.vmat",
+      "texture": "materials/models/weapons/customization/paints/custom/workshop/sawedoff_devourer_tga_dad0e50c.vtex",
+      "sourceSha256": "ef178c42dcde78ea8c1f5e4e47dad8c48ed1c4ec9a81c273a4d90b2a457fd1f2",
+      "rendering": "native albedo, matching native mesh UVs; simplified factory-new PBR"
+    },
+    {
+      "id": "zeus-zeus_standard_issue",
+      "equipment": "zeus",
+      "category": "weapon",
+      "label": "Charged Up",
+      "unlockLevel": 2,
+      "price": 350,
+      "imageUrl": "/textures/cosmetics/zeus-zeus_standard_issue-preview.webp",
+      "assetKey": "zeus",
+      "map": "/textures/cosmetics/kit-1205-albedo.webp",
+      "colors": [
+        [
+          1,
+          1,
+          1
+        ],
+        [
+          1,
+          1,
+          1
+        ],
+        [
+          1,
+          1,
+          1
+        ],
+        [
+          1,
+          1,
+          1
+        ]
+      ],
+      "patternScale": 1,
+      "style": 9,
+      "legacy": false,
+      "kitId": "1205",
+      "source": "weapons/paints/set_train_2025/zeus_standard_issue.vcompmat",
+      "texture": "items/assets/paintkits/set_train_2025/zeus_standard_issue_albedo_texture_psd_86d569cf.vtex",
+      "sourceSha256": "818156cbee1f90adeeb48b2e737e0a8bdf1df21d7f366ba8b01dd6f4703ad698",
+      "rendering": "native albedo, matching native mesh UVs; simplified factory-new PBR"
+    },
+    {
+      "id": "zeus-zeus_tosai",
+      "equipment": "zeus",
+      "category": "weapon",
+      "label": "Tosai",
+      "unlockLevel": 4,
+      "price": 700,
+      "imageUrl": "/textures/cosmetics/zeus-zeus_tosai-preview.webp",
+      "assetKey": "zeus",
+      "map": "/textures/cosmetics/kit-1183-albedo.webp",
+      "colors": [],
+      "patternScale": 1,
+      "style": 7,
+      "legacy": false,
+      "kitId": "1183",
+      "source": "weapons/paints/community/community_35/zeus_tosai.vcompmat",
+      "texture": "items/assets/paintkits/community/community_35/zeus_tosai_albedo_texture_tga_ab8700eb.vtex",
+      "sourceSha256": "0683dfb28f20a4d6bb502173b252c9faa9fae0c747df100e8566b1e1e87a6753",
+      "rendering": "native albedo, matching native mesh UVs; simplified factory-new PBR"
+    },
+    {
+      "id": "zeus-zeus_thunder_god",
+      "equipment": "zeus",
+      "category": "weapon",
+      "label": "Olympus",
+      "unlockLevel": 7,
+      "price": 1200,
+      "imageUrl": "/textures/cosmetics/zeus-zeus_thunder_god-preview.webp",
+      "assetKey": "zeus",
+      "map": "/textures/cosmetics/kit-1172-albedo.webp",
+      "colors": [
+        [
+          1,
+          1,
+          1
+        ],
+        [
+          0.807843137254902,
+          0.7372549019607844,
+          0.6549019607843137
+        ],
+        [
+          0.5529411764705883,
+          0.3803921568627451,
+          0.25882352941176473
+        ],
+        [
+          0.33725490196078434,
+          0.2823529411764706,
+          0.06666666666666667
+        ]
+      ],
+      "patternScale": 1,
+      "style": 9,
+      "legacy": false,
+      "kitId": "1172",
+      "source": "weapons/paints/community/community_33/zeus_thunder_god.vcompmat",
+      "texture": "items/assets/paintkits/community/community_33/zeus_thunder_god_albedo_texture_tga_9e2fbb81.vtex",
+      "sourceSha256": "be2416d56b68cd00f33d2ed766faca6f58ef7b7f6e3911fe2ce0e1a99d4f936c",
+      "rendering": "native albedo, matching native mesh UVs; simplified factory-new PBR"
+    },
+    {
+      "id": "zeus-cu_overpass_dragon_zeus",
+      "equipment": "zeus",
+      "category": "weapon",
+      "label": "Dragon Snore",
+      "unlockLevel": 12,
+      "price": 1900,
+      "imageUrl": "/textures/cosmetics/zeus-cu_overpass_dragon_zeus-preview.webp",
+      "assetKey": "zeus",
+      "map": "/textures/cosmetics/kit-292-albedo.webp",
+      "colors": [],
+      "patternScale": 1,
+      "style": 7,
+      "legacy": false,
+      "kitId": "292",
+      "source": "weapons/paints/set_overpass_2024/cu_overpass_dragon_zeus.vcompmat",
+      "texture": "items/assets/paintkits/set_overpass_2024/cu_overpass_dragon_zeus_albedo_texture_psd_2a1195d7.vtex",
+      "sourceSha256": "e65589483a2f3754399410a0deb47bfa3ba117239ce96452f8c9bcaad0b5515c",
+      "rendering": "native albedo, matching native mesh UVs; simplified factory-new PBR"
+    },
+    {
+      "id": "zeus-hye_earth_mandala_lc",
+      "equipment": "zeus",
+      "category": "weapon",
+      "label": "Earth Mandala",
+      "unlockLevel": 18,
+      "price": 2800,
+      "imageUrl": "/textures/cosmetics/zeus-hye_earth_mandala_lc-preview.webp",
+      "assetKey": "zeus",
+      "map": "/textures/cosmetics/kit-1382-albedo.webp",
+      "colors": [
+        [
+          0.5647058823529412,
+          0.5647058823529412,
+          0.8156862745098039
+        ],
+        [
+          0.6392156862745098,
+          0.23137254901960785,
+          0.3137254901960784
+        ],
+        [
+          0.2823529411764706,
+          0.21568627450980393,
+          0.30196078431372547
+        ],
+        [
+          0.8941176470588236,
+          0.6274509803921569,
+          0.36470588235294116
+        ]
+      ],
+      "patternScale": 1.800001,
+      "style": 3,
+      "legacy": false,
+      "kitId": "1382",
+      "source": "weapons/paints/timed_drops/hye_earth_mandala_lc.vcompmat",
+      "texture": "items/assets/paintkits/timed_drops/earth_mandala2_psd_388d7597.vtex",
+      "sourceSha256": "76dc3e0e43705e0727d3feb2e95af68df5f0116e4e13119d93a5081d0fd4f713",
+      "rendering": "native pattern/palette; approximate procedural finish, fixed seed"
+    },
+    {
+      "id": "zeus-hy_digicam_forest",
+      "equipment": "zeus",
+      "category": "weapon",
+      "label": "Swamp DDPAT",
+      "unlockLevel": 26,
+      "price": 4000,
+      "imageUrl": "/textures/cosmetics/zeus-hy_digicam_forest-preview.webp",
+      "assetKey": "zeus",
+      "map": "/textures/cosmetics/kit-1297-albedo.webp",
+      "colors": [
+        [
+          0.22745098039215686,
+          0.32941176470588235,
+          0.21568627450980393
+        ],
+        [
+          0.16862745098039217,
+          0.21176470588235294,
+          0.19607843137254902
+        ],
+        [
+          0.4117647058823529,
+          0.39215686274509803,
+          0.2823529411764706
+        ],
+        [
+          0.23921568627450981,
+          0.23137254901960785,
+          0.20784313725490197
+        ]
+      ],
+      "patternScale": 7,
+      "style": 2,
+      "legacy": false,
+      "kitId": "1297",
+      "source": "weapons/paints/timed_drops/hy_digicam_forest.vcompmat",
+      "texture": "gloves/textiles/digital_camo_blob_psd_cfb79d2d.vtex",
+      "sourceSha256": "f4d07c9ea95b6471d5a682ec75a3a79b7cfde011121504d38bd970d9ffb994fd",
+      "rendering": "native pattern/palette; approximate procedural finish, fixed seed"
+    },
+    {
+      "id": "zeus-soe_electric_blue",
+      "equipment": "zeus",
+      "category": "weapon",
+      "label": "Electric Blue",
+      "unlockLevel": 38,
+      "price": 5500,
+      "imageUrl": "/textures/cosmetics/zeus-soe_electric_blue-preview.webp",
+      "assetKey": "zeus",
+      "map": null,
+      "colors": [
+        [
+          0.10196078431372549,
+          0.23137254901960785,
+          0.49411764705882355
+        ],
+        [
+          0.21568627450980393,
+          0.44313725490196076,
+          0.9019607843137255
+        ],
+        [
+          0.16862745098039217,
+          0.1843137254901961,
+          0.5019607843137255
+        ],
+        [
+          0.1843137254901961,
+          0.47058823529411764,
+          0.7607843137254902
+        ]
+      ],
+      "patternScale": 1,
+      "style": 1,
+      "legacy": false,
+      "kitId": "1268",
+      "source": "weapons/paints/timed_drops/soe_electric_blue.vcompmat",
+      "texture": null,
+      "sourceSha256": "be652c158b4ab77ceb15a24bdd45edaddca7ffd5f5b1bec95c7f0cf980f1feca",
+      "rendering": "native pattern/palette; approximate procedural finish, fixed seed"
     }
-  ],
-  "knifeBuild": "2000922",
-  "knifeItemsSha256": "1edea31ef2af0a46d1b38b4e4a6337de534bb61629f4b527137617ef03879fed"
+  ]
 }

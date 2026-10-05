@@ -90,7 +90,7 @@ test('stock-only weapon selection still closes Loadout even at maximum level', a
   await expect(loadout.getByRole('region', {name: 'AWP skins'}).getByRole('button', {name: /^Equip AWP skin/})).toHaveCount(1);
 });
 
-test('header changelog is unreleased, keyboard-accessible and does not alter the loadout', async ({page}) => {
+test('header changelog preserves history, is keyboard-accessible and does not alter the loadout', async ({page}) => {
   const trigger = page.getByRole('button', {name: 'Changelog', exact: true});
   await expect.poll(() => page.evaluate(() => Boolean(JSON.parse(localStorage.getItem('spraylab.range.v2') || '{}').crosshair))).toBe(true);
   const before = await page.evaluate(() => localStorage.getItem('spraylab.range.v2'));
@@ -99,10 +99,14 @@ test('header changelog is unreleased, keyboard-accessible and does not alter the
   await expect(dialog).toBeVisible();
   await expect(dialog).toBeFocused();
   await expect(trigger).toHaveAttribute('aria-expanded', 'true');
-  await expect(dialog.getByText('Unreleased', {exact: true})).toBeVisible();
-  await expect(dialog.locator('code')).toHaveText('06774a9');
-  await expect(dialog.locator('.changelog-section')).toHaveCount(6);
+  await expect(dialog.getByRole('heading', {name: 'Latest update', exact: true})).toBeVisible();
+  await expect(dialog.locator('code')).toHaveText(['49d8ea6', '06774a9']);
+  await expect(dialog.locator('.changelog-section')).toHaveCount(14);
+  await expect(dialog.getByRole('heading', {name: 'Responsive combat, radar & armor', exact: true})).toHaveCount(1);
+  await expect(dialog.getByRole('heading', {name: 'Previous update (49d8ea6)', exact: true})).toHaveCount(1);
+  await expect(dialog.getByRole('heading', {name: 'XP, credits & achievements', exact: true})).toHaveCount(1);
   await expect(dialog.getByRole('heading', {name: 'Hearing practice', exact: true})).toHaveCount(1);
+  expect(await dialog.locator('[id]').evaluateAll(nodes => new Set(nodes.map(node => node.id)).size === nodes.length)).toBe(true);
   await page.keyboard.press('Tab');
   await expect(dialog.getByRole('button', {name: 'Close panel'})).toBeFocused();
   await page.keyboard.press('Tab');
@@ -137,7 +141,8 @@ test('header controls and changelog fit desktop, mobile and landscape without ov
         expect(boxes[i].right <= other.left || other.right <= boxes[i].left || boxes[i].bottom <= other.top || other.bottom <= boxes[i].top).toBe(true);
       }
     }
-    await expect(page.locator('.changelog-button span')).toBeVisible();
+    await expect(page.getByRole('button', {name: 'Changelog', exact: true})).toBeVisible();
+    if (height > 540) await expect(page.locator('.changelog-button span')).toBeVisible();
     if ([1440, 390, 320, 844].includes(width)) await page.screenshot({path: `test-results/${info.project.name}-header-${width}.png`});
     await page.getByRole('button', {name: 'Changelog', exact: true}).click();
     const dialog = page.getByRole('dialog', {name: 'Changelog', exact: true});
@@ -146,7 +151,7 @@ test('header controls and changelog fit desktop, mobile and landscape without ov
     expect(await dialog.locator('.changelog-content').evaluate(node => node.scrollWidth <= node.clientWidth)).toBe(true);
     await dialog.locator('.changelog-note').scrollIntoViewIfNeeded();
     await expect(dialog.locator('.changelog-note')).toBeInViewport();
-    await dialog.locator('.changelog-release').scrollIntoViewIfNeeded();
+    await dialog.locator('.changelog-release').first().scrollIntoViewIfNeeded();
     if ([1440, 390, 320, 844].includes(width)) await page.screenshot({path: `test-results/${info.project.name}-changelog-${width}.png`});
     await dialog.getByRole('button', {name: 'Close panel'}).click();
   }
