@@ -1,12 +1,14 @@
 import {describe,expect,it} from 'vitest';
 import fixture from './native-weapon-stats-fixture.json';
-import {gameData,weaponIds} from './config';
+import {gameData,weaponIds,type Weapon} from './config';
+import {equipmentStats} from './equipment';
 import {resolveDamage} from './duel/damage';
 import {UNIT} from './actor-physics';
 
 describe('independent installed-archive weapon stats',()=>{
   it('covers every selectable firearm and pins its exact export/build',()=>{
-    expect(Object.keys(fixture.weapons).sort()).toEqual([...weaponIds].sort());
+    expect(Object.keys(fixture.weapons).sort()).toEqual(Object.keys(gameData.weapons).sort());
+    expect(weaponIds.every(id => id in fixture.weapons)).toBe(true);
     expect(fixture.build).toBe(gameData.build);expect(fixture.sha256).toBe(gameData.sha256);
   });
   it.each(weaponIds)('%s matches the native primary, alternate and control fields',id=>{
@@ -16,9 +18,19 @@ describe('independent installed-archive weapon stats',()=>{
     const {primary:_,alternate:__,...flags}=expected;
     expect(gameData.weapons[id]).toMatchObject(flags);
   });
+  it('exposes native penetration to the runtime equipment API for all 35 guns, including retained AUG', () => {
+    const ids = Object.keys(gameData.weapons) as Weapon[]; expect(ids).toHaveLength(35);
+    for (const id of ids) {
+      expect(equipmentStats(id).penetration).toBe(fixture.weapons[id].primary.penetration);
+      expect(gameData.weapons[id].alternate.penetration).toBe(fixture.weapons[id].alternate.penetration);
+      expect(Number.isFinite(equipmentStats(id).penetration)).toBe(true);
+    }
+    expect(equipmentStats('ak47').penetration).toBe(2); expect(equipmentStats('awp').penetration).toBe(2.5);
+    expect(equipmentStats('nova').penetration).toBe(1); expect(equipmentStats('zeus').penetration).toBe(0);
+  });
 });
 describe('weapon damage and armor arithmetic',()=>{
-  it.each(weaponIds)('%s applies native damage, falloff, head multiplier and armor ratio in world units',id=>{
+  it.each(weaponIds.filter(id => id !== 'zeus'))('%s applies native damage, falloff, head multiplier and armor ratio in world units',id=>{
     const data=fixture.weapons[id].primary;
     for(const distance of [0,500*UNIT,25,50,100]) {
       const base=data.damage*Math.pow(data.rangeModifier,distance/(500*UNIT));

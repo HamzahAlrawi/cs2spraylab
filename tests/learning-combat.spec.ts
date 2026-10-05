@@ -78,7 +78,10 @@ test('live guide projection sends scheduled shots into the head at long range an
     const e = (window as any).lessonEngine, s = e.sim, V = e.camera.position.constructor;
     const {TARGET_Z} = await import(/* @vite-ignore */ '/src/range/simulation.ts');
     cancelAnimationFrame(e.frame);
-    const render = () => {const time = performance.now(); e.previous = time; e.tick(time); cancelAnimationFrame(e.frame);};
+    const render = () => {
+      const time = performance.now(); e.previous = time; e.pacer.ready(time, 0);
+      e.tick(time); cancelAnimationFrame(e.frame);
+    };
     const results = [];
     for (const follow of [false, true]) for (const distance of [4, 15, 90]) for (const eye of [46, 55, 64]) {
       s.settings.follow = follow; s.settings.spread = false; s.active = false;
@@ -193,8 +196,16 @@ test('native reload moves the hands and magazine, returns to idle, and keeps HUD
   await page.goto('/'); await captureEngine(page, 'duel');
   const sample = (remaining: number) => page.evaluate(remaining => {
     const e = (window as any).lessonEngine;
-    cancelAnimationFrame(e.frame); e.sim.actors[0].weapon.reloadUntil = remaining;
-    e.sim.time = 0; e.last = performance.now(); e.tick(e.last); cancelAnimationFrame(e.frame);
+    cancelAnimationFrame(e.frame);
+    const weapon = e.sim.actors[0].weapon;
+    weapon.reload.cancel(false); e.viewAnimation.cancel();
+    if (remaining > 0) {
+      weapon.ammo = weapon.actions.base.magazine - 1;
+      weapon.reload.start(0); weapon.reload.advance(weapon.actions.base.reload - remaining);
+    }
+    e.viewAnimationElapsed = 1 / 30;
+    e.sim.time = remaining > 0 ? weapon.actions.base.reload - remaining : 0;
+    e.last = performance.now(); e.pacer.ready(e.last, 0); e.tick(e.last); cancelAnimationFrame(e.frame);
     const scene = e.viewRoot.children[0]; scene.updateMatrixWorld(true);
     const hand = scene.getObjectByName('hand_L');
     const position = hand.getWorldPosition(hand.position.clone()).toArray();

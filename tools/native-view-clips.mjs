@@ -6,6 +6,7 @@ const suffixes = {
   glock: 'glock', hkp2000: 'hkp', p250: 'p250', deagle: 'deagle', elite: 'elite',
   fiveseven: 'fiveseven', tec9: 'tec9', revolver: 'revolver', awp: 'awp', ssg08: 'ssg08',
   g3sg1: 'g3sg1', scar20: 'scar20', knife: 'knife', 'knife-butterfly': 'butterfly',
+  nova: 'nova', xm1014: 'xm1014', mag7: 'mag7', sawedoff: 'sawedoff', zeus: 'taser',
 };
 
 export const supportedViewIds = Object.keys(suffixes);
@@ -15,7 +16,7 @@ export const lastShotViewIds = ['cz75a', 'usp', 'glock', 'hkp2000', 'p250', 'dea
 export const emptyIdleViewIds = lastShotViewIds.filter(id => !['negev', 'tec9'].includes(id));
 export const scopedFireViewIds = ['aug', 'sg553'];
 export const requiredViewActions = id => [
-  'idle','draw','inspect',...(id.startsWith('knife')?[]:['reload']),
+  'idle','draw','inspect',...(id.startsWith('knife') || id === 'zeus'?[]:['reload']),
   ...(id.startsWith('knife') ? ['fire', 'fire-alt'] : []),
   ...(id==='elite'?['fire-left','fire-right','fire-left-last','fire-right-last','idle-left-empty','idle-empty']:
     firearmViewIds.includes(id)?['fire']:[]),
@@ -55,7 +56,7 @@ export function selectViewClips(id, files) {
     draw: find(`draw_${suffix}`),
     inspect: find(`lookat01_${suffix}`),
   };
-  if (!knife) {
+  if (!knife && id !== 'zeus') {
     result.reload = find(`reload_${suffix}`);
     const empty = find(`reload_empty_${suffix}`, false) ?? find(`empty_reload_${suffix}`, false);
     if (empty) result['reload-empty'] = empty;

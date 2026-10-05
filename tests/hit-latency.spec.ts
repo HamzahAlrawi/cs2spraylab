@@ -37,7 +37,7 @@ for (const frameLimit of [30, 240]) for (const shooter of [0, 1]) {
         if (events.some(event => event.kind === 'hit' && event.shooter === shooter)) {
           hitFrame = this.last;
           const animator = this.animators.get(1);
-          deadPoseOnHitFrame = shooter === 1 || [...animator.actions.entries()].some(([name, action]: any) => name.startsWith('death_') && action.enabled);
+          deadPoseOnHitFrame = shooter === 1 || animator.dying;
         }
         return processEvents.call(this, events);
       };

@@ -18,6 +18,8 @@ export class DuelCoach {
   private placements: number[] = [];
   private times: number[] = [];
   private unsettledShots = 0;
+  private hitShots = new Set<number>();
+  private headShots = new Set<number>();
   observe(time: number, self: DuelActorSnapshot, visible: VisibleEnemy[]) {
     if (visible.length) this.exposedSeconds += 1 / 32;
     if (visible.length > 1) this.multipleAnglesSeconds += 1 / 32;
@@ -41,7 +43,10 @@ export class DuelCoach {
   hit(event: Extract<DuelEvent, {kind: 'hit'}>, time: number, melee = false) {
     if (event.victim === 0) this.taken += event.healthDamage;
     if (event.shooter !== 0) return;
-    if (!melee) {this.hits++; this.heads += +(event.group === 'head');}
+    if (!melee) {
+      if(!this.hitShots.has(event.shotId)) {this.hitShots.add(event.shotId);this.hits++;}
+      if(event.group==='head'&&!this.headShots.has(event.shotId)) {this.headShots.add(event.shotId);this.heads++;}
+    }
     this.kills += +event.lethal; this.damage += event.healthDamage;
     const seen = this.spotted.get(event.victim);
     if (seen !== undefined && !this.damaged.has(event.victim)) this.times.push((time - seen) * 1000);

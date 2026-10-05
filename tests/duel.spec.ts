@@ -56,7 +56,7 @@ test('AI Duel is playable from the first visit with adjacent bot controls', asyn
   await page.getByLabel('Number of bots').press('ArrowRight');
   await expect(page.getByLabel('Number of bots')).toHaveValue('2');
   await page.getByLabel('Bot skill level').selectOption('2');
-  await page.getByLabel('Bot armor').uncheck();
+  await page.getByLabel('Bot armor',{exact:true}).uncheck();
   await page.getByLabel('Add bot weapon').selectOption('mp9');
   await page.getByLabel('Add weapon to bot pool').click();
   await expect(page.getByLabel('Remove MP9')).toBeVisible();

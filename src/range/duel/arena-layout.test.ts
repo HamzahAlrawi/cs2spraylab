@@ -4,10 +4,10 @@ import {clearSegment, routeTo} from './navigation';
 import {UNIT} from '../actor-physics';
 import {observeBot} from './perception';
 import {DuelSimulation} from './simulation';
-import {arenaDesigns, seedForDesign} from './arena-layout';
+import {arenaDesigns, seedForDesign, solidsOverlap} from './arena-layout';
 import {coveredSpawns} from './spawns';
 import {sanitizeDuelConfig} from './config';
-import {arenaPOIs, footprintOf, footprintsOverlap, poiThemes} from './arena-pois';
+import {arenaPOIs, environmentPOIs, footprintsOverlap, poiThemes} from './arena-pois';
 import * as navigation from './navigation';
 import * as rng from './rng';
 
@@ -49,7 +49,7 @@ describe('seeded modular cover', () => {
       }
       for (let a = 0; a < arena.solids.length; a++) for (let b = a + 1; b < arena.solids.length; b++) {
         const x = arena.solids[a], y = arena.solids[b];
-        const overlap = footprintsOverlap(footprintOf([x]), footprintOf([y]));
+        const overlap = solidsOverlap(x, y);
         expect(overlap, `intersecting props at seed ${seed}`).toBe(false);
       }
     }
@@ -89,7 +89,9 @@ describe('seeded modular cover', () => {
       expect(arena.maxX - arena.minX).toBeCloseTo(24 * scale);
       expect(arena.maxZ - arena.minZ).toBeCloseTo(32 * scale);
       expect(arena.pois).toHaveLength(scale < 1 ? 4 : 6);
-      expect(arena.solids.length).toBeLessThanOrEqual(25);
+      expect(arena.solids.length).toBeLessThanOrEqual(40);
+      expect(arena.pois!.filter(p => environmentPOIs.some(template => template.id === p.templateId))).toHaveLength(2);
+      expect(new Set(arena.solids.map(s => s.id)).size).toBe(arena.solids.length);
       layouts.add(JSON.stringify(arena.solids));
       const north = {x: 0, y: 64 * UNIT, z: -8 * scale}, south = {...north, z: 8 * scale};
       for (const p of [north, south]) expect(canFitInArena(p, 0, 72 * UNIT, arena)).toBe(true);
@@ -121,7 +123,7 @@ describe('seeded modular cover', () => {
       }
       for (const [index, poi] of arena.pois!.entries()) {
         seen.add(poi.templateId);
-        const template = arenaPOIs.find(t => t.id === poi.templateId)!;
+        const template = [...arenaPOIs, ...environmentPOIs].find(t => t.id === poi.templateId)!;
         expect(poi.theme).toBe(arena.poiTheme);
         expect(poi.reservation.minX).toBeGreaterThanOrEqual(arena.minX + .6 - 1e-8);
         expect(poi.reservation.maxX).toBeLessThanOrEqual(arena.maxX - .6 + 1e-8);
@@ -133,7 +135,7 @@ describe('seeded modular cover', () => {
         expect(paired.center.x).toBe(poi.center.x); expect(paired.center.z).toBe(-poi.center.z);
       }
       for (const [index, a] of arena.solids.entries()) for (const b of arena.solids.slice(index + 1))
-        expect(footprintsOverlap(footprintOf([a]), footprintOf([b]))).toBe(false);
+        expect(solidsOverlap(a, b)).toBe(false);
       const spawns = coveredSpawns(arena, seed, 5);
       expect(spawns, `covered spawns seed ${seed}, scale ${scale}`).toBeDefined();
       expect(spawns!.bots).toHaveLength(5);
@@ -145,7 +147,8 @@ describe('seeded modular cover', () => {
       }
     }
     expect(layouts.size).toBe(240);
-    expect(seen.size, `Unplaced: ${arenaPOIs.filter(p => !seen.has(p.id)).map(p => p.id).join(', ')}`).toBe(arenaPOIs.length);
+    const expected = [...arenaPOIs.filter(p => scale >= 1 || p.spawnCover), ...environmentPOIs];
+    expect(expected.filter(p => !seen.has(p.id)).map(p => p.id), 'Unplaced eligible templates').toEqual([]);
   }, 30000);
 
   it.each(poiThemes)('supports an optional %s POI theme without changing design or seed', theme => {
@@ -158,7 +161,8 @@ describe('seeded modular cover', () => {
   it.each(poiThemes)('has a validated deterministic %s fallback after all randomized candidates fail', theme => {
     const originalRoute = navigation.routeTo;
     const campId = arenaPOIs.find(p => p.theme === theme && p.spawnCover)!.id;
-    vi.spyOn(rng, 'randomStream').mockImplementation(() => () => .99);
+    const constant = () => .99;
+    vi.spyOn(rng, 'randomStream').mockImplementation(() => constant);
     const route = vi.spyOn(navigation, 'routeTo').mockImplementation((a, b, arena) =>
       arena.pois?.[0]?.templateId === campId ? originalRoute(a, b, arena) : []);
     try {

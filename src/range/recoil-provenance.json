@@ -1,29 +1,33 @@
 {
   "build": "2000908",
   "weaponDataAudit": {
-    "build": "2000922",
-    "inspectedAt": "2026-10-01",
-    "parametersSha256": "45d467f30e8efc6e395668375378b4ccf1119b57978f6fbd2413efab07f70c7d",
-    "scope": "Thirty guns: primary/alternate weapon parameters and crosshair visibility freshly extracted and independently compared with weapons.vdata. Numeric primary/alternate recoil tables and RNG verified against current offline native arithmetic. Full trajectories remain unverified against native captures.",
-    "clientSha256": "9ddf30d68b8ef66607783d418c4f74a6004cf2104572e6c630625e52c1c1202d",
+    "build": "2000924",
+    "inspectedAt": "2026-10-04",
+    "parametersSha256": "d1ea83d49dd40d91c5f2cc6b14ce1b9cd75478b45ef9af2d1cdaf8bf3e30a121",
+    "scope": "Thirty-five extracted equipment definitions, including four shotguns and Zeus. Numeric primary/alternate recoil tables and RNG verified against build 2000924 offline native arithmetic. Full trajectories remain unverified against native captures.",
+    "clientSha256": "d7db25d48f1d10c5e0b0296e20ed803426eb9509da41760daeda39dd35ba89b9",
     "tier0Sha256": "4e0dcb0af3f6953f37ddaed0f4e67a56d031f1e84964a262148f8a6f80547791"
   },
   "tableAudit": {
-    "build": "2000922",
-    "inspectedAt": "2026-10-01",
-    "clientSha256": "9ddf30d68b8ef66607783d418c4f74a6004cf2104572e6c630625e52c1c1202d",
+    "build": "2000924",
+    "inspectedAt": "2026-10-04",
+    "clientSha256": "d7db25d48f1d10c5e0b0296e20ed803426eb9509da41760daeda39dd35ba89b9",
     "tier0Sha256": "4e0dcb0af3f6953f37ddaed0f4e67a56d031f1e84964a262148f8a6f80547791",
     "clientRvas": {
       "tableLoop": "0x7cb72b",
       "tableLoopEnd": "0x7cb903",
-      "rngConstructorImport": "0x19a8d37",
-      "rngFloatImport": "0x19a8d25"
+      "rngConstructorImport": "0x19a8d07",
+      "rngFloatImport": "0x19a8cf5",
+      "shotgunTableLoop": "0x7cba49",
+      "shotgunTableLoopEnd": "0x7cbb4a",
+      "shotgunLookup": "0x7ce2e0",
+      "spreadSampler": "0xd23970"
     },
     "tier0Rvas": {
       "constructor": "0x15e660",
       "randomFloat": "0x15e740"
     },
-    "scope": "All thirty primary 64-entry recoil tables and tier0 RNG fixtures exactly match hash-pinned offline emulation. Desert Eagle base magnitude now rounded to native float32 before addition."
+    "scope": "All thirty-five primary and alternate 64-entry recoil tables, four 64-entry shotgun angle/radius tables, and tier0 RNG fixtures exactly match hash-pinned offline emulation. No native shot seed derivation or V_sinf/V_cosf parity claim."
   },
   "inspectedAt": "2026-09-20",
   "clientSha256": "a0c195f0b6ec00915ef08c548200a010ebbe7982d3a4bc468cad939b67c8c4e3",
@@ -69,7 +73,8 @@
   "limitations": [
     "Euler rather than quaternion interpolation",
     "Recovery formulas inspected, not end-to-end native-capture verified",
-    "Approximate random spread without native RNG or Negev special transformation",
+    "Numeric Source RNG seed support is explicit; native command seed derivation is not implemented",
+    "Native spread transformations and tables inspected; JavaScript trigonometry and complete shot directions are not native-capture verified",
     "128 Hz continuous recovery evaluation rather than native 64 Hz accuracy updates",
     "Fixed-step rather than subtick shot timing",
     "Imported capture interruption behavior uses fitted impulses"

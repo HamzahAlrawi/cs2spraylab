@@ -14,14 +14,14 @@ import pefile
 from unicorn import Uc, UC_ARCH_X86, UC_MODE_64, UC_HOOK_CODE
 from unicorn.x86_const import (
     UC_X86_REG_RSP, UC_X86_REG_RCX, UC_X86_REG_RDX, UC_X86_REG_RSI,
-    UC_X86_REG_RBX, UC_X86_REG_RIP, UC_X86_REG_XMM0, UC_X86_REG_XMM1,
+    UC_X86_REG_RBX, UC_X86_REG_RDI, UC_X86_REG_RIP, UC_X86_REG_XMM0, UC_X86_REG_XMM1,
     UC_X86_REG_XMM2,
 )
 
 ROOT = Path(__file__).resolve().parents[1]
 GAME = Path(os.environ.get('CS2_PATH', 'C:/Program Files (x86)/Steam/steamapps/common/Counter-Strike Global Offensive'))
 HASHES = {
-    'game/csgo/bin/win64/client.dll': '9ddf30d68b8ef66607783d418c4f74a6004cf2104572e6c630625e52c1c1202d',
+    'game/csgo/bin/win64/client.dll': 'd7db25d48f1d10c5e0b0296e20ed803426eb9509da41760daeda39dd35ba89b9',
     'game/bin/win64/tier0.dll': '4e0dcb0af3f6953f37ddaed0f4e67a56d031f1e84964a262148f8a6f80547791',
 }
 
@@ -59,7 +59,7 @@ def main():
         rng.reg_write(UC_X86_REG_RSP, 0x108008)
         rng.reg_write(UC_X86_REG_RCX, 0x101000)
         if seed is not None:
-            rng.reg_write(UC_X86_REG_RDX, seed)
+            rng.reg_write(UC_X86_REG_RDX, seed & 0xffffffff)
         rng.reg_write(UC_X86_REG_XMM1, float_bits(low))
         rng.reg_write(UC_X86_REG_XMM2, float_bits(high))
         rng.emu_start(tier_base + (0x15e660 if seed is not None else 0x15e740), 0x100000, count=100000)
@@ -68,9 +68,9 @@ def main():
         return read_float(rng, UC_X86_REG_XMM0)
 
     def import_call(machine, address, _size, _data):
-        if address == base + 0x19a8d37:
+        if address == base + 0x19a8d07:
             call_rng(seed=machine.reg_read(UC_X86_REG_RDX))
-        elif address == base + 0x19a8d25:
+        elif address == base + 0x19a8cf5:
             value = call_rng(low=read_float(machine, UC_X86_REG_XMM1), high=read_float(machine, UC_X86_REG_XMM2))
             machine.reg_write(UC_X86_REG_XMM0, float_bits(value))
         else:
@@ -80,13 +80,14 @@ def main():
         machine.reg_write(UC_X86_REG_RSP, stack + 8)
         machine.reg_write(UC_X86_REG_RIP, destination)
 
-    client.hook_add(UC_HOOK_CODE, import_call, begin=base + 0x19a8d25, end=base + 0x19a8d37)
+    client.hook_add(UC_HOOK_CODE, import_call, begin=base + 0x19a8cf5, end=base + 0x19a8d07)
     random_values = {}
-    for seed in [1, 223, 38965, 57966]:
+    for seed in [0, 1, -1, 223, -223, 38965, 57966, 2147483646, -2147483646, 2147483647, -2147483647]:
         call_rng(seed=seed)
         random_values[str(seed)] = [call_rng(low=-30, high=30) for _ in range(16)]
     tables = {}
     alternate_tables = {}
+    spread_tables = {}
     data = json.loads((ROOT / 'src/range/game-data.json').read_text())
     inputs = [(weapon, values, tables) for weapon, values in data['weapons'].items()]
     inputs += [(weapon, dict(values, **values['alternate']), alternate_tables) for weapon, values in data['weapons'].items()]
@@ -104,10 +105,22 @@ def main():
         if client.reg_read(UC_X86_REG_RIP) != base + 0x7cb903:
             raise RuntimeError('Recoil instruction budget exceeded')
         destination[weapon] = [dict(zip(('angle', 'magnitude'), struct.unpack('<ff', client.mem_read(output + 4 + i * 8, 8)))) for i in range(64)]
-    for name, value in [('native-rng-fixture.json', random_values), ('native-table-fixture.json', tables), ('native-alternate-table-fixture.json', alternate_tables)]:
+    for weapon, values in data['weapons'].items():
+        if values.get('pellets', 1) <= 1:
+            continue
+        output = 0x114000
+        client.reg_write(UC_X86_REG_RSP, 0x108000)
+        client.reg_write(UC_X86_REG_RBX, output)
+        client.reg_write(UC_X86_REG_RDI, values['pellets'])
+        client.reg_write(UC_X86_REG_RDX, values['spreadSeed'])
+        client.emu_start(base + 0x7cba49, base + 0x7cbb4a, count=100000)
+        if client.reg_read(UC_X86_REG_RIP) != base + 0x7cbb4a:
+            raise RuntimeError('Shotgun table instruction budget exceeded')
+        spread_tables[weapon] = [dict(zip(('angle', 'radius'), struct.unpack('<ff', client.mem_read(output + 0x404 + i * 8, 8)))) for i in range(64)]
+    for name, value in [('native-rng-fixture.json', random_values), ('native-table-fixture.json', tables), ('native-alternate-table-fixture.json', alternate_tables), ('native-shotgun-table-fixture.json', spread_tables)]:
         path = ROOT / 'src/range' / name
         if args.write:
-            path.write_text(json.dumps(value, indent=2) + '\n')
+            path.write_text(json.dumps(value, indent=2) + '\n', newline='\n')
         elif json.loads(path.read_text()) != value:
             raise SystemExit(f'{name}: numeric fixture mismatch')
         print(f'{name}: verified against hash-pinned offline machine code')

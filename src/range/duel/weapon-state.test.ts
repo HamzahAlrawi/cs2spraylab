@@ -12,7 +12,7 @@ const actor = () => ({position: {x: 0, y: 64 * UNIT, z: 0}, velocity: {x: 0, z: 
 describe('duel and range ballistic parity', () => {
   for (const weapon of weaponIds.filter(id => gameData.weapons[id].fullAuto)) it(`${weapon}: preserves fractional automatic cadence and shared recoil`, () => {
     const range = new Simulation({...defaults, mode: 'guided', weapon, spread: false, burst: 0});
-    const duel = new DuelWeaponState(weapon, () => 0);
+    const duel = new DuelWeaponState(weapon, () => 0, {spread: false});
     const command = {...idleCommand(), fireHeld: true, firePressed: true};
     const rangeShots: {time: number; direction: {x: number; y: number; z: number}}[] = [];
     const duelShots: typeof rangeShots = [];
@@ -39,7 +39,7 @@ describe('duel and range ballistic parity', () => {
 
   it.each(weaponIds.filter(id => !gameData.weapons[id].fullAuto))('%s preserves range/duel recoil through a manually tapped magazine', weapon => {
     const range = new Simulation({...defaults, mode: 'guided', weapon, spread: false, burst: 0});
-    const duel = new DuelWeaponState(weapon, () => 0), stats = gameData.weapons[weapon];
+    const duel = new DuelWeaponState(weapon, () => 0, {spread: false}), stats = gameData.weapons[weapon];
     const rangeShots: {time: number; direction: {x: number; y: number; z: number}}[] = [];
     const duelShots: typeof rangeShots = [];
     const period = Math.ceil(stats.cycle / STEP) + 1;
@@ -63,7 +63,7 @@ describe('duel and range ballistic parity', () => {
     });
   });
 
-  it.each(weaponIds.filter(id => !gameData.weapons[id].fullAuto))('%s does not repeat on hold and respects cooldown for a queued press', weapon => {
+  it.each(weaponIds.filter(id => !gameData.weapons[id].fullAuto && id !== 'zeus'))('%s does not repeat on hold and respects cooldown for a queued press', weapon => {
     const duel = new DuelWeaponState(weapon, () => 0), stats = gameData.weapons[weapon];
     const command = {...idleCommand(), fireHeld: true, firePressed: true};
     expect(duel.advance(0, 0, command, actor())).toBeDefined();

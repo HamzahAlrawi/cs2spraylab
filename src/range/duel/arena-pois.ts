@@ -1,20 +1,25 @@
 import type {Solid, PropStyle} from './geometry';
-import type {Vec} from '../actor-physics';
+import {UNIT, type Vec} from '../actor-physics';
+import type {TraversalLink, TraversalVolume} from './environment';
 
 export const poiThemes = ['freight', 'service', 'courtyard', 'switchback', 'loading', 'workshop'] as const;
 export type POITheme = typeof poiThemes[number];
 export type Footprint = {minX: number; maxX: number; minZ: number; maxZ: number};
 export type POIPart = Solid & {label: string};
-export type POITemplate = {id: string; theme: POITheme; use: string; spawnCover: boolean; parts: POIPart[]; footprint: Footprint};
+export type POITemplate = {id: string; theme: POITheme; use: string; spawnCover: boolean; parts: POIPart[]; footprint: Footprint;
+  environment?: boolean; volumes?: TraversalVolume[]; links?: TraversalLink[]};
 export type PlacedPOI = {id: string; templateId: string; theme: POITheme; center: Vec;
-  mirrorX: -1 | 1; mirrorZ: -1 | 1; footprint: Footprint; reservation: Footprint; solidIndices: number[]};
+  mirrorX: -1 | 1; mirrorZ: -1 | 1; footprint: Footprint; reservation: Footprint; solidIndices: number[];
+  surfaceIds?: string[]; traversalIds?: string[]};
 
 const part = (label: string, x: number, z: number, width: number, height: number, depth: number, style: PropStyle): POIPart => ({
   label, center: {x, y: height / 2, z}, size: {x: width, y: height, z: depth}, style,
   kind: style === 'pallets' || style === 'rack' ? 'crate' : style === 'roadblock' || style === 'bench' ? 'barrier'
     : style === 'concrete-stack' || style === 'planter' || style === 'dock' ? 'concrete' : 'cargo',
+  material: style === 'pallets' || style === 'rack' || style === 'bench' ? 'wood'
+    : style === 'concrete-stack' || style === 'planter' || style === 'dock' || style === 'roadblock' ? 'concrete' : 'metal',
 });
-export function footprintOf(parts: Solid[]): Footprint {
+export function footprintOf(parts: readonly {center: Vec; size: Vec}[]): Footprint {
   return {minX: Math.min(...parts.map(p => p.center.x - p.size.x / 2)), maxX: Math.max(...parts.map(p => p.center.x + p.size.x / 2)),
     minZ: Math.min(...parts.map(p => p.center.z - p.size.z / 2)), maxZ: Math.max(...parts.map(p => p.center.z + p.size.z / 2))};
 }
@@ -23,8 +28,9 @@ export const reserveFootprint = (f: Footprint, margin: number): Footprint => ({
 });
 export const footprintsOverlap = (a: Footprint, b: Footprint) =>
   a.minX < b.maxX - 1e-8 && a.maxX > b.minX + 1e-8 && a.minZ < b.maxZ - 1e-8 && a.maxZ > b.minZ + 1e-8;
+const partId = (label: string) => label.toLowerCase().replace(/[^a-z0-9]+/g, '-');
 const poi = (id: string, theme: POITheme, use: string, parts: POIPart[], spawnCover = false): POITemplate =>
-  ({id, theme, use, parts, spawnCover, footprint: footprintOf(parts)});
+  ({id, theme, use, parts: parts.map(p => ({...p, id: p.id ?? partId(p.label)})), spawnCover, footprint: footprintOf(parts)});
 
 // Every entry is an authored object bundle, not a randomized box-count variant.
 // Touching pieces form closed structures; separate pieces leave real walkways.
@@ -144,10 +150,111 @@ export const arenaPOIs: readonly POITemplate[] = [
     part('west bench', -1.4, -.4, 1.4, 1, 1.8, 'bench'), part('west tower', -1.4, .9, 1.4, 2.3, .8, 'cabinet'), part('east bench', 1.4, .3, 1.4, 1, 1.6, 'bench'), part('east tower', 1.4, -1, 1.4, 1.7, 1, 'rack')]),
 ];
 
+const feet = (x: number, y: number, z: number): Vec => ({x, y, z});
+const link = (id: string, kind: TraversalLink['kind'], from: Vec, to: Vec, surfaceIds: string[], extra: Partial<TraversalLink> = {}): TraversalLink =>
+  ({id, kind, from, to, surfaceIds, bidirectional: true, ...extra});
+function environmentPOI(id: string, theme: POITheme, use: string, parts: POIPart[], links: TraversalLink[], volumes: TraversalVolume[] = []): POITemplate {
+  return {...poi(id, theme, use, parts), environment: true, links, volumes, footprint: footprintOf([...parts, ...volumes])};
+}
+function stairs(id: string, theme: POITheme, material: 'metal' | 'concrete') {
+  const parts: POIPart[] = Array.from({length: 4}, (_, i) => ({...part(`tread-${i}`, 0, -1.5 + .55 * i, 1.8, .3 * (i + 1), .55, 'stairs'), material}));
+  parts.push({...part('landing', 0, 1, 1.8, 1.2, 1.15, 'stairs'), material},
+    {...part('back guard', 0, 1.7, 1.8, 2.6, .25, 'plain'), material},
+    {...part('dispatch case', 2.6, .6, .8, .7, 1, 'movable'), material: 'wood', kind: 'crate', health: 75,
+      interaction: {kind: 'movable', mass: 18, damping: 4, maxSpeed: 3}});
+  return environmentPOI(id, theme, 'Four full-width steps reach a protected inspection landing; loose dispatch cargo can shift the side approach', parts,
+    [link('stair-ascent', 'stairs', feet(0, 0, -2.35), feet(0, 1.2, 1), ['tread-0', 'tread-1', 'tread-2', 'tread-3', 'landing'])]);
+}
+function ramp(id: string, theme: POITheme) {
+  return environmentPOI(id, theme, 'Sloped maintenance access reaches an elevated guarded deck with a detached jump-up staging block', [
+    {...part('access slope', 0, -.55, 1.8, 1.2, 2.4, 'ramp'), material: 'concrete', shape: {kind: 'ramp', axis: 'z', highSide: 1}},
+    {...part('deck', 0, 1.15, 1.8, 1.2, 1, 'stairs'), material: 'concrete'},
+    part('deck guard', 0, 1.775, 1.8, 2.6, .25, 'concrete-stack'),
+    part('staging block', 2.6, .6, .8, .75, 1, 'stairs')],
+    [link('ramp-ascent', 'ramp', feet(0, 0, -2.35), feet(0, 1.2, 1.15), ['access-slope', 'deck']),
+      link('staging-jump', 'boost', feet(2.6, 0, -1), feet(2.6, .75, .6), ['staging-block'])]);
+}
+function ladder(id: string, theme: POITheme) {
+  const base = feet(3, .95, .75), mount = feet(3, .95, -.2), perch = feet(.35, 2.4, .75);
+  return environmentPOI(id, theme, 'Inspection loft has a ladder and a stair-accessed two-actor boost platform with a protected perch and clear dismount', [
+    {...part('loft', 0, .65, 1.8, 2.4, 1.8, 'stairs'), material: 'metal'},
+    part('boost-tread-0', 3, -1.775, 1.8, .3, .45, 'stairs'),
+    part('boost-tread-1', 3, -1.325, 1.8, .6, .45, 'stairs'),
+    part('boost-tread-2', 3, -.875, 1.8, .9, .45, 'stairs'),
+    part('boost platform', 3, .35, 1.8, .95, 2, 'stairs')],
+    [link('ladder-ascent', 'ladder', feet(0, 0, -.85), feet(0, 2.4, .5), ['loft'], {volumeId: 'ladder'}),
+      link('boost-approach', 'stairs', feet(3, 0, -2.65), mount, ['boost-tread-0', 'boost-tread-1', 'boost-tread-2', 'boost-platform']),
+      link('partner-boost', 'boost', mount, perch, ['boost-platform', 'loft'], {requiresPartner: true, boost: {
+        base, mount, partnerTop: feet(base.x, base.y + 54 * UNIT, base.z), perch, dismount: feet(-1.6, 0, .75),
+        platformId: 'boost-platform', perchId: 'loft', approachLinkId: 'boost-approach', partnerStance: 'crouch'}})],
+    [{id: 'ladder', kind: 'ladder', center: feet(0, 1.2, -.54), size: feet(.95, 2.4, .5), material: 'metal',
+      ladder: {axis: 'z', facing: -1, bottom: 0, top: 2.4, dismount: feet(0, 2.4, .5)}}]);
+}
+function water(id: string, theme: POITheme) {
+  return environmentPOI(id, theme, 'Open shallow-water channel between dry curbs offers a noisy slow crossover and dry outer routes around the pump', [
+    part('west curb', -1.6, -.3, .4, .85, 2.8, 'concrete-stack'), part('east curb', 1.6, -.3, .4, .85, 2.8, 'concrete-stack'),
+    part('pump head', -1.6, 1.4, .4, 1.7, .6, 'pump')],
+    [link('wet-crossover', 'wade', feet(0, 0, -2.3), feet(0, 0, 1.7), [], {volumeId: 'water'})],
+    [{id: 'water', kind: 'water', center: feet(0, .16, -.3), size: feet(2.8, .32, 2.8), material: 'water',
+      water: {surfaceY: .32, speedScale: .65, drag: 3.2}}]);
+}
+function passage(id: string, theme: POITheme, mode: 'door' | 'glass' | 'vent') {
+  const vent = mode === 'vent', width = vent ? 1.8 : 2, height = vent ? 1.4 : 2.2;
+  const panel: POIPart = {...part('panel', 0, 0, width, height, mode === 'glass' ? .045 : .12,
+    mode === 'vent' ? 'vent-panel' : mode), kind: 'cargo', material: mode === 'glass' ? 'glass' : mode === 'vent' ? 'grate' : 'metal',
+    health: mode === 'door' ? undefined : mode === 'glass' ? 20 : 35,
+    interaction: mode === 'door' ? {kind: 'door', openOffset: feet(0, 2.35, 0), useRadius: 1.8}
+      : {kind: 'breakable', debris: mode === 'glass' ? 'glass' : 'vent'}};
+  return environmentPOI(id, theme, mode === 'door' ? 'Use-operated sliding service gate separates a direct walk-through from the permanently open outer bypass'
+    : mode === 'glass' ? 'Breakable receiving window opens a full-height shortcut while intact glass stops shots and movement'
+      : 'Breakable vent grille opens a crouch-only service shortcut with a structural low lintel and an outer standing route', [
+    part('west jamb', -width / 2 - .35, 0, .7, 2.6, .4, 'concrete-stack'),
+    part('east jamb', width / 2 + .35, 0, .7, 2.6, .4, 'concrete-stack'), panel,
+    {...part('lintel', 0, 0, width, 2.6 - height, .4, 'plain'), center: feet(0, height + (2.6 - height) / 2, 0), material: 'concrete'},
+    part('service terminal', -width / 2 - .35, 1.7, .7, 1.2, .6, 'cabinet')],
+    [link('shortcut', mode === 'door' ? 'door' : 'breakable', feet(0, 0, -.9), feet(0, 0, .85), ['panel'],
+      mode === 'door' ? {requiredOpenId: 'panel'} : {requiredBreakId: 'panel', requiresCrouch: vent})]);
+}
+function movable(id: string, theme: POITheme) {
+  return environmentPOI(id, theme, 'Loose shipping cases form movable low cover in front of a fixed rack; impacts can reshape the inner approach', [
+    {...part('light case', -1.25, -.25, 1, .6, 1, 'movable'), kind: 'crate', material: 'wood', health: 60,
+      interaction: {kind: 'movable', mass: 12, damping: 3.5, maxSpeed: 3}},
+    {...part('heavy case', 1.25, -.25, 1, .95, 1, 'movable'), kind: 'crate', material: 'wood', health: 100,
+      interaction: {kind: 'movable', mass: 28, damping: 4.5, maxSpeed: 2}},
+    part('fixed rack', 0, 1.75, 3.5, 1.8, .4, 'rack')], []);
+}
+
+// Separate from the original cover catalog: one pair replaces a flank, never spawn cover.
+export const environmentPOIs: readonly POITemplate[] = [
+  stairs('freight-inspection-stairs', 'freight', 'metal'), ladder('freight-container-loft', 'freight'),
+  ramp('service-access-ramp', 'service'), water('service-drainage-channel', 'service'), passage('service-vent-access', 'service', 'vent'),
+  water('courtyard-water-rill', 'courtyard'), passage('courtyard-glass-arcade', 'courtyard', 'glass'),
+  ramp('switchback-overlook-ramp', 'switchback'), passage('switchback-security-door', 'switchback', 'door'),
+  stairs('loading-dock-stairs', 'loading', 'concrete'), passage('loading-receiving-glass', 'loading', 'glass'),
+  ladder('workshop-service-loft', 'workshop'), movable('workshop-loose-cargo', 'workshop'), passage('workshop-service-door', 'workshop', 'door'),
+  passage('workshop-crawl-vent', 'workshop', 'vent'),
+];
+
 export function placePOI(template: POITemplate, center: Vec, mirrorX: -1 | 1, mirrorZ: -1 | 1, id: string, firstIndex: number, gap = 1.2) {
-  const solids = template.parts.map(p => ({...p, center: {x: center.x + mirrorX * p.center.x, y: p.center.y, z: center.z + mirrorZ * p.center.z}, poiId: id}));
-  const footprint = footprintOf(solids);
+  const transform = (p: Vec): Vec => ({x: center.x + mirrorX * p.x, y: center.y + p.y, z: center.z + mirrorZ * p.z});
+  const surfaceId = (localId: string) => `${id}/${localId}`;
+  const solids: POIPart[] = template.parts.map(p => ({...p, id: surfaceId(p.id ?? partId(p.label)), center: transform(p.center), poiId: id,
+    shape: p.shape ? {...p.shape, highSide: (p.shape.highSide * (p.shape.axis === 'x' ? mirrorX : mirrorZ)) as -1 | 1} : undefined,
+    interaction: p.interaction?.kind === 'door' ? {...p.interaction,
+      openOffset: {x: mirrorX * p.interaction.openOffset.x, y: p.interaction.openOffset.y, z: mirrorZ * p.interaction.openOffset.z}} : p.interaction}));
+  const volumes: TraversalVolume[] = (template.volumes ?? []).map(v => ({...v, id: surfaceId(v.id), poiId: id, center: transform(v.center),
+    ladder: v.ladder ? {...v.ladder, facing: (v.ladder.facing * (v.ladder.axis === 'x' ? mirrorX : mirrorZ)) as -1 | 1,
+      bottom: center.y + v.ladder.bottom, top: center.y + v.ladder.top, dismount: transform(v.ladder.dismount)} : undefined,
+    water: v.water ? {...v.water, surfaceY: center.y + v.water.surfaceY} : undefined}));
+  const links: TraversalLink[] = (template.links ?? []).map(l => ({...l, id: surfaceId(l.id), poiId: id, from: transform(l.from), to: transform(l.to),
+    surfaceIds: l.surfaceIds.map(surfaceId), volumeId: l.volumeId ? surfaceId(l.volumeId) : undefined,
+    requiredOpenId: l.requiredOpenId ? surfaceId(l.requiredOpenId) : undefined, requiredBreakId: l.requiredBreakId ? surfaceId(l.requiredBreakId) : undefined,
+    boost: l.boost ? {...l.boost, base: transform(l.boost.base), mount: transform(l.boost.mount), partnerTop: transform(l.boost.partnerTop),
+      perch: transform(l.boost.perch), dismount: transform(l.boost.dismount), platformId: surfaceId(l.boost.platformId),
+      perchId: surfaceId(l.boost.perchId), approachLinkId: surfaceId(l.boost.approachLinkId)} : undefined}));
+  const footprint = footprintOf([...solids, ...volumes]);
   const instance: PlacedPOI = {id, templateId: template.id, theme: template.theme, center, mirrorX, mirrorZ,
-    footprint, reservation: reserveFootprint(footprint, gap / 2), solidIndices: solids.map((_, i) => firstIndex + i)};
-  return {solids, instance};
+    footprint, reservation: reserveFootprint(footprint, gap / 2), solidIndices: solids.map((_, i) => firstIndex + i),
+    surfaceIds: solids.map(s => s.id!), traversalIds: [...volumes, ...links].map(t => t.id)};
+  return {solids, instance, volumes, links};
 }

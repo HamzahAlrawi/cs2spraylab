@@ -5,18 +5,24 @@ import type {BotBehavior, SkillLevel} from './config';
 import {traceSolid, type Arena, type CoverLane} from './geometry';
 import {clearSegment, routeTo} from './navigation';
 import {currentVisible, type BotObservation, type VisibleEnemy} from './perception';
-import {combatStyle, peekDistribution, peekTypes, samplePeek, weaponFamily, type BotTraits, type PeekChoice} from './skill';
-import type {ActorCommand, DuelActorSnapshot} from './types';
+import {combatStyle, peekDistribution, peekTypes, sampleCombatPlan, samplePeek, type BotTraits, type PeekChoice} from './skill';
+import {idleCommand, type ActorCommand, type DuelActorSnapshot} from './types';
 import {aimStep, type AimMotor} from './motor';
-import {AngleAwareness, proficiency, SightingMemory} from './awareness';
+import {AngleAwareness, CueAngleChecks, proficiency, SightingMemory} from './awareness';
 import {randomStream} from './rng';
+import {copyTeamAssignment, type TeamAssignment} from './coordination';
+import {knifeModel} from '../equipment';
 
-type Phase = 'approach' | 'setup' | 'expose' | 'brake' | 'attack' | 'return' | 'push' | 'investigate' | 'microstrafe' | 'reload';
+type Phase = 'approach' | 'setup' | 'expose' | 'brake' | 'attack' | 'return' | 'push' | 'investigate' | 'microstrafe' | 'reload' | 'close';
+type FightIntent = 'seek' | 'contest' | 'hold-angle' | 'reset' | 'change-angle' | 'close';
+const peekTravel: Record<PeekChoice, number> = {hold: 0, shoulder: -.45, quick: 0, wide: .95,
+  ferrari: 1.65, crouch: -.05, prefire: 0, slice: -.35, jump: -.15, run: .8, crouchWide: .95};
 const difference = (target: number, current: number) => Math.atan2(Math.sin(target - current), Math.cos(target - current));
 const normal = (random: () => number) => Math.sqrt(-2 * Math.log(Math.max(1e-9, random()))) * Math.cos(2 * Math.PI * random());
 const distance = (a: Vec, b: Vec) => Math.hypot(a.x - b.x, a.z - b.z);
 
-// Decisions are geometry-relative and run at simulation tick rate. This class
+// Motor inputs run at simulation tick rate; tactical choices happen at action
+// boundaries and cached geometry checks. This class
 // never receives the hidden player's live position: only sensed observations.
 export class TacticalBrain {
   phase: Phase = 'approach';
@@ -36,6 +42,7 @@ export class TacticalBrain {
   private route: Vec[] = [];
   private routeGoal = '';
   private routeAt = -Infinity;
+  private shortcutAt = -Infinity;
   private stalledAt = 0;
   private previousPosition: Vec | null = null;
   private repeat: PeekChoice = 'hold';
@@ -46,6 +53,21 @@ export class TacticalBrain {
   private setupWait = .5;
   private attackWait = .8;
   private attackFiredAt = -1;
+  private attackRounds = 1;
+  private attackShots = 0;
+  private previousAmmo?: number;
+  private burstRecovery = .25;
+  private intent: FightIntent = 'seek';
+  private commitUntil = -Infinity;
+  private holdUntil = -Infinity;
+  private engagementAt = -Infinity;
+  private resetGoal: Vec | null = null;
+  private resetCovered = false;
+  private resetPlannedAt = -Infinity;
+  private holdGeometryAt = -Infinity;
+  private holdGeometryResult = false;
+  private readonly visitedLanes = new Map<string, number>();
+  private lastDodgeSign = 0;
   private combatStrafes = 0;
   private microGoal: Vec | null = null;
   private forceReposition = false;
@@ -59,12 +81,16 @@ export class TacticalBrain {
   private heardAt = -Infinity;
   private heardReadyAt = Infinity;
   private actedOnSoundAt = -Infinity;
+  private soundDecisionAt = -Infinity;
   private readonly stagger: number;
   private readonly stealthRoll: number;
   private readonly hearingRandom: () => number;
   private sightEdge: Vec | null = null;
   private peekWidth = 1;
   private readonly scanPoints: Vec[];
+  private readonly sideScanPoints: Record<-1 | 1, Vec[]>;
+  private readonly searchPoints: Vec[];
+  private readonly style: ReturnType<typeof combatStyle>;
   private readonly awareness: AngleAwareness;
   private readonly memory: SightingMemory;
   private crouchSpray = false;
@@ -74,15 +100,25 @@ export class TacticalBrain {
   private controlVariation = 1;
   private searchGoal?: Vec;
   private searchIndex = 0;
+  private readonly cueChecks: CueAngleChecks;
+  private shadowAt = -Infinity;
+  private shadowReadyAt = Infinity;
+  private shadowId?: string;
+  private shadowPoint: Vec | null = null;
+  private teamAssignment: TeamAssignment | null = null;
+  private appliedTeamLane = '';
+  private teamReportAt = -Infinity;
 
   constructor(private readonly traits: BotTraits, private readonly behavior: BotBehavior,
     private readonly accuracy: number, private readonly random: () => number,
     private readonly arena: Arena, private readonly level: SkillLevel,
-    private readonly weapon: Weapon, actorId: number, laneOffset = 0) {
+    private weapon: Weapon, actorId: number, laneOffset = 0) {
     const lanes = arena.lanes;
     if (!lanes?.length) throw new Error('Tactical brain needs cover lanes');
     this.stagger = Math.floor((actorId - 1) / 2) * .18;
+    this.style = combatStyle(level);
     this.awareness = new AngleAwareness(level, random);
+    this.cueChecks = new CueAngleChecks(level);
     this.memory = new SightingMemory(level, arena);
     const role = behavior === 'holder' ? 'camp' : behavior === 'patient' ? 'flank' : 'entry';
     const opening = lanes.filter(lane => lane.role === role);
@@ -98,6 +134,13 @@ export class TacticalBrain {
       x: solid.center.x + side * (solid.size.x / 2 + .45), y: this.preaimHeight,
       z: solid.center.z - solid.size.z / 2 - .2,
     })));
+    this.sideScanPoints = {'-1': this.scanPoints.filter(point => point.x < 0),
+      1: this.scanPoints.filter(point => point.x > 0)};
+    this.searchPoints = arena.solids.filter(solid => solid.center.z > 5 && solid.size.x >= 3)
+      .flatMap(solid => [-1, 1].map(side => ({
+        x: clamp(solid.center.x + side * (solid.size.x / 2 + .9), arena.minX + 1, arena.maxX - 1),
+        y: 0, z: Math.min(arena.maxZ - 1, solid.center.z + solid.size.z / 2 + 1.2),
+      })));
     this.stealthRoll = this.random();
     // Hearing must not perturb route/peek rolls before its reaction deadline.
     this.hearingRandom = randomStream(Math.floor(this.random() * 0x100000000), 'auditory-localization');
@@ -118,11 +161,20 @@ export class TacticalBrain {
     const contesting = !!this.observation?.visible && ['attack', 'brake', 'microstrafe'].includes(this.phase);
     this.forceReposition = healthRemaining < 35 || this.random() <
       (experienced ? contesting ? repeatedDamage ? .22 : .07 : .65 : .3);
-    if (this.forceReposition && this.phase !== 'return' && this.phase !== 'reload') this.transition('return', time);
+    if (this.forceReposition && this.phase !== 'return' && this.phase !== 'reload') {
+      this.intent = 'reset'; this.transition('return', time);
+    }
   }
 
   decisionSnapshot() {
-    return {phase: this.phase, peek: this.activePeek, role: this.lane.role, side: this.lane.side};
+    return {phase: this.phase, peek: this.activePeek, role: this.lane.role, side: this.lane.side,
+      intent: this.intent, burstRounds: this.attackRounds};
+  }
+
+  coordinate(assignment: TeamAssignment | null) {
+    if (!assignment) {this.teamAssignment = null; this.appliedTeamLane = ''; return;}
+    if (this.level !== '10+' && this.level < 6) return;
+    this.teamAssignment = copyTeamAssignment(assignment);
   }
 
   contactReport(time: number): Vec | null {
@@ -136,47 +188,71 @@ export class TacticalBrain {
   }
 
   hear(point: Vec, time: number, kind: 'footstep' | 'landing' | 'gunshot', occluded: boolean) {
+    if (!Number.isFinite(time) || time < this.heardAt || ![point.x, point.y, point.z].every(Number.isFinite)) return;
     const error = (kind === 'gunshot' ? .85 : kind === 'landing' ? 1.25 : 1.8) * (occluded ? 1.7 : 1) * (1.35 - proficiency(this.level) * .65);
-    const continuingCue = time - this.heardAt < .65;
-    this.heard = {x: point.x + normal(this.hearingRandom) * error,
+    const continuingCue = time - this.heardAt < .65 && this.heard && distance(point, this.heard) < 6;
+    const estimate = {x: point.x + normal(this.hearingRandom) * error,
       y: point.y, z: point.z + normal(this.hearingRandom) * error};
+    this.heard = continuingCue ? {x: this.heard!.x + (estimate.x - this.heard!.x) * .35,
+      y: point.y, z: this.heard!.z + (estimate.z - this.heard!.z) * .35} : estimate;
     this.heardAt = time;
     const readyAt = time + this.traits.recognitionMedianMs / 1000 *
       (kind === 'gunshot' ? .65 : 1) * (occluded ? 1.35 : 1);
     this.heardReadyAt = continuingCue ? Math.min(this.heardReadyAt, readyAt) : readyAt;
+    this.cueChecks.observe({source: 'sound', point: {...this.heard, y: this.preaimHeight}, observedAt: time,
+      readyAt: this.heardReadyAt, uncertainty: error, lifetime: 3.5});
   }
 
   perceive(observation: BotObservation) {
+    if (observation.time < (this.observation?.time ?? -Infinity)) return;
     const previousSeenAt = this.lastSeenAt;
+    const previousEnemyId = this.lastSeen?.id;
     this.memory.observe(observation);
     this.observation = {...observation, visible: observation.visible ? this.memory.seen : null};
     this.targetVelocity = observation.visible ? this.memory.velocity : {x: 0, z: 0};
+    const shadow = observation.shadowCues?.find(cue => cue.observedAt <= observation.time &&
+      observation.time - cue.observedAt < .075 && cue.observedAt >= this.shadowAt &&
+      [cue.point.x, cue.point.y, cue.point.z, cue.uncertainty].every(Number.isFinite));
+    if (shadow && (this.level === '10+' || this.level >= 4)) {
+      const continuing = shadow.id === this.shadowId && shadow.observedAt - this.shadowAt < .2;
+      this.shadowReadyAt = continuing ? this.shadowReadyAt
+        : shadow.observedAt + this.traits.recognitionMedianMs / 1000 * .8;
+      this.shadowAt = shadow.observedAt; this.shadowId = shadow.id;
+      this.shadowPoint = {...shadow.point, y: this.preaimHeight};
+      this.cueChecks.observe({source: 'shadow', point: {...shadow.point, y: this.preaimHeight},
+        observedAt: shadow.observedAt, readyAt: this.shadowReadyAt, uncertainty: shadow.uncertainty, lifetime: .85});
+    }
     if (!observation.visible) {
       if (observation.time - this.lastSeenAt > .28) this.firstVisible = -1;
       return;
     }
-    if (this.firstVisible < 0) {
+    if (this.firstVisible < 0 || previousEnemyId !== observation.visible.id) {
       this.firstVisible = observation.time;
-      const recent = observation.time - previousSeenAt < 1.2;
+      const recent = previousEnemyId === observation.visible.id && observation.time - previousSeenAt < 1.2;
       this.readyAt = observation.time + this.traits.recognitionMedianMs / 1000 *
         (recent ? .58 : 1) * Math.exp(.18 * normal(this.random));
       this.aimError = {yaw: normal(this.random) * this.traits.endpointErrorDegrees / this.accuracy * DEG,
         pitch: normal(this.random) * this.traits.endpointErrorDegrees / this.accuracy * DEG};
       this.bodyAim = this.random() < this.traits.lowAimTendency;
       this.stopThisPeek = this.random() < this.traits.stopTendency;
-      const style = combatStyle(this.level), roll = this.random();
-      this.crouchSpray = roll < style.crouchSpray;
-      this.crouchTap = !this.crouchSpray && roll < style.crouchSpray + style.crouchTap;
-      this.tapDelay = .12 + this.random() * .12;
-      this.tapUntil = -Infinity;
-      this.controlVariation = clamp(1 + normal(this.random) * style.recoilVariation, .5, 1.08);
+      if (!recent) {
+        const style = this.style, roll = this.random();
+        this.crouchSpray = roll < style.crouchSpray;
+        this.crouchTap = !this.crouchSpray && roll < style.crouchSpray + style.crouchTap;
+        this.tapDelay = .12 + this.random() * .12;
+        this.tapUntil = -Infinity;
+        this.controlVariation = clamp(1 + normal(this.random) * style.recoilVariation, .5, 1.08);
+        this.engagementAt = -Infinity; this.commitUntil = -Infinity; this.holdUntil = -Infinity;
+      }
     }
   }
 
   private transition(phase: Phase, time: number) {
+    if (phase === this.phase) return;
     const previous = this.phase;
     this.phase = phase; this.phaseAt = time;
     this.route = []; this.routeGoal = ''; this.arrivedGoal = '';
+    if (phase === 'return' || phase === 'reload') this.resetPlannedAt = -Infinity;
     if (phase === 'brake') this.brakeFromMicro = previous === 'microstrafe';
     if (phase === 'setup') {
       const contact = time - this.lastSeenAt < 2.5 ||
@@ -185,21 +261,28 @@ export class TacticalBrain {
       this.setupWait = (baseline + this.random() * (contact ? .8 : 1.7) + this.stagger) * (contact ? .65 : 1);
     }
     if (phase === 'attack') {
-      const range = this.lastSeen && this.observation ? distance(this.lastSeen.position, this.observation.self.position) : 16;
-      const disciplined = this.level === '10+' || Number(this.level) >= 6;
-      const family = pistolIds.some(id => id === this.weapon) ? 'pistol' : weaponFamily(this.weapon);
-      const sniper = sniperIds.includes(this.weapon), stats = gameData.weapons[this.weapon];
-      const rounds = sniper ? stats.fullAuto ? 2 + this.random() * 2 : 1
-        : family === 'pistol' ? 3 + this.random() * 3
-        : family === 'smg' || family === 'lmg' ? 8 + this.random() * 8
-        : disciplined ? range > 20 ? 3 + this.random() * 2 : range > 11 ? 5 + this.random() * 3
-          : 8 + this.random() * 5 : 5 + this.random() * 8;
-      const spray = stats.fullAuto && !sniper && this.crouchSpray;
-      this.attackWait = sniper && !stats.fullAuto ? .18 + this.random() * .12
-        : (Math.floor(spray ? Math.max(rounds, 12 + this.random() * 8) : rounds) - .5) * stats.cycle;
-      this.attackFiredAt = -1;
+      this.beginBurst(time);
     }
   }
+
+  private beginBurst(time: number) {
+    this.phaseAt = time;
+    const self = this.observation?.self;
+    const range = this.lastSeen && self ? distance(this.lastSeen.position, self.position) : 16;
+    const plan = sampleCombatPlan(this.level, this.weapon, range, self?.ammo ?? 30, this.crouchSpray, this.random);
+    this.attackRounds = plan.rounds; this.burstRecovery = plan.recovery;
+    this.attackWait = sniperIds.includes(this.weapon) && !gameData.weapons[this.weapon].fullAuto ? .18 + this.random() * .12
+      : (plan.rounds - .5) * gameData.weapons[this.weapon].cycle;
+    this.attackFiredAt = -1; this.attackShots = 0;
+    if (time >= this.commitUntil) this.commitUntil = time + plan.commitment;
+    if (this.engagementAt === -Infinity) {
+      this.engagementAt = time;
+      this.holdUntil = time + 4.4 + this.random() * 1.6;
+    }
+    if (this.intent !== 'hold-angle') this.intent = 'contest';
+  }
+
+  private laneKey(lane: CoverLane) {return `${lane.anchor.x}:${lane.anchor.z}`;}
 
   private laneForSound(point: Vec, role: CoverLane['role']) {
     const candidates = this.arena.lanes?.filter(lane => lane.role === role) ?? [];
@@ -213,6 +296,9 @@ export class TacticalBrain {
     if (time - this.lastHurtAt < 1.2 || self.health < 40 || distance(self.position, point) < 8) return false;
     if (Math.min(distance(self.position, this.lane.anchor), distance(self.position, this.exposurePoint())) > .9) return false;
     if (distance(self.position, this.lane.retreat) > 2) return false;
+    if (time < this.holdGeometryAt) return this.holdGeometryResult;
+    this.holdGeometryAt = time + .2;
+    this.holdGeometryResult = false;
     const retreat = {...this.lane.retreat, y: self.position.y};
     const coverDistance = Math.hypot(retreat.x - point.x, retreat.y - point.y, retreat.z - point.z);
     if (!Number.isFinite(traceSolid(point, {x: (retreat.x - point.x) / coverDistance,
@@ -221,8 +307,9 @@ export class TacticalBrain {
     const dx = point.x - self.position.x, dy = point.y - self.position.y, dz = point.z - self.position.z;
     const length = Math.hypot(dx, dy, dz);
     if (Math.abs(difference(Math.atan2(-dx, -dz), self.yaw)) > 25 * DEG) return false;
-    return !Number.isFinite(traceSolid(self.position, {x: dx / length, y: dy / length, z: dz / length},
+    this.holdGeometryResult = !Number.isFinite(traceSolid(self.position, {x: dx / length, y: dy / length, z: dz / length},
       this.arena, length - .02).distance);
+    return this.holdGeometryResult;
   }
 
   private chooseLane(self: DuelActorSnapshot, teammates: DuelActorSnapshot[], time: number, force = false) {
@@ -233,6 +320,8 @@ export class TacticalBrain {
       : this.behavior === 'patient' ? {entry: 1, flank: 2, camp: 1.4, offAngle: 2.1}
         : {entry: 2.4, flank: 1.6, camp: .55, offAngle: 1.25};
     if (self.health < 40) {roleWeights.camp *= 2; roleWeights.entry *= .55;}
+    if (self.armor === 0 && self.health < 65) {roleWeights.entry *= .7; roleWeights.offAngle *= 1.3;}
+    if (sniperIds.includes(this.weapon)) {roleWeights.camp *= 1.5; roleWeights.offAngle *= 1.3; roleWeights.entry *= .6;}
     if (this.level !== '10+' && this.level <= 3) {
       roleWeights.entry *= 1.4; roleWeights.offAngle *= .4; roleWeights.flank *= .6;
     }
@@ -241,27 +330,42 @@ export class TacticalBrain {
     }
     const choices = (this.arena.lanes ?? []).filter(lane =>
       clearSegment(lane.anchor, lane.edge, this.arena) &&
-      (!force || lane.role !== this.lane.role || lane.side !== this.lane.side));
+      (!force || distance(lane.anchor, this.lane.anchor) > 1.2));
     const weighted = choices.map(lane => {
       let weight = roleWeights[lane.role ?? 'entry'];
-      if (lane.role === this.lane.role && lane.side === this.lane.side) weight *= force ? .08 : .35;
+      if (distance(lane.anchor, this.lane.anchor) < 1.2) weight *= force ? .08 : .35;
+      const visitedAt = this.visitedLanes.get(this.laneKey(lane)) ?? -Infinity;
+      if (time - visitedAt < 6) weight *= .18 + Math.max(0, time - visitedAt) / 15;
       if (recent) weight *= lane.side === (recent.x >= 0 ? 1 : -1) ? 1.6 : .65;
+      if (recent && (this.level === '10+' || this.level >= 6)) {
+        const eye = {...lane.edge, y: self.position.y};
+        const dx = recent.x - eye.x, dy = recent.y - eye.y, dz = recent.z - eye.z;
+        const length = Math.hypot(dx, dy, dz);
+        if (length > .01 && Number.isFinite(traceSolid(eye,
+          {x: dx / length, y: dy / length, z: dz / length}, this.arena, length - .02).distance)) weight *= .35;
+      }
       const nearby = teammates.filter(peer => peer.id !== self.id && peer.alive && distance(peer.position, lane.anchor) < 2.4).length;
       weight *= Math.pow(.42, nearby);
       weight *= clamp(1.3 - distance(self.position, lane.anchor) / 24, .45, 1.2);
+      if (force && recent) weight *= Math.exp(-Math.max(0, distance(self.position, lane.anchor) - 3.5) / 4);
       return weight;
     });
     const sum = weighted.reduce((total, weight) => total + weight, 0);
     let roll = this.random() * sum;
     for (let index = 0; index < choices.length; index++) {
       roll -= weighted[index];
-      if (roll <= 0) {this.lane = this.makeLane(choices[index]); this.sightEdge = null; return;}
+      if (roll <= 0) {
+        this.visitedLanes.set(this.laneKey(this.lane), time);
+        this.lane = this.makeLane(choices[index]); this.sightEdge = null;
+        this.holdGeometryAt = -Infinity;
+        return;
+      }
     }
   }
 
   private choosePeek(time: number) {
     this.peekCount++;
-    const known = time - this.lastSeenAt < 2;
+    const known = !!this.memory.anticipation(time)?.prefireReady && time >= this.readyAt;
     // A firing corner depends on the expected angle, not just a waypoint beside
     // a box. Scan geometry using memory/common angles, never a hidden actor.
     const memoryAim = this.memory.focus(time);
@@ -295,11 +399,12 @@ export class TacticalBrain {
       jump: eligible.jump && this.behavior !== 'holder',
     }, {
       run: this.behavior === 'aggressive' ? 1.8 : .7,
-      quick: sniper ? 2 : 1,
+      quick: (sniper ? 2 : 1) * (known ? 1.4 : 1),
       ferrari: sniper ? .35 : 1,
       wide: this.lane.role === 'flank' ? 1.7 : this.behavior === 'aggressive' ? 1.4 : .8,
       slice: this.behavior === 'patient' || this.lane.role === 'offAngle' ? 1.6 : .7,
-      shoulder: this.behavior === 'holder' ? 1.5 : 1,
+      shoulder: (this.behavior === 'holder' ? 1.5 : 1) * (known ? .35 : 1),
+      jump: known ? .15 : 1,
       [this.repeat]: .42,
     });
     this.activePeek = samplePeek(distribution, this.random);
@@ -308,12 +413,10 @@ export class TacticalBrain {
   }
 
   private exposurePoint(type: PeekChoice = this.activePeek): Vec {
-    const travel: Record<PeekChoice, number> = {hold: 0, shoulder: -.45, quick: 0, wide: .95,
-      ferrari: 1.65, crouch: -.05, prefire: 0, slice: -.35, jump: -.15, run: .8, crouchWide: .95};
     const axis = this.lane.axis ?? {x: this.lane.side, z: 0};
     const edge = this.sightEdge ?? this.lane.edge;
-    return {...edge, x: edge.x + axis.x * travel[type] * this.peekWidth,
-      z: edge.z + axis.z * travel[type] * this.peekWidth};
+    return {...edge, x: edge.x + axis.x * peekTravel[type] * this.peekWidth,
+      z: edge.z + axis.z * peekTravel[type] * this.peekWidth};
   }
 
   private travel(self: DuelActorSnapshot, goal: Vec, time: number) {
@@ -323,8 +426,10 @@ export class TacticalBrain {
       this.routeGoal = key; this.routeAt = time;
       this.route = clearSegment(self.position, goal, this.arena) ? [goal] : routeTo(self.position, goal, this.arena);
     }
+    const checkShortcut = time >= this.shortcutAt;
+    if (checkShortcut) this.shortcutAt = time + .12;
     while (this.route.length > 1 && (distance(self.position, this.route[0]) < .35 ||
-      clearSegment(self.position, this.route[1], this.arena))) this.route.shift();
+      checkShortcut && clearSegment(self.position, this.route[1], this.arena))) this.route.shift();
     return this.route[0] ?? goal;
   }
 
@@ -332,11 +437,13 @@ export class TacticalBrain {
     const dx = target.position.x - self.position.x, dz = target.position.z - self.position.z;
     const length = Math.hypot(dx, dz);
     if (length < .1) return false;
-    const sign = this.random() < .5 ? -1 : 1;
+    const sign = this.lastDodgeSign && this.random() < .75 ? -this.lastDodgeSign : this.random() < .5 ? -1 : 1;
+    const width = .65 + this.random() * .65;
     for (const direction of [sign, -sign]) {
-      const candidate = {x: self.position.x - dz / length * direction * .85,
-        y: self.position.y, z: self.position.z + dx / length * direction * .85};
+      const candidate = {x: self.position.x - dz / length * direction * width,
+        y: self.position.y, z: self.position.z + dx / length * direction * width};
       if (!clearSegment(self.position, candidate, this.arena)) continue;
+      this.lastDodgeSign = direction;
       this.microGoal = candidate;
       this.combatStrafes++;
       this.transition('microstrafe', time);
@@ -345,28 +452,142 @@ export class TacticalBrain {
     return false;
   }
 
+  private prepareReset(self: DuelActorSnapshot, time: number) {
+    if (this.resetPlannedAt === this.phaseAt) return;
+    this.resetPlannedAt = this.phaseAt;
+    this.resetGoal = {...this.lane.retreat};
+    this.resetCovered = false;
+    const threat = this.memory.focus(time) ?? (time >= this.heardReadyAt && time - this.heardAt < 3.5 ? this.heard : null);
+    if (!threat) return;
+    let best = Infinity;
+    // Pick a reachable nearby shelter from authored cover, not a distant
+    // opening waypoint. Geometry is checked once per reset, not each tick.
+    for (const lane of this.arena.lanes ?? []) for (const point of [lane.retreat, lane.anchor]) {
+      const travel = distance(self.position, point);
+      if (travel < .45 || travel > 7 || !clearSegment(self.position, point, this.arena)) continue;
+      const eye = {...point, y: self.position.y};
+      const dx = threat.x - eye.x, dy = threat.y - eye.y, dz = threat.z - eye.z;
+      const length = Math.hypot(dx, dy, dz);
+      const covered = traceSolid(eye, {x: dx / length, y: dy / length, z: dz / length}, this.arena, length - .02).distance < length - .02;
+      const score = travel + (covered ? 0 : 12);
+      if (score < best) {best = score; this.resetGoal = {...point};}
+    }
+    const eye = {...this.resetGoal, y: self.position.y};
+    const dx = threat.x - eye.x, dy = threat.y - eye.y, dz = threat.z - eye.z;
+    const length = Math.hypot(dx, dy, dz);
+    this.resetCovered = length > .01 && Number.isFinite(traceSolid(eye,
+      {x: dx / length, y: dy / length, z: dz / length}, this.arena, length - .02).distance);
+  }
+
+  private finishBurst(self: DuelActorSnapshot, target: VisibleEnemy | null, time: number,
+    holdingUsefulAngle: boolean) {
+    this.nextBurstAt = time + this.burstRecovery;
+    if (self.ammo === 0) {this.intent = 'reset'; this.transition('reload', time); return;}
+    if (!target) {
+      if (this.memory.focus(time) && time - this.lastSeenAt < .65) {
+        this.intent = 'hold-angle'; this.beginBurst(time);
+      } else {this.intent = 'change-angle'; this.forceReposition = true; this.transition('return', time);}
+      return;
+    }
+    const sniper = sniperIds.includes(this.weapon);
+    if (!sniper && (time < this.commitUntil || holdingUsefulAngle && time < this.holdUntil)) {
+      this.intent = holdingUsefulAngle ? 'hold-angle' : 'contest';
+      this.beginBurst(time);
+      return;
+    }
+    // The next decision is taken after a real burst, not a fresh coin flip
+    // each frame. Open duels change aim line; covered duels can reset/re-peek.
+    const pressured = time - this.lastHurtAt < 1.2 || self.health < 45;
+    const reposition = pressured || holdingUsefulAngle || this.combatStrafes >= 2 ||
+      sniper || distance(self.position, target.position) > 20 && this.behavior !== 'aggressive';
+    if (!reposition && this.dodge(self, target, time)) {
+      this.intent = 'contest'; this.commitUntil = time + .9 + this.random() * .7;
+      return;
+    }
+    this.intent = 'change-angle'; this.forceReposition = true;
+    this.transition('return', time);
+    // Lane selection occurs at cover arrival, keeping this route committed.
+  }
+
+  private knifeCommand(self:DuelActorSnapshot,time:number):Partial<ActorCommand> {
+    const visible=currentVisible(this.observation,time);
+    const known=visible?.bodyPoint??visible?.aimPoint??this.memory.focus(time)??
+      (time>=this.heardReadyAt&&time-this.heardAt<3.5?this.heard:null)??this.lane.edge;
+    const aimPoint=visible?.bodyPoint??visible?.aimPoint??known;
+    const yaw=Math.atan2(-(aimPoint.x-self.position.x),-(aimPoint.z-self.position.z));
+    const pitch=Math.atan2(aimPoint.y-self.position.y,distance(self.position,aimPoint));
+    const yawError=difference(yaw,self.yaw),pitchError=pitch-self.pitch;
+    const aim=aimStep(this.motor,yawError,pitchError,this.traits.motorSettlingMs);
+    const gap=distance(self.position,known),ready=!!visible&&time>=this.readyAt+this.traits.motorSettlingMs/1000;
+    const close=gap<knifeModel.primaryRangeUnits*UNIT*.95;
+    const fire=ready&&close&&Math.hypot(yawError,pitchError)<.2;
+    this.transition(fire?'attack':'close',time);
+    const waypoint=this.travel(self,known,time),dx=waypoint.x-self.position.x,dz=waypoint.z-self.position.z;
+    const length=Math.hypot(dx,dz),moving=gap>.6&&length>.05;
+    const nextYaw=self.yaw+aim.yawDelta;
+    const secondary=fire&&gap<knifeModel.secondaryRangeUnits*UNIT*.9&&(this.level==='10+'||this.level>=4)&&Math.floor(time*2+self.id)%3===0;
+    return {...idleCommand(),forward:moving?(-dx*Math.sin(nextYaw)-dz*Math.cos(nextYaw))/length:0,
+      side:moving?(dx*Math.cos(nextYaw)-dz*Math.sin(nextYaw))/length:0,
+      walk:!visible&&this.behavior==='patient',yawDelta:aim.yawDelta,pitchDelta:aim.pitchDelta,
+      fireHeld:fire&&!secondary,secondaryHeld:secondary};
+  }
+
   command(self: DuelActorSnapshot, time: number, recoil: RecoilAngle = {yaw: 0, pitch: 0},
     teammates: DuelActorSnapshot[] = []): Partial<ActorCommand> {
+    if (self.equipment === 'knife') return this.knifeCommand(self,time);
+    if (gameData.weapons[self.equipment] && this.weapon !== self.equipment) {
+      this.weapon = self.equipment; this.previousAmmo = undefined;
+      this.attackShots = 0; this.attackFiredAt = -1;
+      if (this.phase === 'attack') this.transition('brake', time);
+    }
+    if (this.previousAmmo !== undefined && self.ammo < this.previousAmmo) {
+      this.attackShots += this.previousAmmo - self.ammo;
+      if (this.attackFiredAt < 0) this.attackFiredAt = time - STEP;
+      this.nextShotAt = Math.max(this.nextShotAt, time - STEP + gameData.weapons[this.weapon].cycle);
+    }
+    this.previousAmmo = self.ammo;
+    const assignment = this.teamAssignment;
+    const team = assignment && assignment.actorId === self.id && assignment.generation === self.generation &&
+      time >= assignment.contactAt && time < assignment.expiresAt ? assignment : null;
+    if (team && team.contactAt > this.teamReportAt) {
+      this.teamReportAt = team.contactAt; this.teammateCallout(team.point, team.contactAt);
+    }
     const visible = currentVisible(this.observation, time);
     const identified = !!visible && time >= this.readyAt;
+    const stats = gameData.weapons[this.weapon];
+    const closeWeapon = this.weapon === 'zeus' || stats.pellets > 1;
+    const closing = identified && !!visible && closeWeapon && distance(self.position, visible.position) >
+      (this.weapon === 'zeus' ? stats.range * UNIT * .85 : 8);
     const memoryAge = time - this.lastSeenAt;
     const memoryAim = this.memory.focus(time);
     const sound = this.heard && time >= this.heardAt && time >= this.heardReadyAt &&
       time - this.heardAt < 3.5 ? this.heard : null;
+    if (team && !visible && !self.reloading && self.ammo > 0 && !this.forceReposition &&
+      ['approach', 'setup'].includes(this.phase)) {
+      const laneKey = `${team.role}:${team.lane.anchor.x}:${team.lane.anchor.z}`;
+      if (laneKey !== this.appliedTeamLane && clearSegment(team.lane.anchor, team.lane.edge, this.arena)) {
+        this.appliedTeamLane = laneKey; this.lane = this.makeLane(team.lane); this.sightEdge = null;
+        this.holdGeometryAt = -Infinity;
+        this.transition(distance(self.position, this.lane.anchor) < .35 ? 'setup' : 'approach', time);
+      }
+    }
     const speed = Math.hypot(self.velocity.x, self.velocity.z);
-    if (this.previousPosition && distance(self.position, this.previousPosition) < .08 && speed < .12) {
+    if (['approach', 'expose', 'return', 'push', 'investigate', 'microstrafe', 'close'].includes(this.phase) &&
+      this.previousPosition && distance(self.position, this.previousPosition) < .08 && speed < .12) {
       if (!this.stalledAt) this.stalledAt = time;
     } else this.stalledAt = 0;
     this.previousPosition = {...self.position};
-    if (sound && this.heardAt > this.actedOnSoundAt && this.heardAt > this.lastSeenAt && !visible && memoryAge > .35 &&
-      this.phase !== 'reload' && !this.forceReposition) {
+    if (sound && time >= this.soundDecisionAt && this.heardAt > this.actedOnSoundAt && this.heardAt > this.lastSeenAt && !visible && memoryAge > .35 &&
+      this.phase !== 'reload' && !this.forceReposition && !team) {
       this.actedOnSoundAt = this.heardAt;
+      this.soundDecisionAt = time + .35;
       if (this.behavior === 'aggressive' || this.behavior === 'mixed') {
         if (this.phase !== 'investigate') this.transition('investigate', time);
       } else if (this.behavior === 'patient') {
         const flank = this.laneForSound(sound, 'flank');
         if (flank && (flank.side !== this.lane.side || this.lane.role !== 'flank')) {
           this.lane = this.makeLane(flank);
+          this.holdGeometryAt = -Infinity;
           this.transition('approach', time);
         } else if (this.phase === 'setup') this.phaseAt = Math.min(this.phaseAt, time - .3);
       } else {
@@ -374,19 +595,26 @@ export class TacticalBrain {
         if (angle && !this.usefulHold(self, {...sound, y: this.preaimHeight}, time) &&
           (angle.side !== this.lane.side || angle.role !== this.lane.role)) {
           this.lane = this.makeLane(angle); this.sightEdge = null;
+          this.holdGeometryAt = -Infinity;
           this.transition('approach', time);
         } else if (this.phase === 'setup') this.phaseAt = Math.min(this.phaseAt, time - .55);
       }
     }
     if (this.stalledAt && time - this.stalledAt > 1 &&
       ['approach', 'expose', 'return', 'push', 'investigate', 'microstrafe'].includes(this.phase)) {
-      this.transition('return', time); this.stalledAt = 0;
+      if (this.phase === 'return' || this.phase === 'approach') {
+        this.chooseLane(self, teammates, time, true);
+        this.route = []; this.routeGoal = ''; this.arrivedGoal = '';
+        this.forceReposition = false; this.intent = 'seek';
+        this.transition('approach', time);
+      } else {this.intent = 'reset'; this.transition('return', time);}
+      this.stalledAt = 0;
     }
 
     if (!visible && !memoryAim && !sound && time >= this.scanAt) {
-      const scans = this.scanPoints.filter(point => point.x * this.lane.side > 0);
-      if (!scans.length) scans.push({x: this.lane.side * 4, y: this.preaimHeight, z: 8});
-      const choice = scans[Math.floor(this.random() * scans.length)];
+      const scans = this.sideScanPoints[this.lane.side];
+      const choice = scans.length ? scans[Math.floor(this.random() * scans.length)]
+        : {x: this.lane.side * 4, y: this.preaimHeight, z: 8};
       this.scanAim = {x: choice.x, y: this.preaimHeight, z: choice.z};
       this.scanAt = time + 1.1 + this.random() * 1.8;
     }
@@ -395,7 +623,12 @@ export class TacticalBrain {
     if (this.phase === 'setup' && !identified && !self.reloading && self.ammo < gameData.weapons[this.weapon].magazine * .22 &&
       time - this.lastSeenAt > 1.5) this.transition('reload', time);
     if (this.phase === 'approach' && distance(self.position, this.lane.anchor) < .35) this.transition('setup', time);
-    if (identified && ['approach', 'setup', 'push', 'investigate'].includes(this.phase) && self.ammo > 0) {
+    if (closing && self.ammo > 0 && !self.reloading && !this.forceReposition &&
+      this.phase !== 'reload' && this.phase !== 'return' && this.phase !== 'close') {
+      this.intent = 'close'; this.transition('close', time);
+    }
+    if (this.phase === 'close' && !visible) this.transition('setup', time);
+    if (identified && !closing && ['approach', 'setup', 'push', 'investigate', 'close'].includes(this.phase) && self.ammo > 0) {
       this.activePeek = 'hold';
       this.combatStrafes = 0;
       this.transition(speed > .4 ? 'brake' : 'attack', time);
@@ -408,18 +641,17 @@ export class TacticalBrain {
       this.transition('push', time);
     }
     if (this.phase === 'push' && (!this.searchGoal || distance(self.position, this.searchGoal) < .5)) {
-      const search = this.arena.solids.filter(s => s.center.z > 5 && s.size.x >= 3).flatMap(s => [-1, 1].map(side => ({
-        x: clamp(s.center.x + side * (s.size.x / 2 + .9), this.arena.minX + 1, this.arena.maxX - 1),
-        y: 0, z: Math.min(this.arena.maxZ - 1, s.center.z + s.size.z / 2 + 1.2),
-      })));
-      this.searchGoal = search.length ? search[this.searchIndex++ % search.length] : {x: this.lane.side * 4, y: 0, z: 6};
+      this.searchGoal = this.searchPoints.length ? this.searchPoints[this.searchIndex++ % this.searchPoints.length]
+        : {x: this.lane.side * 4, y: 0, z: 6};
       this.scanAim = {...this.searchGoal, y: this.preaimHeight};
     }
     const soundAim = sound ? {...sound, y: this.preaimHeight} : null;
     const informationAim = soundAim && this.heardAt > this.lastSeenAt && memoryAge > .18 ? soundAim : memoryAim ?? soundAim;
     const holdAim = visible?.aimPoint ?? informationAim;
     const holdingUsefulAngle = !!holdAim && this.usefulHold(self, holdAim, time);
-    if (this.phase === 'setup' && time - this.phaseAt > this.setupWait && !holdingUsefulAngle) {
+    if (this.phase === 'setup' && !holdingUsefulAngle && (team
+      ? !team.waitForPartner && time >= team.peekAt && time - this.phaseAt > .08
+      : time - this.phaseAt > this.setupWait)) {
       if (blindFor > 3 && this.lane.role === 'camp') {
         this.chooseLane(self, teammates, time, true);
         this.transition('approach', time);
@@ -433,47 +665,43 @@ export class TacticalBrain {
     // its planned waypoint is farther away. Wide swings keep a short commitment.
     const swingDelay = this.activePeek === 'ferrari' ? .2
       : this.activePeek === 'wide' || this.activePeek === 'crouchWide' ? .12 : 0;
-    if (this.phase === 'expose' && identified && !informationPeek && !movingFire &&
+    if (this.phase === 'expose' && identified && !closing && !informationPeek && !movingFire &&
       self.ammo > 0 && !self.reloading && time >= Math.max(this.phaseAt, this.readyAt) + swingDelay)
       this.transition('brake', time);
     if (this.phase === 'expose' && distance(self.position, exposure) < .24) {
       this.transition(informationPeek ? 'return' : 'brake', time);
     }
     if (this.phase === 'expose' && time - this.phaseAt > 3) {
-      this.forceReposition = true; this.transition('return', time);
+      this.intent = 'change-angle'; this.forceReposition = true; this.transition('return', time);
     }
     const brakeDelay = this.traits.brakeErrorMs / 1000;
     if (this.phase === 'brake' && time - this.phaseAt >= brakeDelay &&
       (speed < .3 || time - this.phaseAt > .28 + brakeDelay)) this.transition('attack', time);
-    const attackExpired = this.attackFiredAt >= 0 ? time - this.attackFiredAt > this.attackWait
+    const attackExpired = this.attackFiredAt >= 0 && this.attackShots > 0 ?
+      time - this.attackFiredAt > this.attackWait || this.attackShots >= this.attackRounds &&
+        (!sniperIds.includes(this.weapon) || time - this.attackFiredAt > .18)
       : !visible && time - this.phaseAt > .55;
     if (this.phase === 'attack' && (attackExpired || self.ammo === 0)) {
-      this.nextBurstAt = time + .2 + this.random() * .15;
-      const dodgeChance = visible && (distance(self.position, visible.position) < 12 || time - this.lastHurtAt < 1.2)
-        ? .85 : this.behavior === 'holder' ? .3 : .68;
-      if (self.ammo === 0) this.transition('reload', time);
-      else if (identified && holdingUsefulAngle && !sniperIds.includes(this.weapon)) this.transition('attack', time);
-      else if (identified && visible && this.combatStrafes < 2 && this.random() < dodgeChance && this.dodge(self, visible, time)) {
-        // Brief displacement followed by a real counter-strafe before the next burst.
-      } else {
-        // An exhausted open-angle exchange needs actual cover, not endless
-        // return/attack resets at the same exposed point.
-        if (identified && this.combatStrafes >= 2) this.forceReposition = true;
-        this.transition('return', time);
-      }
+      this.finishBurst(self, visible, time, holdingUsefulAngle);
     }
     if (this.phase === 'microstrafe' && (this.microGoal && distance(self.position, this.microGoal) < .25 ||
       time - this.phaseAt > .65)) this.transition('brake', time);
     // A short reset can reach nearby cover. If still exposed, contest the duel
     // instead of silently following a distant retreat waypoint through open space.
-    if (this.phase === 'return' && identified && !informationPeek && !this.forceReposition &&
-      self.ammo > 0 && !self.reloading && time - this.phaseAt > .2)
+    if (this.phase === 'return' || this.phase === 'reload') this.prepareReset(self, time);
+    const exposedReset = this.intent === 'change-angle' &&
+      (!this.resetCovered || time - this.phaseAt > .65);
+    if (this.phase === 'return' && identified && !informationPeek && (!this.forceReposition || exposedReset) &&
+      self.ammo > 0 && !self.reloading && time - this.phaseAt > .2) {
+      this.forceReposition = false; this.intent = 'contest';
       this.transition(speed > .3 ? 'brake' : 'attack', time);
-    if (this.phase === 'return' && distance(self.position, this.lane.retreat) < .35) {
+    }
+    if (this.phase === 'return' && distance(self.position, this.resetGoal ?? this.lane.retreat) < .35) {
       const moveAgain = this.forceReposition || blindFor > 5 || this.peekCount % 2 === 0 || this.random() < .22;
       if (moveAgain) this.chooseLane(self, teammates, time, this.forceReposition);
       this.forceReposition = false;
       this.combatStrafes = 0;
+      this.intent = 'seek'; this.engagementAt = -Infinity;
       if (time > 12 && memoryAge > 6 && this.behavior === 'aggressive' && this.random() < .35) this.transition('push', time);
       else this.transition(distance(self.position, this.lane.anchor) > .55 ? 'approach' : 'setup', time);
     }
@@ -483,20 +711,21 @@ export class TacticalBrain {
       if (next) this.lane = this.makeLane(next);
       this.transition(identified ? 'attack' : 'approach', time);
     }
-    if (this.phase === 'push' && identified) this.transition('attack', time);
+    if (this.phase === 'push' && identified && !closing) this.transition('attack', time);
 
     const lateBrake = this.phase === 'brake' && !this.brakeFromMicro && time - this.phaseAt < brakeDelay;
     const axis = this.lane.axis ?? {x: this.lane.side, z: 0};
-    const goal = this.phase === 'approach' ? this.lane.anchor : this.phase === 'expose' ? exposure
+    const goal = this.phase === 'close' && visible ? {...visible.position, y: self.feet}
+      : this.phase === 'approach' ? this.lane.anchor : this.phase === 'expose' ? exposure
       : lateBrake ? {...exposure, x: exposure.x + axis.x * .45, z: exposure.z + axis.z * .45}
-      : this.phase === 'return' || this.phase === 'reload' ? this.lane.retreat
+      : this.phase === 'return' || this.phase === 'reload' ? this.resetGoal ?? this.lane.retreat
         : this.phase === 'microstrafe' && this.microGoal ? this.microGoal : this.phase === 'investigate' && sound ?
         {x: clamp(sound.x, this.arena.minX + 2, this.arena.maxX - 2), y: 0, z: clamp(sound.z, this.arena.minZ + 2, this.arena.maxZ - 2)} : this.phase === 'push' ?
         this.searchGoal ?? (this.heard && time - this.heardAt < 3 ? {x: clamp(this.heard.x, this.arena.minX + 2, this.arena.maxX - 2), y: 0, z: clamp(this.heard.z, 1, this.arena.maxZ - 2)}
           : this.lastSeen && memoryAge < 8 ? {x: clamp(this.lastSeen.position.x, this.arena.minX + 2, this.arena.maxX - 2), y: 0,
             z: clamp(this.lastSeen.position.z, 1, this.arena.maxZ - 2)} : {x: this.lane.side * this.arena.maxX * .367, y: 0, z: this.arena.maxZ * .417})
         : self.position;
-    const moving = lateBrake || ['approach', 'expose', 'return', 'push', 'investigate', 'microstrafe', 'reload'].includes(this.phase);
+    const moving = lateBrake || ['approach', 'expose', 'return', 'push', 'investigate', 'microstrafe', 'reload', 'close'].includes(this.phase);
     const goalKey = `${this.phase}:${goal.x.toFixed(2)}:${goal.z.toFixed(2)}`;
     const remaining = distance(self.position, goal);
     if (remaining < .24) this.arrivedGoal = goalKey;
@@ -531,9 +760,15 @@ export class TacticalBrain {
       : informationAim ?? (travelLook ? {x: self.position.x + dx / separation * 5, y: this.preaimHeight,
           z: self.position.z + dz / separation * 5} : this.scanAim);
     const soundIsFocus = !!soundAim && informationAim === soundAim;
-    const observedAim = visible || (memoryAim && !soundIsFocus) || ['expose', 'brake', 'attack'].includes(this.phase) ? expectedAim
-      : this.awareness.look(self.position, time, expectedAim, this.scanPoints, this.arena,
-        soundIsFocus && time - this.heardAt < 1.2);
+    const experienced = this.level === '10+' || this.level >= 6;
+    const cueAim = !visible && (!memoryAim || soundIsFocus) && (sound || time - this.shadowAt < .85) &&
+      this.cueChecks.focus(self.position, time, this.scanPoints, this.arena);
+    const shadowFocus = !informationAim && time >= this.shadowReadyAt && time >= this.shadowAt && time - this.shadowAt < .85;
+    const checkedAim = cueAim && (soundIsFocus || shadowFocus) ? cueAim
+      : shadowFocus && this.shadowPoint ? this.shadowPoint : expectedAim;
+    const observedAim = visible || (memoryAim && !soundIsFocus) || ['expose', 'brake', 'attack'].includes(this.phase)
+      ? expectedAim : this.awareness.look(self.position, time, checkedAim, this.scanPoints, this.arena,
+        !!shadowFocus || soundIsFocus && (experienced || time - this.heardAt < 1.2));
     const proficiency = this.level === '10+' ? 1 : (Number(this.level) - 1) / 10;
     const lead = identified ? Math.min(.11, time - (this.observation?.time ?? time) +
       this.traits.motorSettlingMs / 2000 * proficiency) : 0;
@@ -564,7 +799,7 @@ export class TacticalBrain {
     const aim = aimStep(this.motor, yawError, pitchError,
       this.traits.motorSettlingMs);
     // Learned recoil correction is a separate mouse input, not a second delayed target acquisition.
-    const style = combatStyle(this.level);
+    const style = this.style;
     const control = style.recoilControl * this.controlVariation;
     const recoilResponse = 1 - Math.exp(-STEP / style.recoilResponse);
     const recoilYaw = (recoil.yaw * DEG * control - this.compensation.yaw) * recoilResponse;
@@ -583,11 +818,11 @@ export class TacticalBrain {
       (this.activePeek === 'prefire' || movingFire);
     const aimTolerance = Math.max((style.fireTolerance + this.traits.endpointErrorDegrees * .25) * DEG,
       Math.atan2((this.bodyAim || finishSpray) && target?.bodyPoint ? .2 : .12, distance(observedAim, self.position)));
-    const fire = self.ammo > 0 && !self.reloading && time >= this.nextBurstAt && firingPhase && identified && time > this.readyAt + this.traits.motorSettlingMs / 1000 &&
-      (this.attackFiredAt >= 0 || aimError < aimTolerance) &&
+    const fire = self.ammo > 0 && !self.reloading && !closing && distance(observedAim, self.position) <= stats.range * UNIT &&
+      time >= this.nextBurstAt && firingPhase && identified && time > this.readyAt + this.traits.motorSettlingMs / 1000 &&
+      aimError < (this.attackFiredAt >= 0 ? Math.max(aimTolerance * 3, (3 + (1 - proficiency) * 5) * DEG) : aimTolerance) &&
       (movingFire || !this.stopThisPeek && !sniperIds.includes(this.weapon) || speed < gameData.weapons[this.weapon].speed * UNIT * .2);
     const press = fire && time >= this.nextShotAt;
-    if (press && this.phase === 'attack' && this.attackFiredAt < 0) this.attackFiredAt = time;
     if (press) this.nextShotAt = time + gameData.weapons[this.weapon].cycle;
     const lateCrouchWide = this.activePeek === 'crouchWide' &&
       (this.phase === 'brake' || this.phase === 'expose' && distance(self.position, exposure) < .65);
@@ -607,6 +842,7 @@ export class TacticalBrain {
       crouch: this.activePeek === 'crouch' && ['expose', 'brake'].includes(this.phase) || lateCrouchWide || fightingCrouch,
       jump: this.activePeek === 'jump' && this.phase === 'expose' && time - this.phaseAt < .07,
       yawDelta, pitchDelta, fireHeld: fire, firePressed: press,
-      reloadPressed: this.phase === 'reload' && distance(self.position, this.lane.retreat) < .7 && !self.reloading};
+      reloadPressed: this.weapon !== 'zeus' && self.reserve !== 0 && this.phase === 'reload' &&
+        distance(self.position, this.resetGoal ?? this.lane.retreat) < .7 && !self.reloading};
   }
 }

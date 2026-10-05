@@ -1,0 +1,58 @@
+{
+  "build": "2000924",
+  "sourceHashes": {
+    "scripts/surfaceproperties_game.txt": "c66a59952bfdeda1df4b49b6b332510f6ac4fdbd95e2fda49b76a03f49188f40",
+    "surfaceproperties/surfaceproperties.vsurf_c": "40212500c5aa7392558cb125ad7642c1242bb66689c5813860891c77d3476797"
+  },
+  "scope": "Extracted surface properties with physics/base inheritance. Runtime loss branches audited separately.",
+  "materials": {
+    "concrete": {
+      "surfaceName": "concrete",
+      "gameMaterial": "C",
+      "distanceModifier": 0.5,
+      "damageModifier": 0.25
+    },
+    "metal": {
+      "surfaceName": "metal",
+      "gameMaterial": "M",
+      "distanceModifier": 0.4,
+      "damageModifier": 0.3
+    },
+    "wood": {
+      "surfaceName": "Wood",
+      "gameMaterial": "W",
+      "distanceModifier": 0.9,
+      "damageModifier": 0.6
+    },
+    "plastic": {
+      "surfaceName": "plastic",
+      "gameMaterial": "L",
+      "distanceModifier": 0.75,
+      "damageModifier": 0.5
+    },
+    "glass": {
+      "surfaceName": "glass",
+      "gameMaterial": "Y",
+      "distanceModifier": 0.99,
+      "damageModifier": 0.5
+    },
+    "grate": {
+      "surfaceName": "metalgrate",
+      "gameMaterial": "G",
+      "distanceModifier": 0.95,
+      "damageModifier": 0.99
+    },
+    "water": {
+      "surfaceName": "water",
+      "gameMaterial": "S",
+      "distanceModifier": 0.3,
+      "damageModifier": 0.5
+    },
+    "flesh": {
+      "surfaceName": "flesh",
+      "gameMaterial": "F",
+      "distanceModifier": 0.9,
+      "damageModifier": 0.5
+    }
+  }
+}

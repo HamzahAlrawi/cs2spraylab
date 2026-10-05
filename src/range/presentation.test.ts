@@ -84,6 +84,7 @@ describe('wall spray demonstration', () => {
       let previous = {x: 0, y: 0};
       for (let i = 1; i < sim.pattern.length; i++) {
         sim.recovery.advance(sim.stats.cycle);
+        sim.time += sim.stats.cycle;
         const next = mouseCompensation(sim.recovery.recoil, invertY);
         sim.aim((next.x - previous.x) / (.022 * sensitivity), (next.y - previous.y) / (.022 * sensitivity));
         sim.fire(); previous = next;

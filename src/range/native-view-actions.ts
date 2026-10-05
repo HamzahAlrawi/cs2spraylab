@@ -1,4 +1,11 @@
 import {SkinnedMesh, type Object3D} from 'three';
+import reloadPresentation from './native-reload-presentation.json';
+
+export function nativeReloadWindow(id: string | undefined, phase: 'idle' | 'magazine' | 'start' | 'shell' | 'finish' | undefined) {
+  if (!id || !phase || phase === 'idle' || phase === 'magazine') return undefined;
+  const windows = (reloadPresentation.weapons as Record<string, Record<string, {start: number; duration: number}>>)[id];
+  return windows?.[phase === 'start' ? 'intro' : phase === 'shell' ? 'loop' : 'outro'];
+}
 
 export type NativeViewAction = 'fire' | 'fire-last' | 'fire-alt' | 'fire-scoped' | 'fire-left' | 'fire-right' |
   'fire-left-last' | 'fire-right-last' | 'charge' | 'dryfire' | 'draw-alt' |
@@ -12,6 +19,7 @@ const firearms = new Set([
   'ak47', 'm4a4', 'm4a1s', 'galil', 'famas', 'sg553', 'aug', 'mp9', 'mp7', 'mp5sd',
   'mac10', 'ump45', 'p90', 'bizon', 'm249', 'negev', 'cz75a', 'usp', 'glock', 'hkp2000',
   'p250', 'deagle', 'elite', 'fiveseven', 'tec9', 'revolver', 'awp', 'ssg08', 'g3sg1', 'scar20',
+  'nova', 'xm1014', 'mag7', 'sawedoff', 'zeus',
 ]);
 const lastShot = new Set(['cz75a', 'usp', 'glock', 'hkp2000', 'p250', 'deagle', 'fiveseven', 'tec9', 'negev', 'scar20']);
 

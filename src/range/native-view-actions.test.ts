@@ -26,7 +26,8 @@ describe('native view assembly contract', () => {
     for (const id of ['knife', 'knife-butterfly']) {
       expect(nativeFireAction(id)).toBe('fire'); expect(nativeFireAction(id, {alternate:true})).toBe('fire-alt');
     }
-    for (const id of ['nova', 'unknown', '']) expect(nativeFireAction(id)).toBe(null);
+    for (const id of ['nova', 'xm1014', 'mag7', 'sawedoff', 'zeus']) expect(nativeFireAction(id)).toBe('fire');
+    for (const id of ['unknown', '']) expect(nativeFireAction(id)).toBe(null);
   });
   it('uses only authored last-shot variants', () => {
     for (const id of ['cz75a','usp','glock','hkp2000','p250','deagle','fiveseven','tec9','negev','scar20']) {

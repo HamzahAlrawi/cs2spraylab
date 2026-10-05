@@ -61,4 +61,23 @@ describe('adaptive resolution', () => {
     samples(metrics,20,15,5,false); expect(metrics.adaptive).toBe(1);
     expect(metrics.fps).toBe(15); expect(metrics.cpuMs).toBe(5);
   });
+  it('reduces automatic visual pose sampling for sustained CPU pressure, with bounded slow recovery', () => {
+    const metrics = new FrameMetrics();
+    samples(metrics, 3, 30, 24); expect(metrics.animationRate('auto')).toBe(60);
+    samples(metrics, 15, 30, 24); expect(metrics.animationRate('auto')).toBe(30);
+    expect(metrics.animationRate('high')).toBe(120);
+    expect(metrics.animationRate('low')).toBe(45);
+    samples(metrics, 6, 60, 3); expect(metrics.animationRate('auto')).toBe(30);
+    samples(metrics, 60, 60, 3); expect(metrics.animationRate('auto')).toBe(60);
+    metrics.resetResolution(); expect(metrics.animationRate('auto')).toBe(60);
+  });
+  it('does not thin animation for GPU-only slow frames, intentional caps or idle previews', () => {
+    for (const [fps, cpu, active, cap] of [[30, 3, true, 0], [30, 20, true, 30], [15, 20, false, 0]] as const) {
+      const metrics = new FrameMetrics(); samples(metrics, 30, fps, cpu, active, cap);
+      expect(metrics.animationRate('auto')).toBe(60);
+    }
+    const metrics = new FrameMetrics();
+    for (let index = 0; index < 600; index++) metrics.sample(1 / 30, 24, false, true, 0);
+    expect(metrics.animationRate('auto')).toBe(60);
+  });
 });

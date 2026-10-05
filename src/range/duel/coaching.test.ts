@@ -23,7 +23,7 @@ describe('Duel coaching', () => {
     const coach = new DuelCoach(), self = player();
     coach.observe(1, self, [{id: 1, position: {x: 0, y: 1.6, z: 0}, aimPoint: {x: 0, y: 1.6, z: 0}}]);
     coach.shot(self); coach.hit(hit(), 1.45);
-    coach.shot(self); coach.hit(hit({group: 'chest', lethal: true}), 1.55);
+    coach.shot(self); coach.hit(hit({shotId:2,group: 'chest', lethal: true}), 1.55);
     coach.hit(hit({shooter: 1, victim: 0, healthDamage: 17}), 1.6);
     expect(coach.review()).toMatchObject({shots: 2, hits: 2, heads: 1, kills: 1, damage: 40, taken: 17, headRate: 50, accuracy: 100, settled: 100});
     expect(coach.review().timeToDamage).toBeCloseTo(450);

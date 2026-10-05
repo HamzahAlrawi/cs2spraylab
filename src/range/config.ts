@@ -27,11 +27,14 @@ export type Settings = {
 };
 export const weaponNames: Record<Weapon, string> = { ak47: 'AK-47', m4a4: 'M4A4', m4a1s: 'M4A1-S', galil: 'Galil AR', famas: 'FAMAS', sg553: 'SG 553', aug: 'AUG', mp9: 'MP9', mp7: 'MP7', mp5sd: 'MP5-SD', mac10: 'MAC-10', ump45: 'UMP-45', p90: 'P90', bizon: 'PP-Bizon', m249: 'M249', negev: 'Negev', cz75a: 'CZ75-Auto',
   usp: 'USP-S', glock: 'Glock-18', hkp2000: 'P2000', p250: 'P250', deagle: 'Desert Eagle', elite: 'Dual Berettas',
-  fiveseven: 'Five-SeveN', tec9: 'Tec-9', revolver: 'R8 Revolver', awp: 'AWP', ssg08: 'SSG 08', g3sg1: 'G3SG1', scar20: 'SCAR-20' };
+  fiveseven: 'Five-SeveN', tec9: 'Tec-9', revolver: 'R8 Revolver', awp: 'AWP', ssg08: 'SSG 08', g3sg1: 'G3SG1', scar20: 'SCAR-20',
+  nova: 'Nova', xm1014: 'XM1014', mag7: 'MAG-7', sawedoff: 'Sawed-Off', zeus: 'Zeus x27' };
 export const pistolIds = ['usp', 'glock', 'hkp2000', 'p250', 'deagle', 'elite', 'fiveseven', 'tec9', 'cz75a', 'revolver'] as const;
 export type Pistol = typeof pistolIds[number];
 export const sniperIds: Weapon[] = ['awp', 'ssg08', 'g3sg1', 'scar20'];
-export const weaponIds = Object.keys(weaponNames) as Weapon[];
+export const shotgunIds = ['nova', 'xm1014', 'mag7', 'sawedoff'] as const;
+// Retain AUG data/name for legacy saves, but do not offer it in the catalog.
+export const weaponIds = (Object.keys(weaponNames) as Weapon[]).filter(id => id !== 'aug');
 export const gameData = data;
 export const loadoutWeapon = (settings: Pick<Settings, 'weapon' | 'sidearm' | 'primaryEnabled'>): Weapon => settings.primaryEnabled ? settings.weapon : settings.sidearm;
 export const defaults: Settings = {
@@ -57,7 +60,7 @@ export function sanitizeSettings(raw: unknown): Settings {
   const s = (raw && typeof raw === 'object' ? raw : {}) as Partial<Settings>;
   const c = s.crosshair && typeof s.crosshair === 'object' ? s.crosshair : defaults.crosshair;
   return {
-    weapon: weaponIds.includes(s.weapon!) ? s.weapon! : defaults.weapon,
+    weapon: typeof s.weapon === 'string' && Object.prototype.hasOwnProperty.call(weaponNames, s.weapon) ? s.weapon : defaults.weapon,
     sidearm: pistolIds.includes(s.sidearm!) ? s.sidearm! : 'usp',
     primaryEnabled: s.primaryEnabled !== false,
     mode: migrateMode(s.mode),

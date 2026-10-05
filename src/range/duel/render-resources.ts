@@ -6,8 +6,11 @@ export function batchStaticMeshes(root: THREE.Object3D, retainGeometry = new Set
   const batches = new Map<THREE.Material, Map<string, THREE.Mesh[]>>();
   for (const child of root.children) {
     if (!(child instanceof THREE.Mesh) || child instanceof THREE.SkinnedMesh || Array.isArray(child.material)) continue;
+    const attributes = Object.entries(child.geometry.attributes as THREE.NormalBufferAttributes).sort(([a], [b]) => a.localeCompare(b));
+    if (Object.keys(child.geometry.morphAttributes).length || attributes.some(([, attribute]) => attribute instanceof THREE.InterleavedBufferAttribute)) continue;
     const groups = batches.get(child.material) ?? new Map<string, THREE.Mesh[]>();
-    const key = `${child.castShadow}:${child.receiveShadow}:${child.renderOrder}`;
+    const layout = attributes.map(([name, attribute]) => `${name}:${attribute.itemSize}:${attribute.normalized}:${attribute.array.constructor.name}`).join(',');
+    const key = `${child.castShadow}:${child.receiveShadow}:${child.renderOrder}:${!!child.geometry.index}:${layout}`;
     const meshes = groups.get(key) ?? [];
     meshes.push(child); groups.set(key, meshes); batches.set(child.material, groups);
   }

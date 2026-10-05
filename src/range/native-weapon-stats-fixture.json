@@ -1,5 +1,5 @@
 {
-  "build": "2000922",
+  "build": "2000924",
   "source": "scripts/weapons.vdata_c",
   "sha256": "3289d4dba65b1ef3f884c389448c8a6c6db8691442c18a7aaddb28434aaf250d",
   "limitations": [
@@ -10,6 +10,7 @@
     "ak47": {
       "primary": {
         "damage": 36,
+        "penetration": 2,
         "armorRatio": 1.55,
         "headshotMultiplier": 4,
         "range": 8192,
@@ -42,6 +43,7 @@
       },
       "alternate": {
         "damage": 36,
+        "penetration": 2,
         "armorRatio": 1.55,
         "headshotMultiplier": 4,
         "range": 8192,
@@ -89,11 +91,17 @@
         0,
         0,
         0
-      ]
+      ],
+      "pellets": 1,
+      "reserveAsClips": true,
+      "reserve": 90,
+      "reloadsSingleShells": false,
+      "spreadSeed": 0
     },
     "m4a4": {
       "primary": {
         "damage": 33,
+        "penetration": 2,
         "armorRatio": 1.4,
         "headshotMultiplier": 4,
         "range": 8192,
@@ -126,6 +134,7 @@
       },
       "alternate": {
         "damage": 33,
+        "penetration": 2,
         "armorRatio": 1.4,
         "headshotMultiplier": 4,
         "range": 8192,
@@ -173,11 +182,17 @@
         0,
         0,
         0
-      ]
+      ],
+      "pellets": 1,
+      "reserveAsClips": true,
+      "reserve": 120,
+      "reloadsSingleShells": false,
+      "spreadSeed": 0
     },
     "m4a1s": {
       "primary": {
         "damage": 38,
+        "penetration": 2,
         "armorRatio": 1.4,
         "headshotMultiplier": 3.475,
         "range": 8192,
@@ -210,6 +225,7 @@
       },
       "alternate": {
         "damage": 38,
+        "penetration": 2,
         "armorRatio": 1.4,
         "headshotMultiplier": 3.475,
         "range": 8192,
@@ -257,11 +273,17 @@
         0,
         0,
         0
-      ]
+      ],
+      "pellets": 1,
+      "reserveAsClips": true,
+      "reserve": 60,
+      "reloadsSingleShells": false,
+      "spreadSeed": 0
     },
     "galil": {
       "primary": {
         "damage": 30,
+        "penetration": 2,
         "armorRatio": 1.55,
         "headshotMultiplier": 4,
         "range": 8192,
@@ -294,6 +316,7 @@
       },
       "alternate": {
         "damage": 30,
+        "penetration": 2,
         "armorRatio": 1.55,
         "headshotMultiplier": 4,
         "range": 8192,
@@ -341,11 +364,17 @@
         0,
         0,
         0
-      ]
+      ],
+      "pellets": 1,
+      "reserveAsClips": true,
+      "reserve": 140,
+      "reloadsSingleShells": false,
+      "spreadSeed": 0
     },
     "famas": {
       "primary": {
         "damage": 30,
+        "penetration": 2,
         "armorRatio": 1.4,
         "headshotMultiplier": 4,
         "range": 8192,
@@ -378,6 +407,7 @@
       },
       "alternate": {
         "damage": 30,
+        "penetration": 2,
         "armorRatio": 1.4,
         "headshotMultiplier": 4,
         "range": 8192,
@@ -425,11 +455,17 @@
         0,
         0,
         0
-      ]
+      ],
+      "pellets": 1,
+      "reserveAsClips": true,
+      "reserve": 100,
+      "reloadsSingleShells": false,
+      "spreadSeed": 0
     },
     "sg553": {
       "primary": {
         "damage": 30,
+        "penetration": 2,
         "armorRatio": 2,
         "headshotMultiplier": 4,
         "range": 8192,
@@ -462,6 +498,7 @@
       },
       "alternate": {
         "damage": 30,
+        "penetration": 2,
         "armorRatio": 2,
         "headshotMultiplier": 4,
         "range": 8192,
@@ -509,11 +546,17 @@
         0.06,
         0.1,
         0
-      ]
+      ],
+      "pellets": 1,
+      "reserveAsClips": true,
+      "reserve": 90,
+      "reloadsSingleShells": false,
+      "spreadSeed": 0
     },
     "aug": {
       "primary": {
         "damage": 28,
+        "penetration": 2,
         "armorRatio": 1.8,
         "headshotMultiplier": 4,
         "range": 8192,
@@ -546,6 +589,7 @@
       },
       "alternate": {
         "damage": 28,
+        "penetration": 2,
         "armorRatio": 1.8,
         "headshotMultiplier": 4,
         "range": 8192,
@@ -593,11 +637,17 @@
         0.06,
         0.1,
         0
-      ]
+      ],
+      "pellets": 1,
+      "reserveAsClips": true,
+      "reserve": 90,
+      "reloadsSingleShells": false,
+      "spreadSeed": 0
     },
     "mp9": {
       "primary": {
         "damage": 26,
+        "penetration": 1,
         "armorRatio": 1.2,
         "headshotMultiplier": 4,
         "range": 3600,
@@ -630,6 +680,7 @@
       },
       "alternate": {
         "damage": 26,
+        "penetration": 1,
         "armorRatio": 1.2,
         "headshotMultiplier": 4,
         "range": 3600,
@@ -677,11 +728,17 @@
         0,
         0,
         0
-      ]
+      ],
+      "pellets": 1,
+      "reserveAsClips": true,
+      "reserve": 60,
+      "reloadsSingleShells": false,
+      "spreadSeed": 0
     },
     "mp7": {
       "primary": {
         "damage": 30,
+        "penetration": 1,
         "armorRatio": 1.25,
         "headshotMultiplier": 4,
         "range": 3600,
@@ -714,6 +771,7 @@
       },
       "alternate": {
         "damage": 30,
+        "penetration": 1,
         "armorRatio": 1.25,
         "headshotMultiplier": 4,
         "range": 3600,
@@ -761,11 +819,17 @@
         0,
         0,
         0
-      ]
+      ],
+      "pellets": 1,
+      "reserveAsClips": true,
+      "reserve": 90,
+      "reloadsSingleShells": false,
+      "spreadSeed": 0
     },
     "mp5sd": {
       "primary": {
         "damage": 28,
+        "penetration": 1,
         "armorRatio": 1.25,
         "headshotMultiplier": 4,
         "range": 3600,
@@ -798,6 +862,7 @@
       },
       "alternate": {
         "damage": 28,
+        "penetration": 1,
         "armorRatio": 1.25,
         "headshotMultiplier": 4,
         "range": 3600,
@@ -845,11 +910,17 @@
         0,
         0,
         0
-      ]
+      ],
+      "pellets": 1,
+      "reserveAsClips": true,
+      "reserve": 90,
+      "reloadsSingleShells": false,
+      "spreadSeed": 0
     },
     "mac10": {
       "primary": {
         "damage": 29,
+        "penetration": 1,
         "armorRatio": 1.15,
         "headshotMultiplier": 4,
         "range": 3600,
@@ -882,6 +953,7 @@
       },
       "alternate": {
         "damage": 29,
+        "penetration": 1,
         "armorRatio": 1.15,
         "headshotMultiplier": 4,
         "range": 3600,
@@ -929,11 +1001,17 @@
         0,
         0,
         0
-      ]
+      ],
+      "pellets": 1,
+      "reserveAsClips": true,
+      "reserve": 90,
+      "reloadsSingleShells": false,
+      "spreadSeed": 0
     },
     "ump45": {
       "primary": {
         "damage": 35,
+        "penetration": 1,
         "armorRatio": 1.3,
         "headshotMultiplier": 4,
         "range": 3700,
@@ -966,6 +1044,7 @@
       },
       "alternate": {
         "damage": 35,
+        "penetration": 1,
         "armorRatio": 1.3,
         "headshotMultiplier": 4,
         "range": 3700,
@@ -1013,11 +1092,17 @@
         0,
         0,
         0
-      ]
+      ],
+      "pellets": 1,
+      "reserveAsClips": true,
+      "reserve": 75,
+      "reloadsSingleShells": false,
+      "spreadSeed": 0
     },
     "p90": {
       "primary": {
         "damage": 26,
+        "penetration": 1,
         "armorRatio": 1.38,
         "headshotMultiplier": 4,
         "range": 3700,
@@ -1050,6 +1135,7 @@
       },
       "alternate": {
         "damage": 26,
+        "penetration": 1,
         "armorRatio": 1.38,
         "headshotMultiplier": 4,
         "range": 3700,
@@ -1097,11 +1183,17 @@
         0,
         0,
         0
-      ]
+      ],
+      "pellets": 1,
+      "reserveAsClips": true,
+      "reserve": 100,
+      "reloadsSingleShells": false,
+      "spreadSeed": 0
     },
     "bizon": {
       "primary": {
         "damage": 27,
+        "penetration": 1,
         "armorRatio": 1.26,
         "headshotMultiplier": 4,
         "range": 3600,
@@ -1134,6 +1226,7 @@
       },
       "alternate": {
         "damage": 27,
+        "penetration": 1,
         "armorRatio": 1.26,
         "headshotMultiplier": 4,
         "range": 3600,
@@ -1181,11 +1274,17 @@
         0,
         0,
         0
-      ]
+      ],
+      "pellets": 1,
+      "reserveAsClips": true,
+      "reserve": 128,
+      "reloadsSingleShells": false,
+      "spreadSeed": 0
     },
     "m249": {
       "primary": {
         "damage": 32,
+        "penetration": 2,
         "armorRatio": 1.6,
         "headshotMultiplier": 4,
         "range": 8192,
@@ -1218,6 +1317,7 @@
       },
       "alternate": {
         "damage": 32,
+        "penetration": 2,
         "armorRatio": 1.6,
         "headshotMultiplier": 4,
         "range": 8192,
@@ -1265,11 +1365,17 @@
         0,
         0,
         0
-      ]
+      ],
+      "pellets": 1,
+      "reserveAsClips": true,
+      "reserve": 200,
+      "reloadsSingleShells": false,
+      "spreadSeed": 0
     },
     "negev": {
       "primary": {
         "damage": 35,
+        "penetration": 2,
         "armorRatio": 1.42,
         "headshotMultiplier": 4,
         "range": 8192,
@@ -1302,6 +1408,7 @@
       },
       "alternate": {
         "damage": 35,
+        "penetration": 2,
         "armorRatio": 1.42,
         "headshotMultiplier": 4,
         "range": 8192,
@@ -1349,11 +1456,17 @@
         0,
         0,
         0
-      ]
+      ],
+      "pellets": 1,
+      "reserveAsClips": true,
+      "reserve": 300,
+      "reloadsSingleShells": false,
+      "spreadSeed": 0
     },
     "cz75a": {
       "primary": {
         "damage": 31,
+        "penetration": 1,
         "armorRatio": 1.553,
         "headshotMultiplier": 4,
         "range": 4096,
@@ -1386,6 +1499,7 @@
       },
       "alternate": {
         "damage": 31,
+        "penetration": 1,
         "armorRatio": 1.553,
         "headshotMultiplier": 4,
         "range": 4096,
@@ -1433,11 +1547,17 @@
         0,
         0,
         0
-      ]
+      ],
+      "pellets": 1,
+      "reserveAsClips": true,
+      "reserve": 24,
+      "reloadsSingleShells": false,
+      "spreadSeed": 0
     },
     "usp": {
       "primary": {
         "damage": 35,
+        "penetration": 1,
         "armorRatio": 1.01,
         "headshotMultiplier": 4,
         "range": 4096,
@@ -1470,6 +1590,7 @@
       },
       "alternate": {
         "damage": 35,
+        "penetration": 1,
         "armorRatio": 1.01,
         "headshotMultiplier": 4,
         "range": 4096,
@@ -1517,11 +1638,17 @@
         0,
         0,
         0
-      ]
+      ],
+      "pellets": 1,
+      "reserveAsClips": true,
+      "reserve": 24,
+      "reloadsSingleShells": false,
+      "spreadSeed": 0
     },
     "glock": {
       "primary": {
         "damage": 30,
+        "penetration": 1,
         "armorRatio": 0.94,
         "headshotMultiplier": 4,
         "range": 4096,
@@ -1554,6 +1681,7 @@
       },
       "alternate": {
         "damage": 30,
+        "penetration": 1,
         "armorRatio": 0.94,
         "headshotMultiplier": 4,
         "range": 4096,
@@ -1601,11 +1729,17 @@
         0,
         0,
         0
-      ]
+      ],
+      "pellets": 1,
+      "reserveAsClips": true,
+      "reserve": 60,
+      "reloadsSingleShells": false,
+      "spreadSeed": 0
     },
     "hkp2000": {
       "primary": {
         "damage": 35,
+        "penetration": 1,
         "armorRatio": 1.01,
         "headshotMultiplier": 4,
         "range": 4096,
@@ -1638,6 +1772,7 @@
       },
       "alternate": {
         "damage": 35,
+        "penetration": 1,
         "armorRatio": 1.01,
         "headshotMultiplier": 4,
         "range": 4096,
@@ -1685,11 +1820,17 @@
         0,
         0,
         0
-      ]
+      ],
+      "pellets": 1,
+      "reserveAsClips": true,
+      "reserve": 52,
+      "reloadsSingleShells": false,
+      "spreadSeed": 0
     },
     "p250": {
       "primary": {
         "damage": 38,
+        "penetration": 1,
         "armorRatio": 1.28,
         "headshotMultiplier": 4,
         "range": 4096,
@@ -1722,6 +1863,7 @@
       },
       "alternate": {
         "damage": 38,
+        "penetration": 1,
         "armorRatio": 1.28,
         "headshotMultiplier": 4,
         "range": 4096,
@@ -1769,11 +1911,17 @@
         0,
         0,
         0
-      ]
+      ],
+      "pellets": 1,
+      "reserveAsClips": true,
+      "reserve": 39,
+      "reloadsSingleShells": false,
+      "spreadSeed": 0
     },
     "deagle": {
       "primary": {
         "damage": 53,
+        "penetration": 2,
         "armorRatio": 1.864,
         "headshotMultiplier": 3.9,
         "range": 4096,
@@ -1806,6 +1954,7 @@
       },
       "alternate": {
         "damage": 53,
+        "penetration": 2,
         "armorRatio": 1.864,
         "headshotMultiplier": 3.9,
         "range": 4096,
@@ -1853,11 +2002,17 @@
         0,
         0,
         0
-      ]
+      ],
+      "pellets": 1,
+      "reserveAsClips": true,
+      "reserve": 21,
+      "reloadsSingleShells": false,
+      "spreadSeed": 0
     },
     "elite": {
       "primary": {
         "damage": 38,
+        "penetration": 1,
         "armorRatio": 1.15,
         "headshotMultiplier": 4,
         "range": 4096,
@@ -1890,6 +2045,7 @@
       },
       "alternate": {
         "damage": 38,
+        "penetration": 1,
         "armorRatio": 1.15,
         "headshotMultiplier": 4,
         "range": 4096,
@@ -1937,11 +2093,17 @@
         0,
         0,
         0
-      ]
+      ],
+      "pellets": 1,
+      "reserveAsClips": true,
+      "reserve": 60,
+      "reloadsSingleShells": false,
+      "spreadSeed": 0
     },
     "fiveseven": {
       "primary": {
         "damage": 32,
+        "penetration": 1,
         "armorRatio": 1.823,
         "headshotMultiplier": 4,
         "range": 4096,
@@ -1974,6 +2136,7 @@
       },
       "alternate": {
         "damage": 32,
+        "penetration": 1,
         "armorRatio": 1.823,
         "headshotMultiplier": 4,
         "range": 4096,
@@ -2021,11 +2184,17 @@
         0,
         0,
         0
-      ]
+      ],
+      "pellets": 1,
+      "reserveAsClips": true,
+      "reserve": 40,
+      "reloadsSingleShells": false,
+      "spreadSeed": 0
     },
     "tec9": {
       "primary": {
         "damage": 33,
+        "penetration": 1,
         "armorRatio": 1.812,
         "headshotMultiplier": 4,
         "range": 4096,
@@ -2058,6 +2227,7 @@
       },
       "alternate": {
         "damage": 33,
+        "penetration": 1,
         "armorRatio": 1.812,
         "headshotMultiplier": 4,
         "range": 4096,
@@ -2105,11 +2275,17 @@
         0,
         0,
         0
-      ]
+      ],
+      "pellets": 1,
+      "reserveAsClips": true,
+      "reserve": 54,
+      "reloadsSingleShells": false,
+      "spreadSeed": 0
     },
     "revolver": {
       "primary": {
         "damage": 86,
+        "penetration": 2,
         "armorRatio": 1.864,
         "headshotMultiplier": 4,
         "range": 4096,
@@ -2142,6 +2318,7 @@
       },
       "alternate": {
         "damage": 86,
+        "penetration": 2,
         "armorRatio": 1.864,
         "headshotMultiplier": 4,
         "range": 4096,
@@ -2189,11 +2366,17 @@
         0,
         0,
         0
-      ]
+      ],
+      "pellets": 1,
+      "reserveAsClips": true,
+      "reserve": 16,
+      "reloadsSingleShells": false,
+      "spreadSeed": 0
     },
     "awp": {
       "primary": {
         "damage": 115,
+        "penetration": 2.5,
         "armorRatio": 1.95,
         "headshotMultiplier": 4,
         "range": 8192,
@@ -2226,6 +2409,7 @@
       },
       "alternate": {
         "damage": 115,
+        "penetration": 2.5,
         "armorRatio": 1.95,
         "headshotMultiplier": 4,
         "range": 8192,
@@ -2273,11 +2457,17 @@
         0.05,
         0.05,
         0.05
-      ]
+      ],
+      "pellets": 1,
+      "reserveAsClips": true,
+      "reserve": 10,
+      "reloadsSingleShells": false,
+      "spreadSeed": 0
     },
     "ssg08": {
       "primary": {
         "damage": 88,
+        "penetration": 2.5,
         "armorRatio": 1.7,
         "headshotMultiplier": 4,
         "range": 8192,
@@ -2310,6 +2500,7 @@
       },
       "alternate": {
         "damage": 88,
+        "penetration": 2.5,
         "armorRatio": 1.7,
         "headshotMultiplier": 4,
         "range": 8192,
@@ -2357,11 +2548,17 @@
         0.05,
         0.05,
         0.05
-      ]
+      ],
+      "pellets": 1,
+      "reserveAsClips": true,
+      "reserve": 20,
+      "reloadsSingleShells": false,
+      "spreadSeed": 0
     },
     "g3sg1": {
       "primary": {
         "damage": 80,
+        "penetration": 2.5,
         "armorRatio": 1.65,
         "headshotMultiplier": 4,
         "range": 8192,
@@ -2394,6 +2591,7 @@
       },
       "alternate": {
         "damage": 80,
+        "penetration": 2.5,
         "armorRatio": 1.65,
         "headshotMultiplier": 4,
         "range": 8192,
@@ -2441,11 +2639,17 @@
         0.05,
         0.05,
         0.05
-      ]
+      ],
+      "pellets": 1,
+      "reserveAsClips": true,
+      "reserve": 40,
+      "reloadsSingleShells": false,
+      "spreadSeed": 0
     },
     "scar20": {
       "primary": {
         "damage": 80,
+        "penetration": 2.5,
         "armorRatio": 1.65,
         "headshotMultiplier": 4,
         "range": 8192,
@@ -2478,6 +2682,7 @@
       },
       "alternate": {
         "damage": 80,
+        "penetration": 2.5,
         "armorRatio": 1.65,
         "headshotMultiplier": 4,
         "range": 8192,
@@ -2525,7 +2730,467 @@
         0.05,
         0.05,
         0.05
-      ]
+      ],
+      "pellets": 1,
+      "reserveAsClips": true,
+      "reserve": 40,
+      "reloadsSingleShells": false,
+      "spreadSeed": 0
+    },
+    "nova": {
+      "primary": {
+        "damage": 26,
+        "penetration": 1,
+        "armorRatio": 1,
+        "headshotMultiplier": 4,
+        "range": 3000,
+        "rangeModifier": 0.7,
+        "magazine": 8,
+        "cycle": 0.88,
+        "speed": 220,
+        "deploy": 1,
+        "reload": 0.466667,
+        "spread": 0.04,
+        "stand": 0.007,
+        "crouch": 0.00525,
+        "move": 0.03675,
+        "fire": 0.00972,
+        "jump": 0.12631,
+        "jumpInitial": 0.1097,
+        "jumpApex": 0,
+        "land": 0.000236,
+        "recovery": 0.460517,
+        "recoveryFinal": 0.460517,
+        "recoveryCrouch": 0.328941,
+        "recoveryCrouchFinal": 0.328941,
+        "recoveryStart": 2,
+        "recoveryEnd": 5,
+        "recoilSeed": 7763,
+        "recoilAngle": 0,
+        "recoilVariance": 20,
+        "recoilMagnitude": 143,
+        "recoilMagnitudeVariance": 22
+      },
+      "alternate": {
+        "damage": 26,
+        "penetration": 1,
+        "armorRatio": 1,
+        "headshotMultiplier": 4,
+        "range": 3000,
+        "rangeModifier": 0.7,
+        "magazine": 8,
+        "cycle": 0.88,
+        "speed": 220,
+        "deploy": 1,
+        "reload": 0.466667,
+        "spread": 0.04,
+        "stand": 0.007,
+        "crouch": 0.00525,
+        "move": 0.03675,
+        "fire": 0.00972,
+        "jump": 0.12631,
+        "jumpInitial": 0.1097,
+        "jumpApex": 0,
+        "land": 0.000236,
+        "recovery": 0.460517,
+        "recoveryFinal": 0.460517,
+        "recoveryCrouch": 0.328941,
+        "recoveryCrouchFinal": 0.328941,
+        "recoveryStart": 2,
+        "recoveryEnd": 5,
+        "recoilSeed": 7763,
+        "recoilAngle": 0,
+        "recoilVariance": 20,
+        "recoilMagnitude": 143,
+        "recoilMagnitudeVariance": 22
+      },
+      "fullAuto": false,
+      "zoomLevels": 0,
+      "hideWhenZoomed": false,
+      "hasBurst": false,
+      "burstCycle": 0,
+      "burstInterval": 0,
+      "unzoomsAfterShot": false,
+      "isRevolver": false,
+      "showCrosshair": true,
+      "zoomFov": [
+        90,
+        90
+      ],
+      "zoomTime": [
+        0,
+        0,
+        0
+      ],
+      "pellets": 9,
+      "reserveAsClips": false,
+      "reserve": 32,
+      "reloadsSingleShells": true,
+      "spreadSeed": 17514
+    },
+    "xm1014": {
+      "primary": {
+        "damage": 20,
+        "penetration": 1,
+        "armorRatio": 1.6,
+        "headshotMultiplier": 4,
+        "range": 3000,
+        "rangeModifier": 0.7,
+        "magazine": 7,
+        "cycle": 0.35,
+        "speed": 215,
+        "deploy": 1,
+        "reload": 0.6,
+        "spread": 0.038,
+        "stand": 0.007,
+        "crouch": 0.00525,
+        "move": 0.03603,
+        "fire": 0.00883,
+        "jump": 0.13083,
+        "jumpInitial": 0.10038,
+        "jumpApex": 0,
+        "land": 0.000232,
+        "recovery": 0.506569,
+        "recoveryFinal": 0.506569,
+        "recoveryCrouch": 0.361835,
+        "recoveryCrouchFinal": 0.361835,
+        "recoveryStart": 2,
+        "recoveryEnd": 5,
+        "recoilSeed": 24862,
+        "recoilAngle": 0,
+        "recoilVariance": 20,
+        "recoilMagnitude": 80,
+        "recoilMagnitudeVariance": 20
+      },
+      "alternate": {
+        "damage": 20,
+        "penetration": 1,
+        "armorRatio": 1.6,
+        "headshotMultiplier": 4,
+        "range": 3000,
+        "rangeModifier": 0.7,
+        "magazine": 7,
+        "cycle": 0.35,
+        "speed": 215,
+        "deploy": 1,
+        "reload": 0.6,
+        "spread": 0.038,
+        "stand": 0.007,
+        "crouch": 0.00525,
+        "move": 0.03603,
+        "fire": 0.00883,
+        "jump": 0.13083,
+        "jumpInitial": 0.10038,
+        "jumpApex": 0,
+        "land": 0.000232,
+        "recovery": 0.506569,
+        "recoveryFinal": 0.506569,
+        "recoveryCrouch": 0.361835,
+        "recoveryCrouchFinal": 0.361835,
+        "recoveryStart": 2,
+        "recoveryEnd": 5,
+        "recoilSeed": 24862,
+        "recoilAngle": 0,
+        "recoilVariance": 20,
+        "recoilMagnitude": 80,
+        "recoilMagnitudeVariance": 20
+      },
+      "fullAuto": true,
+      "zoomLevels": 0,
+      "hideWhenZoomed": false,
+      "hasBurst": false,
+      "burstCycle": 0,
+      "burstInterval": 0,
+      "unzoomsAfterShot": false,
+      "isRevolver": false,
+      "showCrosshair": true,
+      "zoomFov": [
+        90,
+        90
+      ],
+      "zoomTime": [
+        0,
+        0,
+        0
+      ],
+      "pellets": 6,
+      "reserveAsClips": false,
+      "reserve": 32,
+      "reloadsSingleShells": true,
+      "spreadSeed": 817955
+    },
+    "mag7": {
+      "primary": {
+        "damage": 30,
+        "penetration": 1,
+        "armorRatio": 1.5,
+        "headshotMultiplier": 4,
+        "range": 1400,
+        "rangeModifier": 0.45,
+        "magazine": 5,
+        "cycle": 0.85,
+        "speed": 225,
+        "deploy": 1,
+        "reload": 2.5,
+        "spread": 0.04,
+        "stand": 0.007,
+        "crouch": 0.00525,
+        "move": 0.01599,
+        "fire": 0.01119,
+        "jump": 0.05009,
+        "jumpInitial": 0.05264,
+        "jumpApex": 0,
+        "land": 0.000103,
+        "recovery": 0.399729,
+        "recoveryFinal": 0.399729,
+        "recoveryCrouch": 0.285521,
+        "recoveryCrouchFinal": 0.285521,
+        "recoveryStart": 2,
+        "recoveryEnd": 5,
+        "recoilSeed": 12518,
+        "recoilAngle": 0,
+        "recoilVariance": 20,
+        "recoilMagnitude": 165,
+        "recoilMagnitudeVariance": 25
+      },
+      "alternate": {
+        "damage": 30,
+        "penetration": 1,
+        "armorRatio": 1.5,
+        "headshotMultiplier": 4,
+        "range": 1400,
+        "rangeModifier": 0.45,
+        "magazine": 5,
+        "cycle": 0.85,
+        "speed": 225,
+        "deploy": 1,
+        "reload": 2.5,
+        "spread": 0.04,
+        "stand": 0.007,
+        "crouch": 0.00525,
+        "move": 0.01599,
+        "fire": 0.01119,
+        "jump": 0.05009,
+        "jumpInitial": 0.05264,
+        "jumpApex": 0,
+        "land": 0.000103,
+        "recovery": 0.399729,
+        "recoveryFinal": 0.399729,
+        "recoveryCrouch": 0.285521,
+        "recoveryCrouchFinal": 0.285521,
+        "recoveryStart": 2,
+        "recoveryEnd": 5,
+        "recoilSeed": 12518,
+        "recoilAngle": 0,
+        "recoilVariance": 20,
+        "recoilMagnitude": 165,
+        "recoilMagnitudeVariance": 25
+      },
+      "fullAuto": false,
+      "zoomLevels": 0,
+      "hideWhenZoomed": false,
+      "hasBurst": false,
+      "burstCycle": 0,
+      "burstInterval": 0,
+      "unzoomsAfterShot": false,
+      "isRevolver": false,
+      "showCrosshair": true,
+      "zoomFov": [
+        90,
+        90
+      ],
+      "zoomTime": [
+        0,
+        0,
+        0
+      ],
+      "pellets": 8,
+      "reserveAsClips": true,
+      "reserve": 15,
+      "reloadsSingleShells": false,
+      "spreadSeed": 19899236
+    },
+    "sawedoff": {
+      "primary": {
+        "damage": 32,
+        "penetration": 1,
+        "armorRatio": 1.5,
+        "headshotMultiplier": 4,
+        "range": 1400,
+        "rangeModifier": 0.45,
+        "magazine": 7,
+        "cycle": 0.85,
+        "speed": 210,
+        "deploy": 1,
+        "reload": 0.466667,
+        "spread": 0.062,
+        "stand": 0.007,
+        "crouch": 0.00525,
+        "move": 0.0168,
+        "fire": 0.00972,
+        "jump": 0.0577,
+        "jumpInitial": 0.05012,
+        "jumpApex": 0,
+        "land": 0.000108,
+        "recovery": 0.460517,
+        "recoveryFinal": 0.460517,
+        "recoveryCrouch": 0.328941,
+        "recoveryCrouchFinal": 0.328941,
+        "recoveryStart": 2,
+        "recoveryEnd": 5,
+        "recoilSeed": 1089,
+        "recoilAngle": 0,
+        "recoilVariance": 20,
+        "recoilMagnitude": 143,
+        "recoilMagnitudeVariance": 22
+      },
+      "alternate": {
+        "damage": 32,
+        "penetration": 1,
+        "armorRatio": 1.5,
+        "headshotMultiplier": 4,
+        "range": 1400,
+        "rangeModifier": 0.45,
+        "magazine": 7,
+        "cycle": 0.85,
+        "speed": 210,
+        "deploy": 1,
+        "reload": 0.466667,
+        "spread": 0.062,
+        "stand": 0.007,
+        "crouch": 0.00525,
+        "move": 0.0168,
+        "fire": 0.00972,
+        "jump": 0.0577,
+        "jumpInitial": 0.05012,
+        "jumpApex": 0,
+        "land": 0.000108,
+        "recovery": 0.460517,
+        "recoveryFinal": 0.460517,
+        "recoveryCrouch": 0.328941,
+        "recoveryCrouchFinal": 0.328941,
+        "recoveryStart": 2,
+        "recoveryEnd": 5,
+        "recoilSeed": 1089,
+        "recoilAngle": 0,
+        "recoilVariance": 20,
+        "recoilMagnitude": 143,
+        "recoilMagnitudeVariance": 22
+      },
+      "fullAuto": false,
+      "zoomLevels": 0,
+      "hideWhenZoomed": false,
+      "hasBurst": false,
+      "burstCycle": 0,
+      "burstInterval": 0,
+      "unzoomsAfterShot": false,
+      "isRevolver": false,
+      "showCrosshair": true,
+      "zoomFov": [
+        90,
+        90
+      ],
+      "zoomTime": [
+        0,
+        0,
+        0
+      ],
+      "pellets": 8,
+      "reserveAsClips": false,
+      "reserve": 32,
+      "reloadsSingleShells": true,
+      "spreadSeed": 9571223
+    },
+    "zeus": {
+      "primary": {
+        "damage": 500,
+        "penetration": 0,
+        "armorRatio": 2,
+        "headshotMultiplier": 4,
+        "range": 120,
+        "rangeModifier": 0.99,
+        "magazine": 1,
+        "cycle": 0.15,
+        "speed": 230,
+        "deploy": 1,
+        "reload": 5,
+        "spread": 0,
+        "stand": 0.06,
+        "crouch": 0.05,
+        "move": 0.013,
+        "fire": 0.05,
+        "jump": 0.01,
+        "jumpInitial": 0,
+        "jumpApex": 0,
+        "land": 0.0001,
+        "recovery": 0,
+        "recoveryFinal": 0,
+        "recoveryCrouch": 0,
+        "recoveryCrouchFinal": 0,
+        "recoveryStart": 0,
+        "recoveryEnd": 0,
+        "recoilSeed": 687,
+        "recoilAngle": 0,
+        "recoilVariance": 0,
+        "recoilMagnitude": 0,
+        "recoilMagnitudeVariance": 0
+      },
+      "alternate": {
+        "damage": 500,
+        "penetration": 0,
+        "armorRatio": 2,
+        "headshotMultiplier": 4,
+        "range": 120,
+        "rangeModifier": 0.99,
+        "magazine": 1,
+        "cycle": 0.3,
+        "speed": 230,
+        "deploy": 1,
+        "reload": 5,
+        "spread": 0,
+        "stand": 0.06,
+        "crouch": 0.05,
+        "move": 0.013,
+        "fire": 0.05,
+        "jump": 0.01,
+        "jumpInitial": 0,
+        "jumpApex": 0,
+        "land": 0.0001,
+        "recovery": 0,
+        "recoveryFinal": 0,
+        "recoveryCrouch": 0,
+        "recoveryCrouchFinal": 0,
+        "recoveryStart": 0,
+        "recoveryEnd": 0,
+        "recoilSeed": 687,
+        "recoilAngle": 0,
+        "recoilVariance": 0,
+        "recoilMagnitude": 0,
+        "recoilMagnitudeVariance": 0
+      },
+      "fullAuto": false,
+      "zoomLevels": 0,
+      "hideWhenZoomed": false,
+      "hasBurst": false,
+      "burstCycle": 0,
+      "burstInterval": 0,
+      "unzoomsAfterShot": false,
+      "isRevolver": false,
+      "showCrosshair": true,
+      "zoomFov": [
+        90,
+        90
+      ],
+      "zoomTime": [
+        0,
+        0,
+        0
+      ],
+      "pellets": 1,
+      "reserveAsClips": false,
+      "reserve": 0,
+      "reloadsSingleShells": false,
+      "spreadSeed": 0
     }
   }
 }

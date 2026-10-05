@@ -5652,6 +5652,698 @@
       ],
       "bytes": 2231040,
       "sha256": "d869a09cd9f81a622090c156288c760a2837a84d4e22aa8e9690eb0d20dc6dee"
+    },
+    "nova": {
+      "assetKey": "nova",
+      "variant": "hd",
+      "assemblyVersion": 5,
+      "build": "2000924",
+      "sourceModel": "agents/models/ctm_sas/ctm_sas.vmdl_c",
+      "sourceSha256": "3af2d32ae118a25d09a96bb03a1df3a9d41b1cffe00e6b68ac033e9dac3453ed",
+      "bindSha256": "a192cce74a9c787be50895f26cd8fd373bc3cb95ae74d12f3836abfa78b0156f",
+      "skeleton": "animation/skeletons/weapons/nova.vnmskel",
+      "pickup": "reuse-native-draw",
+      "clips": {
+        "idle": {
+          "path": "animation/anims/viewmodel/rifle/rifle_nova/idle_nova.vnmclip_c",
+          "crc": "00638a6d56",
+          "bytes": 4409,
+          "seconds": 0,
+          "samples": 1,
+          "maxPartMatrixError": 5.960464477539063e-8,
+          "maxMountMatrixError": 5.960464477539063e-8,
+          "quaternionContinuity": true,
+          "armSlot": "OBagents\\models\\ctm_sas\\ctm_sas.vmdl_c",
+          "weaponSlot": "OBanimation/skeletons/weapons/nova.vnmskel"
+        },
+        "draw": {
+          "path": "animation/anims/viewmodel/rifle/rifle_nova/draw_nova.vnmclip_c",
+          "crc": "00fbef174e",
+          "bytes": 12199,
+          "seconds": 1,
+          "samples": 31,
+          "maxPartMatrixError": 8.940696716308594e-8,
+          "maxMountMatrixError": 1.1920928955078125e-7,
+          "quaternionContinuity": true,
+          "armSlot": "OBagents\\models\\ctm_sas\\ctm_sas.vmdl_c",
+          "weaponSlot": "OBanimation/skeletons/weapons/nova.vnmskel"
+        },
+        "inspect": {
+          "path": "animation/anims/viewmodel/rifle/rifle_nova/lookat01_nova.vnmclip_c",
+          "crc": "006d0dd968",
+          "bytes": 51448,
+          "seconds": 5.6,
+          "samples": 169,
+          "maxPartMatrixError": 4.76837158203125e-7,
+          "maxMountMatrixError": 4.76837158203125e-7,
+          "quaternionContinuity": true,
+          "armSlot": "OBagents\\models\\ctm_sas\\ctm_sas.vmdl_c",
+          "weaponSlot": "OBanimation/skeletons/weapons/nova.vnmskel"
+        },
+        "reload": {
+          "path": "animation/anims/viewmodel/rifle/rifle_nova/reload_nova.vnmclip_c",
+          "crc": "006cd754b6",
+          "bytes": 19870,
+          "seconds": 1.6333333333333333,
+          "samples": 50,
+          "maxPartMatrixError": 2.384185791015625e-7,
+          "maxMountMatrixError": 2.384185791015625e-7,
+          "quaternionContinuity": true,
+          "armSlot": "OBagents\\models\\ctm_sas\\ctm_sas.vmdl_c",
+          "weaponSlot": "OBanimation/skeletons/weapons/nova.vnmskel"
+        },
+        "fire": {
+          "path": "animation/anims/viewmodel/rifle/rifle_nova/shoot1_nova.vnmclip_c",
+          "crc": "005eaf008c",
+          "bytes": 9616,
+          "seconds": 0.8,
+          "samples": 25,
+          "maxPartMatrixError": 5.960464477539063e-8,
+          "maxMountMatrixError": 5.960464477539063e-8,
+          "quaternionContinuity": true,
+          "armSlot": "OBagents\\models\\ctm_sas\\ctm_sas.vmdl_c",
+          "weaponSlot": "OBanimation/skeletons/weapons/nova.vnmskel"
+        }
+      },
+      "actionAudit": {
+        "available": [
+          "animation/anims/viewmodel/rifle/rifle_nova/draw_nova.vnmclip_c",
+          "animation/anims/viewmodel/rifle/rifle_nova/idle_nova.vnmclip_c",
+          "animation/anims/viewmodel/rifle/rifle_nova/lookat01_nova.vnmclip_c",
+          "animation/anims/viewmodel/rifle/rifle_nova/reload_nova.vnmclip_c",
+          "animation/anims/viewmodel/rifle/rifle_nova/shoot1_nova.vnmclip_c"
+        ],
+        "unselected": [],
+        "absent": {
+          "bolt": "no separate bolt clip in native nova viewmodel namespace",
+          "pull": "no separate pull clip in native nova viewmodel namespace",
+          "charge": "no separate charge clip in native nova viewmodel namespace",
+          "scope": "no separate scope clip in native nova viewmodel namespace"
+        }
+      },
+      "meshes": [
+        "agents\\models\\ctm_sas\\ctm_sas.vmdl_c.firstperson_default_gloves_arms",
+        "agents\\models\\ctm_sas\\ctm_sas.vmdl_c.firstperson_sleeves",
+        "weapons\\models\\nova\\weapon_shot_nova.vmdl_c.body_hd"
+      ],
+      "limitations": [
+        "Native twist/IK runtime solvers are not reproduced; authored arm tracks retained.",
+        "Call prepareNativeViewAssembly after GLTF load to prevent stale skinned frustum bounds."
+      ],
+      "bytes": 2327168,
+      "sha256": "701077e41f31b8c8c3af1f0127e3e02be0e9ca1c4758a68b51d420ac672a7653"
+    },
+    "xm1014": {
+      "assetKey": "xm1014",
+      "variant": "hd",
+      "assemblyVersion": 5,
+      "build": "2000924",
+      "sourceModel": "agents/models/ctm_sas/ctm_sas.vmdl_c",
+      "sourceSha256": "6b1a6d1b55b56a40c6d92a14e52ad308fd09df790be5f51f1f9c01a61f3f7691",
+      "bindSha256": "dd8a6ebcfa425b3a0423c430758905d856f2ed551de407e39a387bfbab6d6551",
+      "skeleton": "animation/skeletons/weapons/xm1014.vnmskel",
+      "pickup": "reuse-native-draw",
+      "clips": {
+        "idle": {
+          "path": "animation/anims/viewmodel/rifle/rifle_xm1014/idle_xm1014.vnmclip_c",
+          "crc": "00d456f9d2",
+          "bytes": 4337,
+          "seconds": 0,
+          "samples": 1,
+          "maxPartMatrixError": 1.6858738405289841e-7,
+          "maxMountMatrixError": 7.46593613598634e-8,
+          "quaternionContinuity": true,
+          "armSlot": "OBagents\\models\\ctm_sas\\ctm_sas.vmdl_c",
+          "weaponSlot": "OBanimation/skeletons/weapons/xm1014.vnmskel"
+        },
+        "draw": {
+          "path": "animation/anims/viewmodel/rifle/rifle_xm1014/draw_xm1014.vnmclip_c",
+          "crc": "00a3c9121f",
+          "bytes": 10096,
+          "seconds": 1,
+          "samples": 31,
+          "maxPartMatrixError": 1.6858738405289841e-7,
+          "maxMountMatrixError": 1.1920928955078125e-7,
+          "quaternionContinuity": true,
+          "armSlot": "OBagents\\models\\ctm_sas\\ctm_sas.vmdl_c",
+          "weaponSlot": "OBanimation/skeletons/weapons/xm1014.vnmskel"
+        },
+        "inspect": {
+          "path": "animation/anims/viewmodel/rifle/rifle_xm1014/lookat01_xm1014.vnmclip_c",
+          "crc": "001b3b87aa",
+          "bytes": 29282,
+          "seconds": 4.6,
+          "samples": 139,
+          "maxPartMatrixError": 1.6858729168234277e-7,
+          "maxMountMatrixError": 3.129243850708008e-7,
+          "quaternionContinuity": true,
+          "armSlot": "OBagents\\models\\ctm_sas\\ctm_sas.vmdl_c",
+          "weaponSlot": "OBanimation/skeletons/weapons/xm1014.vnmskel"
+        },
+        "reload": {
+          "path": "animation/anims/viewmodel/rifle/rifle_xm1014/reload_xm1014.vnmclip_c",
+          "crc": "006a197a52",
+          "bytes": 16529,
+          "seconds": 1.7333333333333334,
+          "samples": 53,
+          "maxPartMatrixError": 3.371387720108032e-7,
+          "maxMountMatrixError": 1.1920928955078125e-7,
+          "quaternionContinuity": true,
+          "armSlot": "OBagents\\models\\ctm_sas\\ctm_sas.vmdl_c",
+          "weaponSlot": "OBanimation/skeletons/weapons/xm1014.vnmskel"
+        },
+        "fire": {
+          "path": "animation/anims/viewmodel/rifle/rifle_xm1014/shoot1_xm1014.vnmclip_c",
+          "crc": "00620a65c1",
+          "bytes": 7664,
+          "seconds": 0.8666666666666667,
+          "samples": 27,
+          "maxPartMatrixError": 1.6858738405289841e-7,
+          "maxMountMatrixError": 7.636845111846924e-8,
+          "quaternionContinuity": true,
+          "armSlot": "OBagents\\models\\ctm_sas\\ctm_sas.vmdl_c",
+          "weaponSlot": "OBanimation/skeletons/weapons/xm1014.vnmskel"
+        }
+      },
+      "actionAudit": {
+        "available": [
+          "animation/anims/viewmodel/rifle/rifle_xm1014/bullet_hide_xm1014.vnmclip+non_additive.vnmclip_c",
+          "animation/anims/viewmodel/rifle/rifle_xm1014/bullet_hide_xm1014.vnmclip_c",
+          "animation/anims/viewmodel/rifle/rifle_xm1014/draw_xm1014.vnmclip_c",
+          "animation/anims/viewmodel/rifle/rifle_xm1014/idle_xm1014.vnmclip_c",
+          "animation/anims/viewmodel/rifle/rifle_xm1014/lookat01_xm1014.vnmclip_c",
+          "animation/anims/viewmodel/rifle/rifle_xm1014/reload_xm1014.vnmclip_c",
+          "animation/anims/viewmodel/rifle/rifle_xm1014/shoot1_xm1014.vnmclip_c"
+        ],
+        "unselected": [
+          "animation/anims/viewmodel/rifle/rifle_xm1014/bullet_hide_xm1014.vnmclip+non_additive.vnmclip_c",
+          "animation/anims/viewmodel/rifle/rifle_xm1014/bullet_hide_xm1014.vnmclip_c"
+        ],
+        "absent": {
+          "bolt": "no separate bolt clip in native xm1014 viewmodel namespace",
+          "pull": "no separate pull clip in native xm1014 viewmodel namespace",
+          "charge": "no separate charge clip in native xm1014 viewmodel namespace",
+          "scope": "no separate scope clip in native xm1014 viewmodel namespace"
+        }
+      },
+      "meshes": [
+        "agents\\models\\ctm_sas\\ctm_sas.vmdl_c.firstperson_sleeves",
+        "agents\\models\\ctm_sas\\ctm_sas.vmdl_c.firstperson_default_gloves_arms",
+        "weapons\\models\\xm1014\\weapon_shot_xm1014.vmdl_c.body_hd"
+      ],
+      "limitations": [
+        "Native twist/IK runtime solvers are not reproduced; authored arm tracks retained.",
+        "Call prepareNativeViewAssembly after GLTF load to prevent stale skinned frustum bounds."
+      ],
+      "bytes": 2525260,
+      "sha256": "0ddb6e8b1c7ded4cf95e8201e1e6abba377c7ff81b5fe847fc2905ab5a54e457"
+    },
+    "mag7": {
+      "assetKey": "mag7",
+      "variant": "hd",
+      "assemblyVersion": 5,
+      "build": "2000924",
+      "sourceModel": "agents/models/ctm_sas/ctm_sas.vmdl_c",
+      "sourceSha256": "bba75d41a06e031c1f349692f2fa8a27ba1fbda2a23a85e8ff6010ba6b9ad67f",
+      "bindSha256": "548a43372af339284094491e43aa1c442b9fa366c8896c86ab6ff7bc3eea042c",
+      "skeleton": "animation/skeletons/weapons/mag7.vnmskel",
+      "pickup": "reuse-native-draw",
+      "clips": {
+        "idle": {
+          "path": "animation/anims/viewmodel/rifle/rifle_mag7/idle_mag7.vnmclip_c",
+          "crc": "000007e517",
+          "bytes": 4312,
+          "seconds": 0,
+          "samples": 1,
+          "maxPartMatrixError": 1.1920928955078125e-7,
+          "maxMountMatrixError": 7.956428760280687e-8,
+          "quaternionContinuity": true,
+          "armSlot": "OBagents\\models\\ctm_sas\\ctm_sas.vmdl_c",
+          "weaponSlot": "OBanimation/skeletons/weapons/mag7.vnmskel"
+        },
+        "draw": {
+          "path": "animation/anims/viewmodel/rifle/rifle_mag7/draw_mag7.vnmclip_c",
+          "crc": "00d27aa183",
+          "bytes": 8966,
+          "seconds": 1,
+          "samples": 31,
+          "maxPartMatrixError": 5.960464477539063e-8,
+          "maxMountMatrixError": 9.685754776000977e-8,
+          "quaternionContinuity": true,
+          "armSlot": "OBagents\\models\\ctm_sas\\ctm_sas.vmdl_c",
+          "weaponSlot": "OBanimation/skeletons/weapons/mag7.vnmskel"
+        },
+        "inspect": {
+          "path": "animation/anims/viewmodel/rifle/rifle_mag7/lookat01_mag7.vnmclip_c",
+          "crc": "00b810fbd9",
+          "bytes": 28805,
+          "seconds": 4.2,
+          "samples": 127,
+          "maxPartMatrixError": 5.960464477539063e-8,
+          "maxMountMatrixError": 4.470348358154297e-7,
+          "quaternionContinuity": true,
+          "armSlot": "OBagents\\models\\ctm_sas\\ctm_sas.vmdl_c",
+          "weaponSlot": "OBanimation/skeletons/weapons/mag7.vnmskel"
+        },
+        "reload": {
+          "path": "animation/anims/viewmodel/rifle/rifle_mag7/reload_mag7.vnmclip_c",
+          "crc": "00dbb14081",
+          "bytes": 20694,
+          "seconds": 2.466666666666667,
+          "samples": 75,
+          "maxPartMatrixError": 1.1920928955078125e-7,
+          "maxMountMatrixError": 2.980232238769531e-7,
+          "quaternionContinuity": true,
+          "armSlot": "OBagents\\models\\ctm_sas\\ctm_sas.vmdl_c",
+          "weaponSlot": "OBanimation/skeletons/weapons/mag7.vnmskel"
+        },
+        "fire": {
+          "path": "animation/anims/viewmodel/rifle/rifle_mag7/shoot1_mag7.vnmclip_c",
+          "crc": "006be3df66",
+          "bytes": 8972,
+          "seconds": 1.1333333333333333,
+          "samples": 35,
+          "maxPartMatrixError": 5.960464477539063e-8,
+          "maxMountMatrixError": 8.754432201385498e-8,
+          "quaternionContinuity": true,
+          "armSlot": "OBagents\\models\\ctm_sas\\ctm_sas.vmdl_c",
+          "weaponSlot": "OBanimation/skeletons/weapons/mag7.vnmskel"
+        }
+      },
+      "actionAudit": {
+        "available": [
+          "animation/anims/viewmodel/rifle/rifle_mag7/draw_mag7.vnmclip_c",
+          "animation/anims/viewmodel/rifle/rifle_mag7/idle_mag7.vnmclip_c",
+          "animation/anims/viewmodel/rifle/rifle_mag7/lookat01_mag7.vnmclip_c",
+          "animation/anims/viewmodel/rifle/rifle_mag7/reload_mag7.vnmclip_c",
+          "animation/anims/viewmodel/rifle/rifle_mag7/shoot1_mag7.vnmclip_c"
+        ],
+        "unselected": [],
+        "absent": {
+          "bolt": "no separate bolt clip in native mag7 viewmodel namespace",
+          "pull": "no separate pull clip in native mag7 viewmodel namespace",
+          "charge": "no separate charge clip in native mag7 viewmodel namespace",
+          "scope": "no separate scope clip in native mag7 viewmodel namespace"
+        }
+      },
+      "meshes": [
+        "agents\\models\\ctm_sas\\ctm_sas.vmdl_c.firstperson_default_gloves_arms",
+        "agents\\models\\ctm_sas\\ctm_sas.vmdl_c.firstperson_sleeves",
+        "weapons\\models\\mag7\\weapon_shot_mag7.vmdl_c.body_hd"
+      ],
+      "limitations": [
+        "Native twist/IK runtime solvers are not reproduced; authored arm tracks retained.",
+        "Call prepareNativeViewAssembly after GLTF load to prevent stale skinned frustum bounds."
+      ],
+      "bytes": 2256668,
+      "sha256": "4877bf0a11a9500ac6f791c1f048045e6b425c7dfc696afc5e8434fd668499a1"
+    },
+    "sawedoff": {
+      "assetKey": "sawedoff",
+      "variant": "hd",
+      "assemblyVersion": 5,
+      "build": "2000924",
+      "sourceModel": "agents/models/ctm_sas/ctm_sas.vmdl_c",
+      "sourceSha256": "d98211980e7b807f23c19d88156800393b7b39dcf8f8ab8a95c3fe50f7dfd666",
+      "bindSha256": "d302a4b0fbe8023baf0636e4c58758b4c135a85e6834df3c56539f92561d0ea5",
+      "skeleton": "animation/skeletons/weapons/sawedoff.vnmskel",
+      "pickup": "reuse-native-draw",
+      "clips": {
+        "idle": {
+          "path": "animation/anims/viewmodel/rifle/rifle_sawedoff/idle_sawedoff.vnmclip_c",
+          "crc": "00dd1c0f7f",
+          "bytes": 4356,
+          "seconds": 0,
+          "samples": 1,
+          "maxPartMatrixError": 5.960464477539063e-8,
+          "maxMountMatrixError": 7.100738486087721e-8,
+          "quaternionContinuity": true,
+          "armSlot": "OBagents\\models\\ctm_sas\\ctm_sas.vmdl_c",
+          "weaponSlot": "OBanimation/skeletons/weapons/sawedoff.vnmskel"
+        },
+        "draw": {
+          "path": "animation/anims/viewmodel/rifle/rifle_sawedoff/draw_sawedoff.vnmclip_c",
+          "crc": "00b8a0395f",
+          "bytes": 13796,
+          "seconds": 1,
+          "samples": 31,
+          "maxPartMatrixError": 3.5762786865234375e-7,
+          "maxMountMatrixError": 1.1920928955078125e-7,
+          "quaternionContinuity": true,
+          "armSlot": "OBagents\\models\\ctm_sas\\ctm_sas.vmdl_c",
+          "weaponSlot": "OBanimation/skeletons/weapons/sawedoff.vnmskel"
+        },
+        "inspect": {
+          "path": "animation/anims/viewmodel/rifle/rifle_sawedoff/lookat01_sawedoff.vnmclip_c",
+          "crc": "005976abce",
+          "bytes": 42572,
+          "seconds": 5.766666666666667,
+          "samples": 174,
+          "maxPartMatrixError": 5.960464477539063e-8,
+          "maxMountMatrixError": 3.129243850708008e-7,
+          "quaternionContinuity": true,
+          "armSlot": "OBagents\\models\\ctm_sas\\ctm_sas.vmdl_c",
+          "weaponSlot": "OBanimation/skeletons/weapons/sawedoff.vnmskel"
+        },
+        "reload": {
+          "path": "animation/anims/viewmodel/rifle/rifle_sawedoff/reload_sawedoff.vnmclip_c",
+          "crc": "0089421c2a",
+          "bytes": 20429,
+          "seconds": 1.7333333333333334,
+          "samples": 53,
+          "maxPartMatrixError": 2.384185791015625e-7,
+          "maxMountMatrixError": 2.980232238769531e-7,
+          "quaternionContinuity": true,
+          "armSlot": "OBagents\\models\\ctm_sas\\ctm_sas.vmdl_c",
+          "weaponSlot": "OBanimation/skeletons/weapons/sawedoff.vnmskel"
+        },
+        "fire": {
+          "path": "animation/anims/viewmodel/rifle/rifle_sawedoff/shoot1_sawedoff.vnmclip_c",
+          "crc": "006f094b4a",
+          "bytes": 10382,
+          "seconds": 0.8,
+          "samples": 25,
+          "maxPartMatrixError": 5.960464477539063e-8,
+          "maxMountMatrixError": 7.82310962677002e-8,
+          "quaternionContinuity": true,
+          "armSlot": "OBagents\\models\\ctm_sas\\ctm_sas.vmdl_c",
+          "weaponSlot": "OBanimation/skeletons/weapons/sawedoff.vnmskel"
+        }
+      },
+      "actionAudit": {
+        "available": [
+          "animation/anims/viewmodel/rifle/rifle_sawedoff/draw_sawedoff.vnmclip_c",
+          "animation/anims/viewmodel/rifle/rifle_sawedoff/idle_sawedoff.vnmclip_c",
+          "animation/anims/viewmodel/rifle/rifle_sawedoff/lookat01_sawedoff.vnmclip_c",
+          "animation/anims/viewmodel/rifle/rifle_sawedoff/reload_sawedoff.vnmclip_c",
+          "animation/anims/viewmodel/rifle/rifle_sawedoff/shoot1_sawedoff.vnmclip_c"
+        ],
+        "unselected": [],
+        "absent": {
+          "bolt": "no separate bolt clip in native sawedoff viewmodel namespace",
+          "pull": "no separate pull clip in native sawedoff viewmodel namespace",
+          "charge": "no separate charge clip in native sawedoff viewmodel namespace",
+          "scope": "no separate scope clip in native sawedoff viewmodel namespace"
+        }
+      },
+      "meshes": [
+        "agents\\models\\ctm_sas\\ctm_sas.vmdl_c.firstperson_default_gloves_arms",
+        "agents\\models\\ctm_sas\\ctm_sas.vmdl_c.firstperson_sleeves",
+        "weapons\\models\\sawedoff\\weapon_shot_sawedoff.vmdl_c.body_hd"
+      ],
+      "limitations": [
+        "Native twist/IK runtime solvers are not reproduced; authored arm tracks retained.",
+        "Call prepareNativeViewAssembly after GLTF load to prevent stale skinned frustum bounds."
+      ],
+      "bytes": 2067028,
+      "sha256": "33e9c431e8749fb12d903807640ac334d678ceaf709204ac8233ac9d44f4896c"
+    },
+    "zeus": {
+      "assetKey": "zeus",
+      "variant": "hd",
+      "assemblyVersion": 5,
+      "build": "2000924",
+      "sourceModel": "agents/models/ctm_sas/ctm_sas.vmdl_c",
+      "sourceSha256": "d65d37288300f1c4f8f0fcf42435738e10eca9c0a43cb2425a44af165ae62eb3",
+      "bindSha256": "c36c6230f0b8f41e8d4467cfe4688a1a3a085b77ccf68f1b9d1ecfa7ed89a950",
+      "skeleton": "animation/skeletons/weapons/taser.vnmskel",
+      "pickup": "reuse-native-draw",
+      "clips": {
+        "idle": {
+          "path": "animation/anims/viewmodel/pistol/pistol_taser/idle_taser.vnmclip_c",
+          "crc": "00ddd8c5cc",
+          "bytes": 4249,
+          "seconds": 0,
+          "samples": 1,
+          "maxPartMatrixError": 5.684341886080802e-14,
+          "maxMountMatrixError": 2.718297764658928e-8,
+          "quaternionContinuity": true,
+          "armSlot": "OBagents\\models\\ctm_sas\\ctm_sas.vmdl_c",
+          "weaponSlot": "OBanimation/skeletons/weapons/taser.vnmskel"
+        },
+        "draw": {
+          "path": "animation/anims/viewmodel/pistol/pistol_taser/draw_taser.vnmclip_c",
+          "crc": "00531cba93",
+          "bytes": 12179,
+          "seconds": 1,
+          "samples": 31,
+          "maxPartMatrixError": 5.960464477539063e-8,
+          "maxMountMatrixError": 1.1920928955078125e-7,
+          "quaternionContinuity": true,
+          "armSlot": "OBagents\\models\\ctm_sas\\ctm_sas.vmdl_c",
+          "weaponSlot": "OBanimation/skeletons/weapons/taser.vnmskel"
+        },
+        "inspect": {
+          "path": "animation/anims/viewmodel/pistol/pistol_taser/lookat01_taser.vnmclip_c",
+          "crc": "00adf81359",
+          "bytes": 64850,
+          "seconds": 6.433333333333334,
+          "samples": 194,
+          "maxPartMatrixError": 7.275957614183426e-12,
+          "maxMountMatrixError": 3.082677721977234e-7,
+          "quaternionContinuity": true,
+          "armSlot": "OBagents\\models\\ctm_sas\\ctm_sas.vmdl_c",
+          "weaponSlot": "OBanimation/skeletons/weapons/taser.vnmskel"
+        },
+        "fire": {
+          "path": "animation/anims/viewmodel/pistol/pistol_taser/shoot1_taser.vnmclip_c",
+          "crc": "00e49c6d17",
+          "bytes": 8295,
+          "seconds": 0.4,
+          "samples": 13,
+          "maxPartMatrixError": 5.960464477539063e-8,
+          "maxMountMatrixError": 5.960464477539063e-8,
+          "quaternionContinuity": true,
+          "armSlot": "OBagents\\models\\ctm_sas\\ctm_sas.vmdl_c",
+          "weaponSlot": "OBanimation/skeletons/weapons/taser.vnmskel"
+        }
+      },
+      "actionAudit": {
+        "available": [
+          "animation/anims/viewmodel/pistol/pistol_taser/draw_taser.vnmclip_c",
+          "animation/anims/viewmodel/pistol/pistol_taser/idle_taser.vnmclip_c",
+          "animation/anims/viewmodel/pistol/pistol_taser/lookat01_taser.vnmclip_c",
+          "animation/anims/viewmodel/pistol/pistol_taser/shoot1_taser.vnmclip_c"
+        ],
+        "unselected": [],
+        "absent": {
+          "bolt": "no separate bolt clip in native taser viewmodel namespace",
+          "pull": "no separate pull clip in native taser viewmodel namespace",
+          "charge": "no separate charge clip in native taser viewmodel namespace",
+          "scope": "no separate scope clip in native taser viewmodel namespace"
+        }
+      },
+      "meshes": [
+        "agents\\models\\ctm_sas\\ctm_sas.vmdl_c.firstperson_sleeves",
+        "agents\\models\\ctm_sas\\ctm_sas.vmdl_c.firstperson_default_gloves_arms",
+        "weapons\\models\\taser\\weapon_pist_taser.vmdl_c.body_hd"
+      ],
+      "limitations": [
+        "Native twist/IK runtime solvers are not reproduced; authored arm tracks retained.",
+        "Call prepareNativeViewAssembly after GLTF load to prevent stale skinned frustum bounds."
+      ],
+      "bytes": 1802832,
+      "sha256": "09897aefb2e8dff856775df62d442b6efaa92c847f66bea872553c04456fa95a"
+    },
+    "mag7-legacy": {
+      "assetKey": "mag7-legacy",
+      "variant": "legacy",
+      "assemblyVersion": 5,
+      "build": "2000924",
+      "sourceModel": "agents/models/ctm_sas/ctm_sas.vmdl_c",
+      "sourceSha256": "bba75d41a06e031c1f349692f2fa8a27ba1fbda2a23a85e8ff6010ba6b9ad67f",
+      "bindSha256": "548a43372af339284094491e43aa1c442b9fa366c8896c86ab6ff7bc3eea042c",
+      "skeleton": "animation/skeletons/weapons/mag7.vnmskel",
+      "pickup": "reuse-native-draw",
+      "clips": {
+        "idle": {
+          "path": "animation/anims/viewmodel/rifle/rifle_mag7/idle_mag7.vnmclip_c",
+          "crc": "000007e517",
+          "bytes": 4312,
+          "seconds": 0,
+          "samples": 1,
+          "maxPartMatrixError": 1.1920928955078125e-7,
+          "maxMountMatrixError": 7.956428760280687e-8,
+          "quaternionContinuity": true,
+          "armSlot": "OBagents\\models\\ctm_sas\\ctm_sas.vmdl_c",
+          "weaponSlot": "OBanimation/skeletons/weapons/mag7.vnmskel"
+        },
+        "draw": {
+          "path": "animation/anims/viewmodel/rifle/rifle_mag7/draw_mag7.vnmclip_c",
+          "crc": "00d27aa183",
+          "bytes": 8966,
+          "seconds": 1,
+          "samples": 31,
+          "maxPartMatrixError": 5.960464477539063e-8,
+          "maxMountMatrixError": 9.685754776000977e-8,
+          "quaternionContinuity": true,
+          "armSlot": "OBagents\\models\\ctm_sas\\ctm_sas.vmdl_c",
+          "weaponSlot": "OBanimation/skeletons/weapons/mag7.vnmskel"
+        },
+        "inspect": {
+          "path": "animation/anims/viewmodel/rifle/rifle_mag7/lookat01_mag7.vnmclip_c",
+          "crc": "00b810fbd9",
+          "bytes": 28805,
+          "seconds": 4.2,
+          "samples": 127,
+          "maxPartMatrixError": 5.960464477539063e-8,
+          "maxMountMatrixError": 4.470348358154297e-7,
+          "quaternionContinuity": true,
+          "armSlot": "OBagents\\models\\ctm_sas\\ctm_sas.vmdl_c",
+          "weaponSlot": "OBanimation/skeletons/weapons/mag7.vnmskel"
+        },
+        "reload": {
+          "path": "animation/anims/viewmodel/rifle/rifle_mag7/reload_mag7.vnmclip_c",
+          "crc": "00dbb14081",
+          "bytes": 20694,
+          "seconds": 2.466666666666667,
+          "samples": 75,
+          "maxPartMatrixError": 1.1920928955078125e-7,
+          "maxMountMatrixError": 2.980232238769531e-7,
+          "quaternionContinuity": true,
+          "armSlot": "OBagents\\models\\ctm_sas\\ctm_sas.vmdl_c",
+          "weaponSlot": "OBanimation/skeletons/weapons/mag7.vnmskel"
+        },
+        "fire": {
+          "path": "animation/anims/viewmodel/rifle/rifle_mag7/shoot1_mag7.vnmclip_c",
+          "crc": "006be3df66",
+          "bytes": 8972,
+          "seconds": 1.1333333333333333,
+          "samples": 35,
+          "maxPartMatrixError": 5.960464477539063e-8,
+          "maxMountMatrixError": 8.754432201385498e-8,
+          "quaternionContinuity": true,
+          "armSlot": "OBagents\\models\\ctm_sas\\ctm_sas.vmdl_c",
+          "weaponSlot": "OBanimation/skeletons/weapons/mag7.vnmskel"
+        }
+      },
+      "actionAudit": {
+        "available": [
+          "animation/anims/viewmodel/rifle/rifle_mag7/draw_mag7.vnmclip_c",
+          "animation/anims/viewmodel/rifle/rifle_mag7/idle_mag7.vnmclip_c",
+          "animation/anims/viewmodel/rifle/rifle_mag7/lookat01_mag7.vnmclip_c",
+          "animation/anims/viewmodel/rifle/rifle_mag7/reload_mag7.vnmclip_c",
+          "animation/anims/viewmodel/rifle/rifle_mag7/shoot1_mag7.vnmclip_c"
+        ],
+        "unselected": [],
+        "absent": {
+          "bolt": "no separate bolt clip in native mag7 viewmodel namespace",
+          "pull": "no separate pull clip in native mag7 viewmodel namespace",
+          "charge": "no separate charge clip in native mag7 viewmodel namespace",
+          "scope": "no separate scope clip in native mag7 viewmodel namespace"
+        }
+      },
+      "meshes": [
+        "agents\\models\\ctm_sas\\ctm_sas.vmdl_c.firstperson_sleeves",
+        "agents\\models\\ctm_sas\\ctm_sas.vmdl_c.firstperson_default_gloves_arms",
+        "weapons\\models\\mag7\\weapon_shot_mag7.vmdl_c.body_legacy"
+      ],
+      "limitations": [
+        "Native twist/IK runtime solvers are not reproduced; authored arm tracks retained.",
+        "Call prepareNativeViewAssembly after GLTF load to prevent stale skinned frustum bounds."
+      ],
+      "bytes": 1924428,
+      "sha256": "c1641abe0f2d465437a30f21b777c44a7b7577050131e3ceda09bdbac9630e11"
+    },
+    "sawedoff-legacy": {
+      "assetKey": "sawedoff-legacy",
+      "variant": "legacy",
+      "assemblyVersion": 5,
+      "build": "2000924",
+      "sourceModel": "agents/models/ctm_sas/ctm_sas.vmdl_c",
+      "sourceSha256": "d98211980e7b807f23c19d88156800393b7b39dcf8f8ab8a95c3fe50f7dfd666",
+      "bindSha256": "d302a4b0fbe8023baf0636e4c58758b4c135a85e6834df3c56539f92561d0ea5",
+      "skeleton": "animation/skeletons/weapons/sawedoff.vnmskel",
+      "pickup": "reuse-native-draw",
+      "clips": {
+        "idle": {
+          "path": "animation/anims/viewmodel/rifle/rifle_sawedoff/idle_sawedoff.vnmclip_c",
+          "crc": "00dd1c0f7f",
+          "bytes": 4356,
+          "seconds": 0,
+          "samples": 1,
+          "maxPartMatrixError": 5.960464477539063e-8,
+          "maxMountMatrixError": 7.100738486087721e-8,
+          "quaternionContinuity": true,
+          "armSlot": "OBagents\\models\\ctm_sas\\ctm_sas.vmdl_c",
+          "weaponSlot": "OBanimation/skeletons/weapons/sawedoff.vnmskel"
+        },
+        "draw": {
+          "path": "animation/anims/viewmodel/rifle/rifle_sawedoff/draw_sawedoff.vnmclip_c",
+          "crc": "00b8a0395f",
+          "bytes": 13796,
+          "seconds": 1,
+          "samples": 31,
+          "maxPartMatrixError": 3.5762786865234375e-7,
+          "maxMountMatrixError": 1.1920928955078125e-7,
+          "quaternionContinuity": true,
+          "armSlot": "OBagents\\models\\ctm_sas\\ctm_sas.vmdl_c",
+          "weaponSlot": "OBanimation/skeletons/weapons/sawedoff.vnmskel"
+        },
+        "inspect": {
+          "path": "animation/anims/viewmodel/rifle/rifle_sawedoff/lookat01_sawedoff.vnmclip_c",
+          "crc": "005976abce",
+          "bytes": 42572,
+          "seconds": 5.766666666666667,
+          "samples": 174,
+          "maxPartMatrixError": 5.960464477539063e-8,
+          "maxMountMatrixError": 3.129243850708008e-7,
+          "quaternionContinuity": true,
+          "armSlot": "OBagents\\models\\ctm_sas\\ctm_sas.vmdl_c",
+          "weaponSlot": "OBanimation/skeletons/weapons/sawedoff.vnmskel"
+        },
+        "reload": {
+          "path": "animation/anims/viewmodel/rifle/rifle_sawedoff/reload_sawedoff.vnmclip_c",
+          "crc": "0089421c2a",
+          "bytes": 20429,
+          "seconds": 1.7333333333333334,
+          "samples": 53,
+          "maxPartMatrixError": 2.384185791015625e-7,
+          "maxMountMatrixError": 2.980232238769531e-7,
+          "quaternionContinuity": true,
+          "armSlot": "OBagents\\models\\ctm_sas\\ctm_sas.vmdl_c",
+          "weaponSlot": "OBanimation/skeletons/weapons/sawedoff.vnmskel"
+        },
+        "fire": {
+          "path": "animation/anims/viewmodel/rifle/rifle_sawedoff/shoot1_sawedoff.vnmclip_c",
+          "crc": "006f094b4a",
+          "bytes": 10382,
+          "seconds": 0.8,
+          "samples": 25,
+          "maxPartMatrixError": 5.960464477539063e-8,
+          "maxMountMatrixError": 7.82310962677002e-8,
+          "quaternionContinuity": true,
+          "armSlot": "OBagents\\models\\ctm_sas\\ctm_sas.vmdl_c",
+          "weaponSlot": "OBanimation/skeletons/weapons/sawedoff.vnmskel"
+        }
+      },
+      "actionAudit": {
+        "available": [
+          "animation/anims/viewmodel/rifle/rifle_sawedoff/draw_sawedoff.vnmclip_c",
+          "animation/anims/viewmodel/rifle/rifle_sawedoff/idle_sawedoff.vnmclip_c",
+          "animation/anims/viewmodel/rifle/rifle_sawedoff/lookat01_sawedoff.vnmclip_c",
+          "animation/anims/viewmodel/rifle/rifle_sawedoff/reload_sawedoff.vnmclip_c",
+          "animation/anims/viewmodel/rifle/rifle_sawedoff/shoot1_sawedoff.vnmclip_c"
+        ],
+        "unselected": [],
+        "absent": {
+          "bolt": "no separate bolt clip in native sawedoff viewmodel namespace",
+          "pull": "no separate pull clip in native sawedoff viewmodel namespace",
+          "charge": "no separate charge clip in native sawedoff viewmodel namespace",
+          "scope": "no separate scope clip in native sawedoff viewmodel namespace"
+        }
+      },
+      "meshes": [
+        "agents\\models\\ctm_sas\\ctm_sas.vmdl_c.firstperson_default_gloves_arms",
+        "agents\\models\\ctm_sas\\ctm_sas.vmdl_c.firstperson_sleeves",
+        "weapons\\models\\sawedoff\\weapon_shot_sawedoff.vmdl_c.body_legacy"
+      ],
+      "limitations": [
+        "Native twist/IK runtime solvers are not reproduced; authored arm tracks retained.",
+        "Call prepareNativeViewAssembly after GLTF load to prevent stale skinned frustum bounds."
+      ],
+      "bytes": 1749420,
+      "sha256": "c5887592a2810b03d7880247ea74ae81159f2ffaa46817c27a4b4ff18183e621"
     }
   }
 }

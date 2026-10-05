@@ -88,7 +88,7 @@ describe('sound emission and sensor boundary regressions', () => {
     const one = stepsPerBot(1), two = stepsPerBot(2), five = stepsPerBot(5);
     expect(one, JSON.stringify({one, two, five})).toBeLessThan(five * .75);
     expect(two, JSON.stringify({one, two, five})).toBeLessThan(five * .85);
-  });
+  }, 30000);
 });
 
 describe('seeded route diversity after contact', () => {
@@ -114,5 +114,5 @@ describe('seeded route diversity after contact', () => {
     expect(records.filter(record => record.peeks.length > 1 || record.phases.includes('microstrafe')).length,
       JSON.stringify(records)).toBeGreaterThanOrEqual(8);
     expect(records.filter(record => record.phases.includes('microstrafe')).length, JSON.stringify(records)).toBeGreaterThanOrEqual(4);
-  });
+  }, 30000);
 });

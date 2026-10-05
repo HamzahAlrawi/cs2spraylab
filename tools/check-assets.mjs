@@ -6,6 +6,7 @@ const knives = JSON.parse(fs.readFileSync('docs/knife-asset-inventory.json', 'ut
 const ids = [...Object.keys(JSON.parse(fs.readFileSync('src/range/game-data.json', 'utf8')).weapons),'knife',...Object.keys(knives)];
 const inventory = JSON.parse(fs.readFileSync('docs/weapon-animation-inventory.json', 'utf8')).weapons;
 const finishes=JSON.parse(fs.readFileSync('src/range/cosmetics-data.json','utf8')).cosmetics;
+const finishInventory=JSON.parse(fs.readFileSync('docs/weapon-cosmetics-inventory.json','utf8'));
 const legacy=[...new Set(finishes.map(item=>item.assetKey).filter(key=>key?.endsWith('-legacy')))];
 const actors=JSON.parse(fs.readFileSync('src/range/actor-cosmetics-data.json','utf8')).cosmetics;
 const assets = [...ids, ...[...ids,...legacy].map(id => `view-${id}`), 'target', 'range-kit',...actors.map(item=>item.assetKey)];
@@ -68,7 +69,11 @@ for (const id of [...ids.filter(id => !knives[id]), 'target']) {
 }
 for (const name of ['wall', 'wall-normal', 'floor', 'floor-normal']) if (!fs.existsSync(`public/revamp/textures/${name}.webp`)) throw new Error(`Missing ${name} texture`);
 for(const id of ids.filter(id=>!id.startsWith('knife-'))) {
-  if(finishes.filter(item=>item.equipment===id).length<10) throw new Error(`Fewer than ten finishes: ${id}`);
+  const count = finishes.filter(item=>item.equipment===id).length;
+  if(id==='zeus') {
+    const native = finishInventory.weapons.zeus;
+    if(native.nativeAvailable!==7 || count!==native.nativeAvailable) throw new Error('Zeus finish count does not match its seven installed native pairings');
+  } else if(count<10) throw new Error(`Fewer than ten finishes: ${id}`);
 }
 for (const [id, knife] of Object.entries(knives)) {
   if (!finishes.some(item => item.assetKey === id)) throw new Error(`Missing selectable knife: ${id}`);
@@ -100,8 +105,9 @@ for (const [id, event] of Object.entries(hearingMetadata.weapons)) {
 for (const key of [...ids.filter(id => !id.startsWith('knife-')), 'step-concrete', 'step-wood', 'step-metal', 'land-concrete', 'hit-helmet', 'hurt-armor', 'death']) {
   if (!events[key]?.samples.length || !Number.isFinite(events[key].volume) || !Number.isFinite(events[key].pitch)) throw new Error(`Missing native audio event: ${key}`);
 }
-for (const id of ids.filter(id => !id.startsWith('knife'))) for (const action of ['draw', 'reload'])
-  if (!events[`${id}-${action}`]?.samples.length) throw new Error(`Missing native ${action} audio: ${id}`);
+for (const id of ids.filter(id => !id.startsWith('knife'))) for (const action of id==='zeus'?['draw']:['draw', 'reload'])
+  if (!events[`${id}-${action}`]?.samples.length && !audioManifest.timelines?.[id]?.[action]?.cues?.some(cue=>events[cue.key]?.samples?.length))
+    throw new Error(`Missing native ${action} audio: ${id}`);
 const samples = [...new Set(Object.values(events).flatMap(event => event.samples))];
 for (const url of samples) {
   if (!url.startsWith('/audio/native/') || url.includes('..')) throw new Error(`Invalid audio path: ${url}`);

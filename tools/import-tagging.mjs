@@ -11,13 +11,14 @@ execFileSync(path.resolve('.local-tools/vrf/Source2Viewer-CLI.exe'),
   ['-i', `${game}/game/csgo/pak01_dir.vpk`, '-f', 'scripts/weapons.vdata_c', '-d', '-o', file],
   {stdio: 'pipe', maxBuffer: 20e6});
 const raw = fs.readFileSync(file, 'utf8'), source = parseKv3(raw);
-const aliases = {m4a4: 'm4a1', m4a1s: 'm4a1_silencer', galil: 'galilar', sg553: 'sg556', usp: 'usp_silencer'};
+const aliases = {m4a4: 'm4a1', m4a1s: 'm4a1_silencer', galil: 'galilar', sg553: 'sg556', usp: 'usp_silencer', zeus: 'taser'};
 const existing = {...JSON.parse(fs.readFileSync('src/range/game-data.json', 'utf8')).weapons,
   ...JSON.parse(fs.readFileSync('src/range/equipment-data.json', 'utf8')).weapons};
 const weapons = Object.fromEntries(Object.keys(existing).map(id => {
   const entry = source[`weapon_${aliases[id] ?? id}`];
+  const speed = entry?.m_flMaxSpeed;
   const fields = {large: entry?.m_flFlinchVelocityModifierLarge, small: entry?.m_flFlinchVelocityModifierSmall,
-    speed: entry?.m_flMaxSpeed[id === 'usp' || id === 'm4a1s' ? 1 : 0]};
+    speed: Array.isArray(speed) ? speed[id === 'usp' || id === 'm4a1s' ? 1 : 0] : speed};
   if (!Object.values(fields).every(v => Number.isFinite(v) && v >= 0)) throw new Error(`Missing tagging data: ${id}`);
   if (fields.speed !== existing[id].speed) throw new Error(`Movement data changed for ${id}; audit before importing tagging`);
   return [id, fields];

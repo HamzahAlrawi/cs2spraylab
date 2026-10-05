@@ -74,19 +74,41 @@ it('R8 secondary icon fires once while held pointer input can repeat at native c
   expect(shots).toBe(before);
 });
 
+it('collateral range shots damage both physical meshes but count one scored discharge',()=>{
+  const {engine,body,wall,target}=rayFixture();
+  body.position.z=0;target.position.z=-10;wall.position.z=-16;
+  const second=new THREE.Group(),secondBody=new THREE.Mesh(new THREE.BoxGeometry(1,2,.3));
+  secondBody.position.y=1;second.add(secondBody);second.position.z=-14;target.parent!.add(second);
+  engine.sim=new Simulation({...defaults,mode:'transfer',weapon:'awp',spread:false});
+  engine.sim.targetHealth=[1000,1000];engine.targets=[target,second];engine.targetModels=[body,secondBody];
+  const marks:THREE.Vector3[]=[];engine['addImpact']=(_parent,point)=>{marks.push(point.clone());};
+  Object.assign(engine,{xpTargets:new Set(),viewAnimations:new Map(),viewMuzzles:new Map(),
+    viewFlashes:{fire:vi.fn()},acoustics:{setBoxes:vi.fn()},
+    hitmarker:{style:{}},hitCaption:{style:{},textContent:''},
+    hitMaterial:{color:new THREE.Color()},bodyMaterial:{color:new THREE.Color()},missMaterial:{color:new THREE.Color()},
+    audio:{play:vi.fn(),playHit:vi.fn(),playAction:vi.fn()}});
+  engine.shot({index:0,ordinal:0,kind:'bullet',attack:'primary',maxDistance:200,at:0,
+    origin:{x:0,y:1.1,z:0},direction:{x:0,y:0,z:-1},recoil:{yaw:0,pitch:0}});
+  expect(engine.sim.targetHealth[0]).toBeLessThan(1000);expect(engine.sim.targetHealth[1]).toBeLessThan(1000);
+  expect(1000-engine.sim.targetHealth[1]).toBeLessThan(1000-engine.sim.targetHealth[0]);
+  expect(engine.sim.hits).toBe(1);expect(engine.sim.samples).toHaveLength(1);
+  expect(marks[0].z).toBeCloseTo(.162);expect(marks[1].z).toBeCloseTo(.162);
+  body.geometry.dispose();secondBody.geometry.dispose();wall.geometry.dispose();
+});
+
 it.each(Object.keys(modeNames).filter(mode => mode !== 'hearing') as Mode[])('shows distinct head/body feedback for actual hits in %s mode',mode=>{
   const {engine,body,wall,target}=rayFixture();
   engine.sim=new Simulation({...defaults,mode});
-  Object.assign(engine, {xpTargets: new Set(), viewAnimations: new Map(), viewMuzzles: new Map(), viewFlashes: {fire: vi.fn()}});
+  Object.assign(engine, {xpTargets: new Set(), viewAnimations: new Map(), viewMuzzles: new Map(), viewFlashes: {fire: vi.fn()},acoustics:{setBoxes:vi.fn()}});
   body.position.z=0;target.position.z=-10;
   engine.targets=[target];engine.impacts=new THREE.Group();
   engine.markerGeometry=new THREE.SphereGeometry(.018,6,4);
   engine.hitMaterial=new THREE.MeshBasicMaterial();engine.bodyMaterial=new THREE.MeshBasicMaterial();engine.missMaterial=new THREE.MeshBasicMaterial();
   engine.hitmarker={style:{}} as HTMLElement;engine.hitCaption={style:{},textContent:''} as HTMLDivElement;
-  engine.audio={play:vi.fn(),playHit:vi.fn()} as unknown as RangeEngine['audio'];
+  engine.audio={play:vi.fn(),playHit:vi.fn(),playAction:vi.fn()} as unknown as RangeEngine['audio'];
   try {
     for(const [y,label,color] of [[1.7,'HEADSHOT','#ffdc59'],[1.1,'BODY HIT','#51edee']] as const){
-      engine.shot({index:0,at:0,origin:{x:0,y,z:0},direction:{x:0,y:0,z:-1},recoil:{yaw:0,pitch:0}});
+      engine.shot({index:0,ordinal:0,kind:'bullet',attack:'primary',maxDistance:200,at:0,origin:{x:0,y,z:0},direction:{x:0,y:0,z:-1},recoil:{yaw:0,pitch:0}});
       expect(engine.hitCaption.textContent).toBe(label);
       expect(engine.hitCaption.style.color).toBe(color);expect(engine.hitTime).toBe(.45);
       expect(engine.sim.samples[engine.sim.samples.length-1]?.hit).toBe(true);

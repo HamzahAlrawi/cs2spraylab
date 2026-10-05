@@ -7,6 +7,7 @@ import {createBotTraits} from './skill';
 import {TacticalBrain} from './tactics';
 import {idleCommand, type DuelActorSnapshot} from './types';
 import {DuelWeaponState} from './weapon-state';
+import {ZEUS_RECHARGE_SECONDS} from '../equipment';
 
 const map = {...testArena(), lanes: [{side: 1 as const, role: 'entry' as const,
   anchor: {x: 0, y: 0, z: -8}, edge: {x: 1, y: 0, z: -8}, retreat: {x: 0, y: 0, z: -8}}]};
@@ -20,10 +21,11 @@ function encounter(weapon: Weapon, tactical: boolean) {
   const brain = tactical ? new TacticalBrain(traits, 'holder', 1, () => .5, map, 10, weapon, 1)
     : new BotBrain(traits, 'holder', 1, () => .5);
   const state = new DuelWeaponState(weapon, () => .5);
+  const targetZ = weapon === 'zeus' ? -6 : gameData.weapons[weapon].pellets > 1 ? -2 : 8;
   const step = (tick: number) => {
     const time = tick * STEP;
     if (tick % 4 === 0) brain.perceive({time, self: bot, visible: {id: 0,
-      position: {x: 0, y: 1.62, z: 8}, aimPoint: {x: 0, y: 1.62, z: 8}}});
+      position: {x: 0, y: 1.62, z: targetZ}, aimPoint: {x: 0, y: 1.62, z: targetZ}}});
     const command = {...idleCommand(), ...brain.command(bot, time)};
     bot.yaw += command.yawDelta; bot.pitch += command.pitchDelta;
     const fired = state.advance(time, STEP, command, {...bot, verticalVelocity: 0});
@@ -34,7 +36,7 @@ function encounter(weapon: Weapon, tactical: boolean) {
 }
 
 describe('bot firearm commands', () => {
-  it.each(weaponIds.filter(id => !gameData.weapons[id].fullAuto))(
+  it.each(weaponIds.filter(id => !gameData.weapons[id].fullAuto && id !== 'zeus'))(
     'issues repeated semi-auto trigger presses at the extracted %s cadence', weapon => {
       for (const tactical of [false, true]) {
         const {step} = encounter(weapon, tactical), times: number[] = [];
@@ -47,6 +49,20 @@ describe('bot firearm commands', () => {
           expect(times[index] - times[index - 1]).toBeGreaterThanOrEqual(gameData.weapons[weapon].cycle - 1e-8);
       }
     });
+
+  it('respects Zeus recharge instead of spamming impossible reloads or synthetic shots', () => {
+    for (const tactical of [false, true]) {
+      const {step} = encounter('zeus', tactical);
+      let shots = 0;
+      for (let tick = 0; tick < 4 / STEP; tick++) {
+        const {command, fired} = step(tick);
+        shots += +!!fired;
+        expect(command.reloadPressed).toBe(false);
+      }
+      expect(shots).toBe(1);
+      expect(ZEUS_RECHARGE_SECONDS).toBeGreaterThan(4);
+    }
+  });
 
   it.each(['awp', 'ssg08'] as const)('resets a %s engagement shortly after a shot instead of holding a long rifle burst', weapon => {
     const {brain, step} = encounter(weapon, true);

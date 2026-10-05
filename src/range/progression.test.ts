@@ -185,6 +185,24 @@ describe('fair deterministic duel XP', () => {
       expect(evaluateDuelXp(config, win(config)).xp).toBe(normal);
     }
   });
+  it('preserves legacy armor rewards and scales partial armor and missing helmets', () => {
+    const reward = (patch: Partial<XpBot>) => {
+      const config = setup({bots: [bot(patch)]}); return evaluateDuelXp(config, win(config)).xp;
+    };
+    expect(reward({helmet: true, armorPoints: 100})).toBe(reward({}));
+    expect(reward({armorPoints: 0})).toBe(reward({armor: false}));
+    expect(reward({helmet: false, armorPoints: 50})).toBeLessThan(reward({helmet: false, armorPoints: 100}));
+    expect(reward({helmet: false, armorPoints: 100})).toBeLessThan(reward({}));
+    expect(reward({helmet: false, armorPoints: 50})).toBeGreaterThan(reward({armor: false}));
+  });
+  it('rejects invalid armor configurations rather than increasing rewards', () => {
+    for (const armorPoints of [-1, 101, NaN, Infinity]) {
+      const config = setup({bots: [bot({armorPoints})]});
+      expect(evaluateDuelXp(config, win(config)).reason).toBe('invalid-result');
+    }
+    const config = setup({bots: [bot({helmet: 'yes' as unknown as boolean})]});
+    expect(evaluateDuelXp(config, win(config)).reason).toBe('invalid-result');
+  });
   it('does not boost a loss by adding untouched difficult opponents', () => {
     const one = setup(), padded = setup({bots: [bot(), bot({id: '2', skill: '10+'}), bot({id: '3', skill: '10+'})]});
     expect(evaluateDuelXp(padded, partial(padded)).xp).toBeLessThan(evaluateDuelXp(one, partial(one)).xp);
@@ -373,7 +391,8 @@ describe('one-use lifecycle, notifications and React contracts', () => {
   it('rejects changes to any reward-affecting setup or revision, even change-and-revert', () => {
     const controller = createProgressionController({storage: null});
     for (const finalSetup of [setup({playerHealth: 500}), setup({playerArmor: false}), setup({bots: [bot({skill: 10})]}),
-      setup({bots: [bot({weapon: 'awp'})]}), setup({bots: [bot({armor: false})]}), setup({bots: [bot({accuracy: .5})]})]) {
+      setup({bots: [bot({weapon: 'awp'})]}), setup({bots: [bot({armor: false})]}), setup({bots: [bot({accuracy: .5})]}),
+      setup({bots: [bot({helmet: false})]}), setup({bots: [bot({armorPoints: 50})]})]) {
       const id = controller.beginDuel(setup(), '0')!;
       expect(controller.completeDuel(id, win(), finalSetup, '0').reason).toBe('settings-changed');
     }

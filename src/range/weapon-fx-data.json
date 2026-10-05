@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "build": "2000922",
+  "build": "2000924",
   "source": "scripts/weapons.vdata_c",
   "sourceSha256": "c97e58cd9f8fa0cd45b09bbb8116d5da8a108de61d5241dfd6c559d8a7c6e333",
   "sha256": "3289d4dba65b1ef3f884c389448c8a6c6db8691442c18a7aaddb28434aaf250d",
@@ -538,6 +538,71 @@
       "silencerType": "WEAPONSILENCER_NONE",
       "nativeKey": "weapon_knife",
       "sourceSha256": "c97e58cd9f8fa0cd45b09bbb8116d5da8a108de61d5241dfd6c559d8a7c6e333"
+    },
+    "nova": {
+      "tracerFrequency": 1,
+      "silenced": false,
+      "activeMode": 0,
+      "tracerFrequencyModes": [
+        1
+      ],
+      "silencerType": "WEAPONSILENCER_NONE",
+      "tracerParticle": "particles/weapons/cs_weapon_fx/weapon_tracers_shot.vpcf",
+      "nativeKey": "weapon_nova",
+      "sourceSha256": "c97e58cd9f8fa0cd45b09bbb8116d5da8a108de61d5241dfd6c559d8a7c6e333",
+      "tracerParticleSourceSha256": "07babe2e06a13f76b6fb2f7483fb2e2eefd8d7f8e070b0b6fcce1165f6358f12"
+    },
+    "xm1014": {
+      "tracerFrequency": 1,
+      "silenced": false,
+      "activeMode": 0,
+      "tracerFrequencyModes": [
+        1
+      ],
+      "silencerType": "WEAPONSILENCER_NONE",
+      "tracerParticle": "particles/weapons/cs_weapon_fx/weapon_tracers_shot.vpcf",
+      "nativeKey": "weapon_xm1014",
+      "sourceSha256": "c97e58cd9f8fa0cd45b09bbb8116d5da8a108de61d5241dfd6c559d8a7c6e333",
+      "tracerParticleSourceSha256": "07babe2e06a13f76b6fb2f7483fb2e2eefd8d7f8e070b0b6fcce1165f6358f12"
+    },
+    "mag7": {
+      "tracerFrequency": 1,
+      "silenced": false,
+      "activeMode": 0,
+      "tracerFrequencyModes": [
+        1
+      ],
+      "silencerType": "WEAPONSILENCER_NONE",
+      "tracerParticle": "particles/weapons/cs_weapon_fx/weapon_tracers_shot.vpcf",
+      "nativeKey": "weapon_mag7",
+      "sourceSha256": "c97e58cd9f8fa0cd45b09bbb8116d5da8a108de61d5241dfd6c559d8a7c6e333",
+      "tracerParticleSourceSha256": "07babe2e06a13f76b6fb2f7483fb2e2eefd8d7f8e070b0b6fcce1165f6358f12"
+    },
+    "sawedoff": {
+      "tracerFrequency": 1,
+      "silenced": false,
+      "activeMode": 0,
+      "tracerFrequencyModes": [
+        1
+      ],
+      "silencerType": "WEAPONSILENCER_NONE",
+      "tracerParticle": "particles/weapons/cs_weapon_fx/weapon_tracers_shot.vpcf",
+      "nativeKey": "weapon_sawedoff",
+      "sourceSha256": "c97e58cd9f8fa0cd45b09bbb8116d5da8a108de61d5241dfd6c559d8a7c6e333",
+      "tracerParticleSourceSha256": "07babe2e06a13f76b6fb2f7483fb2e2eefd8d7f8e070b0b6fcce1165f6358f12"
+    },
+    "zeus": {
+      "tracerFrequency": 1,
+      "silenced": false,
+      "activeMode": 0,
+      "tracerFrequencyModes": [
+        1
+      ],
+      "silencerType": "WEAPONSILENCER_NONE",
+      "tracerParticle": "particles/weapons/cs_weapon_fx/weapon_tracers_taser.vpcf",
+      "nativeKey": "weapon_taser",
+      "sourceSha256": "c97e58cd9f8fa0cd45b09bbb8116d5da8a108de61d5241dfd6c559d8a7c6e333",
+      "tracerParticleSourceSha256": "3cb9f692006cc25f8b41820ebb3d7187ab3601b86099ed5e3dbbe55303b83d20"
     }
   },
   "particles": {
@@ -1041,6 +1106,35 @@
           "textures": [
             "materials/particles/smoke/smoke.vtex"
           ]
+        }
+      ]
+    },
+    "particles/weapons/cs_weapon_fx/weapon_taser_glow_impact.vpcf": {
+      "source": "particles/weapons/cs_weapon_fx/weapon_taser_glow_impact.vpcf_c",
+      "sourceSha256": "24dfd762a8f04c9139aefeb6a3cb7cbcd59a619e6f563fefe95385dfc920e29c",
+      "sha256": "91d44bdcc7b07d568919c60879c9878692acb032926afb8cc42ee1393dbe6e85",
+      "children": [],
+      "renderers": [
+        {
+          "type": "C_OP_RenderSprites",
+          "textures": [
+            "materials/particle/particle_glow_05.vtex"
+          ],
+          "blendMode": "PARTICLE_OUTPUT_BLEND_MODE_ADD"
+        },
+        {
+          "type": "C_OP_RenderSprites",
+          "textures": [
+            "materials/particle/ground/crack_growth_01.vtex"
+          ],
+          "blendMode": "PARTICLE_OUTPUT_BLEND_MODE_ADD"
+        },
+        {
+          "type": "C_OP_RenderSprites",
+          "textures": [
+            "materials/particle/ground/crack_growth_01.vtex"
+          ],
+          "blendMode": "PARTICLE_OUTPUT_BLEND_MODE_ADD"
         }
       ]
     },
@@ -1847,6 +1941,92 @@
         }
       ]
     },
+    "particles/weapons/cs_weapon_fx/weapon_tracers_shot.vpcf": {
+      "source": "particles/weapons/cs_weapon_fx/weapon_tracers_shot.vpcf_c",
+      "sourceSha256": "07babe2e06a13f76b6fb2f7483fb2e2eefd8d7f8e070b0b6fcce1165f6358f12",
+      "sha256": "659bc9747c9a58fd7747aa86ed989890a9145f174a2e4a0626cf8e5cea64be03",
+      "children": [],
+      "renderers": [
+        {
+          "type": "C_OP_RenderTrails",
+          "textures": [
+            "materials/effects/spark.vtex"
+          ],
+          "blendMode": "PARTICLE_OUTPUT_BLEND_MODE_ADD",
+          "colorGradients": [
+            [
+              {
+                "m_flPosition": 0.377261,
+                "m_Color": [
+                  255,
+                  68,
+                  21
+                ]
+              },
+              {
+                "m_flPosition": 0.470284,
+                "m_Color": [
+                  255,
+                  165,
+                  0
+                ]
+              },
+              {
+                "m_flPosition": 1,
+                "m_Color": [
+                  255,
+                  255,
+                  255
+                ]
+              }
+            ]
+          ]
+        },
+        {
+          "type": "C_OP_RenderTrails",
+          "textures": [
+            "materials/particle/sparks/sparks.vtex"
+          ],
+          "blendMode": "PARTICLE_OUTPUT_BLEND_MODE_BLEND_ADD",
+          "colorGradients": [
+            [
+              {
+                "m_flPosition": 0.571059,
+                "m_Color": [
+                  0,
+                  0,
+                  0
+                ]
+              },
+              {
+                "m_flPosition": 0.757106,
+                "m_Color": [
+                  255,
+                  68,
+                  21
+                ]
+              },
+              {
+                "m_flPosition": 0.819121,
+                "m_Color": [
+                  255,
+                  165,
+                  0
+                ]
+              },
+              {
+                "m_flPosition": 1,
+                "m_Color": [
+                  255,
+                  255,
+                  255
+                ]
+              }
+            ]
+          ]
+        }
+      ]
+    },
     "particles/weapons/cs_weapon_fx/weapon_tracers_smg.vpcf": {
       "source": "particles/weapons/cs_weapon_fx/weapon_tracers_smg.vpcf_c",
       "sourceSha256": "da30a8f084b58f1404b31559676286ec4e512df2a2d818fa6433104e26cd649a",
@@ -1974,6 +2154,59 @@
           ]
         }
       ]
+    },
+    "particles/weapons/cs_weapon_fx/weapon_tracers_taser_wire1a.vpcf": {
+      "source": "particles/weapons/cs_weapon_fx/weapon_tracers_taser_wire1a.vpcf_c",
+      "sourceSha256": "f8434d17ef5e552c146a966de4a542ba0b1c629befbdfe5072b86ff60aa569cd",
+      "sha256": "4ec91d94d071f446d1825291f612827a6d53de75116a46a59c488194b2715df4",
+      "children": [
+        "particles/weapons/cs_weapon_fx/weapon_tracers_taser_wire2.vpcf"
+      ],
+      "renderers": []
+    },
+    "particles/weapons/cs_weapon_fx/weapon_tracers_taser_wire1b.vpcf": {
+      "source": "particles/weapons/cs_weapon_fx/weapon_tracers_taser_wire1b.vpcf_c",
+      "sourceSha256": "688a00134d6cbb85342de9897f2be33e7d16901b2d8283a1b0d17bae2a491427",
+      "sha256": "bcc9b47e8fac68aa04e119216bb89d03c2fdef786d84881c6fc3492cfe109418",
+      "children": [
+        "particles/weapons/cs_weapon_fx/weapon_tracers_taser_wire2.vpcf"
+      ],
+      "renderers": []
+    },
+    "particles/weapons/cs_weapon_fx/weapon_tracers_taser_wire2.vpcf": {
+      "source": "particles/weapons/cs_weapon_fx/weapon_tracers_taser_wire2.vpcf_c",
+      "sourceSha256": "fe5286caf75aaf9209958293f362dd3c511e7da0da28335f1046267d769dd197",
+      "sha256": "bb9c426ce8fda29aa96c7e424648acd6fb4d23007b3850cbb9626d17d7dceb42",
+      "children": [],
+      "renderers": [
+        {
+          "type": "C_OP_RenderRopes",
+          "textures": [
+            "materials/particle/beam_crack_06_bw_center.vtex",
+            "materials/particle/flames/beam_flame.vtex"
+          ],
+          "blendMode": "PARTICLE_OUTPUT_BLEND_MODE_ADD"
+        },
+        {
+          "type": "C_OP_RenderRopes",
+          "textures": [
+            "materials/particle/beam_crack_06_bw_center.vtex",
+            "materials/particle/flames/beam_flame.vtex"
+          ],
+          "blendMode": "PARTICLE_OUTPUT_BLEND_MODE_ADD"
+        }
+      ]
+    },
+    "particles/weapons/cs_weapon_fx/weapon_tracers_taser.vpcf": {
+      "source": "particles/weapons/cs_weapon_fx/weapon_tracers_taser.vpcf_c",
+      "sourceSha256": "3cb9f692006cc25f8b41820ebb3d7187ab3601b86099ed5e3dbbe55303b83d20",
+      "sha256": "54c399412a6e5592cc2e94e7772c7e21af9f749a218b683d2f444344415a4920",
+      "children": [
+        "particles/weapons/cs_weapon_fx/weapon_tracers_taser_wire1a.vpcf",
+        "particles/weapons/cs_weapon_fx/weapon_tracers_taser_wire1b.vpcf",
+        "particles/weapons/cs_weapon_fx/weapon_taser_glow_impact.vpcf"
+      ],
+      "renderers": []
     }
   }
 }

@@ -180,7 +180,7 @@ test('tracking is retired from the range without relabeling or deleting old resu
   });
   await page.goto('/');
   await expect(page.getByLabel('Training mode')).toHaveValue('guided');
-  await expect(page.getByLabel('Training mode').locator('option')).toHaveCount(7);
+  await expect(page.getByLabel('Training mode').locator('option')).toHaveCount(8);
   await expect(page.getByLabel('Training mode').locator('option[value="tracking"]')).toHaveCount(0);
   await expect(page.locator('.settings-hint')).toHaveCount(0);
   await page.getByRole('button', {name: 'Session', exact: false}).click();

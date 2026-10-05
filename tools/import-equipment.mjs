@@ -13,7 +13,7 @@ run('-f', 'scripts/weapons.vdata_c', '-d', '-o', 'research/equipment-weapons.vda
 const raw = fs.readFileSync('research/equipment-weapons.vdata', 'utf8');
 const source = parseKv3(raw);
 const accuracyFields = {
-  damage: 'm_nDamage', range: 'm_flRange', rangeModifier: 'm_flRangeModifier', armorRatio: 'm_flArmorRatio', headshotMultiplier: 'm_flHeadshotMultiplier',
+  damage: 'm_nDamage', penetration: 'm_flPenetration', range: 'm_flRange', rangeModifier: 'm_flRangeModifier', armorRatio: 'm_flArmorRatio', headshotMultiplier: 'm_flHeadshotMultiplier',
   recoveryFinal: 'm_flRecoveryTimeStandFinal', recoveryCrouch: 'm_flRecoveryTimeCrouch',
   recoveryCrouchFinal: 'm_flRecoveryTimeCrouchFinal', recoveryStart: 'm_nRecoveryTransitionStartBullet', recoveryEnd: 'm_nRecoveryTransitionEndBullet',
   jump: 'm_flInaccuracyJump', jumpInitial: 'm_flInaccuracyJumpInitial', jumpApex: 'm_flInaccuracyJumpApex', land: 'm_flInaccuracyLand'
@@ -27,7 +27,10 @@ for (const [id, key, sound] of [['usp', 'weapon_usp_silencer', 'usp/usp_01'], ['
     if (!Number.isFinite(v)) throw new Error(`Missing ${key}.${field}`);
     return [name, v];
   }));
-  Object.assign(stats, {fullAuto: data.m_bIsFullAuto, worldModel: data.m_szWorldModel, skeleton: data.m_szAnimSkeleton});
+  Object.assign(stats, {fullAuto: data.m_bIsFullAuto, worldModel: data.m_szWorldModel, skeleton: data.m_szAnimSkeleton,
+    pellets: data.m_nNumBullets, reserveAsClips: data.m_bReserveAmmoAsClips ?? false,
+    reserve: data.m_nPrimaryReserveAmmoMax * (data.m_bReserveAmmoAsClips ? data.m_iMaxClip1 : 1),
+    reloadsSingleShells: data.m_bReloadsSingleShells ?? false});
   output.weapons[id] = stats;
   console.log(id, JSON.stringify(stats));
   if (process.argv.includes('--data-only')) continue;

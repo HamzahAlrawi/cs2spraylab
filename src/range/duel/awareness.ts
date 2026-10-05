@@ -33,6 +33,7 @@ export class SightingMemory {
   private focusPoint: Vec | null = null;
   private selected: CoverExpectation | null = null;
   private nextAngleAt = 0;
+  private nextGeometryAt = -Infinity;
   private readonly skill: number;
   private readonly lifetime: number;
 
@@ -58,6 +59,7 @@ export class SightingMemory {
       this.wasVisible = true;
       this.focusPoint = this.seen.aimPoint;
       this.exits = []; this.eligible = []; this.selected = null;
+      this.nextGeometryAt = -Infinity;
       return;
     }
     if (!this.seen || time - this.seenAt >= this.lifetime) {
@@ -71,16 +73,19 @@ export class SightingMemory {
     this.wasVisible = false;
     const age = time - this.seenAt;
     const speed = Math.hypot(this.velocity.x, this.velocity.z);
-    this.eligible = this.exits.filter(exit => {
-      const alignment = speed > .2 ? (exit.initialDirection.x * this.velocity.x + exit.initialDirection.z * this.velocity.z) / speed : 0;
-      const reversalDelay = alignment < -.25 ? .18 : 0;
-      if (exit.travel > MAX_KNOWN_SPEED * Math.max(0, age - reversalDelay) + .3) return false;
-      const eye = observation.self.position, point = exit.point;
-      const length = Math.hypot(point.x - eye.x, point.y - eye.y, point.z - eye.z);
-      return !this.arena || length < .01 || !Number.isFinite(traceSolid(eye,
-        {x: (point.x - eye.x) / length, y: (point.y - eye.y) / length, z: (point.z - eye.z) / length},
-        this.arena, length - .02).distance);
-    });
+    if (time >= this.nextGeometryAt) {
+      this.nextGeometryAt = time + .12;
+      this.eligible = this.exits.filter(exit => {
+        const alignment = speed > .2 ? (exit.initialDirection.x * this.velocity.x + exit.initialDirection.z * this.velocity.z) / speed : 0;
+        const reversalDelay = alignment < -.25 ? .18 : 0;
+        if (exit.travel > MAX_KNOWN_SPEED * Math.max(0, age - reversalDelay) + .3) return false;
+        const eye = observation.self.position, point = exit.point;
+        const length = Math.hypot(point.x - eye.x, point.y - eye.y, point.z - eye.z);
+        return !this.arena || length < .01 || !Number.isFinite(traceSolid(eye,
+          {x: (point.x - eye.x) / length, y: (point.y - eye.y) / length, z: (point.z - eye.z) / length},
+          this.arena, length - .02).distance);
+      });
+    }
     if (!this.selected || !this.eligible.includes(this.selected)) this.selected = this.eligible[0] ?? null;
     if (time >= this.nextAngleAt && this.eligible.length > 1) {
       const index = this.selected ? this.eligible.indexOf(this.selected) : -1;
@@ -93,11 +98,19 @@ export class SightingMemory {
   }
 
   focus(time: number): Vec | null {
-    return time - this.seenAt < this.lifetime ? this.focusPoint : null;
+    return time >= this.seenAt && time - this.seenAt < this.lifetime ? this.focusPoint : null;
+  }
+
+  anticipation(time: number) {
+    const point = this.focus(time);
+    if (!point || !this.seen) return null;
+    const age = time - this.seenAt;
+    return {point: {...point}, observedAt: this.seenAt, confidence: Math.exp(-age / 1.4),
+      uncertainty: .15 + age * 1.6, prefireReady: age < 2};
   }
 
   expectations(time: number): readonly CoverExpectation[] {
-    return time - this.seenAt < this.lifetime ? this.eligible : [];
+    return time >= this.seenAt && time - this.seenAt < this.lifetime ? this.eligible : [];
   }
 
   private coverExits(): CoverExpectation[] {
@@ -140,6 +153,46 @@ export class SightingMemory {
   }
 }
 
+export type AngleCue = {source: 'sound' | 'shadow'; point: Vec; observedAt: number; readyAt: number;
+  uncertainty: number; lifetime: number};
+
+// Rank physical openings near a noisy cue. Cache the geometry work at 5 Hz;
+// deadlines and evidence expiry are still checked on every motor tick.
+export class CueAngleChecks {
+  private cue: AngleCue | null = null;
+  private ranked: Vec[] = [];
+  private nextRankAt = -Infinity;
+  private rankOrigin: Vec | null = null;
+  constructor(private readonly level: SkillLevel) {}
+
+  observe(cue: AngleCue) {
+    if (!Number.isFinite(cue.observedAt) || cue.observedAt < (this.cue?.observedAt ?? -Infinity)) return;
+    this.cue = {...cue, point: {...cue.point}};
+    // Repeated steps/shadow frames must not force a geometry rebuild each tick.
+  }
+
+  focus(self: Vec, time: number, candidates: readonly Vec[], arena: Arena): Vec | null {
+    const cue = this.cue;
+    if (!cue || time < cue.observedAt || time < cue.readyAt || time - cue.observedAt >= cue.lifetime) return null;
+    if (time >= this.nextRankAt || !this.rankOrigin || groundDistance(self, this.rankOrigin) > 1) {
+      this.nextRankAt = time + .2; this.rankOrigin = {...self};
+      this.ranked = candidates.map(point => {
+        const dx = point.x - self.x, dy = point.y - self.y, dz = point.z - self.z;
+        const length = Math.hypot(dx, dy, dz), gap = groundDistance(point, cue.point);
+        const clear = length > .1 && !Number.isFinite(traceSolid(self,
+          {x: dx / length, y: dy / length, z: dz / length}, arena, length - .02).distance);
+        return {point, score: clear && gap <= Math.max(3, cue.uncertainty * 2 + 1)
+          ? gap + length * .025 : Infinity};
+      }).filter(item => Number.isFinite(item.score)).sort((a, b) => a.score - b.score).slice(0, 3)
+        .map(item => ({...item.point}));
+    }
+    if (!this.ranked.length) return null;
+    const age = time - Math.max(cue.readyAt, cue.observedAt);
+    const alternatives = this.level === '10+' || Number(this.level) >= 6 ? this.ranked.length : 1;
+    return this.ranked[Math.floor(age / .65) % alternatives];
+  }
+}
+
 export class AngleAwareness {
   private nextCheck = 0;
   private until = 0;
@@ -157,7 +210,7 @@ export class AngleAwareness {
         const clear = distance > .1 && !Number.isFinite(traceSolid(self,
           {x: dx / distance, y: dy / distance, z: dz / distance}, arena, distance - .2).distance);
         const separation = Math.hypot(point.x - expected.x, point.z - expected.z);
-        return {point, index, score: distance < 2 || separation < 1 ? -Infinity :
+        return {point, index, score: distance < 2 || separation < 1 || skill >= .5 && !clear ? -Infinity :
           Math.min(60, time - (this.visited.get(index) ?? -60)) + (clear ? 4 : -4) * (1 - novice * .8) +
           this.random() * (3 + novice * 14)};
       }).sort((a, b) => b.score - a.score);

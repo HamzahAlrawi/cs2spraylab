@@ -73,6 +73,7 @@ test('baked bot deaths lower the skeleton, settle on the floor, and keep a rende
     e.sim.actors[1].yaw = Math.PI;
     e.syncActors(e.sim.snapshot(), 0);
     const model = e.models.get(1), animator = e.animators.get(1), actor = e.sim.snapshot()[1];
+    animator.setDeathWorld(undefined);
     const samples: {head: number; pelvis: number}[] = [];
     model.updateMatrixWorld(true);
     const sample = () => {model.updateMatrixWorld(true); return {
@@ -102,7 +103,7 @@ test('baked bot deaths lower the skeleton, settle on the floor, and keep a rende
   expect(await page.evaluate(() => (window as any).roundEngine.models.get(1).visible)).toBe(true);
 });
 
-test('all constrained death variants preserve stance, avoid joint flips and respect raised support surfaces', async ({page}) => {
+test('baked fallback death variants preserve stance, avoid joint flips and respect raised support surfaces', async ({page}) => {
   await enginePage(page);
   const variants = await page.evaluate(() => {
     const e = (window as any).roundEngine;
@@ -117,6 +118,7 @@ test('all constrained death variants preserve stance, avoid joint flips and resp
       e.sim.arena.solids = [{center: {x: 0, y: .5, z: 4}, size: {x: 2, y: 1, z: 2}}];
       e.syncActors(e.sim.snapshot(), 0);
       const model = e.models.get(1), animator = e.animators.get(1);
+      animator.setDeathWorld(undefined);
       const actor = {...e.sim.snapshot()[1], id, alive: false};
       const head = () => {model.updateMatrixWorld(true); return model.getObjectByName('head_0').matrixWorld.elements[13] - 1;};
       const initialHead = head();
@@ -145,5 +147,32 @@ test('all constrained death variants preserve stance, avoid joint flips and resp
     expect(variant.finalHead, JSON.stringify(variant)).toBeLessThan(.8);
     expect(variant.maxJointStep, JSON.stringify(variant)).toBeLessThan(55 * Math.PI / 180);
     expect(variant.clips.every(name => /death_(?:crouch_)?fall_[abc]$/.test(name))).toBe(true);
+  }
+});
+
+test('dynamic deaths preserve the hit pose and fall onto a raised platform at real elapsed time', async ({page}) => {
+  await enginePage(page);
+  const results = await page.evaluate(() => {
+    const e = (window as any).roundEngine, results = [];
+    for (const duck of [0, .5, 1]) {
+      e.rebuildActors(); const base = e.sim.actors[1];
+      base.feet = 1; base.duckAmount = duck; base.alive = true; base.yaw = Math.PI;
+      base.position = {x: 0, y: 1 + (64 - 18 * duck) * .0254, z: 4};
+      e.covers.visible = false; e.syncActors(e.sim.snapshot(), 0);
+      const model = e.models.get(1), animator = e.animators.get(1), actor = {...e.sim.snapshot()[1], alive: false};
+      animator.setDeathWorld({floor: 0, boxes: [{center: {x: 0, y: .5, z: 4}, size: {x: 8, y: 1, z: 8}}]});
+      const height = () => {model.updateMatrixWorld(true); return model.getObjectByName('head_0').matrixWorld.elements[13];};
+      const before = height(); animator.update(actor, 0); const captured = height();
+      let maxHead = captured;
+      for (let frame = 0; frame < 180; frame++) {animator.update(actor, 1 / 60); maxHead = Math.max(maxHead, height());}
+      results.push({duck, before, captured, maxHead, final: height()});
+    }
+    return results;
+  });
+  for (const result of results) {
+    expect(result.captured).toBeCloseTo(result.before, 5);
+    expect(result.maxHead).toBeLessThanOrEqual(result.before + .15);
+    expect(result.final, JSON.stringify(result)).toBeGreaterThan(1);
+    expect(result.final, JSON.stringify(result)).toBeLessThan(1.8);
   }
 });

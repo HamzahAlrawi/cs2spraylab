@@ -1,0 +1,204 @@
+{
+  "build": "2000924",
+  "serverSha256": "098d4ddd57e2fbe9a73623a2bf68ebaff86f7b6342ddb3d5a0f69cd6335b31cc",
+  "jumpBlock": "0xab2251..0xab2295",
+  "groundBlock": "0xadbc95..0xadbcb7",
+  "scope": "Arithmetic only; timestamp helper/initial landing-state construction supplied by fixture; no native collision or complete movement engine.",
+  "constants": {
+    "ladderDetachSpeed": 270.0
+  },
+  "cases": [
+    {
+      "kind": "jump",
+      "impactUnitsPerSecond": -100,
+      "seconds": 0,
+      "result": 0.949999988079071
+    },
+    {
+      "kind": "ground",
+      "impactUnitsPerSecond": -100,
+      "seconds": 0,
+      "result": 0.9024999737739563
+    },
+    {
+      "kind": "jump",
+      "impactUnitsPerSecond": -100,
+      "seconds": 0.125,
+      "result": 1.0
+    },
+    {
+      "kind": "ground",
+      "impactUnitsPerSecond": -100,
+      "seconds": 0.125,
+      "result": 1.0
+    },
+    {
+      "kind": "jump",
+      "impactUnitsPerSecond": -100,
+      "seconds": 0.5,
+      "result": 1.0
+    },
+    {
+      "kind": "ground",
+      "impactUnitsPerSecond": -100,
+      "seconds": 0.5,
+      "result": 1.0
+    },
+    {
+      "kind": "jump",
+      "impactUnitsPerSecond": -100,
+      "seconds": 1,
+      "result": 1.0
+    },
+    {
+      "kind": "ground",
+      "impactUnitsPerSecond": -100,
+      "seconds": 1,
+      "result": 1.0
+    },
+    {
+      "kind": "jump",
+      "impactUnitsPerSecond": -301.993,
+      "seconds": 0,
+      "result": 0.8490034937858582
+    },
+    {
+      "kind": "ground",
+      "impactUnitsPerSecond": -301.993,
+      "seconds": 0,
+      "result": 0.7208069562911987
+    },
+    {
+      "kind": "jump",
+      "impactUnitsPerSecond": -301.993,
+      "seconds": 0.125,
+      "result": 0.9240034818649292
+    },
+    {
+      "kind": "ground",
+      "impactUnitsPerSecond": -301.993,
+      "seconds": 0.125,
+      "result": 0.8597056269645691
+    },
+    {
+      "kind": "jump",
+      "impactUnitsPerSecond": -301.993,
+      "seconds": 0.5,
+      "result": 1.0
+    },
+    {
+      "kind": "ground",
+      "impactUnitsPerSecond": -301.993,
+      "seconds": 0.5,
+      "result": 1.0
+    },
+    {
+      "kind": "jump",
+      "impactUnitsPerSecond": -301.993,
+      "seconds": 1,
+      "result": 1.0
+    },
+    {
+      "kind": "ground",
+      "impactUnitsPerSecond": -301.993,
+      "seconds": 1,
+      "result": 1.0
+    },
+    {
+      "kind": "jump",
+      "impactUnitsPerSecond": -1000,
+      "seconds": 0,
+      "result": 0.4999999701976776
+    },
+    {
+      "kind": "ground",
+      "impactUnitsPerSecond": -1000,
+      "seconds": 0,
+      "result": 0.2499999701976776
+    },
+    {
+      "kind": "jump",
+      "impactUnitsPerSecond": -1000,
+      "seconds": 0.125,
+      "result": 0.574999988079071
+    },
+    {
+      "kind": "ground",
+      "impactUnitsPerSecond": -1000,
+      "seconds": 0.125,
+      "result": 0.388898640871048
+    },
+    {
+      "kind": "jump",
+      "impactUnitsPerSecond": -1000,
+      "seconds": 0.5,
+      "result": 0.7999999523162842
+    },
+    {
+      "kind": "ground",
+      "impactUnitsPerSecond": -1000,
+      "seconds": 0.5,
+      "result": 0.8055946826934814
+    },
+    {
+      "kind": "jump",
+      "impactUnitsPerSecond": -1000,
+      "seconds": 1,
+      "result": 1.0
+    },
+    {
+      "kind": "ground",
+      "impactUnitsPerSecond": -1000,
+      "seconds": 1,
+      "result": 1.0
+    },
+    {
+      "kind": "jump",
+      "impactUnitsPerSecond": -3000,
+      "seconds": 0,
+      "result": 0.20000000298023224
+    },
+    {
+      "kind": "ground",
+      "impactUnitsPerSecond": -3000,
+      "seconds": 0,
+      "result": 0.04000000283122063
+    },
+    {
+      "kind": "jump",
+      "impactUnitsPerSecond": -3000,
+      "seconds": 0.125,
+      "result": 0.2750000059604645
+    },
+    {
+      "kind": "ground",
+      "impactUnitsPerSecond": -3000,
+      "seconds": 0.125,
+      "result": 0.1788986772298813
+    },
+    {
+      "kind": "jump",
+      "impactUnitsPerSecond": -3000,
+      "seconds": 0.5,
+      "result": 0.5
+    },
+    {
+      "kind": "ground",
+      "impactUnitsPerSecond": -3000,
+      "seconds": 0.5,
+      "result": 0.5955947041511536
+    },
+    {
+      "kind": "jump",
+      "impactUnitsPerSecond": -3000,
+      "seconds": 1,
+      "result": 0.800000011920929
+    },
+    {
+      "kind": "ground",
+      "impactUnitsPerSecond": -3000,
+      "seconds": 1,
+      "result": 1.0
+    }
+  ]
+}

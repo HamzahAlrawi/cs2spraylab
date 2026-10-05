@@ -31,12 +31,18 @@ export class FrameMetrics {
   fps = 0;
   cpuMs = 0;
   adaptive = 1;
+  animationHz = policies.auto.animationHz;
   private elapsed = 0;
   private frames = 0;
   private cpu = 0;
   private warmup = 0;
   private slow = 0;
   private fast = 0;
+  private cpuSlow = 0;
+  private cpuFast = 0;
+  animationRate(quality: Settings['quality']) {
+    return quality === 'auto' ? this.animationHz : qualityPolicy(quality).animationHz;
+  }
   sample(dt: number, cpuMs: number, adaptive: boolean, active: boolean, cap: number) {
     if (dt <= 0 || dt > .25) return false;
     this.elapsed += dt; this.frames++; this.cpu += cpuMs;
@@ -45,10 +51,16 @@ export class FrameMetrics {
     this.cpuMs = this.cpu / this.frames;
     const window = this.elapsed;
     this.elapsed = this.frames = this.cpu = 0;
-    if (!active) {this.slow = this.fast = this.warmup = 0; return true;}
+    if (!active) {this.slow = this.fast = this.cpuSlow = this.cpuFast = this.warmup = 0; return true;}
     this.warmup += window;
     if (!adaptive || this.warmup < 3) return true;
     const target = Math.min(60, cap || 60), budget = 1000 / target;
+    // Resolution alone cannot relieve CPU-bound pose evaluation. Thin visual
+    // sampling only after sustained pressure; simulation and aiming stay full rate.
+    this.cpuSlow = this.cpuMs > budget * .75 ? this.cpuSlow + window : 0;
+    this.cpuFast = this.cpuMs < budget * .45 ? this.cpuFast + window : 0;
+    if (this.cpuSlow >= 1.5) {this.animationHz = Math.max(30, this.animationHz - 10); this.cpuSlow = this.cpuFast = 0;}
+    if (this.cpuFast >= 8) {this.animationHz = Math.min(60, this.animationHz + 5); this.cpuSlow = this.cpuFast = 0;}
     const overloaded = this.fps < target * .8 || this.cpuMs > budget * .85;
     this.slow = overloaded ? this.slow + window : 0;
     this.fast = !overloaded && this.fps >= target * .97 && this.cpuMs < budget * .5 ? this.fast + window : 0;
@@ -56,7 +68,10 @@ export class FrameMetrics {
     if (this.fast >= 8) {this.adaptive = Math.min(1, this.adaptive + .05); this.slow = this.fast = 0;}
     return true;
   }
-  resetResolution() {this.adaptive = 1; this.warmup = this.slow = this.fast = 0;}
+  resetResolution() {
+    this.adaptive = 1; this.animationHz = policies.auto.animationHz;
+    this.warmup = this.slow = this.fast = this.cpuSlow = this.cpuFast = 0;
+  }
 }
 
 // Updated at 2 Hz, outside React's gameplay status updates.

@@ -1,4 +1,4 @@
-import {pistolIds,type Pistol,type Weapon} from '../config';
+import {gameData,pistolIds,sniperIds,type Pistol,type Weapon} from '../config';
 import type {SkillLevel} from './config';
 import {randomStream} from './rng';
 
@@ -118,6 +118,36 @@ export function combatStyle(level: SkillLevel) {
     recoilVariation: interpolate(level, [.18, .075, .022, .012]),
     fireTolerance: interpolate(level, [3, 1.5, .55, .4]),
   };
+}
+
+export type CombatPlan = {rounds: number; recovery: number; commitment: number};
+
+// Intent timings are training heuristics. They choose inputs, never override
+// native weapon cooldowns, recovery, movement or the physical spread cone.
+export function sampleCombatPlan(level: SkillLevel, weapon: Weapon, range: number, ammo: number,
+  crouchSpray: boolean, random: () => number): CombatPlan {
+  const skill = level === '10+' ? 1 : (level - 1) / 10;
+  const stats = gameData.weapons[weapon], family = weaponFamily(weapon);
+  const disciplined = level === '10+' || level >= 6;
+  const roll = random(), pause = random(), intent = random();
+  let rounds: number, recovery: number;
+  if (sniperIds.includes(weapon) || stats.pellets > 1 || weapon === 'zeus') {
+    rounds = stats.fullAuto && sniperIds.includes(weapon) ? 2 + Math.floor(roll * 2) : 1;
+    recovery = Math.max(.18, stats.cycle * .22) + pause * .12;
+  } else if (family === 'pistol' && !stats.fullAuto) {
+    const heavy = weapon === 'deagle' || weapon === 'revolver';
+    rounds = heavy ? 1 + Math.floor(roll * 2) : 2 + Math.floor(roll * 3);
+    recovery = Math.max(.14, stats.recovery * (heavy ? .75 : .5)) + pause * .18;
+  } else {
+    rounds = family === 'smg' || family === 'lmg'
+      ? range < 12 ? 10 + Math.floor(roll * 9) : 5 + Math.floor(roll * 6)
+      : disciplined ? range > 20 ? 2 + Math.floor(roll * 3) : range > 11 ? 4 + Math.floor(roll * 4)
+        : 8 + Math.floor(roll * 7) : 6 + Math.floor(roll * 9);
+    if (crouchSpray) rounds = Math.max(rounds, 13 + Math.floor(roll * 8));
+    recovery = Math.max(.16, stats.recovery * (range > 18 && disciplined ? .9 : .5)) + pause * .18;
+  }
+  return {rounds: Math.max(1, Math.min(Math.max(1, ammo), rounds)), recovery,
+    commitment: .9 + intent * .9 + (range < 10 ? .55 : 0) + (1 - skill) * .35};
 }
 
 export function createBotTraits(level: SkillLevel, seed: number, actorId: number): BotTraits {

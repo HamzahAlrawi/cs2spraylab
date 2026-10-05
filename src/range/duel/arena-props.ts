@@ -1,7 +1,28 @@
 import * as THREE from 'three';
-import type {Solid} from './geometry';
+import type {Arena, Solid} from './geometry';
+import {environmentPieceId, surfaceMaterial, type EnvironmentState, type TraversalVolume} from './environment';
 
-type CoverMaterials = Record<'concrete' | 'cargo' | 'crate' | 'barrier' | 'cap' | 'trim' | 'hazard' | 'crateEdge', THREE.Material>;
+export type CoverMaterials = Record<'concrete' | 'cargo' | 'crate' | 'barrier' | 'cap' | 'trim' | 'hazard' | 'crateEdge', THREE.Material> &
+  Partial<Record<'glass' | 'metal' | 'grate' | 'water', THREE.Material>>;
+
+function rampGeometry(solid: Solid) {
+  const {size: s, shape} = solid, axis = shape!.axis, sign = shape!.highSide;
+  const length = s[axis], width = axis === 'x' ? s.z : s.x;
+  const points = [[-length / 2, -s.y / 2, -width / 2], [-length / 2, -s.y / 2, width / 2],
+    [length / 2, -s.y / 2, -width / 2], [length / 2, -s.y / 2, width / 2],
+    [length / 2, s.y / 2, -width / 2], [length / 2, s.y / 2, width / 2]];
+  const vertices: number[] = [];
+  const triangles = [[0, 2, 1], [1, 2, 3], [2, 4, 3], [3, 4, 5], [0, 4, 2], [1, 3, 5], [0, 1, 4], [1, 5, 4]];
+  // Mirroring one horizontal axis changes winding; preserve outward normals.
+  const mirrored = axis === 'z' ? sign > 0 : sign < 0;
+  for (const triangle of triangles) for (const index of mirrored ? [...triangle].reverse() : triangle) {
+    const [along, y, across] = points[index];
+    vertices.push(axis === 'x' ? sign * along : across, y, axis === 'x' ? across : sign * along);
+  }
+  const geometry = new THREE.BufferGeometry();
+  geometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3)); geometry.computeVertexNormals();
+  return geometry;
+}
 
 export function addArenaCover(solid: Solid, parent: THREE.Group, materials: CoverMaterials) {
   const {center, size, kind = 'concrete'} = solid;
@@ -9,7 +30,24 @@ export function addArenaCover(solid: Solid, parent: THREE.Group, materials: Cove
     const mesh = new THREE.Mesh(new THREE.BoxGeometry(...dimensions), material);
     mesh.position.set(...position); parent.add(mesh);
   };
-  add([size.x, size.y, size.z], [center.x, center.y, center.z], materials[kind]);
+  const material = surfaceMaterial(solid), shellMaterial = material === 'glass' ? materials.glass ?? materials.cargo
+    : material === 'grate' ? materials.grate ?? materials.cargo : material === 'metal' ? materials.metal ?? materials[kind]
+      : material === 'wood' ? materials.crate : materials.concrete;
+  if (solid.shape) {
+    const mesh = new THREE.Mesh(rampGeometry(solid), shellMaterial);
+    mesh.position.set(center.x, center.y, center.z); parent.add(mesh);
+    return;
+  }
+  add([size.x, size.y, size.z], [center.x, center.y, center.z], shellMaterial);
+  if (['stairs', 'glass', 'door', 'vent-panel'].includes(solid.style ?? '')) {
+    if (solid.style === 'door') {
+      for (const face of [-1, 1]) add([.045, .2, .025], [center.x + size.x * .3, center.y, center.z + face * (size.z / 2 + .016)], materials.trim);
+    } else if (solid.style === 'vent-panel') {
+      for (let row = 0; row < 5; row++) add([size.x * .9, .025, .02],
+        [center.x, center.y + (row - 2) * size.y / 7, center.z + size.z / 2 + .014], materials.trim);
+    }
+    return;
+  }
   const horizontal = size.x >= size.z;
   if (kind === 'crate') {
     add([size.x + .035, .07, size.z + .035], [center.x, center.y + size.y / 2, center.z], materials.crateEdge);
@@ -34,6 +72,52 @@ export function addArenaCover(solid: Solid, parent: THREE.Group, materials: Cove
         center.z + (horizontal ? face * (size.z / 2 + .014) : 0)], materials.hazard);
   }
   propDetails(solid, parent, {metal: materials.cap, dark: materials.trim, label: materials.hazard, wood: materials.crateEdge});
+}
+
+export function environmentRenderMetadata(arena: Arena) {
+  return arena.solids.map((solid, surfaceIndex) => ({id: environmentPieceId(solid, surfaceIndex), surfaceIndex,
+    dynamic: !!solid.interaction, material: surfaceMaterial(solid), shape: solid.shape, interaction: solid.interaction}));
+}
+
+// Main batches only static solids. Dynamic groups retain stable IDs for revision sync.
+export function createEnvironmentRenderMap(arena: Arena, parent: THREE.Group, materials: CoverMaterials): Map<string, THREE.Group> {
+  const groups = new Map<string, THREE.Group>();
+  arena.solids.forEach((solid, index) => {
+    if (!solid.interaction) return;
+    const id = environmentPieceId(solid, index), group = new THREE.Group();
+    group.name = id; group.userData.environmentId = id;
+    addArenaCover(solid, group, materials); parent.add(group); groups.set(id, group);
+  });
+  return groups;
+}
+
+export function syncEnvironmentRenderMap(groups: ReadonlyMap<string, THREE.Group>, state: EnvironmentState) {
+  for (const [id, group] of groups) {
+    const piece = state.pieces[id];
+    if (!piece) continue;
+    group.visible = piece.active;
+    group.position.set(piece.offset.x, piece.offset.y, piece.offset.z);
+  }
+}
+
+export function addArenaTraversal(volume: TraversalVolume, parent: THREE.Group, materials: CoverMaterials) {
+  const group = new THREE.Group(); group.name = volume.id; group.userData.traversalId = volume.id;
+  if (volume.kind === 'water' && volume.water) {
+    const mesh = new THREE.Mesh(new THREE.PlaneGeometry(volume.size.x, volume.size.z), materials.water ?? materials.cargo);
+    mesh.rotation.x = -Math.PI / 2; mesh.position.set(volume.center.x, volume.water.surfaceY, volume.center.z); group.add(mesh);
+  } else if (volume.kind === 'ladder' && volume.ladder) {
+    const ladder = volume.ladder, height = ladder.top - ladder.bottom, alongX = ladder.axis === 'z';
+    const width = alongX ? volume.size.x : volume.size.z;
+    const add = (w: number, h: number, d: number, across: number, y: number) => {
+      const mesh = new THREE.Mesh(new THREE.BoxGeometry(alongX ? w : d, h, alongX ? d : w), materials.metal ?? materials.cap);
+      mesh.position.set(volume.center.x + (alongX ? across : 0), y, volume.center.z + (alongX ? 0 : across)); group.add(mesh);
+    };
+    for (const side of [-1, 1]) add(.055, height, .06, side * (width / 2 - .0275), (ladder.top + ladder.bottom) / 2);
+    const count = Math.ceil(height / .24);
+    for (let n = 0; n < count; n++) add(width - .055, .035, .05, 0, ladder.bottom + (n + .5) * height / count);
+  }
+  parent.add(group);
+  return group;
 }
 
 // Decorations sit on closed collision-box shells. No walkable-looking holes
