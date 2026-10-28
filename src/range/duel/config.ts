@@ -2,6 +2,8 @@ import {weaponIds, type Weapon} from '../config';
 import type {Equipment} from '../equipment';
 import {randomStream} from './rng';
 import {arenaDesigns} from './arena-layout';
+import realMaps from './real-map-catalog.json';
+import {sanitizeUtilityLoadout, type UtilityKind} from './utility-loadout';
 
 export type SkillLevel = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | '10+';
 export type BotBehavior = 'mixed' | 'holder' | 'patient' | 'aggressive';
@@ -32,22 +34,31 @@ export type DuelConfig = {
   radarScale: number;
   accuracy: number;
   behavior: BotBehavior;
+  tradeEnabled: boolean;
+  utilitiesEnabled: boolean;
+  botUtilities: boolean;
+  utilityLoadout: UtilityKind[];
   roundSeconds: number;
   feedbackSeconds: number;
   arenaScale: number;
   mapDesign: 'random' | typeof arenaDesigns[number];
+  generatedMaps: boolean;
+  realMapChunk: string;
+  routeGuide: boolean;
   shortcutProtection: boolean;
   overrides: BotOverride[];
 };
 
 export const duelDefaults: DuelConfig = {
   botCount: 1, skill: 3, weapons: ['ak47'], health: 100, playerHealth: 100, armor: true,
-  accuracy: 1, behavior: 'mixed', roundSeconds: 60, feedbackSeconds: 2,
+  accuracy: 1, behavior: 'mixed', tradeEnabled: true, roundSeconds: 60, feedbackSeconds: 2,
   shortcutProtection: true, overrides: [],
   helmet: true, armorPoints: 100, playerArmor: true, playerHelmet: true, playerArmorPoints: 100,
   radarEnabled: true, radarRotate: true, radarScale: .7,
   arenaScale: 1,
   mapDesign: 'random',
+  generatedMaps: false, realMapChunk: 'random', routeGuide: true,
+  utilitiesEnabled: true, botUtilities: true, utilityLoadout: ['he', 'flash', 'smoke', 'molotov'],
 };
 
 const record = (value: unknown): Record<string, unknown> => value && typeof value === 'object' && !Array.isArray(value)
@@ -87,12 +98,25 @@ export function sanitizeDuelConfig(raw: unknown): DuelConfig {
     radarScale: finite(input.radarScale, .7, .25, 1),
     playerHealth: integer(input.playerHealth, duelDefaults.playerHealth, 1, 500),
     accuracy: finite(input.accuracy, duelDefaults.accuracy, .5, 1.5), behavior: behavior(input.behavior),
+    tradeEnabled: input.tradeEnabled !== false,
+    utilitiesEnabled: input.utilitiesEnabled !== false,
+    botUtilities: input.botUtilities !== false,
+    utilityLoadout: sanitizeUtilityLoadout(input.utilityLoadout),
     roundSeconds: integer(input.roundSeconds, duelDefaults.roundSeconds, 15, 180),
     feedbackSeconds: finite(input.feedbackSeconds, duelDefaults.feedbackSeconds, 1, 3),
     arenaScale: finite(input.arenaScale, 1, count <= 2 ? .65 : 1, 1.5),
     mapDesign: arenaDesigns.find(name => name === input.mapDesign) ?? 'random',
+    generatedMaps: input.generatedMaps === true,
+    realMapChunk: realMaps.chunks.some(chunk => chunk.id === input.realMapChunk) ? input.realMapChunk as string : 'random',
+    routeGuide: input.routeGuide !== false,
     shortcutProtection: input.shortcutProtection !== false, overrides,
   };
+}
+
+/** First-visit preset is separate from the kernel's legacy fallback settings. */
+export function restoreDuelConfig(saved:string|null):DuelConfig {
+  if(saved!==null)try{return sanitizeDuelConfig(JSON.parse(saved));}catch{/* Use the new-player preset for unreadable storage. */}
+  return sanitizeDuelConfig({botCount:3,skill:1});
 }
 
 export function botConfig(config: DuelConfig, index: number) {
@@ -113,10 +137,10 @@ export function rosterBehaviors(config: DuelConfig, seed: number): Exclude<BotBe
   const random = randomStream(seed, 'roster:behavior');
   const sample = (): Exclude<BotBehavior, 'mixed'> => {
     const roll = random();
-    return roll < .35 ? 'holder' : roll < .75 ? 'patient' : 'aggressive';
+    return roll < .55 ? 'holder' : roll < .9 ? 'patient' : 'aggressive';
   };
   const base: Exclude<BotBehavior, 'mixed'>[] = config.botCount >= 3
-    ? ['holder', 'patient', 'aggressive', ...Array.from({length: config.botCount - 3}, sample)]
+    ? ['holder', 'patient', ...Array.from({length: config.botCount - 2}, sample)]
     : Array.from({length: config.botCount}, sample);
   for (let index = base.length - 1; index > 0; index--) {
     const swap = Math.floor(random() * (index + 1));

@@ -1,6 +1,17 @@
 import soundEvents from './sound-events-data.json';
+import nativeFootsteps from './native-footsteps-data.json';
 import type {Equipment} from './equipment';
 import type {AcousticPath} from './spatial-audio';
+import type {ActorKinematics} from './actor-physics';
+
+// Installed CS2 convar snapshot: sv_min_jump_landing_sound 260. Merely
+// reacquiring support on a ramp is not an audible jump landing.
+export const MIN_AUDIBLE_LANDING_SPEED = 260 * .0254;
+export function audibleLanding(before: Pick<ActorKinematics,'grounded'|'landedAt'>,
+  after: Pick<ActorKinematics,'grounded'|'landedAt'|'landingVelocity'>) {
+  return !before.grounded && !!after.grounded && after.landedAt !== undefined &&
+    after.landedAt !== before.landedAt && (after.landingVelocity ?? 0) <= -MIN_AUDIBLE_LANDING_SPEED;
+}
 
 export function sampleIndex(count: number, previous: number | undefined, random: number) {
   random = Number.isFinite(random) ? Math.max(0, Math.min(1 - Number.EPSILON, random)) : 0;
@@ -19,9 +30,20 @@ export function curveGain(units: number, points: number[][]) {
   }
   return points[points.length - 1][1];
 }
-export const FOOTSTEP_RANGE = 1100 * .0254;
-export const footstepGain = (meters: number) => curveGain(meters / .0254,
-  [[49.591427, .45], [116.563492, 1], [402.285736, .488971], [1095, .03], [1100, 0]]);
+export const footstepSurfaces: Readonly<Record<string, string>> = nativeFootsteps.surfaces;
+const footstepEvents: Readonly<Record<string, {volume: number; distanceCurve: number[][]}>> = nativeFootsteps.events;
+export function footstepEventKey(surface = 'concrete', landing = false) {
+  const prefix = landing ? 'land-' : 'step-';
+  const name = surface.toLowerCase();
+  const bank = footstepEvents[prefix + name] ? name : footstepSurfaces[name] ?? name;
+  return footstepEvents[prefix + bank] ? prefix + bank : prefix + 'concrete';
+}
+const stepCurve = nativeFootsteps.events['step-concrete'].distanceCurve;
+export const FOOTSTEP_RANGE = stepCurve[stepCurve.length - 1][0] * .0254;
+export function footstepGain(meters: number, surface = 'concrete', landing = false) {
+  const key = footstepEventKey(surface, landing), event = footstepEvents[key];
+  return key.endsWith('-silent') ? 0 : event.volume * curveGain(Math.max(0, meters) / .0254, event.distanceCurve);
+}
 
 export function gunshotRange(equipment: Equipment) {
   const points = soundEvents.weapons[equipment].distanceCurve;
@@ -36,8 +58,8 @@ export function gunshotGain(equipment: Equipment, meters: number) {
 export function propagatedGunshotGain(equipment: Equipment, path: AcousticPath) {
   return gunshotGain(equipment, path.distance) * path.gain;
 }
-export function propagatedFootstepGain(path: AcousticPath, silent = false) {
-  return silent ? 0 : footstepGain(path.distance) * path.gain;
+export function propagatedFootstepGain(path: AcousticPath, silent = false, surface = 'concrete', landing = false) {
+  return silent ? 0 : footstepGain(path.distance, surface, landing) * path.gain;
 }
 export const inverseDistanceGain = (meters: number) => 1 / (1 + .7 * Math.max(0, meters / 3 - 1));
 export function propagatedCueGain(key: string, path: AcousticPath, silent = false) {

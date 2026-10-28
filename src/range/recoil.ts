@@ -3,6 +3,9 @@ export type RecoilParameters = {
   recoilMagnitude: number; recoilMagnitudeVariance: number; fullAuto: boolean;
   magazine: number; cycle: number;
 };
+// Kick offsets are the inverse of native Source QAngle aim punch: physical
+// shots subtract this yaw and add this up-positive pitch. Do not negate the
+// table's sin term as well; that would mirror horizontal recoil twice.
 export type RecoilAngle = { yaw: number; pitch: number };
 const f = Math.fround;
 

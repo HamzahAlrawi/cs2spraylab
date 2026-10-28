@@ -1,0 +1,81 @@
+{
+  "build": "2000935",
+  "clientSha256": "ccaf4e4926babc052994502b19ec61198a11008a39dce712921b93dd993be9f5",
+  "source": "Isolated native Approach arithmetic and release-scheduler prefix; static file mapped into Unicorn, not loaded as a DLL.",
+  "approachRva": "0x3a5c70..0x3a5ca2",
+  "releaseRva": "0x7df2c0..0x7df31d",
+  "inputPath": "0x903673 -> virtual0xc98 -> 0x7d7730; release at0x7d7bf3 -> 0x7df2c0; no animation-age guard in that input path.",
+  "excluded": "Clock/timestamp helpers are explicit inputs. No animation graph, entity system, world tracing or running game is executed.",
+  "constants": {
+    "strengthStepPer64Tick": 0.02031249925494194,
+    "releaseDelay": 0.10000000149011612,
+    "middleStrength": 0.5,
+    "middleSnapTolerance": 0.10000000149011612
+  },
+  "approachCases": [
+    {
+      "current": 1,
+      "target": 0,
+      "step": 0.02031249925494194,
+      "result": 0.979687511920929
+    },
+    {
+      "current": 0,
+      "target": 1,
+      "step": 0.02031249925494194,
+      "result": 0.02031249925494194
+    },
+    {
+      "current": 0.5,
+      "target": 1,
+      "step": 0.02031249925494194,
+      "result": 0.520312488079071
+    },
+    {
+      "current": 0.5,
+      "target": 0,
+      "step": 0.02031249925494194,
+      "result": 0.47968751192092896
+    },
+    {
+      "current": 0.49,
+      "target": 0.5,
+      "step": 0.02031249925494194,
+      "result": 0.5
+    },
+    {
+      "current": 0.51,
+      "target": 0.5,
+      "step": 0.02031249925494194,
+      "result": 0.5
+    },
+    {
+      "current": 0.5,
+      "target": 0.5,
+      "step": 0.02031249925494194,
+      "result": 0.5
+    }
+  ],
+  "releaseCases": [
+    {
+      "releasedAt": 0.0,
+      "throwAt": 0.10000000149011612
+    },
+    {
+      "releasedAt": 0.125,
+      "throwAt": 0.22499999403953552
+    },
+    {
+      "releasedAt": 3.0999999046325684,
+      "throwAt": 3.1999998092651367
+    },
+    {
+      "releasedAt": 60.0,
+      "throwAt": 60.099998474121094
+    },
+    {
+      "releasedAt": 600.0,
+      "throwAt": 600.0999755859375
+    }
+  ]
+}

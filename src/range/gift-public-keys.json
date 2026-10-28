@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "keys": {
+    "7fefb9e3b26ecb14": {
+      "kty": "EC",
+      "x": "heKDVShiC3vzx7mC5xg2DrGvdg2wJa-koNLaObDgkjk",
+      "y": "QGZqclPt86TNk4GAeYYZMOUde7X33Hm8FzFkfUR2drI",
+      "crv": "P-256"
+    }
+  }
+}

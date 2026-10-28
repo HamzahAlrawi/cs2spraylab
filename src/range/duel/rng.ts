@@ -7,6 +7,7 @@ function hash(seed: number, label: string) {
 export class DuelRandom {
   private state: number;
   constructor(seed: number, label = 'duel') { this.state = hash(seed, label); }
+  snapshot() {return this.state;}
   next() {
     let value = this.state;
     value ^= value << 13; value ^= value >>> 17; value ^= value << 5;
@@ -15,7 +16,8 @@ export class DuelRandom {
   }
 }
 
-export function randomStream(seed: number, label: string): () => number {
+export type RandomStream = (() => number) & {snapshot?: () => number};
+export function randomStream(seed: number, label: string): RandomStream {
   const stream = new DuelRandom(seed, label);
-  return () => stream.next();
+  return Object.assign(() => stream.next(), {snapshot: () => stream.snapshot()});
 }

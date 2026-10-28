@@ -1,0 +1,24 @@
+.coaching-review{padding:14px 0;border-top:1px solid #42514d;min-width:0;color:#d8e3df;font-size:12px;line-height:1.55}
+.coaching-review header{display:flex;align-items:baseline;justify-content:space-between;gap:12px}
+.coaching-review h3{margin:0;color:#f0f6f3;font-size:14px;line-height:1.4;overflow-wrap:anywhere}
+.coaching-review header>span{flex-shrink:0;font-size:14px;font-variant-numeric:tabular-nums;color:#83e2c1}
+.coaching-review p{margin:7px 0;overflow-wrap:anywhere}
+.coaching-review p>b{color:#a9bbb4;margin-right:5px}
+.coaching-evidence{color:#c2ceca}.coaching-goal{color:#efdd98}.coaching-strength{color:#a1dfc8}
+.coaching-confidence{display:block;color:#94a9a0;font-size:10px;margin-top:10px;line-height:1.5}
+.coaching-terms{margin-top:10px;font-size:11px;color:#b9ccc2}.coaching-terms summary{cursor:pointer;min-height:28px;line-height:28px}.coaching-terms dl{margin:6px 0}.coaching-terms dt{font-weight:600;color:#dcece4}.coaching-terms dd{margin:3px 0 10px;line-height:1.5;overflow-wrap:anywhere}
+.coaching-metrics{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px 16px;margin:16px 0 0}
+.coaching-metrics>div{min-width:0}.coaching-metrics dt{color:#a9bcb3;font-size:11px}.coaching-metrics dd{margin:2px 0;color:#f0f6f3;font-size:17px;line-height:1.35;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.coaching-metrics p{font-size:10px;line-height:1.45;color:#95aaa0;margin:4px 0 6px}
+.coaching-metrics meter{display:block;width:100%;height:5px;appearance:none;background:#34433e;border:0;border-radius:0}
+.coaching-metrics meter::-webkit-meter-bar{height:5px;background:#34433e;border:0;border-radius:0}.coaching-metrics meter::-webkit-meter-optimum-value{background:#65bea0;border-radius:0}.coaching-metrics meter::-moz-meter-bar{background:#65bea0}
+.range-skill-panel{width:310px}.range-skill-panel>.coaching-review{margin-top:14px}
+.range-app>.mode-brief{display:flex;align-items:center;justify-content:space-between;gap:12px 24px;flex-shrink:0;min-height:58px;padding:9px 26px;background:#202a25;border-bottom:1px solid #3d4e44;font-size:12px;line-height:1.45}.mode-brief>div{min-width:0;max-width:85ch}.mode-brief strong{display:block;font-size:12px;font-weight:600;color:#e3ece6}.mode-brief p{font-size:11px;color:#a9beb2;margin-top:2px;overflow-wrap:anywhere}.mode-brief>button{flex-shrink:0;min-height:32px;max-width:190px;padding:5px 9px;border:1px solid #53695b;font-size:11px;line-height:1.3;color:#d9e7de;text-align:left}
+.coaching-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}.coaching-actions button{display:inline-flex;align-items:center;gap:6px;min-height:32px;padding:6px 9px;border:1px solid #52665e;background:#243c32;color:#dcece5;border-radius:4px;font-size:11px;white-space:normal;text-align:left}
+.practice-block{padding:10px 16px;background:#1e302a;border-bottom:1px solid #4a6056;color:#dcece5;font-size:11px;min-width:0}.practice-block header{display:flex;align-items:center;justify-content:space-between;gap:8px}.practice-block p{margin:4px 0;overflow-wrap:anywhere}.practice-block progress{width:100%;height:5px;accent-color:#83e2c1}.skill-trends{font-size:11px;margin:10px 0;color:#bcd0c5}.skill-trends p{overflow-wrap:anywhere}.workflow-loading{display:grid;place-content:center;min-height:160px;width:100%;color:#bcd0c5}.range-stage>.workflow-loading{height:100%;min-height:300px}
+@media(max-width:1000px){.range-skill-panel{width:260px}}
+@media(max-width:700px){.range-skill-panel{width:100%;height:185px}.range-skill-panel>.coaching-review{margin-top:10px}}
+@media(max-height:550px) and (orientation:landscape){.range-skill-panel{width:235px;height:auto}}
+@media(max-width:360px){.coaching-metrics{grid-template-columns:minmax(0,1fr)}}
+@media(max-width:700px){.range-app>.mode-brief{padding:7px 12px;gap:8px;min-height:48px}.mode-brief strong{font-size:11px}.mode-brief p{display:none}.mode-brief>button{font-size:10px;max-width:135px;gap:5px}.mode-brief>button svg{width:16px}.range-app>.practice-block{padding:7px 12px}.range-app>.practice-block p{font-size:10px}}
+@media(max-height:550px) and (orientation:landscape){.range-app>.mode-brief{min-height:38px;padding-top:4px;padding-bottom:4px}.mode-brief p{display:none}}

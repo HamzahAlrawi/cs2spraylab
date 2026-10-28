@@ -1,15 +1,21 @@
 import {equipmentStats, isPumpShotgun, knifeModel, ZEUS_RECHARGE_SECONDS, type Equipment} from '../equipment';
 import {DEG, UNIT, type Vec} from '../actor-physics';
 import type {DamagePunch} from '../aim-punch';
-import {WeaponRecovery} from '../ballistics';
-import {direction as aimDirection, shotDirections} from '../shot-model';
+import {movementInaccuracy, WeaponRecovery} from '../ballistics';
+import type {ShotState} from '../shot-state';
+import {accuracySpeedUnits, direction as aimDirection, shotDirections} from '../shot-model';
 import type {ActorCommand} from './types';
 import {NativeReloadState, WeaponActions, type ReloadActionEvent} from '../weapon-actions';
+import {shouldAutoReloadEmptyMagazine} from '../empty-magazine';
+import type {RandomStream} from './rng';
 
 export type FiredRound = {
-  origin: Vec; direction: Vec; weapon: Equipment; ordinal: number;
+  at?:number;
+  origin: Vec; direction: Vec; aimDirection?: Vec; weapon: Equipment; ordinal: number;
   kind: 'bullet' | 'pellets' | 'melee' | 'zeus'; attack: 'primary' | 'secondary';
   maxDistance: number; pelletDirections?: Vec[]; firstSlash?: boolean;
+  accuracy?: ShotState;
+  randomState?: {before: number; after: number};
 };
 export type WeaponActionEvent = ReloadActionEvent | {kind: 'zeus-discharge' | 'zeus-ready'; at: number};
 export type WeaponCommand = ActorCommand & {reloadHeld?: boolean};
@@ -51,6 +57,11 @@ export class DuelWeaponState {
     this.burstLeft = 0; this.actions.holster();
   }
 
+  cancelInput() {
+    this.pendingPress = false; this.wasHeld = false; this.wasAlternateHeld = false;
+    this.burstLeft = 0; this.actions.chargeTrigger(0, false); this.actions.alternateFire = false;
+  }
+
   drainActionEvents(): WeaponActionEvent[] {
     const events = [...this.actionEvents, ...this.reload.drainActionEvents()];
     this.actionEvents = []; return events;
@@ -80,7 +91,9 @@ export class DuelWeaponState {
   advance(time: number, dt: number, command: WeaponCommand, actor: {
     position: Vec; yaw: number; pitch: number; velocity: {x: number; z: number};
     feet: number; verticalVelocity: number; duckAmount?: number; grounded?: boolean;
-    punch?: DamagePunch;
+    punch?: DamagePunch; equipReadyAt?: number;
+    sampleAt?:(at:number)=>{position:Vec;yaw:number;pitch:number;velocity:{x:number;z:number};feet:number;
+      verticalVelocity:number;duckAmount?:number;grounded?:boolean};
   }): FiredRound | undefined {
     this.actions.advance(time);
     this.reload.advance(time, command.reloadHeld);
@@ -91,9 +104,11 @@ export class DuelWeaponState {
     const continuous = (this.wasHeld && command.fireHeld || this.wasAlternateHeld && this.actions.alternateFire) && stats.fullAuto;
     this.wasHeld = command.fireHeld;
     this.wasAlternateHeld = this.actions.alternateFire;
-    const airborne = !(actor.grounded ?? actor.feet === 0);
+    let airborne = !(actor.grounded ?? actor.feet === 0);
+    const recoveryBefore=this.id!=='knife'&&(command.fireHeld||command.firePressed||command.secondaryHeld||command.secondaryPressed||this.burstLeft>0)
+      ?this.recovery.fork():undefined;
     this.advancePassive(time, dt, (actor.duckAmount ?? Number(command.crouch)) >= .95, airborne);
-    const punch = actor.punch?.shotFor(this.recovery.angle);
+    let punch = actor.punch?.shotFor(this.recovery.angle);
     if (this.id === 'knife') {
       const secondary = !!(command.secondaryHeld || command.secondaryPressed);
       if (!(command.fireHeld || command.firePressed || secondary) || time + 1e-9 < this.nextShotAt) return;
@@ -111,52 +126,91 @@ export class DuelWeaponState {
       this.actions.holster(); this.burstLeft = 0;
       return;
     }
+    if (this.ammo === 0) this.burstLeft = 0;
+    if (this.ammo === 0 && shouldAutoReloadEmptyMagazine(time, {
+      equipment: this.id, ammo: this.ammo, reserve: this.reserve, active: true,
+      reloading: this.reload.active, attackHeld: command.fireHeld || command.firePressed,
+      secondaryHeld: command.secondaryHeld || command.secondaryPressed, burstPending: this.burstLeft > 0,
+      readyAt: Math.max(this.nextShotAt, this.actions.readyAt, this.reload.fireReadyAt, actor.equipReadyAt ?? 0),
+    }) && this.reload.start(time, !!command.reloadHeld)) {
+      this.pendingPress = false; this.actions.holster(); this.burstLeft = 0;
+      return;
+    }
     if (command.firePressed || this.actions.alternateFire && command.secondaryPressed) this.pendingPress = true;
     if (!this.pendingPress && !this.burstLeft && !(command.fireHeld && stats.fullAuto) && !this.actions.alternateFire) return;
     if (this.reload.active) {this.reload.interrupt(); return;}
     if (this.ammo === 0) {
-      this.reload.start(time, !!command.reloadHeld);
       this.pendingPress = false;
-      this.actions.holster(); this.burstLeft = 0;
+      this.actions.chargeTrigger(time, false); this.burstLeft = 0;
       return;
     }
     const chargedAt = this.actions.chargeTrigger(time, command.fireHeld);
     if (!Number.isFinite(chargedAt)) {this.pendingPress = false; return;}
-    if (time + 1e-9 < Math.max(this.nextShotAt, this.actions.readyAt, chargedAt)) return;
+    if (time + 1e-9 < Math.max(this.nextShotAt, this.actions.readyAt, this.reload.fireReadyAt, chargedAt)) return;
     const burstShotAt = this.burstLeft && time - this.nextShotAt <= dt + 1e-9 ? this.nextShotAt : time;
     if (this.actions.burst && !this.burstLeft) {
       this.burstLeft = 3;
       this.burstEnd = time + this.actions.burstCycle;
     }
+    const scheduled=this.burstLeft?burstShotAt:continuous&&this.ordinal>0?this.nextShotAt:
+      this.id==='revolver'&&!this.actions.alternateFire?chargedAt:time;
+    const chargeFloor=this.id==='revolver'&&!this.actions.alternateFire?chargedAt:0;
+    const shotAt=Math.max(time-dt,Math.min(time,Math.max(scheduled,this.actions.readyAt,this.reload.fireReadyAt,chargeFloor,actor.equipReadyAt??0)));
+    const afterShotSeconds=time-shotAt;
+    const endActor=actor;
+    if(actor.sampleAt)actor={...actor,...actor.sampleAt(shotAt)};
+    airborne=!(actor.grounded??actor.feet===0);
+    if(afterShotSeconds>1e-9&&recoveryBefore) {
+      this.recovery.restore(recoveryBefore);
+      this.advancePassive(shotAt,Math.max(0,dt-afterShotSeconds),(actor.duckAmount??Number(command.crouch))>=.95,airborne);
+    }
+    punch=actor.punch?.shotFor(this.recovery.angle);
     const speedRatio = Math.hypot(actor.velocity.x, actor.velocity.z) / (stats.speed * UNIT);
+    const speedUnits = accuracySpeedUnits(actor.velocity);
+    const accuracy: ShotState = {speedUnits, grounded: !airborne,
+      movementInaccuracy: movementInaccuracy(stats, speedRatio, command.walk, speedUnits),
+      recoveringInaccuracy: Math.max(0, this.recovery.penalty - (airborne ? stats.stand + (stats.jump ?? 0) : (actor.duckAmount ?? Number(command.crouch)) >= .95 ? stats.crouch : stats.stand)),
+      inaccuracy: this.recovery.inaccuracy(speedRatio, command.walk, airborne, actor.verticalVelocity / UNIT, speedUnits),
+      spread: stats.spread, recoil: this.recovery.recoil};
+    const randomBefore = (this.random as Partial<RandomStream>).snapshot?.();
     const directions = shotDirections({
       yaw: actor.yaw, pitch: actor.pitch, recoil: this.recovery.recoil, punch, weapon: stats,
       recovery: this.recovery, speedRatio, walking: command.walk, airborne,
+      speedUnits,
       verticalSpeedUnits: actor.verticalVelocity / UNIT, spread: this.options.spread !== false,
       weaponId: this.id, alternateFire: this.actions.alternateFire,
       recoilIndex: this.recovery.index, seed: this.ordinal + 1,
     }, stats.pellets, this.random);
+    const randomAfter = (this.random as Partial<RandomStream>).snapshot?.();
     const direction = directions[0];
+    const preSpreadDirection = aimDirectionForShot(actor.yaw, actor.pitch, accuracy.recoil, punch);
     if (this.id !== 'zeus') this.recovery.fire();
-    this.actions.afterShot(time);
+    this.actions.afterShot(shotAt);
     this.ammo--;
-    if (isPumpShotgun(this.id)) this.pumpUntil = time + stats.cycle;
+    if (isPumpShotgun(this.id)) this.pumpUntil = shotAt + stats.cycle;
     if (this.id === 'zeus') {
-      this.rechargeUntil = time + ZEUS_RECHARGE_SECONDS;
+      this.rechargeUntil = shotAt + ZEUS_RECHARGE_SECONDS;
       this.actionEvents.push({kind: 'zeus-discharge', at: time});
     }
     // Carry the fractional cycle across ticks, as the range does. Rounding each
     // interval up to a tick slowed full-auto and sampled recoil at the wrong time.
     this.nextShotAt = (continuous && this.ordinal > 0 && time - this.nextShotAt <= dt + 1e-9
-      ? this.nextShotAt : time) + stats.cycle;
+      ? this.nextShotAt : shotAt) + stats.cycle;
     if (this.burstLeft > 0) {
       this.burstLeft--;
       this.nextShotAt = this.burstLeft ? burstShotAt + this.actions.burstInterval : this.burstEnd;
     }
     this.pendingPress = false;
-    return {origin: {...actor.position}, direction, weapon: this.id, ordinal: this.ordinal++,
+    if(afterShotSeconds>1e-9)this.advancePassive(time,afterShotSeconds,(endActor.duckAmount??Number(command.crouch))>=.95,!(endActor.grounded??endActor.feet===0));
+    return {at:shotAt,origin: {...actor.position}, direction, aimDirection: preSpreadDirection, weapon: this.id, ordinal: this.ordinal++, accuracy,
+      ...(randomBefore !== undefined && randomAfter !== undefined ? {randomState: {before: randomBefore, after: randomAfter}} : {}),
       kind: this.id === 'zeus' ? 'zeus' : directions.length > 1 ? 'pellets' : 'bullet',
       attack: this.actions.alternateFire ? 'secondary' : 'primary', maxDistance: stats.range * UNIT,
       ...(directions.length > 1 ? {pelletDirections: directions} : {})};
   }
+}
+
+function aimDirectionForShot(yaw: number, pitch: number, recoil: {yaw: number; pitch: number}, punch?: {yaw: number; pitch: number}) {
+  return aimDirection(yaw - (recoil.yaw + (punch?.yaw ?? 0)) * DEG,
+    pitch + (recoil.pitch + (punch?.pitch ?? 0)) * DEG);
 }

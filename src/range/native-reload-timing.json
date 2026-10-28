@@ -1,0 +1,2572 @@
+{
+  "schema": 1,
+  "build": "2000933",
+  "archiveDirSha256": "f0943b4d5a86fe8f4891ab98983b9d132b4450b9b7401a03a530bcd63f293f99",
+  "source": "scripts/weapons.vdata_c; compiled viewmodel reload clips and decompiled graph references",
+  "statsSha256": "46e7a84b46c620e8daf11c403ee9152a5faa1a033407748b527862aa3147236b",
+  "limitations": [
+    "Static authored events and attack-lock data, not live engine timing measurements.",
+    "Graph references/rates are audited, not a full graph interpreter; silent rate/hold behavior remains a trainer estimate.",
+    "An unexported or graph-unreferenced clip is evidence only, not an instruction to fabricate playback."
+  ],
+  "weapons": {
+    "ak47": {
+      "attackLock": 2.466667,
+      "singleShells": false,
+      "graph": "animation/graphs/viewmodel/viewmodel_gun.vnmgraph+ak47.vnmgraph_c",
+      "graphSha256": "711a66abf1b1257768e03343c09495f931b35cdd4347725a86ced5c7a03e628d",
+      "actions": {
+        "reload": {
+          "path": "animation/anims/viewmodel/rifle/rifle_ak/reload_ak.vnmclip_c",
+          "compiledSha256": "0009f1f949ad38a94ebd3e7893af281cbffdfbe121e62a69f67feff79bbec7aa",
+          "seconds": 2.433333333333333,
+          "fps": 30,
+          "frames": 74,
+          "events": [
+            {
+              "id": "WPN_RELOAD_SILENT",
+              "frame": 0,
+              "durationFrames": 57,
+              "at": 0,
+              "duration": 1.9,
+              "normalized": 0
+            },
+            {
+              "id": "WPN_DROP_MAG",
+              "frame": 18,
+              "durationFrames": 0,
+              "at": 0.6,
+              "duration": 0,
+              "normalized": 0.246575
+            },
+            {
+              "id": "WPN_RELOAD_ADD_AMMO",
+              "frame": 33,
+              "durationFrames": 0,
+              "at": 1.1,
+              "duration": 0,
+              "normalized": 0.452055
+            }
+          ],
+          "graphNodes": [
+            {
+              "name": "partial_mag_reload",
+              "clip": "animation/anims/viewmodel/rifle/rifle_ak/reload_ak.vnmclip_c",
+              "speed": 1
+            },
+            {
+              "name": "empty_mag_reload",
+              "clip": "animation/anims/viewmodel/rifle/rifle_ak/reload_ak.vnmclip_c",
+              "speed": 1
+            },
+            {
+              "name": "partial_mag_reload",
+              "clip": "animation/anims/viewmodel/rifle/rifle_ak/reload_ak.vnmclip_c",
+              "speed": 1
+            },
+            {
+              "name": "empty_mag_reload",
+              "clip": "animation/anims/viewmodel/rifle/rifle_ak/reload_ak.vnmclip_c",
+              "speed": 1
+            }
+          ],
+          "exportedSeconds": 2.433300018310547,
+          "exportedBuild": "2000922"
+        }
+      }
+    },
+    "m4a4": {
+      "attackLock": 3.066667,
+      "singleShells": false,
+      "graph": "animation/graphs/viewmodel/viewmodel_gun.vnmgraph+m4a4.vnmgraph_c",
+      "graphSha256": "3026d44fea9683359a24907be90b0b58b58a88b6758fcc5afe5187bd422e52c8",
+      "actions": {
+        "reload": {
+          "path": "animation/anims/viewmodel/rifle/rifle_m4a4/reload_m4a4.vnmclip_c",
+          "compiledSha256": "374df832ac893cba445a25ca4ec6ecfd1ef7aff6567385df605c1ada54467407",
+          "seconds": 3.066666666666667,
+          "fps": 30,
+          "frames": 93,
+          "events": [
+            {
+              "id": "WPN_RELOAD_SILENT",
+              "frame": 0,
+              "durationFrames": 62,
+              "at": 0,
+              "duration": 2.066666666666667,
+              "normalized": 0
+            },
+            {
+              "id": "WPN_DROP_MAG",
+              "frame": 19,
+              "durationFrames": 0,
+              "at": 0.6333333333333333,
+              "duration": 0,
+              "normalized": 0.206522
+            },
+            {
+              "id": "WPN_RELOAD_ADD_AMMO",
+              "frame": 41,
+              "durationFrames": 0,
+              "at": 1.3666666666666667,
+              "duration": 0,
+              "normalized": 0.445652
+            }
+          ],
+          "graphNodes": [
+            {
+              "name": "partial_mag_reload",
+              "clip": "animation/anims/viewmodel/rifle/rifle_m4a4/reload_m4a4.vnmclip_c",
+              "speed": 1
+            },
+            {
+              "name": "empty_mag_reload",
+              "clip": "animation/anims/viewmodel/rifle/rifle_m4a4/reload_m4a4.vnmclip_c",
+              "speed": 1
+            },
+            {
+              "name": "partial_mag_reload",
+              "clip": "animation/anims/viewmodel/rifle/rifle_m4a4/reload_m4a4.vnmclip_c",
+              "speed": 1
+            },
+            {
+              "name": "empty_mag_reload",
+              "clip": "animation/anims/viewmodel/rifle/rifle_m4a4/reload_m4a4.vnmclip_c",
+              "speed": 1
+            }
+          ],
+          "exportedSeconds": 3.066699981689453,
+          "exportedBuild": "2000922"
+        }
+      }
+    },
+    "m4a1s": {
+      "attackLock": 3.066667,
+      "singleShells": false,
+      "graph": "animation/graphs/viewmodel/viewmodel_gun.vnmgraph+m4a1s.vnmgraph_c",
+      "graphSha256": "39363aec60acab99038dbf149e0efd7dea36bace8cd0b1a7f28c9871ce26ef98",
+      "actions": {
+        "reload": {
+          "path": "animation/anims/viewmodel/rifle/_default_rifle/reload_rifle.vnmclip_c",
+          "compiledSha256": "22291887c9e72333ce299c6336b5424ac4bbe80ae23644296a2c7225e56256e3",
+          "seconds": 3.066666666666667,
+          "fps": 30,
+          "frames": 93,
+          "events": [
+            {
+              "id": "WPN_RELOAD_SILENT",
+              "frame": 0,
+              "durationFrames": 62,
+              "at": 0,
+              "duration": 2.066666666666667,
+              "normalized": 0
+            },
+            {
+              "id": "WPN_DROP_MAG",
+              "frame": 19,
+              "durationFrames": 0,
+              "at": 0.6333333333333333,
+              "duration": 0,
+              "normalized": 0.206522
+            },
+            {
+              "id": "WPN_RELOAD_ADD_AMMO",
+              "frame": 41,
+              "durationFrames": 0,
+              "at": 1.3666666666666667,
+              "duration": 0,
+              "normalized": 0.445652
+            }
+          ],
+          "graphNodes": [
+            {
+              "name": "partial_mag_reload",
+              "clip": "animation/anims/viewmodel/rifle/_default_rifle/reload_rifle.vnmclip_c",
+              "speed": 1
+            },
+            {
+              "name": "empty_mag_reload",
+              "clip": "animation/anims/viewmodel/rifle/_default_rifle/reload_rifle.vnmclip_c",
+              "speed": 1
+            },
+            {
+              "name": "partial_mag_reload",
+              "clip": "animation/anims/viewmodel/rifle/_default_rifle/reload_rifle.vnmclip_c",
+              "speed": 1
+            },
+            {
+              "name": "empty_mag_reload",
+              "clip": "animation/anims/viewmodel/rifle/_default_rifle/reload_rifle.vnmclip_c",
+              "speed": 1
+            }
+          ],
+          "exportedSeconds": 3.066699981689453,
+          "exportedBuild": "2000922"
+        }
+      }
+    },
+    "galil": {
+      "attackLock": 3.033333,
+      "singleShells": false,
+      "graph": "animation/graphs/viewmodel/viewmodel_gun.vnmgraph+galil.vnmgraph_c",
+      "graphSha256": "87f4e98059445eb295d4fa4b54481fd09ee3226de703f4f221db91256ee117b6",
+      "actions": {
+        "reload": {
+          "path": "animation/anims/viewmodel/rifle/rifle_galilar/reload_galilar.vnmclip_c",
+          "compiledSha256": "c947aed0045d9f8c7f65652bf1f436947e643888911daa84438994d70de3e0d1",
+          "seconds": 3.033333333333333,
+          "fps": 30,
+          "frames": 92,
+          "events": [
+            {
+              "id": "WPN_RELOAD_SILENT",
+              "frame": 0,
+              "durationFrames": 66,
+              "at": 0,
+              "duration": 2.2,
+              "normalized": 0
+            },
+            {
+              "id": "WPN_DROP_MAG",
+              "frame": 22,
+              "durationFrames": 0,
+              "at": 0.7333333333333333,
+              "duration": 0,
+              "normalized": 0.241758
+            },
+            {
+              "id": "WPN_RELOAD_ADD_AMMO",
+              "frame": 35,
+              "durationFrames": 0,
+              "at": 1.1666666666666667,
+              "duration": 0,
+              "normalized": 0.384615
+            }
+          ],
+          "graphNodes": [
+            {
+              "name": "partial_mag_reload",
+              "clip": "animation/anims/viewmodel/rifle/rifle_galilar/reload_galilar.vnmclip_c",
+              "speed": 1
+            },
+            {
+              "name": "empty_mag_reload",
+              "clip": "animation/anims/viewmodel/rifle/rifle_galilar/reload_galilar.vnmclip_c",
+              "speed": 1
+            },
+            {
+              "name": "partial_mag_reload",
+              "clip": "animation/anims/viewmodel/rifle/rifle_galilar/reload_galilar.vnmclip_c",
+              "speed": 1
+            },
+            {
+              "name": "empty_mag_reload",
+              "clip": "animation/anims/viewmodel/rifle/rifle_galilar/reload_galilar.vnmclip_c",
+              "speed": 1
+            }
+          ],
+          "exportedSeconds": 3.033300018310547,
+          "exportedBuild": "2000922"
+        }
+      }
+    },
+    "famas": {
+      "attackLock": 3.3,
+      "singleShells": false,
+      "graph": "animation/graphs/viewmodel/viewmodel_gun.vnmgraph+famas.vnmgraph_c",
+      "graphSha256": "e1bd1b55ce41d778d8438cb7987c297bcbcf91c6c9f4168efde619d2c20edf18",
+      "actions": {
+        "reload": {
+          "path": "animation/anims/viewmodel/rifle/rifle_famas/reload_famas.vnmclip_c",
+          "compiledSha256": "62120ded99d9edd1b84f3521a452216b41b28daafc67b43a8ce408951adb7c2e",
+          "seconds": 3.3,
+          "fps": 30,
+          "frames": 100,
+          "events": [
+            {
+              "id": "WPN_RELOAD_SILENT",
+              "frame": 0,
+              "durationFrames": 82,
+              "at": 0,
+              "duration": 2.7333333333333334,
+              "normalized": 0
+            },
+            {
+              "id": "WPN_DROP_MAG",
+              "frame": 23,
+              "durationFrames": 0,
+              "at": 0.7666666666666667,
+              "duration": 0,
+              "normalized": 0.232323
+            },
+            {
+              "id": "WPN_RELOAD_ADD_AMMO",
+              "frame": 50,
+              "durationFrames": 0,
+              "at": 1.6666666666666667,
+              "duration": 0,
+              "normalized": 0.50505
+            }
+          ],
+          "graphNodes": [
+            {
+              "name": "partial_mag_reload",
+              "clip": "animation/anims/viewmodel/rifle/rifle_famas/reload_famas.vnmclip_c",
+              "speed": 1
+            },
+            {
+              "name": "empty_mag_reload",
+              "clip": "animation/anims/viewmodel/rifle/rifle_famas/reload_famas.vnmclip_c",
+              "speed": 1
+            },
+            {
+              "name": "partial_mag_reload",
+              "clip": "animation/anims/viewmodel/rifle/rifle_famas/reload_famas.vnmclip_c",
+              "speed": 1
+            },
+            {
+              "name": "empty_mag_reload",
+              "clip": "animation/anims/viewmodel/rifle/rifle_famas/reload_famas.vnmclip_c",
+              "speed": 1
+            }
+          ],
+          "exportedSeconds": 3.3,
+          "exportedBuild": "2000922"
+        }
+      }
+    },
+    "sg553": {
+      "attackLock": 2.766667,
+      "singleShells": false,
+      "graph": "animation/graphs/viewmodel/viewmodel_gun.vnmgraph+sg556.vnmgraph_c",
+      "graphSha256": "3404312d0a0b7f82e2fb21ed8c9e7f0cdab9ffbbd9d62b839fab25f28be65d32",
+      "actions": {
+        "reload": {
+          "path": "animation/anims/viewmodel/rifle/rifle_sg556/reload_sg556.vnmclip_c",
+          "compiledSha256": "6994acf6efdc29fef3c79a09a024a7bdb9b39863a3e0b233f56a0299ec6154d4",
+          "seconds": 2.7666666666666666,
+          "fps": 30,
+          "frames": 84,
+          "events": [
+            {
+              "id": "WPN_RELOAD_SILENT",
+              "frame": 0,
+              "durationFrames": 67,
+              "at": 0,
+              "duration": 2.2333333333333334,
+              "normalized": 0
+            },
+            {
+              "id": "WPN_DROP_MAG",
+              "frame": 18,
+              "durationFrames": 0,
+              "at": 0.6,
+              "duration": 0,
+              "normalized": 0.216867
+            },
+            {
+              "id": "WPN_RELOAD_ADD_AMMO",
+              "frame": 31,
+              "durationFrames": 0,
+              "at": 1.0333333333333334,
+              "duration": 0,
+              "normalized": 0.373494
+            }
+          ],
+          "graphNodes": [
+            {
+              "name": "partial_mag_reload",
+              "clip": "animation/anims/viewmodel/rifle/rifle_sg556/reload_sg556.vnmclip_c",
+              "speed": 1
+            },
+            {
+              "name": "empty_mag_reload",
+              "clip": "animation/anims/viewmodel/rifle/rifle_sg556/reload_sg556.vnmclip_c",
+              "speed": 1
+            },
+            {
+              "name": "partial_mag_reload",
+              "clip": "animation/anims/viewmodel/rifle/rifle_sg556/reload_sg556.vnmclip_c",
+              "speed": 1
+            },
+            {
+              "name": "empty_mag_reload",
+              "clip": "animation/anims/viewmodel/rifle/rifle_sg556/reload_sg556.vnmclip_c",
+              "speed": 1
+            }
+          ],
+          "exportedSeconds": 2.7666999816894533,
+          "exportedBuild": "2000922"
+        }
+      }
+    },
+    "aug": {
+      "attackLock": 3.2,
+      "singleShells": false,
+      "graph": "animation/graphs/viewmodel/viewmodel_gun.vnmgraph+aug.vnmgraph_c",
+      "graphSha256": "d378c5dd2445289410bc2da9085b9874cfc924faf7fb3211b1523a7e430bb854",
+      "actions": {
+        "reload": {
+          "path": "animation/anims/viewmodel/rifle/rifle_aug/reload_aug.vnmclip_c",
+          "compiledSha256": "ce685ae0afa884227b4daae03bd09d7e7affb593dadcfa52313466f4f35e647b",
+          "seconds": 3.2,
+          "fps": 30,
+          "frames": 97,
+          "events": [
+            {
+              "id": "WPN_RELOAD_SILENT",
+              "frame": 0,
+              "durationFrames": 89,
+              "at": 0,
+              "duration": 2.966666666666667,
+              "normalized": 0
+            },
+            {
+              "id": "WPN_DROP_MAG",
+              "frame": 20,
+              "durationFrames": 0,
+              "at": 0.6666666666666666,
+              "duration": 0,
+              "normalized": 0.208333
+            },
+            {
+              "id": "WPN_RELOAD_ADD_AMMO",
+              "frame": 42,
+              "durationFrames": 0,
+              "at": 1.4,
+              "duration": 0,
+              "normalized": 0.4375
+            }
+          ],
+          "graphNodes": [
+            {
+              "name": "partial_mag_reload",
+              "clip": "animation/anims/viewmodel/rifle/rifle_aug/reload_aug.vnmclip_c",
+              "speed": 1
+            },
+            {
+              "name": "empty_mag_reload",
+              "clip": "animation/anims/viewmodel/rifle/rifle_aug/reload_aug.vnmclip_c",
+              "speed": 1
+            },
+            {
+              "name": "partial_mag_reload",
+              "clip": "animation/anims/viewmodel/rifle/rifle_aug/reload_aug.vnmclip_c",
+              "speed": 1
+            },
+            {
+              "name": "empty_mag_reload",
+              "clip": "animation/anims/viewmodel/rifle/rifle_aug/reload_aug.vnmclip_c",
+              "speed": 1
+            }
+          ],
+          "exportedSeconds": 3.7666666666666666,
+          "exportedBuild": "2000922"
+        }
+      }
+    },
+    "mp9": {
+      "attackLock": 2.133333,
+      "singleShells": false,
+      "graph": "animation/graphs/viewmodel/viewmodel_gun.vnmgraph+mp9.vnmgraph_c",
+      "graphSha256": "794d8c45c4b4180874112ad9bde2cec3d4b698684a54e239bc49e37e9aaaace7",
+      "actions": {
+        "reload": {
+          "path": "animation/anims/viewmodel/rifle/rifle_mp9/reload_mp9.vnmclip_c",
+          "compiledSha256": "5ff7a4608f2b407dedd1a6c6d9e4dad6c92a8ae42f80f143c06df4e1a5f2c480",
+          "seconds": 2.1333333333333333,
+          "fps": 30,
+          "frames": 65,
+          "events": [
+            {
+              "id": "WPN_RELOAD_SILENT",
+              "frame": 0,
+              "durationFrames": 50,
+              "at": 0,
+              "duration": 1.6666666666666667,
+              "normalized": 0
+            },
+            {
+              "id": "WPN_DROP_MAG",
+              "frame": 13,
+              "durationFrames": 0,
+              "at": 0.43333333333333335,
+              "duration": 0,
+              "normalized": 0.203125
+            },
+            {
+              "id": "WPN_RELOAD_ADD_AMMO",
+              "frame": 26,
+              "durationFrames": 0,
+              "at": 0.8666666666666667,
+              "duration": 0,
+              "normalized": 0.40625
+            }
+          ],
+          "graphNodes": [
+            {
+              "name": "partial_mag_reload",
+              "clip": "animation/anims/viewmodel/rifle/rifle_mp9/reload_mp9.vnmclip_c",
+              "speed": 1
+            },
+            {
+              "name": "empty_mag_reload",
+              "clip": "animation/anims/viewmodel/rifle/rifle_mp9/reload_mp9.vnmclip_c",
+              "speed": 1
+            },
+            {
+              "name": "partial_mag_reload",
+              "clip": "animation/anims/viewmodel/rifle/rifle_mp9/reload_mp9.vnmclip_c",
+              "speed": 1
+            },
+            {
+              "name": "empty_mag_reload",
+              "clip": "animation/anims/viewmodel/rifle/rifle_mp9/reload_mp9.vnmclip_c",
+              "speed": 1
+            }
+          ],
+          "exportedSeconds": 2.1333333333333333,
+          "exportedBuild": "2000922"
+        }
+      }
+    },
+    "mp7": {
+      "attackLock": 3.166667,
+      "singleShells": false,
+      "graph": "animation/graphs/viewmodel/viewmodel_gun.vnmgraph+mp7.vnmgraph_c",
+      "graphSha256": "f6ebff38ed87e2a32fc7f94b0d302ebabdaf24f76ef92b14d5fcfc13ab4ab2bd",
+      "actions": {
+        "reload": {
+          "path": "animation/anims/viewmodel/rifle/rifle_mp7/reload_mp7.vnmclip_c",
+          "compiledSha256": "ca7eabf4260f73f1ba13ae393d345e250a51b9cd04610afde441c62c0690f75d",
+          "seconds": 3.1333333333333333,
+          "fps": 30,
+          "frames": 95,
+          "events": [
+            {
+              "id": "WPN_RELOAD_SILENT",
+              "frame": 0,
+              "durationFrames": 73,
+              "at": 0,
+              "duration": 2.433333333333333,
+              "normalized": 0
+            },
+            {
+              "id": "WPN_DROP_MAG",
+              "frame": 16,
+              "durationFrames": 0,
+              "at": 0.5333333333333333,
+              "duration": 0,
+              "normalized": 0.170213
+            },
+            {
+              "id": "WPN_RELOAD_ADD_AMMO",
+              "frame": 43,
+              "durationFrames": 0,
+              "at": 1.4333333333333333,
+              "duration": 0,
+              "normalized": 0.457447
+            }
+          ],
+          "graphNodes": [
+            {
+              "name": "partial_mag_reload",
+              "clip": "animation/anims/viewmodel/rifle/rifle_mp7/reload_mp7.vnmclip_c",
+              "speed": 1
+            },
+            {
+              "name": "empty_mag_reload",
+              "clip": "animation/anims/viewmodel/rifle/rifle_mp7/reload_mp7.vnmclip_c",
+              "speed": 1
+            },
+            {
+              "name": "partial_mag_reload",
+              "clip": "animation/anims/viewmodel/rifle/rifle_mp7/reload_mp7.vnmclip_c",
+              "speed": 1
+            },
+            {
+              "name": "empty_mag_reload",
+              "clip": "animation/anims/viewmodel/rifle/rifle_mp7/reload_mp7.vnmclip_c",
+              "speed": 1
+            }
+          ],
+          "exportedSeconds": 3.1332997639973956,
+          "exportedBuild": "2000922"
+        }
+      }
+    },
+    "mp5sd": {
+      "attackLock": 2.966667,
+      "singleShells": false,
+      "graph": "animation/graphs/viewmodel/viewmodel_gun.vnmgraph+mp5sd.vnmgraph_c",
+      "graphSha256": "5e020f56cd39991ccc73cb5ad372131ea8692dabe8871f5363b2583070f8f0a2",
+      "actions": {
+        "reload": {
+          "path": "animation/anims/viewmodel/rifle/rifle_mp5sd/reload_mp5sd.vnmclip_c",
+          "compiledSha256": "7673b3a29a9ad4b62a5ef54234c0ada03890c3f1ec1266a4cba9912544b37526",
+          "seconds": 2.966666666666667,
+          "fps": 30,
+          "frames": 90,
+          "events": [
+            {
+              "id": "WPN_RELOAD_SILENT",
+              "frame": 0,
+              "durationFrames": 76,
+              "at": 0,
+              "duration": 2.533333333333333,
+              "normalized": 0
+            },
+            {
+              "id": "WPN_DROP_MAG",
+              "frame": 31,
+              "durationFrames": 0,
+              "at": 1.0333333333333334,
+              "duration": 0,
+              "normalized": 0.348315
+            },
+            {
+              "id": "WPN_RELOAD_ADD_AMMO",
+              "frame": 60,
+              "durationFrames": 0,
+              "at": 2,
+              "duration": 0,
+              "normalized": 0.674157
+            }
+          ],
+          "graphNodes": [
+            {
+              "name": "partial_mag_reload",
+              "clip": "animation/anims/viewmodel/rifle/rifle_mp5sd/reload_mp5sd.vnmclip_c",
+              "speed": 1
+            },
+            {
+              "name": "empty_mag_reload",
+              "clip": "animation/anims/viewmodel/rifle/rifle_mp5sd/reload_mp5sd.vnmclip_c",
+              "speed": 1
+            },
+            {
+              "name": "partial_mag_reload",
+              "clip": "animation/anims/viewmodel/rifle/rifle_mp5sd/reload_mp5sd.vnmclip_c",
+              "speed": 1
+            },
+            {
+              "name": "empty_mag_reload",
+              "clip": "animation/anims/viewmodel/rifle/rifle_mp5sd/reload_mp5sd.vnmclip_c",
+              "speed": 1
+            }
+          ],
+          "exportedSeconds": 2.966699727376302,
+          "exportedBuild": "2000922"
+        }
+      }
+    },
+    "mac10": {
+      "attackLock": 2.566667,
+      "singleShells": false,
+      "graph": "animation/graphs/viewmodel/viewmodel_gun.vnmgraph+mac10.vnmgraph_c",
+      "graphSha256": "bee5adf1a079f2db87375eabb2673f3056bcc0b593a1c320d31b5af4bb3b4d01",
+      "actions": {
+        "reload": {
+          "path": "animation/anims/viewmodel/rifle/rifle_mac10/reload_mac10.vnmclip_c",
+          "compiledSha256": "12267abc390abd81d46bf01aa7bb8452a5a3b8949884c4d4ecc7938446a6538d",
+          "seconds": 2.566666666666667,
+          "fps": 30,
+          "frames": 78,
+          "events": [
+            {
+              "id": "WPN_RELOAD_SILENT",
+              "frame": 0,
+              "durationFrames": 64,
+              "at": 0,
+              "duration": 2.1333333333333333,
+              "normalized": 0
+            },
+            {
+              "id": "WPN_DROP_MAG",
+              "frame": 20,
+              "durationFrames": 0,
+              "at": 0.6666666666666666,
+              "duration": 0,
+              "normalized": 0.25974
+            },
+            {
+              "id": "WPN_RELOAD_ADD_AMMO",
+              "frame": 36,
+              "durationFrames": 0,
+              "at": 1.2,
+              "duration": 0,
+              "normalized": 0.467532
+            }
+          ],
+          "graphNodes": [
+            {
+              "name": "partial_mag_reload",
+              "clip": "animation/anims/viewmodel/rifle/rifle_mac10/reload_mac10.vnmclip_c",
+              "speed": 1
+            },
+            {
+              "name": "empty_mag_reload",
+              "clip": "animation/anims/viewmodel/rifle/rifle_mac10/reload_mac10.vnmclip_c",
+              "speed": 1
+            },
+            {
+              "name": "partial_mag_reload",
+              "clip": "animation/anims/viewmodel/rifle/rifle_mac10/reload_mac10.vnmclip_c",
+              "speed": 1
+            },
+            {
+              "name": "empty_mag_reload",
+              "clip": "animation/anims/viewmodel/rifle/rifle_mac10/reload_mac10.vnmclip_c",
+              "speed": 1
+            }
+          ],
+          "exportedSeconds": 2.566699981689453,
+          "exportedBuild": "2000922"
+        }
+      }
+    },
+    "ump45": {
+      "attackLock": 3.466667,
+      "singleShells": false,
+      "graph": "animation/graphs/viewmodel/viewmodel_gun.vnmgraph+ump45.vnmgraph_c",
+      "graphSha256": "91676bdaed512a5eaa3ecf940ad5091da466b4f55b5c6b2e0bdcefb9049c83b6",
+      "actions": {
+        "reload": {
+          "path": "animation/anims/viewmodel/rifle/rifle_ump45/reload_ump45.vnmclip_c",
+          "compiledSha256": "65d5e6b4756c7b73db836551df42b3b59fa093b69e12b93952e9470d9d554686",
+          "seconds": 3.433333333333333,
+          "fps": 30,
+          "frames": 104,
+          "events": [
+            {
+              "id": "WPN_RELOAD_SILENT",
+              "frame": 0,
+              "durationFrames": 75,
+              "at": 0,
+              "duration": 2.5,
+              "normalized": 0
+            },
+            {
+              "id": "WPN_DROP_MAG",
+              "frame": 21,
+              "durationFrames": 0,
+              "at": 0.7,
+              "duration": 0,
+              "normalized": 0.203883
+            },
+            {
+              "id": "WPN_RELOAD_ADD_AMMO",
+              "frame": 46,
+              "durationFrames": 0,
+              "at": 1.5333333333333334,
+              "duration": 0,
+              "normalized": 0.446602
+            }
+          ],
+          "graphNodes": [
+            {
+              "name": "partial_mag_reload",
+              "clip": "animation/anims/viewmodel/rifle/rifle_ump45/reload_ump45.vnmclip_c",
+              "speed": 1
+            },
+            {
+              "name": "empty_mag_reload",
+              "clip": "animation/anims/viewmodel/rifle/rifle_ump45/reload_ump45.vnmclip_c",
+              "speed": 1
+            },
+            {
+              "name": "partial_mag_reload",
+              "clip": "animation/anims/viewmodel/rifle/rifle_ump45/reload_ump45.vnmclip_c",
+              "speed": 1
+            },
+            {
+              "name": "empty_mag_reload",
+              "clip": "animation/anims/viewmodel/rifle/rifle_ump45/reload_ump45.vnmclip_c",
+              "speed": 1
+            }
+          ],
+          "exportedSeconds": 3.433300018310547,
+          "exportedBuild": "2000922"
+        }
+      }
+    },
+    "p90": {
+      "attackLock": 3.366667,
+      "singleShells": false,
+      "graph": "animation/graphs/viewmodel/viewmodel_gun.vnmgraph+p90.vnmgraph_c",
+      "graphSha256": "f1ce556b3f7b4010973bb4c7a21621a7d794ded1e442f508fefc06e3ffbf1dfd",
+      "actions": {
+        "reload": {
+          "path": "animation/anims/viewmodel/rifle/rifle_p90/reload_p90.vnmclip_c",
+          "compiledSha256": "68d9088037fc4b81c703c2b9ea3fec38c3619d7cd1cb664561280c314b2ec77f",
+          "seconds": 3.3666666666666667,
+          "fps": 30,
+          "frames": 102,
+          "events": [
+            {
+              "id": "WPN_RELOAD_SILENT",
+              "frame": 0,
+              "durationFrames": 92,
+              "at": 0,
+              "duration": 3.066666666666667,
+              "normalized": 0
+            },
+            {
+              "id": "WPN_DROP_MAG",
+              "frame": 23,
+              "durationFrames": 0,
+              "at": 0.7666666666666667,
+              "duration": 0,
+              "normalized": 0.227723
+            },
+            {
+              "id": "WPN_RELOAD_ADD_AMMO",
+              "frame": 60,
+              "durationFrames": 0,
+              "at": 2,
+              "duration": 0,
+              "normalized": 0.594059
+            }
+          ],
+          "graphNodes": [
+            {
+              "name": "partial_mag_reload",
+              "clip": "animation/anims/viewmodel/rifle/rifle_p90/reload_p90.vnmclip_c",
+              "speed": 1
+            },
+            {
+              "name": "empty_mag_reload",
+              "clip": "animation/anims/viewmodel/rifle/rifle_p90/reload_p90.vnmclip_c",
+              "speed": 1
+            },
+            {
+              "name": "partial_mag_reload",
+              "clip": "animation/anims/viewmodel/rifle/rifle_p90/reload_p90.vnmclip_c",
+              "speed": 1
+            },
+            {
+              "name": "empty_mag_reload",
+              "clip": "animation/anims/viewmodel/rifle/rifle_p90/reload_p90.vnmclip_c",
+              "speed": 1
+            }
+          ],
+          "exportedSeconds": 3.3666666666666667,
+          "exportedBuild": "2000922"
+        }
+      }
+    },
+    "bizon": {
+      "attackLock": 2.433333,
+      "singleShells": false,
+      "graph": "animation/graphs/viewmodel/viewmodel_gun.vnmgraph+bizon.vnmgraph_c",
+      "graphSha256": "f0826dd81253f46a8bbf04cc5a1a014d8af14c07190f0773e48ecc0b683b2687",
+      "actions": {
+        "reload": {
+          "path": "animation/anims/viewmodel/rifle/rifle_bizon/reload_bizon.vnmclip_c",
+          "compiledSha256": "12e2f358a4d555c4ab13ce63868b341055e57a43b617fd54f02068605c4b120e",
+          "seconds": 2.433333333333333,
+          "fps": 30,
+          "frames": 74,
+          "events": [
+            {
+              "id": "WPN_RELOAD_SILENT",
+              "frame": 0,
+              "durationFrames": 59,
+              "at": 0,
+              "duration": 1.9666666666666666,
+              "normalized": 0
+            },
+            {
+              "id": "WPN_DROP_MAG",
+              "frame": 22,
+              "durationFrames": 0,
+              "at": 0.7333333333333333,
+              "duration": 0,
+              "normalized": 0.30137
+            },
+            {
+              "id": "WPN_RELOAD_ADD_AMMO",
+              "frame": 34,
+              "durationFrames": 0,
+              "at": 1.1333333333333333,
+              "duration": 0,
+              "normalized": 0.465753
+            }
+          ],
+          "graphNodes": [
+            {
+              "name": "partial_mag_reload",
+              "clip": "animation/anims/viewmodel/rifle/rifle_bizon/reload_bizon.vnmclip_c",
+              "speed": 1
+            },
+            {
+              "name": "empty_mag_reload",
+              "clip": "animation/anims/viewmodel/rifle/rifle_bizon/reload_bizon.vnmclip_c",
+              "speed": 1
+            },
+            {
+              "name": "partial_mag_reload",
+              "clip": "animation/anims/viewmodel/rifle/rifle_bizon/reload_bizon.vnmclip_c",
+              "speed": 1
+            },
+            {
+              "name": "empty_mag_reload",
+              "clip": "animation/anims/viewmodel/rifle/rifle_bizon/reload_bizon.vnmclip_c",
+              "speed": 1
+            }
+          ],
+          "exportedSeconds": 2.433333333333333,
+          "exportedBuild": "2000922"
+        }
+      }
+    },
+    "m249": {
+      "attackLock": 5.7,
+      "singleShells": false,
+      "graph": "animation/graphs/viewmodel/viewmodel_gun.vnmgraph+m249.vnmgraph_c",
+      "graphSha256": "28bab42788dbb14edf1b1ee48556f66702aad5308e3571548d24753587be4699",
+      "actions": {
+        "reload": {
+          "path": "animation/anims/viewmodel/rifle/rifle_m249/reload_m249.vnmclip_c",
+          "compiledSha256": "f46a5bf953596e01ad652afc092d04d40c1cd7bdf7f790d873507b963a9ccc92",
+          "seconds": 5.7,
+          "fps": 60,
+          "frames": 343,
+          "events": [
+            {
+              "id": "WPN_RELOAD_SILENT",
+              "frame": 0,
+              "durationFrames": 283,
+              "at": 0,
+              "duration": 4.716666666666667,
+              "normalized": 0
+            },
+            {
+              "id": "WPN_SHOW_BULLETS",
+              "frame": 104,
+              "durationFrames": 238,
+              "at": 1.7333333333333334,
+              "duration": 3.966666666666667,
+              "normalized": 0.304094
+            },
+            {
+              "id": "WPN_DROP_MAG",
+              "frame": 109,
+              "durationFrames": 0,
+              "at": 1.8166666666666667,
+              "duration": 0,
+              "normalized": 0.318713
+            },
+            {
+              "id": "WPN_RELOAD_ADD_AMMO",
+              "frame": 224,
+              "durationFrames": 0,
+              "at": 3.7333333333333334,
+              "duration": 0,
+              "normalized": 0.654971
+            }
+          ],
+          "graphNodes": [
+            {
+              "name": "partial_mag_reload",
+              "clip": "animation/anims/viewmodel/rifle/rifle_m249/reload_m249.vnmclip_c",
+              "speed": 1
+            },
+            {
+              "name": "empty_mag_reload",
+              "clip": "animation/anims/viewmodel/rifle/rifle_m249/reload_m249.vnmclip_c",
+              "speed": 1
+            },
+            {
+              "name": "partial_mag_reload",
+              "clip": "animation/anims/viewmodel/rifle/rifle_m249/reload_m249.vnmclip_c",
+              "speed": 1
+            },
+            {
+              "name": "empty_mag_reload",
+              "clip": "animation/anims/viewmodel/rifle/rifle_m249/reload_m249.vnmclip_c",
+              "speed": 1
+            }
+          ],
+          "exportedSeconds": 5.7,
+          "exportedBuild": "2000922"
+        }
+      }
+    },
+    "negev": {
+      "attackLock": 5.7,
+      "singleShells": false,
+      "graph": "animation/graphs/viewmodel/viewmodel_gun.vnmgraph+negev.vnmgraph_c",
+      "graphSha256": "5f945b9ee40cadec700482ae7a88f9b9e9b8dcd9e625b26b969ff4d572e319bc",
+      "actions": {
+        "reload": {
+          "path": "animation/anims/viewmodel/rifle/rifle_negev/reload_negev.vnmclip_c",
+          "compiledSha256": "d435aacb6ac0421c7e0c4eb734cc46ebd503f83312e9ba4529c1baec13caa170",
+          "seconds": 5.7,
+          "fps": 30,
+          "frames": 172,
+          "events": [
+            {
+              "id": "WPN_RELOAD_SILENT",
+              "frame": 0,
+              "durationFrames": 146,
+              "at": 0,
+              "duration": 4.866666666666666,
+              "normalized": 0
+            },
+            {
+              "id": "WPN_DROP_MAG",
+              "frame": 51,
+              "durationFrames": 0,
+              "at": 1.7,
+              "duration": 0,
+              "normalized": 0.298246
+            },
+            {
+              "id": "WPN_SHOW_BULLETS",
+              "frame": 52,
+              "durationFrames": 119,
+              "at": 1.7333333333333334,
+              "duration": 3.966666666666667,
+              "normalized": 0.304094
+            },
+            {
+              "id": "WPN_RELOAD_ADD_AMMO",
+              "frame": 115,
+              "durationFrames": 0,
+              "at": 3.8333333333333335,
+              "duration": 0,
+              "normalized": 0.672515
+            }
+          ],
+          "graphNodes": [
+            {
+              "name": "partial_mag_reload",
+              "clip": "animation/anims/viewmodel/rifle/rifle_negev/reload_negev.vnmclip_c",
+              "speed": 1
+            },
+            {
+              "name": "empty_mag_reload",
+              "clip": "animation/anims/viewmodel/rifle/rifle_negev/reload_negev.vnmclip_c",
+              "speed": 1
+            },
+            {
+              "name": "partial_mag_reload",
+              "clip": "animation/anims/viewmodel/rifle/rifle_negev/reload_negev.vnmclip_c",
+              "speed": 1
+            },
+            {
+              "name": "empty_mag_reload",
+              "clip": "animation/anims/viewmodel/rifle/rifle_negev/reload_negev.vnmclip_c",
+              "speed": 1
+            }
+          ],
+          "exportedSeconds": 5.7,
+          "exportedBuild": "2000922"
+        },
+        "reload-empty": {
+          "path": "animation/anims/viewmodel/rifle/rifle_negev/empty_reload_negev.vnmclip_c",
+          "compiledSha256": "f64cebc18e341cebe21aa875388ccfa6ed3af439c3621c206f8fc45dfb6f692c",
+          "seconds": 5.7,
+          "fps": 30,
+          "frames": 172,
+          "events": [
+            {
+              "id": "WPN_DROP_MAG",
+              "frame": 51,
+              "durationFrames": 0,
+              "at": 1.7,
+              "duration": 0,
+              "normalized": 0.298246
+            },
+            {
+              "id": "WPN_RELOAD_ADD_AMMO",
+              "frame": 115,
+              "durationFrames": 0,
+              "at": 3.8333333333333335,
+              "duration": 0,
+              "normalized": 0.672515
+            }
+          ],
+          "graphNodes": [],
+          "exportedSeconds": null,
+          "exportedBuild": "2000922"
+        }
+      }
+    },
+    "cz75a": {
+      "attackLock": 2.733333,
+      "singleShells": false,
+      "graph": "animation/graphs/viewmodel/viewmodel_gun_cz75.vnmgraph_c",
+      "graphSha256": "2617053d363416384d59e98468655b492bcf122e4131c8fc8d42924e9ea14e15",
+      "actions": {
+        "reload": {
+          "path": "animation/anims/viewmodel/pistol/pistol_cz75a/reload_cz75a.vnmclip_c",
+          "compiledSha256": "319b38c28ddc9b5776cd714cc05ce714a2bc6973ea6465665b640ce84ed1130f",
+          "seconds": 2.7333333333333334,
+          "fps": 30,
+          "frames": 83,
+          "events": [
+            {
+              "id": "WPN_RELOAD_SILENT",
+              "frame": 0,
+              "durationFrames": 68,
+              "at": 0,
+              "duration": 2.2666666666666666,
+              "normalized": 0
+            },
+            {
+              "id": "WPN_DROP_MAG",
+              "frame": 9,
+              "durationFrames": 0,
+              "at": 0.3,
+              "duration": 0,
+              "normalized": 0.109756
+            },
+            {
+              "id": "WPN_RELOAD_ADD_AMMO",
+              "frame": 47,
+              "durationFrames": 0,
+              "at": 1.5666666666666667,
+              "duration": 0,
+              "normalized": 0.573171
+            }
+          ],
+          "graphNodes": [
+            {
+              "name": "FirstReload",
+              "clip": "animation/anims/viewmodel/pistol/pistol_cz75a/reload_cz75a.vnmclip_c",
+              "speed": 1
+            }
+          ],
+          "exportedSeconds": 2.7333333333333334,
+          "exportedBuild": "2000922"
+        },
+        "reload-empty": {
+          "path": "animation/anims/viewmodel/pistol/pistol_cz75a/reload_empty_cz75a.vnmclip_c",
+          "compiledSha256": "2aaca54cac146ab6f320868a1018030d6154e3d993da1910d3b82eac3013a4e2",
+          "seconds": 2.7333333333333334,
+          "fps": 30,
+          "frames": 83,
+          "events": [
+            {
+              "id": "WPN_RELOAD_SILENT",
+              "frame": 0,
+              "durationFrames": 61,
+              "at": 0,
+              "duration": 2.033333333333333,
+              "normalized": 0
+            },
+            {
+              "id": "WPN_DROP_MAG",
+              "frame": 10,
+              "durationFrames": 0,
+              "at": 0.3333333333333333,
+              "duration": 0,
+              "normalized": 0.121951
+            },
+            {
+              "id": "WPN_RELOAD_ADD_AMMO",
+              "frame": 50,
+              "durationFrames": 0,
+              "at": 1.6666666666666667,
+              "duration": 0,
+              "normalized": 0.609756
+            }
+          ],
+          "graphNodes": [
+            {
+              "name": "FirstReload0",
+              "clip": "animation/anims/viewmodel/pistol/pistol_cz75a/reload_empty_cz75a.vnmclip_c",
+              "speed": 1
+            }
+          ],
+          "exportedSeconds": 2.7333333333333334,
+          "exportedBuild": "2000922"
+        }
+      }
+    },
+    "usp": {
+      "attackLock": 2.2,
+      "singleShells": false,
+      "graph": "animation/graphs/viewmodel/viewmodel_gun.vnmgraph+usp.vnmgraph_c",
+      "graphSha256": "01d5151bad017e89a7285b1835faa6b2366868c354dc1b06dbd28b4aa8fad89c",
+      "actions": {
+        "reload": {
+          "path": "animation/anims/viewmodel/pistol/_default_pistol/reload_pistol.vnmclip_c",
+          "compiledSha256": "b48c306073060aea84d2ac9418383ef13b8f66ed8ef527e154f9fb6aad5a0b2c",
+          "seconds": 2.1666666666666665,
+          "fps": 30,
+          "frames": 66,
+          "events": [
+            {
+              "id": "WPN_RELOAD_SILENT",
+              "frame": 0,
+              "durationFrames": 49,
+              "at": 0,
+              "duration": 1.6333333333333333,
+              "normalized": 0
+            },
+            {
+              "id": "WPN_DROP_MAG",
+              "frame": 9,
+              "durationFrames": 0,
+              "at": 0.3,
+              "duration": 0,
+              "normalized": 0.138462
+            },
+            {
+              "id": "WPN_RELOAD_ADD_AMMO",
+              "frame": 27,
+              "durationFrames": 0,
+              "at": 0.9,
+              "duration": 0,
+              "normalized": 0.415385
+            }
+          ],
+          "graphNodes": [
+            {
+              "name": "partial_mag_reload",
+              "clip": "animation/anims/viewmodel/pistol/_default_pistol/reload_pistol.vnmclip_c",
+              "speed": 1
+            },
+            {
+              "name": "partial_mag_reload",
+              "clip": "animation/anims/viewmodel/pistol/_default_pistol/reload_pistol.vnmclip_c",
+              "speed": 1
+            }
+          ],
+          "exportedSeconds": 2.1666666666666665,
+          "exportedBuild": "2000922"
+        },
+        "reload-empty": {
+          "path": "animation/anims/viewmodel/pistol/_default_pistol/reload_empty_pistol.vnmclip_c",
+          "compiledSha256": "c212bb99b28a76f31dbd50dc52a58d877dda89ffc53be7cb81d1faa9b8c4b0f0",
+          "seconds": 2.1666666666666665,
+          "fps": 30,
+          "frames": 66,
+          "events": [
+            {
+              "id": "WPN_RELOAD_SILENT",
+              "frame": 0,
+              "durationFrames": 46,
+              "at": 0,
+              "duration": 1.5333333333333334,
+              "normalized": 0
+            },
+            {
+              "id": "WPN_DROP_MAG",
+              "frame": 9,
+              "durationFrames": 0,
+              "at": 0.3,
+              "duration": 0,
+              "normalized": 0.138462
+            },
+            {
+              "id": "WPN_RELOAD_ADD_AMMO",
+              "frame": 30,
+              "durationFrames": 0,
+              "at": 1,
+              "duration": 0,
+              "normalized": 0.461538
+            }
+          ],
+          "graphNodes": [
+            {
+              "name": "empty_mag_reload",
+              "clip": "animation/anims/viewmodel/pistol/_default_pistol/reload_empty_pistol.vnmclip_c",
+              "speed": 1
+            },
+            {
+              "name": "empty_mag_reload",
+              "clip": "animation/anims/viewmodel/pistol/_default_pistol/reload_empty_pistol.vnmclip_c",
+              "speed": 1
+            }
+          ],
+          "exportedSeconds": 2.1666666666666665,
+          "exportedBuild": "2000922"
+        }
+      }
+    },
+    "glock": {
+      "attackLock": 2.266667,
+      "singleShells": false,
+      "graph": "animation/graphs/viewmodel/viewmodel_gun.vnmgraph+glock.vnmgraph_c",
+      "graphSha256": "14634095cb91c254fa329638adbe4eb1a29c16f3a4ed50c6f46887f844da1788",
+      "actions": {
+        "reload": {
+          "path": "animation/anims/viewmodel/pistol/pistol_glock18/reload_glock.vnmclip_c",
+          "compiledSha256": "54fd38faa260832669bff6c54c622d45ec69b5a809fff856f14d6c2bf3a0a498",
+          "seconds": 2.2666666666666666,
+          "fps": 30,
+          "frames": 69,
+          "events": [
+            {
+              "id": "WPN_RELOAD_SILENT",
+              "frame": 0,
+              "durationFrames": 52,
+              "at": 0,
+              "duration": 1.7333333333333334,
+              "normalized": 0
+            },
+            {
+              "id": "WPN_DROP_MAG",
+              "frame": 16,
+              "durationFrames": 0,
+              "at": 0.5333333333333333,
+              "duration": 0,
+              "normalized": 0.235294
+            },
+            {
+              "id": "WPN_RELOAD_ADD_AMMO",
+              "frame": 28,
+              "durationFrames": 0,
+              "at": 0.9333333333333333,
+              "duration": 0,
+              "normalized": 0.411765
+            }
+          ],
+          "graphNodes": [
+            {
+              "name": "partial_mag_reload",
+              "clip": "animation/anims/viewmodel/pistol/pistol_glock18/reload_glock.vnmclip_c",
+              "speed": 1
+            },
+            {
+              "name": "partial_mag_reload",
+              "clip": "animation/anims/viewmodel/pistol/pistol_glock18/reload_glock.vnmclip_c",
+              "speed": 1
+            }
+          ],
+          "exportedSeconds": 2.2666666666666666,
+          "exportedBuild": "2000922"
+        },
+        "reload-empty": {
+          "path": "animation/anims/viewmodel/pistol/pistol_glock18/reload_empty_glock.vnmclip_c",
+          "compiledSha256": "ecaa7d73de697109468b460ac0e0c738e0ad18373890a03f09c8c49efc2848d4",
+          "seconds": 2.2666666666666666,
+          "fps": 30,
+          "frames": 69,
+          "events": [
+            {
+              "id": "WPN_RELOAD_SILENT",
+              "frame": 0,
+              "durationFrames": 49,
+              "at": 0,
+              "duration": 1.6333333333333333,
+              "normalized": 0
+            },
+            {
+              "id": "WPN_DROP_MAG",
+              "frame": 18,
+              "durationFrames": 0,
+              "at": 0.6,
+              "duration": 0,
+              "normalized": 0.264706
+            },
+            {
+              "id": "WPN_RELOAD_ADD_AMMO",
+              "frame": 38,
+              "durationFrames": 0,
+              "at": 1.2666666666666666,
+              "duration": 0,
+              "normalized": 0.558824
+            }
+          ],
+          "graphNodes": [
+            {
+              "name": "empty_mag_reload",
+              "clip": "animation/anims/viewmodel/pistol/pistol_glock18/reload_empty_glock.vnmclip_c",
+              "speed": 1
+            },
+            {
+              "name": "empty_mag_reload",
+              "clip": "animation/anims/viewmodel/pistol/pistol_glock18/reload_empty_glock.vnmclip_c",
+              "speed": 1
+            }
+          ],
+          "exportedSeconds": 2.2666666666666666,
+          "exportedBuild": "2000922"
+        }
+      }
+    },
+    "hkp2000": {
+      "attackLock": 2.266667,
+      "singleShells": false,
+      "graph": "animation/graphs/viewmodel/viewmodel_gun.vnmgraph+hkp2000.vnmgraph_c",
+      "graphSha256": "b992e07ef4bd2462c24a4867895f1753fab686017fbe2e40c0f0089182e9e36b",
+      "actions": {
+        "reload": {
+          "path": "animation/anims/viewmodel/pistol/pistol_hkp2000/reload_hkp.vnmclip_c",
+          "compiledSha256": "33a8613c23e7b025831ba14454623fa6519a21ee56a7088db73c80668195cb4c",
+          "seconds": 2.2666666666666666,
+          "fps": 30,
+          "frames": 69,
+          "events": [
+            {
+              "id": "WPN_RELOAD_SILENT",
+              "frame": 0,
+              "durationFrames": 51,
+              "at": 0,
+              "duration": 1.7,
+              "normalized": 0
+            },
+            {
+              "id": "WPN_DROP_MAG",
+              "frame": 13,
+              "durationFrames": 0,
+              "at": 0.43333333333333335,
+              "duration": 0,
+              "normalized": 0.191176
+            },
+            {
+              "id": "WPN_RELOAD_ADD_AMMO",
+              "frame": 28,
+              "durationFrames": 0,
+              "at": 0.9333333333333333,
+              "duration": 0,
+              "normalized": 0.411765
+            }
+          ],
+          "graphNodes": [
+            {
+              "name": "partial_mag_reload",
+              "clip": "animation/anims/viewmodel/pistol/pistol_hkp2000/reload_hkp.vnmclip_c",
+              "speed": 1
+            },
+            {
+              "name": "partial_mag_reload",
+              "clip": "animation/anims/viewmodel/pistol/pistol_hkp2000/reload_hkp.vnmclip_c",
+              "speed": 1
+            }
+          ],
+          "exportedSeconds": 2.2666666666666666,
+          "exportedBuild": "2000922"
+        },
+        "reload-empty": {
+          "path": "animation/anims/viewmodel/pistol/pistol_hkp2000/reload_empty_hkp.vnmclip_c",
+          "compiledSha256": "f30b31886d359f605d9deb7b881c23be4cff506d1d223102161383db052788e9",
+          "seconds": 2.2666666666666666,
+          "fps": 30,
+          "frames": 69,
+          "events": [
+            {
+              "id": "WPN_RELOAD_SILENT",
+              "frame": 0,
+              "durationFrames": 50,
+              "at": 0,
+              "duration": 1.6666666666666667,
+              "normalized": 0
+            },
+            {
+              "id": "WPN_DROP_MAG",
+              "frame": 15,
+              "durationFrames": 0,
+              "at": 0.5,
+              "duration": 0,
+              "normalized": 0.220588
+            },
+            {
+              "id": "WPN_RELOAD_ADD_AMMO",
+              "frame": 36,
+              "durationFrames": 0,
+              "at": 1.2,
+              "duration": 0,
+              "normalized": 0.529412
+            }
+          ],
+          "graphNodes": [
+            {
+              "name": "empty_mag_reload",
+              "clip": "animation/anims/viewmodel/pistol/pistol_hkp2000/reload_empty_hkp.vnmclip_c",
+              "speed": 1
+            },
+            {
+              "name": "empty_mag_reload",
+              "clip": "animation/anims/viewmodel/pistol/pistol_hkp2000/reload_empty_hkp.vnmclip_c",
+              "speed": 1
+            }
+          ],
+          "exportedSeconds": 2.2666666666666666,
+          "exportedBuild": "2000922"
+        }
+      }
+    },
+    "p250": {
+      "attackLock": 2.266667,
+      "singleShells": false,
+      "graph": "animation/graphs/viewmodel/viewmodel_gun.vnmgraph+p250.vnmgraph_c",
+      "graphSha256": "f53526f99e6843707c4c7e6e3f987d25cb4fd813fb468a3273e1c231953bc5e1",
+      "actions": {
+        "reload": {
+          "path": "animation/anims/viewmodel/pistol/pistol_p250/reload_p250.vnmclip_c",
+          "compiledSha256": "57ba5f3c80ef3ebd17e42287a226ac927c006d94df7c7f39196c7824b2d6d71b",
+          "seconds": 2.2666666666666666,
+          "fps": 30,
+          "frames": 69,
+          "events": [
+            {
+              "id": "WPN_RELOAD_SILENT",
+              "frame": 0,
+              "durationFrames": 53,
+              "at": 0,
+              "duration": 1.7666666666666666,
+              "normalized": 0
+            },
+            {
+              "id": "WPN_DROP_MAG",
+              "frame": 13,
+              "durationFrames": 0,
+              "at": 0.43333333333333335,
+              "duration": 0,
+              "normalized": 0.191176
+            },
+            {
+              "id": "WPN_RELOAD_ADD_AMMO",
+              "frame": 28,
+              "durationFrames": 0,
+              "at": 0.9333333333333333,
+              "duration": 0,
+              "normalized": 0.411765
+            }
+          ],
+          "graphNodes": [
+            {
+              "name": "partial_mag_reload",
+              "clip": "animation/anims/viewmodel/pistol/pistol_p250/reload_p250.vnmclip_c",
+              "speed": 1
+            },
+            {
+              "name": "partial_mag_reload",
+              "clip": "animation/anims/viewmodel/pistol/pistol_p250/reload_p250.vnmclip_c",
+              "speed": 1
+            }
+          ],
+          "exportedSeconds": 2.2666666666666666,
+          "exportedBuild": "2000922"
+        },
+        "reload-empty": {
+          "path": "animation/anims/viewmodel/pistol/pistol_p250/reload_empty_p250.vnmclip_c",
+          "compiledSha256": "eb5511997cf697380c4429a221d838110115f04e78a52d0d5bb8040e02187c32",
+          "seconds": 2.2666666666666666,
+          "fps": 30,
+          "frames": 69,
+          "events": [
+            {
+              "id": "WPN_RELOAD_SILENT",
+              "frame": 0,
+              "durationFrames": 49,
+              "at": 0,
+              "duration": 1.6333333333333333,
+              "normalized": 0
+            },
+            {
+              "id": "WPN_DROP_MAG",
+              "frame": 15,
+              "durationFrames": 0,
+              "at": 0.5,
+              "duration": 0,
+              "normalized": 0.220588
+            },
+            {
+              "id": "WPN_RELOAD_ADD_AMMO",
+              "frame": 36,
+              "durationFrames": 0,
+              "at": 1.2,
+              "duration": 0,
+              "normalized": 0.529412
+            }
+          ],
+          "graphNodes": [
+            {
+              "name": "empty_mag_reload",
+              "clip": "animation/anims/viewmodel/pistol/pistol_p250/reload_empty_p250.vnmclip_c",
+              "speed": 1
+            },
+            {
+              "name": "empty_mag_reload",
+              "clip": "animation/anims/viewmodel/pistol/pistol_p250/reload_empty_p250.vnmclip_c",
+              "speed": 1
+            }
+          ],
+          "exportedSeconds": 2.2666666666666666,
+          "exportedBuild": "2000922"
+        }
+      }
+    },
+    "deagle": {
+      "attackLock": 2.2,
+      "singleShells": false,
+      "graph": "animation/graphs/viewmodel/viewmodel_gun.vnmgraph+deagle.vnmgraph_c",
+      "graphSha256": "4b67bf2c2320df7c9ed2d77ebc0cce7055293390217c8ad32f90bc153b73613f",
+      "actions": {
+        "reload": {
+          "path": "animation/anims/viewmodel/pistol/pistol_deagle/reload_deagle.vnmclip_c",
+          "compiledSha256": "3966fb59252703eaf905a5cbda2c0c778a2837f0ab27e14a819a155a14ff8f3e",
+          "seconds": 2.2,
+          "fps": 30,
+          "frames": 67,
+          "events": [
+            {
+              "id": "WPN_RELOAD_SILENT",
+              "frame": 0,
+              "durationFrames": 50,
+              "at": 0,
+              "duration": 1.6666666666666667,
+              "normalized": 0
+            },
+            {
+              "id": "WPN_DROP_MAG",
+              "frame": 12,
+              "durationFrames": 0,
+              "at": 0.4,
+              "duration": 0,
+              "normalized": 0.181818
+            },
+            {
+              "id": "WPN_RELOAD_ADD_AMMO",
+              "frame": 23,
+              "durationFrames": 0,
+              "at": 0.7666666666666667,
+              "duration": 0,
+              "normalized": 0.348485
+            }
+          ],
+          "graphNodes": [
+            {
+              "name": "partial_mag_reload",
+              "clip": "animation/anims/viewmodel/pistol/pistol_deagle/reload_deagle.vnmclip_c",
+              "speed": 1
+            },
+            {
+              "name": "partial_mag_reload",
+              "clip": "animation/anims/viewmodel/pistol/pistol_deagle/reload_deagle.vnmclip_c",
+              "speed": 1
+            }
+          ],
+          "exportedSeconds": 2.2,
+          "exportedBuild": "2000922"
+        },
+        "reload-empty": {
+          "path": "animation/anims/viewmodel/pistol/pistol_deagle/reload_empty_deagle.vnmclip_c",
+          "compiledSha256": "a8247ccc4900080169aab16fe01b7535ace37d2c9aa64e875d09f4fcedcfca9d",
+          "seconds": 2.2,
+          "fps": 30,
+          "frames": 67,
+          "events": [
+            {
+              "id": "WPN_RELOAD_SILENT",
+              "frame": 0,
+              "durationFrames": 49,
+              "at": 0,
+              "duration": 1.6333333333333333,
+              "normalized": 0
+            },
+            {
+              "id": "WPN_DROP_MAG",
+              "frame": 15,
+              "durationFrames": 0,
+              "at": 0.5,
+              "duration": 0,
+              "normalized": 0.227273
+            },
+            {
+              "id": "WPN_RELOAD_ADD_AMMO",
+              "frame": 31,
+              "durationFrames": 0,
+              "at": 1.0333333333333334,
+              "duration": 0,
+              "normalized": 0.469697
+            }
+          ],
+          "graphNodes": [
+            {
+              "name": "empty_mag_reload",
+              "clip": "animation/anims/viewmodel/pistol/pistol_deagle/reload_empty_deagle.vnmclip_c",
+              "speed": 1
+            },
+            {
+              "name": "empty_mag_reload",
+              "clip": "animation/anims/viewmodel/pistol/pistol_deagle/reload_empty_deagle.vnmclip_c",
+              "speed": 1
+            }
+          ],
+          "exportedSeconds": 2.2,
+          "exportedBuild": "2000922"
+        }
+      }
+    },
+    "elite": {
+      "attackLock": 3.766667,
+      "singleShells": false,
+      "graph": "animation/graphs/viewmodel/viewmodel_gun_elites.vnmgraph_c",
+      "graphSha256": "7bb029756d43d8cb8d7a5110440d91fb8551fe79525191c2e531880fc19bd385",
+      "actions": {
+        "reload": {
+          "path": "animation/anims/viewmodel/pistol/pistol_elite/reload_elite.vnmclip_c",
+          "compiledSha256": "ac5f5f3bb4d23d669a56270daead5360ed3545dc2cf70d181464bab3f17ad487",
+          "seconds": 3.7666666666666666,
+          "fps": 30,
+          "frames": 114,
+          "events": [
+            {
+              "id": "WPN_RELOAD_SILENT",
+              "frame": 0,
+              "durationFrames": 112,
+              "at": 0,
+              "duration": 3.7333333333333334,
+              "normalized": 0
+            },
+            {
+              "id": "WPN_DROP_MAG",
+              "frame": 13,
+              "durationFrames": 0,
+              "at": 0.43333333333333335,
+              "duration": 0,
+              "normalized": 0.115044
+            },
+            {
+              "id": "WPN_RELOAD_ADD_AMMO",
+              "frame": 88,
+              "durationFrames": 0,
+              "at": 2.933333333333333,
+              "duration": 0,
+              "normalized": 0.778761
+            }
+          ],
+          "graphNodes": [
+            {
+              "name": "reload",
+              "clip": "animation/anims/viewmodel/pistol/pistol_elite/reload_elite.vnmclip_c",
+              "speed": 1
+            }
+          ],
+          "exportedSeconds": 3.7666666666666666,
+          "exportedBuild": "2000922"
+        }
+      }
+    },
+    "fiveseven": {
+      "attackLock": 2.266667,
+      "singleShells": false,
+      "graph": "animation/graphs/viewmodel/viewmodel_gun.vnmgraph+five_seven.vnmgraph_c",
+      "graphSha256": "13be9ccac03a6d5c437c211bd2d836cce75c96d87e4933bf04f96b0c92db324b",
+      "actions": {
+        "reload": {
+          "path": "animation/anims/viewmodel/pistol/pistol_fiveseven/reload_fiveseven.vnmclip_c",
+          "compiledSha256": "cfc108bef17ca70225077caec8c8a489c5e558d5186cac95b67c3590a69674cb",
+          "seconds": 2.2666666666666666,
+          "fps": 30,
+          "frames": 69,
+          "events": [
+            {
+              "id": "WPN_RELOAD_SILENT",
+              "frame": 0,
+              "durationFrames": 52,
+              "at": 0,
+              "duration": 1.7333333333333334,
+              "normalized": 0
+            },
+            {
+              "id": "WPN_DROP_MAG",
+              "frame": 13,
+              "durationFrames": 0,
+              "at": 0.43333333333333335,
+              "duration": 0,
+              "normalized": 0.191176
+            },
+            {
+              "id": "WPN_RELOAD_ADD_AMMO",
+              "frame": 29,
+              "durationFrames": 0,
+              "at": 0.9666666666666667,
+              "duration": 0,
+              "normalized": 0.426471
+            }
+          ],
+          "graphNodes": [
+            {
+              "name": "partial_mag_reload",
+              "clip": "animation/anims/viewmodel/pistol/pistol_fiveseven/reload_fiveseven.vnmclip_c",
+              "speed": 1
+            },
+            {
+              "name": "partial_mag_reload",
+              "clip": "animation/anims/viewmodel/pistol/pistol_fiveseven/reload_fiveseven.vnmclip_c",
+              "speed": 1
+            }
+          ],
+          "exportedSeconds": 2.2666666666666666,
+          "exportedBuild": "2000922"
+        },
+        "reload-empty": {
+          "path": "animation/anims/viewmodel/pistol/pistol_fiveseven/reload_empty_fiveseven.vnmclip_c",
+          "compiledSha256": "c97d43d0390074008b9bfd581f0e2eec97f9e68397ae0ceeb6a031511db43230",
+          "seconds": 2.2666666666666666,
+          "fps": 30,
+          "frames": 69,
+          "events": [
+            {
+              "id": "WPN_RELOAD_SILENT",
+              "frame": 0,
+              "durationFrames": 51,
+              "at": 0,
+              "duration": 1.7,
+              "normalized": 0
+            },
+            {
+              "id": "WPN_DROP_MAG",
+              "frame": 15,
+              "durationFrames": 0,
+              "at": 0.5,
+              "duration": 0,
+              "normalized": 0.220588
+            },
+            {
+              "id": "WPN_RELOAD_ADD_AMMO",
+              "frame": 36,
+              "durationFrames": 0,
+              "at": 1.2,
+              "duration": 0,
+              "normalized": 0.529412
+            }
+          ],
+          "graphNodes": [
+            {
+              "name": "empty_mag_reload",
+              "clip": "animation/anims/viewmodel/pistol/pistol_fiveseven/reload_empty_fiveseven.vnmclip_c",
+              "speed": 1
+            },
+            {
+              "name": "empty_mag_reload",
+              "clip": "animation/anims/viewmodel/pistol/pistol_fiveseven/reload_empty_fiveseven.vnmclip_c",
+              "speed": 1
+            }
+          ],
+          "exportedSeconds": 2.2666666666666666,
+          "exportedBuild": "2000922"
+        }
+      }
+    },
+    "tec9": {
+      "attackLock": 2.566667,
+      "singleShells": false,
+      "graph": "animation/graphs/viewmodel/viewmodel_gun.vnmgraph+tec9.vnmgraph_c",
+      "graphSha256": "5f19c006bae9b07032e6ad07206ae670b4248b0310b0d15aa185cfda9fe547a0",
+      "actions": {
+        "reload": {
+          "path": "animation/anims/viewmodel/pistol/pistol_tec9/reload_tec9.vnmclip_c",
+          "compiledSha256": "9d80caa7e31f511429528966ea8ca104df46d02e17fbfd421ce294ca45e46d2d",
+          "seconds": 2.566666666666667,
+          "fps": 30,
+          "frames": 78,
+          "events": [
+            {
+              "id": "WPN_RELOAD_SILENT",
+              "frame": 0,
+              "durationFrames": 64,
+              "at": 0,
+              "duration": 2.1333333333333333,
+              "normalized": 0
+            },
+            {
+              "id": "WPN_DROP_MAG",
+              "frame": 16,
+              "durationFrames": 0,
+              "at": 0.5333333333333333,
+              "duration": 0,
+              "normalized": 0.207792
+            },
+            {
+              "id": "WPN_RELOAD_ADD_AMMO",
+              "frame": 43,
+              "durationFrames": 0,
+              "at": 1.4333333333333333,
+              "duration": 0,
+              "normalized": 0.558442
+            }
+          ],
+          "graphNodes": [
+            {
+              "name": "partial_mag_reload",
+              "clip": "animation/anims/viewmodel/pistol/pistol_tec9/reload_tec9.vnmclip_c",
+              "speed": 1
+            },
+            {
+              "name": "empty_mag_reload",
+              "clip": "animation/anims/viewmodel/pistol/pistol_tec9/reload_tec9.vnmclip_c",
+              "speed": 1
+            },
+            {
+              "name": "partial_mag_reload",
+              "clip": "animation/anims/viewmodel/pistol/pistol_tec9/reload_tec9.vnmclip_c",
+              "speed": 1
+            },
+            {
+              "name": "empty_mag_reload",
+              "clip": "animation/anims/viewmodel/pistol/pistol_tec9/reload_tec9.vnmclip_c",
+              "speed": 1
+            }
+          ],
+          "exportedSeconds": 2.566699981689453,
+          "exportedBuild": "2000922"
+        }
+      }
+    },
+    "revolver": {
+      "attackLock": 2.266667,
+      "singleShells": false,
+      "graph": "animation/graphs/viewmodel/viewmodel_gun_revolver.vnmgraph_c",
+      "graphSha256": "4602c48c7dbedc46e567d3a39b8042d976fdd8f99cc17780ef6e79537c3952e8",
+      "actions": {
+        "reload": {
+          "path": "animation/anims/viewmodel/pistol/pistol_revolver/reload_revolver.vnmclip_c",
+          "compiledSha256": "92590b48ceaf6dff0ae51911e85e66f2cbeeaf9c8f2784c6f588842364bb7172",
+          "seconds": 2.2666666666666666,
+          "fps": 30,
+          "frames": 69,
+          "events": [
+            {
+              "id": "WPN_RELOAD_SILENT",
+              "frame": 0,
+              "durationFrames": 65,
+              "at": 0,
+              "duration": 2.1666666666666665,
+              "normalized": 0
+            },
+            {
+              "id": "WPN_DROP_MAG",
+              "frame": 19,
+              "durationFrames": 0,
+              "at": 0.6333333333333333,
+              "duration": 0,
+              "normalized": 0.279412
+            },
+            {
+              "id": "WPN_RELOAD_ADD_AMMO",
+              "frame": 59,
+              "durationFrames": 0,
+              "at": 1.9666666666666666,
+              "duration": 0,
+              "normalized": 0.867647
+            }
+          ],
+          "graphNodes": [
+            {
+              "name": "reload",
+              "clip": "animation/anims/viewmodel/pistol/pistol_revolver/reload_revolver.vnmclip_c",
+              "speed": 1
+            }
+          ],
+          "exportedSeconds": 2.2666999816894533,
+          "exportedBuild": "2000922"
+        }
+      }
+    },
+    "awp": {
+      "attackLock": 3.666667,
+      "singleShells": false,
+      "graph": "animation/graphs/viewmodel/viewmodel_gun.vnmgraph+awp.vnmgraph_c",
+      "graphSha256": "4d454313d587c48e7cd17c40b6290fb0e6e9efdff0e5aa5af6681c7165968a04",
+      "actions": {
+        "reload": {
+          "path": "animation/anims/viewmodel/rifle/rifle_awp/reload_awp.vnmclip_c",
+          "compiledSha256": "3331c7363f8080b62848e36b9fa0d1a3b499791727cda2cba91cede8659736a5",
+          "seconds": 3.6666666666666665,
+          "fps": 30,
+          "frames": 111,
+          "events": [
+            {
+              "id": "WPN_RELOAD_SILENT",
+              "frame": 0,
+              "durationFrames": 94,
+              "at": 0,
+              "duration": 3.1333333333333333,
+              "normalized": 0
+            },
+            {
+              "id": "WPN_DROP_MAG",
+              "frame": 20,
+              "durationFrames": 0,
+              "at": 0.6666666666666666,
+              "duration": 0,
+              "normalized": 0.181818
+            },
+            {
+              "id": "WPN_RELOAD_ADD_AMMO",
+              "frame": 60,
+              "durationFrames": 0,
+              "at": 2,
+              "duration": 0,
+              "normalized": 0.545455
+            }
+          ],
+          "graphNodes": [
+            {
+              "name": "partial_mag_reload",
+              "clip": "animation/anims/viewmodel/rifle/rifle_awp/reload_awp.vnmclip_c",
+              "speed": 1
+            },
+            {
+              "name": "empty_mag_reload",
+              "clip": "animation/anims/viewmodel/rifle/rifle_awp/reload_awp.vnmclip_c",
+              "speed": 1
+            },
+            {
+              "name": "partial_mag_reload",
+              "clip": "animation/anims/viewmodel/rifle/rifle_awp/reload_awp.vnmclip_c",
+              "speed": 1
+            },
+            {
+              "name": "empty_mag_reload",
+              "clip": "animation/anims/viewmodel/rifle/rifle_awp/reload_awp.vnmclip_c",
+              "speed": 1
+            }
+          ],
+          "exportedSeconds": 3.666699981689453,
+          "exportedBuild": "2000922"
+        }
+      }
+    },
+    "ssg08": {
+      "attackLock": 3.7,
+      "singleShells": false,
+      "graph": "animation/graphs/viewmodel/viewmodel_gun.vnmgraph+ssg08.vnmgraph_c",
+      "graphSha256": "774d7e4dd6024826a1208730ddda5839a8b195ecda2fed03871f94be2d25bcbb",
+      "actions": {
+        "reload": {
+          "path": "animation/anims/viewmodel/rifle/rifle_ssg08/reload_ssg08.vnmclip_c",
+          "compiledSha256": "1d91b944cd15c3748366f555526e93883f402e9df3a7a5e2c5305f93af05fb34",
+          "seconds": 3.7,
+          "fps": 30,
+          "frames": 112,
+          "events": [
+            {
+              "id": "WPN_RELOAD_SILENT",
+              "frame": 0,
+              "durationFrames": 95,
+              "at": 0,
+              "duration": 3.1666666666666665,
+              "normalized": 0
+            },
+            {
+              "id": "WPN_DROP_MAG",
+              "frame": 18,
+              "durationFrames": 0,
+              "at": 0.6,
+              "duration": 0,
+              "normalized": 0.162162
+            },
+            {
+              "id": "WPN_RELOAD_ADD_AMMO",
+              "frame": 60,
+              "durationFrames": 0,
+              "at": 2,
+              "duration": 0,
+              "normalized": 0.540541
+            }
+          ],
+          "graphNodes": [
+            {
+              "name": "partial_mag_reload",
+              "clip": "animation/anims/viewmodel/rifle/rifle_ssg08/reload_ssg08.vnmclip_c",
+              "speed": 1
+            },
+            {
+              "name": "empty_mag_reload",
+              "clip": "animation/anims/viewmodel/rifle/rifle_ssg08/reload_ssg08.vnmclip_c",
+              "speed": 1
+            },
+            {
+              "name": "partial_mag_reload",
+              "clip": "animation/anims/viewmodel/rifle/rifle_ssg08/reload_ssg08.vnmclip_c",
+              "speed": 1
+            },
+            {
+              "name": "empty_mag_reload",
+              "clip": "animation/anims/viewmodel/rifle/rifle_ssg08/reload_ssg08.vnmclip_c",
+              "speed": 1
+            }
+          ],
+          "exportedSeconds": 3.7,
+          "exportedBuild": "2000922"
+        }
+      }
+    },
+    "g3sg1": {
+      "attackLock": 4.666667,
+      "singleShells": false,
+      "graph": "animation/graphs/viewmodel/viewmodel_gun.vnmgraph+g3sg1.vnmgraph_c",
+      "graphSha256": "b35bfe31a57d57d636310e7050e11acfcabfc82730df04ac9175908b4507506b",
+      "actions": {
+        "reload": {
+          "path": "animation/anims/viewmodel/rifle/rifle_g3sg1/reload_g3sg1.vnmclip_c",
+          "compiledSha256": "92c9c111f769cbc578f221ebb0a81b07507718ed3af82b73862eeae81f3cd276",
+          "seconds": 4.666666666666667,
+          "fps": 30,
+          "frames": 141,
+          "events": [
+            {
+              "id": "WPN_RELOAD_SILENT",
+              "frame": 0,
+              "durationFrames": 119,
+              "at": 0,
+              "duration": 3.966666666666667,
+              "normalized": 0
+            },
+            {
+              "id": "WPN_DROP_MAG",
+              "frame": 46,
+              "durationFrames": 0,
+              "at": 1.5333333333333334,
+              "duration": 0,
+              "normalized": 0.328571
+            },
+            {
+              "id": "WPN_RELOAD_ADD_AMMO",
+              "frame": 80,
+              "durationFrames": 0,
+              "at": 2.6666666666666665,
+              "duration": 0,
+              "normalized": 0.571429
+            }
+          ],
+          "graphNodes": [
+            {
+              "name": "partial_mag_reload",
+              "clip": "animation/anims/viewmodel/rifle/rifle_g3sg1/reload_g3sg1.vnmclip_c",
+              "speed": 1
+            },
+            {
+              "name": "empty_mag_reload",
+              "clip": "animation/anims/viewmodel/rifle/rifle_g3sg1/reload_g3sg1.vnmclip_c",
+              "speed": 1
+            },
+            {
+              "name": "partial_mag_reload",
+              "clip": "animation/anims/viewmodel/rifle/rifle_g3sg1/reload_g3sg1.vnmclip_c",
+              "speed": 1
+            },
+            {
+              "name": "empty_mag_reload",
+              "clip": "animation/anims/viewmodel/rifle/rifle_g3sg1/reload_g3sg1.vnmclip_c",
+              "speed": 1
+            }
+          ],
+          "exportedSeconds": 4.666666666666667,
+          "exportedBuild": "2000922"
+        }
+      }
+    },
+    "scar20": {
+      "attackLock": 3.066667,
+      "singleShells": false,
+      "graph": "animation/graphs/viewmodel/viewmodel_gun.vnmgraph+scar20.vnmgraph_c",
+      "graphSha256": "04e7fba908e4c21a60c389334ed3b3e3151ad452b79350282fe088ece738ca54",
+      "actions": {
+        "reload": {
+          "path": "animation/anims/viewmodel/rifle/rifle_scar20/reload_scar20.vnmclip_c",
+          "compiledSha256": "3c506e3ce79eb59ec468898b9b4927d5bae0f8802bfa86138430ed6b2ba9c2e1",
+          "seconds": 3.066666666666667,
+          "fps": 30,
+          "frames": 93,
+          "events": [
+            {
+              "id": "WPN_RELOAD_SILENT",
+              "frame": 0,
+              "durationFrames": 80,
+              "at": 0,
+              "duration": 2.6666666666666665,
+              "normalized": 0
+            },
+            {
+              "id": "WPN_DROP_MAG",
+              "frame": 17,
+              "durationFrames": 0,
+              "at": 0.5666666666666667,
+              "duration": 0,
+              "normalized": 0.184783
+            },
+            {
+              "id": "WPN_RELOAD_ADD_AMMO",
+              "frame": 46,
+              "durationFrames": 0,
+              "at": 1.5333333333333334,
+              "duration": 0,
+              "normalized": 0.5
+            }
+          ],
+          "graphNodes": [
+            {
+              "name": "partial_mag_reload",
+              "clip": "animation/anims/viewmodel/rifle/rifle_scar20/reload_scar20.vnmclip_c",
+              "speed": 1
+            },
+            {
+              "name": "partial_mag_reload",
+              "clip": "animation/anims/viewmodel/rifle/rifle_scar20/reload_scar20.vnmclip_c",
+              "speed": 1
+            }
+          ],
+          "exportedSeconds": 3.066666666666667,
+          "exportedBuild": "2000922"
+        },
+        "reload-empty": {
+          "path": "animation/anims/viewmodel/rifle/rifle_scar20/reload_empty_scar20.vnmclip_c",
+          "compiledSha256": "24a5a97b592a1c4242040a5a04f42ae3be2838f9f3f54bab99376dbc01475293",
+          "seconds": 3.066666666666667,
+          "fps": 30,
+          "frames": 93,
+          "events": [
+            {
+              "id": "WPN_RELOAD_SILENT",
+              "frame": 0,
+              "durationFrames": 63,
+              "at": 0,
+              "duration": 2.1,
+              "normalized": 0
+            },
+            {
+              "id": "WPN_DROP_MAG",
+              "frame": 17,
+              "durationFrames": 0,
+              "at": 0.5666666666666667,
+              "duration": 0,
+              "normalized": 0.184783
+            },
+            {
+              "id": "WPN_RELOAD_ADD_AMMO",
+              "frame": 44,
+              "durationFrames": 0,
+              "at": 1.4666666666666666,
+              "duration": 0,
+              "normalized": 0.478261
+            }
+          ],
+          "graphNodes": [
+            {
+              "name": "empty_mag_reload",
+              "clip": "animation/anims/viewmodel/rifle/rifle_scar20/reload_empty_scar20.vnmclip_c",
+              "speed": 1
+            },
+            {
+              "name": "empty_mag_reload",
+              "clip": "animation/anims/viewmodel/rifle/rifle_scar20/reload_empty_scar20.vnmclip_c",
+              "speed": 1
+            }
+          ],
+          "exportedSeconds": 3.066666666666667,
+          "exportedBuild": "2000922"
+        }
+      }
+    },
+    "nova": {
+      "attackLock": 0.466667,
+      "singleShells": true,
+      "graph": "animation/graphs/viewmodel/viewmodel_gun.vnmgraph+nova.vnmgraph_c",
+      "graphSha256": "3ebaf1df54462956d907c6a9ef2fc0e31216bd7a4260d66b23f6469eac7d490c",
+      "actions": {
+        "reload": {
+          "path": "animation/anims/viewmodel/rifle/rifle_nova/reload_nova.vnmclip_c",
+          "compiledSha256": "c940bdad00e71020a1451a073f73690355a6dc462e8179624e1818774a6cddab",
+          "seconds": 1.6333333333333333,
+          "fps": 30,
+          "frames": 50,
+          "events": [
+            {
+              "id": "WPN_RELOAD_INTRO",
+              "frame": 0,
+              "durationFrames": 11,
+              "at": 0,
+              "duration": 0.36666666666666664,
+              "normalized": 0
+            },
+            {
+              "id": "WPN_RELOAD_SILENT",
+              "frame": 0,
+              "durationFrames": 45,
+              "at": 0,
+              "duration": 1.5,
+              "normalized": 0
+            },
+            {
+              "id": "WPN_RELOAD_LOOP",
+              "frame": 11,
+              "durationFrames": 13,
+              "at": 0.36666666666666664,
+              "duration": 0.43333333333333335,
+              "normalized": 0.22449
+            },
+            {
+              "id": "WPN_RELOAD_ADD_AMMO",
+              "frame": 20,
+              "durationFrames": 0,
+              "at": 0.6666666666666666,
+              "duration": 0,
+              "normalized": 0.408163
+            },
+            {
+              "id": "WPN_RELOAD_OUTRO",
+              "frame": 24,
+              "durationFrames": 25,
+              "at": 0.8,
+              "duration": 0.8333333333333334,
+              "normalized": 0.489796
+            }
+          ],
+          "graphNodes": [
+            {
+              "name": "partial_mag_reload",
+              "clip": "animation/anims/viewmodel/rifle/rifle_nova/reload_nova.vnmclip_c",
+              "speed": 1
+            },
+            {
+              "name": "empty_mag_reload",
+              "clip": "animation/anims/viewmodel/rifle/rifle_nova/reload_nova.vnmclip_c",
+              "speed": 1
+            },
+            {
+              "name": "partial_mag_reload",
+              "clip": "animation/anims/viewmodel/rifle/rifle_nova/reload_nova.vnmclip_c",
+              "speed": 1
+            },
+            {
+              "name": "empty_mag_reload",
+              "clip": "animation/anims/viewmodel/rifle/rifle_nova/reload_nova.vnmclip_c",
+              "speed": 1
+            }
+          ],
+          "exportedSeconds": 1.6333333333333333,
+          "exportedBuild": "2000924"
+        }
+      }
+    },
+    "xm1014": {
+      "attackLock": 0.6,
+      "singleShells": true,
+      "graph": "animation/graphs/viewmodel/viewmodel_gun.vnmgraph+xm1014.vnmgraph_c",
+      "graphSha256": "4f7763403e1d5f9fbcc69e17be7d655f194d679c57246ee49faf6333c4b7fc92",
+      "actions": {
+        "reload": {
+          "path": "animation/anims/viewmodel/rifle/rifle_xm1014/reload_xm1014.vnmclip_c",
+          "compiledSha256": "70b48f2c68d78b000dfedaf3db894710b1010d3f8d07682fafdf4b72b864a8fc",
+          "seconds": 1.7333333333333334,
+          "fps": 30,
+          "frames": 53,
+          "events": [
+            {
+              "id": "WPN_RELOAD_INTRO",
+              "frame": 0,
+              "durationFrames": 21,
+              "at": 0,
+              "duration": 0.7,
+              "normalized": 0
+            },
+            {
+              "id": "WPN_RELOAD_SILENT",
+              "frame": 0,
+              "durationFrames": 41,
+              "at": 0,
+              "duration": 1.3666666666666667,
+              "normalized": 0
+            },
+            {
+              "id": "WPN_RELOAD_LOOP",
+              "frame": 21,
+              "durationFrames": 18,
+              "at": 0.7,
+              "duration": 0.6,
+              "normalized": 0.403846
+            },
+            {
+              "id": "WPN_RELOAD_ADD_AMMO",
+              "frame": 31,
+              "durationFrames": 0,
+              "at": 1.0333333333333334,
+              "duration": 0,
+              "normalized": 0.596154
+            },
+            {
+              "id": "WPN_RELOAD_OUTRO",
+              "frame": 39,
+              "durationFrames": 13,
+              "at": 1.3,
+              "duration": 0.43333333333333335,
+              "normalized": 0.75
+            }
+          ],
+          "graphNodes": [
+            {
+              "name": "partial_mag_reload",
+              "clip": "animation/anims/viewmodel/rifle/rifle_xm1014/reload_xm1014.vnmclip_c",
+              "speed": 1
+            },
+            {
+              "name": "empty_mag_reload",
+              "clip": "animation/anims/viewmodel/rifle/rifle_xm1014/reload_xm1014.vnmclip_c",
+              "speed": 1
+            },
+            {
+              "name": "partial_mag_reload",
+              "clip": "animation/anims/viewmodel/rifle/rifle_xm1014/reload_xm1014.vnmclip_c",
+              "speed": 1
+            },
+            {
+              "name": "empty_mag_reload",
+              "clip": "animation/anims/viewmodel/rifle/rifle_xm1014/reload_xm1014.vnmclip_c",
+              "speed": 1
+            }
+          ],
+          "exportedSeconds": 1.7333333333333334,
+          "exportedBuild": "2000924"
+        }
+      }
+    },
+    "mag7": {
+      "attackLock": 2.5,
+      "singleShells": false,
+      "graph": "animation/graphs/viewmodel/viewmodel_gun.vnmgraph+mag7.vnmgraph_c",
+      "graphSha256": "0344438339512038e98d6f6d7b233e6fecabfa4c9e3c84ccb8949f7da1b82e7f",
+      "actions": {
+        "reload": {
+          "path": "animation/anims/viewmodel/rifle/rifle_mag7/reload_mag7.vnmclip_c",
+          "compiledSha256": "b50ecfdd8bc647611fdd0034b341d1feac957aad26f64a5fa264aa49984c2ad6",
+          "seconds": 2.466666666666667,
+          "fps": 30,
+          "frames": 75,
+          "events": [
+            {
+              "id": "WPN_RELOAD_SILENT",
+              "frame": 0,
+              "durationFrames": 59,
+              "at": 0,
+              "duration": 1.9666666666666666,
+              "normalized": 0
+            },
+            {
+              "id": "WPN_DROP_MAG",
+              "frame": 19,
+              "durationFrames": 0,
+              "at": 0.6333333333333333,
+              "duration": 0,
+              "normalized": 0.256757
+            },
+            {
+              "id": "WPN_RELOAD_ADD_AMMO",
+              "frame": 32,
+              "durationFrames": 0,
+              "at": 1.0666666666666667,
+              "duration": 0,
+              "normalized": 0.432432
+            }
+          ],
+          "graphNodes": [
+            {
+              "name": "partial_mag_reload",
+              "clip": "animation/anims/viewmodel/rifle/rifle_mag7/reload_mag7.vnmclip_c",
+              "speed": 1
+            },
+            {
+              "name": "empty_mag_reload",
+              "clip": "animation/anims/viewmodel/rifle/rifle_mag7/reload_mag7.vnmclip_c",
+              "speed": 1
+            },
+            {
+              "name": "partial_mag_reload",
+              "clip": "animation/anims/viewmodel/rifle/rifle_mag7/reload_mag7.vnmclip_c",
+              "speed": 1
+            },
+            {
+              "name": "empty_mag_reload",
+              "clip": "animation/anims/viewmodel/rifle/rifle_mag7/reload_mag7.vnmclip_c",
+              "speed": 1
+            }
+          ],
+          "exportedSeconds": 2.466666666666667,
+          "exportedBuild": "2000924"
+        }
+      }
+    },
+    "sawedoff": {
+      "attackLock": 0.466667,
+      "singleShells": true,
+      "graph": "animation/graphs/viewmodel/viewmodel_gun.vnmgraph+sawedoff.vnmgraph_c",
+      "graphSha256": "4b75ed972786b3bb0f9c300bafdc20c9dfd0e227acd5fc84c4d13c40c753b2a1",
+      "actions": {
+        "reload": {
+          "path": "animation/anims/viewmodel/rifle/rifle_sawedoff/reload_sawedoff.vnmclip_c",
+          "compiledSha256": "17221ae138c9df091568ad805e3066293ddd58fdeee8f3d3e80937a0d77ef5f7",
+          "seconds": 1.7333333333333334,
+          "fps": 30,
+          "frames": 53,
+          "events": [
+            {
+              "id": "WPN_RELOAD_INTRO",
+              "frame": 0,
+              "durationFrames": 12,
+              "at": 0,
+              "duration": 0.4,
+              "normalized": 0
+            },
+            {
+              "id": "WPN_RELOAD_SILENT",
+              "frame": 0,
+              "durationFrames": 43,
+              "at": 0,
+              "duration": 1.4333333333333333,
+              "normalized": 0
+            },
+            {
+              "id": "WPN_RELOAD_LOOP",
+              "frame": 12,
+              "durationFrames": 16,
+              "at": 0.4,
+              "duration": 0.5333333333333333,
+              "normalized": 0.230769
+            },
+            {
+              "id": "WPN_RELOAD_ADD_AMMO",
+              "frame": 20,
+              "durationFrames": 0,
+              "at": 0.6666666666666666,
+              "duration": 0,
+              "normalized": 0.384615
+            },
+            {
+              "id": "WPN_RELOAD_OUTRO",
+              "frame": 28,
+              "durationFrames": 24,
+              "at": 0.9333333333333333,
+              "duration": 0.8,
+              "normalized": 0.538462
+            }
+          ],
+          "graphNodes": [
+            {
+              "name": "partial_mag_reload",
+              "clip": "animation/anims/viewmodel/rifle/rifle_sawedoff/reload_sawedoff.vnmclip_c",
+              "speed": 1
+            },
+            {
+              "name": "empty_mag_reload",
+              "clip": "animation/anims/viewmodel/rifle/rifle_sawedoff/reload_sawedoff.vnmclip_c",
+              "speed": 1
+            },
+            {
+              "name": "partial_mag_reload",
+              "clip": "animation/anims/viewmodel/rifle/rifle_sawedoff/reload_sawedoff.vnmclip_c",
+              "speed": 1
+            },
+            {
+              "name": "empty_mag_reload",
+              "clip": "animation/anims/viewmodel/rifle/rifle_sawedoff/reload_sawedoff.vnmclip_c",
+              "speed": 1
+            }
+          ],
+          "exportedSeconds": 1.7333333333333334,
+          "exportedBuild": "2000924"
+        }
+      }
+    }
+  }
+}

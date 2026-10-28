@@ -1,0 +1,153 @@
+{
+  "build": "2000935",
+  "serverSha256": "2a229dd46c8af0b52c1f49a3e343b99d9ffe946c102c56102a45b00f6a52349c",
+  "codeRva": "0x3506bb..0x350783",
+  "method": "Offline x64 instruction emulation in Unicorn, not native DLL execution.",
+  "inputStubs": [
+    "0x187760 convar interval getter returns explicit fixture interval",
+    "0xcbad30 clock getter returns explicit fixture time"
+  ],
+  "nativeHelpers": [
+    "0x17e2c0 float comparison",
+    "0x1f8150 float subtraction",
+    "0x17b8c0 clamp"
+  ],
+  "excluded": "No world/entity logic, health loss, armor, team scaling, scheduler or gameplay execution. Timer duration/expiry are explicit fixture inputs.",
+  "cases": [
+    {
+      "age": 0.0,
+      "rampDuration": 2,
+      "rampExpiry": 2.0,
+      "dps": 40,
+      "interval": 0.20000000298023224,
+      "nativeRawDamage": 0.0,
+      "referenceRawDamage": 0.0
+    },
+    {
+      "age": 0.10000000149011612,
+      "rampDuration": 2,
+      "rampExpiry": 2.0,
+      "dps": 40,
+      "interval": 0.20000000298023224,
+      "nativeRawDamage": 0.40000009536743164,
+      "referenceRawDamage": 0.40000009536743164
+    },
+    {
+      "age": 0.20000000298023224,
+      "rampDuration": 2,
+      "rampExpiry": 2.0,
+      "dps": 40,
+      "interval": 0.20000000298023224,
+      "nativeRawDamage": 0.8000001907348633,
+      "referenceRawDamage": 0.8000001907348633
+    },
+    {
+      "age": 0.4000000059604645,
+      "rampDuration": 2,
+      "rampExpiry": 2.0,
+      "dps": 40,
+      "interval": 0.20000000298023224,
+      "nativeRawDamage": 1.5999999046325684,
+      "referenceRawDamage": 1.5999999046325684
+    },
+    {
+      "age": 0.6000000238418579,
+      "rampDuration": 2,
+      "rampExpiry": 2.0,
+      "dps": 40,
+      "interval": 0.20000000298023224,
+      "nativeRawDamage": 2.4000000953674316,
+      "referenceRawDamage": 2.4000000953674316
+    },
+    {
+      "age": 0.800000011920929,
+      "rampDuration": 2,
+      "rampExpiry": 2.0,
+      "dps": 40,
+      "interval": 0.20000000298023224,
+      "nativeRawDamage": 3.1999998092651367,
+      "referenceRawDamage": 3.1999998092651367
+    },
+    {
+      "age": 1.0,
+      "rampDuration": 2,
+      "rampExpiry": 2.0,
+      "dps": 40,
+      "interval": 0.20000000298023224,
+      "nativeRawDamage": 4.0,
+      "referenceRawDamage": 4.0
+    },
+    {
+      "age": 1.2000000476837158,
+      "rampDuration": 2,
+      "rampExpiry": 2.0,
+      "dps": 40,
+      "interval": 0.20000000298023224,
+      "nativeRawDamage": 4.800000190734863,
+      "referenceRawDamage": 4.800000190734863
+    },
+    {
+      "age": 1.399999976158142,
+      "rampDuration": 2,
+      "rampExpiry": 2.0,
+      "dps": 40,
+      "interval": 0.20000000298023224,
+      "nativeRawDamage": 5.599999904632568,
+      "referenceRawDamage": 5.599999904632568
+    },
+    {
+      "age": 1.600000023841858,
+      "rampDuration": 2,
+      "rampExpiry": 2.0,
+      "dps": 40,
+      "interval": 0.20000000298023224,
+      "nativeRawDamage": 6.400000095367432,
+      "referenceRawDamage": 6.400000095367432
+    },
+    {
+      "age": 1.7999999523162842,
+      "rampDuration": 2,
+      "rampExpiry": 2.0,
+      "dps": 40,
+      "interval": 0.20000000298023224,
+      "nativeRawDamage": 7.199999809265137,
+      "referenceRawDamage": 7.199999809265137
+    },
+    {
+      "age": 2.0,
+      "rampDuration": 2,
+      "rampExpiry": 2.0,
+      "dps": 40,
+      "interval": 0.20000000298023224,
+      "nativeRawDamage": 8.0,
+      "referenceRawDamage": 8.0
+    },
+    {
+      "age": 3.0,
+      "rampDuration": 2,
+      "rampExpiry": 2.0,
+      "dps": 40,
+      "interval": 0.20000000298023224,
+      "nativeRawDamage": 8.0,
+      "referenceRawDamage": 8.0
+    },
+    {
+      "age": 0.5,
+      "rampDuration": 1,
+      "rampExpiry": 1.0,
+      "dps": 40,
+      "interval": 0.20000000298023224,
+      "nativeRawDamage": 4.0,
+      "referenceRawDamage": 4.0
+    },
+    {
+      "age": 0.5,
+      "rampDuration": 0,
+      "rampExpiry": 0.0,
+      "dps": 40,
+      "interval": 0.20000000298023224,
+      "nativeRawDamage": 8.0,
+      "referenceRawDamage": 8.0
+    }
+  ]
+}

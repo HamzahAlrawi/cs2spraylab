@@ -146,4 +146,23 @@ describe('heuristic difficulty rebalance', () => {
       expect(samples.some(type => ['ferrari', 'jump', 'crouchWide'].includes(type))).toBe(false);
     }
   });
+
+  it('softens default/lower-mid acquisition modestly and retains the already gentler upper-mid calibration', () => {
+    // Dividing out the prior level-5 curve recovers this seed's identity factors.
+    const identity = {recognition: 319.24692254498706 / 260, motor: 212.20678219385204 / 220,
+      endpoint: .947337804719999, preaim: 2.652545853215997 / 2.8};
+    const before = createBotTraits(3, 17, 1);
+    expect(before.recognitionMedianMs / (310 * identity.recognition)).toBeCloseTo(1.08, 12);
+    expect(before.motorSettlingMs / (260 * identity.motor)).toBeCloseTo(1.08, 12);
+    expect(before.endpointErrorDegrees / (1.4 * identity.endpoint)).toBeCloseTo(1.12, 12);
+    expect(before.preaimErrorDegrees / (4.3 * identity.preaim)).toBeCloseTo(1.1, 12);
+    expect(createBotTraits(5, 17, 1).recognitionMedianMs / (319.24692254498706 * 1.08)).toBeCloseTo(1.12 / 1.08, 12);
+    for (const level of [7, 8, 9] as const) {
+      expect(createBotTraits(level, 17, 1).recognitionMedianMs).toBeLessThan(createBotTraits(5, 17, 1).recognitionMedianMs);
+    }
+    for (const level of [1, 2, 3] as const) {
+      const distribution = peekDistribution(level, 'ak47', {}, {shoulder: 100, prefire: 100, slice: 100});
+      expect(advanced.reduce((mass, type) => mass + distribution[type], 0)).toBe(0);
+    }
+  });
 });

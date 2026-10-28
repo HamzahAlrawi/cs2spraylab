@@ -1,0 +1,3719 @@
+{
+  "schema": 1,
+  "build": "2000935",
+  "extractor": {
+    "version": "20.1.7467+9e2e6c7f67e3c4e5a5f443a60c3a5d841ba8f304",
+    "sha256": "ef9f6fb3943c30b73f0991bce6654128727b0807968f7997a6bb014efbec8830",
+    "method": "Static archive extraction and ASCII inventory; no game execution, DLL loading, process access or disassembly."
+  },
+  "sources": {
+    "steam": {
+      "path": "game/csgo/steam.inf",
+      "sha256": "67bb5f38cdcfb57331eea7dbcf2d337f46ea6ed998d3482e2637f830f7210a06",
+      "bytes": 190
+    },
+    "archive": {
+      "path": "game/csgo/pak01_dir.vpk",
+      "sha256": "562972293ed7a5d40e341c4df7d6b0ee06430452694177142f0c1239dd3f2c8b",
+      "bytes": 7708830
+    },
+    "weapons": {
+      "path": "scripts/weapons.vdata_c",
+      "sha256": "879900e6af45204508b3c20a9d781b0e960684111b848b7ae5c26b438fc6ff19",
+      "bytes": 26903,
+      "archive": "archive",
+      "extractedPath": "research/utility-presentation/native-rules/scripts/weapons.vdata_c",
+      "decodedSha256": "cc04aa26fd8d4a34119df7c4b7f4f29c7ebe0c7862ce78e0a2a753642502ba0a",
+      "decodedPath": "research/utility-presentation/native-rules/scripts/weapons.vdata"
+    },
+    "explosions": {
+      "path": "scripts/explosion_types.vdata_c",
+      "sha256": "0ef413f617d7296c1a5c90905235361792ee5baad9de32a43fae046bdb108157",
+      "bytes": 2411,
+      "archive": "archive",
+      "extractedPath": "research/utility-presentation/native-rules/scripts/explosion_types.vdata_c",
+      "decodedSha256": "802f4e22a1f2461456a1150cd0735ce2ac70cb1063dc08f6fbfa2996fcfa0431",
+      "decodedPath": "research/utility-presentation/native-rules/scripts/explosion_types.vdata"
+    },
+    "gameModes": {
+      "path": "gamemodes.txt",
+      "sha256": "b673982b2248d594ed729812fb4d06cdc04dbc7b6de7ec0fddb7399198434edc",
+      "bytes": 198901,
+      "archive": "archive",
+      "extractedPath": "research/utility-presentation/native-rules/gamemodes.txt"
+    },
+    "cfg:gamemode_armsrace.cfg": {
+      "path": "game/csgo/cfg/gamemode_armsrace.cfg",
+      "sha256": "10ddcc39f535763e1b6daf5720f1713438194c2b717d89e7884f711c4566b143",
+      "bytes": 4337,
+      "extractedPath": "research/utility-presentation/native-rules/cfg/gamemode_armsrace.cfg"
+    },
+    "cfg:gamemode_casual.cfg": {
+      "path": "game/csgo/cfg/gamemode_casual.cfg",
+      "sha256": "5bac36be7536c4f4505ee576ea789d9bfd3c7d679ec3f53c7aa13109894c8a25",
+      "bytes": 4545,
+      "extractedPath": "research/utility-presentation/native-rules/cfg/gamemode_casual.cfg"
+    },
+    "cfg:gamemode_competitive.cfg": {
+      "path": "game/csgo/cfg/gamemode_competitive.cfg",
+      "sha256": "925ab200b3b3ea50e7d607d1e5d86e057816faa9c25ed39dd1ca6a61b2fd888d",
+      "bytes": 4472,
+      "extractedPath": "research/utility-presentation/native-rules/cfg/gamemode_competitive.cfg"
+    },
+    "cfg:gamemode_competitive2v2.cfg": {
+      "path": "game/csgo/cfg/gamemode_competitive2v2.cfg",
+      "sha256": "60d7055e3f8d0fc14ba76948a099af3a864bd1e9fbb4938e0b19657cde59d3f4",
+      "bytes": 4411,
+      "extractedPath": "research/utility-presentation/native-rules/cfg/gamemode_competitive2v2.cfg"
+    },
+    "cfg:gamemode_competitive2v2_offline.cfg": {
+      "path": "game/csgo/cfg/gamemode_competitive2v2_offline.cfg",
+      "sha256": "b1c6a85b21b88e595f72bbda1ba299a7dc97c0b8501ba9e2e5eb18426b2232bf",
+      "bytes": 132,
+      "extractedPath": "research/utility-presentation/native-rules/cfg/gamemode_competitive2v2_offline.cfg"
+    },
+    "cfg:gamemode_competitive_offline.cfg": {
+      "path": "game/csgo/cfg/gamemode_competitive_offline.cfg",
+      "sha256": "d2fc0b60049b88905aa1202a8cf6193f7c0fa4d22325fccd94d35d6bd3f7df1a",
+      "bytes": 135,
+      "extractedPath": "research/utility-presentation/native-rules/cfg/gamemode_competitive_offline.cfg"
+    },
+    "cfg:gamemode_competitive_short.cfg": {
+      "path": "game/csgo/cfg/gamemode_competitive_short.cfg",
+      "sha256": "399a51909892062f0ee02d9dee830b3c1d4fa5ac16a903c185571b60183ee2f7",
+      "bytes": 91,
+      "extractedPath": "research/utility-presentation/native-rules/cfg/gamemode_competitive_short.cfg"
+    },
+    "cfg:gamemode_competitive_tmm.cfg": {
+      "path": "game/csgo/cfg/gamemode_competitive_tmm.cfg",
+      "sha256": "e4f77dfcc7c327996acbd101231a31e41b6b61ab6c1a65f1d1cdf6cd9e6d6a3c",
+      "bytes": 755,
+      "extractedPath": "research/utility-presentation/native-rules/cfg/gamemode_competitive_tmm.cfg"
+    },
+    "cfg:gamemode_cooperative.cfg": {
+      "path": "game/csgo/cfg/gamemode_cooperative.cfg",
+      "sha256": "aa3b9b616cf535f7e1a7d0ce815eed562cba81bc935b50df7bee65154e1be25f",
+      "bytes": 1979,
+      "extractedPath": "research/utility-presentation/native-rules/cfg/gamemode_cooperative.cfg"
+    },
+    "cfg:gamemode_coopmission.cfg": {
+      "path": "game/csgo/cfg/gamemode_coopmission.cfg",
+      "sha256": "332fcd4767700cf50b3de6c954e3bfa46163a3a486093931944a24d0f7da7729",
+      "bytes": 3653,
+      "extractedPath": "research/utility-presentation/native-rules/cfg/gamemode_coopmission.cfg"
+    },
+    "cfg:gamemode_custom.cfg": {
+      "path": "game/csgo/cfg/gamemode_custom.cfg",
+      "sha256": "e9389fa7997f0901d01feafca4a1e568a11009a62925ae9edcd1d5a00c7d914d",
+      "bytes": 64,
+      "extractedPath": "research/utility-presentation/native-rules/cfg/gamemode_custom.cfg"
+    },
+    "cfg:gamemode_deathmatch.cfg": {
+      "path": "game/csgo/cfg/gamemode_deathmatch.cfg",
+      "sha256": "851d4b06b5f8166b0f265eaf7ab1e1fa99bb6a66d25193eea58f181383ac5664",
+      "bytes": 4544,
+      "extractedPath": "research/utility-presentation/native-rules/cfg/gamemode_deathmatch.cfg"
+    },
+    "cfg:gamemode_deathmatch_short.cfg": {
+      "path": "game/csgo/cfg/gamemode_deathmatch_short.cfg",
+      "sha256": "d6ed0265e02a12ae475b17e7099b228da6b84eba42360f1ddf09721b59359402",
+      "bytes": 232,
+      "extractedPath": "research/utility-presentation/native-rules/cfg/gamemode_deathmatch_short.cfg"
+    },
+    "cfg:gamemode_deathmatch_tmm.cfg": {
+      "path": "game/csgo/cfg/gamemode_deathmatch_tmm.cfg",
+      "sha256": "6e981c60cfcbb3dadba4154ef82f0fadb046603289e845edcc3f0c9ca628b68c",
+      "bytes": 778,
+      "extractedPath": "research/utility-presentation/native-rules/cfg/gamemode_deathmatch_tmm.cfg"
+    },
+    "cfg:gamemode_demolition.cfg": {
+      "path": "game/csgo/cfg/gamemode_demolition.cfg",
+      "sha256": "c01588e3274d8a569130f9069785f9eb8c57f96f2196efa2a19742af3e18ac18",
+      "bytes": 3870,
+      "extractedPath": "research/utility-presentation/native-rules/cfg/gamemode_demolition.cfg"
+    },
+    "cfg:gamemode_dm_freeforall.cfg": {
+      "path": "game/csgo/cfg/gamemode_dm_freeforall.cfg",
+      "sha256": "ae3f1ff45fb4eec3bf04f66f2e8fbd94eb42354ef496b0322ed3602e0e914022",
+      "bytes": 4165,
+      "extractedPath": "research/utility-presentation/native-rules/cfg/gamemode_dm_freeforall.cfg"
+    },
+    "cfg:gamemode_new_user_training.cfg": {
+      "path": "game/csgo/cfg/gamemode_new_user_training.cfg",
+      "sha256": "7a1879aade269e7cbca78135a91c76970c572ebe903ec6a342e6d2ff410ba2d1",
+      "bytes": 510,
+      "extractedPath": "research/utility-presentation/native-rules/cfg/gamemode_new_user_training.cfg"
+    },
+    "cfg:gamemode_retakecasual.cfg": {
+      "path": "game/csgo/cfg/gamemode_retakecasual.cfg",
+      "sha256": "864ed6645dd628b01b7f94b3465d48349e3ff4fb6ec82c6bf787544094b73bf1",
+      "bytes": 4243,
+      "extractedPath": "research/utility-presentation/native-rules/cfg/gamemode_retakecasual.cfg"
+    },
+    "cfg:gamemode_rush.cfg": {
+      "path": "game/csgo/cfg/gamemode_rush.cfg",
+      "sha256": "debbd15bcb458931171dc538457b8488435fe2ad1123a10d0412e5f1ef0ef5a5",
+      "bytes": 4865,
+      "extractedPath": "research/utility-presentation/native-rules/cfg/gamemode_rush.cfg"
+    },
+    "cfg:gamemode_rush_offline.cfg": {
+      "path": "game/csgo/cfg/gamemode_rush_offline.cfg",
+      "sha256": "8efb7c6df5dda84619dedc311e5d2594c68fe7eb4bd567da99cccf303442630e",
+      "bytes": 132,
+      "extractedPath": "research/utility-presentation/native-rules/cfg/gamemode_rush_offline.cfg"
+    },
+    "cfg:gamemode_teamdeathmatch.cfg": {
+      "path": "game/csgo/cfg/gamemode_teamdeathmatch.cfg",
+      "sha256": "3195df6ad9a4b717237ba34a51c1f10c02ebc27d5eb8e53cf113ceb22d25c232",
+      "bytes": 3884,
+      "extractedPath": "research/utility-presentation/native-rules/cfg/gamemode_teamdeathmatch.cfg"
+    },
+    "cfg:gamemode_workshop.cfg": {
+      "path": "game/csgo/cfg/gamemode_workshop.cfg",
+      "sha256": "ab76df26c09d7ce2201a5fc76d96ade8a7a02a3218ee247f4781619a54a5b6a7",
+      "bytes": 4009,
+      "extractedPath": "research/utility-presentation/native-rules/cfg/gamemode_workshop.cfg"
+    },
+    "cfg:server.cfg": {
+      "path": "game/csgo/cfg/server.cfg",
+      "sha256": "0bdec3e7ad4d5aabef744bb11aa2cfd980ed85daf656eb1d263b63bfb5ee4e31",
+      "bytes": 33,
+      "extractedPath": "research/utility-presentation/native-rules/cfg/server.cfg"
+    },
+    "cfg:server_default.cfg": {
+      "path": "game/csgo/cfg/server_default.cfg",
+      "sha256": "a84e4a9a6c338620872c5da8f014f562b8637592d0964c7d62a458ba684e0951",
+      "bytes": 370,
+      "extractedPath": "research/utility-presentation/native-rules/cfg/server_default.cfg"
+    },
+    "server": {
+      "path": "game/csgo/bin/win64/server.dll",
+      "sha256": "2a229dd46c8af0b52c1f49a3e343b99d9ffe946c102c56102a45b00f6a52349c",
+      "bytes": 34687128
+    },
+    "client": {
+      "path": "game/csgo/bin/win64/client.dll",
+      "sha256": "ccaf4e4926babc052994502b19ec61198a11008a39dce712921b93dd993be9f5",
+      "bytes": 39215768
+    },
+    "gameinfo:core": {
+      "path": "game/core/gameinfo.gi",
+      "sha256": "5b9c606fbd4d665b99e1f10d38646b7fd21eb6643b0e06f3ba05ac87b3ec729f",
+      "bytes": 2474
+    },
+    "gameinfo:csgo": {
+      "path": "game/csgo/gameinfo.gi",
+      "sha256": "bfcb4f966b63cd19bfc22bc6d5e82a0e31d69e2631f7a8bd0355db16b8c0d930",
+      "bytes": 26056
+    }
+  },
+  "weapons": {
+    "he": {
+      "source": "weapons",
+      "key": "weapon_hegrenade",
+      "fields": {
+        "_class": "weapon_hegrenade",
+        "taxonomy": {
+          "weapon": true,
+          "self_damage_on_miss__inflicts_damage": true,
+          "grenade": true,
+          "grenade_he": true
+        },
+        "m_nKillAward": 300,
+        "m_nDamage": 99,
+        "m_iMaxClip1": 0,
+        "m_iMaxClip2": 0,
+        "m_iDefaultClip1": 1,
+        "m_iDefaultClip2": 1,
+        "m_bAllowFlipping": true,
+        "m_bBuiltRightHanded": true,
+        "m_bIsFullAuto": false,
+        "m_nNumBullets": 1,
+        "m_bMeleeWeapon": false,
+        "m_iWeight": 2,
+        "m_iRumbleEffect": -1,
+        "m_nPrimaryReserveAmmoMax": 0,
+        "m_nSecondaryReserveAmmoMax": 0,
+        "m_flInaccuracyJumpInitial": 0,
+        "m_flInaccuracyJumpApex": 0,
+        "m_flInaccuracyReload": 0,
+        "m_flDeployDuration": 1,
+        "m_flDisallowAttackAfterReloadStartDuration": 5,
+        "m_nSpreadSeed": 0,
+        "m_flRecoveryTimeCrouch": 1,
+        "m_flRecoveryTimeStand": 1,
+        "m_flRecoveryTimeCrouchFinal": -1,
+        "m_flRecoveryTimeStandFinal": -1,
+        "m_nRecoveryTransitionStartBullet": 0,
+        "m_nRecoveryTransitionEndBullet": 0,
+        "m_flHeadshotMultiplier": 4,
+        "m_flArmorRatio": 1.2,
+        "m_flPenetration": 1,
+        "m_flFlinchVelocityModifierLarge": 0.3,
+        "m_flFlinchVelocityModifierSmall": 0.1,
+        "m_flRange": 350,
+        "m_flRangeModifier": 0.99,
+        "m_eSilencerType": "WEAPONSILENCER_NONE",
+        "m_flAttackMovespeedFactor": 1,
+        "m_bUnzoomsAfterShot": false,
+        "m_bHideViewModelWhenZoomed": false,
+        "m_nZoomLevels": 0,
+        "m_nZoomFOV1": 90,
+        "m_nZoomFOV2": 90,
+        "m_flZoomTime0": 0,
+        "m_flZoomTime1": 0,
+        "m_flZoomTime2": 0,
+        "m_flInaccuracyPitchShift": 0,
+        "m_flInaccuracyAltSoundThreshold": 0,
+        "m_bHasBurstMode": false,
+        "m_bIsRevolver": false,
+        "m_bCannotShootUnderwater": false,
+        "m_flCycleTime": [
+          0.15,
+          0.3
+        ],
+        "m_flCycleTimeWhenInBurstMode": 0,
+        "m_flTimeBetweenBurstShots": 0,
+        "m_flMaxSpeed": [
+          245,
+          245
+        ],
+        "m_flSpread": [
+          0,
+          0
+        ],
+        "m_flInaccuracyCrouch": [
+          0,
+          0
+        ],
+        "m_flInaccuracyStand": [
+          0,
+          0
+        ],
+        "m_flInaccuracyJump": [
+          0,
+          0
+        ],
+        "m_flInaccuracyLand": [
+          0,
+          0
+        ],
+        "m_flInaccuracyLadder": [
+          0,
+          0
+        ],
+        "m_flInaccuracyFire": [
+          0,
+          0
+        ],
+        "m_flInaccuracyMove": [
+          0,
+          0
+        ],
+        "m_flRecoilAngle": [
+          0,
+          0
+        ],
+        "m_flRecoilAngleVariance": [
+          0,
+          0
+        ],
+        "m_flRecoilMagnitude": [
+          0,
+          0
+        ],
+        "m_flRecoilMagnitudeVariance": [
+          0,
+          0
+        ],
+        "m_nTracerFrequency": 0,
+        "m_bAutoSwitchFrom": true,
+        "m_bAutoSwitchTo": true,
+        "_base": "grenade",
+        "m_GearSlot": "GEAR_SLOT_GRENADES",
+        "m_WeaponType": "WEAPONTYPE_GRENADE",
+        "m_aShootSounds": {
+          "WEAPON_SOUND_RADIO_USE": "Radio.FireInTheHole"
+        },
+        "m_szUseRadioSubtitle": "#SFUI_TitlesTXT_Fire_in_the_hole",
+        "m_GearSlotPosition": 0,
+        "m_DefaultLoadoutPosition": "LOADOUT_POSITION_GRENADE3",
+        "m_szName": "weapon_hegrenade",
+        "m_szWorldModel": "weapons/models/grenade/hegrenade/weapon_hegrenade.vmdl",
+        "m_nPrimaryAmmoType": "AMMO_TYPE_HEGRENADE",
+        "m_nPrice": 300,
+        "m_nRecoilSeed": 52132,
+        "m_flThrowVelocity": 750,
+        "m_flDroppedModelScale": 1.4,
+        "m_iFlags": "ITEM_FLAG_EXHAUSTIBLE",
+        "m_szAnimSkeleton": "animation/skeletons/weapons/hegrenade.vnmskel"
+      }
+    },
+    "flash": {
+      "source": "weapons",
+      "key": "weapon_flashbang",
+      "fields": {
+        "_class": "weapon_flashbang",
+        "taxonomy": {
+          "weapon": true,
+          "self_damage_on_miss__inflicts_damage": true,
+          "grenade": true,
+          "grenade_flash": true
+        },
+        "m_nKillAward": 300,
+        "m_nDamage": 50,
+        "m_iMaxClip1": 0,
+        "m_iMaxClip2": 0,
+        "m_iDefaultClip1": 1,
+        "m_iDefaultClip2": 1,
+        "m_bAllowFlipping": true,
+        "m_bBuiltRightHanded": true,
+        "m_bIsFullAuto": false,
+        "m_nNumBullets": 1,
+        "m_bMeleeWeapon": false,
+        "m_iWeight": 1,
+        "m_iRumbleEffect": -1,
+        "m_nPrimaryReserveAmmoMax": 0,
+        "m_nSecondaryReserveAmmoMax": 0,
+        "m_flInaccuracyJumpInitial": 0,
+        "m_flInaccuracyJumpApex": 0,
+        "m_flInaccuracyReload": 0,
+        "m_flDeployDuration": 1,
+        "m_flDisallowAttackAfterReloadStartDuration": 5,
+        "m_nSpreadSeed": 0,
+        "m_flRecoveryTimeCrouch": 1,
+        "m_flRecoveryTimeStand": 1,
+        "m_flRecoveryTimeCrouchFinal": -1,
+        "m_flRecoveryTimeStandFinal": -1,
+        "m_nRecoveryTransitionStartBullet": 0,
+        "m_nRecoveryTransitionEndBullet": 0,
+        "m_flHeadshotMultiplier": 4,
+        "m_flArmorRatio": 1,
+        "m_flPenetration": 1,
+        "m_flFlinchVelocityModifierLarge": 1,
+        "m_flFlinchVelocityModifierSmall": 1,
+        "m_flRange": 4096,
+        "m_flRangeModifier": 0.99,
+        "m_eSilencerType": "WEAPONSILENCER_NONE",
+        "m_flAttackMovespeedFactor": 1,
+        "m_bUnzoomsAfterShot": false,
+        "m_bHideViewModelWhenZoomed": false,
+        "m_nZoomLevels": 0,
+        "m_nZoomFOV1": 90,
+        "m_nZoomFOV2": 90,
+        "m_flZoomTime0": 0,
+        "m_flZoomTime1": 0,
+        "m_flZoomTime2": 0,
+        "m_flInaccuracyPitchShift": 0,
+        "m_flInaccuracyAltSoundThreshold": 0,
+        "m_bHasBurstMode": false,
+        "m_bIsRevolver": false,
+        "m_bCannotShootUnderwater": false,
+        "m_flCycleTime": [
+          0.15,
+          0.3
+        ],
+        "m_flCycleTimeWhenInBurstMode": 0,
+        "m_flTimeBetweenBurstShots": 0,
+        "m_flMaxSpeed": [
+          245,
+          245
+        ],
+        "m_flSpread": [
+          0,
+          0
+        ],
+        "m_flInaccuracyCrouch": [
+          0,
+          0
+        ],
+        "m_flInaccuracyStand": [
+          0,
+          0
+        ],
+        "m_flInaccuracyJump": [
+          0,
+          0
+        ],
+        "m_flInaccuracyLand": [
+          0,
+          0
+        ],
+        "m_flInaccuracyLadder": [
+          0,
+          0
+        ],
+        "m_flInaccuracyFire": [
+          0,
+          0
+        ],
+        "m_flInaccuracyMove": [
+          0,
+          0
+        ],
+        "m_flRecoilAngle": [
+          0,
+          0
+        ],
+        "m_flRecoilAngleVariance": [
+          0,
+          0
+        ],
+        "m_flRecoilMagnitude": [
+          0,
+          0
+        ],
+        "m_flRecoilMagnitudeVariance": [
+          0,
+          0
+        ],
+        "m_nTracerFrequency": 0,
+        "m_bAutoSwitchFrom": true,
+        "m_bAutoSwitchTo": true,
+        "_base": "grenade",
+        "m_GearSlot": "GEAR_SLOT_GRENADES",
+        "m_WeaponType": "WEAPONTYPE_GRENADE",
+        "m_aShootSounds": {
+          "WEAPON_SOUND_RADIO_USE": "Radio.Flashbang",
+          "WEAPON_SOUND_NEARLYEMPTY": "Default.nearlyempty"
+        },
+        "m_szUseRadioSubtitle": "#SFUI_TitlesTXT_Flashbang_in_the_hole",
+        "m_GearSlotPosition": 1,
+        "m_DefaultLoadoutPosition": "LOADOUT_POSITION_GRENADE2",
+        "m_szName": "weapon_flashbang",
+        "m_szWorldModel": "weapons/models/grenade/flashbang/weapon_flashbang.vmdl",
+        "m_nPrimaryAmmoType": "AMMO_TYPE_FLASHBANG",
+        "m_nPrice": 200,
+        "m_flThrowVelocity": 750,
+        "m_flDroppedModelScale": 1.6,
+        "m_iFlags": "ITEM_FLAG_EXHAUSTIBLE",
+        "m_szAnimSkeleton": "animation/skeletons/weapons/flashbang.vnmskel"
+      }
+    },
+    "smoke": {
+      "source": "weapons",
+      "key": "weapon_smokegrenade",
+      "fields": {
+        "_class": "weapon_smokegrenade",
+        "taxonomy": {
+          "weapon": true,
+          "self_damage_on_miss__inflicts_damage": true,
+          "grenade": true,
+          "grenade_smoke": true
+        },
+        "m_nKillAward": 300,
+        "m_nDamage": 50,
+        "m_iMaxClip1": 0,
+        "m_iMaxClip2": 0,
+        "m_iDefaultClip1": 1,
+        "m_iDefaultClip2": 1,
+        "m_bAllowFlipping": true,
+        "m_bBuiltRightHanded": true,
+        "m_bIsFullAuto": false,
+        "m_nNumBullets": 1,
+        "m_bMeleeWeapon": false,
+        "m_iWeight": 2,
+        "m_iRumbleEffect": -1,
+        "m_nPrimaryReserveAmmoMax": 0,
+        "m_nSecondaryReserveAmmoMax": 0,
+        "m_flInaccuracyJumpInitial": 0,
+        "m_flInaccuracyJumpApex": 0,
+        "m_flInaccuracyReload": 0,
+        "m_flDeployDuration": 1,
+        "m_flDisallowAttackAfterReloadStartDuration": 5,
+        "m_nSpreadSeed": 0,
+        "m_flRecoveryTimeCrouch": 1,
+        "m_flRecoveryTimeStand": 1,
+        "m_flRecoveryTimeCrouchFinal": -1,
+        "m_flRecoveryTimeStandFinal": -1,
+        "m_nRecoveryTransitionStartBullet": 0,
+        "m_nRecoveryTransitionEndBullet": 0,
+        "m_flHeadshotMultiplier": 4,
+        "m_flArmorRatio": 1,
+        "m_flPenetration": 0,
+        "m_flFlinchVelocityModifierLarge": 1,
+        "m_flFlinchVelocityModifierSmall": 1,
+        "m_flRange": 4096,
+        "m_flRangeModifier": 0.99,
+        "m_eSilencerType": "WEAPONSILENCER_NONE",
+        "m_flAttackMovespeedFactor": 1,
+        "m_bUnzoomsAfterShot": false,
+        "m_bHideViewModelWhenZoomed": false,
+        "m_nZoomLevels": 0,
+        "m_nZoomFOV1": 90,
+        "m_nZoomFOV2": 90,
+        "m_flZoomTime0": 0,
+        "m_flZoomTime1": 0,
+        "m_flZoomTime2": 0,
+        "m_flInaccuracyPitchShift": 0,
+        "m_flInaccuracyAltSoundThreshold": 0,
+        "m_bHasBurstMode": false,
+        "m_bIsRevolver": false,
+        "m_bCannotShootUnderwater": false,
+        "m_flCycleTime": [
+          0.15,
+          0.3
+        ],
+        "m_flCycleTimeWhenInBurstMode": 0,
+        "m_flTimeBetweenBurstShots": 0,
+        "m_flMaxSpeed": [
+          245,
+          245
+        ],
+        "m_flSpread": [
+          0,
+          0
+        ],
+        "m_flInaccuracyCrouch": [
+          0,
+          0
+        ],
+        "m_flInaccuracyStand": [
+          0,
+          0
+        ],
+        "m_flInaccuracyJump": [
+          0,
+          0
+        ],
+        "m_flInaccuracyLand": [
+          0,
+          0
+        ],
+        "m_flInaccuracyLadder": [
+          0,
+          0
+        ],
+        "m_flInaccuracyFire": [
+          0,
+          0
+        ],
+        "m_flInaccuracyMove": [
+          0,
+          0
+        ],
+        "m_flRecoilAngle": [
+          0,
+          0
+        ],
+        "m_flRecoilAngleVariance": [
+          0,
+          0
+        ],
+        "m_flRecoilMagnitude": [
+          0,
+          0
+        ],
+        "m_flRecoilMagnitudeVariance": [
+          0,
+          0
+        ],
+        "m_nTracerFrequency": 0,
+        "m_bAutoSwitchFrom": true,
+        "m_bAutoSwitchTo": true,
+        "_base": "grenade",
+        "m_GearSlot": "GEAR_SLOT_GRENADES",
+        "m_WeaponType": "WEAPONTYPE_GRENADE",
+        "m_aShootSounds": {
+          "WEAPON_SOUND_RADIO_USE": "Radio.Smoke"
+        },
+        "m_szUseRadioSubtitle": "#SFUI_TitlesTXT_Smoke_in_the_hole",
+        "m_GearSlotPosition": 2,
+        "m_DefaultLoadoutPosition": "LOADOUT_POSITION_GRENADE4",
+        "m_szName": "weapon_smokegrenade",
+        "m_szWorldModel": "weapons/models/grenade/smokegrenade/weapon_smokegrenade.vmdl",
+        "m_nPrimaryAmmoType": "AMMO_TYPE_SMOKEGRENADE",
+        "m_vSmokeColor": [
+          0,
+          0.8,
+          0
+        ],
+        "m_nPrice": 300,
+        "m_flThrowVelocity": 750,
+        "m_flDroppedModelScale": 1.7,
+        "m_iFlags": "ITEM_FLAG_EXHAUSTIBLE",
+        "m_szAnimSkeleton": "animation/skeletons/weapons/smokegrenade.vnmskel"
+      }
+    },
+    "molotov": {
+      "source": "weapons",
+      "key": "weapon_molotov",
+      "fields": {
+        "_class": "weapon_molotov",
+        "taxonomy": {
+          "weapon": true,
+          "self_damage_on_miss__inflicts_damage": true,
+          "grenade": true,
+          "burns_on_contact": true,
+          "grenade_fire": true
+        },
+        "m_nKillAward": 300,
+        "m_nDamage": 40,
+        "m_iMaxClip1": 0,
+        "m_iMaxClip2": 0,
+        "m_iDefaultClip1": 1,
+        "m_iDefaultClip2": 1,
+        "m_bAllowFlipping": true,
+        "m_bBuiltRightHanded": true,
+        "m_bIsFullAuto": false,
+        "m_nNumBullets": 1,
+        "m_bMeleeWeapon": false,
+        "m_iWeight": 2,
+        "m_iRumbleEffect": -1,
+        "m_nPrimaryReserveAmmoMax": 0,
+        "m_nSecondaryReserveAmmoMax": 0,
+        "m_flInaccuracyJumpInitial": 0,
+        "m_flInaccuracyJumpApex": 0,
+        "m_flInaccuracyReload": 0,
+        "m_flDeployDuration": 1,
+        "m_flDisallowAttackAfterReloadStartDuration": 5,
+        "m_nSpreadSeed": 0,
+        "m_flRecoveryTimeCrouch": 1,
+        "m_flRecoveryTimeStand": 1,
+        "m_flRecoveryTimeCrouchFinal": -1,
+        "m_flRecoveryTimeStandFinal": -1,
+        "m_nRecoveryTransitionStartBullet": 0,
+        "m_nRecoveryTransitionEndBullet": 0,
+        "m_flHeadshotMultiplier": 4,
+        "m_flArmorRatio": 1.8,
+        "m_flPenetration": 1,
+        "m_flFlinchVelocityModifierLarge": 1,
+        "m_flFlinchVelocityModifierSmall": 1,
+        "m_flRange": 4096,
+        "m_flRangeModifier": 0.99,
+        "m_eSilencerType": "WEAPONSILENCER_NONE",
+        "m_flAttackMovespeedFactor": 1,
+        "m_bUnzoomsAfterShot": false,
+        "m_bHideViewModelWhenZoomed": false,
+        "m_nZoomLevels": 0,
+        "m_nZoomFOV1": 90,
+        "m_nZoomFOV2": 90,
+        "m_flZoomTime0": 0,
+        "m_flZoomTime1": 0,
+        "m_flZoomTime2": 0,
+        "m_flInaccuracyPitchShift": 0,
+        "m_flInaccuracyAltSoundThreshold": 0,
+        "m_bHasBurstMode": false,
+        "m_bIsRevolver": false,
+        "m_bCannotShootUnderwater": false,
+        "m_flCycleTime": [
+          0.15,
+          0.3
+        ],
+        "m_flCycleTimeWhenInBurstMode": 0,
+        "m_flTimeBetweenBurstShots": 0,
+        "m_flMaxSpeed": [
+          245,
+          245
+        ],
+        "m_flSpread": [
+          0,
+          0
+        ],
+        "m_flInaccuracyCrouch": [
+          0,
+          0
+        ],
+        "m_flInaccuracyStand": [
+          0,
+          0
+        ],
+        "m_flInaccuracyJump": [
+          0,
+          0
+        ],
+        "m_flInaccuracyLand": [
+          0,
+          0
+        ],
+        "m_flInaccuracyLadder": [
+          0,
+          0
+        ],
+        "m_flInaccuracyFire": [
+          0,
+          0
+        ],
+        "m_flInaccuracyMove": [
+          0,
+          0
+        ],
+        "m_flRecoilAngle": [
+          0,
+          0
+        ],
+        "m_flRecoilAngleVariance": [
+          0,
+          0
+        ],
+        "m_flRecoilMagnitude": [
+          0,
+          0
+        ],
+        "m_flRecoilMagnitudeVariance": [
+          0,
+          0
+        ],
+        "m_nTracerFrequency": 0,
+        "m_bAutoSwitchFrom": true,
+        "m_bAutoSwitchTo": true,
+        "_base": "grenade",
+        "m_GearSlot": "GEAR_SLOT_GRENADES",
+        "m_WeaponType": "WEAPONTYPE_GRENADE",
+        "m_aShootSounds": {
+          "WEAPON_SOUND_RADIO_USE": "Radio.Molotov",
+          "WEAPON_SOUND_NEARLYEMPTY": "Default.nearlyempty"
+        },
+        "m_szUseRadioSubtitle": "#SFUI_TitlesTXT_Molotov_in_the_hole",
+        "m_GearSlotPosition": 4,
+        "m_DefaultLoadoutPosition": "LOADOUT_POSITION_FIRST_WHEEL_GRENADE",
+        "m_szName": "weapon_molotov",
+        "m_szWorldModel": "weapons/models/grenade/molotov/weapon_molotov.vmdl",
+        "m_nPrimaryAmmoType": "AMMO_TYPE_MOLOTOV",
+        "m_nPrice": 400,
+        "m_flThrowVelocity": 750,
+        "m_iFlags": "ITEM_FLAG_EXHAUSTIBLE",
+        "m_szAnimSkeleton": "animation/skeletons/weapons/molotov.vnmskel"
+      }
+    },
+    "incendiary": {
+      "source": "weapons",
+      "key": "weapon_incgrenade",
+      "fields": {
+        "_class": "weapon_incgrenade",
+        "taxonomy": {
+          "weapon": true,
+          "self_damage_on_miss__inflicts_damage": true,
+          "grenade": true,
+          "burns_on_contact": true,
+          "grenade_fire": true
+        },
+        "m_nKillAward": 300,
+        "m_nDamage": 40,
+        "m_iMaxClip1": 0,
+        "m_iMaxClip2": 0,
+        "m_iDefaultClip1": 1,
+        "m_iDefaultClip2": 1,
+        "m_bAllowFlipping": true,
+        "m_bBuiltRightHanded": true,
+        "m_bIsFullAuto": false,
+        "m_nNumBullets": 1,
+        "m_bMeleeWeapon": false,
+        "m_iWeight": 2,
+        "m_iRumbleEffect": -1,
+        "m_nPrimaryReserveAmmoMax": 0,
+        "m_nSecondaryReserveAmmoMax": 0,
+        "m_flInaccuracyJumpInitial": 0,
+        "m_flInaccuracyJumpApex": 0,
+        "m_flInaccuracyReload": 0,
+        "m_flDeployDuration": 1,
+        "m_flDisallowAttackAfterReloadStartDuration": 5,
+        "m_nSpreadSeed": 0,
+        "m_flRecoveryTimeCrouch": 1,
+        "m_flRecoveryTimeStand": 1,
+        "m_flRecoveryTimeCrouchFinal": -1,
+        "m_flRecoveryTimeStandFinal": -1,
+        "m_nRecoveryTransitionStartBullet": 0,
+        "m_nRecoveryTransitionEndBullet": 0,
+        "m_flHeadshotMultiplier": 4,
+        "m_flArmorRatio": 1.475,
+        "m_flPenetration": 1,
+        "m_flFlinchVelocityModifierLarge": 0.7,
+        "m_flFlinchVelocityModifierSmall": 0.8,
+        "m_flRange": 4096,
+        "m_flRangeModifier": 0.99,
+        "m_eSilencerType": "WEAPONSILENCER_NONE",
+        "m_flAttackMovespeedFactor": 1,
+        "m_bUnzoomsAfterShot": false,
+        "m_bHideViewModelWhenZoomed": false,
+        "m_nZoomLevels": 0,
+        "m_nZoomFOV1": 90,
+        "m_nZoomFOV2": 90,
+        "m_flZoomTime0": 0,
+        "m_flZoomTime1": 0,
+        "m_flZoomTime2": 0,
+        "m_flInaccuracyPitchShift": 0,
+        "m_flInaccuracyAltSoundThreshold": 0,
+        "m_bHasBurstMode": false,
+        "m_bIsRevolver": false,
+        "m_bCannotShootUnderwater": false,
+        "m_flCycleTime": [
+          0.15,
+          0.3
+        ],
+        "m_flCycleTimeWhenInBurstMode": 0,
+        "m_flTimeBetweenBurstShots": 0,
+        "m_flMaxSpeed": [
+          245,
+          245
+        ],
+        "m_flSpread": [
+          0,
+          0
+        ],
+        "m_flInaccuracyCrouch": [
+          0,
+          0
+        ],
+        "m_flInaccuracyStand": [
+          0,
+          0
+        ],
+        "m_flInaccuracyJump": [
+          0,
+          0
+        ],
+        "m_flInaccuracyLand": [
+          0,
+          0
+        ],
+        "m_flInaccuracyLadder": [
+          0,
+          0
+        ],
+        "m_flInaccuracyFire": [
+          0,
+          0
+        ],
+        "m_flInaccuracyMove": [
+          0,
+          0
+        ],
+        "m_flRecoilAngle": [
+          0,
+          0
+        ],
+        "m_flRecoilAngleVariance": [
+          0,
+          0
+        ],
+        "m_flRecoilMagnitude": [
+          0,
+          0
+        ],
+        "m_flRecoilMagnitudeVariance": [
+          0,
+          0
+        ],
+        "m_nTracerFrequency": 0,
+        "m_bAutoSwitchFrom": true,
+        "m_bAutoSwitchTo": true,
+        "_base": "grenade",
+        "m_GearSlot": "GEAR_SLOT_GRENADES",
+        "m_WeaponType": "WEAPONTYPE_GRENADE",
+        "m_aShootSounds": {
+          "WEAPON_SOUND_RADIO_USE": "Radio.Incendiary"
+        },
+        "m_szUseRadioSubtitle": "#SFUI_TitlesTXT_Incendiary_in_the_hole",
+        "m_GearSlotPosition": 4,
+        "m_DefaultLoadoutPosition": "LOADOUT_POSITION_FIRST_WHEEL_GRENADE",
+        "m_szName": "weapon_incgrenade",
+        "m_szWorldModel": "weapons/models/grenade/incendiary/weapon_incendiarygrenade.vmdl",
+        "m_nPrimaryAmmoType": "AMMO_TYPE_MOLOTOV",
+        "m_nPrice": 500,
+        "m_flThrowVelocity": 750,
+        "m_flDroppedModelScale": 1.6,
+        "m_iFlags": "ITEM_FLAG_EXHAUSTIBLE",
+        "m_szAnimSkeleton": "animation/skeletons/weapons/incendiary.vnmskel"
+      }
+    },
+    "decoy": {
+      "source": "weapons",
+      "key": "weapon_decoy",
+      "fields": {
+        "_class": "weapon_decoy",
+        "taxonomy": {
+          "weapon": true,
+          "self_damage_on_miss__inflicts_damage": true,
+          "grenade": true,
+          "grenade_decoy": true
+        },
+        "m_nKillAward": 300,
+        "m_nDamage": 50,
+        "m_iMaxClip1": 0,
+        "m_iMaxClip2": 0,
+        "m_iDefaultClip1": 1,
+        "m_iDefaultClip2": 1,
+        "m_bAllowFlipping": true,
+        "m_bBuiltRightHanded": true,
+        "m_bIsFullAuto": false,
+        "m_nNumBullets": 1,
+        "m_bMeleeWeapon": false,
+        "m_iWeight": 1,
+        "m_iRumbleEffect": -1,
+        "m_nPrimaryReserveAmmoMax": 0,
+        "m_nSecondaryReserveAmmoMax": 0,
+        "m_flInaccuracyJumpInitial": 0,
+        "m_flInaccuracyJumpApex": 0,
+        "m_flInaccuracyReload": 0,
+        "m_flDeployDuration": 1,
+        "m_flDisallowAttackAfterReloadStartDuration": 5,
+        "m_nSpreadSeed": 0,
+        "m_flRecoveryTimeCrouch": 1,
+        "m_flRecoveryTimeStand": 1,
+        "m_flRecoveryTimeCrouchFinal": -1,
+        "m_flRecoveryTimeStandFinal": -1,
+        "m_nRecoveryTransitionStartBullet": 0,
+        "m_nRecoveryTransitionEndBullet": 0,
+        "m_flHeadshotMultiplier": 4,
+        "m_flArmorRatio": 1,
+        "m_flPenetration": 1,
+        "m_flFlinchVelocityModifierLarge": 1,
+        "m_flFlinchVelocityModifierSmall": 1,
+        "m_flRange": 4096,
+        "m_flRangeModifier": 0.99,
+        "m_eSilencerType": "WEAPONSILENCER_NONE",
+        "m_flAttackMovespeedFactor": 1,
+        "m_bUnzoomsAfterShot": false,
+        "m_bHideViewModelWhenZoomed": false,
+        "m_nZoomLevels": 0,
+        "m_nZoomFOV1": 90,
+        "m_nZoomFOV2": 90,
+        "m_flZoomTime0": 0,
+        "m_flZoomTime1": 0,
+        "m_flZoomTime2": 0,
+        "m_flInaccuracyPitchShift": 0,
+        "m_flInaccuracyAltSoundThreshold": 0,
+        "m_bHasBurstMode": false,
+        "m_bIsRevolver": false,
+        "m_bCannotShootUnderwater": false,
+        "m_flCycleTime": [
+          0.15,
+          0.3
+        ],
+        "m_flCycleTimeWhenInBurstMode": 0,
+        "m_flTimeBetweenBurstShots": 0,
+        "m_flMaxSpeed": [
+          245,
+          245
+        ],
+        "m_flSpread": [
+          0,
+          0
+        ],
+        "m_flInaccuracyCrouch": [
+          0,
+          0
+        ],
+        "m_flInaccuracyStand": [
+          0,
+          0
+        ],
+        "m_flInaccuracyJump": [
+          0,
+          0
+        ],
+        "m_flInaccuracyLand": [
+          0,
+          0
+        ],
+        "m_flInaccuracyLadder": [
+          0,
+          0
+        ],
+        "m_flInaccuracyFire": [
+          0,
+          0
+        ],
+        "m_flInaccuracyMove": [
+          0,
+          0
+        ],
+        "m_flRecoilAngle": [
+          0,
+          0
+        ],
+        "m_flRecoilAngleVariance": [
+          0,
+          0
+        ],
+        "m_flRecoilMagnitude": [
+          0,
+          0
+        ],
+        "m_flRecoilMagnitudeVariance": [
+          0,
+          0
+        ],
+        "m_nTracerFrequency": 0,
+        "m_bAutoSwitchFrom": true,
+        "m_bAutoSwitchTo": true,
+        "_base": "grenade",
+        "m_GearSlot": "GEAR_SLOT_GRENADES",
+        "m_WeaponType": "WEAPONTYPE_GRENADE",
+        "m_aShootSounds": {
+          "WEAPON_SOUND_RADIO_USE": "Radio.Decoy",
+          "WEAPON_SOUND_NEARLYEMPTY": "Default.nearlyempty"
+        },
+        "m_szUseRadioSubtitle": "#SFUI_TitlesTXT_Decoy_in_the_hole",
+        "m_GearSlotPosition": 3,
+        "m_DefaultLoadoutPosition": "LOADOUT_POSITION_GRENADE1",
+        "m_szName": "weapon_decoy",
+        "m_szWorldModel": "weapons/models/grenade/decoy/weapon_decoy.vmdl",
+        "m_nPrimaryAmmoType": "AMMO_TYPE_DECOY",
+        "m_nPrice": 50,
+        "m_flThrowVelocity": 750,
+        "m_flDroppedModelScale": 1.6,
+        "m_iFlags": "ITEM_FLAG_EXHAUSTIBLE",
+        "m_szAnimSkeleton": "animation/skeletons/weapons/decoy.vnmskel"
+      }
+    }
+  },
+  "vdataBases": {
+    "weapon_base": {
+      "_class": "weapon_cs_base",
+      "_not_pickable": 1,
+      "taxonomy": {
+        "weapon": true,
+        "self_damage_on_miss__inflicts_damage": true
+      },
+      "m_nKillAward": 300,
+      "m_nDamage": 42,
+      "m_iMaxClip1": 0,
+      "m_iMaxClip2": 0,
+      "m_iDefaultClip1": -1,
+      "m_iDefaultClip2": -1,
+      "m_bAllowFlipping": true,
+      "m_bBuiltRightHanded": true,
+      "m_bIsFullAuto": false,
+      "m_nNumBullets": 1,
+      "m_bMeleeWeapon": false,
+      "m_iWeight": 0,
+      "m_iRumbleEffect": -1,
+      "m_nPrimaryReserveAmmoMax": 0,
+      "m_nSecondaryReserveAmmoMax": 0,
+      "m_flInaccuracyJumpInitial": 0,
+      "m_flInaccuracyJumpApex": 0,
+      "m_flInaccuracyReload": 0,
+      "m_flDeployDuration": 1,
+      "m_flDisallowAttackAfterReloadStartDuration": 5,
+      "m_nSpreadSeed": 0,
+      "m_flRecoveryTimeCrouch": 1,
+      "m_flRecoveryTimeStand": 1,
+      "m_flRecoveryTimeCrouchFinal": -1,
+      "m_flRecoveryTimeStandFinal": -1,
+      "m_nRecoveryTransitionStartBullet": 0,
+      "m_nRecoveryTransitionEndBullet": 0,
+      "m_flHeadshotMultiplier": 4,
+      "m_flArmorRatio": 1,
+      "m_flPenetration": 1,
+      "m_flFlinchVelocityModifierLarge": 1,
+      "m_flFlinchVelocityModifierSmall": 1,
+      "m_flRange": 8192,
+      "m_flRangeModifier": 0.98,
+      "m_eSilencerType": "WEAPONSILENCER_NONE",
+      "m_flAttackMovespeedFactor": 1,
+      "m_bUnzoomsAfterShot": false,
+      "m_bHideViewModelWhenZoomed": false,
+      "m_nZoomLevels": 0,
+      "m_nZoomFOV1": 90,
+      "m_nZoomFOV2": 90,
+      "m_flZoomTime0": 0,
+      "m_flZoomTime1": 0,
+      "m_flZoomTime2": 0,
+      "m_flInaccuracyPitchShift": 0,
+      "m_flInaccuracyAltSoundThreshold": 0,
+      "m_bHasBurstMode": false,
+      "m_bIsRevolver": false,
+      "m_bCannotShootUnderwater": false,
+      "m_flCycleTime": [
+        0.15,
+        0.3
+      ],
+      "m_flCycleTimeWhenInBurstMode": 0,
+      "m_flTimeBetweenBurstShots": 0,
+      "m_flMaxSpeed": [
+        1,
+        1
+      ],
+      "m_flSpread": [
+        0,
+        0
+      ],
+      "m_flInaccuracyCrouch": [
+        0,
+        0
+      ],
+      "m_flInaccuracyStand": [
+        0,
+        0
+      ],
+      "m_flInaccuracyJump": [
+        0,
+        0
+      ],
+      "m_flInaccuracyLand": [
+        0,
+        0
+      ],
+      "m_flInaccuracyLadder": [
+        0,
+        0
+      ],
+      "m_flInaccuracyFire": [
+        0,
+        0
+      ],
+      "m_flInaccuracyMove": [
+        0,
+        0
+      ],
+      "m_flRecoilAngle": [
+        0,
+        0
+      ],
+      "m_flRecoilAngleVariance": [
+        0,
+        0
+      ],
+      "m_flRecoilMagnitude": [
+        0,
+        0
+      ],
+      "m_flRecoilMagnitudeVariance": [
+        0,
+        0
+      ],
+      "m_nTracerFrequency": 0,
+      "m_bAutoSwitchFrom": true,
+      "m_bAutoSwitchTo": true
+    },
+    "grenade": {
+      "_class": "weapon_cs_base",
+      "taxonomy": {
+        "weapon": true,
+        "self_damage_on_miss__inflicts_damage": true,
+        "grenade": true
+      },
+      "m_nKillAward": 300,
+      "m_nDamage": 42,
+      "m_iMaxClip1": 0,
+      "m_iMaxClip2": 0,
+      "m_iDefaultClip1": -1,
+      "m_iDefaultClip2": -1,
+      "m_bAllowFlipping": true,
+      "m_bBuiltRightHanded": true,
+      "m_bIsFullAuto": false,
+      "m_nNumBullets": 1,
+      "m_bMeleeWeapon": false,
+      "m_iWeight": 0,
+      "m_iRumbleEffect": -1,
+      "m_nPrimaryReserveAmmoMax": 0,
+      "m_nSecondaryReserveAmmoMax": 0,
+      "m_flInaccuracyJumpInitial": 0,
+      "m_flInaccuracyJumpApex": 0,
+      "m_flInaccuracyReload": 0,
+      "m_flDeployDuration": 1,
+      "m_flDisallowAttackAfterReloadStartDuration": 5,
+      "m_nSpreadSeed": 0,
+      "m_flRecoveryTimeCrouch": 1,
+      "m_flRecoveryTimeStand": 1,
+      "m_flRecoveryTimeCrouchFinal": -1,
+      "m_flRecoveryTimeStandFinal": -1,
+      "m_nRecoveryTransitionStartBullet": 0,
+      "m_nRecoveryTransitionEndBullet": 0,
+      "m_flHeadshotMultiplier": 4,
+      "m_flArmorRatio": 1,
+      "m_flPenetration": 1,
+      "m_flFlinchVelocityModifierLarge": 1,
+      "m_flFlinchVelocityModifierSmall": 1,
+      "m_flRange": 8192,
+      "m_flRangeModifier": 0.98,
+      "m_eSilencerType": "WEAPONSILENCER_NONE",
+      "m_flAttackMovespeedFactor": 1,
+      "m_bUnzoomsAfterShot": false,
+      "m_bHideViewModelWhenZoomed": false,
+      "m_nZoomLevels": 0,
+      "m_nZoomFOV1": 90,
+      "m_nZoomFOV2": 90,
+      "m_flZoomTime0": 0,
+      "m_flZoomTime1": 0,
+      "m_flZoomTime2": 0,
+      "m_flInaccuracyPitchShift": 0,
+      "m_flInaccuracyAltSoundThreshold": 0,
+      "m_bHasBurstMode": false,
+      "m_bIsRevolver": false,
+      "m_bCannotShootUnderwater": false,
+      "m_flCycleTime": [
+        0.15,
+        0.3
+      ],
+      "m_flCycleTimeWhenInBurstMode": 0,
+      "m_flTimeBetweenBurstShots": 0,
+      "m_flMaxSpeed": [
+        1,
+        1
+      ],
+      "m_flSpread": [
+        0,
+        0
+      ],
+      "m_flInaccuracyCrouch": [
+        0,
+        0
+      ],
+      "m_flInaccuracyStand": [
+        0,
+        0
+      ],
+      "m_flInaccuracyJump": [
+        0,
+        0
+      ],
+      "m_flInaccuracyLand": [
+        0,
+        0
+      ],
+      "m_flInaccuracyLadder": [
+        0,
+        0
+      ],
+      "m_flInaccuracyFire": [
+        0,
+        0
+      ],
+      "m_flInaccuracyMove": [
+        0,
+        0
+      ],
+      "m_flRecoilAngle": [
+        0,
+        0
+      ],
+      "m_flRecoilAngleVariance": [
+        0,
+        0
+      ],
+      "m_flRecoilMagnitude": [
+        0,
+        0
+      ],
+      "m_flRecoilMagnitudeVariance": [
+        0,
+        0
+      ],
+      "m_nTracerFrequency": 0,
+      "m_bAutoSwitchFrom": true,
+      "m_bAutoSwitchTo": true,
+      "_base": "weapon_base",
+      "_not_pickable": 1,
+      "m_GearSlot": "GEAR_SLOT_GRENADES",
+      "m_WeaponType": "WEAPONTYPE_GRENADE",
+      "m_aShootSounds": {
+        "WEAPON_SOUND_RADIO_USE": "Radio.FireInTheHole"
+      },
+      "m_szUseRadioSubtitle": "#SFUI_TitlesTXT_Fire_in_the_hole"
+    }
+  },
+  "explosionTypes": {
+    "source": "explosions",
+    "entries": {
+      "grenade": {
+        "m_ParticleEffect": "particles/entity/env_explosion/explosion_grenade.vpcf",
+        "m_SoundName": "Grenade.Explode",
+        "m_bHasForces": true
+      },
+      "molotov": {
+        "m_bIsIncindiary": true,
+        "m_ParticleEffect": "particles/entity/env_explosion/explosion_default.vpcf",
+        "m_SoundName": "Molotov.Explode",
+        "m_bHasForces": true
+      },
+      "smoke": {
+        "m_ParticleEffect": "particles/entity/env_explosion/explosion_smokegrenade.vpcf",
+        "m_SoundName": "SmokeGrenade.Explode"
+      },
+      "flashbang": {
+        "m_ParticleEffect": "particles/entity/env_explosion/explosion_flashbang.vpcf",
+        "m_SoundName": "Flashbang.Explode"
+      }
+    }
+  },
+  "configs": {
+    "gamemode_armsrace.cfg": {
+      "source": "cfg:gamemode_armsrace.cfg",
+      "assignments": [
+        {
+          "key": "ff_damage_reduction_grenade",
+          "args": [
+            "0.0"
+          ],
+          "line": 33
+        },
+        {
+          "key": "ff_damage_reduction_grenade_self",
+          "args": [
+            "0"
+          ],
+          "line": 34
+        },
+        {
+          "key": "mp_death_drop_grenade",
+          "args": [
+            "0"
+          ],
+          "line": 41
+        },
+        {
+          "key": "sv_ignoregrenaderadio",
+          "args": [
+            "1"
+          ],
+          "line": 73
+        },
+        {
+          "key": "ammo_grenade_limit_flashbang",
+          "args": [
+            "1"
+          ],
+          "line": 79
+        },
+        {
+          "key": "ammo_grenade_limit_total",
+          "args": [
+            "3"
+          ],
+          "line": 80
+        },
+        {
+          "key": "mp_buy_allow_grenades",
+          "args": [
+            "0"
+          ],
+          "line": 96
+        }
+      ]
+    },
+    "gamemode_casual.cfg": {
+      "source": "cfg:gamemode_casual.cfg",
+      "assignments": [
+        {
+          "key": "ff_damage_reduction_grenade",
+          "args": [
+            "0"
+          ],
+          "line": 37
+        },
+        {
+          "key": "ff_damage_reduction_grenade_self",
+          "args": [
+            "0"
+          ],
+          "line": 38
+        },
+        {
+          "key": "mp_death_drop_grenade",
+          "args": [
+            "3"
+          ],
+          "line": 45
+        },
+        {
+          "key": "sv_ignoregrenaderadio",
+          "args": [
+            "0"
+          ],
+          "line": 78
+        },
+        {
+          "key": "ammo_grenade_limit_flashbang",
+          "args": [
+            "1"
+          ],
+          "line": 85
+        },
+        {
+          "key": "ammo_grenade_limit_total",
+          "args": [
+            "3"
+          ],
+          "line": 86
+        }
+      ]
+    },
+    "gamemode_competitive.cfg": {
+      "source": "cfg:gamemode_competitive.cfg",
+      "assignments": [
+        {
+          "key": "ff_damage_reduction_grenade",
+          "args": [
+            "0.85"
+          ],
+          "line": 37
+        },
+        {
+          "key": "ff_damage_reduction_grenade_self",
+          "args": [
+            "1"
+          ],
+          "line": 38
+        },
+        {
+          "key": "mp_death_drop_grenade",
+          "args": [
+            "3"
+          ],
+          "line": 45
+        },
+        {
+          "key": "sv_ignoregrenaderadio",
+          "args": [
+            "0"
+          ],
+          "line": 80
+        },
+        {
+          "key": "sv_grenade_trajectory_time_spectator",
+          "args": [
+            "4"
+          ],
+          "line": 81
+        },
+        {
+          "key": "ammo_grenade_limit_flashbang",
+          "args": [
+            "2"
+          ],
+          "line": 88
+        },
+        {
+          "key": "ammo_grenade_limit_total",
+          "args": [
+            "4"
+          ],
+          "line": 89
+        }
+      ]
+    },
+    "gamemode_competitive2v2.cfg": {
+      "source": "cfg:gamemode_competitive2v2.cfg",
+      "assignments": [
+        {
+          "key": "ff_damage_reduction_grenade",
+          "args": [
+            "0.85"
+          ],
+          "line": 36
+        },
+        {
+          "key": "ff_damage_reduction_grenade_self",
+          "args": [
+            "1"
+          ],
+          "line": 37
+        },
+        {
+          "key": "mp_death_drop_grenade",
+          "args": [
+            "3"
+          ],
+          "line": 44
+        },
+        {
+          "key": "sv_ignoregrenaderadio",
+          "args": [
+            "0"
+          ],
+          "line": 79
+        },
+        {
+          "key": "ammo_grenade_limit_flashbang",
+          "args": [
+            "2"
+          ],
+          "line": 86
+        },
+        {
+          "key": "ammo_grenade_limit_total",
+          "args": [
+            "4"
+          ],
+          "line": 87
+        }
+      ]
+    },
+    "gamemode_competitive2v2_offline.cfg": {
+      "source": "cfg:gamemode_competitive2v2_offline.cfg",
+      "assignments": []
+    },
+    "gamemode_competitive_offline.cfg": {
+      "source": "cfg:gamemode_competitive_offline.cfg",
+      "assignments": []
+    },
+    "gamemode_competitive_short.cfg": {
+      "source": "cfg:gamemode_competitive_short.cfg",
+      "assignments": []
+    },
+    "gamemode_competitive_tmm.cfg": {
+      "source": "cfg:gamemode_competitive_tmm.cfg",
+      "assignments": []
+    },
+    "gamemode_cooperative.cfg": {
+      "source": "cfg:gamemode_cooperative.cfg",
+      "assignments": [
+        {
+          "key": "ff_damage_reduction_grenade",
+          "args": [
+            "0"
+          ],
+          "line": 25
+        },
+        {
+          "key": "ff_damage_reduction_grenade_self",
+          "args": [
+            "0"
+          ],
+          "line": 26
+        },
+        {
+          "key": "mp_death_drop_grenade",
+          "args": [
+            "2"
+          ],
+          "line": 30
+        }
+      ]
+    },
+    "gamemode_coopmission.cfg": {
+      "source": "cfg:gamemode_coopmission.cfg",
+      "assignments": [
+        {
+          "key": "ff_damage_reduction_grenade",
+          "args": [
+            "0"
+          ],
+          "line": 25
+        },
+        {
+          "key": "ff_damage_reduction_grenade_self",
+          "args": [
+            "0"
+          ],
+          "line": 26
+        },
+        {
+          "key": "mp_death_drop_grenade",
+          "args": [
+            "3"
+          ],
+          "line": 30
+        }
+      ]
+    },
+    "gamemode_custom.cfg": {
+      "source": "cfg:gamemode_custom.cfg",
+      "assignments": []
+    },
+    "gamemode_deathmatch.cfg": {
+      "source": "cfg:gamemode_deathmatch.cfg",
+      "assignments": [
+        {
+          "key": "ff_damage_reduction_grenade",
+          "args": [
+            "0.0"
+          ],
+          "line": 33
+        },
+        {
+          "key": "ff_damage_reduction_grenade_self",
+          "args": [
+            "0"
+          ],
+          "line": 34
+        },
+        {
+          "key": "mp_death_drop_grenade",
+          "args": [
+            "0"
+          ],
+          "line": 41
+        },
+        {
+          "key": "sv_ignoregrenaderadio",
+          "args": [
+            "1"
+          ],
+          "line": 73
+        },
+        {
+          "key": "ammo_grenade_limit_flashbang",
+          "args": [
+            "1"
+          ],
+          "line": 80
+        },
+        {
+          "key": "ammo_grenade_limit_total",
+          "args": [
+            "3"
+          ],
+          "line": 81
+        },
+        {
+          "key": "mp_buy_allow_grenades",
+          "args": [
+            "0"
+          ],
+          "line": 96
+        }
+      ]
+    },
+    "gamemode_deathmatch_short.cfg": {
+      "source": "cfg:gamemode_deathmatch_short.cfg",
+      "assignments": []
+    },
+    "gamemode_deathmatch_tmm.cfg": {
+      "source": "cfg:gamemode_deathmatch_tmm.cfg",
+      "assignments": []
+    },
+    "gamemode_demolition.cfg": {
+      "source": "cfg:gamemode_demolition.cfg",
+      "assignments": [
+        {
+          "key": "ff_damage_reduction_grenade",
+          "args": [
+            "0"
+          ],
+          "line": 34
+        },
+        {
+          "key": "ff_damage_reduction_grenade_self",
+          "args": [
+            "0"
+          ],
+          "line": 35
+        },
+        {
+          "key": "mp_death_drop_grenade",
+          "args": [
+            "0"
+          ],
+          "line": 42
+        },
+        {
+          "key": "sv_ignoregrenaderadio",
+          "args": [
+            "1"
+          ],
+          "line": 73
+        },
+        {
+          "key": "ammo_grenade_limit_flashbang",
+          "args": [
+            "1"
+          ],
+          "line": 80
+        },
+        {
+          "key": "ammo_grenade_limit_total",
+          "args": [
+            "3"
+          ],
+          "line": 81
+        }
+      ]
+    },
+    "gamemode_dm_freeforall.cfg": {
+      "source": "cfg:gamemode_dm_freeforall.cfg",
+      "assignments": [
+        {
+          "key": "ff_damage_reduction_grenade",
+          "args": [
+            "0.0"
+          ],
+          "line": 33
+        },
+        {
+          "key": "ff_damage_reduction_grenade_self",
+          "args": [
+            "0"
+          ],
+          "line": 34
+        },
+        {
+          "key": "mp_death_drop_grenade",
+          "args": [
+            "0"
+          ],
+          "line": 41
+        },
+        {
+          "key": "sv_ignoregrenaderadio",
+          "args": [
+            "1"
+          ],
+          "line": 73
+        },
+        {
+          "key": "ammo_grenade_limit_flashbang",
+          "args": [
+            "1"
+          ],
+          "line": 80
+        },
+        {
+          "key": "ammo_grenade_limit_total",
+          "args": [
+            "3"
+          ],
+          "line": 81
+        },
+        {
+          "key": "mp_buy_allow_grenades",
+          "args": [
+            "0"
+          ],
+          "line": 95
+        }
+      ]
+    },
+    "gamemode_new_user_training.cfg": {
+      "source": "cfg:gamemode_new_user_training.cfg",
+      "assignments": [
+        {
+          "key": "exec",
+          "args": [
+            "gamemode_competitive.cfg"
+          ],
+          "line": 1
+        }
+      ]
+    },
+    "gamemode_retakecasual.cfg": {
+      "source": "cfg:gamemode_retakecasual.cfg",
+      "assignments": [
+        {
+          "key": "ff_damage_reduction_grenade",
+          "args": [
+            "0"
+          ],
+          "line": 34
+        },
+        {
+          "key": "ff_damage_reduction_grenade_self",
+          "args": [
+            "0"
+          ],
+          "line": 35
+        },
+        {
+          "key": "mp_death_drop_grenade",
+          "args": [
+            "2"
+          ],
+          "line": 43
+        },
+        {
+          "key": "sv_ignoregrenaderadio",
+          "args": [
+            "0"
+          ],
+          "line": 78
+        },
+        {
+          "key": "ammo_grenade_limit_flashbang",
+          "args": [
+            "2"
+          ],
+          "line": 83
+        },
+        {
+          "key": "ammo_grenade_limit_total",
+          "args": [
+            "3"
+          ],
+          "line": 84
+        }
+      ]
+    },
+    "gamemode_rush.cfg": {
+      "source": "cfg:gamemode_rush.cfg",
+      "assignments": [
+        {
+          "key": "ff_damage_reduction_grenade",
+          "args": [
+            "0.85"
+          ],
+          "line": 38
+        },
+        {
+          "key": "ff_damage_reduction_grenade_self",
+          "args": [
+            "1"
+          ],
+          "line": 39
+        },
+        {
+          "key": "mp_death_drop_grenade",
+          "args": [
+            "2"
+          ],
+          "line": 46
+        },
+        {
+          "key": "sv_ignoregrenaderadio",
+          "args": [
+            "0"
+          ],
+          "line": 85
+        },
+        {
+          "key": "sv_grenade_trajectory_time_spectator",
+          "args": [
+            "4"
+          ],
+          "line": 86
+        },
+        {
+          "key": "ammo_grenade_limit_flashbang",
+          "args": [
+            "1"
+          ],
+          "line": 93
+        },
+        {
+          "key": "ammo_grenade_limit_total",
+          "args": [
+            "1"
+          ],
+          "line": 94
+        }
+      ]
+    },
+    "gamemode_rush_offline.cfg": {
+      "source": "cfg:gamemode_rush_offline.cfg",
+      "assignments": []
+    },
+    "gamemode_teamdeathmatch.cfg": {
+      "source": "cfg:gamemode_teamdeathmatch.cfg",
+      "assignments": [
+        {
+          "key": "ff_damage_reduction_grenade",
+          "args": [
+            "0.0"
+          ],
+          "line": 34
+        },
+        {
+          "key": "ff_damage_reduction_grenade_self",
+          "args": [
+            "0"
+          ],
+          "line": 35
+        },
+        {
+          "key": "mp_death_drop_grenade",
+          "args": [
+            "0"
+          ],
+          "line": 42
+        },
+        {
+          "key": "sv_ignoregrenaderadio",
+          "args": [
+            "1"
+          ],
+          "line": 74
+        },
+        {
+          "key": "ammo_grenade_limit_flashbang",
+          "args": [
+            "1"
+          ],
+          "line": 81
+        },
+        {
+          "key": "ammo_grenade_limit_total",
+          "args": [
+            "3"
+          ],
+          "line": 82
+        },
+        {
+          "key": "mp_buy_allow_grenades",
+          "args": [
+            "0"
+          ],
+          "line": 96
+        }
+      ]
+    },
+    "gamemode_workshop.cfg": {
+      "source": "cfg:gamemode_workshop.cfg",
+      "assignments": [
+        {
+          "key": "ff_damage_reduction_grenade",
+          "args": [
+            "0"
+          ],
+          "line": 7
+        },
+        {
+          "key": "ff_damage_reduction_grenade_self",
+          "args": [
+            "0"
+          ],
+          "line": 10
+        },
+        {
+          "key": "sv_ignoregrenaderadio",
+          "args": [
+            "0"
+          ],
+          "line": 22
+        },
+        {
+          "key": "mp_death_drop_grenade",
+          "args": [
+            "0"
+          ],
+          "line": 62
+        }
+      ]
+    },
+    "server.cfg": {
+      "source": "cfg:server.cfg",
+      "assignments": []
+    },
+    "server_default.cfg": {
+      "source": "cfg:server_default.cfg",
+      "assignments": []
+    }
+  },
+  "modeExec": [
+    {
+      "scope": "GameModes.txt/gameTypes/classic/gameModes/casual/exec",
+      "key": "exec",
+      "file": "gamemode_casual.cfg",
+      "line": 120
+    },
+    {
+      "scope": "GameModes.txt/gameTypes/classic/gameModes/casual/exec",
+      "key": "exec",
+      "file": "gamemode_casual_server.cfg",
+      "line": 121
+    },
+    {
+      "scope": "GameModes.txt/gameTypes/classic/gameModes/competitive/exec",
+      "key": "exec",
+      "file": "gamemode_competitive.cfg",
+      "line": 166
+    },
+    {
+      "scope": "GameModes.txt/gameTypes/classic/gameModes/competitive/exec",
+      "key": "exec_offline",
+      "file": "gamemode_competitive_offline.cfg",
+      "line": 167
+    },
+    {
+      "scope": "GameModes.txt/gameTypes/classic/gameModes/competitive/exec",
+      "key": "exec",
+      "file": "gamemode_competitive_server.cfg",
+      "line": 168
+    },
+    {
+      "scope": "GameModes.txt/gameTypes/classic/gameModes/scrimcomp2v2/exec",
+      "key": "exec",
+      "file": "gamemode_competitive2v2.cfg",
+      "line": 215
+    },
+    {
+      "scope": "GameModes.txt/gameTypes/classic/gameModes/scrimcomp2v2/exec",
+      "key": "exec_offline",
+      "file": "gamemode_competitive2v2_offline.cfg",
+      "line": 216
+    },
+    {
+      "scope": "GameModes.txt/gameTypes/classic/gameModes/scrimcomp2v2/exec",
+      "key": "exec",
+      "file": "gamemode_competitive2v2_server.cfg",
+      "line": 217
+    },
+    {
+      "scope": "GameModes.txt/gameTypes/classic/gameModes/scrimcomp5v5/exec",
+      "key": "exec",
+      "file": "gamemode_competitive.cfg",
+      "line": 262
+    },
+    {
+      "scope": "GameModes.txt/gameTypes/classic/gameModes/scrimcomp5v5/exec",
+      "key": "exec_offline",
+      "file": "gamemode_competitive_offline.cfg",
+      "line": 263
+    },
+    {
+      "scope": "GameModes.txt/gameTypes/classic/gameModes/scrimcomp5v5/exec",
+      "key": "exec",
+      "file": "op08_weapons_expert.cfg",
+      "line": 264
+    },
+    {
+      "scope": "GameModes.txt/gameTypes/classic/gameModes/scrimcomp5v5/exec",
+      "key": "exec",
+      "file": "gamemode_competitive_server.cfg",
+      "line": 265
+    },
+    {
+      "scope": "GameModes.txt/gameTypes/classic/gameModes/new_user_training/exec",
+      "key": "exec",
+      "file": "gamemode_new_user_training.cfg",
+      "line": 296
+    },
+    {
+      "scope": "GameModes.txt/gameTypes/classic/gameModes/retakes/exec",
+      "key": "exec",
+      "file": "gamemode_casual.cfg",
+      "line": 337
+    },
+    {
+      "scope": "GameModes.txt/gameTypes/classic/gameModes/retakes/exec",
+      "key": "exec",
+      "file": "gamemode_casual_server.cfg",
+      "line": 338
+    },
+    {
+      "scope": "GameModes.txt/gameTypes/classic/gameModes/retakes/exec",
+      "key": "exec",
+      "file": "gamemode_retakecasual.cfg",
+      "line": 339
+    },
+    {
+      "scope": "GameModes.txt/gameTypes/classic/gameModes/rush/exec",
+      "key": "exec",
+      "file": "gamemode_rush.cfg",
+      "line": 384
+    },
+    {
+      "scope": "GameModes.txt/gameTypes/classic/gameModes/rush/exec",
+      "key": "exec_offline",
+      "file": "gamemode_rush_offline.cfg",
+      "line": 385
+    },
+    {
+      "scope": "GameModes.txt/gameTypes/gungame/gameModes/gungameprogressive/exec",
+      "key": "exec",
+      "file": "gamemode_armsrace.cfg",
+      "line": 433
+    },
+    {
+      "scope": "GameModes.txt/gameTypes/gungame/gameModes/gungameprogressive/exec",
+      "key": "exec",
+      "file": "gamemode_armsrace_server.cfg",
+      "line": 434
+    },
+    {
+      "scope": "GameModes.txt/gameTypes/gungame/gameModes/gungametrbomb/exec",
+      "key": "exec",
+      "file": "gamemode_demolition.cfg",
+      "line": 476
+    },
+    {
+      "scope": "GameModes.txt/gameTypes/gungame/gameModes/gungametrbomb/exec",
+      "key": "exec",
+      "file": "gamemode_demolition_server.cfg",
+      "line": 477
+    },
+    {
+      "scope": "GameModes.txt/gameTypes/gungame/gameModes/deathmatch/exec",
+      "key": "exec",
+      "file": "gamemode_deathmatch.cfg",
+      "line": 546
+    },
+    {
+      "scope": "GameModes.txt/gameTypes/gungame/gameModes/deathmatch/exec",
+      "key": "exec",
+      "file": "gamemode_deathmatch_server.cfg",
+      "line": 547
+    },
+    {
+      "scope": "GameModes.txt/gameTypes/training/gameModes/training/exec",
+      "key": "exec",
+      "file": "gamemode_training.cfg",
+      "line": 599
+    },
+    {
+      "scope": "GameModes.txt/gameTypes/training/gameModes/training/exec",
+      "key": "exec",
+      "file": "gamemode_training_server.cfg",
+      "line": 600
+    },
+    {
+      "scope": "GameModes.txt/gameTypes/custom/gameModes/custom/exec",
+      "key": "exec",
+      "file": "gamemode_custom.cfg",
+      "line": 645
+    },
+    {
+      "scope": "GameModes.txt/gameTypes/custom/gameModes/custom/exec",
+      "key": "exec",
+      "file": "gamemode_custom_server.cfg",
+      "line": 646
+    },
+    {
+      "scope": "GameModes.txt/gameTypes/cooperative/gameModes/cooperative/exec",
+      "key": "exec",
+      "file": "gamemode_competitive.cfg",
+      "line": 672
+    },
+    {
+      "scope": "GameModes.txt/gameTypes/cooperative/gameModes/cooperative/exec",
+      "key": "exec",
+      "file": "gamemode_cooperative.cfg",
+      "line": 673
+    },
+    {
+      "scope": "GameModes.txt/gameTypes/cooperative/gameModes/cooperative/exec",
+      "key": "exec",
+      "file": "gamemode_cooperative_server.cfg",
+      "line": 674
+    },
+    {
+      "scope": "GameModes.txt/gameTypes/cooperative/gameModes/coopmission/exec",
+      "key": "exec",
+      "file": "gamemode_competitive.cfg",
+      "line": 691
+    },
+    {
+      "scope": "GameModes.txt/gameTypes/cooperative/gameModes/coopmission/exec",
+      "key": "exec",
+      "file": "gamemode_coopmission.cfg",
+      "line": 692
+    },
+    {
+      "scope": "GameModes.txt/gameTypes/cooperative/gameModes/coopmission/exec",
+      "key": "exec",
+      "file": "gamemode_coopmission_server.cfg",
+      "line": 693
+    },
+    {
+      "scope": "GameModes.txt/gameTypes/freeforall/gameModes/survival/exec",
+      "key": "exec",
+      "file": "gamemode_survival.cfg",
+      "line": 778
+    },
+    {
+      "scope": "GameModes.txt/gameTypes/freeforall/gameModes/survival/exec",
+      "key": "exec",
+      "file": "gamemode_survival_server.cfg",
+      "line": 779
+    }
+  ],
+  "gameInfoOverrides": [
+    {
+      "source": "gameinfo:csgo",
+      "scope": "GameInfo/ConVars",
+      "key": "inferno_scorch_decals",
+      "value": "0",
+      "line": 203
+    }
+  ],
+  "convars": {
+    "ammo_grenade_limit_default": {
+      "engineDefault": null,
+      "engineDefaultStatus": "not-extracted",
+      "nameEvidence": [
+        {
+          "source": "server",
+          "fileOffset": "0x18b3860",
+          "kind": "ascii-name-only"
+        },
+        {
+          "source": "client",
+          "fileOffset": "0x1ba4098",
+          "kind": "ascii-name-only"
+        }
+      ],
+      "configOverrides": []
+    },
+    "ammo_grenade_limit_flashbang": {
+      "engineDefault": null,
+      "engineDefaultStatus": "not-extracted",
+      "nameEvidence": [
+        {
+          "source": "server",
+          "fileOffset": "0x18b3880",
+          "kind": "ascii-name-only"
+        },
+        {
+          "source": "client",
+          "fileOffset": "0x1ba40d0",
+          "kind": "ascii-name-only"
+        }
+      ],
+      "configOverrides": [
+        {
+          "file": "gamemode_armsrace.cfg",
+          "source": "cfg:gamemode_armsrace.cfg",
+          "key": "ammo_grenade_limit_flashbang",
+          "args": [
+            "1"
+          ],
+          "line": 79
+        },
+        {
+          "file": "gamemode_casual.cfg",
+          "source": "cfg:gamemode_casual.cfg",
+          "key": "ammo_grenade_limit_flashbang",
+          "args": [
+            "1"
+          ],
+          "line": 85
+        },
+        {
+          "file": "gamemode_competitive.cfg",
+          "source": "cfg:gamemode_competitive.cfg",
+          "key": "ammo_grenade_limit_flashbang",
+          "args": [
+            "2"
+          ],
+          "line": 88
+        },
+        {
+          "file": "gamemode_competitive2v2.cfg",
+          "source": "cfg:gamemode_competitive2v2.cfg",
+          "key": "ammo_grenade_limit_flashbang",
+          "args": [
+            "2"
+          ],
+          "line": 86
+        },
+        {
+          "file": "gamemode_deathmatch.cfg",
+          "source": "cfg:gamemode_deathmatch.cfg",
+          "key": "ammo_grenade_limit_flashbang",
+          "args": [
+            "1"
+          ],
+          "line": 80
+        },
+        {
+          "file": "gamemode_demolition.cfg",
+          "source": "cfg:gamemode_demolition.cfg",
+          "key": "ammo_grenade_limit_flashbang",
+          "args": [
+            "1"
+          ],
+          "line": 80
+        },
+        {
+          "file": "gamemode_dm_freeforall.cfg",
+          "source": "cfg:gamemode_dm_freeforall.cfg",
+          "key": "ammo_grenade_limit_flashbang",
+          "args": [
+            "1"
+          ],
+          "line": 80
+        },
+        {
+          "file": "gamemode_retakecasual.cfg",
+          "source": "cfg:gamemode_retakecasual.cfg",
+          "key": "ammo_grenade_limit_flashbang",
+          "args": [
+            "2"
+          ],
+          "line": 83
+        },
+        {
+          "file": "gamemode_rush.cfg",
+          "source": "cfg:gamemode_rush.cfg",
+          "key": "ammo_grenade_limit_flashbang",
+          "args": [
+            "1"
+          ],
+          "line": 93
+        },
+        {
+          "file": "gamemode_teamdeathmatch.cfg",
+          "source": "cfg:gamemode_teamdeathmatch.cfg",
+          "key": "ammo_grenade_limit_flashbang",
+          "args": [
+            "1"
+          ],
+          "line": 81
+        }
+      ]
+    },
+    "ammo_grenade_limit_total": {
+      "engineDefault": null,
+      "engineDefaultStatus": "not-extracted",
+      "nameEvidence": [
+        {
+          "source": "server",
+          "fileOffset": "0x18b38a0",
+          "kind": "ascii-name-only"
+        },
+        {
+          "source": "client",
+          "fileOffset": "0x1ba40f0",
+          "kind": "ascii-name-only"
+        }
+      ],
+      "configOverrides": [
+        {
+          "file": "gamemode_armsrace.cfg",
+          "source": "cfg:gamemode_armsrace.cfg",
+          "key": "ammo_grenade_limit_total",
+          "args": [
+            "3"
+          ],
+          "line": 80
+        },
+        {
+          "file": "gamemode_casual.cfg",
+          "source": "cfg:gamemode_casual.cfg",
+          "key": "ammo_grenade_limit_total",
+          "args": [
+            "3"
+          ],
+          "line": 86
+        },
+        {
+          "file": "gamemode_competitive.cfg",
+          "source": "cfg:gamemode_competitive.cfg",
+          "key": "ammo_grenade_limit_total",
+          "args": [
+            "4"
+          ],
+          "line": 89
+        },
+        {
+          "file": "gamemode_competitive2v2.cfg",
+          "source": "cfg:gamemode_competitive2v2.cfg",
+          "key": "ammo_grenade_limit_total",
+          "args": [
+            "4"
+          ],
+          "line": 87
+        },
+        {
+          "file": "gamemode_deathmatch.cfg",
+          "source": "cfg:gamemode_deathmatch.cfg",
+          "key": "ammo_grenade_limit_total",
+          "args": [
+            "3"
+          ],
+          "line": 81
+        },
+        {
+          "file": "gamemode_demolition.cfg",
+          "source": "cfg:gamemode_demolition.cfg",
+          "key": "ammo_grenade_limit_total",
+          "args": [
+            "3"
+          ],
+          "line": 81
+        },
+        {
+          "file": "gamemode_dm_freeforall.cfg",
+          "source": "cfg:gamemode_dm_freeforall.cfg",
+          "key": "ammo_grenade_limit_total",
+          "args": [
+            "3"
+          ],
+          "line": 81
+        },
+        {
+          "file": "gamemode_retakecasual.cfg",
+          "source": "cfg:gamemode_retakecasual.cfg",
+          "key": "ammo_grenade_limit_total",
+          "args": [
+            "3"
+          ],
+          "line": 84
+        },
+        {
+          "file": "gamemode_rush.cfg",
+          "source": "cfg:gamemode_rush.cfg",
+          "key": "ammo_grenade_limit_total",
+          "args": [
+            "1"
+          ],
+          "line": 94
+        },
+        {
+          "file": "gamemode_teamdeathmatch.cfg",
+          "source": "cfg:gamemode_teamdeathmatch.cfg",
+          "key": "ammo_grenade_limit_total",
+          "args": [
+            "3"
+          ],
+          "line": 82
+        }
+      ]
+    },
+    "ff_damage_reduction_grenade": {
+      "engineDefault": null,
+      "engineDefaultStatus": "not-extracted",
+      "nameEvidence": [],
+      "configOverrides": [
+        {
+          "file": "gamemode_armsrace.cfg",
+          "source": "cfg:gamemode_armsrace.cfg",
+          "key": "ff_damage_reduction_grenade",
+          "args": [
+            "0.0"
+          ],
+          "line": 33
+        },
+        {
+          "file": "gamemode_casual.cfg",
+          "source": "cfg:gamemode_casual.cfg",
+          "key": "ff_damage_reduction_grenade",
+          "args": [
+            "0"
+          ],
+          "line": 37
+        },
+        {
+          "file": "gamemode_competitive.cfg",
+          "source": "cfg:gamemode_competitive.cfg",
+          "key": "ff_damage_reduction_grenade",
+          "args": [
+            "0.85"
+          ],
+          "line": 37
+        },
+        {
+          "file": "gamemode_competitive2v2.cfg",
+          "source": "cfg:gamemode_competitive2v2.cfg",
+          "key": "ff_damage_reduction_grenade",
+          "args": [
+            "0.85"
+          ],
+          "line": 36
+        },
+        {
+          "file": "gamemode_cooperative.cfg",
+          "source": "cfg:gamemode_cooperative.cfg",
+          "key": "ff_damage_reduction_grenade",
+          "args": [
+            "0"
+          ],
+          "line": 25
+        },
+        {
+          "file": "gamemode_coopmission.cfg",
+          "source": "cfg:gamemode_coopmission.cfg",
+          "key": "ff_damage_reduction_grenade",
+          "args": [
+            "0"
+          ],
+          "line": 25
+        },
+        {
+          "file": "gamemode_deathmatch.cfg",
+          "source": "cfg:gamemode_deathmatch.cfg",
+          "key": "ff_damage_reduction_grenade",
+          "args": [
+            "0.0"
+          ],
+          "line": 33
+        },
+        {
+          "file": "gamemode_demolition.cfg",
+          "source": "cfg:gamemode_demolition.cfg",
+          "key": "ff_damage_reduction_grenade",
+          "args": [
+            "0"
+          ],
+          "line": 34
+        },
+        {
+          "file": "gamemode_dm_freeforall.cfg",
+          "source": "cfg:gamemode_dm_freeforall.cfg",
+          "key": "ff_damage_reduction_grenade",
+          "args": [
+            "0.0"
+          ],
+          "line": 33
+        },
+        {
+          "file": "gamemode_retakecasual.cfg",
+          "source": "cfg:gamemode_retakecasual.cfg",
+          "key": "ff_damage_reduction_grenade",
+          "args": [
+            "0"
+          ],
+          "line": 34
+        },
+        {
+          "file": "gamemode_rush.cfg",
+          "source": "cfg:gamemode_rush.cfg",
+          "key": "ff_damage_reduction_grenade",
+          "args": [
+            "0.85"
+          ],
+          "line": 38
+        },
+        {
+          "file": "gamemode_teamdeathmatch.cfg",
+          "source": "cfg:gamemode_teamdeathmatch.cfg",
+          "key": "ff_damage_reduction_grenade",
+          "args": [
+            "0.0"
+          ],
+          "line": 34
+        },
+        {
+          "file": "gamemode_workshop.cfg",
+          "source": "cfg:gamemode_workshop.cfg",
+          "key": "ff_damage_reduction_grenade",
+          "args": [
+            "0"
+          ],
+          "line": 7
+        }
+      ]
+    },
+    "ff_damage_reduction_grenade_self": {
+      "engineDefault": null,
+      "engineDefaultStatus": "not-extracted",
+      "nameEvidence": [],
+      "configOverrides": [
+        {
+          "file": "gamemode_armsrace.cfg",
+          "source": "cfg:gamemode_armsrace.cfg",
+          "key": "ff_damage_reduction_grenade_self",
+          "args": [
+            "0"
+          ],
+          "line": 34
+        },
+        {
+          "file": "gamemode_casual.cfg",
+          "source": "cfg:gamemode_casual.cfg",
+          "key": "ff_damage_reduction_grenade_self",
+          "args": [
+            "0"
+          ],
+          "line": 38
+        },
+        {
+          "file": "gamemode_competitive.cfg",
+          "source": "cfg:gamemode_competitive.cfg",
+          "key": "ff_damage_reduction_grenade_self",
+          "args": [
+            "1"
+          ],
+          "line": 38
+        },
+        {
+          "file": "gamemode_competitive2v2.cfg",
+          "source": "cfg:gamemode_competitive2v2.cfg",
+          "key": "ff_damage_reduction_grenade_self",
+          "args": [
+            "1"
+          ],
+          "line": 37
+        },
+        {
+          "file": "gamemode_cooperative.cfg",
+          "source": "cfg:gamemode_cooperative.cfg",
+          "key": "ff_damage_reduction_grenade_self",
+          "args": [
+            "0"
+          ],
+          "line": 26
+        },
+        {
+          "file": "gamemode_coopmission.cfg",
+          "source": "cfg:gamemode_coopmission.cfg",
+          "key": "ff_damage_reduction_grenade_self",
+          "args": [
+            "0"
+          ],
+          "line": 26
+        },
+        {
+          "file": "gamemode_deathmatch.cfg",
+          "source": "cfg:gamemode_deathmatch.cfg",
+          "key": "ff_damage_reduction_grenade_self",
+          "args": [
+            "0"
+          ],
+          "line": 34
+        },
+        {
+          "file": "gamemode_demolition.cfg",
+          "source": "cfg:gamemode_demolition.cfg",
+          "key": "ff_damage_reduction_grenade_self",
+          "args": [
+            "0"
+          ],
+          "line": 35
+        },
+        {
+          "file": "gamemode_dm_freeforall.cfg",
+          "source": "cfg:gamemode_dm_freeforall.cfg",
+          "key": "ff_damage_reduction_grenade_self",
+          "args": [
+            "0"
+          ],
+          "line": 34
+        },
+        {
+          "file": "gamemode_retakecasual.cfg",
+          "source": "cfg:gamemode_retakecasual.cfg",
+          "key": "ff_damage_reduction_grenade_self",
+          "args": [
+            "0"
+          ],
+          "line": 35
+        },
+        {
+          "file": "gamemode_rush.cfg",
+          "source": "cfg:gamemode_rush.cfg",
+          "key": "ff_damage_reduction_grenade_self",
+          "args": [
+            "1"
+          ],
+          "line": 39
+        },
+        {
+          "file": "gamemode_teamdeathmatch.cfg",
+          "source": "cfg:gamemode_teamdeathmatch.cfg",
+          "key": "ff_damage_reduction_grenade_self",
+          "args": [
+            "0"
+          ],
+          "line": 35
+        },
+        {
+          "file": "gamemode_workshop.cfg",
+          "source": "cfg:gamemode_workshop.cfg",
+          "key": "ff_damage_reduction_grenade_self",
+          "args": [
+            "0"
+          ],
+          "line": 10
+        }
+      ]
+    },
+    "inferno_batched_rays": {
+      "engineDefault": null,
+      "engineDefaultStatus": "not-extracted",
+      "nameEvidence": [
+        {
+          "source": "client",
+          "fileOffset": "0x1cac4f8",
+          "kind": "ascii-name-only"
+        }
+      ],
+      "configOverrides": []
+    },
+    "inferno_child_spawn_interval_multiplier": {
+      "engineDefault": null,
+      "engineDefaultStatus": "not-extracted",
+      "nameEvidence": [
+        {
+          "source": "server",
+          "fileOffset": "0x17c0a50",
+          "kind": "ascii-name-only"
+        }
+      ],
+      "configOverrides": []
+    },
+    "inferno_child_spawn_max_depth": {
+      "engineDefault": null,
+      "engineDefaultStatus": "not-extracted",
+      "nameEvidence": [
+        {
+          "source": "server",
+          "fileOffset": "0x17c0e70",
+          "kind": "ascii-name-only"
+        }
+      ],
+      "configOverrides": []
+    },
+    "Inferno_concav_plane_threshold": {
+      "engineDefault": null,
+      "engineDefaultStatus": "not-extracted",
+      "nameEvidence": [
+        {
+          "source": "client",
+          "fileOffset": "0x1cac468",
+          "kind": "ascii-name-only"
+        }
+      ],
+      "configOverrides": []
+    },
+    "inferno_ct_experiment": {
+      "engineDefault": null,
+      "engineDefaultStatus": "not-extracted",
+      "nameEvidence": [
+        {
+          "source": "server",
+          "fileOffset": "0x17c16f8",
+          "kind": "ascii-name-only"
+        },
+        {
+          "source": "client",
+          "fileOffset": "0x1caea80",
+          "kind": "ascii-name-only"
+        }
+      ],
+      "configOverrides": []
+    },
+    "inferno_damage": {
+      "engineDefault": null,
+      "engineDefaultStatus": "not-extracted",
+      "nameEvidence": [
+        {
+          "source": "server",
+          "fileOffset": "0x17c0cc0",
+          "kind": "ascii-name-only"
+        }
+      ],
+      "configOverrides": []
+    },
+    "inferno_damage_ct": {
+      "engineDefault": null,
+      "engineDefaultStatus": "not-extracted",
+      "nameEvidence": [
+        {
+          "source": "server",
+          "fileOffset": "0x17c0cf8",
+          "kind": "ascii-name-only"
+        }
+      ],
+      "configOverrides": []
+    },
+    "inferno_damage_timer": {
+      "engineDefault": null,
+      "engineDefaultStatus": "not-extracted",
+      "nameEvidence": [
+        {
+          "source": "server",
+          "fileOffset": "0x17c16c0",
+          "kind": "ascii-name-only"
+        },
+        {
+          "source": "client",
+          "fileOffset": "0x1caea48",
+          "kind": "ascii-name-only"
+        }
+      ],
+      "configOverrides": []
+    },
+    "inferno_debug": {
+      "engineDefault": null,
+      "engineDefaultStatus": "not-extracted",
+      "nameEvidence": [
+        {
+          "source": "server",
+          "fileOffset": "0x17c0c98",
+          "kind": "ascii-name-only"
+        }
+      ],
+      "configOverrides": []
+    },
+    "inferno_dlight_spacing": {
+      "engineDefault": null,
+      "engineDefaultStatus": "not-extracted",
+      "nameEvidence": [
+        {
+          "source": "client",
+          "fileOffset": "0x1cac3f8",
+          "kind": "ascii-name-only"
+        }
+      ],
+      "configOverrides": []
+    },
+    "inferno_dlights": {
+      "engineDefault": null,
+      "engineDefaultStatus": "not-extracted",
+      "nameEvidence": [
+        {
+          "source": "client",
+          "fileOffset": "0x1cac448",
+          "kind": "ascii-name-only"
+        }
+      ],
+      "configOverrides": []
+    },
+    "inferno_fire": {
+      "engineDefault": null,
+      "engineDefaultStatus": "not-extracted",
+      "nameEvidence": [
+        {
+          "source": "client",
+          "fileOffset": "0x1cac458",
+          "kind": "ascii-name-only"
+        }
+      ],
+      "configOverrides": []
+    },
+    "inferno_flame_lifetime": {
+      "engineDefault": null,
+      "engineDefaultStatus": "not-extracted",
+      "nameEvidence": [
+        {
+          "source": "server",
+          "fileOffset": "0x17c0c28",
+          "kind": "ascii-name-only"
+        }
+      ],
+      "configOverrides": []
+    },
+    "inferno_flame_lifetime_incendiary": {
+      "engineDefault": null,
+      "engineDefaultStatus": "not-extracted",
+      "nameEvidence": [
+        {
+          "source": "server",
+          "fileOffset": "0x17c0bd0",
+          "kind": "ascii-name-only"
+        }
+      ],
+      "configOverrides": []
+    },
+    "inferno_flame_spacing": {
+      "engineDefault": null,
+      "engineDefaultStatus": "not-extracted",
+      "nameEvidence": [
+        {
+          "source": "server",
+          "fileOffset": "0x17c0b80",
+          "kind": "ascii-name-only"
+        }
+      ],
+      "configOverrides": []
+    },
+    "inferno_forward_reduction_factor": {
+      "engineDefault": null,
+      "engineDefaultStatus": "not-extracted",
+      "nameEvidence": [
+        {
+          "source": "server",
+          "fileOffset": "0x17c0fd0",
+          "kind": "ascii-name-only"
+        }
+      ],
+      "configOverrides": []
+    },
+    "inferno_friendly_fire_duration": {
+      "engineDefault": null,
+      "engineDefaultStatus": "not-extracted",
+      "nameEvidence": [
+        {
+          "source": "server",
+          "fileOffset": "0x17c0c78",
+          "kind": "ascii-name-only"
+        }
+      ],
+      "configOverrides": []
+    },
+    "inferno_initial_spawn_interval": {
+      "engineDefault": null,
+      "engineDefaultStatus": "not-extracted",
+      "nameEvidence": [
+        {
+          "source": "server",
+          "fileOffset": "0x17c0a00",
+          "kind": "ascii-name-only"
+        }
+      ],
+      "configOverrides": []
+    },
+    "inferno_max_child_spawn_interval": {
+      "engineDefault": null,
+      "engineDefaultStatus": "not-extracted",
+      "nameEvidence": [
+        {
+          "source": "server",
+          "fileOffset": "0x17c0aa8",
+          "kind": "ascii-name-only"
+        }
+      ],
+      "configOverrides": []
+    },
+    "inferno_max_flames": {
+      "engineDefault": null,
+      "engineDefaultStatus": "not-extracted",
+      "nameEvidence": [
+        {
+          "source": "server",
+          "fileOffset": "0x17c0b38",
+          "kind": "ascii-name-only"
+        }
+      ],
+      "configOverrides": []
+    },
+    "inferno_max_range": {
+      "engineDefault": null,
+      "engineDefaultStatus": "not-extracted",
+      "nameEvidence": [
+        {
+          "source": "server",
+          "fileOffset": "0x17c0d58",
+          "kind": "ascii-name-only"
+        }
+      ],
+      "configOverrides": []
+    },
+    "inferno_max_range_ct": {
+      "engineDefault": null,
+      "engineDefaultStatus": "not-extracted",
+      "nameEvidence": [
+        {
+          "source": "server",
+          "fileOffset": "0x17c0dc8",
+          "kind": "ascii-name-only"
+        }
+      ],
+      "configOverrides": []
+    },
+    "inferno_max_trace_per_tick": {
+      "engineDefault": null,
+      "engineDefaultStatus": "not-extracted",
+      "nameEvidence": [
+        {
+          "source": "server",
+          "fileOffset": "0x17c0fb0",
+          "kind": "ascii-name-only"
+        }
+      ],
+      "configOverrides": []
+    },
+    "inferno_per_flame_spawn_duration": {
+      "engineDefault": null,
+      "engineDefaultStatus": "not-extracted",
+      "nameEvidence": [
+        {
+          "source": "server",
+          "fileOffset": "0x17c09a8",
+          "kind": "ascii-name-only"
+        }
+      ],
+      "configOverrides": []
+    },
+    "inferno_smoke_volume_density": {
+      "engineDefault": null,
+      "engineDefaultStatus": "not-extracted",
+      "nameEvidence": [
+        {
+          "source": "server",
+          "fileOffset": "0x17c0ff8",
+          "kind": "ascii-name-only"
+        }
+      ],
+      "configOverrides": []
+    },
+    "inferno_spawn_angle": {
+      "engineDefault": null,
+      "engineDefaultStatus": "not-extracted",
+      "nameEvidence": [
+        {
+          "source": "server",
+          "fileOffset": "0x17c0af0",
+          "kind": "ascii-name-only"
+        }
+      ],
+      "configOverrides": []
+    },
+    "inferno_spread_speed_mult": {
+      "engineDefault": null,
+      "engineDefaultStatus": "not-extracted",
+      "nameEvidence": [
+        {
+          "source": "server",
+          "fileOffset": "0x17c0ef8",
+          "kind": "ascii-name-only"
+        }
+      ],
+      "configOverrides": []
+    },
+    "inferno_spread_speed_mult_ct": {
+      "engineDefault": null,
+      "engineDefaultStatus": "not-extracted",
+      "nameEvidence": [
+        {
+          "source": "server",
+          "fileOffset": "0x17c0f90",
+          "kind": "ascii-name-only"
+        }
+      ],
+      "configOverrides": []
+    },
+    "inferno_surface_offset": {
+      "engineDefault": null,
+      "engineDefaultStatus": "not-extracted",
+      "nameEvidence": [
+        {
+          "source": "server",
+          "fileOffset": "0x17c0e58",
+          "kind": "ascii-name-only"
+        }
+      ],
+      "configOverrides": []
+    },
+    "inferno_velocity_decay_factor": {
+      "engineDefault": null,
+      "engineDefaultStatus": "not-extracted",
+      "nameEvidence": [
+        {
+          "source": "server",
+          "fileOffset": "0x17c0e18",
+          "kind": "ascii-name-only"
+        }
+      ],
+      "configOverrides": []
+    },
+    "inferno_velocity_factor": {
+      "engineDefault": null,
+      "engineDefaultStatus": "not-extracted",
+      "nameEvidence": [
+        {
+          "source": "server",
+          "fileOffset": "0x17c0de0",
+          "kind": "ascii-name-only"
+        }
+      ],
+      "configOverrides": []
+    },
+    "inferno_velocity_factor_ct": {
+      "engineDefault": null,
+      "engineDefaultStatus": "not-extracted",
+      "nameEvidence": [
+        {
+          "source": "server",
+          "fileOffset": "0x17c0df8",
+          "kind": "ascii-name-only"
+        }
+      ],
+      "configOverrides": []
+    },
+    "inferno_velocity_normal_factor": {
+      "engineDefault": null,
+      "engineDefaultStatus": "not-extracted",
+      "nameEvidence": [
+        {
+          "source": "server",
+          "fileOffset": "0x17c0e38",
+          "kind": "ascii-name-only"
+        }
+      ],
+      "configOverrides": []
+    },
+    "molotov_throw_detonate_time": {
+      "engineDefault": null,
+      "engineDefaultStatus": "not-extracted",
+      "nameEvidence": [
+        {
+          "source": "server",
+          "fileOffset": "0x18e7aa0",
+          "kind": "ascii-name-only"
+        },
+        {
+          "source": "client",
+          "fileOffset": "0x1bce230",
+          "kind": "ascii-name-only"
+        }
+      ],
+      "configOverrides": []
+    },
+    "molotov_usethrow_direction": {
+      "engineDefault": null,
+      "engineDefaultStatus": "not-extracted",
+      "nameEvidence": [
+        {
+          "source": "server",
+          "fileOffset": "0x18e7b40",
+          "kind": "ascii-name-only"
+        }
+      ],
+      "configOverrides": []
+    },
+    "mp_buy_allow_grenades": {
+      "engineDefault": null,
+      "engineDefaultStatus": "not-extracted",
+      "nameEvidence": [],
+      "configOverrides": [
+        {
+          "file": "gamemode_armsrace.cfg",
+          "source": "cfg:gamemode_armsrace.cfg",
+          "key": "mp_buy_allow_grenades",
+          "args": [
+            "0"
+          ],
+          "line": 96
+        },
+        {
+          "file": "gamemode_deathmatch.cfg",
+          "source": "cfg:gamemode_deathmatch.cfg",
+          "key": "mp_buy_allow_grenades",
+          "args": [
+            "0"
+          ],
+          "line": 96
+        },
+        {
+          "file": "gamemode_dm_freeforall.cfg",
+          "source": "cfg:gamemode_dm_freeforall.cfg",
+          "key": "mp_buy_allow_grenades",
+          "args": [
+            "0"
+          ],
+          "line": 95
+        },
+        {
+          "file": "gamemode_teamdeathmatch.cfg",
+          "source": "cfg:gamemode_teamdeathmatch.cfg",
+          "key": "mp_buy_allow_grenades",
+          "args": [
+            "0"
+          ],
+          "line": 96
+        }
+      ]
+    },
+    "mp_death_drop_grenade": {
+      "engineDefault": null,
+      "engineDefaultStatus": "not-extracted",
+      "nameEvidence": [],
+      "configOverrides": [
+        {
+          "file": "gamemode_armsrace.cfg",
+          "source": "cfg:gamemode_armsrace.cfg",
+          "key": "mp_death_drop_grenade",
+          "args": [
+            "0"
+          ],
+          "line": 41
+        },
+        {
+          "file": "gamemode_casual.cfg",
+          "source": "cfg:gamemode_casual.cfg",
+          "key": "mp_death_drop_grenade",
+          "args": [
+            "3"
+          ],
+          "line": 45
+        },
+        {
+          "file": "gamemode_competitive.cfg",
+          "source": "cfg:gamemode_competitive.cfg",
+          "key": "mp_death_drop_grenade",
+          "args": [
+            "3"
+          ],
+          "line": 45
+        },
+        {
+          "file": "gamemode_competitive2v2.cfg",
+          "source": "cfg:gamemode_competitive2v2.cfg",
+          "key": "mp_death_drop_grenade",
+          "args": [
+            "3"
+          ],
+          "line": 44
+        },
+        {
+          "file": "gamemode_cooperative.cfg",
+          "source": "cfg:gamemode_cooperative.cfg",
+          "key": "mp_death_drop_grenade",
+          "args": [
+            "2"
+          ],
+          "line": 30
+        },
+        {
+          "file": "gamemode_coopmission.cfg",
+          "source": "cfg:gamemode_coopmission.cfg",
+          "key": "mp_death_drop_grenade",
+          "args": [
+            "3"
+          ],
+          "line": 30
+        },
+        {
+          "file": "gamemode_deathmatch.cfg",
+          "source": "cfg:gamemode_deathmatch.cfg",
+          "key": "mp_death_drop_grenade",
+          "args": [
+            "0"
+          ],
+          "line": 41
+        },
+        {
+          "file": "gamemode_demolition.cfg",
+          "source": "cfg:gamemode_demolition.cfg",
+          "key": "mp_death_drop_grenade",
+          "args": [
+            "0"
+          ],
+          "line": 42
+        },
+        {
+          "file": "gamemode_dm_freeforall.cfg",
+          "source": "cfg:gamemode_dm_freeforall.cfg",
+          "key": "mp_death_drop_grenade",
+          "args": [
+            "0"
+          ],
+          "line": 41
+        },
+        {
+          "file": "gamemode_retakecasual.cfg",
+          "source": "cfg:gamemode_retakecasual.cfg",
+          "key": "mp_death_drop_grenade",
+          "args": [
+            "2"
+          ],
+          "line": 43
+        },
+        {
+          "file": "gamemode_rush.cfg",
+          "source": "cfg:gamemode_rush.cfg",
+          "key": "mp_death_drop_grenade",
+          "args": [
+            "2"
+          ],
+          "line": 46
+        },
+        {
+          "file": "gamemode_teamdeathmatch.cfg",
+          "source": "cfg:gamemode_teamdeathmatch.cfg",
+          "key": "mp_death_drop_grenade",
+          "args": [
+            "0"
+          ],
+          "line": 42
+        },
+        {
+          "file": "gamemode_workshop.cfg",
+          "source": "cfg:gamemode_workshop.cfg",
+          "key": "mp_death_drop_grenade",
+          "args": [
+            "0"
+          ],
+          "line": 62
+        }
+      ]
+    },
+    "smoke_grenade_ct_color": {
+      "engineDefault": null,
+      "engineDefaultStatus": "not-extracted",
+      "nameEvidence": [
+        {
+          "source": "server",
+          "fileOffset": "0x18e8660",
+          "kind": "ascii-name-only"
+        }
+      ],
+      "configOverrides": []
+    },
+    "smoke_grenade_t_color": {
+      "engineDefault": null,
+      "engineDefaultStatus": "not-extracted",
+      "nameEvidence": [
+        {
+          "source": "server",
+          "fileOffset": "0x18e8678",
+          "kind": "ascii-name-only"
+        }
+      ],
+      "configOverrides": []
+    },
+    "smoke_param1": {
+      "engineDefault": null,
+      "engineDefaultStatus": "not-extracted",
+      "nameEvidence": [
+        {
+          "source": "server",
+          "fileOffset": "0x18e8138",
+          "kind": "ascii-name-only"
+        },
+        {
+          "source": "client",
+          "fileOffset": "0x1bce9c0",
+          "kind": "ascii-name-only"
+        }
+      ],
+      "configOverrides": []
+    },
+    "smoke_param2": {
+      "engineDefault": null,
+      "engineDefaultStatus": "not-extracted",
+      "nameEvidence": [
+        {
+          "source": "server",
+          "fileOffset": "0x18e8148",
+          "kind": "ascii-name-only"
+        },
+        {
+          "source": "client",
+          "fileOffset": "0x1bce9d0",
+          "kind": "ascii-name-only"
+        }
+      ],
+      "configOverrides": []
+    },
+    "smoke_param3": {
+      "engineDefault": null,
+      "engineDefaultStatus": "not-extracted",
+      "nameEvidence": [
+        {
+          "source": "server",
+          "fileOffset": "0x18e8158",
+          "kind": "ascii-name-only"
+        },
+        {
+          "source": "client",
+          "fileOffset": "0x1bce9e0",
+          "kind": "ascii-name-only"
+        }
+      ],
+      "configOverrides": []
+    },
+    "smoke_param4": {
+      "engineDefault": null,
+      "engineDefaultStatus": "not-extracted",
+      "nameEvidence": [
+        {
+          "source": "server",
+          "fileOffset": "0x18e8168",
+          "kind": "ascii-name-only"
+        },
+        {
+          "source": "client",
+          "fileOffset": "0x1bce9f0",
+          "kind": "ascii-name-only"
+        }
+      ],
+      "configOverrides": []
+    },
+    "smoke_param5": {
+      "engineDefault": null,
+      "engineDefaultStatus": "not-extracted",
+      "nameEvidence": [
+        {
+          "source": "server",
+          "fileOffset": "0x18e8178",
+          "kind": "ascii-name-only"
+        },
+        {
+          "source": "client",
+          "fileOffset": "0x1bcea00",
+          "kind": "ascii-name-only"
+        }
+      ],
+      "configOverrides": []
+    },
+    "smoke_use_noise_texture": {
+      "engineDefault": null,
+      "engineDefaultStatus": "not-extracted",
+      "nameEvidence": [
+        {
+          "source": "server",
+          "fileOffset": "0x18e8188",
+          "kind": "ascii-name-only"
+        },
+        {
+          "source": "client",
+          "fileOffset": "0x1bcea10",
+          "kind": "ascii-name-only"
+        }
+      ],
+      "configOverrides": []
+    },
+    "sv_gravity": {
+      "engineDefault": null,
+      "engineDefaultStatus": "not-extracted",
+      "nameEvidence": [
+        {
+          "source": "server",
+          "fileOffset": "0x1809178",
+          "kind": "ascii-name-only"
+        },
+        {
+          "source": "client",
+          "fileOffset": "0x1b09208",
+          "kind": "ascii-name-only"
+        }
+      ],
+      "configOverrides": []
+    },
+    "sv_grenade_collision_sphere": {
+      "engineDefault": null,
+      "engineDefaultStatus": "not-extracted",
+      "nameEvidence": [
+        {
+          "source": "server",
+          "fileOffset": "0x18e7748",
+          "kind": "ascii-name-only"
+        },
+        {
+          "source": "client",
+          "fileOffset": "0x1bce960",
+          "kind": "ascii-name-only"
+        }
+      ],
+      "configOverrides": []
+    },
+    "sv_grenade_collision_sphere_radius": {
+      "engineDefault": null,
+      "engineDefaultStatus": "not-extracted",
+      "nameEvidence": [
+        {
+          "source": "server",
+          "fileOffset": "0x18e7768",
+          "kind": "ascii-name-only"
+        },
+        {
+          "source": "client",
+          "fileOffset": "0x1bce980",
+          "kind": "ascii-name-only"
+        }
+      ],
+      "configOverrides": []
+    },
+    "sv_grenade_trajectory_prac_pipreview": {
+      "engineDefault": null,
+      "engineDefaultStatus": "not-extracted",
+      "nameEvidence": [
+        {
+          "source": "server",
+          "fileOffset": "0x18e7720",
+          "kind": "ascii-name-only"
+        },
+        {
+          "source": "client",
+          "fileOffset": "0x1bce938",
+          "kind": "ascii-name-only"
+        }
+      ],
+      "configOverrides": []
+    },
+    "sv_grenade_trajectory_prac_trailtime": {
+      "engineDefault": null,
+      "engineDefaultStatus": "not-extracted",
+      "nameEvidence": [
+        {
+          "source": "server",
+          "fileOffset": "0x18e8a60",
+          "kind": "ascii-name-only"
+        },
+        {
+          "source": "client",
+          "fileOffset": "0x1bce8d0",
+          "kind": "ascii-name-only"
+        }
+      ],
+      "configOverrides": []
+    },
+    "sv_grenade_trajectory_time_spectator": {
+      "engineDefault": null,
+      "engineDefaultStatus": "not-extracted",
+      "nameEvidence": [
+        {
+          "source": "server",
+          "fileOffset": "0x18e89e8",
+          "kind": "ascii-name-only"
+        },
+        {
+          "source": "client",
+          "fileOffset": "0x1bce858",
+          "kind": "ascii-name-only"
+        }
+      ],
+      "configOverrides": [
+        {
+          "file": "gamemode_competitive.cfg",
+          "source": "cfg:gamemode_competitive.cfg",
+          "key": "sv_grenade_trajectory_time_spectator",
+          "args": [
+            "4"
+          ],
+          "line": 81
+        },
+        {
+          "file": "gamemode_rush.cfg",
+          "source": "cfg:gamemode_rush.cfg",
+          "key": "sv_grenade_trajectory_time_spectator",
+          "args": [
+            "4"
+          ],
+          "line": 86
+        }
+      ]
+    },
+    "sv_hegrenade_damage_multiplier": {
+      "engineDefault": null,
+      "engineDefaultStatus": "not-extracted",
+      "nameEvidence": [
+        {
+          "source": "server",
+          "fileOffset": "0x17cb5f0",
+          "kind": "ascii-name-only"
+        },
+        {
+          "source": "client",
+          "fileOffset": "0x1d09878",
+          "kind": "ascii-name-only"
+        }
+      ],
+      "configOverrides": []
+    },
+    "sv_hegrenade_radius_multiplier": {
+      "engineDefault": null,
+      "engineDefaultStatus": "not-extracted",
+      "nameEvidence": [
+        {
+          "source": "server",
+          "fileOffset": "0x17cb610",
+          "kind": "ascii-name-only"
+        },
+        {
+          "source": "client",
+          "fileOffset": "0x1d09898",
+          "kind": "ascii-name-only"
+        }
+      ],
+      "configOverrides": []
+    },
+    "sv_ignoregrenaderadio": {
+      "engineDefault": null,
+      "engineDefaultStatus": "not-extracted",
+      "nameEvidence": [],
+      "configOverrides": [
+        {
+          "file": "gamemode_armsrace.cfg",
+          "source": "cfg:gamemode_armsrace.cfg",
+          "key": "sv_ignoregrenaderadio",
+          "args": [
+            "1"
+          ],
+          "line": 73
+        },
+        {
+          "file": "gamemode_casual.cfg",
+          "source": "cfg:gamemode_casual.cfg",
+          "key": "sv_ignoregrenaderadio",
+          "args": [
+            "0"
+          ],
+          "line": 78
+        },
+        {
+          "file": "gamemode_competitive.cfg",
+          "source": "cfg:gamemode_competitive.cfg",
+          "key": "sv_ignoregrenaderadio",
+          "args": [
+            "0"
+          ],
+          "line": 80
+        },
+        {
+          "file": "gamemode_competitive2v2.cfg",
+          "source": "cfg:gamemode_competitive2v2.cfg",
+          "key": "sv_ignoregrenaderadio",
+          "args": [
+            "0"
+          ],
+          "line": 79
+        },
+        {
+          "file": "gamemode_deathmatch.cfg",
+          "source": "cfg:gamemode_deathmatch.cfg",
+          "key": "sv_ignoregrenaderadio",
+          "args": [
+            "1"
+          ],
+          "line": 73
+        },
+        {
+          "file": "gamemode_demolition.cfg",
+          "source": "cfg:gamemode_demolition.cfg",
+          "key": "sv_ignoregrenaderadio",
+          "args": [
+            "1"
+          ],
+          "line": 73
+        },
+        {
+          "file": "gamemode_dm_freeforall.cfg",
+          "source": "cfg:gamemode_dm_freeforall.cfg",
+          "key": "sv_ignoregrenaderadio",
+          "args": [
+            "1"
+          ],
+          "line": 73
+        },
+        {
+          "file": "gamemode_retakecasual.cfg",
+          "source": "cfg:gamemode_retakecasual.cfg",
+          "key": "sv_ignoregrenaderadio",
+          "args": [
+            "0"
+          ],
+          "line": 78
+        },
+        {
+          "file": "gamemode_rush.cfg",
+          "source": "cfg:gamemode_rush.cfg",
+          "key": "sv_ignoregrenaderadio",
+          "args": [
+            "0"
+          ],
+          "line": 85
+        },
+        {
+          "file": "gamemode_teamdeathmatch.cfg",
+          "source": "cfg:gamemode_teamdeathmatch.cfg",
+          "key": "sv_ignoregrenaderadio",
+          "args": [
+            "1"
+          ],
+          "line": 74
+        },
+        {
+          "file": "gamemode_workshop.cfg",
+          "source": "cfg:gamemode_workshop.cfg",
+          "key": "sv_ignoregrenaderadio",
+          "args": [
+            "0"
+          ],
+          "line": 22
+        }
+      ]
+    },
+    "sv_smoke_volume_blind_start": {
+      "engineDefault": null,
+      "engineDefaultStatus": "not-extracted",
+      "nameEvidence": [
+        {
+          "source": "client",
+          "fileOffset": "0x1c85280",
+          "kind": "ascii-name-only"
+        }
+      ],
+      "configOverrides": []
+    },
+    "weapon_molotov_maxdetonateslope": {
+      "engineDefault": null,
+      "engineDefaultStatus": "not-extracted",
+      "nameEvidence": [
+        {
+          "source": "server",
+          "fileOffset": "0x18e7b00",
+          "kind": "ascii-name-only"
+        },
+        {
+          "source": "client",
+          "fileOffset": "0x1bce290",
+          "kind": "ascii-name-only"
+        }
+      ],
+      "configOverrides": []
+    }
+  },
+  "unresolved": {
+    "engineDefaults": "ASCII names do not establish registered types/defaults. Prior research/convars.txt is not a fresh build-pinned source and is not consumed.",
+    "throw": "m_flThrowVelocity is a weapon-data input, not the final launch speed. Launch multiplier, strength curve, player-velocity inheritance, pitch transform, hand offset and release delay require native-code evidence.",
+    "detonation": "HE/flash fuse, smoke/decoy rest threshold and check cadence, decoy duration, fire collision/detonation conditions and smoke lifetime are not exposed numerically in extracted vdata/CFG.",
+    "physics": "Projectile gravity multiplier, hull, bounce restitution/friction, sleep speed and collision masks require native-code evidence. sv_gravity ASCII presence alone supplies no default.",
+    "effects": "Weapon m_nDamage/m_flRange/m_flArmorRatio are preserved as fields, not assumed blast/flash/decoy formulas. No inference from particle durations or presentation sounds.",
+    "configuration": "CFG assignments are overrides, not engine defaults. modeExec preserves declared order/offline condition; absent server CFGs and official environment overrides are not invented."
+  }
+}

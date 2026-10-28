@@ -4,6 +4,7 @@ import {gameData} from './config';
 export class MovementLesson {
   x = -1.4; velocity = 0; peak = 0; time = 0; counterAt = -Infinity;
   complete = false; message = 'Hold D to move right.'; shots = 0; shotSpeed: number | null = null;
+  snapshot: {x: number; velocity: number; aligned: boolean; settled: boolean} | null = null;
   readonly cap = gameData.weapons.m4a4.speed * UNIT;
   constructor(public lesson: number) {}
   get settled() {return Math.abs(this.velocity) <= this.cap * .34;}
@@ -19,18 +20,24 @@ export class MovementLesson {
     this.peak = Math.max(this.peak, Math.abs(this.velocity));
     if (this.complete) return;
     if (this.lesson === 0 && this.peak > this.cap * .65 && Math.abs(this.velocity) < 8 * UNIT && this.time - this.counterAt < .2) {
-      this.complete = true; this.message = 'You stopped with the opposite key. That is a counter-strafe.';
+      this.finish('Counter-strafe complete: you used the opposite key to brake before shooting.');
     } else if (this.shots === 0) this.message = this.peak < this.cap * .65 ? 'Hold D to build sideways speed.'
-      : !this.settled ? 'Release D, then briefly tap A to brake.' : 'Speed is low enough. Line up the head and fire.';
+      : !this.settled ? 'Release D, then briefly tap A to counter-strafe.'
+      : this.lesson === 0 ? 'Stopped without completing the counter-strafe. Hold D to build speed again, then release D and briefly tap A.'
+      : 'Stop complete. Put the crosshair on the head, then fire.';
   }
   shoot() {
     if (this.complete || this.lesson === 0) return;
     this.shots++;
-    if (!this.visible) this.message = 'The wall is still in the way. Move farther right before shooting.';
-    else if (!this.settled) this.message = 'Too early: you were still moving. Release D, tap A, then shoot.';
+    if (!this.visible) this.message = 'Still behind cover. Strafe farther right to clear the wall before taking the shot.';
+    else if (!this.settled) this.message = 'Moving shot: counter-strafe before clicking. Release D, tap A and wait for the stop.';
     else if (!this.aligned) this.message = `The head is ${this.x < 0 ? 'right' : 'left'} of your crosshair. Use a small strafe to align it.`;
-    else if (this.peak < this.cap * .65 || this.time - this.counterAt > 1.25) this.message = 'Hit, but no counter-strafe yet. Build speed, brake with the opposite key, then shoot.';
-    else {this.complete = true; this.shotSpeed = Math.abs(this.velocity) / UNIT; this.message = this.lesson === 1 ? 'Head aligned, braked in time, shot connected.' : 'Cover cleared, braked in time, shot connected. Ready for the range.';}
+    else if (this.peak < this.cap * .65 || this.time - this.counterAt > 1.25) this.message = 'Hit, but this rep needs a counter-strafe. Build sideways speed, tap the opposite key to brake, then fire.';
+    else {this.shotSpeed = Math.abs(this.velocity) / UNIT; this.finish(this.lesson === 1 ? 'Good crosshair placement and counter-strafe: first bullet connected.' : 'Clean peek: cleared the wall, counter-strafed and landed the first bullet.');}
+  }
+  private finish(message: string) {
+    this.complete = true; this.message = message;
+    this.snapshot = {x: this.x, velocity: this.velocity, aligned: this.aligned, settled: this.settled};
   }
 }
 

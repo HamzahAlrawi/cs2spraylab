@@ -33,4 +33,8 @@ describe('terrain-aware scouting',()=>{
     f.peer.level=8;f.peer.contactAt=101;
     expect(planner.plan(101,[f.peer],f.arena,f.state)).toBeUndefined();
   });
+  it('does not override a pending trade with an unrelated terrain assignment',()=>{
+    const f=fixture('stairs'),planner=new TerrainTactics(3);f.peer.busy=true;
+    for(let time=2;time<20;time++)expect(planner.plan(time,[f.peer],f.arena,f.state)).toBeUndefined();
+  });
 });

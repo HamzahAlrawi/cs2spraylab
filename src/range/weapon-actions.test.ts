@@ -79,7 +79,7 @@ describe('native weapon modes', () => {
       if (tick) range.step(STEP);
       if (pressed) {range.start(); range.release('mouse');}
       const shot = duel.advance(at, tick ? STEP : 0, {...idleCommand(), firePressed: pressed, fireHeld: pressed}, actor);
-      if (shot) duelTimes.push(at);
+      if (shot) duelTimes.push(shot.at??at);
     }
     expect(times).toHaveLength(3); expect(duelTimes).toEqual(times);
     times.slice(1).forEach((at, i) => expect(at - times[0] - (i + 1) * gameData.weapons[id].burstInterval).toBeLessThan(STEP + 1e-8));
@@ -96,6 +96,8 @@ describe('native weapon modes', () => {
     const weapon = new DuelWeaponState('awp', () => 0);
     weapon.actions.secondary(0); weapon.ammo = 0;
     weapon.advance(1, 0, {...idleCommand(), firePressed: true}, actor);
+    expect(weapon.reload.active).toBe(false); expect(weapon.actions.zoom).toBe(1);
+    weapon.advance(1 + STEP, STEP, idleCommand(), actor);
     expect(weapon.reloadEmpty).toBe(true); expect(weapon.reloadUntil).toBeGreaterThan(1);
     expect(weapon.actions.zoom).toBe(0);
   });
@@ -110,7 +112,7 @@ describe('native weapon modes', () => {
       if (tick) range.step(STEP);
       const round=duel.advance(time, tick ? STEP : 0, {...idleCommand(),fireHeld:!alternate,firePressed:tick===0&&!alternate,
         secondaryHeld:alternate,secondaryPressed:tick===0&&alternate},actor);
-      if(round) duelTimes.push(time);
+      if(round) duelTimes.push(round.at??time);
     }
     expect(times.length).toBeGreaterThan(3);
     expect(times.length).toBe(duelTimes.length);

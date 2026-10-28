@@ -3,8 +3,10 @@ import {equipmentStats, type Equipment} from '../equipment';
 import {pointOnRay, traceActor} from './geometry';
 import type {Hitgroup} from './types';
 import nativeSurfaces from './native-surface-fixture.json';
+import type {ActorHitPose} from './actor-hitboxes';
+import type {NativeSurface, NativeSurfaceInterval, SurfaceMaterial} from '../prefire/native-surfaces';
 
-export type PenetrationMaterial = 'concrete' | 'metal' | 'wood' | 'plastic' | 'glass' | 'grate' | 'water' | 'flesh';
+export type PenetrationMaterial = SurfaceMaterial;
 export type PenetrationSolid = {
   center: Vec; size: Vec; id?: string; kind?: string; material?: string;
   active?: boolean; health?: number; shotBlocking?: boolean; penetrable?: boolean;
@@ -13,7 +15,8 @@ export type PenetrationSolid = {
 };
 export type PenetrationActor = {
   id: number; side: string; position: Vec; feet: number; alive: boolean;
-  duckAmount?: number; crouched?: boolean; armor?: number; helmet?: boolean;
+  duckAmount?: number; crouched?: boolean; armor?: number; helmet?: boolean; yaw?: number;
+  hitPose?: ActorHitPose;
 };
 export type PenetrationStats = {
   damage: number; penetration?: number; rangeModifier: number;
@@ -21,7 +24,10 @@ export type PenetrationStats = {
 };
 export type BulletRayRequest = {
   origin: Vec; direction: Vec; range: number; equipment?: Equipment; stats?: PenetrationStats;
-  arena: {solids: readonly PenetrationSolid[]}; actors: readonly PenetrationActor[];
+  arena: {solids: readonly PenetrationSolid[]; native?: {
+    ray(origin: Vec, direction: Vec, range: number): {distance: number; normal: Vec; surfaceId?: number; surface?: NativeSurface} | undefined;
+    traceSolid?(origin: Vec, direction: Vec, range: number): NativeSurfaceInterval[];
+  }}; actors: readonly PenetrationActor[];
   shooterId?: number; shooterSide?: string; maxPenetrations?: number;
   // Trainer policy: never damage teammates. Zero makes friendly flesh opaque.
   friendlyFleshPenetration?: number;
@@ -33,6 +39,7 @@ export type SurfaceContact = {
   kind: 'surface'; phase: 'entry' | 'exit'; surfaceId: number; environmentId?: string;
   material: PenetrationMaterial; point: Vec; distance: number; normal: Vec;
   thickness: number; residualDamage: number; penetrations: number;
+  nativeSurface?: NativeSurface; primitiveId?: number;
 };
 export type PenetratingActorHit = {
   kind: 'actor'; actorId: number; group: Hitgroup; point: Vec; distance: number;
@@ -107,13 +114,13 @@ export function raySolidInterval(origin: Vec, direction: Vec, solid: Penetration
 
 function actorInterval(origin: Vec, direction: Vec, actor: PenetrationActor, range: number) {
   const feet = {...actor.position, y: actor.feet}, duck = actor.duckAmount ?? Number(actor.crouched ?? false);
-  const hit = traceActor(origin, direction, feet, duck, range);
+  const hit = traceActor(origin, direction, feet, duck, range, actor.yaw, actor.hitPose);
   if (!hit.group || !Number.isFinite(hit.distance)) return;
-  // Existing analytic hit zones, not render bones. Reverse from beyond all zones
-  // to obtain the flesh chord; gaps between zones belong to the same actor.
+  // Reverse through the same supplied capsules or analytic fallback to obtain
+  // the flesh chord; gaps between zones belong to the same actor.
   const end = Math.max(hit.distance + 3, dot({x: feet.x - origin.x, y: feet.y + 1 - origin.y, z: feet.z - origin.z}, direction) + 3);
   const reverse = {x: -direction.x, y: -direction.y, z: -direction.z};
-  const back = traceActor(pointOnRay(origin, direction, end), reverse, feet, duck, end - hit.distance + EPS);
+  const back = traceActor(pointOnRay(origin, direction, end), reverse, feet, duck, end - hit.distance + EPS, actor.yaw, actor.hitPose);
   if (!Number.isFinite(back.distance)) return;
   return {entry: hit.distance, exit: Math.max(hit.distance, end - back.distance), group: hit.group};
 }
@@ -166,10 +173,32 @@ export function resolveBulletRay(request: BulletRayRequest): BulletRayResult {
   if (!Number.isFinite(range) || range < 0 || !Number.isFinite(request.maxPenetrations ?? 4)) throw new RangeError('Invalid bullet range or penetration budget');
   const maxPenetrations = Math.max(0, Math.floor(request.maxPenetrations ?? 4));
   const power = Math.max(0, (stats as PenetrationStats).penetration ?? 0);
-  type SolidCrossing = Interval & {kind: 'surface'; solid: PenetrationSolid; surfaceId: number};
+  type SolidCrossing = Interval & {kind: 'surface'; solid: PenetrationSolid; surfaceId: number; nativeSurface?: NativeSurface; primitiveId?: number};
   type ActorCrossing = {kind: 'actor'; actor: PenetrationActor; entry: number; exit: number; group: Hitgroup};
   type Crossing = SolidCrossing | ActorCrossing;
   const crossings: Crossing[] = [];
+  const nativeIntervals = arena.native?.traceSolid?.(origin,direction,range);
+  if (nativeIntervals) for (const interval of nativeIntervals) {
+    const validExit = interval.validated && interval.exit !== undefined && Number.isFinite(interval.exit) && interval.exit > interval.entry && interval.exitNormal;
+    const surface = interval.surface;
+    if (!Number.isFinite(interval.entry) || interval.entry < 0 || interval.entry > range) throw new RangeError('Invalid native surface entry');
+    const thickness = validExit ? interval.exit! - interval.entry : 0;
+    // Use the actual source modifier, including variants (solidmetal, dense
+    // wood, etc.). The special branches depend on gameMaterial, not family.
+    const special = surface?.gameMaterial === 'W' ? {modifier:3,damageLoss:.16} :
+      surface?.gameMaterial === 'L' ? {modifier:2,damageLoss:.16} :
+      ['Y','G'].includes(surface?.gameMaterial ?? '') && f(thickness / UNIT) < 6 ? {modifier:3,damageLoss:.05} : undefined;
+    const known = !!surface?.gameMaterial && Number.isFinite(surface.penetrationModifier) && surface.penetrationModifier! > 0;
+    crossings.push({kind:'surface',surfaceId:interval.surfaceId,primitiveId:interval.primitiveId,nativeSurface:surface,
+      entry:interval.entry,exit:validExit ? interval.exit! : Infinity,entryNormal:interval.entryNormal,exitNormal:interval.exitNormal ?? interval.entryNormal,
+      solid:{center:pointOnRay(origin,direction,interval.entry),size:{x:1,y:1,z:1},material:surface?.material ?? 'concrete',
+        penetrable:!!validExit && known,penetrationModifier:special?.modifier ?? surface?.penetrationModifier,damageLoss:special?.damageLoss ?? .16}});
+  } else {
+    const native = arena.native?.ray(origin, direction, range);
+    if (native) crossings.push({kind: 'surface', surfaceId: native.surfaceId ?? -1, entry: native.distance, exit: Infinity,
+      entryNormal: native.normal, exitNormal: native.normal, nativeSurface:native.surface,
+      solid: {center: pointOnRay(origin, direction, native.distance), size: {x: 1, y: 1, z: 1}, penetrable: false, material: native.surface?.material ?? 'concrete'}});
+  }
   arena.solids.forEach((solid, surfaceId) => {
     if (solid.active === false || solid.health === 0 || solid.shotBlocking === false) return;
     const interval = raySolidInterval(origin, direction, solid);
@@ -204,7 +233,9 @@ export function resolveBulletRay(request: BulletRayRequest): BulletRayResult {
       const contact: SurfaceContact = {kind: 'surface', phase: boundary.exit ? 'exit' : 'entry',
         surfaceId: crossing.surfaceId, environmentId: crossing.solid.id, material,
         point: pointOnRay(origin, direction, distance), distance,
-        normal: {...(boundary.exit ? crossing.exitNormal : crossing.entryNormal)}, thickness, residualDamage: damage, penetrations};
+        normal: {...(boundary.exit ? crossing.exitNormal : crossing.entryNormal)}, thickness: Number.isFinite(thickness) ? thickness : 0, residualDamage: damage, penetrations,
+        ...(crossing.nativeSurface ? {nativeSurface:crossing.nativeSurface} : {}),
+        ...(crossing.primitiveId === undefined ? {} : {primitiveId:crossing.primitiveId})};
       surfaces.push(contact); contacts.push(contact);
       if (boundary.exit) continue;
       if (penetrations >= maxPenetrations) {stopped = 'penetration-limit'; break;}

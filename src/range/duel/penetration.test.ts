@@ -1,5 +1,6 @@
 import {describe, expect, it} from 'vitest';
 import {UNIT} from '../actor-physics';
+import {actorHeadPoint} from './geometry';
 import nativeLoss from './native-penetration-fixture.json';
 import nativeSurfaces from './native-surface-fixture.json';
 import {damageThroughSurface, penetrationLoss, penetrationMaterials, raySolidInterval, resolveBulletRay,
@@ -15,6 +16,17 @@ const request = (patch: Partial<BulletRayRequest> = {}): BulletRayRequest => ({o
   direction: {x: 0, y: 0, z: -1}, range: 30, stats, arena: {solids: []}, actors: [], shooterId: 1, shooterSide: 'player', ...patch});
 
 describe('stateless penetration and collateral ray', () => {
+  it('uses the facing-aware crouched head for both flesh entry and exit without moving stored impacts', () => {
+    const target = {...actor(2, -15), yaw: .8, duckAmount: 1};
+    const head = actorHeadPoint({...target.position, y: target.feet}, 1, target.yaw);
+    const input = request({origin: {x: 0, y: 64 * UNIT, z: 0}, actors: [target],
+      direction: {x: head.x, y: head.y - 64 * UNIT, z: head.z}});
+    const result = resolveBulletRay(input), hit = result.hits[0], point = {...hit.point};
+    expect(hit.group).toBe('head'); expect(hit.thickness).toBeCloseTo(.27, 8);
+    expect(result.contacts.map(c => c.kind)).toEqual(['actor', 'flesh-exit']);
+    target.position.x += 5; target.yaw = 0;
+    expect(hit.point).toEqual(point); expect(resolveBulletRay(input).hits).toHaveLength(0);
+  });
   it('uses supplied physical mesh intervals without inventing analytic hits',()=>{
     const result=resolveBulletRay(request({actors:[actor(2,-5),actor(3,-10)],physicalActorIntervals:[
       {actorId:2,entry:4.7,exit:5.1,group:'head'},{actorId:3,entry:9.8,exit:10.1,group:'chest'}]}));

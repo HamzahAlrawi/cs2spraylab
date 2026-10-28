@@ -93,6 +93,9 @@ await import('./verify-scale.mjs');
 await import('./verify-reload.mjs');
 await import('./verify-world-weapons.mjs');
 const audioManifest = JSON.parse(fs.readFileSync('public/revamp/audio/events.json', 'utf8'));
+if(fs.existsSync('public/revamp/models/combat-delivery.json')) {
+  const {verifyCombatModelDelivery}=await import('./check-combat-model-delivery.mjs');verifyCombatModelDelivery();
+}
 const events = audioManifest.events;
 const hearingMetadata = JSON.parse(fs.readFileSync('src/range/sound-events-data.json', 'utf8'));
 if (hearingMetadata.build !== audioManifest.build) throw new Error('AI hearing metadata targets a different game build');

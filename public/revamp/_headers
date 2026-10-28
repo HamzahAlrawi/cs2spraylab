@@ -1,0 +1,8 @@
+/maps/dust2/duel/objects/*
+  Cache-Control: public, max-age=31536000, immutable
+
+/models/objects/*
+  Cache-Control: public, max-age=31536000, immutable
+
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable

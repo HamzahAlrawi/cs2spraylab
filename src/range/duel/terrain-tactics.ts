@@ -23,7 +23,7 @@ export class TerrainTactics {
   constructor(seed:number){this.random=randomStream(seed,'terrain-tactics');}
   plan(time:number,peers:readonly TacticalPeer[],arena:Arena,state:EnvironmentState,reserved:readonly number[]=[]) {
     const links=availableTraversalLinks(arena,state).filter(link=>['stairs','ramp','ladder'].includes(link.kind)&&link.to.y-link.from.y>.35);
-    const safe=(peer:TacticalPeer)=>peer.actor.alive&&!peer.actor.reloading&&!reserved.includes(peer.actor.id)&&
+    const safe=(peer:TacticalPeer)=>peer.actor.alive&&!peer.actor.reloading&&!peer.busy&&!reserved.includes(peer.actor.id)&&
       (peer.level==='10+'||peer.level>=5)&&time-(peer.contactAt??-Infinity)>2&&time-(peer.lastHurtAt??-Infinity)>2;
     if(this.active) {
       const active=this.active,peer=peers.find(item=>item.actor.id===active.id);

@@ -24,7 +24,7 @@ test('fundamentals offer interactive practice, honest demonstrations and mobile 
   const dialog = page.getByRole('dialog', {name: 'Stop before you shoot'});
   await expect(dialog).toBeVisible();
   await page.getByRole('button', {name: 'Watch example'}).click();
-  await expect(page.locator('.lesson-feedback')).toContainText('That is a counter-strafe');
+  await expect(page.locator('.lesson-feedback')).toContainText('Counter-strafe complete');
   await expect(page.getByRole('button', {name: 'Next lesson'})).toBeDisabled();
   await page.getByRole('button', {name: 'Try it yourself'}).click();
   // Pointer controls exercise the same input path on desktop and touch devices.
@@ -34,14 +34,14 @@ test('fundamentals offer interactive practice, honest demonstrations and mobile 
   await page.mouse.up();
   const left = (await page.getByRole('button', {name: 'Move left', exact: true}).boundingBox())!;
   await page.mouse.move(left.x + left.width / 2, left.y + left.height / 2); await page.mouse.down();
-  await expect(page.locator('.lesson-feedback')).toContainText('That is a counter-strafe');
+  await expect(page.locator('.lesson-feedback')).toContainText('Counter-strafe complete');
   await page.mouse.up();
   await page.getByRole('button', {name: 'Next lesson'}).click();
   await expect(page.getByRole('heading', {name: 'Aim with your movement'})).toBeVisible();
   await page.getByRole('button', {name: 'Fire / Space'}).click();
   await expect(page.locator('.lesson-feedback')).toContainText('right of your crosshair');
   await page.getByRole('button', {name: 'Watch example'}).click();
-  await expect(page.locator('.lesson-feedback')).toContainText('shot connected');
+  await expect(page.locator('.lesson-feedback')).toContainText('first bullet');
   const image = await page.locator('.movement-tutorial').screenshot({path: `test-results/tutorial-${info.project.name}.png`});
   expect((await sharp(image).stats()).channels[0].stdev).toBeGreaterThan(20);
   expect((await page.locator('.movement-tutorial').boundingBox())!.width).toBeLessThanOrEqual(page.viewportSize()!.width);
@@ -55,6 +55,7 @@ test('transfer and spread choices persist, with mode-specific recommendations', 
   await page.goto('/');
   await page.getByLabel('Training mode').selectOption('guided');
   await page.getByRole('button', {name: 'Settings', exact: true}).click();
+  await page.getByRole('tab', {name: 'Training', exact: true}).click();
   await expect(page.getByLabel('Practice spread', {exact: true})).not.toBeChecked();
   await expect(page.locator('.setting-explanation').filter({hasText: 'Turning it off does not remove recoil'})).toBeVisible();
   await page.getByLabel('Transfer after bullet', {exact: true}).fill('9');
@@ -66,6 +67,7 @@ test('transfer and spread choices persist, with mode-specific recommendations', 
   await page.getByLabel('Transfer trigger').selectOption('kill');
   await page.reload();
   await page.getByRole('button', {name: 'Settings', exact: true}).click();
+  await page.getByRole('tab', {name: 'Training', exact: true}).click();
   await expect(page.getByLabel('Transfer trigger')).toHaveValue('kill');
   await expect(page.getByLabel('Transfer after bullet', {exact: true})).toHaveCount(0);
 });
@@ -107,15 +109,24 @@ test('live guide projection sends scheduled shots into the head at long range an
 });
 
 test('Duel size, equipment, damage arcs and scorecard work without blocking the crosshair', async ({page}, info) => {
+  await page.addInitScript(()=>localStorage.setItem('spraylab.duel.v1',JSON.stringify({generatedMaps:true})));
   const errors: string[] = []; page.on('pageerror', e => errors.push(e.message));
   await page.goto('/'); await captureEngine(page, 'duel');
   await page.getByLabel('Arena size', {exact: true}).fill('1.5');
   await expect.poll(() => page.evaluate(() => (window as any).lessonEngine.sim.arena.maxX)).toBe(18);
-  const geometry = await page.evaluate(() => {
-    const e = (window as any).lessonEngine; return {scale: e.shell.scale.toArray(), z: e.sim.actors[0].position.z};
+  const geometry = await page.evaluate(async () => {
+    const e = (window as any).lessonEngine, arena = e.sim.arena, [player, ...bots] = e.sim.snapshot();
+    const url = performance.getEntriesByType('resource').find(entry => entry.name.includes('/duel/DuelEngine.ts'))!.name;
+    const {canFitInArena} = await import(/* @vite-ignore */ new URL('./geometry.ts', url).href);
+    const {routeTo} = await import(/* @vite-ignore */ new URL('./navigation.ts', url).href);
+    return {scale: e.shell.scale.toArray(), native: !!arena.native,
+      fittingSpawns: [player, ...bots].every(actor => canFitInArena(actor.position, actor.feet, 72 * .0254, arena)),
+      connectedSpawns: bots.every(bot => routeTo(bot.position, player.position, arena).length > 0)};
   });
   expect(geometry.scale).toEqual([1.5, 1, 1.5]);
-  expect(geometry.z).toBeGreaterThan(10);
+  expect(geometry.native).toBe(false);
+  expect(geometry.fittingSpawns).toBe(true);
+  expect(geometry.connectedSpawns).toBe(true);
   await page.getByRole('button', {name: 'Equip USP-S', exact: true}).click();
   await expect(page.locator('.duel-ammo small')).toHaveText('USP-S');
   await page.waitForFunction(() => (window as any).lessonEngine.renderedEquipment === 'usp' && (window as any).lessonEngine.viewRoot.children.length);
@@ -135,20 +146,24 @@ test('Duel size, equipment, damage arcs and scorecard work without blocking the 
   await page.locator('.duel-view').screenshot({path: `test-results/damage-feedback-${info.project.name}.png`});
   await expect(page.locator('.damage-arc')).toHaveCount(0);
   await page.evaluate(() => {
-    const e = (window as any).lessonEngine, self = e.sim.snapshot()[0];
+    const e = (window as any).lessonEngine, self = {...e.sim.snapshot()[0], yaw: 0, pitch: 0, velocity: {x: 0, z: 0}};
     e.pause();
-    e.sim.coach.shot(self); e.sim.coach.shot({...self, velocity: {x: 5, z: 0}});
-    e.sim.coach.hit({kind: 'hit', shooter: 0, victim: 1, group: 'head', healthDamage: 40, armorDamage: 0, lethal: true}, 1);
+    const point = {...self.position, z: self.position.z - 10};
+    e.sim.coach.observe(1, self, [{id: 1, position: point, aimPoint: point, headPoint: point}]);
+    e.sim.coach.shot(self, 11, 1); e.sim.coach.shot({...self, velocity: {x: 5, z: 0}}, 12, 1.01);
+    e.sim.coach.hit({kind: 'hit', tick: 1, shotId: 11, shooter: 0, victim: 1, group: 'head', healthDamage: 40, armorDamage: 0, lethal: true, point}, 1.1);
     e.processEvents([{kind: 'round', outcome: 'won', seconds: 1}]); e.report();
   });
   await page.getByRole('tab', {name: 'Scorecard', exact: true}).click();
   await expect(page.getByRole('region', {name: 'Duel scorecard'})).toContainText('50%');
-  await expect(page.getByRole('region', {name: 'Duel scorecard'})).toContainText('1/2 shots fired while moving');
+  await expect(page.getByRole('region', {name: 'Duel scorecard'})).toContainText('1/2 (50%)');
+  await expect(page.getByRole('region', {name: 'Duel scorecard'})).toContainText('Next rep');
   await page.getByRole('region', {name: 'Duel scorecard'}).screenshot({path: `test-results/scorecard-${info.project.name}.png`});
   const png = await page.locator('canvas[data-duel]').screenshot();
   expect((await sharp(png).stats()).channels[0].stdev).toBeGreaterThan(12);
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   await page.reload(); await page.getByRole('tab', {name: 'Scorecard'}).click();
+  await page.getByText('Combat totals and timing', {exact: true}).click();
   await expect(page.getByRole('region', {name: 'Duel scorecard'})).toContainText('Hits / shots');
   expect(errors).toEqual([]);
 });
@@ -186,9 +201,9 @@ test('lessons two and three are completable with manual movement and preserve th
     await expect(page.locator('.lesson-speed .ready')).toBeVisible();
     await page.keyboard.up('KeyA');
     await page.getByRole('button', {name: 'Fire / Space'}).click();
-    await expect(page.locator('.lesson-feedback')).toContainText('shot connected');
+    await expect(page.locator('.lesson-feedback')).toContainText('first bullet');
     await page.waitForTimeout(1400);
-    await expect(page.locator('.lesson-feedback')).toContainText('shot connected');
+    await expect(page.locator('.lesson-feedback')).toContainText('first bullet');
   }
 });
 

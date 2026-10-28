@@ -1,4 +1,4 @@
-import {describe, expect, it} from 'vitest';
+import {describe, expect, it,vi} from 'vitest';
 import {STEP, UNIT} from '../actor-physics';
 import {damagePunch} from '../aim-punch';
 import {direction} from '../shot-model';
@@ -19,6 +19,22 @@ function fixture() {
   sim.command(1, {}); sim.start();
   return sim;
 }
+
+describe('mixed pellet impulses',()=>{
+  it.each([0,5,100])('keeps chest punch when a simultaneous head pellet hits armor %s',armor=>{
+    const sim=fixture(),shooter=sim.actors[0],victim=sim.actors[1];victim.armor=armor;victim.helmet=true;
+    shooter.pitch=0;
+    const head=direction(0,0),body=direction(0,Math.atan2(1.2-64*UNIT,16));
+    vi.spyOn(shooter.weapon,'advance').mockReturnValueOnce({origin:{...shooter.position},direction:head,
+      pelletDirections:[head,body],weapon:'nova',kind:'pellets',attack:'primary',ordinal:0,maxDistance:100});
+    const punch=vi.spyOn(victim.punch,'hit');sim.step();
+    const contacts=sim.drainEvents().filter(e=>e.kind==='hit');
+    expect(contacts).toHaveLength(1);expect(contacts[0]).toMatchObject({group:'head',lethal:false});
+    expect(punch.mock.calls.map(([hit])=>hit.group)).toEqual(['head','chest']);
+    expect(victim.punch.angle.pitch).toBeGreaterThan(0);
+    if(armor===5)expect(punch.mock.calls[1][0].armor).toBeLessThan(armor);
+  });
+});
 
 describe('shared combat aim punch', () => {
   it.each(['fallback', 'tactical'])('%s aim corrects punch through its finite motor, not instant recoil cancellation', kind => {
@@ -79,8 +95,15 @@ describe('shared combat aim punch', () => {
     const hit = sim.drainEvents().find(event => event.kind === 'hit');
     if (hit?.kind !== 'hit') throw new Error('Missing test hit');
     expect(sim.actors[1].armor).toBe(0);
+    expect(hit.armored).toBe(true);
     const expected = damagePunch({rawDamage: hit.healthDamage + 2 * hit.armorDamage, armor: 1, helmet: true, group: 'chest'}, () => .5);
     expect(sim.actors[1].punch.angle.pitch).toBeCloseTo(expected.pitch);
+  });
+  it('does not report armored body audio for unprotected legs',()=>{
+    const sim=fixture();sim.actors[0].pitch=Math.atan2(.3-64*UNIT,16);
+    sim.command(0,{firePressed:true});sim.step();
+    const hit=sim.drainEvents().find(event=>event.kind==='hit');
+    expect(hit).toMatchObject({group:'leg',armorDamage:0,armored:false});
   });
 
   it('does not punch an actor behind cover or after a lethal hit', () => {

@@ -6,6 +6,7 @@ import {defaults} from './config';
 import {MovementLesson} from './lesson-model';
 import {groundVelocity, STEP} from './actor-physics';
 import {createScenario, angleTo, exposedHead} from './drills';
+import {NativeReloadState} from './weapon-actions';
 
 function viewFixture(names = ['idle', 'reload', 'reload-empty', 'draw', 'inspect']) {
   const root = new THREE.Group(), hand = new THREE.Object3D(), weapon = new THREE.Object3D();
@@ -18,6 +19,55 @@ function viewFixture(names = ['idle', 'reload', 'reload-empty', 'draw', 'inspect
 }
 
 describe('native first-person action runtime', () => {
+  it('plays magazine source seconds independently of the attack gate and holds a shorter clip endpoint', () => {
+    const root = new THREE.Group(), hand = new THREE.Object3D(); hand.name = 'hand'; root.add(hand);
+    const animation = new ViewAnimation(root, [
+      new THREE.AnimationClip('idle', 0, [new THREE.NumberKeyframeTrack('hand.position[x]', [0], [0])]),
+      new THREE.AnimationClip('reload', 2, [new THREE.NumberKeyframeTrack('hand.position[x]', [0, 2], [0, 2])]),
+    ]);
+    animation.update(3.9, 5, 0, {equipment:'ak47', reloadPhase:'magazine', reloadProgress:1.1 / 5});
+    expect(hand.position.x).toBeCloseTo(1.1); // Not 1.1 / 5 * clip duration.
+    animation.update(2.6, 5, 0, {equipment:'ak47', reloadPhase:'magazine', reloadProgress:2.4 / 5});
+    expect(hand.position.x).toBeCloseTo(2); expect(animation.activeAction).toBe('reload');
+    animation.update(0, 5, 0, {reloadPhase:'idle'}); expect(hand.position.x).toBe(0);
+    animation.dispose();
+  });
+
+  it.each([false, true])('keeps the chosen tactical/empty clip after ammo commit and cancels on holster (empty=%s)', empty => {
+    const {animation, hand} = viewFixture();
+    const reload = new NativeReloadState('glock'); reload.ammo = empty ? 0 : 1; reload.start(0);
+    const commitAt = reload.ammoCommitAt; reload.advance(commitAt);
+    animation.update(reload.until - commitAt, reload.phaseDuration, 0, {equipment:'glock', reloadPhase:reload.phase,
+      reloadProgress:reload.progress, reloadEmpty:reload.empty, ammo:reload.ammo});
+    expect(hand.position.x).toBeCloseTo((empty ? .8 : .4) * (commitAt <= 1 ? commitAt : 2 - commitAt));
+    expect(reload.active).toBe(true); expect(reload.ammo).toBe(20);
+    reload.cancel(); animation.update(0, 1, 0, {reloadPhase:reload.phase, ammo:reload.ammo});
+    expect(hand.position.x).toBe(0); expect(animation.activeAction).toBe('idle'); animation.dispose();
+  });
+
+  it('uses unscaled progress during prospective silent-mode changes without restarting the magazine clip', () => {
+    const {animation, hand} = viewFixture();
+    const reload = new NativeReloadState('ak47'); reload.ammo = 0; reload.start(0, true);
+    const sample = (at:number, held:boolean) => {
+      reload.advance(at, held);
+      animation.update(reload.until - at, reload.phaseDuration, 0, {equipment:'ak47', reloadPhase:reload.phase,
+        reloadProgress:reload.progress, reloadEmpty:reload.empty, ammo:reload.ammo});
+    };
+    sample(1, false); expect(hand.position.x).toBeCloseTo(.4);
+    sample(1, true); expect(hand.position.x).toBeCloseTo(.4);
+    sample(2, false); expect(hand.position.x).toBeCloseTo(.8);
+    animation.dispose();
+  });
+  it('interrupts draw or pickup with inspect immediately, without changing gameplay readiness', () => {
+    const {animation} = viewFixture();
+    animation.playDraw(1.5); animation.update(0,1,.02);
+    expect(animation.activeAction).toBe('draw');
+    expect(animation.playInspect()).toBe(true);
+    expect(animation.activeAction).toBe('inspect');
+    animation.playPickup(1.5);
+    expect(animation.playInspect()).toBe(true);
+    expect(animation.activeAction).toBe('inspect');
+  });
   it('samples authored intro/shell/outro ranges and loops inserts without idle dips', () => {
     const root = new THREE.Group(), hand = new THREE.Object3D(); hand.name = 'hand'; root.add(hand);
     const animation = new ViewAnimation(root, [

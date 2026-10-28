@@ -1,0 +1,16 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Movement tutorial test host</title>
+<style>body{margin:0;font-family:Arial,sans-serif}*{box-sizing:border-box}</style></head>
+<body><div id="root"></div><script type="module">
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import {MovementTutorial} from '../src/range/MovementTutorial.tsx';
+function Harness() {
+  const [open, setOpen] = React.useState(false);
+  return React.createElement(React.Fragment, null,
+    React.createElement('button', {onClick: () => setOpen(true)}, 'Open tutorial'),
+    open && React.createElement(MovementTutorial, {close: () => setOpen(false), practice: () => setOpen(false)}));
+}
+ReactDOM.createRoot(document.getElementById('root')).render(React.createElement(Harness));
+</script></body></html>

@@ -1,0 +1,18 @@
+{
+  "source":"https://github.com/GameOperator13/cs2-dust2-duel-density",
+  "commit":"04f94b0ad6600c39f019bf65f46a08b13cdce3f1",
+  "file":"cs2_dust2_data/dust2_kills_with_coords.csv",
+  "sha256":"61d1471513107aa511cb395c7954a618e351087f3f527c9b35edff090c15b134",
+  "license":"CC-BY-4.0",
+  "licenseNotice":"Combat coordinates from GameOperator13/cs2-dust2-duel-density, derived from Julien Blanchon's OpenCS2 dataset, CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/). SprayLab adapts a small set into native-validated training positions. No endorsement implied.",
+  "context":"Actual combat-origin coordinates, not measured holding probabilities. Standing stance, facing and peek behavior are authored training adaptations; the CSV does not establish them. Each position needs the same native covered-entry/clearance/visibility audit as all other proposals.",
+  "angles":[
+    {"id":"a-ramp-cross-low","name":"A ramp / CT cross corner","position":[948.48779296875,2357.664794921875,5.862894058227539],"rotation":[0,-100,0],"crouched":false,"moving":true,"event":"2393007-de_dust2-r01-k001","role":"attacker"},
+    {"id":"long-blue-exit","name":"Long doors / Blue-side exit","position":[647.3790893554688,833.2149047851562,0.21765995025634766],"rotation":[0,-90,0],"crouched":false,"moving":true,"event":"2393007-de_dust2-r03-k001","role":"victim"},
+    {"id":"short-platform-front","name":"Short platform / forward edge","position":[306.7973937988281,2105.32421875,97.78036499023438],"rotation":[0,-90,0],"crouched":false,"moving":true,"event":"2393007-de_dust2-r05-k000","role":"victim"},
+    {"id":"b-default-back","name":"B site / back of default","position":[-1512.1630859375,2570.207275390625,2.681544780731201],"rotation":[0,-110,0],"crouched":false,"moving":true,"event":"2393007-de_dust2-r16-k002","role":"victim"},
+    {"id":"a-short-ramp-edge","name":"A Short / site ramp edge","position":[338.688720703125,2551.569580078125,96.94181060791016],"rotation":[0,-90,0],"crouched":false,"moving":true,"event":"2393007-de_dust2-r05-k001","role":"victim"},
+    {"id":"a-back-default","name":"A default / rear side","position":[1180.963623046875,2741.306884765625,98.80091094970703],"rotation":[0,-110,0],"crouched":false,"moving":true,"event":"2393025-de_dust2-r03-k001","role":"victim"},
+    {"id":"ct-spawn-b-slope","name":"CT spawn / B ramp wall","position":[-638.03515625,2395.004150390625,-100.843505859375],"rotation":[0,-90,0],"crouched":false,"moving":true,"event":"2393015-de_dust2-r03-k005","role":"victim"}
+  ]
+}

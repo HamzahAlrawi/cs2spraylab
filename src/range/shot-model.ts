@@ -1,4 +1,4 @@
-import {DEG, type Vec} from './actor-physics';
+import {DEG, UNIT, type Vec} from './actor-physics';
 import {shotgunSpreadTable, sourceRandom, type RecoilAngle} from './recoil';
 import type {WeaponRecovery, AccuracyParameters} from './ballistics';
 
@@ -14,6 +14,7 @@ export type ShotAim = {
   weapon: AccuracyParameters;
   recovery: WeaponRecovery;
   speedRatio: number;
+  speedUnits?: number;
   walking: boolean;
   airborne: boolean;
   verticalSpeedUnits: number;
@@ -33,6 +34,12 @@ export type SpreadSample = {
   recoilIndex?: number; pelletPattern?: SpreadOffset;
 };
 const f = Math.fround, TAU = f(Math.PI * 2);
+
+// The native inaccuracy path reads a float32 horizontal velocity length.
+export function accuracySpeedUnits(velocity: {x: number; z: number}) {
+  const x = f(velocity.x / UNIT), z = f(velocity.z / UNIT);
+  return f(Math.sqrt(f(f(x * x) + f(z * z))));
+}
 
 function spreadRadius(radius: number, sample: SpreadSample) {
   if (sample.weaponId === 'revolver' && sample.alternateFire) return f(1 - f(radius * radius));
@@ -67,7 +74,7 @@ export function shotDirection(aim: ShotAim, random?: () => number): Vec {
   const pitch = aim.pitch + (aim.recoil.pitch + (aim.punch?.pitch ?? 0)) * DEG;
   const forward = direction(yaw, pitch);
   if (aim.spread) {
-    const cone = aim.recovery.inaccuracy(aim.speedRatio, aim.walking, aim.airborne, aim.verticalSpeedUnits);
+    const cone = aim.recovery.inaccuracy(aim.speedRatio, aim.walking, aim.airborne, aim.verticalSpeedUnits, aim.speedUnits);
     const {horizontal, vertical} = sampleShotSpread({inaccuracy: cone, spread: aim.weapon.spread,
       weaponId: aim.weaponId, alternateFire: aim.alternateFire,
       recoilIndex: aim.recoilIndex ?? aim.recovery.index, pelletPattern: aim.pelletPattern},

@@ -1,0 +1,71 @@
+{
+  "version": 1,
+  "map": "dust2",
+  "coordinateSystem": "Source inches converted to metres: x=x*.0254, y=z*.0254, z=-y*.0254; no rescaling or recentering",
+  "chunks": [
+    {
+      "id": "dust2-long-doors",
+      "name": "Dust 2 · Long doors & pit",
+      "routeId": "long-doors",
+      "sourceMin": [0, -500, -256],
+      "sourceMax": [1950, 1450, 640],
+      "contextPaddingUnits": 384
+    },
+    {
+      "id": "dust2-b-entry",
+      "name": "Dust 2 · B tunnels & site",
+      "routeId": "b-tunnels",
+      "sourceMin": [-2450, 850, -256],
+      "sourceMax": [-1050, 3300, 640],
+      "contextPaddingUnits": 384
+    },
+    {
+      "id": "dust2-mid-ct",
+      "name": "Dust 2 · Mid doors & CT",
+      "routeId": "mid-doors",
+      "sourceMin": [-850, 850, -256],
+      "sourceMax": [1000, 2500, 640],
+      "contextPaddingUnits": 384
+    },
+    {
+      "id": "dust2-a-long",
+      "name": "Dust 2 · Long to A site",
+      "routeId": "long-a",
+      "sourceMin": [-100, 650, -256],
+      "sourceMax": [2000, 3300, 640],
+      "contextPaddingUnits": 320
+    },
+    {
+      "id": "dust2-a-short",
+      "name": "Dust 2 · Catwalk & A site",
+      "routeId": "short-a",
+      "sourceMin": [-550, 100, -256],
+      "sourceMax": [1550, 3300, 640],
+      "contextPaddingUnits": 320
+    },
+    {
+      "id": "dust2-b-doors",
+      "name": "Dust 2 · B doors retake",
+      "routeId": "b-doors",
+      "sourceMin": [-2450, 1750, -256],
+      "sourceMax": [-300, 3300, 640],
+      "contextPaddingUnits": 320
+    },
+    {
+      "id": "dust2-tunnels",
+      "name": "Dust 2 · Lower & upper tunnels",
+      "routeId": "lower-tunnels",
+      "sourceMin": [-2450, 200, -256],
+      "sourceMax": [-200, 1950, 640],
+      "contextPaddingUnits": 320
+    },
+    {
+      "id": "dust2-top-mid",
+      "name": "Dust 2 · Mid push & Xbox",
+      "routeId": "ct-mid-push",
+      "sourceMin": [-1000, -300, -256],
+      "sourceMax": [800, 1950, 640],
+      "contextPaddingUnits": 320
+    }
+  ]
+}

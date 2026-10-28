@@ -1,0 +1,27 @@
+import type {Group} from 'three';
+import type {Settings} from '../config';
+import type {DuelConfig} from './config';
+import type {DuelSimulation} from './simulation';
+import type {Vec} from '../actor-physics';
+import type {PrefireReview} from '../prefire/coaching';
+import type {summarizePrefireHistory} from '../prefire/training-log';
+export type PrefireStats = PrefireReview & {routeId: string; routeName: string; headshotPercent: number;
+  stoppedPercent: number; seconds: number; progress: ReturnType<typeof summarizePrefireHistory>;
+  encounter?: import('../prefire/encounters').EncounterSelection;
+  navigation?: import('../prefire/navigation').RouteNavigation};
+export type DuelScenario = {
+  kind?: 'prefire' | 'duel-map';
+  name: string; scene: Group;
+  create(settings: Settings, seed: number): DuelSimulation;
+  beforeRestart?(outcome: DuelSimulation['outcome'], continuous: boolean): void;
+  report?(sim: DuelSimulation): PrefireStats;
+  configureDuel?(config: DuelConfig): void;
+  prepareRound?(seed: number, signal: AbortSignal): Promise<boolean>;
+  stageRound?(seed:number,signal:AbortSignal,warm:(scene:Group,signal:AbortSignal)=>Promise<void>):Promise<void>;
+  prefetchRound?(seed:number, warm?: (scene: Group, signal: AbortSignal) => Promise<void>):void;
+  replayMap?(geometrySha256?:string):void;
+  feedbackSeconds?(): number;
+  updateView?(position: Vec): void;
+  radarOverview?(feet: number): import('./radar').RadarOverview | undefined;
+  loadingReport?(): {decodedFresh: number; decodedReused: number; milliseconds: number; warmBudgetBytes: number} | undefined;
+};

@@ -2,13 +2,50 @@ import {describe, expect, it} from 'vitest';
 import {DEG, UNIT, type Vec} from './actor-physics';
 import {WeaponRecovery} from './ballistics';
 import {gameData, weaponIds} from './config';
-import {direction, sampleShotSpread, shotDirection, shotDirections, type ShotAim} from './shot-model';
+import {accuracySpeedUnits, direction, sampleShotSpread, shotDirection, shotDirections, type ShotAim} from './shot-model';
+import {movementInaccuracy} from './ballistics';
 
 const dot = (a: Vec, b: Vec) => a.x * b.x + a.y * b.y + a.z * b.z;
 const sequence = () => {let i = 0; const values = [.1, .65, .8, .4]; return () => values[i++ % values.length];};
 const aim = (yaw = 0, pitch = 0): ShotAim => ({yaw, pitch, recoil: {yaw: 0, pitch: 0},
   weapon: gameData.weapons.ak47, recovery: new WeaponRecovery(gameData.weapons.ak47),
   speedRatio: 0, walking: false, airborne: false, verticalSpeedUnits: 0, spread: true});
+
+// Build 2000930 client 85cdde..85ce18, hash 44af2aa0...a560008:
+// isolated SSE emulation with float32 Python sin/cos import substitutes.
+// These are native Source pitch/yaw velocity increments, not trainer angles.
+const nativeImpulseSigns = [
+  {angle:-90,pitch:4.371138828673793e-8,yaw:1},
+  {angle:-30,pitch:-.8660253882408142,yaw:.5},
+  {angle:0,pitch:-1,yaw:0},
+  {angle:30,pitch:-.8660253882408142,yaw:-.5},
+  {angle:90,pitch:4.371138828673793e-8,yaw:-1},
+];
+
+describe('native recoil sign convention',()=>{
+  it.each(nativeImpulseSigns)('stores inverse Source impulse for recoil angle $angle',sample=>{
+    const recovery=new WeaponRecovery({...gameData.weapons.ak47,fullAuto:false,
+      recoilAngle:sample.angle,recoilVariance:0,recoilMagnitude:1,recoilMagnitudeVariance:0});
+    recovery.fire();
+    expect(recovery.velocity.yaw).toBeCloseTo(-sample.yaw,7);
+    expect(recovery.velocity.pitch).toBeCloseTo(-sample.pitch,7);
+  });
+  it.each(nativeImpulseSigns)('applies native Source yaw/pitch signs to physical shots at angle $angle',sample=>{
+    for(const yaw of [-1.2,0,.75])for(const pitch of [-.6,0,.4]){
+      const recoil={yaw:-sample.yaw*2,pitch:-sample.pitch*2};
+      const actual=shotDirection({...aim(yaw,pitch),recoil,spread:false});
+      // Valve AngleVectors: (cos(p)*cos(y), cos(p)*sin(y), -sin(p)).
+      // Dust 2 conversion: Source X -> world X, Z -> Y, Y -> -Z.
+      const sourceYaw=yaw+Math.PI/2+sample.yaw*2*DEG;
+      const sourcePitch=-pitch+sample.pitch*2*DEG;
+      const expected={x:Math.cos(sourcePitch)*Math.cos(sourceYaw),
+        y:-Math.sin(sourcePitch),z:-Math.cos(sourcePitch)*Math.sin(sourceYaw)};
+      expect(actual.x).toBeCloseTo(expected.x,12);
+      expect(actual.y).toBeCloseTo(expected.y,12);
+      expect(actual.z).toBeCloseTo(expected.z,12);
+    }
+  });
+});
 
 describe('physical long-range shot geometry', () => {
   it('keeps the spread cone circular at steep pitch and after camera rotation', () => {
@@ -51,6 +88,16 @@ describe('physical long-range shot geometry', () => {
 });
 
 describe('native spread sampling', () => {
+  it('reads actual float32 horizontal speed instead of inventing a penalty at the crouch cap', () => {
+    const weapon = gameData.weapons.ak47;
+    const speed = accuracySpeedUnits({x: 73.1 * UNIT, z: 0});
+    expect(speed).toBe(73.0999984741211);
+    expect(movementInaccuracy(weapon, .340000000001, false, speed)).toBe(0);
+    expect(accuracySpeedUnits({x: 3 * UNIT, z: 4 * UNIT})).toBe(5);
+    const idle = shotDirection({...aim(), seed: 54});
+    const duckSpeed = shotDirection({...aim(), seed: 54, speedRatio: .340000000001, speedUnits: speed});
+    expect(duckSpeed).toEqual(idle);
+  });
   it('draws radii before angles and uses uniformly sampled radius, not uniform area', () => {
     const result = sampleShotSpread({inaccuracy: 1, spread: 0}, () => .25);
     expect(result.horizontal).toBeCloseTo(0, 6);

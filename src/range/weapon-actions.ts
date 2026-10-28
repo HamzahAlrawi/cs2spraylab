@@ -1,5 +1,6 @@
 import {gameData} from './config';
 import {equipmentStats, weaponModeStats, SILENT_RELOAD_MULTIPLIER, SHELL_RELOAD_START, SHELL_RELOAD_FINISH, type Equipment} from './equipment';
+import {nativeReloadTiming} from './native-view-actions';
 
 // Trainer estimate: vdata exposes R8 fire modes but not its engine-side windup.
 // Keep this separate from the audited native weapon parameters.
@@ -65,7 +66,7 @@ export type ReloadPhase = 'idle' | 'magazine' | 'start' | 'shell' | 'finish';
 export type ReloadActionEvent = {kind: 'reload-start' | 'reload-shell' | 'reload-end' | 'reload-cancel' | 'reload-mode';
   at: number; silent: boolean; phase: ReloadPhase; ammo: number; reserve: number};
 
-/** Ammo changes only on completed insert phases; cancellation cannot mint ammo. */
+/** Authored ammo commitment and the attack gate are independent of the clip end. */
 export class NativeReloadState {
   ammo: number;
   reserve: number;
@@ -75,6 +76,10 @@ export class NativeReloadState {
   startedAt = 0;
   private lastTime = 0;
   private remaining = 0;
+  private magazineDuration = 0;
+  private commitWork = 0;
+  private retainedReadyAt = 0;
+  ammoCommitted = false;
   private events: ReloadActionEvent[] = [];
   readonly stats;
   constructor(readonly id: Equipment, readonly silentMultiplier = SILENT_RELOAD_MULTIPLIER) {
@@ -84,30 +89,47 @@ export class NativeReloadState {
   }
   get active() {return this.phase !== 'idle';}
   get phaseDuration() {return this.phase === 'idle' ? 0 : this.phase === 'start' ? SHELL_RELOAD_START
-    : this.phase === 'finish' ? SHELL_RELOAD_FINISH : this.stats.reload;}
+    : this.phase === 'finish' ? SHELL_RELOAD_FINISH : this.phase === 'magazine' ? this.magazineDuration : this.stats.reload;}
   get progress() {return this.phaseDuration ? Math.max(0, Math.min(1, 1 - this.remaining / this.phaseDuration)) : 0;}
   get until() {return this.active ? this.lastTime + this.remaining * (this.silent ? this.silentMultiplier : 1) : 0;}
+  /** A committed magazine keeps its attack floor across holster; callers also enforce deploy/cycle gates. */
+  get fireReadyAt() {return Math.max(this.until, this.retainedReadyAt);}
+  get ammoCommitAt() {return this.phase === 'magazine' && !this.ammoCommitted
+    ? this.lastTime + Math.max(0, this.commitWork - (this.phaseDuration - this.remaining)) * (this.silent ? this.silentMultiplier : 1) : 0;}
   start(time: number, silent = false) {
     if (this.active || this.id === 'knife' || this.id === 'zeus' || this.ammo >= this.stats.magazine || this.reserve <= 0) return false;
     this.empty = this.ammo === 0; this.silent = silent; this.startedAt = this.lastTime = time;
+    const timing = nativeReloadTiming(this.id, this.empty);
+    this.magazineDuration = timing?.attackLock ?? this.stats.reload;
+    this.commitWork = Math.min(this.magazineDuration, timing?.ammoAt ?? this.magazineDuration);
+    this.ammoCommitted = false;
     this.phase = this.stats.reloadsSingleShells ? 'start' : 'magazine';
-    this.remaining = this.phase === 'start' ? SHELL_RELOAD_START : this.stats.reload;
+    this.remaining = this.phase === 'start' ? SHELL_RELOAD_START : this.magazineDuration;
     this.emit('reload-start', time);
     return true;
   }
   advance(time: number, reloadHeld?: boolean) {
     // Integrate the preceding interval at its preceding rate. Changing modes
     // cannot retroactively accelerate already elapsed reload time.
-    let work = Math.max(0, time - this.lastTime) / (this.silent ? this.silentMultiplier : 1);
+    const rate = this.silent ? this.silentMultiplier : 1;
+    let work = Math.max(0, time - this.lastTime) / rate;
+    let boundaryAt = this.lastTime;
+    if (this.phase === 'magazine' && !this.ammoCommitted &&
+      this.phaseDuration - this.remaining + work + 1e-9 >= this.commitWork) {
+      const inserted = Math.min(this.stats.magazine - this.ammo, this.reserve);
+      this.ammo += inserted; this.reserve -= inserted; this.ammoCommitted = true;
+    }
     this.lastTime = Math.max(this.lastTime, time);
     while (this.active && work + 1e-9 >= this.remaining) {
+      boundaryAt += this.remaining * rate;
       work = Math.max(0, work - this.remaining);
       if (this.phase === 'magazine') {
-        const inserted = Math.min(this.stats.magazine - this.ammo, this.reserve);
-        this.ammo += inserted; this.reserve -= inserted; this.emit('reload-end', time); this.cancel(false);
-      } else if (this.phase === 'finish') {this.emit('reload-end', time); this.cancel(false);}
+        this.retainedReadyAt = Math.max(this.retainedReadyAt, boundaryAt);
+        this.remaining = 0;
+        this.emit('reload-end', boundaryAt); this.cancel(false);
+      } else if (this.phase === 'finish') {this.emit('reload-end', boundaryAt); this.cancel(false);}
       else {
-        if (this.phase === 'shell') {this.ammo++; this.reserve--; this.emit('reload-shell', time);}
+        if (this.phase === 'shell') {this.ammo++; this.reserve--; this.emit('reload-shell', boundaryAt);}
         this.phase = this.ammo >= this.stats.magazine || this.reserve <= 0 ? 'finish' : 'shell';
         this.remaining = this.phase === 'finish' ? SHELL_RELOAD_FINISH : this.stats.reload;
       }
@@ -123,6 +145,7 @@ export class NativeReloadState {
     return true;
   }
   cancel(notify = true) {
+    if (this.phase === 'magazine' && this.ammoCommitted && this.remaining > 0) this.retainedReadyAt = Math.max(this.retainedReadyAt, this.until);
     if (this.active && notify) this.emit('reload-cancel', this.lastTime);
     this.phase = 'idle'; this.remaining = 0; this.silent = false;
   }

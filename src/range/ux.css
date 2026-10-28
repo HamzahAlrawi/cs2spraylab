@@ -1,0 +1,254 @@
+:root {
+  --ui-bg: #16191b;
+  --ui-panel: #202427;
+  --ui-input: #181c1f;
+  --ui-line: #3d454a;
+  --ui-text: #edf0f2;
+  --ui-muted: #afb8bd;
+  --ui-accent: #8ee0c4;
+  --ui-gold: #f1d17c;
+  background: var(--ui-bg);
+  color: var(--ui-text);
+}
+.range-app {background: var(--ui-bg); color: var(--ui-text)}
+.range-app button:disabled {cursor: not-allowed}
+.range-app :is(button, a, input, select, summary):focus-visible {outline: 2px solid var(--ui-accent); outline-offset: 3px}
+.range-app .appbar {height: 60px; min-height: 60px; padding: 0 20px; gap: 24px; background: #1b1f22; border-color: var(--ui-line); flex-wrap: nowrap}
+.range-app .brand {font-size: 19px; color: var(--ui-gold)}
+.range-app .brand-sub {color: var(--ui-muted)}
+.range-app .main-nav {height: 100%; min-height: 0; gap: 4px}
+.range-app .main-nav button {font-size: 13px; padding: 0 12px; color: var(--ui-muted)}
+.range-app .main-nav .selected {color: var(--ui-text); border-color: var(--ui-accent)}
+.range-app .app-actions {gap: 8px}
+.range-app .app-actions .settings-button {height: 38px; width: auto; flex-shrink: 0; font-size: 13px; background: #30383e; border-color: #67757d; color: var(--ui-text)}
+.range-app .appbar .changelog-button {width: 38px; height: 38px; padding: 0; border-color: transparent; color: var(--ui-muted)}
+.range-app .changelog-button span {display: none}
+.range-app .header-donation {height: 36px; color: var(--ui-gold); background: #302c22; border-color: #74623e; font-size: 11px; padding: 0 10px}
+.range-app .donation-wrap {display: none}
+.range-app .donation-compact {display: none}
+.range-app .settings-hint {position: relative; flex: 0 0 auto; top: auto; right: auto; margin: 0; width: 100%; padding: 7px 20px; background: #263a34; border: 0; border-bottom: 1px solid #73a894; border-radius: 0; z-index: 4}
+.range-app .settings-hint .hint-action b {font-size: 13px}
+.range-app .settings-hint .hint-action span {font-size: 11px}
+.range-app .range-toolbar {min-height: 68px; padding: 0 20px; gap: 18px; background: #22272b; border-color: var(--ui-line)}
+.range-app .weapon-select {height: 66px; width: 220px; margin: 0; padding-right: 16px; border-color: var(--ui-line)}
+.range-app .weapon-select img {width: 82px; height: 50px}
+.range-app .weapon-select span {font-size: 14px}
+.range-app .weapon-select small, .range-app .mode-select small {font-size: 10px; color: var(--ui-muted)}
+.range-app .drill-select-group {display: flex; align-items: center; gap: 16px; min-width: 0}
+.range-app .mode-select {min-width: 0; border: 0; height: auto; gap: 4px}
+.range-app .mode-select select {font-size: 14px; max-width: 230px; color: var(--ui-text)}
+.range-app .mode-select option, .range-app .mode-select optgroup {background: var(--ui-panel); color: var(--ui-text)}
+.range-app .browse-drills {min-height: 38px; padding: 0 10px; border: 1px solid #566168; color: var(--ui-accent); font-size: 12px; white-space: nowrap}
+.range-app .browse-drills:hover {background: #303b3b}
+.range-app .distance-input {margin: 0; border-left: 1px solid var(--ui-line); padding-left: 16px}
+.range-app .distance-input small {font-size: 10px}
+.range-app .toolbar-actions {flex-direction: row; gap: 2px; margin-left: auto}
+.range-app .icon-button {width: 38px; height: 38px}
+.range-app .panel-toggle {min-height: 38px; padding: 0 9px; font-size: 12px; color: var(--ui-muted); white-space: nowrap}
+.range-app .panel-toggle[aria-expanded=false] {background: #30413e; color: var(--ui-accent)}
+.range-app .mode-brief {position: relative; z-index: 4; display: flex; align-items: center; justify-content: space-between; gap: 16px; min-height: 40px; flex-shrink: 0; padding: 0 20px; background: #1c2124; border-bottom: 1px solid var(--ui-line)}
+.range-app .mode-brief > button {font-size: 12px; min-height: 36px; border: 0; color: var(--ui-muted); padding: 0}
+.range-app .drill-objective {min-width: 0; font-size: 12px; color: #d0d8db}
+.range-app .drill-objective summary {display: flex; align-items: center; gap: 9px; cursor: pointer; list-style: none; min-height: 36px; line-height: 1.4}
+.range-app .drill-objective summary::-webkit-details-marker {display: none}
+.range-app .drill-objective[open] summary > svg {transform: rotate(180deg)}
+.range-app .drill-objective p {position: absolute; top: calc(100% + 4px); left: 20px; padding: 16px; width: min(480px, calc(100% - 40px)); font-size: 13px; line-height: 1.65; background: #242c30; border: 1px solid #66777e; box-shadow: 0 6px 18px #0004}
+.range-app .statusbar {background: #181c1f; color: var(--ui-muted); border-top: 1px solid #30383d; font-size: 10px}
+.range-app .duel-controls, .range-app .drill-panel {width: 316px; background: var(--ui-panel); border-color: var(--ui-line)}
+.range-app .prefire-controls {background: var(--ui-panel); color: var(--ui-text)}
+.range-app :is(.duel-setup, .prefire-setup) :is(select, input[type=number]) {background: var(--ui-input); border-color: #59656c; color: var(--ui-text)}
+.range-app :is(.duel-setup, .prefire-setup) input[type=range] {accent-color: var(--ui-accent)}
+.range-app .duel-controls-head, .range-app .prefire-controls-head {min-height: 62px; height: 62px; border-color: var(--ui-line)}
+.range-app .duel-controls-head h2, .range-app .prefire-controls-head h2 {font-size: 18px; color: var(--ui-text)}
+.range-app .duel-controls .tabs {padding: 0 16px; gap: 16px}
+.range-app .tabs button {font-size: 13px; color: var(--ui-muted); min-height: 44px}
+.range-app .tabs button[aria-selected=true] {color: var(--ui-accent); border-color: var(--ui-accent)}
+.range-app .duel-controls-foot {background: #1c2124; border-color: var(--ui-line)}
+.range-app .duel-controls-foot button {min-height: 38px; font-size: 12px; background: #303b3f}
+.range-app .duel-controls-foot span {font-size: 11px; color: var(--ui-muted)}
+.range-app .combat-review-launch {font-size: 12px; min-height: 38px; border-color: var(--ui-line)}
+.range-app .duel-hint {font-size: 12px; background: #34423b; color: #d5f3df; animation: none}
+.range-app.focus-practice .range-stage > .drill-panel, .range-app.focus-practice .duel-controls {display: none}
+.range-app .drawer {width: 480px; background: var(--ui-panel); color: var(--ui-text); border-color: var(--ui-line)}
+.range-app .drawer.wide, .range-app .drawer.settings-drawer {width: 560px}
+.range-app .drawer-header {padding: 20px 24px; min-height: 86px; border-color: var(--ui-line)}
+.range-app .drawer-header small {color: var(--ui-accent); font-size: 10px}
+.range-app .drawer-header h1 {font-size: 24px}
+.range-app .drawer-content {padding: 24px; scrollbar-color: #65727b var(--ui-panel); scroll-padding: 16px}
+.range-app .drawer-content h2 {color: var(--ui-muted); font-size: 12px; font-weight: 600}
+.range-app .drawer-footer {padding: 14px 24px; background: #1b2023; border-color: var(--ui-line); flex: none}
+.range-app .drawer-footer > span {color: var(--ui-muted); font-size: 11px}
+.range-app .secondary, .range-app .primary {min-height: 40px; font-size: 12px; padding: 8px 12px}
+.range-app .primary {background: var(--ui-accent); color: #12261e; border-color: var(--ui-accent)}
+.range-app .secondary {border-color: #637077}
+.range-app .settings-tabs {padding: 0 24px; gap: 14px; border-color: var(--ui-line)}
+.range-app .settings-tabs button {flex: 1 1 auto; padding: 12px 0; white-space: nowrap}
+.range-app .two-fields label, .range-app .select-row, .range-app .toggle-row, .range-app .slider-row, .range-app .color-row {font-size: 13px}
+.range-app .two-fields input, .range-app .select-row select {font-size: 14px; min-height: 42px; background: var(--ui-input); border-color: #59656c; color: var(--ui-text)}
+.range-app .toggle-row {min-height: 48px; line-height: 1.5; border-bottom: 1px solid #30383d}
+.range-app .toggle-row input {width: 44px; height: 30px}
+.range-app .switch {width: 38px; height: 22px; background: #566168}
+.range-app .switch:after {width: 16px; height: 16px; background: #e0e5e7}
+.range-app .toggle-row input:checked+.switch {background: var(--ui-accent)}
+.range-app .toggle-row input:checked+.switch:after {background: #193529}
+.range-app .toggle-row input:disabled+.switch {opacity: .5}
+.range-app .slider-row {margin: 22px 0}
+.range-app .slider-row output {font-size: 13px; color: var(--ui-accent); font-variant-numeric: tabular-nums}
+.range-app .slider-row input {height: 18px; accent-color: var(--ui-accent)}
+.range-app .readout {font-size: 12px; border-color: var(--ui-line)}
+.range-app .readout b {color: var(--ui-accent)}
+.range-app .setting-explanation, .range-app .settings-note, .range-app .data-note {font-size: 12px; color: var(--ui-muted); line-height: 1.65}
+.range-app .settings-section {margin: 20px 0; border-block: 1px solid var(--ui-line)}
+.range-app .settings-section + .settings-section {border-top: 0; margin-top: -20px}
+.range-app .settings-section > summary {min-height: 48px; padding: 14px 0; cursor: pointer; font-size: 13px; font-weight: 600; color: #d8e2e7}
+.range-app .settings-section > div {padding-bottom: 16px}
+.range-app .settings-context {display: flex; gap: 8px; align-items: center; font-size: 13px; color: var(--ui-accent); padding-bottom: 18px; border-bottom: 1px solid var(--ui-line)}
+.range-app .reset-confirm {display: flex; flex-wrap: wrap; gap: 10px; padding: 16px 24px; background: #42342d; border-top: 1px solid #a88267; font-size: 13px; flex: none}
+.range-app .reset-confirm span {width: 100%; line-height: 1.5}
+.range-app .presets button {font-size: 12px; border-color: var(--ui-line); min-height: 80px; background: #282f33}
+.range-app .presets button[aria-pressed=true] {border-color: var(--ui-accent); background: #293c38}
+.range-app .swatches button {height: 32px; width: 32px}
+.range-app .crosshair-preview {height: 180px; background: #647076; border-color: #6b777e}
+.range-app .search-field {display: flex; align-items: center; gap: 10px; min-height: 44px; padding: 0 12px; background: var(--ui-input); border: 1px solid #65727b; border-radius: 5px; color: var(--ui-muted)}
+.range-app .search-field:focus-within {outline: 2px solid var(--ui-accent); outline-offset: 1px}
+.range-app .search-field input {width: 100%; min-width: 0; height: 42px; border: 0; outline: 0; background: none; color: var(--ui-text); font-size: 14px}
+.range-app .search-field input::placeholder {color: #a1adb4}
+.range-app .search-field input::-webkit-search-cancel-button {display: none}
+.range-app .search-field .icon-button {width: 30px; height: 34px}
+.range-app .search-empty {display: flex; flex-direction: column; align-items: center; gap: 16px; padding: 32px 0; font-size: 14px; color: var(--ui-muted)}
+.range-app .drill-library {padding-top: 20px}
+.range-app .drill-library section {margin-top: 24px}
+.range-app .drill-library h2 {margin: 0 0 10px; font-size: 11px}
+.range-app .drill-choice {width: 100%; min-height: 94px; padding: 16px 10px; display: flex; gap: 16px; align-items: center; text-align: left; border-bottom: 1px solid var(--ui-line); border-radius: 0}
+.range-app .drill-choice:hover {background: #2c3439}
+.range-app .drill-choice.current {background: #293c38; box-shadow: inset 3px 0 var(--ui-accent)}
+.range-app .drill-choice > span {flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 5px}
+.range-app .drill-choice b {font-size: 15px; font-weight: 600; line-height: 1.4}
+.range-app .drill-choice span span {font-size: 13px; line-height: 1.5; color: #c2ccd1}
+.range-app .drill-choice small {font-size: 11px; color: var(--ui-accent)}
+.range-app .drill-choice-icon {color: var(--ui-muted)}
+.range-app .weapon-filters {display: flex; flex-wrap: wrap; gap: 5px; padding: 12px 0; border-bottom: 1px solid var(--ui-line)}
+.range-app .weapon-filters button {min-height: 34px; padding: 4px 10px; font-size: 12px; color: var(--ui-muted); border: 1px solid transparent}
+.range-app .weapon-filters button[aria-pressed=true] {color: var(--ui-accent); border-color: #6a8b82; background: #2a3a36}
+.range-app .weapon-item {min-height: 102px; border-color: var(--ui-line)}
+.range-app .weapon-item img {height: 72px; width: 140px}
+.range-app .weapon-item small {font-size: 11px; color: var(--ui-muted)}
+.range-app .weapon-item.chosen {background: #293c38}
+.range-app .loadout-finishes {border-color: var(--ui-line)}
+.range-app .loadout-finishes h3 {font-size: 13px; color: #d0d9df}
+.range-app .loadout-finishes button span {font-size: 12px}
+.range-app .controls-settings .controls-warning {font-size: 12px; color: var(--ui-muted)}
+.range-app .controls-settings .control-row {font-size: 13px; min-height: 52px; border-color: var(--ui-line)}
+.range-app .controls-settings .control-binding {min-height: 38px; font-size: 12px; background: #283136; border-color: #637078}
+.range-app .coach-instruction, .range-app .coach-feedback {font-size: 13px; color: #c7d0d5}
+.range-app .coach-heading, .range-app .coach-condition {font-size: 11px}
+.range-app .drill-panel h2 {font-size: 17px}
+.range-app .enter-range {background: var(--ui-gold); border: 1px solid #f7df9f; color: #26251b; min-height: 48px; font-size: 14px; padding: 0 28px}
+.range-app .range-view > .enter-range {top: 66%; z-index: 5}
+.range-app .toast {background: #263b35; border-color: #6d9987; font-size: 13px; border-radius: 5px}
+@media (max-width: 1200px) {
+  .range-app .appbar {gap: 18px}
+  .range-app .appbar .progression-summary {width: 38px; min-width: 38px; max-width: 38px}
+  .range-app .range-toolbar {gap: 12px}
+  .range-app .weapon-select {width: 192px}
+  .range-app .distance-input {padding-left: 10px}
+}
+@media (max-width: 1000px) {
+  .range-app .appbar {display: flex; min-height: 58px; height: 58px; gap: 12px; padding: 0 14px}
+  .range-app .app-actions {margin-left: auto; justify-content: flex-end}
+  .range-app .main-nav {margin: 0; height: 100%}
+  .range-app .main-nav button {padding: 0 7px; font-size: 12px}
+  .range-app .brand {font-size: 16px; gap: 7px}
+  .range-app .brand-sub {display: none}
+  .range-app .header-donation {max-width: 145px; white-space: normal; line-height: 1.3; text-align: left}
+  .range-app .duel-controls, .range-app .drill-panel {width: 288px}
+  .range-app .range-toolbar {padding: 0 14px; gap: 12px}
+  .range-app .weapon-select {width: 174px; gap: 6px; padding-right: 10px}
+  .range-app .weapon-select img {width: 55px}
+  .range-app .drill-select-group {gap: 8px}
+  .range-app .browse-drills {padding: 0 8px}
+  .range-app .browse-drills span {display: none}
+  .range-app .distance-input {display: none}
+  .range-app .mode-select select {max-width: 210px}
+}
+@media (max-width: 700px) {
+  .range-app .appbar {display: grid; height: 96px; min-height: 96px; grid-template-columns: 1fr auto; grid-template-rows: 38px 38px; gap: 4px 10px; padding: 6px 12px}
+  .range-app .main-nav {height: 38px; justify-self: end}
+  .range-app .main-nav button {display: flex; font-size: 12px; gap: 6px; padding: 0 8px}
+  .range-app .app-actions {grid-column: 1 / -1; width: 100%; display: flex; justify-content: space-between; gap: 6px; margin: 0}
+  .range-app .appbar .changelog-button {height: 34px; width: 34px}
+  .range-app .appbar .progression-summary {width: 34px; height: 34px; min-width: 34px; max-width: 34px}
+  .range-app .header-donation {font-size: 11px; max-width: none; min-width: 0; flex: 1 1 auto; min-height: 34px; height: auto; padding: 4px 7px; white-space: normal}
+  .range-app .header-donation span {min-width: 0; white-space: normal}
+  .range-app .header-donation .donation-full {display: none}
+  .range-app .header-donation .donation-compact {display: inline}
+  .range-app .app-actions .settings-button {height: 34px; min-width: 94px; font-size: 12px; padding: 0 10px; gap: 5px}
+  .range-app .range-toolbar {display: flex; flex-wrap: wrap; gap: 0 12px; min-height: 108px; padding: 0 12px}
+  .range-app .weapon-select {height: 54px; width: calc(100% - 172px); min-width: 134px; flex: 1; border: 0; padding: 0}
+  .range-app .weapon-select img {width: 56px; height: 40px}
+  .range-app .weapon-select span {font-size: 13px; min-width: 0; white-space: normal}
+  .range-app .weapon-select small {display: none}
+  .range-app .toolbar-actions {height: 54px; gap: 0; margin-left: 0}
+  .range-app .toolbar-actions .icon-button {width: 34px; min-width: 34px; height: 38px; min-height: 38px; padding: 0}
+  .range-app .panel-toggle {height: 36px; min-height: 36px; padding: 0 7px; flex: none; font-size: 12px}
+  .range-app .drill-select-group {order: 3; width: 100%; height: 54px; border-top: 1px solid var(--ui-line); gap: 8px}
+  .range-app .mode-select {height: auto; flex: 1; border: 0; gap: 2px}
+  .range-app .mode-select small {font-size: 9px}
+  .range-app .mode-select select {max-width: 100%; width: 100%; font-size: 13px}
+  .range-app .browse-drills {height: 36px; font-size: 12px; padding: 0 9px}
+  .range-app .browse-drills span {display: inline}
+  .range-app .mode-brief {padding: 0 12px; min-height: 38px; gap: 10px}
+  .range-app .mode-brief > button span {display: none}
+  .range-app .mode-brief > button {width: 32px; min-width: 32px}
+  .range-app .drill-objective {font-size: 11px}
+  .range-app .settings-hint {padding: 6px 12px}
+  .range-app .drawer, .range-app .drawer.wide, .range-app .drawer.settings-drawer {width: 100%; max-width: 100%}
+  .range-app .drawer-header {padding: 16px 20px; min-height: 78px}
+  .range-app .drawer-content {padding: 20px}
+  .range-app .settings-tabs {padding: 0 16px; gap: 10px}
+  .range-app .settings-tabs button {font-size: 12px; min-height: 48px}
+  .range-app .drawer-footer {padding: 12px 20px}
+  .range-app .drawer-footer > span {display: none}
+  .range-app .duel-controls {width: 100%; height: 430px; min-height: 0; flex-direction: column; border-left: 0}
+  .range-app .duel-controls-head {width: 100%; height: 54px; min-height: 54px; border-right: 0; border-bottom: 1px solid var(--ui-line)}
+  .range-app .duel-controls-body {display: flex; height: auto; flex: 1; min-height: 0}
+  .range-app .duel-controls-foot {display: flex; padding: 8px 16px}
+  .range-app .duel-controls-foot > span {display: none}
+  .range-app .duel-controls.prefire-panel {height: 500px}
+  .range-app:not(.focus-practice) .range-stage {overflow-y: auto}
+  .range-app:not(.focus-practice) .duel-layout {height: auto; min-height: 100%; flex-direction: column}
+  .range-app:not(.focus-practice) .duel-view {height: 360px; min-height: 360px; flex: none}
+  .range-app:not(.focus-practice) .with-drill {overflow-y: auto; display: block}
+  .range-app:not(.focus-practice) .with-drill .range-view {height: 360px; min-height: 360px}
+  .range-app:not(.focus-practice) .drill-panel {height: auto; max-height: none; width: 100%; overflow: visible}
+  .range-app .range-stage:fullscreen .duel-view {height: 100%; min-height: 100%; flex: 1}
+}
+@media (max-width: 380px) {
+  .range-app .browse-drills span {display: none}
+  .range-app .settings-tabs {gap: 8px; padding: 0 12px}
+  .range-app .settings-tabs button {font-size: 11px}
+}
+@media (max-height: 540px) and (orientation: landscape) {
+  .range-app .appbar {display: flex; height: 44px; min-height: 44px; padding: 0 12px; gap: 12px}
+  .range-app .main-nav {height: 44px}
+  .range-app .main-nav button {font-size: 12px}
+  .range-app .app-actions {width: auto; margin-left: auto; gap: 6px}
+  .range-app .header-donation {font-size: 0; width: 32px; min-height: 30px; padding: 0}
+  .range-app .app-actions .settings-button {font-size: 12px; height: 30px}
+  .range-app .range-toolbar {min-height: 52px; height: 52px; flex-wrap: nowrap; gap: 12px}
+  .range-app .weapon-select {height: 50px; width: 150px; min-width: 120px; flex: none}
+  .range-app .drill-select-group {width: auto; order: 0; height: 50px; border: 0}
+  .range-app .mode-select {min-width: 130px; flex: initial}
+  .range-app .mode-select select {font-size: 12px; max-width: 180px}
+  .range-app .browse-drills span {display: none}
+  .range-app .toolbar-actions {height: 50px; margin-left: auto}
+  .range-app .mode-brief {display: none}
+  .range-app .duel-controls {width: 270px; height: 100%}
+  .range-app:not(.focus-practice) .duel-layout {height: 100%; flex-direction: row}
+  .range-app:not(.focus-practice) .duel-view {height: 100%; min-height: 0; flex: 1}
+  .range-app:not(.focus-practice) .range-stage {overflow: hidden}
+  .range-app .duel-controls.prefire-panel {height: 100%}
+}
+@media (prefers-reduced-motion: reduce) {
+  .range-app *, .range-app *::before, .range-app *::after {animation: none !important; scroll-behavior: auto !important}
+}

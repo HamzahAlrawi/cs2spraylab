@@ -2,6 +2,20 @@ import {describe, expect, it} from 'vitest';
 import {DeathPhysics} from './death-physics';
 
 describe('cosmetic skeletal contact solver', () => {
+  it('follows bounded native-derived drive samples while preserving contacts and fixed-step determinism', () => {
+    const bodies=[{name:'head',position:{x:0,y:1.6,z:0},radius:.12}];
+    const drive={frames:[{time:0,positions:[{x:0,y:1.6,z:0}]},
+      {time:.4,positions:[{x:.4,y:.5,z:0}]},{time:.8,positions:[{x:.7,y:-1,z:0}]}]};
+    const a=new DeathPhysics(bodies,[],undefined,drive),b=new DeathPhysics(bodies,[],undefined,drive);
+    for(let n=0;n<60;n++)a.step(1/60);
+    for(let n=0;n<240;n++)b.step(1/240);
+    expect([...a.positions]).toEqual([...b.positions]);
+    expect(a.point('head')!.y).toBeGreaterThanOrEqual(.12);
+    expect(a.point('head')!.x).toBeGreaterThan(.3);
+    expect(drive.frames[2].positions[0].y).toBe(-1);
+    expect(()=>new DeathPhysics(bodies,[],undefined,{frames:[]})).toThrow(/pose drive/);
+    expect(()=>new DeathPhysics(bodies,[],undefined,{frames:[drive.frames[1],drive.frames[0]]})).toThrow(/pose drive/);
+  });
   it('uses the shared native 800-unit gravity, not Earth gravity', () => {
     const rag = new DeathPhysics([{name: 'head', position: {x: 0, y: 2, z: 0}, radius: .12}], []);
     rag.step(1 / 120); expect(rag.point('head')!.y).toBeCloseTo(2 - 800 * .0254 / 120 ** 2, 10);
@@ -46,5 +60,19 @@ describe('cosmetic skeletal contact solver', () => {
     expect(() => new DeathPhysics([{name: 'hip', position: {x: NaN, y: 0, z: 0}, radius: .1}], [])).toThrow();
     expect(() => new DeathPhysics(Array.from({length: 25}, (_, i) => ({name: String(i), position: {x: 0, y: 1, z: 0}, radius: .1})), [])).toThrow();
     expect(() => new DeathPhysics(a.bodies, [{a: 'hip', b: 'missing'}])).toThrow();
+  });
+  it('uses native-map contact instead of an imaginary y=0 floor, then sleeps without more queries',()=>{
+    let queries=0;
+    const rag=new DeathPhysics([{name:'head',position:{x:1,y:0,z:2},radius:.12}],[]);
+    const world={floor:-1000,sweepSphere:(from:{x:number;y:number;z:number},to:{x:number;y:number;z:number},radius:number)=>{
+      queries++;const floor=-2+radius;
+      if(to.y>=floor)return {position:{...to},fraction:1,startSolid:false};
+      const fraction=Math.max(0,(from.y-floor)/(from.y-to.y));
+      return {position:{...to,y:floor},fraction,contact:{normal:{x:0,y:1,z:0}},startSolid:false};
+    }};
+    const contacts=[];for(let n=0;n<300;n++)contacts.push(...rag.step(1/60,world));
+    expect(rag.point('head')!.y).toBeCloseTo(-1.88);expect(rag.sleeping).toBe(true);
+    expect(contacts.some(contact=>contact.solid===-2)).toBe(true);
+    const count=queries;rag.step(1,world);expect(queries).toBe(count);
   });
 });

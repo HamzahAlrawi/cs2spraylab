@@ -29,9 +29,10 @@
 .range-stage{display:flex}
 .range-view{position:relative;flex:1;min-width:0;min-height:0;overflow:hidden;isolation:isolate;container:range-view / size}
 .with-drill .enter-range{top:50%}
+.range-stage:fullscreen .duel-controls,.range-stage:fullscreen>.drill-panel{display:none}
 .replay .drill-review svg{width:16px;height:16px;background:none;flex-shrink:0}
-.hit-caption{left:50%;top:calc(50% + 40px);bottom:auto;transform:translateX(-50%);width:160px;font-size:16px;line-height:24px;text-align:center}
-.hit-marker{left:calc(50% - 102px);top:calc(50% + 42px);bottom:auto;transform:none;width:20px;height:20px}.hit-marker svg{width:20px;height:20px}
+.hit-caption{left:50%;top:auto;bottom:clamp(44px,18cqh,112px);transform:translateX(-50%);width:160px;font-size:16px;line-height:24px;text-align:center}
+.hit-marker{left:calc(50% - 102px);top:auto;bottom:calc(clamp(44px,18cqh,112px) + 2px);transform:none;width:20px;height:20px}.hit-marker svg{width:20px;height:20px}
 .equipment-slots{position:absolute;right:24px;top:101px;display:flex;gap:4px}
 .equipment-slots button{width:67px;height:34px;border:1px solid #7b8b8166;background:#172820c9;position:relative;padding:2px 2px 2px 12px}
 .equipment-slots button[aria-pressed=true]{border-color:#e4cd7a;background:#36432ee8}
@@ -88,12 +89,12 @@
   .hit-counts{gap:6px}
   .hit-counts b{font-size:12px}
   .hit-counts span{font-size:7px;gap:2px}
-  .hit-caption{top:calc(50% + 28px);font-size:13px;line-height:18px}
-  .hit-marker{top:calc(50% + 29px);width:16px;height:16px}
+  .hit-caption{font-size:13px;line-height:18px}
+  .hit-marker{width:16px;height:16px}
   .hit-marker svg{width:16px;height:16px}
 }
 .donation-wrap{display:none}.header-donation span{line-height:1.25;text-align:left}
-.rep-feedback{position:absolute;top:calc(50% + 28px);left:50%;transform:translateX(-50%);width:min(380px,calc(100% - 32px));text-align:center;pointer-events:none;z-index:4;color:#ffdbb4;text-shadow:0 2px 3px #000,0 0 8px #000}
+.rep-feedback{position:absolute;bottom:clamp(76px,24cqh,148px);left:50%;transform:translateX(-50%);width:min(380px,calc(100% - 32px));text-align:center;pointer-events:none;z-index:4;color:#ffdbb4;text-shadow:0 2px 3px #000,0 0 8px #000}
 .rep-feedback.passed{color:#a6f2bc}.rep-feedback b{display:block;font-size:15px;line-height:20px}.rep-feedback p{font-size:11px;line-height:15px;margin-top:5px;color:#fff4df}
 .has-rep-feedback .hud-result{visibility:hidden}
 .peek-direction{position:absolute;left:50%;top:calc(50% - 68px);transform:translateX(-50%);display:flex;align-items:center;gap:7px;color:#a6ffe0;font-size:13px;font-weight:700;text-shadow:0 2px 4px #000;filter:drop-shadow(0 0 3px #12231d);pointer-events:none;white-space:nowrap}
@@ -102,7 +103,8 @@
 @media(max-width:580px){.header-donation{font-size:10px;gap:4px;padding:0 7px}.donation-wrap{display:block}.header-donation svg{width:12px}.main-nav .count{display:none}.rep-feedback b{font-size:13px;line-height:17px}}
 @media(max-width:360px){.appbar .brand{font-size:11px}.app-actions{gap:4px}.header-donation{font-size:9px;padding:0 4px}}
 @media(max-height:540px) and (orientation:landscape){.appbar{height:38px}.range-toolbar{min-height:43px}.weapon-select{height:43px}.weapon-select img{height:36px}.statusbar{height:26px}}
-@container range-view (max-height:240px){.rep-feedback{top:calc(50% + 20px)}.rep-feedback b{font-size:12px;line-height:15px}.rep-feedback p{font-size:10px;line-height:12px;margin-top:4px}}
+@container range-view (max-height:360px){.rep-feedback b{font-size:12px;line-height:15px}.rep-feedback p{display:none}}
+@container range-view (max-height:480px){.has-hit-feedback .hud-result>small,.has-hit-feedback .hud-result>strong{visibility:hidden}}
 .weapon-scope{position:absolute;inset:0;z-index:4;pointer-events:none;overflow:hidden;display:grid;place-items:center}
 .weapon-scope[hidden]{display:none}
 .scope-aperture{position:relative;width:min(100cqw,100cqh);height:min(100cqw,100cqh);aspect-ratio:1;border-radius:50%;border:2px solid #070909;box-shadow:0 0 0 200vmax #050606;overflow:hidden}
@@ -153,3 +155,15 @@
 .range-shortcut-warning{position:absolute;left:50%;top:65px;transform:translateX(-50%);max-width:90%;font-size:11px;text-align:center;color:#f0dfb0;background:#1a292ad9;padding:5px 9px;pointer-events:none}
 .appbar:has(.settings-hint){height:auto;flex-wrap:wrap;row-gap:8px;padding-top:8px;padding-bottom:8px}
 .appbar:has(.settings-hint) .main-nav{height:auto;min-height:28px}
+@media(max-height:540px) and (orientation:landscape){
+  .appbar:has(.settings-hint){height:40px;min-height:40px;flex-wrap:nowrap;row-gap:0;padding-top:0;padding-bottom:0}
+  .settings-hint{width:auto;flex:0 1 200px;min-width:140px;padding:2px 4px 2px 8px;gap:4px}
+  .settings-hint .hint-action{flex-direction:row;gap:0}
+  .settings-hint .hint-action b{font-size:11px;line-height:14px}
+  .settings-hint .hint-action span{display:none}
+  .settings-hint .hint-arrow{width:16px;height:16px}
+  .settings-hint .icon-button{width:28px;height:28px}
+}
+@media(max-width:700px) and (max-height:540px) and (orientation:landscape){
+  .appbar:has(.settings-hint) .header-donation{font-size:0;width:28px;padding:0;gap:0}
+}

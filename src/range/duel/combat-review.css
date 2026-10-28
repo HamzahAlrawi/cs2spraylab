@@ -1,0 +1,20 @@
+.combat-review{position:absolute;right:12px;top:54px;z-index:15;width:min(330px,calc(100% - 24px));max-height:calc(100% - 66px);overflow:auto;background:#182421f5;border:1px solid #647971;border-radius:6px;padding:14px;color:#ecf4ef;font-size:12px;box-shadow:0 8px 24px #0005}
+.combat-review-heading{position:sticky;top:-14px;z-index:1;display:flex;align-items:center;gap:6px;margin-bottom:12px;padding:6px 0;background:#182421}.combat-review-heading>strong{flex:1;font-size:15px}.combat-review .icon-button{width:30px;height:30px;display:grid;place-items:center;background:#30423b;color:#ecf4ef}
+.combat-review label{display:flex;flex-direction:column;gap:6px;margin:12px 0}.combat-review select{width:100%;min-width:0;background:#2b3c35;color:#ecf4ef;border:1px solid #647971;padding:6px}.combat-review input{width:100%;accent-color:#5eead4}.combat-review p{line-height:1.5;color:#c5d5cc;margin:8px 0}
+.combat-review-view{display:flex;margin:12px 0}.combat-review-view button{flex:1;padding:8px;color:#d1ded6;border:1px solid #647971}.combat-review-view button[aria-pressed=true]{background:#416257;color:#fff}
+.combat-review-legend{display:flex;flex-wrap:wrap;gap:12px;font-size:11px;margin:12px 0}.combat-review-legend span:before{content:'';display:inline-block;width:9px;height:9px;margin-right:5px;background:#5eead4}.combat-review-legend span:nth-child(2):before{background:#fb7185}.combat-review-legend span:nth-child(3):before{background:#a3e635}.combat-review-time{display:flex;gap:10px;align-items:center;font-variant-numeric:tabular-nums}.combat-review-launch{display:flex;align-items:center;justify-content:center;gap:7px;padding:7px 10px;border:1px solid #647971;color:#e7f1eb;font-size:12px}.combat-review-launch:disabled{opacity:.4}
+.range-app .combat-review{left:12px;right:12px;top:auto;bottom:12px;width:auto;max-height:min(50%,360px);padding:12px 16px;background:#1d2529f5;border-color:#667981;font-size:13px}
+.range-app .combat-review-heading{position:static;margin:0 0 8px;padding:0;background:none}
+.range-app .combat-review-heading>span{color:#bccbd0;font-size:12px;margin-right:8px}
+.range-app .combat-review .icon-button{width:36px;height:36px;flex:none;background:#303d42}
+.range-app .combat-review-transport{display:flex;align-items:center;gap:8px}
+.range-app .combat-review-transport input{flex:1;min-width:40px;height:28px}
+.range-app .combat-review-transport output{font-size:12px;white-space:nowrap;font-variant-numeric:tabular-nums;color:#cbd9df}
+.range-app .combat-review-view{margin:10px 0;gap:6px}
+.range-app .combat-review-view button{min-height:34px;border-radius:4px;font-size:12px}
+.range-app .combat-review-view button[aria-pressed=true]{background:#30594e;border-color:#8ee0c4}
+.range-app .combat-review summary{cursor:pointer;min-height:34px;padding:7px 0;color:#c3d4db;font-size:12px}
+.range-app .combat-shot-details>label{font-size:12px}
+.range-app .combat-review select{min-height:38px;font-size:13px}
+.range-app .duel-view.replaying :is(.duel-hud,.duel-tools,.duel-topline,.duel-result,.duel-caption,.prefire-navigation,.prefire-live-feedback,.prefire-shot-cue,.pickup-prompt,.duel-shortcut-warning){display:none}
+@media(max-width:500px){.range-app .combat-review{left:6px;right:6px;bottom:6px;padding:10px;max-height:55%}.range-app .combat-review-transport{gap:4px}.range-app .combat-review-transport output{font-size:11px}.range-app .combat-review .icon-button{width:32px;height:34px}}

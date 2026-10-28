@@ -1,0 +1,255 @@
+.prefire-setup {
+  font-size: 13px;
+  line-height: 1.5;
+  letter-spacing: 0;
+}
+
+.prefire-setup .prefire-controls-head h2 {
+  font-size: 17px;
+  overflow-wrap: anywhere;
+}
+
+.prefire-setup .prefire-controls-head small {
+  font-size: 13px;
+}
+
+.prefire-setup .prefire-controls-body {
+  gap: 0;
+  padding-top: 16px;
+  padding-bottom: 16px;
+  scrollbar-gutter: stable;
+}
+
+.prefire-setup .prefire-controls-body > * {
+  flex-shrink: 0;
+  min-width: 0;
+}
+
+.prefire-setup .prefire-essentials {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding-bottom: 20px;
+}
+
+.prefire-setup .prefire-essentials h3 {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.4;
+  color: #f1d886;
+}
+
+.prefire-setup .prefire-course-context,
+.prefire-setup .prefire-start-label {
+  margin: -8px 0 0;
+  color: #b6c5b7;
+  font-size: 13px;
+  overflow-wrap: anywhere;
+}
+
+.prefire-setup .prefire-field,
+.prefire-setup .prefire-field output,
+.prefire-setup .prefire-field small,
+.prefire-setup .prefire-population legend,
+.prefire-setup .prefire-population span,
+.prefire-setup .prefire-check {
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.prefire-setup .prefire-field small {
+  color: #b6c5b7;
+}
+
+.prefire-setup .prefire-field > span {
+  flex-wrap: wrap;
+}
+
+.prefire-setup .prefire-field select {
+  height: 40px;
+  max-width: 100%;
+  padding: 0 6px;
+}
+
+.prefire-setup .prefire-field input[type=range] {
+  min-height: 28px;
+}
+
+.prefire-setup .prefire-lineup-mode > div {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.prefire-setup .prefire-population span {
+  height: 100%;
+  min-height: 44px;
+  padding: 6px 4px;
+  text-align: center;
+  overflow-wrap: anywhere;
+}
+
+.prefire-setup .prefire-population label + label span {
+  border-left: 0;
+}
+
+.prefire-setup .prefire-check {
+  min-height: 44px;
+}
+
+.prefire-setup .prefire-check:has(input:disabled) {
+  color: #a9b5ad;
+  cursor: default;
+}
+
+.prefire-setup .prefire-disclosure {
+  border-top: 1px solid #405047;
+}
+
+.prefire-setup summary {
+  min-height: 44px;
+  padding: 10px 0;
+  cursor: pointer;
+  font-size: 13px;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+  color: #d5e2d7;
+}
+
+.prefire-setup summary::marker {
+  color: #f1d886;
+}
+
+.prefire-setup summary:hover {
+  color: #fff;
+}
+
+.prefire-setup .prefire-disclosure-state {
+  display: block;
+  margin: 2px 0 0 16px;
+  color: #b6c5b7;
+  font-size: 13px;
+  font-weight: 400;
+  font-variant-numeric: tabular-nums;
+}
+
+.prefire-setup .prefire-option-fields,
+.prefire-setup .prefire-review-content {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 0;
+  padding: 4px 0 18px;
+}
+
+.prefire-setup .prefire-toggles {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.prefire-setup .prefire-toggles.prefire-option-fields {
+  gap: 8px;
+}
+
+.prefire-setup .prefire-stats {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px 10px;
+}
+
+.prefire-setup .prefire-stats dt {
+  min-height: 0;
+  font-size: 13px;
+}
+
+.prefire-setup .prefire-stats dd {
+  font-size: 16px;
+}
+
+.prefire-setup .prefire-route-identity {
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.prefire-setup .prefire-route-identity > span,
+.prefire-setup .prefire-shot-state > small,
+.prefire-setup .prefire-shot-state > strong,
+.prefire-setup .prefire-shot-state dt,
+.prefire-setup .prefire-shot-state dd,
+.prefire-setup .prefire-shot-state p,
+.prefire-setup .prefire-goal strong,
+.prefire-setup .prefire-goal p,
+.prefire-setup .prefire-progress,
+.prefire-setup .prefire-feedback p,
+.prefire-setup .prefire-angle-review,
+.prefire-setup .prefire-angle-review li strong,
+.prefire-setup .prefire-angle-review li > span,
+.prefire-setup .prefire-angle-review li > b,
+.prefire-setup .prefire-angle-review p,
+.prefire-setup .prefire-angles ol,
+.prefire-setup .prefire-angles p,
+.prefire-setup .prefire-angles li small,
+.prefire-setup .prefire-angles .prefire-evidence-key,
+.prefire-setup .prefire-encounter-evidence {
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.prefire-setup .prefire-angle-review {
+  padding-top: 0;
+}
+
+.prefire-setup .prefire-angles {
+  border-top: 0;
+  padding: 4px 0 18px;
+}
+
+.prefire-setup .prefire-angles li {
+  padding-top: 6px;
+  padding-bottom: 6px;
+}
+
+.prefire-setup .prefire-angles details {
+  border-top: 1px solid #405047;
+  margin-top: 12px;
+}
+
+.prefire-setup .prefire-angles details p {
+  margin: 8px 0;
+}
+
+.prefire-setup .prefire-angles a {
+  color: #83e2c1;
+  text-decoration: underline;
+  overflow-wrap: anywhere;
+}
+
+.prefire-setup .prefire-angles pre {
+  white-space: pre-wrap;
+  font-size: 13px;
+  max-height: 160px;
+  overflow: auto;
+  overflow-wrap: anywhere;
+}
+
+.prefire-setup .prefire-controls-body > .secondary,
+.prefire-setup .prefire-controls-body > [role=status] {
+  margin: 0 0 16px;
+  font-size: 13px;
+  overflow-wrap: anywhere;
+}
+
+.prefire-setup .prefire-actions .icon-button {
+  width: 40px;
+  height: 40px;
+}
+
+@media (max-width: 700px) {
+  .prefire-setup .prefire-essentials {
+    gap: 12px;
+  }
+
+  .prefire-setup .prefire-actions .icon-button {
+    width: 44px;
+    height: 44px;
+  }
+}

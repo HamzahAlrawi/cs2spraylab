@@ -110,7 +110,7 @@ def continuous_quaternion(obj, previous):
 
 exported, inventory = [], {}
 for label, resource in spec['clips'].items():
-    native_path = resource.removesuffix('.vnmclip_c')
+    native_path = spec.get('actionAliases', {}).get(label, resource.removesuffix('.vnmclip_c'))
     # Blender truncates long action IDs. Accept only an unambiguous full prefix
     # of the audited resource, and still verify both native action slots below.
     matching = [a for a in actions if a.name.split('.')[0] == native_path or

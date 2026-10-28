@@ -5,6 +5,7 @@ export type AccuracyParameters=RecoilParameters&{
   recoveryFinal?:number;recoveryCrouch?:number;recoveryCrouchFinal?:number;
   recoveryStart?:number;recoveryEnd?:number;jump?:number;jumpInitial?:number;jumpApex?:number;
   spreadSeed?:number;pellets?:number;
+  speed?:number;
 };
 const clamp=(x:number,lo=0,hi=1)=>Math.max(lo,Math.min(hi,x));
 const ZERO=()=>({yaw:0,pitch:0});
@@ -18,11 +19,13 @@ export function recoveryTime(w:AccuracyParameters,index:number,crouch:boolean,ai
   return final===undefined || final<0 ? initial : initial+(final-initial)*blend;
 }
 
-// Installed build 2000908: remap 34..95% of weapon cap, then x^0.25
-// for running. The walking branch bypasses that exponent (RVA 0x7e71c6).
-export function movementInaccuracy(w:AccuracyParameters,speedRatio:number,walking=false){
-  const x=clamp((speedRatio-.34)/(.95-.34));
-  return w.move*(walking?x:Math.pow(x,.25));
+// Build 2000930: float32 speed/cap remap, then a fourth root for running.
+// Double rounding just above .34 invents a penalty at the crouch speed cap.
+export function movementInaccuracy(w:AccuracyParameters,speedRatio:number,walking=false,speedUnits?:number){
+  const f=Math.fround,cap=f(w.speed ?? 1),speed=f(speedUnits ?? speedRatio*cap);
+  const low=f(cap*f(.34)),high=f(cap*f(.95));
+  const x=clamp(f(f(speed-low)/f(high-low)));
+  return f(f(w.move)*(walking?x:f(Math.pow(x,f(.25)))));
 }
 export function airborneInaccuracy(w:AccuracyParameters,verticalSpeedUnits:number){
   const initial=w.jumpInitial ?? 0,apex=w.jumpApex ?? 0;
@@ -72,8 +75,8 @@ export class WeaponRecovery {
   get recoil(){return{yaw:this.angle.yaw*2,pitch:this.angle.pitch*2};}
   setParameters(weapon: AccuracyParameters) {
     if (this.weapon === weapon) return;
-    // Preserve accumulated firing error while switching stance/zoom baselines.
-    this.penalty = Math.max(weapon.stand, this.penalty - this.weapon.stand + weapon.stand);
+    // Native recovery retains the absolute penalty when the mode changes; the
+    // next advance clamps/decays it toward that mode's current stance baseline.
     this.weapon = weapon;
     this.impulses = recoilTable(weapon).map(p => {
       const radians = Math.fround(p.angle * Math.fround(Math.PI / 180));
@@ -99,12 +102,19 @@ export class WeaponRecovery {
     this.penalty+=this.weapon.fire;this.index++;this.lastShot=this.time;
     return recoil;
   }
-  predict(seconds:number,afterShot=false){
+  fork(){
     const copy=Object.assign(Object.create(WeaponRecovery.prototype),this) as WeaponRecovery;
-    copy.angle={...this.angle};copy.velocity={...this.velocity};
+    copy.angle={...this.angle};copy.velocity={...this.velocity};return copy;
+  }
+  restore(source:WeaponRecovery){
+    this.angle={...source.angle};this.velocity={...source.velocity};this.index=source.index;
+    this.penalty=source.penalty;this.lastShot=source.lastShot;this.time=source.time;
+  }
+  predict(seconds:number,afterShot=false){
+    const copy=this.fork();
     if(afterShot)copy.fire();copy.advance(seconds);return copy.recoil;
   }
-  inaccuracy(speedRatio:number,walking=false,airborne=false,verticalSpeedUnits=0){
-    return Math.min(1,this.penalty+movementInaccuracy(this.weapon,speedRatio,walking)+(airborne?airborneInaccuracy(this.weapon,verticalSpeedUnits):0));
+  inaccuracy(speedRatio:number,walking=false,airborne=false,verticalSpeedUnits=0,speedUnits?:number){
+    return Math.min(1,this.penalty+movementInaccuracy(this.weapon,speedRatio,walking,speedUnits)+(airborne?airborneInaccuracy(this.weapon,verticalSpeedUnits):0));
   }
 }

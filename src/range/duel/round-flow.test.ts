@@ -4,6 +4,31 @@ import {sanitizeDuelConfig} from './config';
 import {DuelSimulation} from './simulation';
 
 describe('continuous duel sessions', () => {
+  it('keeps movement, aim, shots and reloads playable after winning without changing scored stats or replay',()=>{
+    const sim=new DuelSimulation(sanitizeDuelConfig({botCount:1,practiceSpread:false}),7);
+    sim.start();sim.actors[1].alive=false;sim.actors[1].health=0;sim.step();
+    expect(sim.postWinPlayable).toBe(false);sim.enablePostWinPlay();
+    const result=sim.drainEvents(),completed=sim.completedAt,review=structuredClone(sim.coach.review()),replay=sim.replay.export();
+    expect(result.filter(event=>event.kind==='round')).toHaveLength(1);
+    expect(sim.postWinPlayable).toBe(true);const before={...sim.actors[0].position},ammo=sim.actors[0].weapon.ammo;
+    sim.command(0,{side:1,yawDelta:.1,fireHeld:true,firePressed:true,jumpPressed:true});sim.advance(.25);
+    expect(sim.actors[0].position.x).not.toBeCloseTo(before.x);expect(sim.actors[0].feet).toBeGreaterThan(0);
+    expect(sim.actors[0].yaw).toBeCloseTo(.1);expect(sim.actors[0].weapon.ammo).toBeLessThan(ammo);
+    expect(sim.drainEvents().some(event=>event.kind==='fire')).toBe(true);
+    sim.command(0,{side:0,fireHeld:false,reloadPressed:true});
+    for(let i=0;i<12;i++)sim.advance(.25);
+    expect(sim.actors[0].weapon.ammo).toBe(ammo);expect(sim.outcome).toBe('won');expect(sim.completedAt).toBe(completed);
+    expect(sim.coach.review()).toEqual(review);expect(sim.replay.export()).toEqual(replay);
+    expect(sim.drainEvents().filter(event=>event.kind==='round')).toEqual([]);
+    sim.pause();const time=sim.time;sim.advance(.25);expect(sim.time).toBe(time);
+    sim.resume();sim.advance(.1);expect(sim.time).toBeGreaterThan(time);
+  });
+  it.each(['lost','draw'] as const)('does not resume combat after a %s round',outcome=>{
+    const sim=new DuelSimulation();sim.start();sim.phase='result';sim.outcome=outcome;
+    sim.enablePostWinPlay();
+    sim.command(0,{side:1,fireHeld:true});const before=sim.snapshot();sim.advance(.25);
+    expect(sim.playable).toBe(false);expect(sim.time).toBe(0);expect(sim.snapshot()).toEqual(before);
+  });
   it('selects the fall from the shot direction in actor-local space', () => {
     const actor = {id: 1, yaw: Math.PI, deathDirection: {x: 0, y: 0, z: -1}};
     expect(deathVariant(actor)).toBe('a');
@@ -38,7 +63,7 @@ describe('continuous duel sessions', () => {
     expect(sanitizeDuelConfig({playerHealth: NaN, feedbackSeconds: 10}).playerHealth).toBe(100);
     expect(sanitizeDuelConfig({playerHealth: 600, feedbackSeconds: 10})).toMatchObject({playerHealth: 500, feedbackSeconds: 3});
   });
-  it('lowers the death camera smoothly and settles without a looping fall', () => {
+  it('drops the death camera with prompt accelerating weight and settles without a looping fall', () => {
     let height = 1.6256;
     for (let frame = 0; frame < 180; frame++) {
       const view = deathView(frame / 60, 1.6256);
@@ -49,8 +74,34 @@ describe('continuous duel sessions', () => {
     expect(height).toBeCloseTo(.28);
     expect(deathView(2, 1.6256)).toEqual(deathView(3, 1.6256));
     expect(deathView(PLAYER_COLLAPSE_SECONDS, 1.6256).height).toBeCloseTo(.28);
-    expect(deathView(PLAYER_COLLAPSE_SECONDS / 2, 1.6256).height).toBeCloseTo((1.6256 + .28) / 2);
+    const early=1.6256-deathView(.1,1.6256).height;
+    const later=deathView(.2,1.6256).height-deathView(.3,1.6256).height;
+    expect(later).toBeGreaterThan(early*3);
+    expect(deathView(.4,1.6256).height).toBeCloseTo(.28);
     expect(deathView(.12, 1.6256).weaponDrop).toBe(1);
+  });
+  it('reacts promptly to headshots and normalizes shot direction independently of world support', () => {
+    const hit={direction:{x:1,y:0,z:0},yaw:0,headshot:true};
+    const head=deathView(.04,1.6256,hit),body=deathView(.04,1.6256,{...hit,headshot:false});
+    expect(head.height).toBeLessThan(body.height);expect(head.roll).toBeGreaterThan(body.roll);
+    expect(deathView(.1,1.6256,{...hit,direction:{x:-1,y:0,z:0}}).roll).toBeCloseTo(-deathView(.1,1.6256,hit).roll);
+    expect(deathView(.1,1.6256,{...hit,direction:{x:20,y:0,z:0}})).toEqual(deathView(.1,1.6256,hit));
+    expect(deathView(.1,1.6256,{...hit,yaw:Math.PI/2,direction:{x:0,y:0,z:-1}}).roll).toBeCloseTo(deathView(.1,1.6256,hit).roll);
+    expect(deathView(.04,1.6256,{...hit,direction:{x:0,y:0,z:1}}).pitch).toBeGreaterThan(
+      deathView(.04,1.6256,{...hit,direction:{x:0,y:0,z:-1}}).pitch);
+    expect(deathView(.5,1.6256,hit)).toEqual(deathView(4,1.6256,hit));
+  });
+  it('is finite, absolute-time and bounded for crouch, zero direction and invalid inputs', () => {
+    const hit={direction:{x:0,y:0,z:0},yaw:0,headshot:true};
+    for(const eye of [.28,.9,1.6256])for(const time of [0,.04,.2,.5,2]) {
+      const view=deathView(time,eye,hit);
+      expect(view.height).toBeGreaterThanOrEqual(.28-1e-8);expect(view.height).toBeLessThanOrEqual(eye);
+      expect(Object.values(view).every(Number.isFinite)).toBe(true);
+      expect(deathView(time,eye,hit)).toEqual(view);
+    }
+    expect(deathView(.2,.9).height).toBeLessThan(deathView(.2,1.6256).height);
+    expect(deathView(NaN,NaN,{...hit,yaw:NaN})).toEqual(deathView(0,1.6256));
+    expect(deathView(-1,1.6256)).toEqual(deathView(0,1.6256));
   });
   it('settles dead bodies and the player camera on cover instead of falling through it', () => {
     const cover = [{center: {x: 0, y: .5, z: 0}, size: {x: 2, y: 1, z: 2}}];

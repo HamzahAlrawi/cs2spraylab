@@ -8,7 +8,7 @@ export const UNIT = .0254;
 export const DEG = Math.PI / 180;
 export const STEP = 1 / 128;
 export const GRAVITY = 800 * UNIT;
-export const JUMP_SPEED = 301.993 * UNIT;
+export const JUMP_SPEED = 301.9933776855469 * UNIT;
 export const DUCK_SECONDS = 1 / 6.4;
 export const UNDUCK_SECONDS = 1 / 8;
 
@@ -52,13 +52,21 @@ export const idleInput = (): MoveInput => ({ forward: 0, side: 0, walk: false, c
 export const clamp = (n: number, min: number, max: number) => Math.max(min, Math.min(max, n));
 export const stanceCurve = (amount: number) => amount * amount * (3 - 2 * amount);
 
-type GroundStance = {weaponSpeed: number; ducking: boolean; walking: boolean};
+type GroundStance = {weaponSpeed: number; ducking: boolean; walking: boolean; surfaceFriction?: number};
 
-// Build 2000919, server Accelerate (RVA ab1ff0): wish-speed and acceleration
+// Current CheckParameters enables the walk cap only below cap + 25 u/s.
+// Duck scales both the command and its maximum, including airborne commands.
+export function movementWishSpeed(weaponSpeed: number, duckAmount: number, ducking: boolean, walking: boolean, currentSpeed: number) {
+  if (ducking) return weaponSpeed * (1 - .66 * duckAmount);
+  const walkCapUnits = Math.fround(Math.fround(weaponSpeed / UNIT) * Math.fround(.52));
+  return walking && Math.fround(currentSpeed / UNIT) < Math.fround(walkCapUnits + 25) ? weaponSpeed * .52 : weaponSpeed;
+}
+
+// Builds 2000919/2000930, server Accelerate: wish-speed and acceleration
 // speed are different, especially while ducking, walking or damage-tagged.
 export function accelerateGround(
   vx: number, vz: number, x: number, z: number, wishSpeed: number, dt: number,
-  {weaponSpeed, ducking, walking}: GroundStance = {weaponSpeed: wishSpeed, ducking: false, walking: false},
+  {weaponSpeed, ducking, walking, surfaceFriction = 1}: GroundStance = {weaponSpeed: wishSpeed, ducking: false, walking: false},
 ) {
   const length = Math.hypot(x, z);
   if (!length) return {x: vx, z: vz};
@@ -69,24 +77,24 @@ export function accelerateGround(
   const accelerationSpeed = base * (ducking ? .34 : walking ? .52 : weaponScale);
   const walkCap = base * weaponScale * .52;
   const taper = walking && !ducking ? clamp((walkCap - Math.max(0, current)) / (5 * UNIT), 0, 1) : 1;
-  const add = Math.min(Math.max(0, wishSpeed - current), 5.5 * accelerationSpeed * taper * dt);
+  const add = Math.min(Math.max(0, wishSpeed - current), 5.5 * accelerationSpeed * taper * Math.max(0, surfaceFriction) * dt);
   return {x: vx + x * add, z: vz + z * add};
 }
 
 export function groundVelocity(vx: number, vz: number, x: number, z: number, speed: number, dt: number, stance?: GroundStance) {
   const v = Math.hypot(vx, vz);
-  if (v > 0) {
-    const retained = Math.max(0, v - Math.max(v, 80 * UNIT) * 5.2 * dt) / v;
+  if (v >= .1 * UNIT) {
+    const retained = Math.max(0, v - Math.max(v, 80 * UNIT) * 5.2 * Math.max(0, stance?.surfaceFriction ?? 1) * dt) / v;
     vx *= retained; vz *= retained;
   }
   return accelerateGround(vx, vz, x, z, speed, dt, stance);
 }
 
-export function airVelocity(vx: number, vz: number, x: number, z: number, speed: number, dt: number) {
+export function airVelocity(vx: number, vz: number, x: number, z: number, speed: number, dt: number, surfaceFriction = 1) {
   const length = Math.hypot(x, z);
   if (!length) return { x: vx, z: vz };
   x /= length; z /= length;
-  const add = Math.min(Math.max(0, Math.min(speed, 30 * UNIT) - vx * x - vz * z), 12 * speed * dt);
+  const add = Math.min(Math.max(0, Math.min(speed, 30 * UNIT) - vx * x - vz * z), 12 * speed * Math.max(0, surfaceFriction) * dt);
   return { x: vx + x * add, z: vz + z * add };
 }
 
@@ -121,7 +129,7 @@ export function advanceActor(
     canOccupy = (p, feet, height) => fitsTerrain(p, feet, height, world) ||
       environment?.selfId !== undefined && resizeSupportedStack({...actor, id: environment.selfId},
         {position: p, feet, height}, bodies, environment) !== undefined;
-    vertical = (p, from, to, height) => verticalContact(p, from, to, height, world.solids, world.floor === undefined ? 0 : world.floor);
+    vertical = (p, from, to, height) => verticalContact(p, from, to, height, world.solids, world.floor === undefined ? 0 : world.floor, world.native);
   }
   const { forward, side, walk, crouch, jump } = input;
   const currentDuck = actor.duckAmount ?? 0;
@@ -170,12 +178,17 @@ export function advanceActor(
   const wishZ = -side * Math.sin(actor.yaw) - forward * Math.cos(actor.yaw);
   const tag = clamp(actor.velocityModifier ?? 1, 0, 1);
   const ducking = crouch || duckAmount > 0;
-  const speed = runningSpeed * (ducking ? 1 - .66 * duckAmount : walk ? .52 : 1) * tag;
+  const wishSpeed = movementWishSpeed(runningSpeed, duckAmount, ducking, walk,
+    Math.hypot(actor.velocity.x, actor.velocity.z, actor.verticalVelocity));
+  const speed = wishSpeed * tag;
+  const surface = support.support?.traversal;
+  const surfaceFriction = supported && (surface?.kind === 'solid' || surface?.kind === 'ramp') ? surface.friction ?? 1 : 1;
+  // Restore landing momentum only for a supported bhop, before new air input.
+  const startingVelocity = supported && wantsJump && bhop && actor.landingVelocityXY ? actor.landingVelocityXY : actor.velocity;
   let velocity = airborne
-    ? airVelocity(actor.velocity.x, actor.velocity.z, wishX, wishZ, runningSpeed, dt)
-    : groundVelocity(actor.velocity.x, actor.velocity.z, wishX, wishZ, speed, dt,
-      {weaponSpeed: runningSpeed, ducking, walking: walk && !ducking});
-  if (bhop && actor.landingVelocityXY) velocity = {...actor.landingVelocityXY};
+    ? airVelocity(startingVelocity.x, startingVelocity.z, wishX, wishZ, wishSpeed, dt, surfaceFriction)
+    : groundVelocity(startingVelocity.x, startingVelocity.z, wishX, wishZ, speed, dt,
+      {weaponSpeed: runningSpeed, ducking, walking: walk && !ducking, surfaceFriction});
   let moveMode: NonNullable<ActorKinematics['moveMode']> = airborne ? 'air' : 'ground';
   const hullHeight = (72 - 18 * duckCurve) * UNIT;
   if (world && environment?.selfId !== undefined && duckAmount !== currentDuck) {

@@ -22,7 +22,7 @@ export function arenaTerrain(arena:Arena):TerrainSolid[] {
 }
 
 export function arenaMovementEnvironment(arena:Arena,actors:readonly ContactActor[],selfId:number,time:number,pitch:number):ActorEnvironment {
-  return {solids:arenaTerrain(arena),bounds:arena,floor:0,actors,selfId,time,pitch,
+  return {solids:arenaTerrain(arena),bounds:arena,floor:arena.native?null:0,native:arena.native,actors,selfId,time,pitch,
     jumpRules:{bhopWindow:1/128,spamTime:1/64,autoBhop:false,enableBunnyhopping:false}};
 }
 
@@ -32,7 +32,7 @@ export const actorBody=(actor:ContactActor)=>({center:{x:actor.position.x,y:acto
 export function canWalkTo(from:Vec,to:Vec,arena:Arena) {
   const length=Math.hypot(to.x-from.x,to.z-from.z);
   if(length>12)return false;
-  const world={solids:arenaTerrain(arena),floor:0,bounds:arena};
+  const world={solids:arenaTerrain(arena),floor:arena.native?null:0,native:arena.native,bounds:arena};
   let at={...from};const steps=Math.max(1,Math.ceil(length/.12));
   for(let step=1;step<=steps;step++) {
     const moved=moveOnTerrain(at,{x:from.x+(to.x-from.x)*step/steps,y:at.y,z:from.z+(to.z-from.z)*step/steps},72*UNIT,world,true);

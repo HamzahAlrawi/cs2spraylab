@@ -1,8 +1,11 @@
 import {describe, expect, it} from 'vitest';
 import * as THREE from 'three';
-import {arenaPOIs, footprintOf, footprintsOverlap, placePOI, poiThemes} from './arena-pois';
+import {arenaPOIs, environmentPOIs, footprintOf, footprintsOverlap, placePOI, poiThemes} from './arena-pois';
 import {propDetails} from './arena-props';
 import {batchStaticMeshes} from './render-resources';
+import {canFitInArena, testArena} from './geometry';
+import {routeTo} from './navigation';
+import {UNIT} from '../actor-physics';
 
 describe('authored POI library', () => {
   it('contains at least fifty distinct authored plans, not height or box-count variants', () => {
@@ -11,8 +14,11 @@ describe('authored POI library', () => {
     const plans = arenaPOIs.map(p => JSON.stringify(p.parts.map(s => [s.center.x, s.center.z, s.size.x, s.size.z]).sort()));
     expect(new Set(plans).size).toBeGreaterThanOrEqual(50);
     for (const theme of poiThemes) {
-      expect(arenaPOIs.filter(p => p.theme === theme)).toHaveLength(9);
-      expect(arenaPOIs.filter(p => p.theme === theme && p.spawnCover)).toHaveLength(3);
+      expect(arenaPOIs.filter(p => p.theme === theme).length).toBeGreaterThanOrEqual(11);
+      expect(arenaPOIs.filter(p => p.theme === theme && p.spawnCover).length).toBeGreaterThanOrEqual(3);
+      expect(arenaPOIs.filter(p => p.theme === theme && !p.spawnCover && p.footprint.maxX - p.footprint.minX <= 3).length).toBeGreaterThanOrEqual(2);
+      expect(environmentPOIs.filter(p => p.theme === theme).length).toBeGreaterThanOrEqual(4);
+      expect(new Set(environmentPOIs.filter(p => p.theme === theme).flatMap(p => p.links!.map(l => l.kind))).size).toBeGreaterThanOrEqual(2);
     }
   });
 
@@ -60,6 +66,28 @@ describe('authored POI library', () => {
       });
     }
     expect(JSON.stringify(arenaPOIs)).toBe(snapshot);
+  });
+
+  it.each(environmentPOIs)('$id keeps a dry ground bypass and accessible entries under both lane facings', template => {
+    const before = JSON.stringify(template);
+    for (const mx of [-1, 1] as const) for (const mz of [-1, 1] as const) {
+      const placed = placePOI(template, {x: 2, y: 0, z: -3}, mx, mz, 'lane', 0);
+      const arena = {...testArena(), solids: [...placed.solids, ...placed.volumes.filter(v => v.kind === 'water').map(v => ({
+        center: {...v.center, y: 1}, size: {...v.size, y: 2}, kind: 'concrete' as const}))]};
+      const a = {x: 0, y: 0, z: -9}, b = {x: 0, y: 0, z: 4};
+      expect(routeTo(a, b, arena).length).toBeGreaterThan(0);
+      const entries = placed.links.flatMap(l => [l.from, l.to, ...(l.boost ? [l.boost.dismount] : [])]).filter(p => p.y === 0);
+      for (const p of entries) {
+        expect(canFitInArena(p, 0, 72 * UNIT, arena)).toBe(true);
+        expect(routeTo(a, p, arena).length).toBeGreaterThan(0);
+        expect(routeTo(b, p, arena).length).toBeGreaterThan(0);
+      }
+      for (const l of placed.links) {
+        expect(l.surfaceIds.every(id => placed.solids.some(s => s.id === id))).toBe(true);
+        if (l.volumeId) expect(placed.volumes.some(v => v.id === l.volumeId)).toBe(true);
+      }
+    }
+    expect(JSON.stringify(template)).toBe(before);
   });
 
   it('bounds static decoration geometry and merges it using the existing engine batcher', () => {

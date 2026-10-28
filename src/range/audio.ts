@@ -1,9 +1,15 @@
 import type {Equipment} from './equipment';
 import type {Vec} from './actor-physics';
-import {AcousticScene, AcousticReverb, positionListener, spatialChain, type SpatialSound, type SpatialAudioProfile} from './spatial-audio';
-import {ActionSoundTimeline, curveGain, inverseDistanceGain, sampleIndex, type ActorSoundState, type SoundAction, type SoundTimelines} from './sound-model';
+import {AcousticScene, AcousticReverb, positionListener, retainSoundOcclusion, spatialChain, type SpatialSound, type SpatialAudioProfile} from './spatial-audio';
+import {ActionSoundTimeline, curveGain, footstepEventKey, inverseDistanceGain, sampleIndex, type ActorSoundState, type SoundAction, type SoundTimelines} from './sound-model';
 
-type NativeEvent = {samples: string[]; volume: number; pitch: number; distanceCurve?: number[][]};
+export type NativeEvent = {samples: string[]; volume: number; pitch: number; distanceCurve?: number[][];
+  impactSpeedCurve?:number[][];delay?: number; source?: string; tracks?: {samples:string[]}[]; dependencies?: NativeEvent[]};
+function eventSamples(event:NativeEvent,depth=0):string[] {
+  if(depth>4)return [];
+  return [...(event.tracks?.flatMap(track=>track.samples)??event.samples),
+    ...(event.dependencies?.flatMap(child=>eventSamples(child,depth+1))??[])];
+}
 export type RangeAudioProfile = SpatialAudioProfile & {nativeDistanceCurves?: boolean; reverb?: boolean; propagationDelay?: boolean};
 export class RangeAudio {
   context?: AudioContext;
@@ -18,11 +24,17 @@ export class RangeAudio {
   private events: Record<string, NativeEvent> = {};
   private manifest?: Promise<void>;
   private common?: Promise<void>;
+  private utilityBank?: Promise<void>;
+  private stepLoads = new Map<string, Promise<void>>();
   private previous = new Map<string, number>();
   private listenerPose = '';
   private listenerPosition: Vec = {x: 0, y: 0, z: 0};
   private master?: DynamicsCompressorNode;
+  private flashFilter?: BiquadFilterNode;
+  private lastFlashExposure = -1;
   private voiceCleanup = new Map<AudioBufferSourceNode, () => void>();
+  private utilityVoices = new Map<AudioBufferSourceNode, number>();
+  private utilityCue?: {owner:number;duration?:number};
   private timelines: SoundTimelines = {};
   private actionSounds = new ActionSoundTimeline();
   private actorSounds = new Map<string | number, {volume: number; spatial?: SpatialSound}>();
@@ -31,18 +43,28 @@ export class RangeAudio {
 
   constructor(private readonly profile: RangeAudioProfile = {}) {}
 
-  private async unlockContext() {
+  /** Allocate silently while loading; only a trusted gesture resumes playback. */
+  prepare() {
+    try {this.createContext(); return true;} catch {return false;}
+  }
+  private createContext() {
     const Constructor = window.AudioContext || (window as unknown as {webkitAudioContext?: typeof AudioContext}).webkitAudioContext;
     if (!Constructor || this.disposed) throw new Error('Web Audio unavailable');
     this.context ??= new Constructor({latencyHint: 'interactive'});
-    await this.context.resume();
     if (!this.master) {
       this.master = this.context.createDynamicsCompressor();
       this.master.threshold.value = -3; this.master.knee.value = 0; this.master.ratio.value = 12;
       this.master.attack.value = .003; this.master.release.value = .08;
-      this.master.connect(this.context.destination);
+      if (typeof this.context.createBiquadFilter === 'function') {
+        this.flashFilter=this.context.createBiquadFilter();this.flashFilter.type='lowpass';this.flashFilter.frequency.value=20000;
+        this.master.connect(this.flashFilter);this.flashFilter.connect(this.context.destination);
+      } else this.master.connect(this.context.destination);
       this.reverb = new AcousticReverb(this.context, this.master);
     }
+  }
+  private async unlockContext() {
+    this.createContext();
+    await this.context!.resume();
   }
 
   /** Strict, opt-in loading for drills that must not silently play missing samples. */
@@ -56,8 +78,8 @@ export class RangeAudio {
       }
       const urls = [...new Set(keys.flatMap(key => {
         const event = this.events[key];
-        if (!event?.samples.length) throw new Error(`Native audio unavailable: ${key}`);
-        return event.samples;
+        if (!event || !eventSamples(event).length) throw new Error(`Native audio unavailable: ${key}`);
+        return eventSamples(event);
       }))];
       for (let i = 0; i < urls.length; i += 4) await Promise.all(urls.slice(i, i + 4).map(url => this.decode(url)));
       if (this.disposed || this.context?.state !== 'running') return false;
@@ -73,7 +95,8 @@ export class RangeAudio {
         if (response.ok) this.readManifest(await response.json());
       }).catch(() => {});
       await this.manifest;
-      this.common ??= this.preload(Object.keys(this.events).filter(key => /^(step-|land-|hit-|hurt-|impact-|death$)/.test(key)));
+      this.common ??= this.preload(Object.keys(this.events).filter(key =>
+        /^(combat-|hit-|hurt-|impact-|death$)/.test(key) || /^(step|land)-(concrete|wood|metal)$/.test(key)));
       if (!this.pending.has(weapon)) this.pending.set(weapon, this.load(weapon));
       await Promise.all([this.pending.get(weapon), this.common]);
       if (!this.disposed) this.status = 'ready';
@@ -82,6 +105,18 @@ export class RangeAudio {
   private readManifest(data: {events: Record<string, NativeEvent>; timelines?: SoundTimelines}) {
     this.events = data.events; this.timelines = data.timelines ?? {};
     this.actionSounds.setTimelines(this.timelines);
+  }
+  /** Utilities are optional; gun-only drills must not fetch/decode the grenade bank. */
+  async preloadUtilities() {
+    if (this.disposed) return;
+    this.createContext();
+    this.manifest ??= fetch('/audio/events.json').then(async response => {
+      if (response.ok) this.readManifest(await response.json());
+    }).catch(() => {});
+    await this.manifest;
+    if (this.disposed) return;
+    this.utilityBank ??= this.preload(Object.keys(this.events).filter(key => key.startsWith('utility-')));
+    await this.utilityBank;
   }
   private async decode(url: string) {
     if (this.samples.has(url)) return;
@@ -96,7 +131,7 @@ export class RangeAudio {
     try {await job;} finally {this.decoding.delete(url);}
   }
   private async preload(keys: string[]) {
-    const urls = [...new Set(keys.flatMap(key => this.events[key]?.samples ?? []))];
+    const urls = [...new Set(keys.flatMap(key => this.events[key] ? eventSamples(this.events[key]) : []))];
     for (let i = 0; i < urls.length; i += 4) await Promise.all(urls.slice(i, i + 4).map(url => this.decode(url).catch(() => {})));
   }
   private async load(weapon: Equipment) {
@@ -128,7 +163,7 @@ export class RangeAudio {
     }
     return mono;
   }
-  private emit(buffer: AudioBuffer, volume: number, pitch: number, spatial?: SpatialSound, pan = 0) {
+  private emit(buffer: AudioBuffer, volume: number, pitch: number, spatial?: SpatialSound, pan = 0, delay = 0) {
     if (!this.context || this.context.state !== 'running' || !Number.isFinite(volume) || volume <= 0 || this.disposed) return false;
     if (this.voices.size >= 24) {const oldest = this.voices.values().next().value!; oldest.stop(); this.voiceCleanup.get(oldest)?.();}
     const voice = this.context.createBufferSource(), gain = this.context.createGain();
@@ -143,27 +178,46 @@ export class RangeAudio {
       (chain?.output ?? gain).connect(this.reverb!.input(spatial?.path?.reverb ?? spatial!.reverb!));
     }
     this.voices.add(voice);
-    const cleanup = () => {voice.disconnect(); gain.disconnect(); stereo?.disconnect(); chain?.dispose(); this.voices.delete(voice); this.voiceCleanup.delete(voice);};
+    const cleanup = () => {voice.disconnect(); gain.disconnect(); stereo?.disconnect(); chain?.dispose(); this.voices.delete(voice); this.voiceCleanup.delete(voice);this.utilityVoices.delete(voice);};
     this.voiceCleanup.set(voice, cleanup); voice.onended = cleanup;
-    voice.start(this.context.currentTime + (this.profile.propagationDelay === false ? 0 : spatial?.path?.delay ?? 0));
+    const startsAt=this.context.currentTime + delay + (this.profile.propagationDelay === false ? 0 : spatial?.path?.delay ?? 0);
+    voice.start(startsAt);
+    if(this.utilityCue){this.utilityVoices.set(voice,this.utilityCue.owner);
+      if(this.utilityCue.duration!==undefined)voice.stop(startsAt+this.utilityCue.duration);}
     return true;
   }
   playEvent(key: string, volume: number, spatial?: SpatialSound, pan = 0) {
     const event = this.events[key];
-    if (key.endsWith('-scope-out') || !event || !event.samples.length || !Number.isFinite(volume) || volume <= 0) return false;
-    const index = sampleIndex(event.samples.length, this.previous.get(key), Math.random());
-    const buffer = this.samples.get(event.samples[index]);
-    if (!buffer) return false;
-    this.previous.set(key, index);
+    if (key.endsWith('-scope-out') || !event || !Number.isFinite(volume) || volume <= 0) return false;
     if (spatial && this.acoustics && !spatial.path) spatial = {...spatial,
       path: this.acoustics.resolve(this.listenerPosition, spatial.position, this.context?.currentTime ?? 0)};
+    if (spatial?.path && spatial.occluded) spatial={...spatial,path:retainSoundOcclusion(spatial.path,true)};
+    return this.playNativeEvent(event,key,volume,spatial,pan);
+  }
+  private playNativeEvent(event:NativeEvent,key:string,volume:number,spatial?:SpatialSound,pan=0,depth=0) {
+    if(depth>4)return false;
+    let played=false;
     const distance = spatial?.path?.distance ?? (spatial ? Math.hypot(spatial.position.x - this.listenerPosition.x,
       spatial.position.y - this.listenerPosition.y, spatial.position.z - this.listenerPosition.z) : 0);
     const mapped = spatial && event.distanceCurve && this.profile.nativeDistanceCurves !== false;
     const pathMapped = !!spatial?.path && !mapped;
     const attenuation = mapped ? curveGain(distance / .0254, event.distanceCurve!) : pathMapped ? inverseDistanceGain(distance) : 1;
-    return this.emit(buffer, volume * event.volume * attenuation, event.pitch,
-      (mapped || pathMapped) && spatial ? {...spatial, distanceMapped: true} : spatial, pan);
+    for(const [track,samples] of (event.tracks?.map(t=>t.samples)??[event.samples]).entries()) {
+      if(!(event.volume>0))continue;
+      const available=samples.map((url,index)=>this.samples.has(url)?index:-1).filter(index=>index>=0);
+      if(!available.length)continue;
+      const trackKey=`${key}:${track}`,previous=available.indexOf(this.previous.get(trackKey)??-1);
+      const index=available[sampleIndex(available.length,previous<0?undefined:previous,Math.random())];
+      this.previous.set(trackKey,index);
+      played=this.emit(this.samples.get(samples[index])!,volume*event.volume*attenuation,event.pitch,
+        (mapped||pathMapped)&&spatial?{...spatial,distanceMapped:true}:spatial,pan,
+        Math.max(0,Math.min(1,event.delay??0)))||played;
+    }
+    // Child sound events have independent gain/pitch/delay. A silent primary
+    // (notably lethal helmet feedback) must not mute its flesh and dink layers.
+    for(const [index,child] of (event.dependencies??[]).slice(0,8).entries())
+      played=this.playNativeEvent(child,`${key}/${index}`,volume,spatial,pan,depth+1)||played;
+    return played;
   }
   play(weapon: Equipment, volume: number, spatial?: SpatialSound) {
     if (this.events[weapon]) this.playEvent(weapon, volume * .65, spatial);
@@ -172,10 +226,30 @@ export class RangeAudio {
     }
   }
   playStep(volume: number, pan = 0, heavy = false, spatial?: SpatialSound, surface = 'concrete') {
-    this.playEvent(`${heavy ? 'land' : 'step'}-${surface}`, volume, spatial, pan);
+    if (this.disposed || this.context?.state !== 'running' || !Number.isFinite(volume) || volume <= 0) return false;
+    const key = footstepEventKey(surface, heavy), event = this.events[key];
+    if (key.endsWith('-silent') || event && !event.samples.length) return false;
+    if (event?.samples.some(url => this.samples.has(url))) return this.playEvent(key, volume, spatial, pan);
+    if (event && !this.stepLoads.has(key)) this.stepLoads.set(key, this.preload([key]));
+    // A cold/older asset pack keeps an on-time quiet fallback, never a late
+    // footstep after movement stopped. Rare banks are not decoded at startup.
+    const fallback = `${heavy ? 'land' : 'step'}-${/metal|chainlink|ladder/.test(key) ? 'metal' : /wood/.test(key) ? 'wood' : 'concrete'}`;
+    const fallbackVolume = this.events[fallback]?.volume ?? 1;
+    return this.playEvent(fallback, volume * Math.min(1, (event?.volume ?? fallbackVolume) / fallbackVolume), spatial, pan);
   }
-  playHit(head: boolean, armor: boolean, victim: boolean, volume: number, spatial?: SpatialSound) {
-    this.playEvent(`${victim ? 'hurt' : 'hit'}-${head ? armor ? 'helmet' : 'head' : armor ? 'armor' : 'body'}`, volume * .55, spatial);
+  playHit(head: boolean, armor: boolean, victim: boolean, volume: number, spatial?: SpatialSound, lethal=false,
+    audience:'attacker'|'victim'|'onlooker'=victim?'victim':'attacker') {
+    const part=head?armor?'helmet':'head':armor?'armor':'body';
+    const native=`combat-${lethal?'kill':'hit'}-${part}-${audience}`;
+    if(this.events[native])return this.playEvent(native,volume,spatial);
+    return this.playEvent(`${victim?'hurt':'hit'}-${part}`,volume*.55,spatial);
+  }
+  playBodyContact(speed:number,volume:number,spatial?:SpatialSound,team:'ct'|'t'='ct') {
+    if(!Number.isFinite(speed)||speed<=0)return false;
+    // Native samples and speed/gain curve; the cosmetic solver's hard/soft
+    // classification is an approximation, not a Source 2 collision callback.
+    const key=`combat-contact-${team}-${speed>2.35?'hard':'soft'}`,event=this.events[key];
+    return this.playEvent(key,volume*(event?.impactSpeedCurve?curveGain(speed/.0254,event.impactSpeedCurve):1),spatial);
   }
   setAcoustics(scene?: AcousticScene) {this.acoustics = scene;}
   /** Call for every actor each simulation frame; local and remote use the same timeline. */
@@ -230,7 +304,47 @@ export class RangeAudio {
   playImpact(surface: 'concrete' | 'metal' | 'wood' | 'glass', volume: number, spatial?: SpatialSound) {
     return this.playEvent(`impact-${surface}`, volume, spatial);
   }
+  playUtility(kind: 'he' | 'flash' | 'smoke' | 'molotov' | 'incendiary' | 'decoy',
+    action: 'throw' | 'bounce' | 'detonate' | 'decoy' | 'extinguish', volume: number, spatial?: SpatialSound, sound?: string) {
+    if (this.disposed || this.context?.state !== 'running' || !Number.isFinite(volume) || volume <= 0 || sound === 'silent') return false;
+    const cue = sound ?? action;
+    const key = cue.startsWith('utility-') ? cue : cue === 'extinguish' ? 'utility-extinguish' :
+      cue === 'decoy-end' ? 'utility-decoy-end' : cue === 'decoy' ? 'utility-decoy-decoy' :
+      cue === 'ignite' ? `utility-${kind}-detonate` : /^(he|flash|smoke)$/.test(cue) ? `utility-${cue}-detonate` :
+      `utility-${kind}-${cue}`;
+    const event = this.events[key];
+    const audibleSamples = (native: NativeEvent, depth = 0): string[] => depth > 4 ? [] : [
+      ...(native.volume > 0 ? native.tracks?.flatMap(track => track.samples) ?? native.samples : []),
+      ...(native.dependencies?.flatMap(child => audibleSamples(child, depth + 1)) ?? []),
+    ];
+    const urls = event ? audibleSamples(event) : [];
+    // Preserve authored silence/attenuation. Missing banks get an on-time quiet
+    // impact only; never queue a delayed utility cue after a replay/mute change.
+    if (event && (!urls.length || urls.some(url => this.samples.has(url)))) return this.playEvent(key, volume, spatial);
+    return this.playImpact('concrete', volume * .12, spatial);
+  }
+  async preloadUtilityCues(names: readonly string[]) {
+    if(this.disposed)return;
+    const wanted=new Set(names);
+    await this.preload(Object.keys(this.events).filter(key=>key.startsWith('utility-cue-')&&wanted.has(this.events[key].source??'')));
+  }
+  playUtilityCue(name: string, volume: number, spatial?: SpatialSound, owner?:number, duration?:number) {
+    this.utilityCue=owner===undefined?undefined:{owner,duration:duration!==undefined&&Number.isFinite(duration)?Math.max(.001,duration):undefined};
+    try{return this.playEvent(`utility-cue-${name.toLowerCase().replace(/[^a-z0-9]+/g,'-')}`,volume,spatial);}
+    finally{this.utilityCue=undefined;}
+  }
+  cancelUtilityCues(owner?:number) {
+    for(const [voice,id]of this.utilityVoices)if(owner===undefined||id===owner){
+      try{voice.stop();}catch{}this.voiceCleanup.get(voice)?.();
+    }
+  }
+  setFlashExposure(amount: number) {
+    const value=Number.isFinite(amount)?Math.max(0,Math.min(1,amount)):0;
+    if(!this.context||!this.flashFilter||Math.abs(value-this.lastFlashExposure)<.001)return;
+    this.lastFlashExposure=value;
+    this.flashFilter.frequency.setTargetAtTime(20000*(1-value)**2+600*value,this.context.currentTime,.025);
+  }
   stopVoices() {this.actionSounds.clear(); this.actorSounds.clear(); for (const v of this.voices) {try {v.stop();} catch {} this.voiceCleanup.get(v)?.();}}
   dispose() {this.disposed = true; this.stopVoices(); this.reverb?.dispose(); this.samples.clear(); this.buffers.clear();
-    this.pending.clear(); void this.context?.close().catch(() => {});}
+    this.pending.clear(); this.stepLoads.clear(); void this.context?.close().catch(() => {});}
 }

@@ -11,6 +11,7 @@ test('spread defaults on, explicit off is visible, and impact size persists',asy
   await expect(page.getByRole('button',{name:'Enter range',exact:true})).toBeEnabled({timeout:45000});
   await expect(page.getByLabel('Training mode')).toHaveValue('peek');
   await page.getByRole('button',{name:'Settings',exact:true}).click();
+  await page.getByRole('tab',{name:'Training',exact:true}).click();
   await expect(page.getByLabel('Practice spread',{exact:true})).toBeChecked();
   await page.getByLabel('Bullet impact size',{exact:true}).fill('3');
   await page.getByLabel('Practice spread',{exact:true}).uncheck();
@@ -19,6 +20,7 @@ test('spread defaults on, explicit off is visible, and impact size persists',asy
   await expect(page.getByRole('button',{name:'Spread off',exact:true})).toBeVisible();
   await page.getByRole('button',{name:'Spread off',exact:true}).click();
   await page.getByRole('button',{name:'Settings',exact:true}).click();
+  await page.getByRole('tab',{name:'Training',exact:true}).click();
   await expect(page.getByLabel('Practice spread',{exact:true})).toBeChecked();
   await expect(page.getByLabel('Bullet impact size',{exact:true})).toHaveValue('3');
 });
@@ -32,7 +34,8 @@ test('stationary counterstrafing attempts score zero and show a central movement
   await canvas.dispatchEvent('pointerup',{button:0,pointerId:1,isPrimary:true,pointerType:'touch'});
   await expect(page.getByTestId('accuracy')).toHaveText('0/100');
   const feedback=page.getByRole('status',{name:'Rep feedback',exact:true});
-  await expect(feedback).toContainText('Move, then counter-strafe');
+  await expect(feedback).toContainText('Build a real entry');
+  await expect(feedback.locator('p')).toContainText('Peak entry speed 0%');
   await expect(feedback.locator('p')).toBeVisible();
   await page.screenshot({path:`test-results/${info.project.name}-counterstrafe-tip.png`});
   const [f,c]=await page.evaluate(()=>['.rep-feedback','canvas[data-range]'].map(s=>{

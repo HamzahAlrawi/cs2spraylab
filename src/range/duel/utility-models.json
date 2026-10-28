@@ -1,0 +1,1043 @@
+{
+  "schema": 1,
+  "models": {
+    "he": {
+      "build": "2000935",
+      "model": "weapons/models/grenade/hegrenade/weapon_hegrenade.vmdl",
+      "skeleton": "animation/skeletons/weapons/hegrenade.vnmskel",
+      "inverseBind": [
+        1.4400005568441982e-14,
+        1.0000001800000216,
+        -1.2000002995824042e-7,
+        0,
+        -1.2000002919268341e-7,
+        1.4400004825158254e-14,
+        1.0000001800000216,
+        0,
+        1.0000001800000216,
+        -1.2000002995824042e-7,
+        1.4400004917025098e-14,
+        0,
+        0,
+        0,
+        0,
+        1
+      ],
+      "sourceSha256": "b81a8ea417a42dba3b08480085d5033fd64de3f83c57227a760df434b432c583",
+      "handInverseBind": [
+        7.472551405529185e-14,
+        1.000000180000026,
+        -7.62886380901482e-8,
+        0,
+        -9.107536915282962e-7,
+        -4.371137746805207e-8,
+        1.000000179999613,
+        0,
+        1.000000179999709,
+        -1.2000002995824037e-7,
+        7.907536714902885e-7,
+        0,
+        0,
+        0,
+        0,
+        1
+      ],
+      "nativeArmsSha256": "0c335d56009a13a25ce6d09457cb3eb43a1b96eef693187919b8b6804fabed17",
+      "assemblySourceSha256": "62643ff43a04da40db2e9ed5ab259a97a3a205e0a35074c34dc526ea74e2de38",
+      "world": {
+        "url": "/models/utility-he.glb",
+        "sha256": "02697b63ee303fecc290448e0ec751c301b8ce091a3bec1e74a6ee99c0d2fbe2",
+        "bytes": 342720
+      },
+      "projectile": {
+        "url": "/models/utility-he-projectile.glb",
+        "sha256": "8cd0e4f7ca3415d601b4a06ac66ac26f014480ec527042ef42702d2a8bff1c4c",
+        "bytes": 213924
+      },
+      "view": {
+        "url": "/models/view-utility-he.glb",
+        "sha256": "2b6bc9c965f5737a9ed0037bfc971761546e35a8a4d240899d63c0a10b43e2b1",
+        "bytes": 2053324
+      },
+      "clips": {
+        "idle": {
+          "path": "animation/anims/viewmodel/grenade/grenade_hegrenade/idle_hegrenade.vnmclip_c",
+          "crc": "00cfa3bf0a",
+          "bytes": 5024,
+          "seconds": 1,
+          "samples": 31,
+          "maxPartMatrixError": 9.313225746154785e-10,
+          "maxMountMatrixError": 5.960464477539063e-8,
+          "quaternionContinuity": true,
+          "armSlot": "OBagents\\models\\ctm_sas\\ctm_sas.vmdl_c",
+          "weaponSlot": "OBanimation/skeletons/weapons/hegrenade.vnmskel"
+        },
+        "draw": {
+          "path": "animation/anims/viewmodel/grenade/grenade_hegrenade/draw_hegrenade.vnmclip_c",
+          "crc": "0023bd4004",
+          "bytes": 7897,
+          "seconds": 1,
+          "samples": 31,
+          "maxPartMatrixError": 1.1920928955078125e-7,
+          "maxMountMatrixError": 1.7881393432617188e-7,
+          "quaternionContinuity": true,
+          "armSlot": "OBagents\\models\\ctm_sas\\ctm_sas.vmdl_c",
+          "weaponSlot": "OBanimation/skeletons/weapons/hegrenade.vnmskel"
+        },
+        "inspect": {
+          "path": "animation/anims/viewmodel/grenade/grenade_hegrenade/lookat01_hegrenade.vnmclip_c",
+          "crc": "008763eb8a",
+          "bytes": 26841,
+          "seconds": 5.8,
+          "samples": 175,
+          "maxPartMatrixError": 9.313225746154785e-10,
+          "maxMountMatrixError": 2.980232238769531e-7,
+          "quaternionContinuity": true,
+          "armSlot": "OBagents\\models\\ctm_sas\\ctm_sas.vmdl_c",
+          "weaponSlot": "OBanimation/skeletons/weapons/hegrenade.vnmskel"
+        },
+        "pullpin": {
+          "path": "animation/anims/viewmodel/grenade/grenade_hegrenade/pullpin_hegrenade.vnmclip_c",
+          "crc": "00c597b334",
+          "bytes": 14159,
+          "seconds": 0.9666666666666667,
+          "samples": 30,
+          "maxPartMatrixError": 2.1606683731079102e-7,
+          "maxMountMatrixError": 4.172325134277344e-7,
+          "quaternionContinuity": true,
+          "armSlot": "OBagents\\models\\ctm_sas\\ctm_sas.vmdl_c",
+          "weaponSlot": "OBanimation/skeletons/weapons/hegrenade.vnmskel"
+        },
+        "hold-high": {
+          "path": "animation/anims/viewmodel/grenade/grenade_hegrenade/throwcharge_high_hegrenade.vnmclip_c",
+          "crc": "00227731ed",
+          "bytes": 4319,
+          "seconds": 0,
+          "samples": 1,
+          "maxPartMatrixError": 4.6566128730773926e-9,
+          "maxMountMatrixError": 3.5762786865234375e-7,
+          "quaternionContinuity": true,
+          "armSlot": "OBagents\\models\\ctm_sas\\ctm_sas.vmdl_c",
+          "weaponSlot": "OBanimation/skeletons/weapons/hegrenade.vnmskel"
+        },
+        "hold-mid": {
+          "path": "animation/anims/viewmodel/grenade/grenade_hegrenade/throwcharge_mid_hegrenade.vnmclip_c",
+          "crc": "00056bafa0",
+          "bytes": 4310,
+          "seconds": 0,
+          "samples": 1,
+          "maxPartMatrixError": 4.6566128730773926e-9,
+          "maxMountMatrixError": 3.5762786865234375e-7,
+          "quaternionContinuity": true,
+          "armSlot": "OBagents\\models\\ctm_sas\\ctm_sas.vmdl_c",
+          "weaponSlot": "OBanimation/skeletons/weapons/hegrenade.vnmskel"
+        },
+        "hold-low": {
+          "path": "animation/anims/viewmodel/grenade/grenade_hegrenade/throwcharge_low_hegrenade.vnmclip_c",
+          "crc": "0096c33c98",
+          "bytes": 4295,
+          "seconds": 0,
+          "samples": 1,
+          "maxPartMatrixError": 4.6566128730773926e-9,
+          "maxMountMatrixError": 3.5762786865234375e-7,
+          "quaternionContinuity": true,
+          "armSlot": "OBagents\\models\\ctm_sas\\ctm_sas.vmdl_c",
+          "weaponSlot": "OBanimation/skeletons/weapons/hegrenade.vnmskel"
+        },
+        "throw-high": {
+          "path": "animation/anims/viewmodel/grenade/grenade_hegrenade/throw_overhand_hegrenade.vnmclip_c",
+          "crc": "00cc306400",
+          "bytes": 8475,
+          "seconds": 0.4666666666666667,
+          "samples": 15,
+          "maxPartMatrixError": 2.384185791015625e-7,
+          "maxMountMatrixError": 4.172325134277344e-7,
+          "quaternionContinuity": true,
+          "armSlot": "OBagents\\models\\ctm_sas\\ctm_sas.vmdl_c",
+          "weaponSlot": "OBanimation/skeletons/weapons/hegrenade.vnmskel"
+        },
+        "throw-low": {
+          "path": "animation/anims/viewmodel/grenade/grenade_hegrenade/throw_underhand_hegrenade.vnmclip_c",
+          "crc": "008da759e4",
+          "bytes": 7881,
+          "seconds": 0.5,
+          "samples": 16,
+          "maxPartMatrixError": 5.960464477539063e-8,
+          "maxMountMatrixError": 3.129243850708008e-7,
+          "quaternionContinuity": true,
+          "armSlot": "OBagents\\models\\ctm_sas\\ctm_sas.vmdl_c",
+          "weaponSlot": "OBanimation/skeletons/weapons/hegrenade.vnmskel"
+        }
+      },
+      "limitations": [
+        "Native twist/IK runtime solvers are not reproduced; authored arm tracks retained.",
+        "Call prepareNativeViewAssembly after GLTF load to prevent stale skinned frustum bounds."
+      ]
+    },
+    "flash": {
+      "build": "2000935",
+      "model": "weapons/models/grenade/flashbang/weapon_flashbang.vmdl",
+      "skeleton": "animation/skeletons/weapons/flashbang.vnmskel",
+      "inverseBind": [
+        1.4400005568441982e-14,
+        1.0000001800000216,
+        -1.2000002995824042e-7,
+        0,
+        -1.2000002919268341e-7,
+        1.4400004825158254e-14,
+        1.0000001800000216,
+        0,
+        1.0000001800000216,
+        -1.2000002995824042e-7,
+        1.4400004917025098e-14,
+        0,
+        0,
+        0,
+        0,
+        1
+      ],
+      "sourceSha256": "fd8299f57f9decebfc778bbb6c0ba0139c534c5b83236b007cfe90038edc88e0",
+      "handInverseBind": [
+        7.472551405529185e-14,
+        1.000000180000026,
+        -7.62886380901482e-8,
+        0,
+        -9.107536915282962e-7,
+        -4.371137746805207e-8,
+        1.000000179999613,
+        0,
+        1.000000179999709,
+        -1.2000002995824037e-7,
+        7.907536714902885e-7,
+        0,
+        0,
+        0,
+        0,
+        1
+      ],
+      "nativeArmsSha256": "eea7828565c7e3d2f4d8c2d3baddad8d5e25091d65363a8be83b1df01f66086c",
+      "assemblySourceSha256": "bfa6b1b495734f63625a78f4fdec9bef7f903b78745df71cb12f849153d89311",
+      "world": {
+        "url": "/models/utility-flash.glb",
+        "sha256": "16165a8190094e7d13338c1f98eaa7cf3eef45edae417875a768ab1fa38f31c2",
+        "bytes": 440052
+      },
+      "projectile": {
+        "url": "/models/utility-flash-projectile.glb",
+        "sha256": "fce5686706c6d5d356aef83366105768c100ccfe32f634c3722d5aa8e91244e3",
+        "bytes": 310160
+      },
+      "view": {
+        "url": "/models/view-utility-flash.glb",
+        "sha256": "4c0f7c67a34725f497aed04117d811b5efac56353e40237a8bdfcd96bee94daf",
+        "bytes": 2245672
+      },
+      "clips": {
+        "idle": {
+          "path": "animation/anims/viewmodel/grenade/grenade_flashbang/idle_flashbang.vnmclip_c",
+          "crc": "00673ac130",
+          "bytes": 4301,
+          "seconds": 0,
+          "samples": 1,
+          "maxPartMatrixError": 5.960464477539063e-8,
+          "maxMountMatrixError": 8.940696716308594e-8,
+          "quaternionContinuity": true,
+          "armSlot": "OBagents\\models\\ctm_sas\\ctm_sas.vmdl_c",
+          "weaponSlot": "OBanimation/skeletons/weapons/flashbang.vnmskel"
+        },
+        "draw": {
+          "path": "animation/anims/viewmodel/grenade/grenade_flashbang/draw_flashbang.vnmclip_c",
+          "crc": "004c0dec99",
+          "bytes": 8236,
+          "seconds": 1,
+          "samples": 31,
+          "maxPartMatrixError": 1.7881393432617188e-7,
+          "maxMountMatrixError": 2.980232238769531e-7,
+          "quaternionContinuity": true,
+          "armSlot": "OBagents\\models\\ctm_sas\\ctm_sas.vmdl_c",
+          "weaponSlot": "OBanimation/skeletons/weapons/flashbang.vnmskel"
+        },
+        "inspect": {
+          "path": "animation/anims/viewmodel/grenade/grenade_flashbang/lookat01_flashbang.vnmclip_c",
+          "crc": "00827c779f",
+          "bytes": 27590,
+          "seconds": 5.8,
+          "samples": 175,
+          "maxPartMatrixError": 2.8312206268310547e-7,
+          "maxMountMatrixError": 4.470348358154297e-7,
+          "quaternionContinuity": true,
+          "armSlot": "OBagents\\models\\ctm_sas\\ctm_sas.vmdl_c",
+          "weaponSlot": "OBanimation/skeletons/weapons/flashbang.vnmskel"
+        },
+        "pullpin": {
+          "path": "animation/anims/viewmodel/grenade/grenade_flashbang/pullpin_flashbang.vnmclip_c",
+          "crc": "00a961e69d",
+          "bytes": 11040,
+          "seconds": 0.9666666666666667,
+          "samples": 30,
+          "maxPartMatrixError": 4.172325134277344e-7,
+          "maxMountMatrixError": 2.980232238769531e-7,
+          "quaternionContinuity": true,
+          "armSlot": "OBagents\\models\\ctm_sas\\ctm_sas.vmdl_c",
+          "weaponSlot": "OBanimation/skeletons/weapons/flashbang.vnmskel"
+        },
+        "hold-high": {
+          "path": "animation/anims/viewmodel/grenade/grenade_flashbang/throwcharge_high_flashbang.vnmclip_c",
+          "crc": "00b220b6cf",
+          "bytes": 4295,
+          "seconds": 0,
+          "samples": 1,
+          "maxPartMatrixError": 1.862645149230957e-9,
+          "maxMountMatrixError": 1.4901161193847656e-7,
+          "quaternionContinuity": true,
+          "armSlot": "OBagents\\models\\ctm_sas\\ctm_sas.vmdl_c",
+          "weaponSlot": "OBanimation/skeletons/weapons/flashbang.vnmskel"
+        },
+        "hold-mid": {
+          "path": "animation/anims/viewmodel/grenade/grenade_flashbang/throwcharge_mid_flashbang.vnmclip_c",
+          "crc": "003ad79c37",
+          "bytes": 4298,
+          "seconds": 0,
+          "samples": 1,
+          "maxPartMatrixError": 1.862645149230957e-9,
+          "maxMountMatrixError": 1.4901161193847656e-7,
+          "quaternionContinuity": true,
+          "armSlot": "OBagents\\models\\ctm_sas\\ctm_sas.vmdl_c",
+          "weaponSlot": "OBanimation/skeletons/weapons/flashbang.vnmskel"
+        },
+        "hold-low": {
+          "path": "animation/anims/viewmodel/grenade/grenade_flashbang/throwcharge_low_flashbang.vnmclip_c",
+          "crc": "009ff9d836",
+          "bytes": 4295,
+          "seconds": 0,
+          "samples": 1,
+          "maxPartMatrixError": 1.862645149230957e-9,
+          "maxMountMatrixError": 1.4901161193847656e-7,
+          "quaternionContinuity": true,
+          "armSlot": "OBagents\\models\\ctm_sas\\ctm_sas.vmdl_c",
+          "weaponSlot": "OBanimation/skeletons/weapons/flashbang.vnmskel"
+        },
+        "throw-high": {
+          "path": "animation/anims/viewmodel/grenade/grenade_flashbang/throw_overhand_flashbang.vnmclip_c",
+          "crc": "006d039e3f",
+          "bytes": 9725,
+          "seconds": 0.7333333333333333,
+          "samples": 23,
+          "maxPartMatrixError": 2.9802322387695312e-8,
+          "maxMountMatrixError": 3.501772880554199e-7,
+          "quaternionContinuity": true,
+          "armSlot": "OBagents\\models\\ctm_sas\\ctm_sas.vmdl_c",
+          "weaponSlot": "OBanimation/skeletons/weapons/flashbang.vnmskel"
+        },
+        "throw-low": {
+          "path": "animation/anims/viewmodel/grenade/grenade_flashbang/throw_underhand_flashbang.vnmclip_c",
+          "crc": "000689f7cd",
+          "bytes": 8526,
+          "seconds": 0.5,
+          "samples": 16,
+          "maxPartMatrixError": 2.9802322387695312e-8,
+          "maxMountMatrixError": 2.384185791015625e-7,
+          "quaternionContinuity": true,
+          "armSlot": "OBagents\\models\\ctm_sas\\ctm_sas.vmdl_c",
+          "weaponSlot": "OBanimation/skeletons/weapons/flashbang.vnmskel"
+        }
+      },
+      "limitations": [
+        "Native twist/IK runtime solvers are not reproduced; authored arm tracks retained.",
+        "Call prepareNativeViewAssembly after GLTF load to prevent stale skinned frustum bounds."
+      ]
+    },
+    "smoke": {
+      "build": "2000935",
+      "model": "weapons/models/grenade/smokegrenade/weapon_smokegrenade.vmdl",
+      "skeleton": "animation/skeletons/weapons/smokegrenade.vnmskel",
+      "inverseBind": [
+        1.4400005568441982e-14,
+        1.0000001800000216,
+        -1.2000002995824042e-7,
+        0,
+        -1.2000002919268341e-7,
+        1.4400004825158254e-14,
+        1.0000001800000216,
+        0,
+        1.0000001800000216,
+        -1.2000002995824042e-7,
+        1.4400004917025098e-14,
+        0,
+        0,
+        0,
+        0,
+        1
+      ],
+      "sourceSha256": "2ba574714bbe9fe5f7e4ead4015e2cbaeae7df2ade3b0f7ec5a875f6b35f0765",
+      "handInverseBind": [
+        7.472551405529185e-14,
+        1.000000180000026,
+        -7.62886380901482e-8,
+        0,
+        -9.107536915282962e-7,
+        -4.371137746805207e-8,
+        1.000000179999613,
+        0,
+        1.000000179999709,
+        -1.2000002995824037e-7,
+        7.907536714902885e-7,
+        0,
+        0,
+        0,
+        0,
+        1
+      ],
+      "nativeArmsSha256": "7351b1069a1bb9277f80be15da2eb5565addc5352691a0eb534b1d21de1c0341",
+      "assemblySourceSha256": "79e887f45916eb108b37b3ab8bc90452ebd42dc7c327f77f76eac46421be6f43",
+      "world": {
+        "url": "/models/utility-smoke.glb",
+        "sha256": "5860f5467369c53a3d80ade0221d9a98da922213ed32828f7f261861cc348d47",
+        "bytes": 366484
+      },
+      "projectile": {
+        "url": "/models/utility-smoke-projectile.glb",
+        "sha256": "b5ed29deaf16ed64e6a70861cf25d873b2912433252a1941fb28b16b50fc6198",
+        "bytes": 238404
+      },
+      "view": {
+        "url": "/models/view-utility-smoke.glb",
+        "sha256": "b8b9b9e219a61ad42fb39124d9d7eb1eb027eed4863f7ccd41daeaba4f0d3740",
+        "bytes": 2086068
+      },
+      "clips": {
+        "idle": {
+          "path": "animation/anims/viewmodel/grenade/grenade_smokegrenade/idle_smoke.vnmclip_c",
+          "crc": "00025d6a66",
+          "bytes": 5265,
+          "seconds": 1,
+          "samples": 31,
+          "maxPartMatrixError": 3.725290298461914e-9,
+          "maxMountMatrixError": 1.7881393432617188e-7,
+          "quaternionContinuity": true,
+          "armSlot": "OBagents\\models\\ctm_sas\\ctm_sas.vmdl_c",
+          "weaponSlot": "OBanimation/skeletons/weapons/smokegrenade.vnmskel"
+        },
+        "draw": {
+          "path": "animation/anims/viewmodel/grenade/grenade_smokegrenade/draw_smoke.vnmclip_c",
+          "crc": "000a5c507c",
+          "bytes": 7821,
+          "seconds": 1,
+          "samples": 31,
+          "maxPartMatrixError": 2.980232238769531e-7,
+          "maxMountMatrixError": 2.384185791015625e-7,
+          "quaternionContinuity": true,
+          "armSlot": "OBagents\\models\\ctm_sas\\ctm_sas.vmdl_c",
+          "weaponSlot": "OBanimation/skeletons/weapons/smokegrenade.vnmskel"
+        },
+        "inspect": {
+          "path": "animation/anims/viewmodel/grenade/grenade_smokegrenade/lookat01_smoke.vnmclip_c",
+          "crc": "000797afc2",
+          "bytes": 26538,
+          "seconds": 7.066666666666666,
+          "samples": 213,
+          "maxPartMatrixError": 2.998858690261841e-7,
+          "maxMountMatrixError": 2.384185791015625e-7,
+          "quaternionContinuity": true,
+          "armSlot": "OBagents\\models\\ctm_sas\\ctm_sas.vmdl_c",
+          "weaponSlot": "OBanimation/skeletons/weapons/smokegrenade.vnmskel"
+        },
+        "pullpin": {
+          "path": "animation/anims/viewmodel/grenade/grenade_smokegrenade/pullpin_smoke.vnmclip_c",
+          "crc": "004a68d3ff",
+          "bytes": 14268,
+          "seconds": 0.9333333333333333,
+          "samples": 29,
+          "maxPartMatrixError": 2.384185791015625e-7,
+          "maxMountMatrixError": 4.172325134277344e-7,
+          "quaternionContinuity": true,
+          "armSlot": "OBagents\\models\\ctm_sas\\ctm_sas.vmdl_c",
+          "weaponSlot": "OBanimation/skeletons/weapons/smokegrenade.vnmskel"
+        },
+        "hold-high": {
+          "path": "animation/anims/viewmodel/grenade/grenade_smokegrenade/throwcharge_high_smoke.vnmclip_c",
+          "crc": "00ead3941f",
+          "bytes": 4361,
+          "seconds": 0,
+          "samples": 1,
+          "maxPartMatrixError": 3.725290298461914e-9,
+          "maxMountMatrixError": 5.960464477539063e-8,
+          "quaternionContinuity": true,
+          "armSlot": "OBagents\\models\\ctm_sas\\ctm_sas.vmdl_c",
+          "weaponSlot": "OBanimation/skeletons/weapons/smokegrenade.vnmskel"
+        },
+        "hold-mid": {
+          "path": "animation/anims/viewmodel/grenade/grenade_smokegrenade/throwcharge_mid_smoke.vnmclip_c",
+          "crc": "001d0f464b",
+          "bytes": 4357,
+          "seconds": 0,
+          "samples": 1,
+          "maxPartMatrixError": 3.725290298461914e-9,
+          "maxMountMatrixError": 5.960464477539063e-8,
+          "quaternionContinuity": true,
+          "armSlot": "OBagents\\models\\ctm_sas\\ctm_sas.vmdl_c",
+          "weaponSlot": "OBanimation/skeletons/weapons/smokegrenade.vnmskel"
+        },
+        "hold-low": {
+          "path": "animation/anims/viewmodel/grenade/grenade_smokegrenade/throwcharge_low_smoke.vnmclip_c",
+          "crc": "00b3f213f8",
+          "bytes": 4353,
+          "seconds": 0,
+          "samples": 1,
+          "maxPartMatrixError": 3.725290298461914e-9,
+          "maxMountMatrixError": 5.960464477539063e-8,
+          "quaternionContinuity": true,
+          "armSlot": "OBagents\\models\\ctm_sas\\ctm_sas.vmdl_c",
+          "weaponSlot": "OBanimation/skeletons/weapons/smokegrenade.vnmskel"
+        },
+        "throw-high": {
+          "path": "animation/anims/viewmodel/grenade/grenade_smokegrenade/throw_overhand_smoke.vnmclip_c",
+          "crc": "00a8b63c04",
+          "bytes": 11689,
+          "seconds": 0.7333333333333333,
+          "samples": 23,
+          "maxPartMatrixError": 1.4901161193847656e-8,
+          "maxMountMatrixError": 4.76837158203125e-7,
+          "quaternionContinuity": true,
+          "armSlot": "OBagents\\models\\ctm_sas\\ctm_sas.vmdl_c",
+          "weaponSlot": "OBanimation/skeletons/weapons/smokegrenade.vnmskel"
+        },
+        "throw-low": {
+          "path": "animation/anims/viewmodel/grenade/grenade_smokegrenade/throw_underhand_smoke.vnmclip_c",
+          "crc": "001aeb10cc",
+          "bytes": 8647,
+          "seconds": 0.5,
+          "samples": 16,
+          "maxPartMatrixError": 1.4901161193847656e-8,
+          "maxMountMatrixError": 3.5762786865234375e-7,
+          "quaternionContinuity": true,
+          "armSlot": "OBagents\\models\\ctm_sas\\ctm_sas.vmdl_c",
+          "weaponSlot": "OBanimation/skeletons/weapons/smokegrenade.vnmskel"
+        }
+      },
+      "limitations": [
+        "Native twist/IK runtime solvers are not reproduced; authored arm tracks retained.",
+        "Call prepareNativeViewAssembly after GLTF load to prevent stale skinned frustum bounds."
+      ]
+    },
+    "molotov": {
+      "build": "2000935",
+      "model": "weapons/models/grenade/molotov/weapon_molotov.vmdl",
+      "skeleton": "animation/skeletons/weapons/molotov.vnmskel",
+      "inverseBind": [
+        1.4400005568441982e-14,
+        1.0000001800000216,
+        -1.2000002995824042e-7,
+        0,
+        -1.2000002919268341e-7,
+        1.4400004825158254e-14,
+        1.0000001800000216,
+        0,
+        1.0000001800000216,
+        -1.2000002995824042e-7,
+        1.4400004917025098e-14,
+        0,
+        0,
+        0,
+        0,
+        1
+      ],
+      "sourceSha256": "b64e3a59156c2599b677e149142e84a3ef87137932263c665f2ebb9ba3216d40",
+      "handInverseBind": [
+        1.1065323668446919e-14,
+        1.000000180000026,
+        -7.628863809019078e-8,
+        0,
+        -7.628863732463327e-8,
+        -4.3711377468045265e-8,
+        1.0000001800000249,
+        0,
+        1.0000001800000207,
+        -1.20000029958241e-7,
+        -4.3711382713412556e-8,
+        0,
+        2.2886587100953053e-28,
+        1.3113410893263241e-28,
+        -3.0000000030344383e-21,
+        1
+      ],
+      "nativeArmsSha256": "88902d299e23a01246529f1781b60b5b856a8eabe23df204246ccc9f29ae1c9f",
+      "assemblySourceSha256": "5382c9c60d66ba16e0532d88b64a7614e0de16cc3bbdbf398703fc117959a706",
+      "world": {
+        "url": "/models/utility-molotov.glb",
+        "sha256": "c31f72fc72a5e2c0f21b31d3d9964015d3ba873ef1b2f7c3c5a631ee1f6025b9",
+        "bytes": 222676
+      },
+      "projectile": {
+        "url": "/models/utility-molotov-projectile.glb",
+        "sha256": "b8615782cfbba383f50742c4840560b209ca3a9a57d623db995fef2b88544387",
+        "bytes": 222688
+      },
+      "view": {
+        "url": "/models/view-utility-molotov.glb",
+        "sha256": "6b300156c827e666790c487a7b20b38c2105818acb0f22299a2f1ae013fe3379",
+        "bytes": 2287140
+      },
+      "clips": {
+        "idle": {
+          "path": "animation/anims/viewmodel/grenade/grenade_molotov/idle_molotov.vnmclip_c",
+          "crc": "006855e22b",
+          "bytes": 4456,
+          "seconds": 0,
+          "samples": 1,
+          "maxPartMatrixError": 4.172325134277344e-7,
+          "maxMountMatrixError": 4.24903703333257e-8,
+          "quaternionContinuity": true,
+          "armSlot": "OBagents\\models\\ctm_sas\\ctm_sas.vmdl_c",
+          "weaponSlot": "OBanimation/skeletons/weapons/molotov.vnmskel"
+        },
+        "draw": {
+          "path": "animation/anims/viewmodel/grenade/grenade_molotov/draw_molotov.vnmclip_c",
+          "crc": "00134fc933",
+          "bytes": 13518,
+          "seconds": 1,
+          "samples": 31,
+          "maxPartMatrixError": 4.76837158203125e-7,
+          "maxMountMatrixError": 4.24903703333257e-8,
+          "quaternionContinuity": true,
+          "armSlot": "OBagents\\models\\ctm_sas\\ctm_sas.vmdl_c",
+          "weaponSlot": "OBanimation/skeletons/weapons/molotov.vnmskel"
+        },
+        "inspect": {
+          "path": "animation/anims/viewmodel/grenade/grenade_molotov/lookat01_molotov.vnmclip_c",
+          "crc": "00d6a753a9",
+          "bytes": 18831,
+          "seconds": 5.366666666666666,
+          "samples": 162,
+          "maxPartMatrixError": 6.556510925292969e-7,
+          "maxMountMatrixError": 4.24903703333257e-8,
+          "quaternionContinuity": true,
+          "armSlot": "OBagents\\models\\ctm_sas\\ctm_sas.vmdl_c",
+          "weaponSlot": "OBanimation/skeletons/weapons/molotov.vnmskel"
+        },
+        "pullpin": {
+          "path": "animation/anims/viewmodel/grenade/grenade_molotov/pullpin_molotov.vnmclip_c",
+          "crc": "00b300cf92",
+          "bytes": 15625,
+          "seconds": 1.1,
+          "samples": 34,
+          "maxPartMatrixError": 5.364418029785156e-7,
+          "maxMountMatrixError": 4.24903703333257e-8,
+          "quaternionContinuity": true,
+          "armSlot": "OBagents\\models\\ctm_sas\\ctm_sas.vmdl_c",
+          "weaponSlot": "OBanimation/skeletons/weapons/molotov.vnmskel"
+        },
+        "hold-high": {
+          "path": "animation/anims/viewmodel/grenade/grenade_molotov/throwcharge_high_molotov.vnmclip_c",
+          "crc": "00872d8928",
+          "bytes": 4470,
+          "seconds": 0,
+          "samples": 1,
+          "maxPartMatrixError": 3.2782554626464844e-7,
+          "maxMountMatrixError": 4.24903703333257e-8,
+          "quaternionContinuity": true,
+          "armSlot": "OBagents\\models\\ctm_sas\\ctm_sas.vmdl_c",
+          "weaponSlot": "OBanimation/skeletons/weapons/molotov.vnmskel"
+        },
+        "hold-mid": {
+          "path": "animation/anims/viewmodel/grenade/grenade_molotov/throwcharge_mid_molotov.vnmclip_c",
+          "crc": "00bcbe32c7",
+          "bytes": 4461,
+          "seconds": 0,
+          "samples": 1,
+          "maxPartMatrixError": 2.384185791015625e-7,
+          "maxMountMatrixError": 4.24903703333257e-8,
+          "quaternionContinuity": true,
+          "armSlot": "OBagents\\models\\ctm_sas\\ctm_sas.vmdl_c",
+          "weaponSlot": "OBanimation/skeletons/weapons/molotov.vnmskel"
+        },
+        "hold-low": {
+          "path": "animation/anims/viewmodel/grenade/grenade_molotov/throwcharge_low_molotov.vnmclip_c",
+          "crc": "009186122e",
+          "bytes": 4953,
+          "seconds": 0,
+          "samples": 1,
+          "maxPartMatrixError": 2.980232238769531e-7,
+          "maxMountMatrixError": 4.24903703333257e-8,
+          "quaternionContinuity": true,
+          "armSlot": "OBagents\\models\\ctm_sas\\ctm_sas.vmdl_c",
+          "weaponSlot": "OBanimation/skeletons/weapons/molotov.vnmskel"
+        },
+        "throw-high": {
+          "path": "animation/anims/viewmodel/grenade/grenade_molotov/throw_overhand_molotov.vnmclip_c",
+          "crc": "00587e3608",
+          "bytes": 7285,
+          "seconds": 0.7333333333333333,
+          "samples": 23,
+          "maxPartMatrixError": 4.172325134277344e-7,
+          "maxMountMatrixError": 4.24903703333257e-8,
+          "quaternionContinuity": true,
+          "armSlot": "OBagents\\models\\ctm_sas\\ctm_sas.vmdl_c",
+          "weaponSlot": "OBanimation/skeletons/weapons/molotov.vnmskel"
+        },
+        "throw-low": {
+          "path": "animation/anims/viewmodel/grenade/grenade_molotov/throw_underhand_molotov.vnmclip_c",
+          "crc": "006dc6630d",
+          "bytes": 8395,
+          "seconds": 0.4,
+          "samples": 13,
+          "maxPartMatrixError": 3.5762786865234375e-7,
+          "maxMountMatrixError": 4.24903703333257e-8,
+          "quaternionContinuity": true,
+          "armSlot": "OBagents\\models\\ctm_sas\\ctm_sas.vmdl_c",
+          "weaponSlot": "OBanimation/skeletons/weapons/molotov.vnmskel"
+        }
+      },
+      "limitations": [
+        "Native twist/IK runtime solvers are not reproduced; authored arm tracks retained.",
+        "Call prepareNativeViewAssembly after GLTF load to prevent stale skinned frustum bounds."
+      ]
+    },
+    "incendiary": {
+      "build": "2000935",
+      "model": "weapons/models/grenade/incendiary/weapon_incendiarygrenade.vmdl",
+      "skeleton": "animation/skeletons/weapons/incendiary.vnmskel",
+      "inverseBind": [
+        1.4400005568441982e-14,
+        1.0000001800000216,
+        -1.2000002995824042e-7,
+        0,
+        -1.2000002919268341e-7,
+        1.4400004825158254e-14,
+        1.0000001800000216,
+        0,
+        1.0000001800000216,
+        -1.2000002995824042e-7,
+        1.4400004917025098e-14,
+        0,
+        0,
+        0,
+        0,
+        1
+      ],
+      "sourceSha256": "993b57da4f182c35504d0e0b5fb95099f77f0bbf2d9aebab6a3924d8cda32410",
+      "handInverseBind": [
+        7.472551405529185e-14,
+        1.000000180000026,
+        -7.62886380901482e-8,
+        0,
+        -9.107536915282962e-7,
+        -4.371137746805207e-8,
+        1.000000179999613,
+        0,
+        1.000000179999709,
+        -1.2000002995824037e-7,
+        7.907536714902885e-7,
+        0,
+        0,
+        0,
+        0,
+        1
+      ],
+      "nativeArmsSha256": "bd3692b9534637bb3dca6edfbf2f7fdce0d0d20be97c303b50e1187a61a717e9",
+      "assemblySourceSha256": "36dd9105e632b6c74f35fdf652108be4007af57ac1e65210f56c05579d1ec5e3",
+      "world": {
+        "url": "/models/utility-incendiary.glb",
+        "sha256": "fa9b902de2887e698f436ab99dc8b140f68fa46a4616a198de11352433294386",
+        "bytes": 394244
+      },
+      "projectile": {
+        "url": "/models/utility-incendiary-projectile.glb",
+        "sha256": "036ada2181e50b4b3fdceffbbe1f434aa357205c0e839be22d898176445b2f70",
+        "bytes": 266168
+      },
+      "view": {
+        "url": "/models/view-utility-incendiary.glb",
+        "sha256": "60cfbbdc9a0cf2268df7de76e6fdda912a6233713d423d6a79ccd4205d7868a7",
+        "bytes": 2174680
+      },
+      "clips": {
+        "idle": {
+          "path": "animation/anims/viewmodel/grenade/grenade_incendiary/idle_incendiary.vnmclip_c",
+          "crc": "00c7a1bc84",
+          "bytes": 5577,
+          "seconds": 0.9666666666666667,
+          "samples": 30,
+          "maxPartMatrixError": 1.1920928955078125e-7,
+          "maxMountMatrixError": 1.1920928955078125e-7,
+          "quaternionContinuity": true,
+          "armSlot": "OBagents\\models\\ctm_sas\\ctm_sas.vmdl_c",
+          "weaponSlot": "OBanimation/skeletons/weapons/incendiary.vnmskel"
+        },
+        "draw": {
+          "path": "animation/anims/viewmodel/grenade/grenade_incendiary/draw_incendiary.vnmclip_c",
+          "crc": "0040cf4467",
+          "bytes": 10045,
+          "seconds": 1,
+          "samples": 31,
+          "maxPartMatrixError": 2.980232238769531e-7,
+          "maxMountMatrixError": 2.384185791015625e-7,
+          "quaternionContinuity": true,
+          "armSlot": "OBagents\\models\\ctm_sas\\ctm_sas.vmdl_c",
+          "weaponSlot": "OBanimation/skeletons/weapons/incendiary.vnmskel"
+        },
+        "inspect": {
+          "path": "animation/anims/viewmodel/grenade/grenade_incendiary/lookat01_incendiary.vnmclip_c",
+          "crc": "0031c3f858",
+          "bytes": 23708,
+          "seconds": 5.266666666666667,
+          "samples": 159,
+          "maxPartMatrixError": 2.980232238769531e-7,
+          "maxMountMatrixError": 3.3527612686157227e-7,
+          "quaternionContinuity": true,
+          "armSlot": "OBagents\\models\\ctm_sas\\ctm_sas.vmdl_c",
+          "weaponSlot": "OBanimation/skeletons/weapons/incendiary.vnmskel"
+        },
+        "pullpin": {
+          "path": "animation/anims/viewmodel/grenade/grenade_incendiary/pullpin_incendiary.vnmclip_c",
+          "crc": "008d409b94",
+          "bytes": 14133,
+          "seconds": 0.9666666666666667,
+          "samples": 30,
+          "maxPartMatrixError": 2.980232238769531e-7,
+          "maxMountMatrixError": 4.172325134277344e-7,
+          "quaternionContinuity": true,
+          "armSlot": "OBagents\\models\\ctm_sas\\ctm_sas.vmdl_c",
+          "weaponSlot": "OBanimation/skeletons/weapons/incendiary.vnmskel"
+        },
+        "hold-high": {
+          "path": "animation/anims/viewmodel/grenade/grenade_incendiary/throwcharge_high_incendiary.vnmclip_c",
+          "crc": "0053265215",
+          "bytes": 4307,
+          "seconds": 0,
+          "samples": 1,
+          "maxPartMatrixError": 3.725290298461914e-9,
+          "maxMountMatrixError": 5.960464477539063e-8,
+          "quaternionContinuity": true,
+          "armSlot": "OBagents\\models\\ctm_sas\\ctm_sas.vmdl_c",
+          "weaponSlot": "OBanimation/skeletons/weapons/incendiary.vnmskel"
+        },
+        "hold-mid": {
+          "path": "animation/anims/viewmodel/grenade/grenade_incendiary/throwcharge_mid_incendiary.vnmclip_c",
+          "crc": "0096aff60f",
+          "bytes": 4303,
+          "seconds": 0,
+          "samples": 1,
+          "maxPartMatrixError": 3.725290298461914e-9,
+          "maxMountMatrixError": 5.960464477539063e-8,
+          "quaternionContinuity": true,
+          "armSlot": "OBagents\\models\\ctm_sas\\ctm_sas.vmdl_c",
+          "weaponSlot": "OBanimation/skeletons/weapons/incendiary.vnmskel"
+        },
+        "hold-low": {
+          "path": "animation/anims/viewmodel/grenade/grenade_incendiary/throwcharge_low_incendiary.vnmclip_c",
+          "crc": "004e90b026",
+          "bytes": 4300,
+          "seconds": 0,
+          "samples": 1,
+          "maxPartMatrixError": 3.725290298461914e-9,
+          "maxMountMatrixError": 5.960464477539063e-8,
+          "quaternionContinuity": true,
+          "armSlot": "OBagents\\models\\ctm_sas\\ctm_sas.vmdl_c",
+          "weaponSlot": "OBanimation/skeletons/weapons/incendiary.vnmskel"
+        },
+        "throw-high": {
+          "path": "animation/anims/viewmodel/grenade/grenade_incendiary/throw_overhand_incendiary.vnmclip_c",
+          "crc": "0030815b6c",
+          "bytes": 11419,
+          "seconds": 0.7333333333333333,
+          "samples": 23,
+          "maxPartMatrixError": 1.1920928955078125e-7,
+          "maxMountMatrixError": 4.76837158203125e-7,
+          "quaternionContinuity": true,
+          "armSlot": "OBagents\\models\\ctm_sas\\ctm_sas.vmdl_c",
+          "weaponSlot": "OBanimation/skeletons/weapons/incendiary.vnmskel"
+        },
+        "throw-low": {
+          "path": "animation/anims/viewmodel/grenade/grenade_incendiary/throw_underhand_incendiary.vnmclip_c",
+          "crc": "00f6806dde",
+          "bytes": 8421,
+          "seconds": 0.5,
+          "samples": 16,
+          "maxPartMatrixError": 1.1920928955078125e-7,
+          "maxMountMatrixError": 3.5762786865234375e-7,
+          "quaternionContinuity": true,
+          "armSlot": "OBagents\\models\\ctm_sas\\ctm_sas.vmdl_c",
+          "weaponSlot": "OBanimation/skeletons/weapons/incendiary.vnmskel"
+        }
+      },
+      "limitations": [
+        "Native twist/IK runtime solvers are not reproduced; authored arm tracks retained.",
+        "Call prepareNativeViewAssembly after GLTF load to prevent stale skinned frustum bounds."
+      ]
+    },
+    "decoy": {
+      "build": "2000935",
+      "model": "weapons/models/grenade/decoy/weapon_decoy.vmdl",
+      "skeleton": "animation/skeletons/weapons/decoy.vnmskel",
+      "inverseBind": [
+        1.4400005568441982e-14,
+        1.0000001800000216,
+        -1.2000002995824042e-7,
+        0,
+        -1.2000002919268341e-7,
+        1.4400004825158254e-14,
+        1.0000001800000216,
+        0,
+        1.0000001800000216,
+        -1.2000002995824042e-7,
+        1.4400004917025098e-14,
+        0,
+        0,
+        0,
+        0,
+        1
+      ],
+      "sourceSha256": "10beb323ac5f872bf266b0c92ef7afd12ad89be787f23f60f91faa18148f4849",
+      "handInverseBind": [
+        7.472551405529185e-14,
+        1.000000180000026,
+        -7.62886380901482e-8,
+        0,
+        -9.107536915282962e-7,
+        -4.371137746805207e-8,
+        1.000000179999613,
+        0,
+        1.000000179999709,
+        -1.2000002995824037e-7,
+        7.907536714902885e-7,
+        0,
+        0,
+        0,
+        0,
+        1
+      ],
+      "nativeArmsSha256": "ef667e97d52e5d9337d076ee2a35dba1379f8af6a60d891c0b3bf57062c65a19",
+      "assemblySourceSha256": "329560a55f7ef5b08ffa0a59ee36f98625720bcfdca9373f6f2d5ec5ef5a929d",
+      "world": {
+        "url": "/models/utility-decoy.glb",
+        "sha256": "dbae3b1ece4af2e52c6f3d95e11f7f68e6d40d08f1e48f09e969e6744b855a42",
+        "bytes": 442644
+      },
+      "projectile": {
+        "url": "/models/utility-decoy-projectile.glb",
+        "sha256": "a1ea235f623f2ecb278e769f0b999e15114fbd89ae1ee7062b09c679b1074150",
+        "bytes": 312752
+      },
+      "view": {
+        "url": "/models/view-utility-decoy.glb",
+        "sha256": "91a1736fa5b9cb267ab01709e7d49e1795df7631b1405dd9ac2f1b9eaa89bd83",
+        "bytes": 2263420
+      },
+      "clips": {
+        "idle": {
+          "path": "animation/anims/viewmodel/grenade/_default_grenade/idle_grenade.vnmclip_c",
+          "crc": "001c74ca22",
+          "bytes": 4280,
+          "seconds": 0,
+          "samples": 1,
+          "maxPartMatrixError": 5.960464477539063e-8,
+          "maxMountMatrixError": 8.940696716308594e-8,
+          "quaternionContinuity": true,
+          "armSlot": "OBagents\\models\\ctm_sas\\ctm_sas.vmdl_c",
+          "weaponSlot": "OBanimation/skeletons/weapons/decoy.vnmskel"
+        },
+        "draw": {
+          "path": "animation/anims/viewmodel/grenade/_default_grenade/draw_grenade.vnmclip_c",
+          "crc": "0002325cbc",
+          "bytes": 8131,
+          "seconds": 1,
+          "samples": 31,
+          "maxPartMatrixError": 1.7881393432617188e-7,
+          "maxMountMatrixError": 2.384185791015625e-7,
+          "quaternionContinuity": true,
+          "armSlot": "OBagents\\models\\ctm_sas\\ctm_sas.vmdl_c",
+          "weaponSlot": "OBanimation/skeletons/weapons/decoy.vnmskel"
+        },
+        "inspect": {
+          "path": "animation/anims/viewmodel/grenade/_default_grenade/lookat01_grenade.vnmclip_c",
+          "crc": "0029d5432d",
+          "bytes": 34366,
+          "seconds": 7.033333333333333,
+          "samples": 212,
+          "maxPartMatrixError": 3.5762786865234375e-7,
+          "maxMountMatrixError": 2.980232238769531e-7,
+          "quaternionContinuity": true,
+          "armSlot": "OBagents\\models\\ctm_sas\\ctm_sas.vmdl_c",
+          "weaponSlot": "OBanimation/skeletons/weapons/decoy.vnmskel"
+        },
+        "pullpin": {
+          "path": "animation/anims/viewmodel/grenade/_default_grenade/pullpin_grenade.vnmclip_c",
+          "crc": "00e55f5b03",
+          "bytes": 11090,
+          "seconds": 0.9666666666666667,
+          "samples": 30,
+          "maxPartMatrixError": 4.172325134277344e-7,
+          "maxMountMatrixError": 2.980232238769531e-7,
+          "quaternionContinuity": true,
+          "armSlot": "OBagents\\models\\ctm_sas\\ctm_sas.vmdl_c",
+          "weaponSlot": "OBanimation/skeletons/weapons/decoy.vnmskel"
+        },
+        "hold-high": {
+          "path": "animation/anims/viewmodel/grenade/_default_grenade/throwcharge_high_grenade.vnmclip_c",
+          "crc": "005a44e42b",
+          "bytes": 4291,
+          "seconds": 0,
+          "samples": 1,
+          "maxPartMatrixError": 1.862645149230957e-9,
+          "maxMountMatrixError": 1.4901161193847656e-7,
+          "quaternionContinuity": true,
+          "armSlot": "OBagents\\models\\ctm_sas\\ctm_sas.vmdl_c",
+          "weaponSlot": "OBanimation/skeletons/weapons/decoy.vnmskel"
+        },
+        "hold-mid": {
+          "path": "animation/anims/viewmodel/grenade/_default_grenade/throwcharge_mid_grenade.vnmclip_c",
+          "crc": "001444f5d5",
+          "bytes": 4293,
+          "seconds": 0,
+          "samples": 1,
+          "maxPartMatrixError": 1.862645149230957e-9,
+          "maxMountMatrixError": 1.4901161193847656e-7,
+          "quaternionContinuity": true,
+          "armSlot": "OBagents\\models\\ctm_sas\\ctm_sas.vmdl_c",
+          "weaponSlot": "OBanimation/skeletons/weapons/decoy.vnmskel"
+        },
+        "hold-low": {
+          "path": "animation/anims/viewmodel/grenade/_default_grenade/throwcharge_low_grenade.vnmclip_c",
+          "crc": "002d24f481",
+          "bytes": 4291,
+          "seconds": 0,
+          "samples": 1,
+          "maxPartMatrixError": 1.862645149230957e-9,
+          "maxMountMatrixError": 1.4901161193847656e-7,
+          "quaternionContinuity": true,
+          "armSlot": "OBagents\\models\\ctm_sas\\ctm_sas.vmdl_c",
+          "weaponSlot": "OBanimation/skeletons/weapons/decoy.vnmskel"
+        },
+        "throw-high": {
+          "path": "animation/anims/viewmodel/grenade/_default_grenade/throw_overhand_grenade.vnmclip_c",
+          "crc": "00669d5258",
+          "bytes": 9706,
+          "seconds": 0.7333333333333333,
+          "samples": 23,
+          "maxPartMatrixError": 2.9802322387695312e-8,
+          "maxMountMatrixError": 3.501772880554199e-7,
+          "quaternionContinuity": true,
+          "armSlot": "OBagents\\models\\ctm_sas\\ctm_sas.vmdl_c",
+          "weaponSlot": "OBanimation/skeletons/weapons/decoy.vnmskel"
+        },
+        "throw-low": {
+          "path": "animation/anims/viewmodel/grenade/_default_grenade/throw_underhand_grenade.vnmclip_c",
+          "crc": "004722e0eb",
+          "bytes": 8502,
+          "seconds": 0.5,
+          "samples": 16,
+          "maxPartMatrixError": 2.9802322387695312e-8,
+          "maxMountMatrixError": 2.384185791015625e-7,
+          "quaternionContinuity": true,
+          "armSlot": "OBagents\\models\\ctm_sas\\ctm_sas.vmdl_c",
+          "weaponSlot": "OBanimation/skeletons/weapons/decoy.vnmskel"
+        }
+      },
+      "limitations": [
+        "Native twist/IK runtime solvers are not reproduced; authored arm tracks retained.",
+        "Call prepareNativeViewAssembly after GLTF load to prevent stale skinned frustum bounds."
+      ]
+    }
+  }
+}

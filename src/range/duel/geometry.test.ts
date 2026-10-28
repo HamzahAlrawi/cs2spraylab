@@ -4,10 +4,38 @@ import {arenaPOIs, environmentPOIs, placePOI} from './arena-pois';
 import {createEnvironmentState, damageEnvironmentPiece, environmentTerrainWorld} from './environment';
 import {surfaceHeight} from '../terrain';
 import {canFitInArena, materialForSurface, rayBox, rayBoxInterval, raySolidInterval, solidTopAt,
-  testArena, traceSolid, traceSolidEntries, type Solid} from './geometry';
+  actorHeadPoint, testArena, traceActor, traceSolid, traceSolidEntries, type Solid} from './geometry';
 
 const p = (x = 0, y = 0, z = 0) => ({x, y, z});
 const box: Solid = {id: 'box', material: 'wood', center: p(0, 1), size: p(2, 2, 2)};
+
+describe('facing-aware actor head geometry', () => {
+  it('keeps the native-pose forward lean and smooth duck blend without enlarging the head', () => {
+    const feet = p(2, 3, -4), standing = actorHeadPoint(feet, 0, Math.PI / 2), ducked = actorHeadPoint(feet, 1, Math.PI / 2);
+    expect(standing.x).toBeCloseTo(2 - 4.5 * UNIT); expect(standing.y).toBeCloseTo(3 + 64 * UNIT);
+    expect(ducked.x).toBeCloseTo(2 - 8 * UNIT); expect(ducked.y).toBeCloseTo(3 + 47 * UNIT);
+    expect(actorHeadPoint(feet, .25, 0).y).toBeCloseTo(3 + (64 - 17 * .15625) * UNIT);
+    expect(actorHeadPoint(feet, 1)).toEqual({x: 2, y: 4.17, z: -4});
+    const head = actorHeadPoint(p(), 1, .8);
+    expect(traceActor(p(head.x + .136, head.y, 10), p(0, 0, -1), p(), 1, Infinity, .8).group).toBeUndefined();
+  });
+  it('hits the measured imported crouched head rather than an invisible sphere over the feet', () => {
+    // Browser audit of the imported native idle_crouch pose, at yaw .8.
+    const origin = p(0, 64 * UNIT, 0), head = p(-.1457668279, 1.1938013582, -15.1415703680);
+    const distance = Math.hypot(head.x, head.y - origin.y, head.z);
+    const direction = p(head.x / distance, (head.y - origin.y) / distance, head.z / distance);
+    expect(traceActor(origin, direction, p(0, 0, -15), 1).group).toBeUndefined();
+    expect(traceActor(origin, direction, p(0, 0, -15), 1, Infinity, .8).group).toBe('head');
+  });
+  it('uses the same physical head point at 5, 15, 50 and 100 metres at every stance/facing', () => {
+    for (const distance of [5, 15, 50, 100]) for (const yaw of [0, .8, Math.PI, -Math.PI / 2]) for (const duck of [0, .25, .5, .75, 1]) {
+      const feet = p(2, 1, -distance), head = actorHeadPoint(feet, duck, yaw), origin = p(0, 64 * UNIT, 0);
+      const delta = p(head.x, head.y - origin.y, head.z), length = Math.hypot(delta.x, delta.y, delta.z);
+      const hit = traceActor(origin, p(delta.x / length, delta.y / length, delta.z / length), feet, duck, Infinity, yaw);
+      expect(hit.group).toBe('head'); expect(hit.distance).toBeCloseTo(length - .135, 7);
+    }
+  });
+});
 
 describe('environment ray entry and exit contract', () => {
   it('returns geometric thickness, ordered surfaces and face normals without clipping exits to weapon range', () => {

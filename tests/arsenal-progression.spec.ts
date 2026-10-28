@@ -6,7 +6,10 @@ const desktopProjects=['chromium','brave','opera-gx'];
 const emeraldDefinition=JSON.parse(readFileSync('src/range/cosmetics-data.json','utf8')).cosmetics.find((item:any)=>item.id==='knife-butterfly-emerald');
 
 async function duelEngine(page: Page) {
+  await page.addInitScript(() => performance.setResourceTimingBufferSize(10000));
   await page.goto('/');
+  await expect(page.locator('canvas[data-duel]')).toBeVisible();
+  await page.waitForFunction(() => performance.getEntriesByType('resource').some(entry => entry.name.includes('/duel/DuelEngine.ts')));
   await page.evaluate(async () => {
     const url = performance.getEntriesByType('resource').find(e => e.name.includes('/duel/DuelEngine.ts'))!.name;
     const {DuelEngine} = await import(/* @vite-ignore */ url);
@@ -35,9 +38,12 @@ test('stock knife, locked cosmetics and armory fit small screens without hiding 
     await dialog.getByRole('button',{name:'Unlocks',exact:true}).click();
     await dialog.getByRole('tab',{name:'Knives',exact:true}).click();
     await dialog.getByLabel('Knife type', {exact: true}).selectOption('knife-butterfly');
+    await dialog.getByRole('searchbox', {name: 'Search cosmetics'}).fill('Gamma Doppler Emerald');
+    await dialog.getByRole('button', {name: /^Preview Butterfly Knife \| Gamma Doppler Emerald,/}).click();
     const emerald = dialog.getByRole('button', {name: new RegExp(`Butterfly.*Emerald.*locked until level ${emeraldDefinition.unlockLevel}`)});
-    await expect(emerald).toHaveAttribute('aria-disabled', 'true');
+    await expect(emerald).toBeDisabled();
     await emerald.dispatchEvent('click');
+    await expect(dialog.getByRole('group', {name: 'Purchase confirmation'})).toHaveCount(0);
     expect(await page.evaluate(() => JSON.parse(localStorage.getItem('spraylab.progression.v1') || '{}').equipped?.knife)).not.toBe('knife-butterfly-emerald');
     const bounds = (await dialog.boundingBox())!;
     expect(bounds.x).toBeGreaterThanOrEqual(0); expect(bounds.x + bounds.width).toBeLessThanOrEqual(width);
@@ -109,7 +115,8 @@ test('unlocked emerald uses its native model, compiles its shader and persists e
   await page.getByRole('button', {name: /Open armory/}).click();
   await page.getByRole('tab',{name:'Weapons',exact:true}).click();
   await page.getByLabel('Equipment', {exact: true}).selectOption('ak47');
-  await page.getByRole('button', {name: /B the Monster, AK-47, equip/}).click();
+  await page.getByRole('button', {name: /^Preview B the Monster, AK-47,/}).click();
+  await page.getByRole('button', {name: 'Equip B the Monster', exact: true}).click();
   await page.getByRole('button', {name: 'Close armory'}).click();
   expect(await page.evaluate(() => JSON.parse(localStorage.getItem('spraylab.progression.v1')!).equipped.ak47)).toBe('ak47-cu_overpass_monster_ak47');
   expect(errors).toEqual([]);
@@ -198,10 +205,14 @@ test('loadout previews skins, purchases spend once, and sidearm-only hides slot 
   await loadout.getByRole('button',{name:'Browse Desert Eagle unlocks'}).click();
   const armory=page.getByRole('dialog',{name:'Armory'});
   await expect(armory.getByLabel('Equipment',{exact:true})).toHaveValue('deagle');
-  const buy=armory.getByRole('button',{name:/buy for 350 credits/});
+  await armory.getByRole('button', {name: /^Preview Tilted, Desert Eagle,/}).click();
+  const buy=armory.getByRole('button',{name:'Buy Tilted for 350 credits',exact:true});
   await buy.click();
+  await expect(armory.locator('.progression-wallet strong')).toHaveText('1,000');
+  await armory.getByRole('button', {name:'Confirm purchase',exact:true}).click();
   await expect(armory.locator('.progression-wallet strong')).toHaveText('650');
-  const equip=armory.getByRole('button',{name:/Desert Eagle, equip$/}).filter({hasText:'Equip'});
+  await expect(armory.locator('.armory-detail .armory-status')).toHaveText('Owned');
+  const equip=armory.getByRole('button',{name:'Equip Tilted',exact:true});
   await equip.click();
   await page.getByRole('button',{name:'Close armory'}).click();
   await page.locator('.weapon-select').click();

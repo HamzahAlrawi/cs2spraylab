@@ -1,128 +1,211 @@
-.progression-summary{display:inline-flex;align-items:center;gap:8px;min-width:150px;max-width:265px;min-height:38px;padding:5px 9px;border:1px solid #556960;background:#26342e;color:#f0f4ed;border-radius:4px;text-align:left;letter-spacing:0}
-.progression-summary:hover{background:#32443b}
-.progression-summary>svg{color:#a2dec4;flex-shrink:0}
-.progression-summary-text{display:flex;flex-direction:column;flex:1;min-width:0;gap:5px}
-.progression-summary-text>span:first-child{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
-.progression-summary b{font-size:11px;white-space:nowrap}
-.progression-summary small{font-size:9px;color:#c3d1c8;white-space:nowrap}
-.progression-summary-wallet{display:flex;align-items:center;gap:4px;flex-shrink:0;font-size:11px;color:#f5cc75;font-variant-numeric:tabular-nums}
-.progression-track{height:3px;width:100%;background:#4b5f54;overflow:hidden;border-radius:2px}
-.progression-track>span{display:block;height:100%;background:#8fe1bc;transition:width .25s ease-out}
-.progression-armory{padding:0;inset:0;width:960px;max-width:calc(100vw - 24px);max-height:calc(100dvh - 24px);margin:auto;border:1px solid #626b69;border-radius:6px;background:#202625;color:#edf4ee;box-shadow:0 20px 70px #0009;overflow:auto;overscroll-behavior:contain;letter-spacing:0;color-scheme:dark}
-.progression-armory::backdrop{background:#07110ed9}
-.progression-armory-content{padding:20px}
-.progression-armory-header{display:flex;justify-content:space-between;align-items:flex-start;gap:14px}
-.progression-armory .progression-armory-header h2{font-size:20px;font-weight:650;text-transform:none;line-height:1.3;color:#f0f6ef;margin:0 0 5px}
-.progression-armory-header p{font-size:11px;line-height:1.5;color:#c0c9c3;margin:0}
-.progression-icon-button{display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;flex-shrink:0;border-radius:4px;padding:0;color:#cfdfd4;background:transparent;border:0;cursor:pointer}
-.progression-icon-button:hover{background:#ffffff12;color:#fff}
-.progression-account{display:grid;grid-template-columns:minmax(0,1fr) minmax(130px,180px);align-items:center;gap:28px;padding:20px 0 16px;border-bottom:1px solid #46534c}
-.progression-level{display:flex;gap:12px;align-items:center;min-width:0}
-.progression-level>svg{color:#a4dfc6;flex-shrink:0}
-.progression-level>div{flex:1;min-width:0}
-.progression-level-label{display:flex;gap:12px;justify-content:space-between;flex-wrap:wrap;font-size:13px;line-height:1.6}
-.progression-level-label span{color:#c9d7d0;font-size:11px}
-.progression-level progress{display:block;width:100%;height:6px;margin:8px 0 6px;accent-color:#9be3c3;border:0;border-radius:3px;background:#3f574c;overflow:hidden}
-.progression-level progress::-webkit-progress-bar{background:#3f574c}
-.progression-level progress::-webkit-progress-value{background:#9be3c3}
-.progression-level progress::-moz-progress-bar{background:#9be3c3}
-.progression-level small{font-size:11px;color:#c7d8cd}
-.progression-wallet{display:flex;gap:10px;align-items:center;justify-content:flex-end;color:#f5cc75;min-width:0}
-.progression-wallet>svg{flex-shrink:0}
-.progression-wallet>div{min-width:0}
-.progression-wallet small{display:block;font-size:11px;color:#dac793}
-.progression-wallet strong{display:block;font-size:22px;line-height:1.4;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
-.progression-stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;padding:12px 0;margin:0;border-bottom:1px solid #46534c}
-.progression-stats div{min-width:0}
-.progression-stats dt{font-size:10px;color:#b7c4bd}
-.progression-stats dd{font-size:13px;color:#f2f5f3;margin:3px 0 0;overflow-wrap:anywhere;font-variant-numeric:tabular-nums}
-.progression-storage-warning{margin:12px 0 0;padding:9px 12px;border-left:2px solid #e5bd88;background:#4b412e;color:#ffe0b7;font-size:12px;line-height:1.5}
-.progression-views{display:flex;gap:6px;margin-top:16px;flex-wrap:wrap}
-.progression-views button,.progression-tabs button{display:inline-flex;align-items:center;justify-content:center;gap:6px;background:transparent;border:1px solid transparent;border-radius:4px;color:#c9d6cf;font:inherit;font-size:12px;line-height:1.4;min-height:36px;padding:6px 12px;cursor:pointer}
-.progression-views button[aria-pressed=true]{background:#3b4841;border-color:#697b70;color:#fff}
-.progression-action-notice{min-height:18px;font-size:11px;line-height:1.5;color:#a8e2c5;margin:6px 0;overflow-wrap:anywhere}
-.progression-tabs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px;border-bottom:1px solid #46534c;padding-bottom:8px}
-.progression-tabs button{width:100%;min-width:0;padding:7px 8px}
-.progression-gloves-icon{display:block;width:28px;height:18px;object-fit:contain;flex:none}
-.progression-tabs button[aria-selected=true]{background:#33483c;border-color:#8bbea3;color:#d9f6e6}
-.progression-tabs button:hover,.progression-views button:hover{background:#ffffff0d}
-.progression-filter{display:flex;align-items:center;gap:8px;padding:14px 0;flex-wrap:wrap;font-size:12px}
-.progression-filter label{color:#cbd9d1}
-.progression-filter select{background:#2b3430;color:#f3f6ee;border:1px solid #627869;border-radius:3px;min-height:34px;min-width:100px;max-width:100%;padding:4px 8px;font:inherit}
-.progression-search{display:flex;align-items:center;gap:6px;flex:1;min-width:120px;min-height:34px;border:1px solid #627869;border-radius:3px;background:#2b3430;padding:0 8px;color:#b7c4bd}
-.progression-search input{min-width:0;width:100%;font:inherit;font-size:12px;border:0;background:transparent;color:#edf4ee;padding:6px 0}
-.progression-search input::placeholder{color:#b7c4bd}
-.progression-items{display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:10px;list-style:none;padding:0;margin:0}
-.progression-items>li{min-width:0}
-.progression-catalog-title{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:10px}
-.progression-armory .progression-catalog-title h3{font-size:14px;line-height:1.5;margin:0;text-transform:none;color:#eef4f0;overflow-wrap:anywhere}
-.progression-catalog-title>span{font-size:11px;color:#bdcdc4;flex-shrink:0}
-.progression-choice{display:flex;flex-direction:column;align-items:stretch;width:100%;height:100%;min-height:275px;padding:10px;gap:8px;background:#2b3330;border:1px solid #4e6257;border-radius:5px;text-align:left;color:#f0f5ef;font:inherit;box-sizing:border-box}
-.progression-choice.is-equipped{border-color:#9be3c3;background:#2c3d34}
-.progression-choice.is-locked{border-color:#555e58}
-.progression-items.is-collection .progression-choice{min-height:228px}
-.progression-preview{position:relative;display:flex;align-items:center;justify-content:center;width:100%;height:104px;flex:none;color:var(--cosmetic-swatch);overflow:hidden}
-.progression-preview img{display:block;width:100%;height:100%;object-fit:contain}
-.progression-swatch{display:block;width:13px;height:13px;border:1px solid #ffffff80;border-radius:50%;background:var(--cosmetic-swatch);position:absolute;bottom:3px;right:2px}
-.progression-choice-name{font-size:12px;font-weight:600;line-height:1.5;overflow-wrap:anywhere;min-height:42px}
-.progression-choice-name small{display:block;color:#bdd0c2;font-size:10px;font-weight:400;margin-top:2px}
-.progression-item-meta{display:flex;justify-content:space-between;gap:6px;flex-wrap:wrap;font-size:9px;line-height:1.5;color:#bac4cc}
-.progression-item-meta span{overflow-wrap:anywhere}
-.progression-choice-state{display:flex;align-items:center;gap:5px;margin-top:auto;min-height:18px;font-size:11px;line-height:1.5;color:#ace9c9}
-.progression-choice-state.locked{color:#edb4a2}
-.progression-price{display:flex;align-items:center;gap:5px;color:#f5cc75;min-height:18px;font-size:11px;line-height:1.5;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
-.progression-price svg,.progression-item-action svg{flex-shrink:0}
-.progression-item-action{display:flex;align-items:center;justify-content:center;gap:6px;width:100%;min-height:34px;padding:6px;border:1px solid #799889;border-radius:3px;background:#3b5245;color:#eefaf1;font:inherit;font-size:11px;line-height:1.5;cursor:pointer;white-space:normal;overflow-wrap:anywhere}
-.progression-item-action:hover:not(:disabled){background:#476856;border-color:#ace9c9}
-.progression-item-action:disabled{background:#303936;border-color:#515e57;color:#b4c0b9;cursor:default}
-.progression-item-action[aria-pressed=true]{color:#ace9c9}
-.progression-empty{padding:32px 0;color:#c9d6cf;text-align:center;font-size:13px}
-.progression-milestones ul{margin:0;padding:0;list-style:none}
-.progression-milestones li{display:flex;align-items:center;justify-content:space-between;gap:24px;padding:14px 0;border-bottom:1px solid #46534c}
-.progression-milestones li>div{min-width:0;flex:1}
-.progression-milestones strong{display:block;font-size:12px;font-weight:600;overflow-wrap:anywhere}
-.progression-milestones small{display:block;font-size:10px;color:#bacbc0;margin-top:4px}
-.progression-milestones progress{display:block;width:100%;max-width:320px;height:5px;margin-top:7px;accent-color:#9be3c3}
-.progression-milestones li>span{display:flex;align-items:center;gap:5px;flex-shrink:0;color:#f5cc75;font-size:12px;font-variant-numeric:tabular-nums}
-.achievement-count{font-size:10px;color:#e7cc8e;font-variant-numeric:tabular-nums}
-.achievement-overview{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid #46534c}
-.achievement-overview>svg{flex-shrink:0;color:#f3ce7e}
-.achievement-overview>div{flex:1;min-width:0}
-.progression-armory .achievement-overview h3{margin:0 0 4px;font-size:15px;line-height:1.4;text-transform:none}
-.achievement-overview span{font-size:11px;color:#c6d2cd;font-variant-numeric:tabular-nums}
-.achievement-overview progress{display:block;width:100%;height:5px;margin-top:8px;accent-color:#f3ce7e}
-.progression-achievements .progression-filter{display:grid;grid-template-columns:repeat(3,minmax(0,1fr))}
-.progression-achievements .progression-filter select{min-width:0;width:100%}
-.achievement-list{list-style:none;margin:0;padding:0}
-.achievement-row{display:flex;align-items:flex-start;gap:14px;padding:16px 0;border-bottom:1px solid #46534c}
-.achievement-emblem{display:flex;align-items:center;justify-content:center;width:44px;height:44px;flex:none;border:1px solid #5e6864;border-radius:6px;background:#2c3431;color:#c0ccc6}
-.is-earned .achievement-emblem{border-color:currentColor;background:#ffffff08}
-.is-earned .achievement-combat{color:#f2bf7f}.is-earned .achievement-technique{color:#8adbd5}.is-earned .achievement-training{color:#a7e5be}.is-earned .achievement-collection{color:#efabc3}.is-earned .achievement-career{color:#e9d27b}
-.achievement-detail{flex:1;min-width:0}
-.achievement-title{display:flex;align-items:baseline;justify-content:space-between;gap:10px;flex-wrap:wrap}
-.progression-armory .achievement-title h4{font-size:13px;font-weight:600;line-height:1.5;margin:0;text-transform:none;color:#edf4ee;overflow-wrap:anywhere}
-.achievement-title>span{font-size:10px;color:#b8c4bd}
-.achievement-detail p{font-size:11px;line-height:1.6;color:#c7d2cb;margin:4px 0 8px;overflow-wrap:anywhere}
-.achievement-progress{display:flex;align-items:center;gap:12px}
-.achievement-progress progress{display:block;min-width:0;width:100%;max-width:360px;height:5px;accent-color:#93ceb3}
-.achievement-progress>span{display:flex;align-items:center;gap:4px;font-size:10px;color:#c4d1c9;font-variant-numeric:tabular-nums;white-space:nowrap}
-.is-earned .achievement-progress>span{color:#a7e5be}
-.achievement-detail time{display:block;font-size:10px;line-height:1.5;color:#adc1b4;margin-top:5px}
-.progression-notification .achievement-toast-label{color:#ffe1a3;font-weight:600}
-.achievement-toast-action{display:inline-flex;align-items:center;gap:5px;padding:5px 0;margin-top:3px;background:transparent;border:0;color:#ffe1a3;font:inherit;font-size:11px;line-height:1.4;cursor:pointer;text-align:left}
-.achievement-toast-action:hover{text-decoration:underline}
-@media(max-width:480px){.achievement-row{gap:10px}.achievement-emblem{width:34px;height:34px}.achievement-emblem svg{width:18px;height:18px}.achievement-progress{gap:8px}.progression-views button{padding:6px 8px;font-size:11px}.achievement-count{font-size:9px}}
-@media(max-width:600px){.progression-achievements .progression-filter{grid-template-columns:repeat(2,minmax(0,1fr))}.progression-achievements .progression-filter select:last-child{grid-column:1/-1}}
-.progression-summary:focus-visible,.progression-armory button:focus-visible,.progression-armory select:focus-visible,.progression-armory input:focus-visible,.progression-notification button:focus-visible{outline:2px solid #f2d889;outline-offset:3px}
-.progression-notification-region{position:fixed;left:18px;bottom:48px;max-width:min(420px,calc(100vw - 36px));z-index:110;pointer-events:none;letter-spacing:0}
-.progression-notification{display:flex;align-items:center;gap:10px;padding:10px 8px 10px 12px;background:#1c352bed;border:1px solid #88b99f;border-radius:4px;color:#effaf2;box-shadow:0 4px 18px #0004;animation:progression-reveal .2s ease-out}
-.progression-notification>svg{flex-shrink:0;color:#a8edc8}
-.progression-notification>div{min-width:0;flex:1;overflow-wrap:anywhere}
-.progression-notification strong{font-size:13px;line-height:1.5}
-.progression-notification small{display:block;font-size:11px;line-height:1.5;color:#c6e3d2}
-.progression-notification button{pointer-events:auto}
-@keyframes progression-reveal{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
-@media(max-width:480px){.progression-armory-content{padding:14px}.progression-account{grid-template-columns:minmax(0,1fr);gap:14px}.progression-wallet{justify-content:flex-start}.progression-wallet strong{font-size:20px}.progression-stats{gap:8px}.progression-items{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.progression-choice{padding:8px;min-height:275px}.progression-tabs button{flex-direction:column;font-size:10px;padding:7px 3px;gap:4px}.progression-filter{gap:8px}.progression-filter label{width:100%}.progression-filter select{flex:1;min-width:0;font-size:11px}.progression-search{flex-basis:100%}.progression-summary{min-width:110px;max-width:200px}.progression-summary small{display:none}.progression-notification-region{left:12px;bottom:44px;max-width:calc(100vw - 24px)}}
-@media(prefers-reduced-motion:reduce){.progression-notification{animation:none}.progression-track>span{transition:none}}
-@media(max-width:1000px){.appbar .progression-summary{width:36px;min-width:36px;max-width:36px;padding:0;gap:0;flex-shrink:0}.appbar .progression-summary-text,.appbar .progression-summary-wallet{display:none}}
-@media(max-width:580px){.appbar .progression-summary{height:32px;min-height:32px}.appbar .settings-button{width:34px;height:32px;padding:0;gap:0;font-size:0;flex-shrink:0}}
+.progression-summary {display:inline-flex;align-items:center;gap:8px;min-width:150px;max-width:265px;min-height:38px;padding:5px 9px;border:1px solid #56625e;background:#282e2b;color:#f1f4f2;border-radius:4px;text-align:left;letter-spacing:0;cursor:pointer}
+.progression-summary:hover {background:#343e38}
+.progression-summary>svg {color:#a2dec4;flex-shrink:0}
+.progression-summary-text {display:flex;flex-direction:column;flex:1;min-width:0;gap:5px}
+.progression-summary-text>span:first-child {display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.progression-summary b {font-size:11px;white-space:nowrap}
+.progression-summary small {font-size:9px;color:#c3d1c8;white-space:nowrap}
+.progression-summary-wallet {display:flex;align-items:center;gap:4px;flex-shrink:0;font-size:11px;color:#e8c77e;font-variant-numeric:tabular-nums}
+.progression-track {height:3px;width:100%;background:#4b5f54;overflow:hidden;border-radius:2px}
+.progression-track>span {display:block;height:100%;background:#9bd7ba;transition:width .25s ease-out}
+
+.progression-armory {padding:0;inset:0;width:1080px;max-width:calc(100vw - 32px);max-height:calc(100dvh - 32px);margin:auto;border:1px solid #535955;border-radius:6px;background:#202321;color:#f1f4f2;box-shadow:0 20px 70px #0009;overflow:auto;overscroll-behavior:contain;letter-spacing:0;color-scheme:dark;font:13px/1.5 Inter,ui-sans-serif,system-ui,sans-serif}
+.progression-armory::backdrop {background:#0a0c0bd9}
+.progression-armory *, .progression-armory *::before, .progression-armory *::after {box-sizing:border-box;letter-spacing:0}
+.progression-armory-content {padding:22px}
+.progression-armory-header {display:flex;justify-content:space-between;align-items:flex-start;gap:14px}
+.progression-armory .progression-armory-header h2 {font-size:20px;font-weight:650;text-transform:none;line-height:1.3;color:#f1f4f2;margin:0 0 4px}
+.progression-armory-header p {font-size:11px;color:#acb5af;margin:0}
+.progression-icon-button {display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;flex-shrink:0;border-radius:4px;padding:0;color:#cbd5ce;background:transparent;border:1px solid transparent;cursor:pointer}
+.progression-icon-button:hover:not(:disabled) {background:#ffffff0d;color:#fff}
+.progression-armory button:disabled {cursor:default}
+.progression-icon-button:disabled {color:#767e79}
+.progression-account {display:grid;grid-template-columns:minmax(0,1fr) minmax(130px,200px);align-items:center;gap:48px;padding:20px 0 16px;border-bottom:1px solid #414742}
+.progression-level {display:flex;gap:12px;align-items:center;min-width:0;max-width:490px}
+.progression-level>svg {color:#9bd7ba;flex-shrink:0}
+.progression-level>div {flex:1;min-width:0}
+.progression-level-label {display:flex;gap:12px;justify-content:space-between;flex-wrap:wrap;line-height:1.6}
+.progression-level-label span {color:#b7c0ba;font-size:11px;font-variant-numeric:tabular-nums}
+.progression-armory progress {accent-color:#9bd7ba;border:0;border-radius:2px;background:#444b46;overflow:hidden}
+.progression-armory progress::-webkit-progress-bar {background:#444b46}
+.progression-armory progress::-webkit-progress-value {background:#9bd7ba}
+.progression-armory progress::-moz-progress-bar {background:#9bd7ba}
+.progression-level progress {display:block;width:100%;height:5px;margin:8px 0 6px}
+.progression-level small {font-size:11px;color:#b7c0ba}
+.progression-wallet {display:flex;gap:10px;align-items:center;justify-content:flex-end;color:#e8c77e;min-width:0}
+.progression-wallet>svg {flex-shrink:0}
+.progression-wallet>div {min-width:0}
+.progression-wallet small {display:block;font-size:11px;color:#c3b693}
+.progression-wallet strong {display:block;font-size:23px;line-height:1.4;font-variant-numeric:tabular-nums;overflow-wrap:anywhere;font-weight:600}
+.progression-stats {display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;padding:12px 0;margin:0;border-bottom:1px solid #414742}
+.progression-stats div {min-width:0}
+.progression-stats dt {font-size:10px;color:#acb5af}
+.progression-stats dd {font-size:12px;margin:3px 0 0;overflow-wrap:anywhere;font-variant-numeric:tabular-nums}
+.progression-account-history {border-bottom:1px solid #414742;font-size:11px;color:#b7c0ba}
+.progression-account-history summary {padding:10px 0;cursor:pointer}
+.progression-account-history summary>span {float:right;font-variant-numeric:tabular-nums}
+.progression-account-history .progression-stats {border-bottom:0;padding-top:0}
+.progression-storage-warning {margin:12px 0 0;padding:9px 12px;border-left:2px solid #e8c77e;background:#39352c;color:#f5dcb4;font-size:12px}
+.progression-views {display:flex;gap:4px;margin-top:16px;flex-wrap:wrap;border-bottom:1px solid #414742}
+.progression-views button,.progression-tabs button {display:inline-flex;align-items:center;justify-content:center;gap:7px;background:transparent;border:1px solid transparent;border-radius:3px;color:#b7c0ba;font:inherit;font-size:12px;line-height:1.5;min-height:40px;padding:8px 12px;cursor:pointer}
+.progression-views button {border-radius:0;border-bottom:2px solid transparent}
+.progression-views button[aria-pressed=true] {border-bottom-color:#9bd7ba;color:#f1f4f2}
+.progression-tabs button:hover,.progression-views button:hover {background:#ffffff08;color:#f1f4f2}
+.progression-action-notice {min-height:20px;font-size:12px;color:#a8e2c5;margin:6px 0;overflow-wrap:anywhere}
+.progression-action-notice:empty {min-height:0;margin:12px 0}
+.progression-tabs {display:flex;gap:6px;padding-bottom:4px;flex-wrap:wrap}
+.progression-tabs button {min-width:100px;min-height:38px;padding:6px 12px}
+.progression-tabs button[aria-selected=true] {background:#343d37;border-color:#66796d;color:#e0f3e8}
+.progression-gloves-icon {display:block;width:28px;height:22px;object-fit:contain;flex:none}
+.progression-filter {display:flex;align-items:flex-end;gap:10px;padding:12px 0 18px;flex-wrap:wrap;font-size:11px}
+.progression-filter label {display:flex;flex:1;flex-direction:column;gap:5px;min-width:120px;color:#b7c0ba}
+.progression-filter select {background:#292e2a;color:#f1f4f2;border:1px solid #59615b;border-radius:4px;height:36px;min-width:0;max-width:100%;padding:5px 9px;font:inherit;font-size:12px}
+.progression-filter .armory-search-label {flex:1.3}
+.progression-search {display:flex;align-items:center;gap:7px;min-width:0;height:36px;border:1px solid #59615b;border-radius:4px;background:#292e2a;padding:0 9px;color:#acb5af}
+.progression-search input {min-width:0;width:100%;font:inherit;font-size:12px;border:0;background:transparent;color:#f1f4f2;padding:6px 0}
+.progression-search input::placeholder {color:#a7b0a9}
+.armory-browser {display:grid;grid-template-columns:minmax(0,1fr) 290px;gap:22px;align-items:start}
+.armory-results {min-width:0}
+.progression-catalog-title,.progression-section-heading {display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:12px}
+.progression-armory .progression-catalog-title h3,.progression-armory .progression-section-heading h3 {font-size:13px;line-height:1.5;margin:0;text-transform:none;color:#f1f4f2;overflow-wrap:anywhere}
+.progression-catalog-title>span,.progression-section-heading>span {font-size:11px;color:#acb5af;flex-shrink:0}
+.progression-items {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;list-style:none;padding:0;margin:0}
+.progression-items>li {min-width:0}
+.progression-choice {display:flex;flex-direction:column;align-items:stretch;width:100%;height:100%;min-height:178px;padding:10px;gap:6px;background:#292d2a;border:1px solid #444c46;border-radius:5px;text-align:left;color:#f1f4f2;font:inherit;cursor:pointer}
+.progression-choice:hover {background:#303731;border-color:#75887a}
+.progression-choice[aria-pressed=true] {border-color:#a1c7b1;box-shadow:inset 0 0 0 1px #a1c7b1}
+.progression-preview {position:relative;display:flex;align-items:center;justify-content:center;width:100%;height:90px;flex:none;color:var(--cosmetic-swatch);overflow:hidden}
+.progression-preview img {display:block;width:100%;height:100%;object-fit:contain}
+.progression-swatch {display:block;width:10px;height:10px;border:1px solid #ffffff80;border-radius:50%;background:var(--cosmetic-swatch);position:absolute;bottom:3px;right:2px}
+.armory-missing-preview {display:flex;flex-direction:column;align-items:center;gap:6px;color:#a7b0a9}
+.armory-missing-preview small {font-size:10px}
+.progression-choice-name {font-size:12px;font-weight:500;line-height:1.5;overflow-wrap:anywhere}
+.progression-choice-name small {display:block;color:#acb5af;font-size:10px;font-weight:400;margin-top:2px}
+.armory-item-footer {display:flex;align-items:flex-end;justify-content:space-between;gap:6px;flex-wrap:wrap;margin-top:auto}
+.progression-choice-state,.progression-price,.armory-status {display:inline-flex;align-items:center;gap:5px;min-height:18px;font-size:10px;line-height:1.5;color:#b7c0ba;overflow-wrap:anywhere}
+.is-equipped .progression-choice-state {color:#a8e2c5}
+.is-locked .progression-choice-state,.armory-status.is-locked {color:#e0afa0}
+.progression-price {color:#e8c77e;font-variant-numeric:tabular-nums}
+.progression-price svg,.progression-item-action svg,.armory-status svg {flex-shrink:0}
+.armory-detail {position:sticky;top:16px;min-width:0;border-left:1px solid #414742;padding-left:22px}
+.armory-detail>.progression-preview {height:185px;margin-bottom:16px;background:#262a27;border-radius:4px;padding:10px}
+.armory-detail-heading>span:first-child {font-size:11px;color:#acb5af}
+.progression-armory .armory-detail-heading h3 {font-size:17px;font-weight:600;line-height:1.45;margin:5px 0 8px;overflow-wrap:anywhere;text-transform:none;color:#f1f4f2}
+.armory-status {font-size:12px;color:#badac8}
+.armory-detail-facts {margin:16px 0;font-size:12px}
+.armory-detail-facts>div {display:flex;justify-content:space-between;gap:12px;padding:9px 0;border-top:1px solid #414742}
+.armory-detail-facts dt {color:#acb5af;flex:none}
+.armory-detail-facts dd {display:flex;align-items:center;justify-content:flex-end;gap:5px;margin:0;text-align:right;overflow-wrap:anywhere;min-width:0}
+.armory-detail-facts dd svg {flex:none}
+.armory-requirement {margin:0 0 12px;color:#e0afa0;font-size:12px;overflow-wrap:anywhere}
+.progression-item-action,.armory-secondary {display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:38px;padding:8px 12px;border:1px solid #a1c7b1;border-radius:4px;background:#b3d7c1;color:#17251c;font:inherit;font-size:12px;line-height:1.5;cursor:pointer;white-space:normal;overflow-wrap:anywhere}
+.progression-item-action {width:100%}
+.progression-item-action:hover:not(:disabled) {background:#cce9d7}
+.progression-item-action:disabled {background:#2d332f;border-color:#505b53;color:#b7c0ba}
+.armory-secondary {background:transparent;color:#d7e1da;border-color:#637068}
+.armory-secondary:hover {background:#ffffff0d}
+.armory-back {display:none}
+.armory-confirmation {border-top:2px solid #e8c77e;padding-top:12px}
+.armory-confirmation p {font-size:12px;margin:0 0 12px;overflow-wrap:anywhere}
+.armory-confirmation dl {font-size:11px;margin:0 0 14px}
+.armory-confirmation dl>div {display:flex;justify-content:space-between;gap:10px;margin-top:6px}
+.armory-confirmation dt {color:#b7c0ba}
+.armory-confirmation dd {margin:0;text-align:right;font-variant-numeric:tabular-nums}
+.armory-confirm-actions {display:flex;gap:8px;flex-wrap:wrap}
+.armory-confirm-actions .progression-item-action {width:auto;flex:1}
+.armory-pagination {display:flex;align-items:center;justify-content:center;gap:12px;margin-top:14px;font-size:11px;color:#b7c0ba;font-variant-numeric:tabular-nums}
+.armory-pagination .progression-icon-button {border-color:#505b53}
+.progression-empty {padding:40px 16px;color:#b7c0ba;text-align:center;font-size:12px}
+.progression-empty p {margin:0 0 14px}
+.progression-milestones ul {margin:0;padding:0;list-style:none}
+.progression-milestones li {display:flex;align-items:center;justify-content:space-between;gap:24px;padding:14px 0;border-bottom:1px solid #414742}
+.progression-milestones li>div {min-width:0;flex:1}
+.progression-milestones strong {display:block;font-size:12px;font-weight:600;overflow-wrap:anywhere}
+.progression-milestones small {display:block;font-size:11px;color:#b7c0ba;margin-top:4px}
+.progression-milestones progress {display:block;width:100%;max-width:400px;height:5px;margin-top:7px}
+.progression-milestones li>span {display:flex;align-items:center;gap:5px;flex-shrink:0;color:#e8c77e;font-size:12px;font-variant-numeric:tabular-nums}
+
+.achievement-count {font-size:10px;color:#e8c77e;font-variant-numeric:tabular-nums}
+.achievement-overview {display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid #414742}
+.achievement-overview>svg {flex-shrink:0;color:#e8c77e}
+.achievement-overview>div {flex:1;min-width:0}
+.progression-armory .achievement-overview h3 {margin:0 0 4px;font-size:15px;line-height:1.4;text-transform:none}
+.achievement-overview span {font-size:11px;color:#b7c0ba;font-variant-numeric:tabular-nums}
+.achievement-overview progress {display:block;width:100%;height:5px;margin-top:8px}
+.progression-achievements .progression-filter {display:grid;grid-template-columns:repeat(3,minmax(0,1fr))}
+.progression-achievements .progression-filter select {min-width:0;width:100%}
+.achievement-list {list-style:none;margin:0;padding:0}
+.achievement-row {display:flex;align-items:flex-start;gap:14px;padding:16px 0;border-bottom:1px solid #414742}
+.achievement-emblem {display:flex;align-items:center;justify-content:center;width:40px;height:40px;flex:none;border:1px solid #59615b;border-radius:4px;background:#292e2a;color:#b7c0ba}
+.is-earned .achievement-emblem {border-color:currentColor;background:#ffffff08}
+.is-earned .achievement-combat {color:#f2bf7f}.is-earned .achievement-technique {color:#8adbd5}.is-earned .achievement-training {color:#a7e5be}.is-earned .achievement-collection {color:#efabc3}.is-earned .achievement-career {color:#e9d27b}
+.achievement-detail {flex:1;min-width:0}
+.achievement-title {display:flex;align-items:baseline;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.progression-armory .achievement-title h4 {font-size:13px;font-weight:600;line-height:1.5;margin:0;text-transform:none;color:#f1f4f2;overflow-wrap:anywhere}
+.achievement-title>span {font-size:10px;color:#acb5af}
+.achievement-detail p {font-size:12px;line-height:1.6;color:#b7c0ba;margin:4px 0 8px;overflow-wrap:anywhere}
+.achievement-progress {display:flex;align-items:center;gap:12px}
+.achievement-progress progress {display:block;min-width:0;width:100%;max-width:360px;height:5px}
+.achievement-progress>span {display:flex;align-items:center;gap:4px;font-size:11px;color:#b7c0ba;font-variant-numeric:tabular-nums;white-space:nowrap}
+.is-earned .achievement-progress>span {color:#a7e5be}
+.achievement-detail time {display:block;font-size:10px;line-height:1.5;color:#acb5af;margin-top:5px}
+.progression-notification .achievement-toast-label {color:#ffe1a3;font-weight:600}
+.achievement-toast-action {display:inline-flex;align-items:center;gap:5px;padding:5px 0;margin-top:3px;background:transparent;border:0;color:#ffe1a3;font:inherit;font-size:11px;line-height:1.4;cursor:pointer;text-align:left}
+.achievement-toast-action:hover {text-decoration:underline}
+.progression-summary:focus-visible,.progression-armory button:focus-visible,.progression-armory select:focus-visible,.progression-armory input:focus-visible,.progression-armory summary:focus-visible,.progression-notification button:focus-visible {outline:2px solid #f2d889;outline-offset:3px}
+.progression-notification-region {position:fixed;left:18px;bottom:48px;max-width:min(420px,calc(100vw - 36px));z-index:110;pointer-events:none;letter-spacing:0}
+.progression-notification {display:flex;align-items:center;gap:10px;padding:10px 8px 10px 12px;background:#1c352bed;border:1px solid #88b99f;border-radius:4px;color:#effaf2;box-shadow:0 4px 18px #0004;animation:progression-reveal .2s ease-out}
+.progression-notification>svg {flex-shrink:0;color:#a8edc8}
+.progression-notification>div {min-width:0;flex:1;overflow-wrap:anywhere}
+.progression-notification strong {font-size:13px;line-height:1.5}
+.progression-notification small {display:block;font-size:11px;line-height:1.5;color:#c6e3d2}
+.progression-notification button {pointer-events:auto}
+@keyframes progression-reveal {from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+@media(min-width:1000px) {.progression-items {grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:720px) {
+  .progression-armory {max-width:calc(100vw - 16px);max-height:calc(100dvh - 16px)}
+  .progression-armory-content {padding:16px}
+  .armory-browser {grid-template-columns:minmax(0,1fr);gap:20px}
+  .armory-browser:not(.is-inspecting) .armory-detail,.armory-browser.is-inspecting .armory-results {display:none}
+  .armory-detail {position:static;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr);column-gap:16px;border-left:0;border-top:1px solid #414742;padding:12px 0 0}
+  .armory-back {display:inline-flex;grid-column:1/-1;justify-self:start;margin-bottom:12px}
+  .armory-detail>.progression-preview {grid-column:1;grid-row:2/4;height:160px;margin:0}
+  .armory-detail-heading {grid-column:2;min-width:0}
+  .armory-detail-facts {grid-column:2;font-size:11px;margin:8px 0 12px;min-width:0}
+  .armory-detail-facts>div {gap:6px;padding:5px 0;flex-wrap:wrap}
+  .armory-detail-facts dd {text-align:left;justify-content:flex-start}
+  .armory-detail>.progression-item-action,.armory-requirement,.armory-confirmation {grid-column:1/-1}
+  .armory-detail .armory-detail-heading h3 {font-size:15px}
+  .armory-detail>.progression-item-action {min-height:40px}
+  .progression-account {gap:20px}
+}
+@media(max-width:480px) {
+  .progression-armory-content {padding:12px}
+  .progression-account {grid-template-columns:minmax(0,1fr) auto;gap:12px;padding:16px 0}
+  .progression-level {gap:0}.progression-level>svg {display:none}
+  .progression-wallet {gap:6px}.progression-wallet>svg {width:18px}
+  .progression-wallet strong {font-size:19px}
+  .progression-stats {grid-template-columns:repeat(2,minmax(0,1fr));gap:8px 12px}
+  .progression-views {flex-wrap:nowrap;gap:0}
+  .progression-views button {padding:7px 6px;min-width:0;gap:5px}
+  .progression-views button:nth-child(-n+2) {flex:1}
+  .progression-views button:nth-child(n+3) {width:38px;flex:none}
+  .progression-views .progression-view-label,.progression-views .achievement-count {display:none}
+  .progression-tabs {display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px}
+  .progression-tabs button {flex-direction:column;min-width:0;font-size:11px;padding:6px 2px;gap:4px;min-height:58px}
+  .progression-filter {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+  .progression-filter label {min-width:0}
+  .progression-filter .armory-search-label {grid-column:1/-1}
+  .progression-choice {padding:8px;min-height:178px}
+  .progression-preview {height:78px}
+  .progression-choice-name {font-size:11px}
+  .progression-milestones li {gap:12px}.progression-milestones li>span {font-size:11px}
+  .achievement-row {gap:10px}.achievement-emblem {width:32px;height:32px}.achievement-emblem svg {width:18px;height:18px}
+  .achievement-progress {gap:8px}.achievement-count {font-size:9px}
+  .progression-achievements .progression-filter {grid-template-columns:minmax(0,1fr)}
+  .progression-summary {min-width:110px;max-width:200px}.progression-summary small {display:none}
+  .progression-notification-region {left:12px;bottom:44px;max-width:calc(100vw - 24px)}
+}
+@media(prefers-reduced-motion:reduce) {.progression-notification {animation:none}.progression-track>span {transition:none}}
+@media(max-width:1000px) {.appbar .progression-summary {width:36px;min-width:36px;max-width:36px;padding:0;gap:0;flex-shrink:0}.appbar .progression-summary-text,.appbar .progression-summary-wallet {display:none}}
+@media(max-width:580px) {.appbar .progression-summary {height:32px;min-height:32px}.appbar .settings-button {width:34px;height:32px;padding:0;gap:0;font-size:0;flex-shrink:0}}

@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Presentation Asset Audit</title>
+<style>html,body{margin:0;width:100%;height:100%;overflow:hidden}canvas{display:block;width:100%;height:100%}</style>
+<canvas></canvas>
+<script type="module">
+import * as THREE from 'three';
+import {GLTFLoader} from 'three/examples/jsm/loaders/GLTFLoader.js';
+import {clone} from 'three/examples/jsm/utils/SkeletonUtils.js';
+import {RoomEnvironment} from 'three/examples/jsm/environments/RoomEnvironment.js';
+import {ViewAnimation} from '/src/range/view-animation.ts';
+import {DuelAnimator,nativeGestureClips} from '/src/range/duel/animation.ts';
+import {prepareNativeViewAssembly, nativeReloadWindow} from '/src/range/native-view-actions.ts';
+import {VIEWMODEL_FOV, VIEWMODEL_OFFSET, viewmodelViewport} from '/src/range/viewmodel.ts';
+import mounts from '/src/range/weapon-mounts.json';
+
+const renderer = new THREE.WebGLRenderer({canvas:document.querySelector('canvas'),antialias:true,preserveDrawingBuffer:true});
+renderer.setPixelRatio(1);
+const scene = new THREE.Scene(); scene.background = new THREE.Color('#79868c');
+const room = new RoomEnvironment(), pmrem = new THREE.PMREMGenerator(renderer);
+scene.environment = pmrem.fromScene(room,.04).texture; scene.environmentIntensity = .32;
+room.dispose(); pmrem.dispose();
+scene.add(new THREE.HemisphereLight('#ffffff','#696b64',.7));
+const light = new THREE.DirectionalLight('#fff4dd',1.4); light.position.set(-2,4,2); scene.add(light);
+const ground = new THREE.Mesh(new THREE.PlaneGeometry(10,10),new THREE.MeshStandardMaterial({color:'#657275'}));
+ground.rotation.x = -Math.PI/2; scene.add(ground);
+const prop = new THREE.Mesh(new THREE.BoxGeometry(.8,.55,.8),new THREE.MeshStandardMaterial({color:'#49785f'}));
+prop.position.set(0,.275,-.4); scene.add(prop);
+const root = new THREE.Group(); scene.add(root);
+const camera = new THREE.PerspectiveCamera(46,1,.01,20), loader = new GLTFLoader();
+let view, animator, actor, equipment, mode, target, motion, worldWeapon;
+const contacts = [];
+function draw() {
+  const width=innerWidth,height=innerHeight;
+  renderer.setSize(width,height); renderer.setViewport(0,0,width,height);
+  camera.aspect=width/height;
+  if(mode==='view') {
+    const viewport=viewmodelViewport(width,height); camera.aspect=viewport.aspect;
+    renderer.clear(); renderer.setViewport(viewport.x,viewport.y,viewport.width,viewport.height);
+  }
+  camera.updateProjectionMatrix(); renderer.render(scene,camera);
+  const gl=renderer.getContext(), pixels=new Uint8Array(width*height*4), colors=new Set(); let hash=2166136261;
+  gl.readPixels(0,0,width,height,gl.RGBA,gl.UNSIGNED_BYTE,pixels);
+  for(let i=0;i<pixels.length;i+=16) {
+    colors.add(`${pixels[i]},${pixels[i+1]},${pixels[i+2]}`);
+    for(let j=0;j<3;j++) hash=Math.imul(hash^pixels[i+j],16777619);
+  }
+  const bones=[]; root.traverse(node=>{if(node.isBone)bones.push(...node.matrixWorld.elements);});
+  if(!bones.every(Number.isFinite)) throw new Error(`${equipment}: nonfinite bones`);
+  let bodySpan=0;
+  if(mode==='world'&&actor.alive) {
+    const points=['pelvis','head_0','hand_L','hand_R','ankle_L','ankle_R'].map(name=>root.getObjectByName(name)?.getWorldPosition(new THREE.Vector3())).filter(Boolean);
+    bodySpan=Math.max(...points.map(point=>point.y))-Math.min(...points.map(point=>point.y));
+    if(bodySpan>2.3||points.some(point=>point.distanceTo(points[0])>1.5)) throw new Error(`${equipment}: implausible skeleton dimensions (${bodySpan})`);
+  }
+  return {hash:hash>>>0,colors:colors.size,drawCalls:renderer.info.render.calls,contacts:contacts.length,bodySpan};
+}
+window.presentationAudit={
+  async load(kind,id) {
+    view?.dispose(); animator?.dispose(); root.clear(); root.position.set(0,0,0); root.rotation.set(0,0,0);
+    equipment=id; mode=kind; contacts.length=0; ground.visible=prop.visible=kind==='world';
+    if(kind==='view') {
+      camera.fov=VIEWMODEL_FOV; camera.position.set(0,0,0); camera.rotation.set(0,0,0);
+      root.position.copy(VIEWMODEL_OFFSET);
+      const gltf=await loader.loadAsync(`/models/view-${id}.glb`);
+      prepareNativeViewAssembly(gltf.scene); gltf.scene.rotation.y=Math.PI; root.add(gltf.scene);
+      view=new ViewAnimation(gltf.scene,gltf.animations);
+      return {...draw(),actions:gltf.animations.filter(clip=>clip.name.startsWith('fire')).map(clip=>clip.name)};
+    }
+    camera.fov=46; camera.position.set(2.4,1.4,3.4); camera.lookAt(0,.9,0);
+    target??=await loader.loadAsync('/models/target.glb'); motion??=await loader.loadAsync('/models/duel-motion.glb');
+    const model=clone(target.scene); model.rotation.y=Math.PI; root.add(model);
+    const held=model.getObjectByName('held_weapon_target001')??model.getObjectByName('held_weapon_target.001');
+    if(held)held.visible=false;
+    const weapon=await loader.loadAsync(`/models/${id}.glb`), mount=model.getObjectByName('wpn');
+    worldWeapon=weapon.scene;
+    if(mount&&mounts.mounts[id]) {
+      new THREE.Matrix4().fromArray(mounts.mounts[id].inverseBind).decompose(weapon.scene.position,weapon.scene.quaternion,weapon.scene.scale);
+      mount.add(weapon.scene);
+    }
+    const gestures=await loader.loadAsync(`/models/duel-gestures/${id}.glb`);
+    animator=new DuelAnimator(model,motion.animations,0,id); animator.addGestureClips(nativeGestureClips(gestures));
+    actor={id:1,generation:1,side:'enemy',position:{x:0,y:0,z:0},feet:0,velocity:{x:0,z:0},yaw:0,pitch:0,
+      duckAmount:0,crouched:false,alive:true,equipment:id,ammo:30,reloading:false};
+    animator.onDeathContact=contact=>contacts.push(contact); animator.update(actor,0);
+    return {...draw(),actions:gestures.animations.map(clip=>clip.name.split('/').pop()).filter(name=>
+      /^gesture_(draw|reload|fire)_/.test(name)&&!name.includes('crouch')).map(name=>name.slice(8,-id.length-1))};
+  },
+  sample(action,progress) {
+    if(mode==='view') {
+      if(action==='reload')view.update((1-progress)*2,2,0,{equipment});
+      else if(['start','shell','finish'].includes(action)) {
+        const window=nativeReloadWindow(equipment,action);
+        if(!window)throw new Error(`${equipment}: missing ${action} segment`);
+        view.update((1-progress)*window.duration,window.duration,0,{equipment,reloadPhase:action,reloadProgress:progress});
+      }else {
+        if(!view.playFire(equipment))throw new Error(`${equipment}: missing fire`);
+        view.update(0,1,view.duration('fire')*progress);
+      }
+    }else {
+      actor.reloading=action==='reload';
+      if(!animator.playAction(equipment,action,{duration:1}))throw new Error(`${equipment}: missing world ${action}`);
+      animator.update(actor,progress,undefined,actor.reloading?{reloadDuration:1,reloadRemaining:1-progress}:{});
+    }
+    return draw();
+  },
+  aim(pitch) {actor.pitch=pitch;animator.update(actor,0);return draw();},
+  die() {
+    worldWeapon.visible=false;
+    actor.alive=false; animator.setDeathWorld({floor:0,boxes:[{center:{x:0,y:.275,z:-.4},size:{x:.8,y:.55,z:.8}}]});
+    animator.update(actor,0); const before=draw();
+    for(let n=0;n<180;n++)animator.update(actor,1/60);
+    return {before,after:draw()};
+  },
+};
+</script>
+</html>

@@ -250,13 +250,13 @@ describe('authored traversal bundles', () => {
     const glass = fixture('loading-receiving-glass');
     expect(shadowFootprints(glass, sun).some(s => s.id === 'fixture/panel')).toBe(false);
   });
-  it.each([.65, 1, 1.5])('replaces a flank pair without adding POIs or losing ground connectivity at scale %s', scale => {
+  it.each([.65, 1, 1.5])('adds diverse environment POIs without losing ground connectivity at scale %s', scale => {
     for (let seed = 0; seed < 24; seed++) {
       const arena = duelArena(seed, scale);
-      expect(arena.pois).toHaveLength(scale < 1 ? 4 : 6);
-      expect(arena.pois!.filter(poi => environmentPOIs.some(t => t.id === poi.templateId))).toHaveLength(2);
+      expect(arena.pois!.length).toBeGreaterThanOrEqual(scale < 1 ? 4 : 6);
+      expect(arena.pois!.filter(poi => environmentPOIs.some(t => t.id === poi.templateId)).length).toBeGreaterThanOrEqual(2);
       expect(routeTo(p(0, 0, -8 * scale), p(0, 0, 8 * scale), arena).length).toBeGreaterThan(0);
-      expect(arena.solids.length).toBeLessThanOrEqual(40);
+      expect(arena.solids.length).toBeLessThanOrEqual(56);
     }
   }, 30000);
 });

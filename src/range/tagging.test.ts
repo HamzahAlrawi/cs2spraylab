@@ -100,7 +100,9 @@ describe('tagged movement', () => {
       {walk: false, crouch: true, duckAmount: 1, factor: .34}]) {
       const actor = {...standing(), duckAmount: stance.duckAmount, velocity: {x: 225 * UNIT, z: 0}, velocityModifier: .3};
       const next = advanceActor(actor, {...idleInput(), side: 1, ...stance}, 225 * UNIT, STEP);
-      expect(next.velocity.x).toBeCloseTo(225 * UNIT * .3 * stance.factor);
+      expect(next.velocity.x).toBeCloseTo(225 * UNIT * .3 * (stance.walk ? 1 : stance.factor));
+      const settled = advanceActor(next, {...idleInput(), side: 1, ...stance}, 225 * UNIT, STEP);
+      expect(settled.velocity.x).toBeCloseTo(225 * UNIT * .3 * stance.factor);
     }
   });
 

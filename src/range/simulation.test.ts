@@ -151,7 +151,7 @@ describe('Compatibility and imported data', () => {
   });
   it('sanitizes corrupted and hostile storage settings', () => {
     const s = sanitizeSettings({ weapon: 'nope', mode: 'nope', sensitivity: NaN, distance: 10000, volume: -1, crosshair: { color: 'url(javascript:bad)', size: 1e6, alpha: null } });
-    expect(s.weapon).toBe('ak47'); expect(s.sensitivity).toBe(1); expect('distance' in s).toBe(false);
+    expect(s.weapon).toBe('ak47'); expect(s.sensitivity).toBe(defaults.sensitivity); expect('distance' in s).toBe(false);
     expect(s.volume).toBe(0); expect(s.crosshair.color).toBe(defaults.crosshair.color); expect(s.crosshair.size).toBe(20);
   });
 });

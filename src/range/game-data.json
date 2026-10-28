@@ -2,6 +2,7 @@
   "build": "2000924",
   "source": "scripts/weapons.vdata_c",
   "sha256": "3289d4dba65b1ef3f884c389448c8a6c6db8691442c18a7aaddb28434aaf250d",
+  "staticUpdates": [{"build":"2000935","sha256":"cc04aa26fd8d4a34119df7c4b7f4f29c7ebe0c7862ce78e0a2a753642502ba0a","fields":["aug.reload","aug.alternate.reload"],"note":"Base build and native instruction fixtures remain historical; fresh static comparison found only these two changes."}],
   "weapons": {
     "ak47": {
       "magazine": 30,
@@ -604,7 +605,7 @@
       "range": 8192,
       "armorRatio": 1.8,
       "headshotMultiplier": 4,
-      "reload": 3.766667,
+      "reload": 3.2,
       "fullAuto": true,
       "worldModel": "weapons/models/aug/weapon_rif_aug.vmdl",
       "skeleton": "animation/skeletons/weapons/aug.vnmskel",
@@ -643,7 +644,7 @@
         "range": 8192,
         "armorRatio": 1.8,
         "headshotMultiplier": 4,
-        "reload": 3.766667
+        "reload": 3.2
       },
       "zoomLevels": 1,
       "zoomFov": [

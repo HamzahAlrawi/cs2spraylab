@@ -69,6 +69,7 @@ test('armor and radar persist while legacy latency preferences and controls are 
     DuelEngine.prototype.tick=function(time:number){(window as any).configEngine=this;return original.call(this,time);};
   });
   await page.waitForFunction(()=>(window as any).configEngine?.motionReady);
+  await page.locator('summary').filter({hasText:/^Health & armor$/}).click();
   await page.getByLabel('Player armor points',{exact:true}).fill('35');
   await page.getByLabel('Player helmet',{exact:true}).uncheck();
   await page.getByLabel('Bot armor points',{exact:true}).fill('50');
@@ -76,10 +77,11 @@ test('armor and radar persist while legacy latency preferences and controls are 
   await expect(page.getByLabel('Player ping',{exact:true})).toHaveCount(0);
   await expect(page.getByLabel('Bot ping',{exact:true})).toHaveCount(0);
   await expect(page.getByLabel('Snapshot buffer',{exact:true})).toHaveCount(0);
-  await page.locator('.duel-bot-details > summary').filter({hasText:/^Radar$/}).click();
+  await page.locator('summary').filter({hasText:/^Advanced combat & radar$/}).click();
   await page.getByLabel('Show radar',{exact:true}).uncheck();
   await expect(page.locator('.duel-radar')).toBeHidden();
-  await page.locator('.duel-roster summary').first().click();
+  await page.locator('summary').filter({hasText:/^Opponents/}).click();
+  await page.locator('.duel-setup-roster > details > summary').first().click();
   await page.getByLabel('Customize bot 1',{exact:true}).check();
   await expect(page.getByLabel('Bot 1 ping',{exact:true})).toHaveCount(0);
   await page.getByLabel('Bot 1 armor points',{exact:true}).fill('27');
@@ -94,9 +96,10 @@ test('armor and radar persist while legacy latency preferences and controls are 
   expect(saved.overrides[0]).not.toHaveProperty('ping');
   expect(await page.evaluate(()=>(window as any).configEngine.xpSetup().bots[0])).toMatchObject({armor:true,helmet:false,armorPoints:27});
   await page.reload();
+  await page.locator('summary').filter({hasText:/^Health & armor$/}).click();
   await expect(page.getByLabel('Player armor points',{exact:true})).toHaveValue('35');
   await expect(page.getByLabel('Player helmet',{exact:true})).not.toBeChecked();
-  await page.locator('.duel-bot-details > summary').filter({hasText:/^Radar$/}).click();
+  await page.locator('summary').filter({hasText:/^Advanced combat & radar$/}).click();
   await expect(page.getByLabel('Show radar',{exact:true})).not.toBeChecked();
   await page.getByLabel('Show radar',{exact:true}).check();
   await expect(page.locator('.duel-radar')).toBeVisible();

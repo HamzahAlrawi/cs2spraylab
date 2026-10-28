@@ -1,3 +1,5 @@
+import type {CoachingSummary, SkillMetric} from './coaching-types';
+
 export const HEARING_CONFIG_KEY = 'spraylab.hearing.config.v1';
 export const HEARING_HISTORY_KEY = 'spraylab.hearing.history.v1';
 export const HEARING_HISTORY_LIMIT = 100;
@@ -22,6 +24,7 @@ export type HearingScoring = 'direction' | 'direction-distance' | 'distance';
 export type HearingResult = {
   date: string; target: HearingPoint; guess: HearingPoint; scoring: HearingScoring;
   directionError: number; distanceError: number; score: number; replays: number;
+  context?: {config: HearingConfig; heading: number; volume: number; event: string; muffled: boolean};
 };
 
 function record(value: unknown): Record<string, unknown> {
@@ -47,6 +50,8 @@ export function hearingPoint(angle: number, distance: number): HearingPoint {
 }
 export function hearingAngle(point: HearingPoint) {return normalizeDegrees(Math.atan2(point.x, -point.z) * 180 / Math.PI);}
 export function angularError(a: number, b: number) {return Math.abs((normalizeDegrees(a - b) + 180) % 360 - 180);}
+/** Positive is a clockwise/right correction; the antipodal case has no unique side. */
+export function signedHearingError(target: number, guess: number) {return (normalizeDegrees(target - guess) + 180) % 360 - 180;}
 export function hearingScoring(config: HearingConfig): HearingScoring {return config.device === 'mono' ? 'distance' : config.task;}
 export function scoreHearing(target: HearingPoint, guess: HearingPoint, scoring: HearingScoring) {
   const directionError = angularError(hearingAngle(target), hearingAngle(guess));
@@ -112,9 +117,137 @@ export function parseHearingHistory(value: unknown): HearingResult[] {
       || typeof row.replays !== 'number' || !Number.isInteger(row.replays) || row.replays < 0 || row.replays > 10000) return [];
     const target = record(row.target) as HearingPoint, guess = record(row.guess) as HearingPoint;
     const scoring = row.scoring as HearingScoring;
+    const candidate = parseHearingContext(row.context);
+    const context = candidate && hearingScoring(candidate.config) === scoring ? candidate : undefined;
     return [{date: row.date, target: {x: target.x, z: target.z}, guess: {x: guess.x, z: guess.z}, scoring, replays: row.replays,
+      ...(context ? {context} : {}),
       ...scoreHearing(target, guess, scoring)}];
   });
+}
+
+function parseHearingContext(value: unknown): HearingResult['context'] {
+  const input = record(value), raw = record(input.config), config = normalizeHearingConfig(raw);
+  if ((Object.keys(config) as (keyof HearingConfig)[]).some(key => raw[key] !== config[key])
+    || typeof input.heading !== 'number' || !Number.isFinite(input.heading) || input.heading < 0 || input.heading >= 360
+    || typeof input.volume !== 'number' || !Number.isFinite(input.volume) || input.volume <= 0 || input.volume > 1
+    || typeof input.muffled !== 'boolean' || typeof input.event !== 'string'
+    || ![...hearingGuns, 'step-concrete', 'step-wood', 'step-metal'].includes(input.event)) return undefined;
+  const expectedEvent = input.event.startsWith('step-') ? `step-${config.surface}` : config.gun;
+  if (input.event !== expectedEvent || config.sounds === 'steps' && !input.event.startsWith('step-')
+    || config.sounds === 'shots' && input.event.startsWith('step-') || input.muffled && !config.muffled) return undefined;
+  return {config, heading: input.heading, volume: input.volume, event: input.event, muffled: input.muffled};
+}
+
+function sameSetup(a: HearingConfig, b: HearingConfig) {
+  return (Object.keys(hearingDefaults) as (keyof HearingConfig)[]).every(key => a[key] === b[key]);
+}
+function answerKey(row: HearingResult) {return `${row.date}|${row.target.x}|${row.target.z}|${row.guess.x}|${row.guess.z}`;}
+
+/** Unknown old setups remain in history but cannot establish a comparable baseline. */
+export function comparableHearingResults(config: HearingConfig, rows: readonly HearingResult[], volume: number, reference?: HearingResult) {
+  const seen = new Set<string>();
+  return rows.slice(0, HEARING_HISTORY_LIMIT).filter(row => {
+    const c = row.context, ref = reference?.context, key = answerKey(row);
+    if (!c || !sameSetup(config, c.config) || c.volume !== volume || row.scoring !== hearingScoring(config)
+      || reference && (!ref || c.event !== ref.event || c.muffled !== ref.muffled || row.replays !== reference.replays)
+      || seen.has(key)) return false;
+    seen.add(key); return true;
+  }).sort((a, b) => Date.parse(b.date) - Date.parse(a.date));
+}
+
+const directionSectors = ['front', 'front-right', 'right', 'back-right', 'back', 'back-left', 'left', 'front-left'];
+function hearingSector(row: HearingResult) {return Math.round(normalizeDegrees(hearingAngle(row.target) - (row.context?.heading ?? 0)) / 45) % 8;}
+const mean = (values: number[]) => values.reduce((a, b) => a + b, 0) / values.length;
+
+function hearingHistoryMetrics(rows: HearingResult[], direction: boolean, distance: boolean): SkillMetric[] {
+  const metrics: SkillMetric[] = [];
+  if (direction && rows.length >= 12) {
+    const sectors = directionSectors.map((label, index) => ({label, rows: rows.filter(row => hearingSector(row) === index)}))
+      .filter(sector => sector.rows.length >= 3);
+    if (sectors.length >= 2) {
+      const worst = sectors.sort((a, b) => mean(b.rows.map(row => row.directionError)) - mean(a.rows.map(row => row.directionError)))[0];
+      const error = mean(worst.rows.map(row => row.directionError)), best = mean(sectors[sectors.length - 1].rows.map(row => row.directionError));
+      if (error >= 15 && error - best >= 5) metrics.push({label: 'Weakest sampled sector', value: worst.label, score: null,
+        detail: `${error.toFixed(1)} degrees mean error over ${worst.rows.length} answers. Only ${sectors.length}/8 sectors have at least 3 answers; this is not a full directional ranking.`});
+    }
+  }
+  if (rows.length < 24) return metrics;
+  // Match difficulty strata before comparing blocks; changing sector/range mix must not look like improvement.
+  const recent = rows.slice(0, 12), previous = rows.slice(12, 24);
+  const trend = (label: string, group: (row: HearingResult) => number, error: (row: HearingResult) => number, minimum: number, unit: string) => {
+    const groups = [...new Set(recent.map(group))].map(key => ({recent: recent.filter(row => group(row) === key), previous: previous.filter(row => group(row) === key)}))
+      .filter(pair => pair.recent.length >= 2 && pair.previous.length >= 2);
+    if (groups.length < minimum) return;
+    const now = mean(groups.map(pair => mean(pair.recent.map(error)))), before = mean(groups.map(pair => mean(pair.previous.map(error))));
+    const sample = groups.reduce((n, pair) => n + pair.recent.length + pair.previous.length, 0);
+    metrics.push({label, value: `${before.toFixed(1)} -> ${now.toFixed(1)}${unit}`, score: null,
+      detail: `${sample} answers across ${groups.length} matched ${label === 'Direction trend' ? 'direction sectors' : 'distance bands'}, equally weighted. Lower error is better; this is a practice observation, not proven mastery.`});
+  };
+  if (direction) trend('Direction trend', hearingSector, row => row.directionError, 3, ' degrees');
+  if (distance) trend('Distance trend', row => Math.min(2, Math.floor((Math.hypot(row.target.x, row.target.z) - 4) / (20 / 3))), row => row.distanceError, 2, ' m');
+  return metrics;
+}
+
+export function hearingCoaching(result: HearingResult, config: HearingConfig, history: readonly HearingResult[] = []): CoachingSummary {
+  const scoring = hearingScoring(config), direction = scoring !== 'distance', distance = scoring !== 'direction';
+  const measured = scoreHearing(result.target, result.guess, scoring);
+  const signed = signedHearingError(hearingAngle(result.target), hearingAngle(result.guess));
+  const offset = Math.hypot(result.guess.x, result.guess.z) - Math.hypot(result.target.x, result.target.z);
+  const targetAngle = normalizeDegrees(hearingAngle(result.target) - (result.context?.heading ?? 0));
+  const guessAngle = normalizeDegrees(hearingAngle(result.guess) - (result.context?.heading ?? 0));
+  const frontBack = direction && result.context !== undefined
+    && Math.cos(targetAngle * Math.PI / 180) * Math.cos(guessAngle * Math.PI / 180) < 0
+    && Math.abs(Math.cos(targetAngle * Math.PI / 180)) > .35 && Math.abs(Math.cos(guessAngle * Math.PI / 180)) > .35
+    && angularError(targetAngle, 180 - guessAngle) <= 30;
+  const directionEvidence = Math.abs(signed) < .05 ? 'Bearing matched within 0.1 degrees.' : Math.abs(signed) >= 179.95
+    ? 'The source was opposite your estimate: 180.0 degrees away.'
+    : `The source was ${Math.abs(signed).toFixed(1)} degrees ${signed < 0 ? 'left' : 'right'} of your estimate.`;
+  const distanceEvidence = Math.abs(offset) < .05 ? 'Range matched within 0.1 m in this drill.'
+    : `You ${offset > 0 ? 'overshot' : 'undershot'} range by ${Math.abs(offset).toFixed(1)} m (${Math.hypot(result.guess.x, result.guess.z).toFixed(1)} m guessed; ${Math.hypot(result.target.x, result.target.z).toFixed(1)} m actual).`;
+  const metrics: SkillMetric[] = [];
+  if (direction) metrics.push({label: 'Direction error', value: `${measured.directionError.toFixed(1)} degrees`,
+    score: Math.round(100 * Math.max(0, 1 - measured.directionError / 90)), detail: directionEvidence});
+  if (distance) metrics.push({label: 'Distance error', value: `${measured.distanceError.toFixed(1)} m`,
+    score: Math.round(100 * Math.max(0, 1 - measured.distanceError / 12)), detail: `${distanceEvidence} Loudness varies with sound type and muffling; metre accuracy here is not a guarantee of in-game range estimation.`});
+  const compatible = result.context ? comparableHearingResults(config, history, result.context.volume, result) : [];
+  const rows = [{...result, ...measured}, ...compatible.filter(row => answerKey(row) !== answerKey(result))].slice(0, HEARING_HISTORY_LIMIT);
+  if (result.context) metrics.push(...hearingHistoryMetrics(rows, direction, distance));
+  let focus: string, action: string, goal: string;
+  const directionGoal = measured.directionError > 45 ? 45 : measured.directionError > 20 ? 20 : 10;
+  const distanceGoal = measured.distanceError > 6 ? 5 : measured.distanceError > 2 ? 3 : 2;
+  if (!direction) {
+    focus = 'Estimate range, not direction';
+    action = `Mono has no left/right cue. Compare the same ${result.context?.event.startsWith('step-') ? 'footstep surface' : 'sound'} with Near and Far at a fixed, comfortable volume. Choose a near/far band before an exact spot.`;
+    goal = `Next sound: place the range estimate within ${distanceGoal} m in this drill; bearing is not judged.`;
+  } else if (frontBack) {
+    focus = 'Check front versus back';
+    action = config.panner === 'equalpower'
+      ? 'This panner can make front/back sound alike. Try HRTF with headphones, then turn the listener 90 degrees and replay the cue.'
+      : 'Check front versus back before placing the sound cue. Turn the listener 90 degrees and replay; listen for how the left/right balance changes.';
+    goal = `Next sound: identify the front/back half first, then aim for less than ${directionGoal} degrees bearing error.`;
+  } else if (measured.directionError > 20 || !distance) {
+    focus = measured.directionError > 20 ? 'Locate the sound cue' : 'Good directional read';
+    action = config.device === 'stereo' ? 'Keep your listening position and speaker placement fixed. Check Left and Right, then call the side before narrowing down the sound cue.'
+      : 'Read left/right first, then place the sound cue more precisely. If the sides sound reversed, check Left and Right calibration instead of guessing around it.';
+    goal = `Next sound: keep bearing error within ${directionGoal} degrees${!distance ? '; distance does not affect this score' : ', without changing volume'}.`;
+  } else if (measured.distanceError > 2) {
+    focus = result.context?.muffled ? 'Separate muffling from distance' : 'Calibrate the range estimate';
+    action = result.context?.muffled ? 'Quiet does not always mean far: cover can muffle the cue. Compare Near and Far with the same sound; do not translate quieter audio directly into metres.'
+      : 'Compare Near and Far with the same sound at a fixed, comfortable volume. A footstep and a gunshot are not equally loud at the same range.';
+    goal = `Next sound: retain bearing within 20 degrees and estimate range within ${distanceGoal} m in this drill.`;
+  } else {
+    focus = 'Good direction and range read';
+    action = 'Keep that sound read. Repeat from other directions with the same setup before adding muffling or changing the sound; do not just drill your strongest side.';
+    goal = 'Next sound: bearing within 10 degrees and range within 2 m in this drill; replays remain available.';
+  }
+  const confidence = `${rows.length} comparable ${result.replays > 0 ? 'replayed' : 'first-listen'} practice ${rows.length === 1 ? 'answer' : 'answers'}. ${rows.length < 5 ? 'One small sample cannot establish a habit.' : rows.length < 12 ? 'Early sample; keep practicing before drawing conclusions.' : 'Observed practice only, not a rank or mastery claim.'}`
+    + `${result.context ? '' : ' This older answer has no setup metadata, so history comparisons are unavailable.'}`
+    + `${result.replays ? ` ${result.replays} ${result.replays === 1 ? 'replay was' : 'replays were'} used; score is unchanged, and comparisons use the same replay count.` : ''}`
+    + `${direction && config.panner === 'equalpower' ? ' Equal-power front/back ambiguity is not proof of poor listening.' : ''}`
+    + ' External device volume cannot be checked here.';
+  return {score: measured.score, focus, evidence: [direction ? directionEvidence : 'Mono: no directional judgment.', distance ? distanceEvidence : 'Direction-only: distance is not scored.', frontBack ? 'The estimate swapped the front/back half.' : ''].filter(Boolean).join(' '),
+    action, goal, confidence, metrics,
+    ...(direction && measured.directionError <= 20 ? {strength: `Bearing error was ${measured.directionError.toFixed(1)} degrees on this trial.`} : {})};
 }
 export function hearingStats(rows: HearingResult[]) {
   const directions = rows.filter(row => row.scoring !== 'distance'), distances = rows.filter(row => row.scoring !== 'direction');

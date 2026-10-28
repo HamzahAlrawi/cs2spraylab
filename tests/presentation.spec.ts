@@ -56,6 +56,8 @@ test('wall patterns animate, respect reduced motion and can be switched off inde
   const mp9 = await shot(); expect(mp9.equals(still)).toBe(false);
   const rightBefore = await right();
   await page.getByRole('button', {name: 'Settings', exact: true}).click();
+  await page.getByRole('tab', {name: 'Training', exact: true}).click();
+  await page.locator('summary').filter({hasText: /^Wall guides$/}).click();
   await page.getByLabel('Impact pattern (left)', {exact: true}).uncheck();
   await page.getByRole('button', {name: 'Done', exact: true}).click();
   const hidden = await shot();
@@ -70,6 +72,8 @@ test('wall patterns animate, respect reduced motion and can be switched off inde
   expect(mean(await right())).toBeGreaterThan(mean(rightBefore) + 30);
   await page.reload();
   await page.getByRole('button', {name: 'Settings', exact: true}).click();
+  await page.getByRole('tab', {name: 'Training', exact: true}).click();
+  await page.locator('summary').filter({hasText: /^Wall guides$/}).click();
   await expect(page.getByLabel('Impact pattern (left)', {exact: true})).toBeChecked();
   await expect(page.getByLabel('Mouse movement (right)', {exact: true})).not.toBeChecked();
   await page.getByRole('button', {name: 'Done', exact: true}).click();

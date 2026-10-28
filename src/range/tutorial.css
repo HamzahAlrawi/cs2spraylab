@@ -13,6 +13,7 @@
 .transfer-health{position:absolute;left:18px;top:72px;display:flex;gap:12px;pointer-events:none;color:#dff9ed;font-size:11px}.transfer-health span{padding:6px 9px;background:#172e27de;border-left:2px solid #55ffa4}.transfer-health span:last-child{border-color:#ff75d7}.transfer-health b{margin-left:6px}.transfer-health .down{color:#f5c29e}
 .lesson-backdrop{grid-template-columns:minmax(0,1fr)}.movement-tutorial{width:min(660px,100%);min-width:0;justify-self:center}.movement-tutorial nav button{min-width:0;overflow-wrap:anywhere}
 .lesson-feedback small{display:block;margin-top:8px;font-size:12px;line-height:1.5}
+.lesson-speed>span{white-space:nowrap;flex-shrink:0}
 .lesson-head-zone{position:absolute;top:58px;width:38.4px;height:38.4px;border:1px solid #ffd0aa;border-radius:50%;transform:translate(-50%,-50%);z-index:1;pointer-events:none}.lesson-head-zone.aligned{border-color:#69edc5}
 @media(max-height:550px) and (orientation:landscape){.mode-brief{flex:none;padding:4px 12px;margin:0;gap:12px}.mode-brief strong{font-size:12px}.mode-brief p{display:none}.mode-brief>button{padding:4px 7px;font-size:11px}.mode-brief>button svg{width:15px;height:15px}}
 @media(max-width:700px) and (orientation:portrait){main.range-app{height:auto;min-height:100dvh;overflow:visible}.range-app>.range-stage{flex:none;height:440px}.range-app>.range-stage.with-drill{height:625px}.range-app>.range-stage.duel-stage{height:660px}}

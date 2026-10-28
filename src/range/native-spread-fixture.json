@@ -1,0 +1,375 @@
+{
+  "build": "2000930",
+  "clientSha256": "44af2aa0d2c64f90d273444cb393b8b679094f0b02136dbdb89d4ec82a560008",
+  "range": [
+    "0xd235a0",
+    "0xd238c4"
+  ],
+  "limitations": [
+    "Supplied uniform draws, not native command/subtick seed derivation.",
+    "Python float32 sin/cos substitutes, not native V_sinf/V_cosf.",
+    "Pattern-off single-pellet sampler only; weapon state and final ray tested separately."
+  ],
+  "cases": [
+    {
+      "weaponId": "ak47",
+      "alternateFire": false,
+      "recoilIndex": 0,
+      "random": [
+        0.1,
+        0.2,
+        0.3,
+        0.4
+      ],
+      "inaccuracy": 0.0065,
+      "spread": 0.003,
+      "horizontal": -0.0005272543639875948,
+      "vertical": 0.0011471934849396348
+    },
+    {
+      "weaponId": "ak47",
+      "alternateFire": false,
+      "recoilIndex": 0,
+      "random": [
+        0,
+        0,
+        1,
+        0.99
+      ],
+      "inaccuracy": 0,
+      "spread": 0.0006,
+      "horizontal": 0.0005988160846754909,
+      "vertical": -3.7674224586226046e-05
+    },
+    {
+      "weaponId": "ak47",
+      "alternateFire": false,
+      "recoilIndex": 0,
+      "random": [
+        0.999,
+        0.875,
+        0.5,
+        0.25
+      ],
+      "inaccuracy": 0.05,
+      "spread": 0.01,
+      "horizontal": 0.03531999513506889,
+      "vertical": -0.030319973826408386
+    },
+    {
+      "weaponId": "revolver",
+      "alternateFire": false,
+      "recoilIndex": 0,
+      "random": [
+        0.1,
+        0.2,
+        0.3,
+        0.4
+      ],
+      "inaccuracy": 0.0065,
+      "spread": 0.003,
+      "horizontal": -0.0005272543639875948,
+      "vertical": 0.0011471934849396348
+    },
+    {
+      "weaponId": "revolver",
+      "alternateFire": false,
+      "recoilIndex": 0,
+      "random": [
+        0,
+        0,
+        1,
+        0.99
+      ],
+      "inaccuracy": 0,
+      "spread": 0.0006,
+      "horizontal": 0.0005988160846754909,
+      "vertical": -3.7674224586226046e-05
+    },
+    {
+      "weaponId": "revolver",
+      "alternateFire": false,
+      "recoilIndex": 0,
+      "random": [
+        0.999,
+        0.875,
+        0.5,
+        0.25
+      ],
+      "inaccuracy": 0.05,
+      "spread": 0.01,
+      "horizontal": 0.03531999513506889,
+      "vertical": -0.030319973826408386
+    },
+    {
+      "weaponId": "revolver",
+      "alternateFire": true,
+      "recoilIndex": 0,
+      "random": [
+        0.1,
+        0.2,
+        0.3,
+        0.4
+      ],
+      "inaccuracy": 0.0065,
+      "spread": 0.003,
+      "horizontal": -0.00022009201347827911,
+      "vertical": 0.00772470235824585
+    },
+    {
+      "weaponId": "revolver",
+      "alternateFire": true,
+      "recoilIndex": 0,
+      "random": [
+        0,
+        0,
+        1,
+        0.99
+      ],
+      "inaccuracy": 0,
+      "spread": 0.0006,
+      "horizontal": 0.0,
+      "vertical": 0.0
+    },
+    {
+      "weaponId": "revolver",
+      "alternateFire": true,
+      "recoilIndex": 0,
+      "random": [
+        0.999,
+        0.875,
+        0.5,
+        0.25
+      ],
+      "inaccuracy": 0.05,
+      "spread": 0.01,
+      "horizontal": 7.067363912938163e-05,
+      "vertical": 0.007429325953125954
+    },
+    {
+      "weaponId": "negev",
+      "alternateFire": false,
+      "recoilIndex": 0,
+      "random": [
+        0.1,
+        0.2,
+        0.3,
+        0.4
+      ],
+      "inaccuracy": 0.0065,
+      "spread": 0.003,
+      "horizontal": -0.00041828141547739506,
+      "vertical": 0.0079451072961092
+    },
+    {
+      "weaponId": "negev",
+      "alternateFire": false,
+      "recoilIndex": 0,
+      "random": [
+        0,
+        0,
+        1,
+        0.99
+      ],
+      "inaccuracy": 0,
+      "spread": 0.0006,
+      "horizontal": 0.0,
+      "vertical": 0.0
+    },
+    {
+      "weaponId": "negev",
+      "alternateFire": false,
+      "recoilIndex": 0,
+      "random": [
+        0.999,
+        0.875,
+        0.5,
+        0.25
+      ],
+      "inaccuracy": 0.05,
+      "spread": 0.01,
+      "horizontal": 0.0002818482753355056,
+      "vertical": 0.009679088369011879
+    },
+    {
+      "weaponId": "negev",
+      "alternateFire": false,
+      "recoilIndex": 0.5,
+      "random": [
+        0.1,
+        0.2,
+        0.3,
+        0.4
+      ],
+      "inaccuracy": 0.0065,
+      "spread": 0.003,
+      "horizontal": -0.00041828141547739506,
+      "vertical": 0.0079451072961092
+    },
+    {
+      "weaponId": "negev",
+      "alternateFire": false,
+      "recoilIndex": 0.5,
+      "random": [
+        0,
+        0,
+        1,
+        0.99
+      ],
+      "inaccuracy": 0,
+      "spread": 0.0006,
+      "horizontal": 0.0,
+      "vertical": 0.0
+    },
+    {
+      "weaponId": "negev",
+      "alternateFire": false,
+      "recoilIndex": 0.5,
+      "random": [
+        0.999,
+        0.875,
+        0.5,
+        0.25
+      ],
+      "inaccuracy": 0.05,
+      "spread": 0.01,
+      "horizontal": 0.0002818482753355056,
+      "vertical": 0.009679088369011879
+    },
+    {
+      "weaponId": "negev",
+      "alternateFire": false,
+      "recoilIndex": 1,
+      "random": [
+        0.1,
+        0.2,
+        0.3,
+        0.4
+      ],
+      "inaccuracy": 0.0065,
+      "spread": 0.003,
+      "horizontal": -0.00039898278191685677,
+      "vertical": 0.007930321618914604
+    },
+    {
+      "weaponId": "negev",
+      "alternateFire": false,
+      "recoilIndex": 1,
+      "random": [
+        0,
+        0,
+        1,
+        0.99
+      ],
+      "inaccuracy": 0,
+      "spread": 0.0006,
+      "horizontal": 0.0,
+      "vertical": 0.0
+    },
+    {
+      "weaponId": "negev",
+      "alternateFire": false,
+      "recoilIndex": 1,
+      "random": [
+        0.999,
+        0.875,
+        0.5,
+        0.25
+      ],
+      "inaccuracy": 0.05,
+      "spread": 0.01,
+      "horizontal": 0.00014120634295977652,
+      "vertical": 0.009233793243765831
+    },
+    {
+      "weaponId": "negev",
+      "alternateFire": false,
+      "recoilIndex": 2,
+      "random": [
+        0.1,
+        0.2,
+        0.3,
+        0.4
+      ],
+      "inaccuracy": 0.0065,
+      "spread": 0.003,
+      "horizontal": -0.00022009201347827911,
+      "vertical": 0.00772470235824585
+    },
+    {
+      "weaponId": "negev",
+      "alternateFire": false,
+      "recoilIndex": 2,
+      "random": [
+        0,
+        0,
+        1,
+        0.99
+      ],
+      "inaccuracy": 0,
+      "spread": 0.0006,
+      "horizontal": 0.0,
+      "vertical": 0.0
+    },
+    {
+      "weaponId": "negev",
+      "alternateFire": false,
+      "recoilIndex": 2,
+      "random": [
+        0.999,
+        0.875,
+        0.5,
+        0.25
+      ],
+      "inaccuracy": 0.05,
+      "spread": 0.01,
+      "horizontal": 7.067363912938163e-05,
+      "vertical": 0.007429325953125954
+    },
+    {
+      "weaponId": "negev",
+      "alternateFire": false,
+      "recoilIndex": 3,
+      "random": [
+        0.1,
+        0.2,
+        0.3,
+        0.4
+      ],
+      "inaccuracy": 0.0065,
+      "spread": 0.003,
+      "horizontal": -0.0005272543639875948,
+      "vertical": 0.0011471934849396348
+    },
+    {
+      "weaponId": "negev",
+      "alternateFire": false,
+      "recoilIndex": 3,
+      "random": [
+        0,
+        0,
+        1,
+        0.99
+      ],
+      "inaccuracy": 0,
+      "spread": 0.0006,
+      "horizontal": 0.0005988160846754909,
+      "vertical": -3.7674224586226046e-05
+    },
+    {
+      "weaponId": "negev",
+      "alternateFire": false,
+      "recoilIndex": 3,
+      "random": [
+        0.999,
+        0.875,
+        0.5,
+        0.25
+      ],
+      "inaccuracy": 0.05,
+      "spread": 0.01,
+      "horizontal": 0.03531999513506889,
+      "vertical": -0.030319973826408386
+    }
+  ]
+}

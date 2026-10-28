@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="en">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Armory UI test host</title>
+<style>body{margin:0;padding:16px;font-family:Arial,sans-serif;background:#151815}*{box-sizing:border-box}</style></head>
+<body><div id="root"></div><script type="module">
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import {ProgressionPanel} from '../src/range/ProgressionPanel.tsx';
+import {createProgressionController} from '../src/range/progression.ts';
+import {cosmeticCatalog} from '../src/range/cosmetics.ts';
+import {equipmentNames} from '../src/range/equipment.ts';
+window.armoryController = createProgressionController({catalog: cosmeticCatalog});
+function Harness() {
+  const [requestedEquipment, setRequested] = React.useState(null);
+  return React.createElement(React.Fragment, null,
+    React.createElement('button', {onClick: () => setRequested('gloves')}, 'Open glove unlocks'),
+    React.createElement(ProgressionPanel, {controller: window.armoryController, equipmentLabels: equipmentNames, activeEquipment: 'ak47',
+      requestedEquipment, onRequestHandled: () => setRequested(null), onOpenChange: open => {window.armoryOpen = open;}}));
+}
+ReactDOM.createRoot(document.getElementById('root')).render(React.createElement(Harness));
+</script></body></html>

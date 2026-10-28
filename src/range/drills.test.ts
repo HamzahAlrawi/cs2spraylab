@@ -144,7 +144,7 @@ describe('Evidence-based drill feedback',()=>{
   it('flags firing while moving and does not reward a lucky hit',()=>{
     const {coach,sample}=coachFixture();sample.position.x+=2.2;sample.velocity.x=5;sample.input.side=1;
     const m=coach.record(sample,true,true);
-    expect(m.accurateShots).toBe(0);expect(m.passed).toBe(false);expect(m.verdict).toBe('Shot before stopping');
+    expect(m.accurateShots).toBe(0);expect(m.passed).toBe(false);expect(m.verdict).toBe('Brake before the opening shot');
   });
   it('counts deliberate off-angle correction separately from excess mouse travel',()=>{
     const {coach,sample}=coachFixture();sample.position.x+=2.2;sample.yaw+=.12;coach.update(sample);

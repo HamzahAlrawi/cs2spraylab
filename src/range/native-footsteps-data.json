@@ -1,0 +1,2737 @@
+{
+  "build": "2000933",
+  "sourceHashes": {
+    "soundevents/game_sounds_footsteps.vsndevts_c": "a5e880fb7f55be614163bb9058b10dd39f318411e6891448f5bfb6cdb09dfccc",
+    "scripts/surfaceproperties_footsteps.txt": "a78e76c87cf8a26bb2f8c471843cf74b7ca17cf0f8e337cf5449218a5f997534",
+    "surfaceproperties/surfaceproperties.vsurf_c": "40212500c5aa7392558cb125ad7642c1242bb66689c5813860891c77d3476797"
+  },
+  "surfaces": {
+    "default": "default",
+    "solidmetal": "metal",
+    "metal": "metal",
+    "metal_barrelsoundoverride": "metalbarrel",
+    "metal_vehiclesoundoverride": "metalvehicle",
+    "metal_survivalcase": "silent",
+    "metal_survivalcase_unpunchable": "silent",
+    "metaldogtags": "metal",
+    "metalgrate": "metalgrate",
+    "metal_box": "metal",
+    "metal_bouncy": "metal",
+    "slipperymetal": "metal",
+    "grate": "metalgrate",
+    "metalvent": "metalvent",
+    "metalpanel": "metalvehicle",
+    "dirt": "dirt",
+    "mud": "mud",
+    "slipperyslime": "slipperyslime",
+    "grass": "grass",
+    "slowgrass": "grass",
+    "sugarcane": "grass",
+    "tile": "tile",
+    "tile_survivalcase": "silent",
+    "tile_survivalcase_gib": "silent",
+    "wood": "wood",
+    "wood_lowdensity": "wood",
+    "wood_box": "woodbox",
+    "wood_basket": "wood_basket",
+    "wood_crate": "wood_crate",
+    "wood_plank": "woodbox",
+    "wood_solid": "wood",
+    "wood_furniture": "woodbox",
+    "wood_panel": "wood_panel",
+    "wood_dense": "wood_solid",
+    "water": "water",
+    "wet": "wettile",
+    "puddle": "water",
+    "slime": "slipperyslime",
+    "quicksand": "default",
+    "wade": "wade",
+    "ladder": "ladder",
+    "wood_ladder": "wood_ladder",
+    "glass": "glass",
+    "glassfloor": "glass",
+    "computer": "metal",
+    "weapon_magazine": "metal",
+    "concrete": "concrete",
+    "asphalt": "concrete",
+    "rock": "concrete",
+    "porcelain": "concrete",
+    "boulder": "concrete",
+    "brick": "concrete",
+    "concrete_block": "concrete",
+    "stucco": "concrete",
+    "chainlink": "chainlink",
+    "chain": "chainlink",
+    "flesh": "flesh",
+    "bloodyflesh": "flesh",
+    "alienflesh": "flesh",
+    "armorflesh": "flesh",
+    "ice": "default",
+    "carpet": "carpet",
+    "dufflebag_survivalcase": "silent",
+    "upholstery": "dirt",
+    "plaster": "concrete",
+    "sheetrock": "drywall",
+    "cardboard": "cardboard",
+    "plastic_barrel": "plastic_barrel",
+    "plastic_box": "plastic_box",
+    "plastic": "plastic_box",
+    "plastic_survivalcase": "silent",
+    "sand": "sand",
+    "rubber": "rubber",
+    "rubbertire": "rubber",
+    "jeeptire": "rubber",
+    "slidingrubbertire": "rubber",
+    "brakingrubbertire": "rubber",
+    "slidingrubbertire_front": "rubber",
+    "slidingrubbertire_rear": "rubber",
+    "glassbottle": "glassbottle",
+    "pottery": "glassbottle",
+    "clay": "tile",
+    "canister": "metalvehicle",
+    "metal_barrel": "metalbarrel",
+    "metal_barrel_explodingsurvival": "metalvehicle",
+    "floating_metal_barrel": "metalbarrel",
+    "plastic_barrel_buoyant": "plastic_barrel",
+    "roller": "metalvehicle",
+    "popcan": "metal",
+    "paintcan": "metal",
+    "paper": "cardboard",
+    "papercup": "cardboard",
+    "ceiling_tile": "ceiling_tile",
+    "foliage": "foliage",
+    "slipperyslide": "metal",
+    "strongman_bell": "metal",
+    "watermelon": "wettile",
+    "item": "plastic_box",
+    "floatingstandable": "dirt",
+    "grenade": "grenade",
+    "weapon": "weapon",
+    "metal_shield": "weapon",
+    "default_silent": "default",
+    "player": "default",
+    "player_control_clip": "default",
+    "no_decal": "default",
+    "soccerball": "rubber",
+    "gravel": "gravel",
+    "snow": "snow",
+    "metalvehicle": "metalvehicle",
+    "brass_bell_large": "default",
+    "brass_bell_medium": "default",
+    "brass_bell_small": "default",
+    "brass_bell_smallest": "default",
+    "metal_sand_barrel": "metalbarrel",
+    "blockbullets": "default",
+    "jalopytire": "rubber",
+    "slidingrubbertire_jalopyfront": "rubber",
+    "slidingrubbertire_jalopyrear": "rubber",
+    "jalopy": "metal",
+    "balloon": "default",
+    "metal_ventslat": "metal",
+    "metal_sheetmetal": "metal",
+    "plasticbottle": "plastic_box",
+    "concrete_polished": "ceiling_tile",
+    "plastic_dumpster": "plastic_box",
+    "metal_dumpster": "metalbarrel",
+    "cloth": "carpet",
+    "plaster_drywall": "drywall",
+    "wood_tree": "wood_solid",
+    "beans": "mud",
+    "weaponheavy": "weapon",
+    "weaponpistol": "weapon",
+    "weaponsmg": "weapon",
+    "weaponrifle": "weapon",
+    "weaponc4": "weapon",
+    "weaponshotgun": "weapon",
+    "defuser": "weapon",
+    "weaponmolotov": "glassbottle",
+    "weaponflashbang": "glassbottle",
+    "weaponsniper": "weapon",
+    "weaponhegrenade": "weapon",
+    "weaponincendiary": "weapon",
+    "cardboard_smallbox": "cardboard",
+    "papertowel": "cardboard",
+    "potterylarge": "glassbottle",
+    "plastic_tape": "plastic_box",
+    "playerflesh": "flesh",
+    "fruit": "flesh",
+    "weaponmagazine": "weapon",
+    "audioblocker": "default",
+    "wet_sand": "wet_sand",
+    "plastic_autocover": "plastic_autocover",
+    "plastic_milkcrate": "plastic_milkcrate",
+    "weaponknife": "weapon",
+    "brass_bell_smallest_g": "default",
+    "metalrailing": "metalrailing",
+    "plastic_solid": "plastic_box",
+    "wet_concrete": "wetconcrete",
+    "wet_mud": "wetmud",
+    "audioblocker_inneredge": "default",
+    "audioblocker_middleedge": "default",
+    "audioblocker_outeredge": "default",
+    "metal_sheet_corrugated": "metalbarrel"
+  },
+  "landingFallbacks": [
+    "water",
+    "wet_sand"
+  ],
+  "rightFootOverrides": {
+    "carpet": "T_Carpet.StepLeft"
+  },
+  "events": {
+    "step-default": {
+      "source": "CT_Default.StepLeft",
+      "volume": 0.9,
+      "pitch": 1,
+      "distanceCurve": [
+        [
+          49.591427,
+          0.45
+        ],
+        [
+          116.563492,
+          1
+        ],
+        [
+          402.285736,
+          0.488971
+        ],
+        [
+          1095,
+          0.03
+        ],
+        [
+          1100,
+          0
+        ]
+      ]
+    },
+    "land-default": {
+      "source": "Land_Default.StepLeft",
+      "volume": 1,
+      "pitch": 1.01,
+      "distanceCurve": [
+        [
+          0,
+          1
+        ],
+        [
+          37.42857,
+          1
+        ],
+        [
+          429.10892,
+          0.445141
+        ],
+        [
+          1090,
+          0.05
+        ],
+        [
+          1100,
+          0
+        ]
+      ]
+    },
+    "step-metal": {
+      "source": "CT_SolidMetal.StepLeft",
+      "volume": 1,
+      "pitch": 0.98,
+      "distanceCurve": [
+        [
+          49.591427,
+          0.45
+        ],
+        [
+          116.563492,
+          1
+        ],
+        [
+          402.285736,
+          0.488971
+        ],
+        [
+          1095,
+          0.03
+        ],
+        [
+          1100,
+          0
+        ]
+      ]
+    },
+    "land-metal": {
+      "source": "Land_SolidMetal.StepLeft",
+      "volume": 0.9,
+      "pitch": 1.01,
+      "distanceCurve": [
+        [
+          0,
+          1
+        ],
+        [
+          37.42857,
+          1
+        ],
+        [
+          429.10892,
+          0.445141
+        ],
+        [
+          1090,
+          0.05
+        ],
+        [
+          1100,
+          0
+        ]
+      ]
+    },
+    "step-metalbarrel": {
+      "source": "CT_MetalBarrel.StepLeft",
+      "volume": 1,
+      "pitch": 0.98,
+      "distanceCurve": [
+        [
+          49.591427,
+          0.45
+        ],
+        [
+          116.563492,
+          1
+        ],
+        [
+          402.285736,
+          0.488971
+        ],
+        [
+          1095,
+          0.03
+        ],
+        [
+          1100,
+          0
+        ]
+      ]
+    },
+    "land-metalbarrel": {
+      "source": "Land_MetalBarrel.StepLeft",
+      "volume": 1,
+      "pitch": 1.01,
+      "distanceCurve": [
+        [
+          0,
+          1
+        ],
+        [
+          37.42857,
+          1
+        ],
+        [
+          429.10892,
+          0.445141
+        ],
+        [
+          1090,
+          0.05
+        ],
+        [
+          1100,
+          0
+        ]
+      ]
+    },
+    "step-metalvehicle": {
+      "source": "CT_MetalVehicle.StepLeft",
+      "volume": 1,
+      "pitch": 0.98,
+      "distanceCurve": [
+        [
+          49.591427,
+          0.45
+        ],
+        [
+          116.563492,
+          1
+        ],
+        [
+          402.285736,
+          0.488971
+        ],
+        [
+          1095,
+          0.03
+        ],
+        [
+          1100,
+          0
+        ]
+      ]
+    },
+    "land-metalvehicle": {
+      "source": "Land_MetalVehicle.StepLeft",
+      "volume": 1,
+      "pitch": 1.01,
+      "distanceCurve": [
+        [
+          0,
+          1
+        ],
+        [
+          37.42857,
+          1
+        ],
+        [
+          429.10892,
+          0.445141
+        ],
+        [
+          1090,
+          0.05
+        ],
+        [
+          1100,
+          0
+        ]
+      ]
+    },
+    "step-silent": {
+      "source": "CT_Silent.StepLeft",
+      "volume": 1,
+      "pitch": 0.98,
+      "distanceCurve": [
+        [
+          49.591427,
+          0.45
+        ],
+        [
+          116.563492,
+          1
+        ],
+        [
+          402.285736,
+          0.488971
+        ],
+        [
+          1095,
+          0.03
+        ],
+        [
+          1100,
+          0
+        ]
+      ]
+    },
+    "land-silent": {
+      "source": "Land_Silent.StepLeft",
+      "volume": 1,
+      "pitch": 1.01,
+      "distanceCurve": [
+        [
+          0,
+          1
+        ],
+        [
+          37.42857,
+          1
+        ],
+        [
+          429.10892,
+          0.445141
+        ],
+        [
+          1090,
+          0.05
+        ],
+        [
+          1100,
+          0
+        ]
+      ]
+    },
+    "step-metalgrate": {
+      "source": "CT_MetalGrate.StepLeft",
+      "volume": 0.9,
+      "pitch": 0.98,
+      "distanceCurve": [
+        [
+          49.591427,
+          0.45
+        ],
+        [
+          116.563492,
+          1
+        ],
+        [
+          402.285736,
+          0.488971
+        ],
+        [
+          1095,
+          0.03
+        ],
+        [
+          1100,
+          0
+        ]
+      ]
+    },
+    "land-metalgrate": {
+      "source": "Land_MetalGrate.StepLeft",
+      "volume": 1,
+      "pitch": 1.01,
+      "distanceCurve": [
+        [
+          0,
+          1
+        ],
+        [
+          37.42857,
+          1
+        ],
+        [
+          429.10892,
+          0.445141
+        ],
+        [
+          1090,
+          0.05
+        ],
+        [
+          1100,
+          0
+        ]
+      ]
+    },
+    "step-metalvent": {
+      "source": "CT_MetalVent.StepLeft",
+      "volume": 1,
+      "pitch": 0.98,
+      "distanceCurve": [
+        [
+          49.591427,
+          0.45
+        ],
+        [
+          116.563492,
+          1
+        ],
+        [
+          402.285736,
+          0.488971
+        ],
+        [
+          1095,
+          0.03
+        ],
+        [
+          1100,
+          0
+        ]
+      ]
+    },
+    "land-metalvent": {
+      "source": "Land_MetalVent.StepLeft",
+      "volume": 1,
+      "pitch": 1.01,
+      "distanceCurve": [
+        [
+          0,
+          1
+        ],
+        [
+          37.42857,
+          1
+        ],
+        [
+          429.10892,
+          0.445141
+        ],
+        [
+          1090,
+          0.05
+        ],
+        [
+          1100,
+          0
+        ]
+      ]
+    },
+    "step-dirt": {
+      "source": "CT_Dirt.StepLeft",
+      "volume": 0.6,
+      "pitch": 1,
+      "distanceCurve": [
+        [
+          49.591427,
+          0.45
+        ],
+        [
+          116.563492,
+          1
+        ],
+        [
+          402.285736,
+          0.488971
+        ],
+        [
+          1095,
+          0.03
+        ],
+        [
+          1100,
+          0
+        ]
+      ]
+    },
+    "land-dirt": {
+      "source": "Land_Dirt.StepLeft",
+      "volume": 1,
+      "pitch": 1.01,
+      "distanceCurve": [
+        [
+          0,
+          1
+        ],
+        [
+          37.42857,
+          1
+        ],
+        [
+          429.10892,
+          0.445141
+        ],
+        [
+          1090,
+          0.05
+        ],
+        [
+          1100,
+          0
+        ]
+      ]
+    },
+    "step-mud": {
+      "source": "CT_Mud.StepLeft",
+      "volume": 0.7,
+      "pitch": 0.98,
+      "distanceCurve": [
+        [
+          49.591427,
+          0.5
+        ],
+        [
+          116.563492,
+          1
+        ],
+        [
+          402.285736,
+          0.488971
+        ],
+        [
+          1095,
+          0.03
+        ],
+        [
+          1100,
+          0
+        ]
+      ]
+    },
+    "land-mud": {
+      "source": "Land_Mud.StepLeft",
+      "volume": 1,
+      "pitch": 1.01,
+      "distanceCurve": [
+        [
+          0,
+          1
+        ],
+        [
+          37.42857,
+          1
+        ],
+        [
+          429.10892,
+          0.445141
+        ],
+        [
+          1090,
+          0.05
+        ],
+        [
+          1100,
+          0
+        ]
+      ]
+    },
+    "step-slipperyslime": {
+      "source": "CT_SlipperySlime.StepLeft",
+      "volume": 1,
+      "pitch": 0.98,
+      "distanceCurve": [
+        [
+          49.591427,
+          0.5
+        ],
+        [
+          116.563492,
+          1
+        ],
+        [
+          402.285736,
+          0.488971
+        ],
+        [
+          1095,
+          0.03
+        ],
+        [
+          1100,
+          0
+        ]
+      ]
+    },
+    "land-slipperyslime": {
+      "source": "Land_SlipperySlime.StepLeft",
+      "volume": 1,
+      "pitch": 1.01,
+      "distanceCurve": [
+        [
+          0,
+          1
+        ],
+        [
+          37.42857,
+          1
+        ],
+        [
+          429.10892,
+          0.445141
+        ],
+        [
+          1090,
+          0.05
+        ],
+        [
+          1100,
+          0
+        ]
+      ]
+    },
+    "step-grass": {
+      "source": "CT_Grass.StepLeft",
+      "volume": 1,
+      "pitch": 1,
+      "distanceCurve": [
+        [
+          49.591427,
+          0.45
+        ],
+        [
+          116.563492,
+          1
+        ],
+        [
+          402.285736,
+          0.488971
+        ],
+        [
+          1095,
+          0.03
+        ],
+        [
+          1100,
+          0
+        ]
+      ]
+    },
+    "land-grass": {
+      "source": "Land_Grass.StepLeft",
+      "volume": 1,
+      "pitch": 1.01,
+      "distanceCurve": [
+        [
+          0,
+          1
+        ],
+        [
+          37.42857,
+          1
+        ],
+        [
+          429.10892,
+          0.445141
+        ],
+        [
+          1090,
+          0.05
+        ],
+        [
+          1100,
+          0
+        ]
+      ]
+    },
+    "step-tile": {
+      "source": "CT_Tile.StepLeft",
+      "volume": 1,
+      "pitch": 0.98,
+      "distanceCurve": [
+        [
+          49.591427,
+          0.45
+        ],
+        [
+          116.563492,
+          1
+        ],
+        [
+          402.285736,
+          0.488971
+        ],
+        [
+          1095,
+          0.03
+        ],
+        [
+          1100,
+          0
+        ]
+      ]
+    },
+    "land-tile": {
+      "source": "Land_Tile.StepLeft",
+      "volume": 1,
+      "pitch": 1.01,
+      "distanceCurve": [
+        [
+          0,
+          1
+        ],
+        [
+          37.42857,
+          1
+        ],
+        [
+          429.10892,
+          0.445141
+        ],
+        [
+          1090,
+          0.05
+        ],
+        [
+          1100,
+          0
+        ]
+      ]
+    },
+    "step-wood": {
+      "source": "CT_Wood.StepLeft",
+      "volume": 1,
+      "pitch": 0.98,
+      "distanceCurve": [
+        [
+          49.591427,
+          0.45
+        ],
+        [
+          116.563492,
+          1
+        ],
+        [
+          402.285736,
+          0.488971
+        ],
+        [
+          1095,
+          0.03
+        ],
+        [
+          1100,
+          0
+        ]
+      ]
+    },
+    "land-wood": {
+      "source": "Land_Wood.StepLeft",
+      "volume": 1,
+      "pitch": 1.01,
+      "distanceCurve": [
+        [
+          0,
+          1
+        ],
+        [
+          37.42857,
+          1
+        ],
+        [
+          429.10892,
+          0.445141
+        ],
+        [
+          1090,
+          0.05
+        ],
+        [
+          1100,
+          0
+        ]
+      ]
+    },
+    "step-woodbox": {
+      "source": "CT_WoodBox.StepLeft",
+      "volume": 1,
+      "pitch": 0.98,
+      "distanceCurve": [
+        [
+          49.591427,
+          0.45
+        ],
+        [
+          116.563492,
+          1
+        ],
+        [
+          402.285736,
+          0.488971
+        ],
+        [
+          1095,
+          0.03
+        ],
+        [
+          1100,
+          0
+        ]
+      ]
+    },
+    "land-woodbox": {
+      "source": "Land_WoodBox.StepLeft",
+      "volume": 1,
+      "pitch": 1.01,
+      "distanceCurve": [
+        [
+          0,
+          1
+        ],
+        [
+          37.42857,
+          1
+        ],
+        [
+          429.10892,
+          0.445141
+        ],
+        [
+          1090,
+          0.05
+        ],
+        [
+          1100,
+          0
+        ]
+      ]
+    },
+    "step-wood_basket": {
+      "source": "CT_Wood_Basket.StepLeft",
+      "volume": 1,
+      "pitch": 0.98,
+      "distanceCurve": [
+        [
+          49.591427,
+          0.45
+        ],
+        [
+          116.563492,
+          1
+        ],
+        [
+          402.285736,
+          0.488971
+        ],
+        [
+          1095,
+          0.03
+        ],
+        [
+          1100,
+          0
+        ]
+      ]
+    },
+    "land-wood_basket": {
+      "source": "Land_Wood_Basket.StepLeft",
+      "volume": 1,
+      "pitch": 1.06,
+      "distanceCurve": [
+        [
+          0,
+          1
+        ],
+        [
+          37.42857,
+          1
+        ],
+        [
+          429.10892,
+          0.445141
+        ],
+        [
+          1090,
+          0.05
+        ],
+        [
+          1100,
+          0
+        ]
+      ]
+    },
+    "step-wood_crate": {
+      "source": "CT_Wood_Crate.StepLeft",
+      "volume": 1,
+      "pitch": 0.98,
+      "distanceCurve": [
+        [
+          49.591427,
+          0.45
+        ],
+        [
+          116.563492,
+          1
+        ],
+        [
+          402.285736,
+          0.488971
+        ],
+        [
+          1095,
+          0.03
+        ],
+        [
+          1100,
+          0
+        ]
+      ]
+    },
+    "land-wood_crate": {
+      "source": "Land_Wood_Crate.StepLeft",
+      "volume": 1,
+      "pitch": 1.01,
+      "distanceCurve": [
+        [
+          0,
+          1
+        ],
+        [
+          37.42857,
+          1
+        ],
+        [
+          429.10892,
+          0.445141
+        ],
+        [
+          1090,
+          0.05
+        ],
+        [
+          1100,
+          0
+        ]
+      ]
+    },
+    "step-wood_panel": {
+      "source": "CT_Wood_Panel.StepLeft",
+      "volume": 1,
+      "pitch": 0.98,
+      "distanceCurve": [
+        [
+          49.591427,
+          0.45
+        ],
+        [
+          116.563492,
+          1
+        ],
+        [
+          402.285736,
+          0.488971
+        ],
+        [
+          1095,
+          0.03
+        ],
+        [
+          1100,
+          0
+        ]
+      ]
+    },
+    "land-wood_panel": {
+      "source": "Land_Wood_Panel.StepLeft",
+      "volume": 1,
+      "pitch": 1.01,
+      "distanceCurve": [
+        [
+          0,
+          1
+        ],
+        [
+          37.42857,
+          1
+        ],
+        [
+          429.10892,
+          0.445141
+        ],
+        [
+          1090,
+          0.05
+        ],
+        [
+          1100,
+          0
+        ]
+      ]
+    },
+    "step-wood_solid": {
+      "source": "CT_Wood_Solid.StepLeft",
+      "volume": 1,
+      "pitch": 0.98,
+      "distanceCurve": [
+        [
+          49.591427,
+          0.45
+        ],
+        [
+          116.563492,
+          1
+        ],
+        [
+          402.285736,
+          0.488971
+        ],
+        [
+          1095,
+          0.03
+        ],
+        [
+          1100,
+          0
+        ]
+      ]
+    },
+    "land-wood_solid": {
+      "source": "Land_Wood_Solid.StepLeft",
+      "volume": 1,
+      "pitch": 1.01,
+      "distanceCurve": [
+        [
+          0,
+          1
+        ],
+        [
+          37.42857,
+          1
+        ],
+        [
+          429.10892,
+          0.445141
+        ],
+        [
+          1090,
+          0.05
+        ],
+        [
+          1100,
+          0
+        ]
+      ]
+    },
+    "step-water": {
+      "source": "CT_Water.StepLeft",
+      "volume": 1,
+      "pitch": 0.98,
+      "distanceCurve": [
+        [
+          49.591427,
+          0.45
+        ],
+        [
+          116.563492,
+          1
+        ],
+        [
+          402.285736,
+          0.488971
+        ],
+        [
+          1095,
+          0.03
+        ],
+        [
+          1100,
+          0
+        ]
+      ]
+    },
+    "land-water": {
+      "source": "Land_Default.StepLeft",
+      "volume": 1,
+      "pitch": 1.01,
+      "distanceCurve": [
+        [
+          0,
+          1
+        ],
+        [
+          37.42857,
+          1
+        ],
+        [
+          429.10892,
+          0.445141
+        ],
+        [
+          1090,
+          0.05
+        ],
+        [
+          1100,
+          0
+        ]
+      ]
+    },
+    "step-wettile": {
+      "source": "CT_WetTile.StepLeft",
+      "volume": 1,
+      "pitch": 1.1,
+      "distanceCurve": [
+        [
+          49.591427,
+          0.45
+        ],
+        [
+          116.563492,
+          1
+        ],
+        [
+          402.285736,
+          0.488971
+        ],
+        [
+          1095,
+          0.03
+        ],
+        [
+          1100,
+          0
+        ]
+      ]
+    },
+    "land-wettile": {
+      "source": "Land_WetTile.StepLeft",
+      "volume": 1,
+      "pitch": 1.01,
+      "distanceCurve": [
+        [
+          0,
+          1
+        ],
+        [
+          37.42857,
+          1
+        ],
+        [
+          429.10892,
+          0.445141
+        ],
+        [
+          1090,
+          0.05
+        ],
+        [
+          1100,
+          0
+        ]
+      ]
+    },
+    "step-wade": {
+      "source": "Player.Wade",
+      "volume": 0.3,
+      "pitch": 1,
+      "distanceCurve": [
+        [
+          0,
+          0.460815
+        ],
+        [
+          37.029705,
+          0.460815
+        ],
+        [
+          52.27723,
+          1
+        ],
+        [
+          102.37624,
+          1
+        ],
+        [
+          402.28574,
+          0.488971
+        ],
+        [
+          1095,
+          0.03
+        ],
+        [
+          1100,
+          0
+        ]
+      ]
+    },
+    "land-wade": {
+      "source": "Player.Wade",
+      "volume": 0.3,
+      "pitch": 1,
+      "distanceCurve": [
+        [
+          0,
+          0.460815
+        ],
+        [
+          37.029705,
+          0.460815
+        ],
+        [
+          52.27723,
+          1
+        ],
+        [
+          102.37624,
+          1
+        ],
+        [
+          402.28574,
+          0.488971
+        ],
+        [
+          1095,
+          0.03
+        ],
+        [
+          1100,
+          0
+        ]
+      ]
+    },
+    "step-ladder": {
+      "source": "CT_Ladder.StepLeft",
+      "volume": 0.7,
+      "pitch": 0.98,
+      "distanceCurve": [
+        [
+          49.591427,
+          0.45
+        ],
+        [
+          116.563492,
+          1
+        ],
+        [
+          402.285736,
+          0.488971
+        ],
+        [
+          1095,
+          0.03
+        ],
+        [
+          1100,
+          0
+        ]
+      ]
+    },
+    "land-ladder": {
+      "source": "Land_Ladder.StepLeft",
+      "volume": 1,
+      "pitch": 1.01,
+      "distanceCurve": [
+        [
+          0,
+          1
+        ],
+        [
+          37.42857,
+          1
+        ],
+        [
+          429.10892,
+          0.445141
+        ],
+        [
+          1090,
+          0.05
+        ],
+        [
+          1100,
+          0
+        ]
+      ]
+    },
+    "step-wood_ladder": {
+      "source": "CT_Wood_Ladder.StepLeft",
+      "volume": 1,
+      "pitch": 0.98,
+      "distanceCurve": [
+        [
+          49.591427,
+          0.45
+        ],
+        [
+          116.563492,
+          1
+        ],
+        [
+          402.285736,
+          0.488971
+        ],
+        [
+          1095,
+          0.03
+        ],
+        [
+          1100,
+          0
+        ]
+      ]
+    },
+    "land-wood_ladder": {
+      "source": "Land_Wood_Ladder.StepLeft",
+      "volume": 1,
+      "pitch": 1.01,
+      "distanceCurve": [
+        [
+          0,
+          1
+        ],
+        [
+          37.42857,
+          1
+        ],
+        [
+          429.10892,
+          0.445141
+        ],
+        [
+          1090,
+          0.05
+        ],
+        [
+          1100,
+          0
+        ]
+      ]
+    },
+    "step-glass": {
+      "source": "CT_Glass.StepLeft",
+      "volume": 1.5,
+      "pitch": 0.98,
+      "distanceCurve": [
+        [
+          49.591427,
+          0.45
+        ],
+        [
+          116.563492,
+          1
+        ],
+        [
+          402.285736,
+          0.488971
+        ],
+        [
+          1095,
+          0.03
+        ],
+        [
+          1100,
+          0
+        ]
+      ]
+    },
+    "land-glass": {
+      "source": "Land_Glass.StepLeft",
+      "volume": 1,
+      "pitch": 1.01,
+      "distanceCurve": [
+        [
+          0,
+          1
+        ],
+        [
+          37.42857,
+          1
+        ],
+        [
+          429.10892,
+          0.445141
+        ],
+        [
+          1090,
+          0.05
+        ],
+        [
+          1100,
+          0
+        ]
+      ]
+    },
+    "step-concrete": {
+      "source": "CT_Concrete.StepLeft",
+      "volume": 0.9,
+      "pitch": 1,
+      "distanceCurve": [
+        [
+          49.591427,
+          0.45
+        ],
+        [
+          116.563492,
+          1
+        ],
+        [
+          402.285736,
+          0.488971
+        ],
+        [
+          1095,
+          0.03
+        ],
+        [
+          1100,
+          0
+        ]
+      ]
+    },
+    "land-concrete": {
+      "source": "Land_Concrete.StepLeft",
+      "volume": 1,
+      "pitch": 1.06,
+      "distanceCurve": [
+        [
+          0,
+          1
+        ],
+        [
+          37.42857,
+          1
+        ],
+        [
+          429.10892,
+          0.445141
+        ],
+        [
+          1090,
+          0.05
+        ],
+        [
+          1100,
+          0
+        ]
+      ]
+    },
+    "step-chainlink": {
+      "source": "CT_ChainLink.StepLeft",
+      "volume": 1,
+      "pitch": 0.98,
+      "distanceCurve": [
+        [
+          49.591427,
+          0.45
+        ],
+        [
+          116.563492,
+          1
+        ],
+        [
+          402.285736,
+          0.488971
+        ],
+        [
+          1095,
+          0.03
+        ],
+        [
+          1100,
+          0
+        ]
+      ]
+    },
+    "land-chainlink": {
+      "source": "Land_ChainLink.StepLeft",
+      "volume": 1,
+      "pitch": 1.01,
+      "distanceCurve": [
+        [
+          0,
+          1
+        ],
+        [
+          37.42857,
+          1
+        ],
+        [
+          429.10892,
+          0.445141
+        ],
+        [
+          1090,
+          0.05
+        ],
+        [
+          1100,
+          0
+        ]
+      ]
+    },
+    "step-flesh": {
+      "source": "CT_Flesh.StepLeft",
+      "volume": 1,
+      "pitch": 0.98,
+      "distanceCurve": [
+        [
+          49.591427,
+          0.45
+        ],
+        [
+          116.563492,
+          1
+        ],
+        [
+          402.285736,
+          0.488971
+        ],
+        [
+          1095,
+          0.03
+        ],
+        [
+          1100,
+          0
+        ]
+      ]
+    },
+    "land-flesh": {
+      "source": "Land_Flesh.StepLeft",
+      "volume": 0.4,
+      "pitch": 1.01,
+      "distanceCurve": [
+        [
+          0,
+          1
+        ],
+        [
+          37.42857,
+          1
+        ],
+        [
+          429.10892,
+          0.445141
+        ],
+        [
+          1090,
+          0.05
+        ],
+        [
+          1100,
+          0
+        ]
+      ]
+    },
+    "step-carpet": {
+      "source": "CT_Carpet.StepLeft",
+      "volume": 1,
+      "pitch": 0.98,
+      "distanceCurve": [
+        [
+          49.591427,
+          0.5
+        ],
+        [
+          116.563492,
+          1
+        ],
+        [
+          402.285736,
+          0.488971
+        ],
+        [
+          1095,
+          0.03
+        ],
+        [
+          1100,
+          0
+        ]
+      ]
+    },
+    "land-carpet": {
+      "source": "Land_Carpet.StepLeft",
+      "volume": 1,
+      "pitch": 1.01,
+      "distanceCurve": [
+        [
+          0,
+          1
+        ],
+        [
+          37.42857,
+          1
+        ],
+        [
+          429.10892,
+          0.445141
+        ],
+        [
+          1090,
+          0.05
+        ],
+        [
+          1100,
+          0
+        ]
+      ]
+    },
+    "step-drywall": {
+      "source": "CT_Drywall.StepLeft",
+      "volume": 0.9,
+      "pitch": 1,
+      "distanceCurve": [
+        [
+          49.591427,
+          0.45
+        ],
+        [
+          116.563492,
+          1
+        ],
+        [
+          402.285736,
+          0.488971
+        ],
+        [
+          1095,
+          0.03
+        ],
+        [
+          1100,
+          0
+        ]
+      ]
+    },
+    "land-drywall": {
+      "source": "Land_Drywall.StepLeft",
+      "volume": 1,
+      "pitch": 1.01,
+      "distanceCurve": [
+        [
+          0,
+          1
+        ],
+        [
+          37.42857,
+          1
+        ],
+        [
+          429.10892,
+          0.445141
+        ],
+        [
+          1090,
+          0.05
+        ],
+        [
+          1100,
+          0
+        ]
+      ]
+    },
+    "step-cardboard": {
+      "source": "CT_Cardboard.StepLeft",
+      "volume": 1,
+      "pitch": 0.98,
+      "distanceCurve": [
+        [
+          49.591427,
+          0.5
+        ],
+        [
+          116.563492,
+          1
+        ],
+        [
+          402.285736,
+          0.488971
+        ],
+        [
+          1095,
+          0.03
+        ],
+        [
+          1100,
+          0
+        ]
+      ]
+    },
+    "land-cardboard": {
+      "source": "Land_Cardboard.StepLeft",
+      "volume": 1,
+      "pitch": 1.01,
+      "distanceCurve": [
+        [
+          0,
+          1
+        ],
+        [
+          37.42857,
+          1
+        ],
+        [
+          429.10892,
+          0.445141
+        ],
+        [
+          1090,
+          0.05
+        ],
+        [
+          1100,
+          0
+        ]
+      ]
+    },
+    "step-plastic_barrel": {
+      "source": "CT_Plastic_Barrel.StepLeft",
+      "volume": 1,
+      "pitch": 0.98,
+      "distanceCurve": [
+        [
+          49.591427,
+          0.4
+        ],
+        [
+          116.563492,
+          1
+        ],
+        [
+          402.285736,
+          0.488971
+        ],
+        [
+          1095,
+          0.03
+        ],
+        [
+          1100,
+          0
+        ]
+      ]
+    },
+    "land-plastic_barrel": {
+      "source": "Land_Plastic_Barrel.StepLeft",
+      "volume": 1,
+      "pitch": 1.01,
+      "distanceCurve": [
+        [
+          0,
+          1
+        ],
+        [
+          37.42857,
+          1
+        ],
+        [
+          429.10892,
+          0.445141
+        ],
+        [
+          1090,
+          0.05
+        ],
+        [
+          1100,
+          0
+        ]
+      ]
+    },
+    "step-plastic_box": {
+      "source": "CT_Plastic_Box.StepLeft",
+      "volume": 0.7,
+      "pitch": 0.98,
+      "distanceCurve": [
+        [
+          49.591427,
+          0.4
+        ],
+        [
+          116.563492,
+          1
+        ],
+        [
+          402.285736,
+          0.488971
+        ],
+        [
+          1095,
+          0.03
+        ],
+        [
+          1100,
+          0
+        ]
+      ]
+    },
+    "land-plastic_box": {
+      "source": "Land_Plastic_Box.StepLeft",
+      "volume": 1,
+      "pitch": 1.01,
+      "distanceCurve": [
+        [
+          0,
+          1
+        ],
+        [
+          37.42857,
+          1
+        ],
+        [
+          429.10892,
+          0.445141
+        ],
+        [
+          1090,
+          0.05
+        ],
+        [
+          1100,
+          0
+        ]
+      ]
+    },
+    "step-sand": {
+      "source": "CT_Sand.StepLeft",
+      "volume": 1,
+      "pitch": 1,
+      "distanceCurve": [
+        [
+          49.591427,
+          0.45
+        ],
+        [
+          116.563492,
+          1
+        ],
+        [
+          402.285736,
+          0.488971
+        ],
+        [
+          1095,
+          0.03
+        ],
+        [
+          1100,
+          0
+        ]
+      ]
+    },
+    "land-sand": {
+      "source": "Land_Sand.StepLeft",
+      "volume": 1.2,
+      "pitch": 1.01,
+      "distanceCurve": [
+        [
+          0,
+          1
+        ],
+        [
+          37.42857,
+          1
+        ],
+        [
+          429.10892,
+          0.445141
+        ],
+        [
+          1090,
+          0.05
+        ],
+        [
+          1100,
+          0
+        ]
+      ]
+    },
+    "step-rubber": {
+      "source": "CT_Rubber.StepLeft",
+      "volume": 1,
+      "pitch": 0.98,
+      "distanceCurve": [
+        [
+          49.591427,
+          0.45
+        ],
+        [
+          116.563492,
+          1
+        ],
+        [
+          402.285736,
+          0.488971
+        ],
+        [
+          1095,
+          0.03
+        ],
+        [
+          1100,
+          0
+        ]
+      ]
+    },
+    "land-rubber": {
+      "source": "Land_Rubber.StepLeft",
+      "volume": 1,
+      "pitch": 1.01,
+      "distanceCurve": [
+        [
+          0,
+          1
+        ],
+        [
+          37.42857,
+          1
+        ],
+        [
+          429.10892,
+          0.445141
+        ],
+        [
+          1090,
+          0.05
+        ],
+        [
+          1100,
+          0
+        ]
+      ]
+    },
+    "step-glassbottle": {
+      "source": "CT_GlassBottle.StepLeft",
+      "volume": 1.5,
+      "pitch": 0.98,
+      "distanceCurve": [
+        [
+          49.591427,
+          0.45
+        ],
+        [
+          116.563492,
+          1
+        ],
+        [
+          402.285736,
+          0.488971
+        ],
+        [
+          1095,
+          0.03
+        ],
+        [
+          1100,
+          0
+        ]
+      ]
+    },
+    "land-glassbottle": {
+      "source": "Land_GlassBottle.StepLeft",
+      "volume": 1,
+      "pitch": 1.01,
+      "distanceCurve": [
+        [
+          0,
+          1
+        ],
+        [
+          37.42857,
+          1
+        ],
+        [
+          429.10892,
+          0.445141
+        ],
+        [
+          1090,
+          0.05
+        ],
+        [
+          1100,
+          0
+        ]
+      ]
+    },
+    "step-ceiling_tile": {
+      "source": "CT_Ceiling_Tile.StepLeft",
+      "volume": 1,
+      "pitch": 0.98,
+      "distanceCurve": [
+        [
+          49.591427,
+          0.45
+        ],
+        [
+          116.563492,
+          1
+        ],
+        [
+          402.285736,
+          0.488971
+        ],
+        [
+          1095,
+          0.03
+        ],
+        [
+          1100,
+          0
+        ]
+      ]
+    },
+    "land-ceiling_tile": {
+      "source": "Land_Ceiling_Tile.StepLeft",
+      "volume": 1,
+      "pitch": 1.01,
+      "distanceCurve": [
+        [
+          0,
+          1
+        ],
+        [
+          37.42857,
+          1
+        ],
+        [
+          429.10892,
+          0.445141
+        ],
+        [
+          1090,
+          0.05
+        ],
+        [
+          1100,
+          0
+        ]
+      ]
+    },
+    "step-foliage": {
+      "source": "CT_Foliage.StepLeft",
+      "volume": 1,
+      "pitch": 1,
+      "distanceCurve": [
+        [
+          49.591427,
+          0.45
+        ],
+        [
+          116.563492,
+          1
+        ],
+        [
+          402.285736,
+          0.488971
+        ],
+        [
+          1095,
+          0.03
+        ],
+        [
+          1100,
+          0
+        ]
+      ]
+    },
+    "land-foliage": {
+      "source": "Land_Foliage.StepLeft",
+      "volume": 1,
+      "pitch": 1.01,
+      "distanceCurve": [
+        [
+          0,
+          1
+        ],
+        [
+          37.42857,
+          1
+        ],
+        [
+          429.10892,
+          0.445141
+        ],
+        [
+          1090,
+          0.05
+        ],
+        [
+          1100,
+          0
+        ]
+      ]
+    },
+    "step-grenade": {
+      "source": "CT_Grenade.StepLeft",
+      "volume": 1,
+      "pitch": 0.98,
+      "distanceCurve": [
+        [
+          49.591427,
+          0.45
+        ],
+        [
+          116.563492,
+          1
+        ],
+        [
+          402.285736,
+          0.488971
+        ],
+        [
+          1095,
+          0.03
+        ],
+        [
+          1100,
+          0
+        ]
+      ]
+    },
+    "land-grenade": {
+      "source": "Land_Grenade.StepLeft",
+      "volume": 1,
+      "pitch": 1.01,
+      "distanceCurve": [
+        [
+          0,
+          1
+        ],
+        [
+          37.42857,
+          1
+        ],
+        [
+          429.10892,
+          0.445141
+        ],
+        [
+          1090,
+          0.05
+        ],
+        [
+          1100,
+          0
+        ]
+      ]
+    },
+    "step-weapon": {
+      "source": "CT_Weapon.StepLeft",
+      "volume": 0.5,
+      "pitch": 0.98,
+      "distanceCurve": [
+        [
+          49.591427,
+          0.45
+        ],
+        [
+          116.563492,
+          1
+        ],
+        [
+          402.285736,
+          0.488971
+        ],
+        [
+          1095,
+          0.03
+        ],
+        [
+          1100,
+          0
+        ]
+      ]
+    },
+    "land-weapon": {
+      "source": "Land_Weapon.StepLeft",
+      "volume": 0.5,
+      "pitch": 1.01,
+      "distanceCurve": [
+        [
+          0,
+          1
+        ],
+        [
+          37.42857,
+          1
+        ],
+        [
+          429.10892,
+          0.445141
+        ],
+        [
+          1090,
+          0.05
+        ],
+        [
+          1100,
+          0
+        ]
+      ]
+    },
+    "step-gravel": {
+      "source": "CT_Gravel.StepLeft",
+      "volume": 0.8,
+      "pitch": 0.98,
+      "distanceCurve": [
+        [
+          49.591427,
+          0.45
+        ],
+        [
+          116.563492,
+          1
+        ],
+        [
+          402.285736,
+          0.488971
+        ],
+        [
+          1095,
+          0.03
+        ],
+        [
+          1100,
+          0
+        ]
+      ]
+    },
+    "land-gravel": {
+      "source": "Land_Gravel.StepLeft",
+      "volume": 1,
+      "pitch": 1.01,
+      "distanceCurve": [
+        [
+          0,
+          1
+        ],
+        [
+          37.42857,
+          1
+        ],
+        [
+          429.10892,
+          0.445141
+        ],
+        [
+          1090,
+          0.05
+        ],
+        [
+          1100,
+          0
+        ]
+      ]
+    },
+    "step-snow": {
+      "source": "CT_Snow.StepLeft",
+      "volume": 1,
+      "pitch": 0.98,
+      "distanceCurve": [
+        [
+          49.591427,
+          0.45
+        ],
+        [
+          116.563492,
+          1
+        ],
+        [
+          402.285736,
+          0.488971
+        ],
+        [
+          1095,
+          0.03
+        ],
+        [
+          1100,
+          0
+        ]
+      ]
+    },
+    "land-snow": {
+      "source": "Land_Snow.StepLeft",
+      "volume": 1,
+      "pitch": 1.01,
+      "distanceCurve": [
+        [
+          0,
+          1
+        ],
+        [
+          37.42857,
+          1
+        ],
+        [
+          429.10892,
+          0.445141
+        ],
+        [
+          1090,
+          0.05
+        ],
+        [
+          1100,
+          0
+        ]
+      ]
+    },
+    "step-wet_sand": {
+      "source": "CT_Wet_Sand.StepLeft",
+      "volume": 0.9,
+      "pitch": 1,
+      "distanceCurve": [
+        [
+          49.591427,
+          0.45
+        ],
+        [
+          116.563492,
+          1
+        ],
+        [
+          402.285736,
+          0.488971
+        ],
+        [
+          1095,
+          0.03
+        ],
+        [
+          1100,
+          0
+        ]
+      ]
+    },
+    "land-wet_sand": {
+      "source": "Land_Default.StepLeft",
+      "volume": 1,
+      "pitch": 1.01,
+      "distanceCurve": [
+        [
+          0,
+          1
+        ],
+        [
+          37.42857,
+          1
+        ],
+        [
+          429.10892,
+          0.445141
+        ],
+        [
+          1090,
+          0.05
+        ],
+        [
+          1100,
+          0
+        ]
+      ]
+    },
+    "step-plastic_autocover": {
+      "source": "CT_Plastic_autoCover.StepLeft",
+      "volume": 0.7,
+      "pitch": 0.98,
+      "distanceCurve": [
+        [
+          49.591427,
+          0.45
+        ],
+        [
+          116.563492,
+          1
+        ],
+        [
+          402.285736,
+          0.488971
+        ],
+        [
+          1095,
+          0.03
+        ],
+        [
+          1100,
+          0
+        ]
+      ]
+    },
+    "land-plastic_autocover": {
+      "source": "Land_Plastic_autoCover.StepLeft",
+      "volume": 1,
+      "pitch": 1.01,
+      "distanceCurve": [
+        [
+          0,
+          1
+        ],
+        [
+          37.42857,
+          1
+        ],
+        [
+          429.10892,
+          0.445141
+        ],
+        [
+          1090,
+          0.05
+        ],
+        [
+          1100,
+          0
+        ]
+      ]
+    },
+    "step-plastic_milkcrate": {
+      "source": "CT_Plastic_milkCrate.StepLeft",
+      "volume": 0.7,
+      "pitch": 0.98,
+      "distanceCurve": [
+        [
+          49.591427,
+          0.45
+        ],
+        [
+          116.563492,
+          1
+        ],
+        [
+          402.285736,
+          0.488971
+        ],
+        [
+          1095,
+          0.03
+        ],
+        [
+          1100,
+          0
+        ]
+      ]
+    },
+    "land-plastic_milkcrate": {
+      "source": "Land_Plastic_milkCrate.StepLeft",
+      "volume": 0.7,
+      "pitch": 1,
+      "distanceCurve": [
+        [
+          0,
+          1
+        ],
+        [
+          37.42857,
+          1
+        ],
+        [
+          429.10892,
+          0.445141
+        ],
+        [
+          1090,
+          0.05
+        ],
+        [
+          1100,
+          0
+        ]
+      ]
+    },
+    "step-metalrailing": {
+      "source": "CT_MetalRailing.StepLeft",
+      "volume": 0.7,
+      "pitch": 1,
+      "distanceCurve": [
+        [
+          49.591427,
+          0.3
+        ],
+        [
+          116.563492,
+          1
+        ],
+        [
+          402.285736,
+          0.488971
+        ],
+        [
+          1095,
+          0.03
+        ],
+        [
+          1100,
+          0
+        ]
+      ]
+    },
+    "land-metalrailing": {
+      "source": "Land_MetalRailing.StepLeft",
+      "volume": 0.7,
+      "pitch": 1,
+      "distanceCurve": [
+        [
+          0,
+          1
+        ],
+        [
+          37.42857,
+          1
+        ],
+        [
+          429.10892,
+          0.445141
+        ],
+        [
+          1090,
+          0.05
+        ],
+        [
+          1100,
+          0
+        ]
+      ]
+    },
+    "step-wetconcrete": {
+      "source": "CT_WetConcrete.StepLeft",
+      "volume": 1,
+      "pitch": 1.1,
+      "distanceCurve": [
+        [
+          49.591427,
+          0.45
+        ],
+        [
+          116.563492,
+          1
+        ],
+        [
+          402.285736,
+          0.488971
+        ],
+        [
+          1095,
+          0.03
+        ],
+        [
+          1100,
+          0
+        ]
+      ]
+    },
+    "land-wetconcrete": {
+      "source": "Land_WetConcrete.StepLeft",
+      "volume": 1,
+      "pitch": 1.01,
+      "distanceCurve": [
+        [
+          0,
+          1
+        ],
+        [
+          37.42857,
+          1
+        ],
+        [
+          429.10892,
+          0.445141
+        ],
+        [
+          1090,
+          0.05
+        ],
+        [
+          1100,
+          0
+        ]
+      ]
+    },
+    "step-wetmud": {
+      "source": "CT_WetMud.StepLeft",
+      "volume": 1,
+      "pitch": 1.1,
+      "distanceCurve": [
+        [
+          49.591427,
+          0.45
+        ],
+        [
+          116.563492,
+          1
+        ],
+        [
+          402.285736,
+          0.488971
+        ],
+        [
+          1095,
+          0.03
+        ],
+        [
+          1100,
+          0
+        ]
+      ]
+    },
+    "land-wetmud": {
+      "source": "Land_WetMud.StepLeft",
+      "volume": 1,
+      "pitch": 1.01,
+      "distanceCurve": [
+        [
+          0,
+          1
+        ],
+        [
+          37.42857,
+          1
+        ],
+        [
+          429.10892,
+          0.445141
+        ],
+        [
+          1090,
+          0.05
+        ],
+        [
+          1100,
+          0
+        ]
+      ]
+    }
+  }
+}

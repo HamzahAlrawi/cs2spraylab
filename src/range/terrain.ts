@@ -1,4 +1,5 @@
-import type {Vec} from './actor-physics';
+import type {Vec, ResolveVertical} from './actor-physics';
+import type {HullSweep} from './actor-collision';
 
 // Static convar defaults; solver tolerances are not movement tuning.
 // Provenance and approximation boundaries: docs/terrain-contact-audit.md.
@@ -19,7 +20,15 @@ export type Traversal =
   | {kind: 'actor'; actorId: ContactId};
 export type TerrainSolid = {center: Vec; size: Vec; id?: ContactId; traversal?: Traversal};
 export type TerrainBounds = {minX: number; maxX: number; minZ: number; maxZ: number};
-export type TerrainWorld = {solids: readonly TerrainSolid[]; floor?: number | null; bounds?: TerrainBounds};
+export type TerrainQueries = {
+  corpseGeometry?(center: Vec, radius: number): {vertices: Float32Array; indices: Uint32Array};
+  sweepSphere?(from:Vec,to:Vec,radius:number):HullSweep;
+  sweepGrenade?(from:Vec,to:Vec,radius:number):HullSweep;
+  sweep(from: Vec, to: Vec, height: number): HullSweep;
+  fits(position: Vec, feet: number, height: number): boolean;
+  vertical(position: Vec, from: number, to: number, height: number): ReturnType<ResolveVertical>;
+};
+export type TerrainWorld = {solids: readonly TerrainSolid[]; floor?: number | null; bounds?: TerrainBounds; native?: TerrainQueries};
 export type Plane = {normal: Vec; distance: number};
 
 export const collidable = (solid: TerrainSolid) =>

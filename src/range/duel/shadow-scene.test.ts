@@ -22,4 +22,14 @@ describe('shared visible actor shadow geometry',()=>{
     renderer.update(actorShadows(actors,testArena()));expect((renderer.group.children[0] as any).geometry).toBe(geometry);
     renderer.update([]);expect(renderer.group.children).toHaveLength(0);renderer.dispose();
   });
+  it.each([-3.2,3.2])('projects native-map shadows onto the actual floor at %s meters',floor=>{
+    const actor=new DuelSimulation().snapshot()[0],arena=testArena();
+    actor.feet=floor; actor.position.y=floor+64*.0254;
+    arena.native={fits:()=>true,sweep:(from,to)=>({position:to,fraction:1,startSolid:false}),
+      vertical:()=>({feet:floor,grounded:true,ceiling:false}),
+      ray:(origin,direction)=> direction.x===0&&direction.z===0&&direction.y===-1
+        ? {distance:origin.y-floor,normal:{x:0,y:1,z:0},surfaceId:0}:undefined};
+    const shadow=actorShadow(actor,arena)!;
+    expect(shadow.polygon.every(point=>Math.abs(point.y-(floor+.015))<1e-8)).toBe(true);
+  });
 });

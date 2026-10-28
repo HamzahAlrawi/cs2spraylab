@@ -1,6 +1,20 @@
 import {expect, test, type Page} from '@playwright/test';
 import sharp from 'sharp';
 
+test.beforeEach(async ({page}) => {
+  // These lifecycle/animation fixtures use local arena coordinates. Native
+  // chunk loading and visibility have their own integration coverage.
+  await page.addInitScript(() => {
+    if (!localStorage.getItem('spraylab.duel.v1')) localStorage.setItem('spraylab.duel.v1', JSON.stringify({generatedMaps: true}));
+  });
+});
+
+async function showDrillPanel(page: Page) {
+  await expect(page.locator('.duel-setup')).toBeAttached();
+  const show = page.getByRole('button', {name: 'Show drill panel', exact: true});
+  if (await show.isVisible()) await show.click();
+}
+
 async function enginePage(page: Page) {
   await page.goto('/');
   await expect(page.locator('canvas[data-duel]')).toBeVisible();
@@ -20,9 +34,14 @@ test('rounds restart without another click or viewport changes; Escape pauses th
   const errors: string[] = [];
   page.on('pageerror', error => errors.push(error.message));
   await enginePage(page);
+  await showDrillPanel(page);
+  await page.locator('summary').filter({hasText: /^Health & armor$/}).click();
   await page.getByLabel('Player health', {exact: true}).fill('240');
+  await page.locator('summary').filter({hasText: /^Advanced combat & radar$/}).click();
   await page.getByLabel('Round restart delay').fill('1.5');
   await page.reload();
+  await showDrillPanel(page);
+  await page.locator('summary').filter({hasText: /^Health & armor$/}).click();
   await expect(page.getByLabel('Player health', {exact: true})).toHaveValue('240');
   // Reload replaced the instrumented prototype; attach to the fresh module.
   await enginePage(page);
@@ -35,17 +54,30 @@ test('rounds restart without another click or viewport changes; Escape pauses th
   const forceDeath = () => page.evaluate(() => {
     const e = (window as any).roundEngine;
     e.sim.actors[0].alive = false; e.sim.actors[0].health = 0;
+    e.sim.actors[0].deathDirection={x:Math.cos(e.sim.actors[0].yaw),y:0,z:-Math.sin(e.sim.actors[0].yaw)};
+    e.sim.actors[0].deathGroup='head';
     e.processEvents([{kind: 'hit', victim: 0, shooter: 1, shotId: 9999, group: 'head', healthDamage: 240,
       armorDamage: 0, lethal: true, point: {...e.sim.actors[0].position}}]);
     e.sim.step(); e.processEvents(e.sim.drainEvents()); e.report();
+    return e.sim.coach.review().coaching;
   });
-  await forceDeath();
+  const coaching = await forceDeath();
   await expect(page.locator('.duel-result')).toContainText('Next round');
+  await expect(page.locator('.duel-result p').last()).toHaveText(coaching.action);
+  await expect(page.locator('.duel-result-evidence')).toHaveText(coaching.evidence);
+  await expect(page.locator('.duel-result')).not.toContainText(coaching.goal);
   await expect(page.getByRole('button', {name: 'Enter duel', exact: true})).toHaveCount(0);
   await page.waitForTimeout(550);
-  const deathCamera = await page.evaluate(() => ({y: (window as any).roundEngine.camera.position.y,
-    roll: (window as any).roundEngine.camera.rotation.z}));
-  expect(deathCamera.y).toBeLessThan(1.3); expect(deathCamera.roll).toBeGreaterThan(.05);
+  const deathCamera = await page.evaluate(() => {
+    const e = (window as any).roundEngine;
+    return {y: e.camera.position.y, roll: e.camera.rotation.z, camera: e.camera.position.toArray(),
+      focus: e.deathFocus.toArray(), goal: e.deathCamera.toArray(), forward: e.camera.getWorldDirection(e.camera.position.clone()).toArray(),
+      root: e.playerCorpse?.root.position.toArray(), head: e.playerCorpse?.root.getObjectByName('head_0').getWorldPosition(e.camera.position.clone()).toArray()};
+  });
+  // Death now follows a visible articulated corpse rather than lowering an
+  // empty first-person camera to a hardcoded .28 m above the floor.
+  expect(deathCamera.y).toBeLessThan(1.6256); expect(deathCamera.roll).toBeGreaterThan(.05);
+  expect(deathCamera.root).toBeDefined(); expect(deathCamera.head?.every(Number.isFinite)).toBe(true);
   await page.locator('canvas[data-duel]').screenshot({path: `test-results/duel-player-death-${info.project.name}.png`});
   await expect(page.locator('.duel-result')).toHaveCount(0, {timeout: 4000});
   await expect(page.locator('.duel-health strong')).toHaveText('240');
@@ -70,6 +102,8 @@ test('baked bot deaths lower the skeleton, settle on the floor, and keep a rende
     e.covers.visible = false;
     e.sim.arena.solids.length = 0;
     e.sim.actors[1].position = {x: 0, y: 1.6256, z: 4};
+    e.sim.actors[1].feet=0;e.sim.actors[1].duckAmount=0;e.sim.actors[1].grounded=true;
+    e.sim.actors[1].eyeHeight=1.6256;
     e.sim.actors[1].yaw = Math.PI;
     e.syncActors(e.sim.snapshot(), 0);
     const model = e.models.get(1), animator = e.animators.get(1), actor = e.sim.snapshot()[1];

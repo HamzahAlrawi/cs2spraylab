@@ -77,7 +77,8 @@ describe('recent sighting and geometry-limited re-peek expectations', () => {
     expect(older.some(exit => exit.point.x < -3)).toBe(true);
     expect(older.some(exit => exit.point.x > 3)).toBe(true);
     expect(older.find(exit => exit.point.x < 0)!.travel).toBeGreaterThan(9);
-    expect(memory.focus(2.1)!.x).toBeLessThan(0);
+    // Newly reachable alternatives alone do not force a periodic gaze switch.
+    expect(memory.focus(2.1)).toEqual(nearby);
     memory.observe(observation(3.7, null));
     expect(memory.focus(3.7)).toBeNull();
     expect(memory.expectations(3.7)).toEqual([]);

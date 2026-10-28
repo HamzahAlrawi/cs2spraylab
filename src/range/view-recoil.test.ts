@@ -2,12 +2,21 @@ import {describe, expect, it} from 'vitest';
 import {DEG, STEP} from './actor-physics';
 import {defaults} from './config';
 import {Simulation} from './simulation';
-import {recoilView} from './view-recoil';
+import {CAMERA_PUNCH_FRACTION, recoilView} from './view-recoil';
 import {direction, shotDirection} from './shot-model';
 import {WeaponRecovery} from './ballistics';
 import {gameData} from './config';
 
 describe('shared camera presentation', () => {
+  it('tracks weapon recoil through the inspected native view fraction, without scaling the physical shot', () => {
+    const recoil = {yaw: .7, pitch: 3};
+    const view = recoilView(.3, .1, recoil);
+    expect(view.yaw).toBeCloseTo(.3 - .7 * DEG * CAMERA_PUNCH_FRACTION, 12);
+    expect(view.pitch).toBeCloseTo(.1 + 3 * DEG * CAMERA_PUNCH_FRACTION, 12);
+    const physical = direction(.3 - .7 * DEG, .1 + 3 * DEG);
+    expect(direction(view.yaw, view.pitch)).not.toEqual(physical);
+    expect(recoil).toEqual({yaw: .7, pitch: 3});
+  });
   it('renders recoil without feeding it back into physical aim or mouse sensitivity', () => {
     const recoil = {yaw: 2, pitch: 7};
     const shot = direction(.3 - recoil.yaw * DEG, .1 + recoil.pitch * DEG);

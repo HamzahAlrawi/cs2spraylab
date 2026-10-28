@@ -1,16 +1,24 @@
-import {UNIT, type Vec} from '../actor-physics';
+import {stanceCurve, UNIT, type Vec} from '../actor-physics';
 import type {Hitgroup} from './types';
 import {createArena} from './arena-layout';
 import type {PlacedPOI, POITheme} from './arena-pois';
 import {blocksMovement, blocksShots, environmentPieceId, resolveEnvironmentSolid, surfaceMaterial,
   type EnvironmentMetadata, type EnvironmentState, type SurfaceMaterial, type TraversalLink, type TraversalVolume} from './environment';
+import type {TerrainQueries} from '../terrain';
+import {analyticActorBodyZones, type ActorHitPose} from './actor-hitboxes';
+import type {NativeSurfaceQueries, SurfaceMaterial as NativeMaterial} from '../prefire/native-surfaces';
 
 export type PropStyle = 'plain' | 'generator' | 'pallets' | 'vent' | 'cabinet' | 'concrete-stack' | 'roadblock' | 'kiosk' | 'rack' | 'planter' | 'dock' | 'pump' | 'bench' | 'stairs' | 'ramp' | 'door' | 'glass' | 'vent-panel' | 'movable';
 export type Solid = {center: Vec; size: Vec; kind?: 'concrete' | 'cargo' | 'crate' | 'barrier'; style?: PropStyle; poiId?: string} & EnvironmentMetadata;
 export type CoverLane = {side: -1 | 1; anchor: Vec; edge: Vec; retreat: Vec;
-  axis?: {x: number; z: number}; role?: 'entry' | 'flank' | 'camp' | 'offAngle'};
+  axis?: {x: number; z: number}; role?: 'entry' | 'flank' | 'camp' | 'offAngle'; watch?: Vec};
 export type Arena = {minX: number; maxX: number; minZ: number; maxZ: number; solids: Solid[]; lanes?: CoverLane[]; design?: string; seed?: number; pois?: PlacedPOI[]; poiTheme?: POITheme;
-  traversalVolumes?: TraversalVolume[]; traversalLinks?: TraversalLink[]};
+  spawns?: {player: ArenaSpawn; bots: ArenaSpawn[]};
+  tactical?: {entry: Vec; watchPoints: Vec[]; searchPoints: Vec[]};
+  roundSetup?: {course: string; start: number; holds: string[]};
+  traversalVolumes?: TraversalVolume[]; traversalLinks?: TraversalLink[];
+  native?: TerrainQueries & NativeSurfaceQueries & {build?: string; collisionSha256?: string}};
+export type ArenaSpawn = {feet: Vec; yaw: number; pitch?: number; crouched?: boolean; lane?: number};
 export const testArena = (): Arena => ({minX: -12, maxX: 12, minZ: -20, maxZ: 12, solids: []});
 
 export function duelArena(seed: number, scale = 1, theme?: POITheme): Arena {
@@ -36,7 +44,8 @@ const intersects = (x: number, z: number, feet: number, height: number, solid: S
 export function canFitInArena(position: Vec, feet: number, height: number, arena: Arena, state?: EnvironmentState) {
   return position.x >= arena.minX + 16 * UNIT && position.x <= arena.maxX - 16 * UNIT &&
     position.z >= arena.minZ + 16 * UNIT && position.z <= arena.maxZ - 16 * UNIT &&
-    !arena.solids.some((solid, index) => intersects(position.x, position.z, feet, height, resolveEnvironmentSolid(solid, index, state)));
+    !arena.solids.some((solid, index) => intersects(position.x, position.z, feet, height, resolveEnvironmentSolid(solid, index, state))) &&
+    (!arena.native || arena.native.fits(position, feet, height));
 }
 
 export function moveInArena(from: Vec, desired: Vec, feet: number, height: number, arena: Arena, state?: EnvironmentState): Vec {
@@ -151,36 +160,96 @@ function raySphere(origin: Vec, direction: Vec, center: Vec, radius: number, max
   return distance <= maxDistance ? distance : Infinity;
 }
 
-export function traceActor(origin: Vec, direction: Vec, feet: Vec, crouch: boolean | number, maxDistance = Infinity) {
+/** Exact finite-segment capsule, retaining the physical exit beyond range. */
+export function rayCapsuleInterval(origin: Vec, direction: Vec, point0: Vec, point1: Vec, radius: number, maxDistance = Infinity) {
+  if (!validRay(origin, direction, maxDistance) || !Number.isFinite(radius) || radius <= 0 ||
+    ![point0.x, point0.y, point0.z, point1.x, point1.y, point1.z].every(Number.isFinite)) return undefined;
+  const bx = point1.x - point0.x, by = point1.y - point0.y, bz = point1.z - point0.z;
+  const ox = origin.x - point0.x, oy = origin.y - point0.y, oz = origin.z - point0.z;
+  const baba = bx * bx + by * by + bz * bz, bard = bx * direction.x + by * direction.y + bz * direction.z;
+  const baoa = bx * ox + by * oy + bz * oz, dodo = direction.x ** 2 + direction.y ** 2 + direction.z ** 2;
+  const rdoa = direction.x * ox + direction.y * oy + direction.z * oz, oaoa = ox * ox + oy * oy + oz * oz;
+  let near = Infinity, far = -Infinity;
+  const accept = (t: number) => {if (t >= 0) {near = Math.min(near, t); far = Math.max(far, t);}};
+  const a = baba * dodo - bard * bard, b = baba * rdoa - baoa * bard, c = baba * (oaoa - radius * radius) - baoa * baoa;
+  if (a > 1e-12) {
+    const discriminant = b * b - a * c;
+    if (discriminant >= 0) {
+      const root = Math.sqrt(discriminant);
+      for (const t of [(-b - root) / a, (-b + root) / a]) {
+        const projected = baoa + t * bard;
+        if (projected >= 0 && projected <= baba) accept(t);
+      }
+    }
+  }
+  for (const endpoint of [0, 1]) {
+    const x = ox - bx * endpoint, y = oy - by * endpoint, z = oz - bz * endpoint;
+    const halfB = x * direction.x + y * direction.y + z * direction.z;
+    const discriminant = halfB * halfB - dodo * (x * x + y * y + z * z - radius * radius);
+    if (discriminant < 0) continue;
+    const root = Math.sqrt(discriminant);
+    for (const t of [(-halfB - root) / dodo, (-halfB + root) / dodo]) {
+      const projected = baoa + t * bard;
+      if (endpoint === 0 ? projected <= 0 : projected >= baba) accept(t);
+    }
+  }
+  const projection = baba > 0 ? Math.max(0, Math.min(1, baoa / baba)) : 0;
+  const inside = (ox - bx * projection) ** 2 + (oy - by * projection) ** 2 + (oz - bz * projection) ** 2 <= radius * radius;
+  if (inside) near = 0;
+  return Number.isFinite(near) && far >= near && near <= maxDistance ? {entryDistance: near, exitDistance: far} : undefined;
+}
+
+// The native pose leans its head forward, especially when ducked. These anchors
+// are calibrated to the imported actor; they are not native animated hitboxes.
+export function actorHeadPoint(feet: Vec, crouch: boolean | number, yaw?: number): Vec {
+  const amount = typeof crouch === 'boolean' ? Number(crouch) : Math.max(0, Math.min(1, crouch));
+  if (yaw === undefined) return {x: feet.x, y: feet.y + 1.62 - .45 * amount, z: feet.z};
+  const blend = stanceCurve(amount), forward = (4.5 + 3.5 * blend) * UNIT;
+  return {x: feet.x - Math.sin(yaw) * forward, y: feet.y + (64 - 17 * blend) * UNIT,
+    z: feet.z - Math.cos(yaw) * forward};
+}
+
+export function traceActor(origin: Vec, direction: Vec, feet: Vec, crouch: boolean | number, maxDistance = Infinity, yaw?: number, pose?: ActorHitPose) {
+  if (pose) {
+    let closest = {distance: Infinity, group: undefined as Hitgroup | undefined};
+    let neck = Infinity;
+    for (const capsule of pose.capsules) {
+      const interval = rayCapsuleInterval(origin, direction, capsule.point0, capsule.point1, capsule.radius, Math.min(maxDistance, closest.distance));
+      if (!interval) continue;
+      if (capsule.neck) neck = Math.min(neck, interval.entryDistance);
+      else if (interval.entryDistance < closest.distance) closest = {distance: interval.entryDistance, group: capsule.group};
+    }
+    // Valve's neck pass-through rule is specific to neck -> head. Never grant
+    // general head priority through nearer arms/chest, cover, or another actor.
+    if (neck < closest.distance) return {distance: neck, group: closest.group === 'head' ? 'head' as const : 'chest' as const};
+    return closest;
+  }
   // Analytic hit zones share the movement stance fraction; visual animation is separate.
-  const base = feet.y;
-  const fraction = typeof crouch === 'boolean' ? Number(crouch) : Math.max(0, Math.min(1, crouch));
-  const lerp = (stand: number, duck: number) => stand + (duck - stand) * fraction;
   let closest = {distance: Infinity, group: undefined as Hitgroup | undefined};
-  const head = raySphere(origin, direction, {x: feet.x, y: base + lerp(1.62, 1.17), z: feet.z}, .135, maxDistance);
+  const head = raySphere(origin, direction, actorHeadPoint(feet, crouch, yaw), .135, maxDistance);
   if (head < closest.distance) closest = {distance: head, group: 'head'};
-  const zones: {group: Hitgroup; centerX: number; low: number; high: number; halfWidth: number; halfDepth: number}[] = [
-    {group: 'chest', centerX: 0, low: lerp(1.08, .76), high: lerp(1.47, 1.07), halfWidth: lerp(.25, .24), halfDepth: .17},
-    {group: 'stomach', centerX: 0, low: lerp(.76, .42), high: lerp(1.08, .76), halfWidth: .22, halfDepth: .17},
-    {group: 'arm', centerX: -.31, low: lerp(.79, .55), high: lerp(1.4, 1.02), halfWidth: .09, halfDepth: .15},
-    {group: 'arm', centerX: .31, low: lerp(.79, .55), high: lerp(1.4, 1.02), halfWidth: .09, halfDepth: .15},
-    {group: 'leg', centerX: 0, low: .02, high: lerp(.76, .42), halfWidth: .22, halfDepth: .15},
-  ];
-  for (const zone of zones) {
-    const x = feet.x + zone.centerX;
-    const distance = rayBox(origin, direction,
-      {x: x - zone.halfWidth, y: base + zone.low, z: feet.z - zone.halfDepth},
-      {x: x + zone.halfWidth, y: base + zone.high, z: feet.z + zone.halfDepth}, maxDistance);
+  const cy = Math.cos(yaw ?? 0), sy = Math.sin(yaw ?? 0), dx = origin.x - feet.x, dz = origin.z - feet.z;
+  const localOrigin = {x: dx * cy - dz * sy, y: origin.y - feet.y, z: dx * sy + dz * cy};
+  const localDirection = {x: direction.x * cy - direction.z * sy, y: direction.y,
+    z: direction.x * sy + direction.z * cy};
+  for (const zone of analyticActorBodyZones(crouch)) {
+    const distance = rayBox(localOrigin, localDirection,
+      {x: zone.centerX - zone.halfWidth, y: zone.low, z: -zone.halfDepth},
+      {x: zone.centerX + zone.halfWidth, y: zone.high, z: zone.halfDepth}, maxDistance);
     if (distance < closest.distance) closest = {distance, group: zone.group};
   }
   return closest;
 }
 
-export type SolidTrace = {distance: number; exitDistance: number; surfaceId: number; pieceId?: string; material?: SurfaceMaterial;
+export type SolidTrace = {distance: number; exitDistance: number; surfaceId: number; pieceId?: string; material?: NativeMaterial;
+  source?: 'native' | 'authored';
   entry?: Vec; exit?: Vec; normal?: Vec; exitNormal?: Vec; thickness: number};
 export function traceSolid(origin: Vec, direction: Vec, arena: Arena, maxDistance = Infinity, state?: EnvironmentState): SolidTrace {
   let closest: SolidTrace = {distance: Infinity, exitDistance: Infinity, surfaceId: -1, thickness: 0};
   if (!validRay(origin, direction, maxDistance)) return closest;
+  const native = arena.native?.ray(origin, direction, maxDistance);
+  if (native) closest = {distance: native.distance, exitDistance: native.distance, surfaceId: native.surfaceId, source: 'native',
+    normal: native.normal, entry: pointOnRay(origin, direction, native.distance), thickness: Infinity, material: native.surface?.material};
   for (let index = 0; index < arena.solids.length; index++) {
     const solid = resolveEnvironmentSolid(arena.solids[index], index, state);
     if (!blocksShots(solid)) continue;
@@ -196,7 +265,7 @@ export function traceSolid(origin: Vec, direction: Vec, arena: Arena, maxDistanc
 }
 
 function traceFromInterval(origin: Vec, direction: Vec, solid: Solid, index: number, interval: RayInterval): SolidTrace {
-  return {distance: interval.entryDistance, exitDistance: interval.exitDistance, surfaceId: index, pieceId: environmentPieceId(solid, index),
+  return {distance: interval.entryDistance, exitDistance: interval.exitDistance, surfaceId: index, source: 'authored', pieceId: environmentPieceId(solid, index),
     material: surfaceMaterial(solid), entry: pointOnRay(origin, direction, interval.entryDistance), exit: pointOnRay(origin, direction, interval.exitDistance),
     normal: interval.entryNormal, exitNormal: interval.exitNormal,
     thickness: (interval.exitDistance - interval.entryDistance) * Math.hypot(direction.x, direction.y, direction.z)};
@@ -210,7 +279,8 @@ export function traceSolidEntries(origin: Vec, direction: Vec, arena: Arena, max
   }).sort((a, b) => a.distance - b.distance || a.surfaceId - b.surfaceId);
 }
 
-export function materialForSurface(arena: Arena, surfaceId: number): SurfaceMaterial | undefined {
+export function materialForSurface(arena: Arena, surfaceId: number): NativeMaterial | undefined {
+  if (arena.native) return arena.native.materialForSurface?.(surfaceId)?.material;
   const solid = arena.solids[surfaceId];
   return solid ? surfaceMaterial(solid) : undefined;
 }

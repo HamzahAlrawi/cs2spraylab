@@ -6,10 +6,12 @@ import { clone as cloneSkeleton } from 'three/examples/jsm/utils/SkeletonUtils.j
 import { Settings, MeasuredProfile, Weapon, gameData } from './config';
 import { DEG, direction, Simulation, Shot, Vec, VERTICAL_FOV, TARGET_Z, type Result } from './simulation';
 import { RangeAudio } from './audio';
-import { requestRawLock } from './input';
+import { bindGameplayWheel, requestRawLock } from './input';
+import {actionsForCode, ignoreGameplayKey, isEditingTarget, movementControls} from './controls';
+import {mouseCountScale} from './input-sensitivity';
 import { VIEWMODEL_FOV, VIEWMODEL_OFFSET, viewmodelViewport } from './viewmodel';
 import { GUIDE_COLORS, SprayDemonstration } from './spray-demonstration';
-import {type Equipment, type Slot} from './equipment';
+import {equipmentControlSlot, type Equipment, type Slot} from './equipment';
 import {DrillScenery} from './drill-scene';
 import {HEAD_HEIGHT, peekDirection, type DrillMetrics, type Exposure} from './drills';
 import {guidanceAngles} from './guidance';
@@ -30,6 +32,9 @@ import {resolveBulletRay,type PenetrationSolid,type SurfaceContact} from './duel
 import {resolveDamage} from './duel/damage';
 import {equipmentStats} from './equipment';
 import {AcousticScene} from './spatial-audio';
+import {measureRangeShot} from './range-coaching';
+import {prewarmShaders, disposeWarmRenderer} from './shader-warmup';
+import {WeaponPreloader} from './weapon-preloader';
 
 export type RangeStatus = {
   weapon: Weapon;
@@ -97,6 +102,9 @@ export class RangeEngine {
   clearInput?: () => void;
   modelCache = new Map<Equipment, THREE.Object3D>();
   viewAnimations = new Map<Equipment, ViewAnimation>();
+  private equipping?: Equipment;
+  private pendingInspect?: Equipment;
+  private equipPresentation?: object;
   private wasReloading = false;
   private scope: ScopeOverlay;
   private cosmeticKey = '';
@@ -104,7 +112,8 @@ export class RangeEngine {
   private xpAttempt: string | null = null;
   private xpRevision = 0;
   private xpTargets = new Set<number>();
-  loading = new Map<Equipment, Promise<THREE.Object3D>>();
+  loading = new Map<Equipment, Promise<THREE.Object3D | undefined>>();
+  private readonly weaponPreloader = new WeaponPreloader();
   revision = 0; kick = 0; hitTime = 0;
   markerGeometry = new THREE.SphereGeometry(.018, 6, 4);
   missMaterial = new THREE.MeshBasicMaterial({ color: '#ff6259' });
@@ -143,7 +152,7 @@ export class RangeEngine {
     this.sim.onSound = landing => this.audio.playStep(this.sim.settings.volume * .45, 0, landing);
     this.observer = new ResizeObserver(() => this.resize()); this.observer.observe(host);
     this.bindInput(); this.resize();
-    void this.loadTarget(); void this.setWeapon(loadoutWeapon(settings));
+    void this.loadTarget(); void this.setWeapon(loadoutWeapon(settings)).then(() => this.preloadWeapons());
     this.frame = requestAnimationFrame(t => this.tick(t));
   }
   private box(size: number[], pos: number[], mat: THREE.Material, solid = true) {
@@ -256,14 +265,14 @@ export class RangeEngine {
     this.scene.updateMatrixWorld(true);
     batchStaticMeshes(this.scene, new Set(this.solids));
   }
-  syncTargets() {
+  syncTargets(targetX?:number) {
     if (this.drillRevision !== this.sim.drillRevision) {
       this.drillRevision = this.sim.drillRevision; this.drillScenery.setScenario(this.sim.drill?.scenario); this.clearImpacts();
       if (this.renderer) this.renderer.shadowMap.needsUpdate = true;
     }
     this.targets.forEach((target, i) => {
       target.visible = i === 0 || this.sim.settings.mode === 'transfer';
-      target.position.copy(vector(this.sim.targetPosition(i)));
+      target.position.copy(vector(this.sim.targetPosition(i,targetX)));
       target.updateMatrixWorld(true);
     });
   }
@@ -294,6 +303,7 @@ export class RangeEngine {
         }));
       });
       this.loadedTarget = true; this.updateAssetStatus();
+      if (!this.sim.active && this.renderer) prewarmShaders(this.renderer,this.scene,this.camera);
       if (this.renderer) this.renderer.shadowMap.needsUpdate = true;
     } catch { if (!this.disposed) { this.assetStatus = 'Target asset missing'; this.onError('The player model could not load. Restore the local game assets with npm run assets:build.'); } }
   }
@@ -303,15 +313,22 @@ export class RangeEngine {
   async equip(slot: Slot) {
     if (this.sim.active) this.renderer.domElement.focus({preventScroll:true});
     if (!this.sim.equip(slot)) return;
+    const id = this.sim.equipped;
+    const request = {}; this.equipPresentation = request;
+    this.equipping = id; this.pendingInspect = undefined;
     this.updateDemonstration();
     void this.audio.unlock(this.sim.equipped);
-    await this.setWeapon(this.sim.equipped);
-    this.viewAnimations.get(this.sim.equipped)?.playDraw(Math.max(.01, this.sim.equipReadyAt - this.sim.time));
-    this.audio.playAction('range-player',this.sim.equipped,'draw',this.sim.time,{local:true,volume:this.sim.settings.volume*.5,duration:this.sim.stats.deploy});
+    await this.setWeapon(id);
+    if (this.disposed || this.sim.equipped !== id || this.equipPresentation !== request) return;
+    this.equipping = undefined;
+    this.viewAnimations.get(id)?.playDraw(Math.max(.01, this.sim.equipReadyAt - this.sim.time));
+    if (this.pendingInspect === id) {this.pendingInspect = undefined; this.inspect();}
+    else this.audio.playAction('range-player',id,'draw',this.sim.time,{local:true,volume:this.sim.settings.volume*.5,duration:this.sim.stats.deploy});
   }
-  inspect() {if (!this.sim.firing && !this.sim.reloadState.active && this.sim.time >= this.sim.equipReadyAt) {
-    this.viewAnimations.get(this.sim.equipped)?.playInspect();
-    this.audio.playAction('range-player',this.sim.equipped,'inspect',this.sim.time,{local:true,volume:this.sim.settings.volume*.5});
+  inspect() {if (!this.sim.firing && !this.sim.reloadState.active) {
+    if (this.equipping === this.sim.equipped) {this.pendingInspect = this.sim.equipped; return;}
+    if (this.viewAnimations.get(this.sim.equipped)?.playInspect())
+      this.audio.playAction('range-player',this.sim.equipped,'inspect',this.sim.time,{local:true,volume:this.sim.settings.volume*.5});
   }}
   secondary(held = false) {
     if (this.sim.firing || this.sim.reloadState.active) return;
@@ -322,45 +339,58 @@ export class RangeEngine {
       if(zoom!==this.sim.actions.zoom)this.audio.playScope(this.sim.equipped,!!this.sim.actions.zoom,this.sim.settings.volume*.4);
     }
   }
+  private async prepareWeapon(id: Equipment) {
+    const cached = this.modelCache.get(id);
+    if (cached) return cached;
+    if (!this.loading.has(id)) {
+      const profile = this.progression?.getSnapshot().profile;
+      const asset = profile ? cosmeticAsset(profile, id) : id;
+      const cosmeticRevision = this.cosmeticRevision;
+      const pending = new GLTFLoader().loadAsync(`/models/view-${asset}.glb`).then(async ({ scene: model, animations }) => {
+        prepareNativeViewAssembly(model);
+        try {if (profile) await applyCosmetic(model, profile, id);}
+        catch {this.disposeObject(model); throw new Error('Cosmetic could not load');}
+        if (this.disposed || cosmeticRevision !== this.cosmeticRevision) { this.disposeObject(model); return; }
+        const wrapper = new THREE.Group();
+        model.rotation.y = Math.PI;
+        model.traverse(o => { if (o instanceof THREE.Mesh) for (const m of Array.isArray(o.material) ? o.material : [o.material]) {
+          if (m instanceof THREE.MeshStandardMaterial) {
+            m.envMapIntensity = .3;
+            // The imported roughness map already contains the native surface values.
+            if (m.roughnessMap) m.roughness = 1;
+            if (/sleeve|glove|bare_arm/.test(m.name)) { m.metalness = 0; m.roughness = .9; m.roughnessMap = null; m.metalnessMap = null; }
+          }
+        } });
+        wrapper.add(model);
+        this.viewAnimations.set(id, new ViewAnimation(model, animations));
+        this.viewMuzzles.set(id, id === 'elite' ? {left: muzzleAnchor(model, 'left'), right: muzzleAnchor(model, 'right')} : {main: muzzleAnchor(model)});
+        this.modelCache.set(id, wrapper);
+        this.viewScene.add(wrapper);
+        prewarmShaders(this.renderer, this.viewScene, this.viewCamera);
+        wrapper.removeFromParent();
+        return wrapper;
+      }).finally(() => { if (cosmeticRevision === this.cosmeticRevision) this.loading.delete(id); });
+      this.loading.set(id, pending);
+    }
+    return this.loading.get(id)!;
+  }
+  private preloadWeapons() {
+    if (this.disposed) return;
+    const settings = this.sim.settings;
+    this.weaponPreloader.start([...(settings.primaryEnabled ? [settings.weapon] : []), settings.sidearm, 'knife'], async id => {
+      await this.prepareWeapon(id); this.trimModelCache();
+    }, () => !this.disposed && !this.sim.active);
+  }
   async setWeapon(id: Equipment) {
     const revision = ++this.revision;
     this.assetStatus = 'Loading weapon';
-    this.weaponRoot.clear();
     try {
-      let model = this.modelCache.get(id);
-      if (!model) {
-        if (!this.loading.has(id)) {
-          const profile = this.progression?.getSnapshot().profile;
-          const asset = profile ? cosmeticAsset(profile, id) : id;
-          const cosmeticRevision = this.cosmeticRevision;
-          const pending = new GLTFLoader().loadAsync(`/models/view-${asset}.glb`).then(async ({ scene: model, animations }) => {
-            prepareNativeViewAssembly(model);
-            try {if (profile) await applyCosmetic(model, profile, id);}
-            catch {this.disposeObject(model); throw new Error('Cosmetic could not load');}
-            if (this.disposed || cosmeticRevision !== this.cosmeticRevision) { this.disposeObject(model); return model; }
-            const wrapper = new THREE.Group();
-            model.rotation.y = Math.PI;
-            model.traverse(o => { if (o instanceof THREE.Mesh) for (const m of Array.isArray(o.material) ? o.material : [o.material]) {
-              if (m instanceof THREE.MeshStandardMaterial) {
-                m.envMapIntensity = .3;
-                // The imported roughness map already contains the native surface values.
-                if (m.roughnessMap) m.roughness = 1;
-                if (/sleeve|glove|bare_arm/.test(m.name)) { m.metalness = 0; m.roughness = .9; m.roughnessMap = null; m.metalnessMap = null; }
-              }
-            } });
-            wrapper.add(model);
-            this.viewAnimations.set(id, new ViewAnimation(model, animations));
-            this.viewMuzzles.set(id, id === 'elite' ? {left: muzzleAnchor(model, 'left'), right: muzzleAnchor(model, 'right')} : {main: muzzleAnchor(model)});
-            this.modelCache.set(id, wrapper);
-            return wrapper;
-          }).finally(() => { if (cosmeticRevision === this.cosmeticRevision) this.loading.delete(id); });
-          this.loading.set(id, pending);
-        }
-        model = await this.loading.get(id)!;
-      }
+      const model = this.modelCache.get(id) ?? await this.prepareWeapon(id);
       if (this.disposed) return;
       if (revision !== this.revision) { this.trimModelCache(); return; }
+      if (!model) return;
       this.modelCache.delete(id); this.modelCache.set(id, model);
+      this.weaponRoot.clear();
       this.weaponRoot.add(model);
       this.weaponRoot.position.set(0, 0, 0);
       this.weaponRoot.rotation.set(0, 0, 0);
@@ -377,18 +407,20 @@ export class RangeEngine {
     const key = JSON.stringify(this.progression?.getSnapshot().profile.equipped);
     if (key === this.cosmeticKey) return;
     this.cosmeticKey = key; this.cosmeticRevision++; this.revision++;
+    this.weaponPreloader.cancel();
     this.weaponRoot.clear(); this.loading.clear();
     this.viewAnimations.forEach(animation => animation.dispose()); this.viewAnimations.clear();
     this.viewMuzzles.clear(); this.viewFlashes.clear();
     this.modelCache.forEach(model => this.disposeObject(model)); this.modelCache.clear();
     await this.setWeapon(this.sim.equipped);
+    this.preloadWeapons();
   }
   settleProgression(result: Result) {
     if (!this.xpAttempt) return;
     const drill = result.drill;
     this.progression?.completeDrill(this.xpAttempt, {completion: 'completed',
       objectiveCompleted: drill ? drill.passed : result.shots >= 6 && result.hits / result.shots >= .5,
-      score: drill?.movementScore ?? result.hits / Math.max(1, result.shots) * 100,
+      score: result.coaching?.score ?? drill?.movementScore ?? result.hits / Math.max(1, result.shots) * 100,
       shots: result.shots, hits: result.hits, activeSeconds: result.seconds,
       movementReps: drill?.counterStrafed ? 1 : 0, targetsHit: this.xpTargets.size,
     }, String(this.xpRevision));
@@ -403,7 +435,7 @@ export class RangeEngine {
     // Embedded glove textures are duplicated per GLB; keep only three GPU assemblies.
     for (const [id, model] of this.modelCache) {
       if (this.modelCache.size <= 3) break;
-      if (id === this.sim.equipped) continue;
+      if (id === this.sim.equipped || model.parent === this.weaponRoot) continue;
       this.modelCache.delete(id); this.viewAnimations.get(id)?.dispose(); this.viewAnimations.delete(id); this.disposeObject(model);
       this.viewMuzzles.delete(id);
     }
@@ -434,6 +466,7 @@ export class RangeEngine {
     this.renderer.shadowMap.enabled = qualityPolicy(settings.quality).shadows;
     if (changedWeapon) void this.setWeapon(loadoutWeapon(settings));
     else if (changedSidearm && this.sim.slot === 2) void this.setWeapon(settings.sidearm);
+    if (changedWeapon || changedSidearm) this.preloadWeapons();
   }
   updateDemonstration() {
     const weapon = this.sim.equipped === 'knife' ? loadoutWeapon(this.sim.settings) : this.sim.equipped;
@@ -484,9 +517,10 @@ export class RangeEngine {
     const animationAmmo = this.sim.loadedAmmo;
     this.viewAnimations.get(this.sim.equipped)?.playFire(this.sim.equipped, {side:animationAmmo % 2 ? 'right' : 'left',lastShot:animationAmmo===0,
       alternate:this.sim.actions.alternateFire, zoomed:this.sim.actions.zoom > 0, ...(['awp','ssg08'].includes(this.sim.equipped) ? {duration:this.sim.stats.cycle} : {})});
-    this.syncTargets();
+    this.syncTargets(shot.targetX);
     const expectedIndex=this.sim.targetForShot(shot.index);
     const expectedTarget = this.targets[expectedIndex];
+    const targetAlive = this.sim.settings.mode !== 'transfer' || this.sim.targetHealth[expectedIndex] > 0;
     const meshes=this.targetModels.filter(model=>model.parent?.visible).flatMap(scoringMeshes);
     const covers=this.physicalCover();
     const rays=(shot.pelletDirections??[shot.direction]).map(dir=>{
@@ -516,7 +550,7 @@ export class RangeEngine {
       const ray=resolveBulletRay({origin:shot.origin,direction:dir,range:shot.maxDistance,
         equipment:this.sim.equipped,stats:this.sim.stats,arena:{solids:covers},
         actors:crossings.map(crossing=>({id:crossing.targetIndex,side:'target',alive:true,feet:0,
-          position:this.sim.targetPosition(crossing.targetIndex),armor:0,helmet:false})),
+          position:this.sim.targetPosition(crossing.targetIndex,shot.targetX),armor:0,helmet:false})),
         physicalActorIntervals:crossings.map(crossing=>({actorId:crossing.targetIndex,entry:crossing.physical.distance,
           exit:crossing.exit,group:crossing.head?'head':'chest'}))});
       const hits=ray.hits.map(hit=>{
@@ -564,7 +598,11 @@ export class RangeEngine {
     const t = (target.position.z - shot.origin.z) / shot.direction.z;
     this.sim.samples.push({ x: t > 0 ? shot.origin.x + shot.direction.x * t - target.position.x : 100,
       y: t > 0 ? shot.origin.y + shot.direction.y * t - target.position.y - HEAD_HEIGHT : 100, hit: !!hit, head,
-      bullet: this.sim.drill ? this.sim.drill.shots+1 : shot.index + 1 });
+      bullet: this.sim.drill ? this.sim.drill.shots+1 : shot.index + 1,
+      ...measureRangeShot({origin: shot.origin, targetPoint: {x: target.position.x, y: target.position.y + HEAD_HEIGHT, z: target.position.z},
+        yaw: this.sim.yaw, pitch: this.sim.pitch, recoil: shot.recoil, velocity: this.sim.velocity, stats: shot.accuracy?.stats ?? this.sim.stats,
+        walking: shot.accuracy?.walking ?? this.sim.input.walk, grounded: shot.accuracy?.grounded ?? this.sim.grounded, at: shot.at, target: expectedIndex,
+        wrongTarget: !!physicalHit && !hit, targetAlive})});
     this.hitTime = .45;
     this.hitmarker.style.color = head ? '#ffdc59' : hit ? '#51edee' : '#ff7469';
     this.hitCaption.textContent = head ? 'HEADSHOT' : hit ? 'BODY HIT' : physicalHit ? 'WRONG TARGET' : 'MISS';
@@ -607,7 +645,7 @@ export class RangeEngine {
       if (mode === 'drag' || document.pointerLockElement !== this.renderer.domElement) {
         this.pause(); this.inputStatus = 'Mouse capture blocked. Click Enter range again.'; return;
       }
-      this.inputStatus = mode === 'raw' ? 'Raw mouse' : 'Standard mouse';
+      this.inputStatus = mode === 'raw' ? 'Raw mouse (verify cm/360)' : 'Standard mouse (raw unverified)';
     } finally {
       if (revision === this.enterRevision) this.entering = false;
       if ((this.disposed || !this.sim.active) && document.pointerLockElement === this.renderer.domElement) document.exitPointerLock();
@@ -624,6 +662,14 @@ export class RangeEngine {
   }
   bindInput() {
     const canvas = this.renderer.domElement;
+    this.cleanup.push(bindGameplayWheel(canvas, () => this.sim.settings.controls,
+      () => this.sim.active && !this.entering, actions => {
+        if (actions.includes('jump')) this.sim.input.jumpPressed = true;
+        for (const action of actions) {const slot = equipmentControlSlot(action, this.sim.slot); if (slot) void this.equip(slot);}
+        if (actions.includes('lastWeapon')) void this.equip(this.sim.previousSlot);
+        if (actions.includes('reload')) this.sim.reload(false);
+        if (actions.includes('inspect')) this.inspect();
+      }));
     const listen = (target: EventTarget, type: string, fn: EventListener, options?: AddEventListenerOptions) => {
       target.addEventListener(type, fn, options); this.cleanup.push(() => target.removeEventListener(type, fn, options));
     };
@@ -648,9 +694,10 @@ export class RangeEngine {
     }) as EventListener);
     listen(document, 'pointermove', ((e: PointerEvent) => {
       if (!this.sim.active) return;
-      if (document.pointerLockElement === canvas && e.pointerType === 'mouse') this.sim.aim(e.movementX, e.movementY);
+      const countScale = e.pointerType === 'mouse' ? mouseCountScale(this.sim.settings, this.sim.actions.zoom > 0) : 1;
+      if (document.pointerLockElement === canvas && e.pointerType === 'mouse') this.sim.aim(e.movementX * countScale, e.movementY * countScale);
       else if (e.pointerId === pointer) {
-        this.sim.aim(e.clientX - lastX, e.clientY - lastY, e.pointerType !== 'mouse');
+        this.sim.aim((e.clientX - lastX) * countScale, (e.clientY - lastY) * countScale, e.pointerType !== 'mouse');
         lastX = e.clientX; lastY = e.clientY;
       }
     }) as EventListener);
@@ -664,27 +711,35 @@ export class RangeEngine {
     listen(canvas, 'contextmenu', e => e.preventDefault());
     listen(document, 'pointerlockchange', (() => {
       if (this.entering) return;
-      if (document.pointerLockElement !== canvas && this.inputStatus !== 'Touch' && this.inputStatus !== 'Drag aim') this.pause();
+      if (document.pointerLockElement !== canvas && this.inputStatus !== 'Touch' && !this.inputStatus.startsWith('Drag aim')) this.pause();
     }) as EventListener);
     listen(document, 'fullscreenchange', (() => {
       if (this.shortcuts.protected && !document.fullscreenElement) this.pause();
     }) as EventListener);
     const keys = new Set<string>();
     const update = () => {
-      this.sim.input = { ...this.sim.input, forward: +keys.has('KeyW') - +keys.has('KeyS'), side: +keys.has('KeyD') - +keys.has('KeyA'), walk: keys.has('ShiftLeft') || keys.has('ShiftRight'), crouch: keys.has('ControlLeft') || keys.has('ControlRight') || keys.has('KeyC'), jump: keys.has('Space') };
+      this.sim.input = { ...this.sim.input, ...movementControls(this.sim.settings.controls, keys) };
     };
     this.clearInput = () => { keys.clear(); pointer = null;this.sim.input.jumpPressed=false;this.sim.reloadHeld=false; update(); };
     listen(window, 'keydown', ((e: KeyboardEvent) => {
-      if (!this.sim.active || (e.target instanceof HTMLElement && e.target.matches('input,select,textarea,button'))) return;
-      if (['KeyW', 'KeyA', 'KeyS', 'KeyD', 'ShiftLeft', 'ShiftRight', 'ControlLeft', 'ControlRight', 'KeyC', 'Space'].includes(e.code)) { e.preventDefault(); keys.add(e.code); update(); }
-      if (!e.repeat && ['Digit1','Digit2','Digit3','Digit4'].includes(e.code)) { e.preventDefault(); void this.equip(+e.code.slice(-1) as Slot); }
-      if(!e.repeat&&e.code==='Space')this.sim.input.jumpPressed=true;
-      if (!e.repeat && e.code === 'KeyQ') { e.preventDefault(); void this.equip(this.sim.previousSlot); }
-      if (!e.repeat && e.code === 'KeyR') {this.sim.reloadHeld=true;this.sim.reload(true);}
-      if (!e.repeat && e.code === 'KeyF') {e.preventDefault(); this.inspect();}
-      if (e.code === 'Escape') this.pause();
+      if (!this.sim.active || ignoreGameplayKey(e)) return;
+      if (e.code === 'Escape') {this.pause(); return;}
+      const actions = actionsForCode(this.sim.settings.controls, e.code);
+      if (!actions.length) return;
+      e.preventDefault(); keys.add(e.code); update();
+      if (e.repeat) return;
+      if (actions.includes('jump')) this.sim.input.jumpPressed = true;
+      for (const action of actions) {const slot = equipmentControlSlot(action, this.sim.slot); if (slot) void this.equip(slot);}
+      if (actions.includes('lastWeapon')) void this.equip(this.sim.previousSlot);
+      if (actions.includes('reload')) {this.sim.reloadHeld = true; this.sim.reload(true);}
+      if (actions.includes('inspect')) this.inspect();
     }) as EventListener);
-    listen(window, 'keyup', ((e: KeyboardEvent) => { keys.delete(e.code);if(e.code==='KeyR')this.sim.reloadHeld=false; update(); }) as EventListener);
+    listen(window, 'keyup', ((e: KeyboardEvent) => {
+      keys.delete(e.code);
+      if (actionsForCode(this.sim.settings.controls, e.code).includes('reload')) this.sim.reloadHeld = false;
+      update();
+    }) as EventListener);
+    listen(window, 'focusin', (e => {if (this.sim.active && isEditingTarget(e.target)) this.pause();}) as EventListener);
     const blur = () => { keys.clear(); pointer = null; if (!this.entering || document.hidden) this.pause(); };
     listen(window, 'blur', blur);
     listen(document, 'visibilitychange', () => { if (document.hidden) blur(); });
@@ -705,13 +760,15 @@ export class RangeEngine {
   tick(timestamp: number) {
     if (this.disposed) return;
     this.frame = requestAnimationFrame(t => this.tick(t));
+    this.metrics.setVisible(!document.hidden);
     if (document.hidden || !this.pacer.ready(timestamp, this.sim.active ? this.sim.settings.frameLimit : 15)) {
       if (document.hidden) this.previous = timestamp;
       return;
     }
     const cpuStart = performance.now();
     const policy = qualityPolicy(this.sim.settings.quality);
-    const dt = this.previous ? Math.min((timestamp - this.previous) / 1000, .25) : 0;
+    const frameDt = this.previous ? (timestamp - this.previous) / 1000 : 0;
+    const dt = Math.min(frameDt, .25);
     this.previous = timestamp; this.elapsed += dt;
     this.sim.advance(dt); this.syncTargets();
     const activeLane = this.sim.firing ? this.sim.targetForShot() : 0;
@@ -766,7 +823,7 @@ export class RangeEngine {
     this.weaponRoot.rotation.x = this.kick * (this.sim.slot===3 ? 0 : .02) + view.weaponPitch;
     this.weaponRoot.rotation.y = view.weaponYaw;
     this.weaponRoot.rotation.z = 0;
-    const r = this.sim.settings.follow ? this.sim.recoil : { yaw: 0, pitch: 0 };
+    const r = this.sim.settings.follow ? visualRecoil : { yaw: 0, pitch: 0 };
     const point = new THREE.Vector3(-Math.tan(-this.sim.yaw + r.yaw * DEG), 0, -1);
     // Project the recoil-only direction with the same camera, excluding random spread.
     const yaw = this.sim.yaw - r.yaw * DEG, pitch = this.sim.pitch + r.pitch * DEG;
@@ -784,7 +841,7 @@ export class RangeEngine {
       const target = this.sim.targetPosition(this.sim.targetForShot(index));
       const p = visible ? this.sim.predictedRecoil(i===1) : {yaw:0,pitch:0};
       const angles = guidanceAngles(this.sim.position, target, p,
-        this.sim.settings.follow ? this.sim.recoil : visualRecoil, this.sim.settings.follow);
+        visualRecoil, this.sim.settings.follow);
       const aim = direction(angles.yaw, angles.pitch);
       const point = vector(aim).multiplyScalar(10).add(this.camera.position).project(this.camera);
       cue.hidden = !visible || point.z > 1 || Math.abs(point.x) > .95 || Math.abs(point.y) > .88;
@@ -804,7 +861,7 @@ export class RangeEngine {
     const v = this.viewViewport; this.renderer.setViewport(v.x, v.y, v.width, v.height);
     this.renderer.render(this.viewScene, this.viewCamera);
     const oldResolution = this.metrics.adaptive;
-    if (this.metrics.sample(dt, performance.now() - cpuStart, this.sim.settings.quality === 'auto', this.sim.active, this.sim.settings.frameLimit)) {
+    if (this.metrics.sample(frameDt, performance.now() - cpuStart, this.sim.settings.quality === 'auto', this.sim.active, this.sim.settings.frameLimit)) {
       this.meter.update(this.metrics, this.renderer.getPixelRatio());
       if (oldResolution !== this.metrics.adaptive) this.resize();
     }
@@ -827,7 +884,11 @@ export class RangeEngine {
   disposeObject(root: THREE.Object3D) {
     disposeResources([root]);
   }
+  performanceReport() {return this.metrics.exportReport({quality: this.sim.settings.quality, browser: navigator.userAgent,
+    frameLimit: this.sim.settings.frameLimit, mode: this.sim.settings.mode, botCount: this.sim.drill ? 1 : this.targets.length,
+    intervalSource: 'raw', loading: 'unknown'}, true);}
   dispose() {
+    this.weaponPreloader.cancel();
     this.cancelProgression();
     this.disposed = true; this.pause(); cancelAnimationFrame(this.frame); this.observer.disconnect();
     this.cleanup.forEach(fn => fn()); this.audio.dispose();
@@ -841,6 +902,6 @@ export class RangeEngine {
     this.scope.dispose();
     this.markerGeometry.dispose(); this.missMaterial.dispose(); this.hitMaterial.dispose(); this.bodyMaterial.dispose();
     this.cues.forEach(c => c.remove()); this.hitCaption.remove();
-    this.environment?.dispose(); this.renderer.dispose(); this.renderer.domElement.remove();
+    this.environment?.dispose(); disposeWarmRenderer(this.renderer); this.renderer.domElement.remove();
   }
 }

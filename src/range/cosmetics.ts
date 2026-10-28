@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import data from './cosmetics-data.json';
+import data from './cosmetic-catalog.json';
 import {equipmentIds, equipmentNames, type Equipment} from './equipment';
 import {equippedCosmetic, type CosmeticDefinition, type ProgressionProfile} from './progression';
 import {actorCosmetics, applyGloves} from './actor-cosmetics';
@@ -7,6 +7,7 @@ import {actorCosmetics, applyGloves} from './actor-cosmetics';
 type NativeFinish = CosmeticDefinition & {map?: string | null; colors?: number[][]; style?: number; patternScale?: number; kitId?: string;
   paintMaskMap?: string; patternRotation?: number; patternOffset?: number[]; paintRoughness?: number; stockOnly?: boolean};
 const finishes = data.cosmetics as readonly NativeFinish[];
+let finishDetails:Promise<readonly NativeFinish[]>|undefined;
 export const DEFAULT_GLOVE_PREVIEW = '/textures/cosmetics/gloves-standard-preview.webp';
 const legacyLevels: Record<string,number> = {'142':10,'106':7,'137':12,'138':5,'139':6,'144':4,'939':3,'937':3,'936':6,'883':5,'568':20};
 
@@ -81,7 +82,9 @@ diffuseColor.rgb = mix(diffuseColor.rgb, ${sample}, knifeCoverage);`);
 export async function applyCosmetic(root: THREE.Object3D, profile: ProgressionProfile, equipment: Equipment) {
   await applyGloves(root, profile);
   const choice = equippedCosmetic(profile, cosmeticCatalog, equipment);
-  const finish = finishes.find(item => item.id === choice?.id);
+  if(!choice||choice.isDefault)return;
+  finishDetails??=import('./cosmetics-data.json').then(module=>module.default.cosmetics as readonly NativeFinish[]);
+  const finish = (await finishDetails).find(item => item.id === choice.id);
   if (!finish || finish.stockOnly) return;
   const knife = equipment === 'knife';
   const paint = finish.map ? await new THREE.TextureLoader().loadAsync(finish.map) : undefined;

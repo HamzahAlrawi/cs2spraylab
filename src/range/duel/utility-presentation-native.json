@@ -1,0 +1,3203 @@
+{
+  "schema": 1,
+  "build": "2000935",
+  "archiveDirectorySha256": "562972293ed7a5d40e341c4df7d6b0ee06430452694177142f0c1239dd3f2c8b",
+  "vdataResource": "scripts/weapons.vdata_c",
+  "vdataSha256": "cc04aa26fd8d4a34119df7c4b7f4f29c7ebe0c7862ce78e0a2a753642502ba0a",
+  "source": "Static compiled clips cross-checked against authored frame events and grenade graph variations.",
+  "limitations": [
+    "Sound markers are not projectile-release ID events. Do not infer gameplay launch timing from sound.",
+    "Graph transitions are audited data, not a full graph interpreter or live engine timing measurement.",
+    "Single-frame clips are poses with zero authored duration, not missing animations."
+  ],
+  "utilities": {
+    "he": {
+      "graph": "animation/graphs/viewmodel/viewmodel_grenade.vnmgraph+he.vnmgraph_c",
+      "graphSha256": "236729611449a881684073edb6f336e1c5cf7906b97723582214a4a91eb44b56",
+      "transitions": [
+        {
+          "name": "Underhand",
+          "seconds": 0,
+          "target": "23a61eef-e60e-4a5b-bf8a-3e29abfc7cc3",
+          "easing": "Linear"
+        },
+        {
+          "name": "Overhand",
+          "seconds": 0,
+          "target": "ee229e6c-9ad1-4180-9934-01f431d60fbd",
+          "easing": "Linear"
+        },
+        {
+          "name": "ReadyToThrow",
+          "seconds": 0.2,
+          "target": "3df2ffc4-57a4-4ef4-9361-357546f01245",
+          "easing": "Linear"
+        },
+        {
+          "name": "Throw",
+          "seconds": 0,
+          "target": "bc87fffb-1e27-4772-8f98-8e4e2e35ec1a",
+          "easing": "Linear"
+        },
+        {
+          "name": "Charge",
+          "seconds": 0,
+          "target": "83e9a878-8f7a-4bb8-9e6b-0957983a231c",
+          "easing": "Linear"
+        },
+        {
+          "name": "DeployOptions1",
+          "seconds": 0,
+          "target": "eacc460f-7fba-4767-8ae3-470103e6d881",
+          "easing": "Linear"
+        },
+        {
+          "name": "DeployOptions0",
+          "seconds": 0,
+          "target": "ae6bfeb5-2869-42af-acc6-2728b3dd7917",
+          "easing": "Linear"
+        },
+        {
+          "name": "Attack",
+          "seconds": 0,
+          "target": "14c5cda9-0e4f-450b-b0bb-76ad4b2cead9",
+          "easing": "Linear"
+        },
+        {
+          "name": "Deploying",
+          "seconds": 0,
+          "target": "eaabd9cd-974a-47b3-9f9b-a8f608ac2055",
+          "easing": "Linear"
+        },
+        {
+          "name": "Inspect",
+          "seconds": 0.2,
+          "target": "a521d05d-365a-4955-bbc5-fc46d3aa2f3d",
+          "easing": "Linear"
+        },
+        {
+          "name": "Idle",
+          "seconds": 0.2,
+          "target": "e573da1f-2dce-4b22-bb0d-b872992136cd",
+          "easing": "Linear"
+        }
+      ],
+      "actions": {
+        "idle": {
+          "resource": "animation/anims/viewmodel/grenade/grenade_hegrenade/idle_hegrenade.vnmclip_c",
+          "sha256": "6e400dffe8684ad617f24ae9159b00a42e522a1fe4711f46e5fa815239db4462",
+          "definitionSha256": "25721c92f5c2023a92bf337cb3a8d0d1f616b6252a0e1ca9ac685628180478f2",
+          "frames": 31,
+          "fps": 30,
+          "seconds": 1,
+          "exportedSeconds": 1,
+          "pose": false,
+          "events": [],
+          "graphReferences": [
+            {
+              "name": "idle",
+              "_class": "CNmGraphDocClipNode::CData",
+              "m_clip": "animation/anims/viewmodel/grenade/grenade_hegrenade/idle_hegrenade.vnmclip",
+              "m_flSpeedMultiplier": 1,
+              "m_nStartSyncEventOffset": 0,
+              "looping": true,
+              "fixedTime": null
+            }
+          ]
+        },
+        "draw": {
+          "resource": "animation/anims/viewmodel/grenade/grenade_hegrenade/draw_hegrenade.vnmclip_c",
+          "sha256": "f804eeafe080d71a60c4352d588343585715a806ab49fe7b4c8dec50cbd8eb3a",
+          "definitionSha256": "6769d1d0d25837f9e2ba8413ebff6138904a381181fb41bf23ed9aff5120c304",
+          "frames": 31,
+          "fps": 30,
+          "seconds": 1,
+          "exportedSeconds": 1,
+          "pose": false,
+          "events": [
+            {
+              "type": "CNmClipDocEvent_Sound",
+              "name": "Draw.Gear",
+              "frame": 0,
+              "at": 0,
+              "authoredAt": 0,
+              "duration": 0.966667,
+              "authoredDuration": 0.9666666666666667,
+              "normalized": 0,
+              "position": "EntityEyePos"
+            },
+            {
+              "type": "CNmClipDocEvent_Sound",
+              "name": "HEGrenade.Draw",
+              "frame": 2,
+              "at": 0.066667,
+              "authoredAt": 0.06666666666666667,
+              "duration": 0.4,
+              "authoredDuration": 0.4,
+              "normalized": 0.066667,
+              "position": "EntityEyePos"
+            }
+          ],
+          "graphReferences": [
+            {
+              "name": "deploy",
+              "_class": "CNmGraphDocClipNode::CData",
+              "m_clip": "animation/anims/viewmodel/grenade/grenade_hegrenade/draw_hegrenade.vnmclip",
+              "m_flSpeedMultiplier": 1,
+              "m_nStartSyncEventOffset": 0,
+              "looping": false,
+              "fixedTime": null
+            },
+            {
+              "name": "deploy",
+              "_class": "CNmGraphDocClipNode::CData",
+              "m_clip": "animation/anims/viewmodel/grenade/grenade_hegrenade/draw_hegrenade.vnmclip",
+              "m_flSpeedMultiplier": 1,
+              "m_nStartSyncEventOffset": 0,
+              "looping": false,
+              "fixedTime": null
+            }
+          ]
+        },
+        "inspect": {
+          "resource": "animation/anims/viewmodel/grenade/grenade_hegrenade/lookat01_hegrenade.vnmclip_c",
+          "sha256": "7625b8eac6931cac4a5d0b69b898735c8996383fb914b59ea24b5e857017ddfe",
+          "definitionSha256": "2dbd93d75a9af5e9fc30ed10e24a3df2336205527c8f0eb754df0a76bf7255c7",
+          "frames": 175,
+          "fps": 30,
+          "seconds": 5.8,
+          "exportedSeconds": 5.8,
+          "pose": false,
+          "events": [
+            {
+              "type": "CNmClipDocEvent_Sound",
+              "name": "Inspect.Gear.UltraSmall",
+              "frame": 0,
+              "at": 0,
+              "authoredAt": 0,
+              "duration": 1.6999974,
+              "authoredDuration": 1.7,
+              "normalized": 0,
+              "position": "EntityEyePos"
+            },
+            {
+              "type": "CNmClipDocEvent_ID",
+              "name": "WPN_INSPECT_INTRO",
+              "frame": 0,
+              "at": 0,
+              "authoredAt": 0,
+              "duration": 2.9,
+              "authoredDuration": 2.9,
+              "normalized": 0,
+              "position": null
+            },
+            {
+              "type": "CNmClipDocEvent_Sound",
+              "name": "HEGrenade.Inspect01.Handles",
+              "frame": 2,
+              "at": 0.06666520000000001,
+              "authoredAt": 0.06666666666666667,
+              "duration": 0.5000006,
+              "authoredDuration": 0.5,
+              "normalized": 0.011494,
+              "position": "EntityEyePos"
+            },
+            {
+              "type": "CNmClipDocEvent_Sound",
+              "name": "Inspect.Gear.UltraSmall",
+              "frame": 48,
+              "at": 1.5999996,
+              "authoredAt": 1.6,
+              "duration": 1.6999974,
+              "authoredDuration": 1.7,
+              "normalized": 0.275862,
+              "position": "EntityEyePos"
+            },
+            {
+              "type": "CNmClipDocEvent_Sound",
+              "name": "HEGrenade.Inspect01.Handles",
+              "frame": 55,
+              "at": 1.8333335999999998,
+              "authoredAt": 1.8333333333333333,
+              "duration": 0.5000006,
+              "authoredDuration": 0.5,
+              "normalized": 0.316092,
+              "position": "EntityEyePos"
+            },
+            {
+              "type": "CNmClipDocEvent_ID",
+              "name": "WPN_INSPECT_LOOP",
+              "frame": 87,
+              "at": 2.9,
+              "authoredAt": 2.9,
+              "duration": 1.8000009999999997,
+              "authoredDuration": 1.8,
+              "normalized": 0.5,
+              "position": null
+            },
+            {
+              "type": "CNmClipDocEvent_Sound",
+              "name": "Inspect.Gear.UltraSmall",
+              "frame": 141,
+              "at": 4.700001,
+              "authoredAt": 4.7,
+              "duration": 1.0333338,
+              "authoredDuration": 1.0333333333333334,
+              "normalized": 0.810345,
+              "position": "EntityEyePos"
+            },
+            {
+              "type": "CNmClipDocEvent_ID",
+              "name": "WPN_INSPECT_OUTRO",
+              "frame": 141,
+              "at": 4.700001,
+              "authoredAt": 4.7,
+              "duration": 1.099999,
+              "authoredDuration": 1.1,
+              "normalized": 0.810345,
+              "position": null
+            },
+            {
+              "type": "CNmClipDocEvent_Sound",
+              "name": "HEGrenade.Inspect01.Handles",
+              "frame": 146,
+              "at": 4.866664,
+              "authoredAt": 4.866666666666666,
+              "duration": 0.3666644,
+              "authoredDuration": 0.36666666666666664,
+              "normalized": 0.83908,
+              "position": "EntityEyePos"
+            }
+          ],
+          "graphReferences": []
+        },
+        "pullpin": {
+          "resource": "animation/anims/viewmodel/grenade/grenade_hegrenade/pullpin_hegrenade.vnmclip_c",
+          "sha256": "13e7afaf100f77d82818764eaa7d663eba509bfd30aaa3d406110430d4d6f988",
+          "definitionSha256": "926bf9ebfef15e4d4dee21068e28ef9ea7fd262ffa38d4533372402d8fdc1c66",
+          "frames": 30,
+          "fps": 30,
+          "seconds": 0.9666666666666667,
+          "exportedSeconds": 0.9666666666666667,
+          "pose": false,
+          "events": [
+            {
+              "type": "CNmClipDocEvent_Sound",
+              "name": "HEGrenade.PullPin",
+              "frame": 0,
+              "at": 0,
+              "authoredAt": 0,
+              "duration": 0.9666666666666667,
+              "authoredDuration": 0.9666666666666667,
+              "normalized": 0,
+              "position": "EntityEyePos"
+            }
+          ],
+          "graphReferences": [
+            {
+              "name": "pull_pin",
+              "_class": "CNmGraphDocClipNode::CData",
+              "m_clip": "animation/anims/viewmodel/grenade/grenade_hegrenade/pullpin_hegrenade.vnmclip",
+              "m_flSpeedMultiplier": 1,
+              "m_nStartSyncEventOffset": 0,
+              "looping": false,
+              "fixedTime": null
+            }
+          ]
+        },
+        "hold-high": {
+          "resource": "animation/anims/viewmodel/grenade/grenade_hegrenade/throwcharge_high_hegrenade.vnmclip_c",
+          "sha256": "79f933a5df1983758d2783ed81b36808987eef00b9afeec90924bea94dd134a0",
+          "definitionSha256": "e31eea0deb15b0d8a679880345e65c831dd34c70aef8d0df78976bcea1d815d5",
+          "frames": 1,
+          "fps": 30,
+          "seconds": 0,
+          "exportedSeconds": 0,
+          "pose": true,
+          "events": [],
+          "graphReferences": [
+            {
+              "name": "High",
+              "_class": "CNmGraphDocAnimationPoseNode::CData",
+              "m_clip": "animation/anims/viewmodel/grenade/grenade_hegrenade/throwcharge_high_hegrenade.vnmclip",
+              "m_variationTimeValue": -1,
+              "looping": false,
+              "fixedTime": 0
+            }
+          ]
+        },
+        "hold-mid": {
+          "resource": "animation/anims/viewmodel/grenade/grenade_hegrenade/throwcharge_mid_hegrenade.vnmclip_c",
+          "sha256": "2800fdb85551bf11697b97271b4d1cf7939774845959da6dea7f4a214da9b059",
+          "definitionSha256": "09ed87a4a5edc14d1bcd25fc6663180a67f9defdd4c40fd4f510ba958dd8261e",
+          "frames": 1,
+          "fps": 30,
+          "seconds": 0,
+          "exportedSeconds": 0,
+          "pose": true,
+          "events": [],
+          "graphReferences": [
+            {
+              "name": "Mid",
+              "_class": "CNmGraphDocAnimationPoseNode::CData",
+              "m_clip": "animation/anims/viewmodel/grenade/grenade_hegrenade/throwcharge_mid_hegrenade.vnmclip",
+              "m_variationTimeValue": -1,
+              "looping": false,
+              "fixedTime": 0
+            }
+          ]
+        },
+        "hold-low": {
+          "resource": "animation/anims/viewmodel/grenade/grenade_hegrenade/throwcharge_low_hegrenade.vnmclip_c",
+          "sha256": "fc59b6019709529f0a560ba1c959acb20fc52f3409336be5b57ae5d119c859ee",
+          "definitionSha256": "3de9cad8ba245ca0554b9a0fa5a9f6de8dda073f74e6c43647c253a6122195fb",
+          "frames": 1,
+          "fps": 30,
+          "seconds": 0,
+          "exportedSeconds": 0,
+          "pose": true,
+          "events": [],
+          "graphReferences": [
+            {
+              "name": "Low",
+              "_class": "CNmGraphDocAnimationPoseNode::CData",
+              "m_clip": "animation/anims/viewmodel/grenade/grenade_hegrenade/throwcharge_low_hegrenade.vnmclip",
+              "m_variationTimeValue": -1,
+              "looping": false,
+              "fixedTime": 0
+            }
+          ]
+        },
+        "throw-high": {
+          "resource": "animation/anims/viewmodel/grenade/grenade_hegrenade/throw_overhand_hegrenade.vnmclip_c",
+          "sha256": "54ba3567ecb2fc2a9038916c687e1f92d58fbefbe45759b9201c153de04e05d5",
+          "definitionSha256": "8b54ae16d2d3d80c45d4eaee05714bc829ee26eb4589bfc601c8a04a49465439",
+          "frames": 24,
+          "fps": 30,
+          "seconds": 0.7666666666666667,
+          "exportedSeconds": 0.4666666666666667,
+          "pose": false,
+          "events": [
+            {
+              "type": "CNmClipDocEvent_Sound",
+              "name": "Grenade.PreThrow.Gear",
+              "frame": 0,
+              "at": 0,
+              "authoredAt": 0,
+              "duration": 0,
+              "authoredDuration": 0,
+              "normalized": 0,
+              "position": "EntityEyePos"
+            },
+            {
+              "type": "CNmClipDocEvent_Sound",
+              "name": "HEGrenade.Throw",
+              "frame": 2,
+              "at": 0.06666703333333333,
+              "authoredAt": 0.06666666666666667,
+              "duration": 0,
+              "authoredDuration": 0,
+              "normalized": 0.086957,
+              "position": "EntityEyePos"
+            }
+          ],
+          "graphReferences": [
+            {
+              "name": "throw_overhand",
+              "_class": "CNmGraphDocClipNode::CData",
+              "m_clip": "animation/anims/viewmodel/grenade/grenade_hegrenade/throw_overhand_hegrenade.vnmclip",
+              "m_flSpeedMultiplier": 1,
+              "m_nStartSyncEventOffset": 0,
+              "looping": false,
+              "fixedTime": null
+            }
+          ]
+        },
+        "throw-low": {
+          "resource": "animation/anims/viewmodel/grenade/grenade_hegrenade/throw_underhand_hegrenade.vnmclip_c",
+          "sha256": "252633e778f294621bd70a04cbca2038cc9c6e77db96cfd49b31201706ef321d",
+          "definitionSha256": "b6fb40dea9399f87f03937a5d71804188e4902a20111bdd0d9cfec479d7dec96",
+          "frames": 16,
+          "fps": 30,
+          "seconds": 0.5,
+          "exportedSeconds": 0.5,
+          "pose": false,
+          "events": [
+            {
+              "type": "CNmClipDocEvent_Sound",
+              "name": "Grenade.ThrowUnder.Gear",
+              "frame": 0,
+              "at": 0,
+              "authoredAt": 0,
+              "duration": 0.5,
+              "authoredDuration": 0.5,
+              "normalized": 0,
+              "position": "EntityEyePos"
+            },
+            {
+              "type": "CNmClipDocEvent_Sound",
+              "name": "HEGrenade.Throw",
+              "frame": 4,
+              "at": 0.1333335,
+              "authoredAt": 0.13333333333333333,
+              "duration": 0,
+              "authoredDuration": 0,
+              "normalized": 0.266667,
+              "position": "EntityEyePos"
+            }
+          ],
+          "graphReferences": [
+            {
+              "name": "throw_underhand",
+              "_class": "CNmGraphDocClipNode::CData",
+              "m_clip": "animation/anims/viewmodel/grenade/grenade_hegrenade/throw_underhand_hegrenade.vnmclip",
+              "m_flSpeedMultiplier": 1,
+              "m_nStartSyncEventOffset": 0,
+              "looping": false,
+              "fixedTime": null
+            }
+          ]
+        }
+      },
+      "completions": [
+        {
+          "state": "Charge",
+          "stateId": "83e9a878-8f7a-4bb8-9e6b-0957983a231c",
+          "event": "WPN_ACTION_COMPLETE",
+          "type": "TimeRemaining",
+          "comparison": "LessThanEqual",
+          "remaining": 0.2,
+          "clips": [
+            {
+              "resource": "animation/anims/viewmodel/grenade/grenade_hegrenade/pullpin_hegrenade.vnmclip_c",
+              "speed": 1
+            }
+          ],
+          "actions": [
+            {
+              "action": "pullpin",
+              "at": 0.7666666666666666
+            }
+          ]
+        },
+        {
+          "state": "Throw",
+          "stateId": "bc87fffb-1e27-4772-8f98-8e4e2e35ec1a",
+          "event": "WPN_ACTION_COMPLETE",
+          "type": "TimeRemaining",
+          "comparison": "LessThanEqual",
+          "remaining": 0,
+          "clips": [
+            {
+              "resource": "animation/anims/viewmodel/grenade/grenade_hegrenade/throw_underhand_hegrenade.vnmclip_c",
+              "speed": 1
+            },
+            {
+              "resource": "animation/anims/viewmodel/grenade/grenade_hegrenade/throw_overhand_hegrenade.vnmclip_c",
+              "speed": 1
+            }
+          ],
+          "actions": [
+            {
+              "action": "throw-high",
+              "at": 0.7666666666666667
+            },
+            {
+              "action": "throw-low",
+              "at": 0.5
+            }
+          ]
+        },
+        {
+          "state": "Deploying",
+          "stateId": "eaabd9cd-974a-47b3-9f9b-a8f608ac2055",
+          "event": "WPN_ACTION_COMPLETE",
+          "type": "TimeRemaining",
+          "comparison": "LessThanEqual",
+          "remaining": 0.2,
+          "clips": [
+            {
+              "resource": "animation/anims/viewmodel/grenade/grenade_hegrenade/draw_hegrenade.vnmclip_c",
+              "speed": 1
+            },
+            {
+              "resource": "animation/anims/viewmodel/grenade/grenade_hegrenade/draw_hegrenade.vnmclip_c",
+              "speed": 1
+            }
+          ],
+          "actions": [
+            {
+              "action": "draw",
+              "at": 0.8
+            }
+          ]
+        }
+      ],
+      "deployDuration": 1
+    },
+    "flash": {
+      "graph": "animation/graphs/viewmodel/viewmodel_grenade.vnmgraph+flash.vnmgraph_c",
+      "graphSha256": "ab64e05f4d8f1601bee8c28c23b3155e09b0cf5421f227feab1fb589a70dfb96",
+      "transitions": [
+        {
+          "name": "Underhand",
+          "seconds": 0,
+          "target": "94db41f7-5fed-44f2-bfa4-0f4c26edd877",
+          "easing": "Linear"
+        },
+        {
+          "name": "Overhand",
+          "seconds": 0,
+          "target": "6ca2674b-25df-4359-9a80-caf278102469",
+          "easing": "Linear"
+        },
+        {
+          "name": "ReadyToThrow",
+          "seconds": 0.2,
+          "target": "c5219e6a-74b6-450f-a1b9-1f0a17e9bb8c",
+          "easing": "Linear"
+        },
+        {
+          "name": "Throw",
+          "seconds": 0,
+          "target": "c1d51b3f-2fa9-43dc-ae6f-5289a9503c61",
+          "easing": "Linear"
+        },
+        {
+          "name": "Charge",
+          "seconds": 0,
+          "target": "d12b9db2-d9b9-4526-89f0-1deadd4be381",
+          "easing": "Linear"
+        },
+        {
+          "name": "DeployOptions1",
+          "seconds": 0,
+          "target": "276d5bf4-9822-436a-a047-065c4a77d569",
+          "easing": "Linear"
+        },
+        {
+          "name": "DeployOptions0",
+          "seconds": 0,
+          "target": "c8ebb648-f7cc-45a8-82f8-4b5e66cb4a3d",
+          "easing": "Linear"
+        },
+        {
+          "name": "Attack",
+          "seconds": 0,
+          "target": "b7551259-54a3-41f0-9d51-3454266b5f06",
+          "easing": "Linear"
+        },
+        {
+          "name": "Deploying",
+          "seconds": 0,
+          "target": "3c939319-8773-4b8f-9092-584628997131",
+          "easing": "Linear"
+        },
+        {
+          "name": "Inspect",
+          "seconds": 0.2,
+          "target": "d5d68862-dd79-4148-88fc-43d53ed56f85",
+          "easing": "Linear"
+        },
+        {
+          "name": "Idle",
+          "seconds": 0.2,
+          "target": "f8813254-0da4-4ffd-b9b3-fb4cc75bf298",
+          "easing": "Linear"
+        }
+      ],
+      "actions": {
+        "idle": {
+          "resource": "animation/anims/viewmodel/grenade/grenade_flashbang/idle_flashbang.vnmclip_c",
+          "sha256": "f8e6f18e1d2892daef8b0c8ad082237d87d4c22f942c764b29ef9094b173a4e8",
+          "definitionSha256": "64eaf8f2de353427612e8275650a34026d06da7bb27d4c6a9bc2ac758700e60b",
+          "frames": 11,
+          "fps": 30,
+          "seconds": 0.3333333333333333,
+          "exportedSeconds": 0,
+          "pose": false,
+          "events": [],
+          "graphReferences": [
+            {
+              "name": "idle",
+              "_class": "CNmGraphDocClipNode::CData",
+              "m_clip": "animation/anims/viewmodel/grenade/grenade_flashbang/idle_flashbang.vnmclip",
+              "m_flSpeedMultiplier": 1,
+              "m_nStartSyncEventOffset": 0,
+              "looping": true,
+              "fixedTime": null
+            }
+          ]
+        },
+        "draw": {
+          "resource": "animation/anims/viewmodel/grenade/grenade_flashbang/draw_flashbang.vnmclip_c",
+          "sha256": "506b944358daba086c1bba864885c8dc4a88f5b851286cc4914b71e6f573effd",
+          "definitionSha256": "0ebb65cb547d9a6f41942c4e618035da4fd514e345bd3b9c3ecbd80ffa289b4f",
+          "frames": 31,
+          "fps": 30,
+          "seconds": 1,
+          "exportedSeconds": 1,
+          "pose": false,
+          "events": [
+            {
+              "type": "CNmClipDocEvent_Sound",
+              "name": "Draw.Gear",
+              "frame": 0,
+              "at": 0,
+              "authoredAt": 0,
+              "duration": 0.866667,
+              "authoredDuration": 0.8666666666666667,
+              "normalized": 0,
+              "position": "EntityPos"
+            },
+            {
+              "type": "CNmClipDocEvent_Sound",
+              "name": "Flashbang.Draw",
+              "frame": 2,
+              "at": 0.066667,
+              "authoredAt": 0.06666666666666667,
+              "duration": 0.5,
+              "authoredDuration": 0.5,
+              "normalized": 0.066667,
+              "position": "EntityPos"
+            }
+          ],
+          "graphReferences": [
+            {
+              "name": "deploy",
+              "_class": "CNmGraphDocClipNode::CData",
+              "m_clip": "animation/anims/viewmodel/grenade/grenade_flashbang/draw_flashbang.vnmclip",
+              "m_flSpeedMultiplier": 1,
+              "m_nStartSyncEventOffset": 0,
+              "looping": false,
+              "fixedTime": null
+            },
+            {
+              "name": "deploy",
+              "_class": "CNmGraphDocClipNode::CData",
+              "m_clip": "animation/anims/viewmodel/grenade/grenade_flashbang/draw_flashbang.vnmclip",
+              "m_flSpeedMultiplier": 1,
+              "m_nStartSyncEventOffset": 0,
+              "looping": false,
+              "fixedTime": null
+            }
+          ]
+        },
+        "inspect": {
+          "resource": "animation/anims/viewmodel/grenade/grenade_flashbang/lookat01_flashbang.vnmclip_c",
+          "sha256": "0a6113cc5ade7c9c87f68a08af4f32d487648931d28ca8f99b83944d5473bcf4",
+          "definitionSha256": "497b0120b9dc78da41035761796dad68b6a2bc55661ec7c20439ea53bccd55ff",
+          "frames": 175,
+          "fps": 30,
+          "seconds": 5.8,
+          "exportedSeconds": 5.8,
+          "pose": false,
+          "events": [
+            {
+              "type": "CNmClipDocEvent_Sound",
+              "name": "Inspect.Gear.Small",
+              "frame": 0,
+              "at": 0,
+              "authoredAt": 0,
+              "duration": 1.7666684,
+              "authoredDuration": 1.7666666666666666,
+              "normalized": 0,
+              "position": "EntityEyePos"
+            },
+            {
+              "type": "CNmClipDocEvent_ID",
+              "name": "WPN_INSPECT_INTRO",
+              "frame": 0,
+              "at": 0,
+              "authoredAt": 0,
+              "duration": 2.9,
+              "authoredDuration": 2.9,
+              "normalized": 0,
+              "position": null
+            },
+            {
+              "type": "CNmClipDocEvent_Sound",
+              "name": "Flashbang.Inspect.Spins",
+              "frame": 10,
+              "at": 0.3333318,
+              "authoredAt": 0.3333333333333333,
+              "duration": 0.4333354,
+              "authoredDuration": 0.43333333333333335,
+              "normalized": 0.057471,
+              "position": "EntityEyePos"
+            },
+            {
+              "type": "CNmClipDocEvent_Sound",
+              "name": "Flashbang.Inspect.Ring",
+              "frame": 17,
+              "at": 0.5666657999999999,
+              "authoredAt": 0.5666666666666667,
+              "duration": 0.3333318,
+              "authoredDuration": 0.3333333333333333,
+              "normalized": 0.097701,
+              "position": "EntityEyePos"
+            },
+            {
+              "type": "CNmClipDocEvent_ID",
+              "name": "WPN_INSPECT_LOOP",
+              "frame": 87,
+              "at": 2.9,
+              "authoredAt": 2.9,
+              "duration": 1.8000009999999997,
+              "authoredDuration": 1.8,
+              "normalized": 0.5,
+              "position": null
+            },
+            {
+              "type": "CNmClipDocEvent_ID",
+              "name": "WPN_INSPECT_OUTRO",
+              "frame": 141,
+              "at": 4.700001,
+              "authoredAt": 4.7,
+              "duration": 1.099999,
+              "authoredDuration": 1.1,
+              "normalized": 0.810345,
+              "position": null
+            },
+            {
+              "type": "CNmClipDocEvent_Sound",
+              "name": "Inspect.Gear.UltraSmall",
+              "frame": 150,
+              "at": 5.0000002,
+              "authoredAt": 5,
+              "duration": 0.7666672,
+              "authoredDuration": 0.7666666666666667,
+              "normalized": 0.862069,
+              "position": "EntityEyePos"
+            },
+            {
+              "type": "CNmClipDocEvent_Sound",
+              "name": "Flashbang.Inspect.Spins",
+              "frame": 151,
+              "at": 5.0333328,
+              "authoredAt": 5.033333333333333,
+              "duration": 0.3666644,
+              "authoredDuration": 0.36666666666666664,
+              "normalized": 0.867816,
+              "position": "EntityEyePos"
+            },
+            {
+              "type": "CNmClipDocEvent_Sound",
+              "name": "Flashbang.Inspect.RingMove",
+              "frame": 158,
+              "at": 5.266666799999999,
+              "authoredAt": 5.266666666666667,
+              "duration": 0.1333362,
+              "authoredDuration": 0.13333333333333333,
+              "normalized": 0.908046,
+              "position": "EntityEyePos"
+            }
+          ],
+          "graphReferences": []
+        },
+        "pullpin": {
+          "resource": "animation/anims/viewmodel/grenade/grenade_flashbang/pullpin_flashbang.vnmclip_c",
+          "sha256": "3f3013190ec9c0ae6093544cac816728713eb7d09257db2a12237efe69f713f1",
+          "definitionSha256": "b4daddd92fa223ad9b4628583ee4075cc6f620a1d690f41d7de0594003352615",
+          "frames": 30,
+          "fps": 30,
+          "seconds": 0.9666666666666667,
+          "exportedSeconds": 0.9666666666666667,
+          "pose": false,
+          "events": [
+            {
+              "type": "CNmClipDocEvent_Sound",
+              "name": "Flashbang.PullPin",
+              "frame": 0,
+              "at": 0,
+              "authoredAt": 0,
+              "duration": 0.9666666666666667,
+              "authoredDuration": 0.9666666666666667,
+              "normalized": 0,
+              "position": "EntityEyePos"
+            }
+          ],
+          "graphReferences": [
+            {
+              "name": "pull_pin",
+              "_class": "CNmGraphDocClipNode::CData",
+              "m_clip": "animation/anims/viewmodel/grenade/grenade_flashbang/pullpin_flashbang.vnmclip",
+              "m_flSpeedMultiplier": 1,
+              "m_nStartSyncEventOffset": 0,
+              "looping": false,
+              "fixedTime": null
+            }
+          ]
+        },
+        "hold-high": {
+          "resource": "animation/anims/viewmodel/grenade/grenade_flashbang/throwcharge_high_flashbang.vnmclip_c",
+          "sha256": "f85120acca252b0d30bdb6f652c9731ba7f90ec3e00073bee8c96017634608a3",
+          "definitionSha256": "24d01561c0bd29ae2287e7d3b0007fbde718e5e5c1d68eca44e73787efd26ecb",
+          "frames": 31,
+          "fps": 30,
+          "seconds": 1,
+          "exportedSeconds": 0,
+          "pose": false,
+          "events": [],
+          "graphReferences": [
+            {
+              "name": "High",
+              "_class": "CNmGraphDocAnimationPoseNode::CData",
+              "m_clip": "animation/anims/viewmodel/grenade/grenade_flashbang/throwcharge_high_flashbang.vnmclip",
+              "m_variationTimeValue": -1,
+              "looping": false,
+              "fixedTime": 0
+            }
+          ]
+        },
+        "hold-mid": {
+          "resource": "animation/anims/viewmodel/grenade/grenade_flashbang/throwcharge_mid_flashbang.vnmclip_c",
+          "sha256": "998b35d79fcc56ec487a3cf0446db82e0deb455f6f00f5775f32c694490ccfa4",
+          "definitionSha256": "667bca63f12b2626d35fb4c1e28641dc7db9545073585f0710caddd333a6938b",
+          "frames": 31,
+          "fps": 30,
+          "seconds": 1,
+          "exportedSeconds": 0,
+          "pose": false,
+          "events": [],
+          "graphReferences": [
+            {
+              "name": "Mid",
+              "_class": "CNmGraphDocAnimationPoseNode::CData",
+              "m_clip": "animation/anims/viewmodel/grenade/grenade_flashbang/throwcharge_mid_flashbang.vnmclip",
+              "m_variationTimeValue": -1,
+              "looping": false,
+              "fixedTime": 0
+            }
+          ]
+        },
+        "hold-low": {
+          "resource": "animation/anims/viewmodel/grenade/grenade_flashbang/throwcharge_low_flashbang.vnmclip_c",
+          "sha256": "133ccd03b9c4c33097d8d7c41ce6fd31a3c2a6f564c36f184b1d289eb6ca4579",
+          "definitionSha256": "5f57a1c9c5e9ab5a98b70f2153793c570b65d58229ba298287bd1c5c0d3acfec",
+          "frames": 31,
+          "fps": 30,
+          "seconds": 1,
+          "exportedSeconds": 0,
+          "pose": false,
+          "events": [],
+          "graphReferences": [
+            {
+              "name": "Low",
+              "_class": "CNmGraphDocAnimationPoseNode::CData",
+              "m_clip": "animation/anims/viewmodel/grenade/grenade_flashbang/throwcharge_low_flashbang.vnmclip",
+              "m_variationTimeValue": -1,
+              "looping": false,
+              "fixedTime": 0
+            }
+          ]
+        },
+        "throw-high": {
+          "resource": "animation/anims/viewmodel/grenade/grenade_flashbang/throw_overhand_flashbang.vnmclip_c",
+          "sha256": "83853ed640fb4d45676774d3bc65ca92df6c3fc1c1801f5d16b9764ee5bcbaa9",
+          "definitionSha256": "52bf1cd55762e9ba6773dc6189886248c151192d3aa5da16174de32818baf93d",
+          "frames": 24,
+          "fps": 30,
+          "seconds": 0.7666666666666667,
+          "exportedSeconds": 0.7333333333333333,
+          "pose": false,
+          "events": [
+            {
+              "type": "CNmClipDocEvent_Sound",
+              "name": "Grenade.PreThrow.Gear",
+              "frame": 0,
+              "at": 0,
+              "authoredAt": 0,
+              "duration": 0,
+              "authoredDuration": 0,
+              "normalized": 0,
+              "position": "EntityEyePos"
+            },
+            {
+              "type": "CNmClipDocEvent_Sound",
+              "name": "Flashbang.Throw",
+              "frame": 2,
+              "at": 0.06666703333333333,
+              "authoredAt": 0.06666666666666667,
+              "duration": 0,
+              "authoredDuration": 0,
+              "normalized": 0.086957,
+              "position": "EntityEyePos"
+            }
+          ],
+          "graphReferences": [
+            {
+              "name": "throw_overhand",
+              "_class": "CNmGraphDocClipNode::CData",
+              "m_clip": "animation/anims/viewmodel/grenade/grenade_flashbang/throw_overhand_flashbang.vnmclip",
+              "m_flSpeedMultiplier": 1,
+              "m_nStartSyncEventOffset": 0,
+              "looping": false,
+              "fixedTime": null
+            }
+          ]
+        },
+        "throw-low": {
+          "resource": "animation/anims/viewmodel/grenade/grenade_flashbang/throw_underhand_flashbang.vnmclip_c",
+          "sha256": "57e6e572327d88a156d63340e231b69a41bc90477027bcc932d221142b493996",
+          "definitionSha256": "2ff64aeab2408642549c70c6a58abad212e01148a370a4a43b778c3f4ec1b6e8",
+          "frames": 16,
+          "fps": 30,
+          "seconds": 0.5,
+          "exportedSeconds": 0.5,
+          "pose": false,
+          "events": [
+            {
+              "type": "CNmClipDocEvent_Sound",
+              "name": "Grenade.ThrowUnder.Gear",
+              "frame": 0,
+              "at": 0,
+              "authoredAt": 0,
+              "duration": 0.5,
+              "authoredDuration": 0.5,
+              "normalized": 0,
+              "position": "EntityEyePos"
+            },
+            {
+              "type": "CNmClipDocEvent_Sound",
+              "name": "Flashbang.Throw",
+              "frame": 4,
+              "at": 0.1333335,
+              "authoredAt": 0.13333333333333333,
+              "duration": 0,
+              "authoredDuration": 0,
+              "normalized": 0.266667,
+              "position": "EntityEyePos"
+            }
+          ],
+          "graphReferences": [
+            {
+              "name": "throw_underhand",
+              "_class": "CNmGraphDocClipNode::CData",
+              "m_clip": "animation/anims/viewmodel/grenade/grenade_flashbang/throw_underhand_flashbang.vnmclip",
+              "m_flSpeedMultiplier": 1,
+              "m_nStartSyncEventOffset": 0,
+              "looping": false,
+              "fixedTime": null
+            }
+          ]
+        }
+      },
+      "completions": [
+        {
+          "state": "Charge",
+          "stateId": "d12b9db2-d9b9-4526-89f0-1deadd4be381",
+          "event": "WPN_ACTION_COMPLETE",
+          "type": "TimeRemaining",
+          "comparison": "LessThanEqual",
+          "remaining": 0.2,
+          "clips": [
+            {
+              "resource": "animation/anims/viewmodel/grenade/grenade_flashbang/pullpin_flashbang.vnmclip_c",
+              "speed": 1
+            }
+          ],
+          "actions": [
+            {
+              "action": "pullpin",
+              "at": 0.7666666666666666
+            }
+          ]
+        },
+        {
+          "state": "Throw",
+          "stateId": "c1d51b3f-2fa9-43dc-ae6f-5289a9503c61",
+          "event": "WPN_ACTION_COMPLETE",
+          "type": "TimeRemaining",
+          "comparison": "LessThanEqual",
+          "remaining": 0,
+          "clips": [
+            {
+              "resource": "animation/anims/viewmodel/grenade/grenade_flashbang/throw_underhand_flashbang.vnmclip_c",
+              "speed": 1
+            },
+            {
+              "resource": "animation/anims/viewmodel/grenade/grenade_flashbang/throw_overhand_flashbang.vnmclip_c",
+              "speed": 1
+            }
+          ],
+          "actions": [
+            {
+              "action": "throw-high",
+              "at": 0.7666666666666667
+            },
+            {
+              "action": "throw-low",
+              "at": 0.5
+            }
+          ]
+        },
+        {
+          "state": "Deploying",
+          "stateId": "3c939319-8773-4b8f-9092-584628997131",
+          "event": "WPN_ACTION_COMPLETE",
+          "type": "TimeRemaining",
+          "comparison": "LessThanEqual",
+          "remaining": 0.2,
+          "clips": [
+            {
+              "resource": "animation/anims/viewmodel/grenade/grenade_flashbang/draw_flashbang.vnmclip_c",
+              "speed": 1
+            },
+            {
+              "resource": "animation/anims/viewmodel/grenade/grenade_flashbang/draw_flashbang.vnmclip_c",
+              "speed": 1
+            }
+          ],
+          "actions": [
+            {
+              "action": "draw",
+              "at": 0.8
+            }
+          ]
+        }
+      ],
+      "deployDuration": 1
+    },
+    "smoke": {
+      "graph": "animation/graphs/viewmodel/viewmodel_grenade.vnmgraph+smoke.vnmgraph_c",
+      "graphSha256": "6e9e0bc3be40a80f617d31e9c74cb7ba3f35098b1e014fd95cd4285cdcb63112",
+      "transitions": [
+        {
+          "name": "Underhand",
+          "seconds": 0,
+          "target": "fbd1b3ce-aa37-4743-bec8-ebfac206b63f",
+          "easing": "Linear"
+        },
+        {
+          "name": "Overhand",
+          "seconds": 0,
+          "target": "16930c5a-4e9d-4eba-8a21-47b1798446e1",
+          "easing": "Linear"
+        },
+        {
+          "name": "ReadyToThrow",
+          "seconds": 0.2,
+          "target": "b2fe22c1-2468-4797-9fa8-2a0848e5e99b",
+          "easing": "Linear"
+        },
+        {
+          "name": "Throw",
+          "seconds": 0,
+          "target": "20c8aed5-f601-4e3c-a5bf-5d1cc7bd76c7",
+          "easing": "Linear"
+        },
+        {
+          "name": "Charge",
+          "seconds": 0,
+          "target": "14e9c341-6563-48bd-8c95-49aeff23ebb6",
+          "easing": "Linear"
+        },
+        {
+          "name": "DeployOptions1",
+          "seconds": 0,
+          "target": "ed1041d4-5fd2-4319-ab69-ec940c7517e2",
+          "easing": "Linear"
+        },
+        {
+          "name": "DeployOptions0",
+          "seconds": 0,
+          "target": "0c8f1b23-2ce1-4756-953c-32dedd12c79f",
+          "easing": "Linear"
+        },
+        {
+          "name": "Attack",
+          "seconds": 0,
+          "target": "572735e8-969f-4a75-994c-2daad5340598",
+          "easing": "Linear"
+        },
+        {
+          "name": "Deploying",
+          "seconds": 0,
+          "target": "d55e4067-9687-45cc-b210-875632f117cc",
+          "easing": "Linear"
+        },
+        {
+          "name": "Inspect",
+          "seconds": 0.2,
+          "target": "6938a3c7-420e-4e11-b3f1-c0a2cb7a66bd",
+          "easing": "Linear"
+        },
+        {
+          "name": "Idle",
+          "seconds": 0.2,
+          "target": "c9dd10f0-75ec-48c8-a170-fcfc863ff2a9",
+          "easing": "Linear"
+        }
+      ],
+      "actions": {
+        "idle": {
+          "resource": "animation/anims/viewmodel/grenade/grenade_smokegrenade/idle_smoke.vnmclip_c",
+          "sha256": "0f6df5a7f680e0188418580b0d7ffcdfbb073c5562b4b15ca92ff47659790ddf",
+          "definitionSha256": "2692d167a866a5b008f1386a3f91084e9c74a21ce2796cdf8c24f24dc1c473ba",
+          "frames": 31,
+          "fps": 30,
+          "seconds": 1,
+          "exportedSeconds": 1,
+          "pose": false,
+          "events": [],
+          "graphReferences": [
+            {
+              "name": "idle",
+              "_class": "CNmGraphDocClipNode::CData",
+              "m_clip": "animation/anims/viewmodel/grenade/grenade_smokegrenade/idle_smoke.vnmclip",
+              "m_flSpeedMultiplier": 1,
+              "m_nStartSyncEventOffset": 0,
+              "looping": true,
+              "fixedTime": null
+            }
+          ]
+        },
+        "draw": {
+          "resource": "animation/anims/viewmodel/grenade/grenade_smokegrenade/draw_smoke.vnmclip_c",
+          "sha256": "07aa405789ff7b2c9d63c5de2eae977d5e43594bb99f45ee036672bc3a37425b",
+          "definitionSha256": "9441ad3f2b2afd9df2da35dc9dbcd546a14f491322adf8e146b65306c6cbf6b1",
+          "frames": 31,
+          "fps": 30,
+          "seconds": 1,
+          "exportedSeconds": 1,
+          "pose": false,
+          "events": [
+            {
+              "type": "CNmClipDocEvent_Sound",
+              "name": "SmokeGrenade.Draw",
+              "frame": 3,
+              "at": 0.1,
+              "authoredAt": 0.1,
+              "duration": 0.866667,
+              "authoredDuration": 0.8666666666666667,
+              "normalized": 0.1,
+              "position": "EntityEyePos"
+            }
+          ],
+          "graphReferences": [
+            {
+              "name": "deploy",
+              "_class": "CNmGraphDocClipNode::CData",
+              "m_clip": "animation/anims/viewmodel/grenade/grenade_smokegrenade/draw_smoke.vnmclip",
+              "m_flSpeedMultiplier": 1,
+              "m_nStartSyncEventOffset": 0,
+              "looping": false,
+              "fixedTime": null
+            },
+            {
+              "name": "deploy",
+              "_class": "CNmGraphDocClipNode::CData",
+              "m_clip": "animation/anims/viewmodel/grenade/grenade_smokegrenade/draw_smoke.vnmclip",
+              "m_flSpeedMultiplier": 1,
+              "m_nStartSyncEventOffset": 0,
+              "looping": false,
+              "fixedTime": null
+            }
+          ]
+        },
+        "inspect": {
+          "resource": "animation/anims/viewmodel/grenade/grenade_smokegrenade/lookat01_smoke.vnmclip_c",
+          "sha256": "490adc1d740afed853ace4d3d9dd0d07db5acceabd717db9ed44d27979bd4ec4",
+          "definitionSha256": "7bfba2212dddfea3a566180244e37d6e2828831e8a3b7824c177f58e8319e216",
+          "frames": 213,
+          "fps": 30,
+          "seconds": 7.066666666666666,
+          "exportedSeconds": 7.066666666666666,
+          "pose": false,
+          "events": [
+            {
+              "type": "CNmClipDocEvent_Sound",
+              "name": "Inspect.Gear.Small",
+              "frame": 0,
+              "at": 0,
+              "authoredAt": 0,
+              "duration": 1.3333316000000002,
+              "authoredDuration": 1.3333333333333333,
+              "normalized": 0,
+              "position": "EntityEyePos"
+            },
+            {
+              "type": "CNmClipDocEvent_ID",
+              "name": "WPN_INSPECT_INTRO",
+              "frame": 0,
+              "at": 0,
+              "authoredAt": 0,
+              "duration": 1.3999985333333336,
+              "authoredDuration": 1.4,
+              "normalized": 0,
+              "position": null
+            },
+            {
+              "type": "CNmClipDocEvent_Sound",
+              "name": "SmokeGrenade.Inspect01.Turns",
+              "frame": 13,
+              "at": 0.4200002666666667,
+              "authoredAt": 0.43333333333333335,
+              "duration": 0.8466644,
+              "authoredDuration": 0.8333333333333334,
+              "normalized": 0.059434,
+              "position": "EntityEyePos"
+            },
+            {
+              "type": "CNmClipDocEvent_ID",
+              "name": "WPN_INSPECT_LOOP",
+              "frame": 42,
+              "at": 1.3999985333333336,
+              "authoredAt": 1.4,
+              "duration": 3.7666676,
+              "authoredDuration": 3.7666666666666666,
+              "normalized": 0.198113,
+              "position": null
+            },
+            {
+              "type": "CNmClipDocEvent_Sound",
+              "name": "Inspect.Gear.UltraSmall",
+              "frame": 106,
+              "at": 3.533333333333333,
+              "authoredAt": 3.533333333333333,
+              "duration": 1.3333316000000002,
+              "authoredDuration": 1.3333333333333333,
+              "normalized": 0.5,
+              "position": "EntityEyePos"
+            },
+            {
+              "type": "CNmClipDocEvent_Sound",
+              "name": "Inspect.Gear.UltraSmall",
+              "frame": 137,
+              "at": 4.566663733333333,
+              "authoredAt": 4.566666666666666,
+              "duration": 1.3333316000000002,
+              "authoredDuration": 1.3333333333333333,
+              "normalized": 0.646226,
+              "position": "EntityEyePos"
+            },
+            {
+              "type": "CNmClipDocEvent_ID",
+              "name": "WPN_INSPECT_OUTRO",
+              "frame": 155,
+              "at": 5.166666133333334,
+              "authoredAt": 5.166666666666667,
+              "duration": 1.9000005333333334,
+              "authoredDuration": 1.9,
+              "normalized": 0.731132,
+              "position": null
+            },
+            {
+              "type": "CNmClipDocEvent_Sound",
+              "name": "Inspect.Gear.UltraSmall",
+              "frame": 182,
+              "at": 6.066669733333333,
+              "authoredAt": 6.066666666666666,
+              "duration": 0.9999969333333333,
+              "authoredDuration": 1,
+              "normalized": 0.858491,
+              "position": "EntityEyePos"
+            },
+            {
+              "type": "CNmClipDocEvent_Sound",
+              "name": "SmokeGrenade.Inspect01.Turns",
+              "frame": 187,
+              "at": 6.2333300000000005,
+              "authoredAt": 6.233333333333333,
+              "duration": 0.8333366666666666,
+              "authoredDuration": 0.8333333333333334,
+              "normalized": 0.882075,
+              "position": "EntityEyePos"
+            }
+          ],
+          "graphReferences": []
+        },
+        "pullpin": {
+          "resource": "animation/anims/viewmodel/grenade/grenade_smokegrenade/pullpin_smoke.vnmclip_c",
+          "sha256": "fe4d9f8cb4c9facbefebcff6efcf82547bba045b3011ea09bf7054b07d2513a7",
+          "definitionSha256": "1e5be824d642e02b6bc630398ada078fd54f658619920027e4b003987aa50919",
+          "frames": 30,
+          "fps": 30,
+          "seconds": 0.9666666666666667,
+          "exportedSeconds": 0.9333333333333333,
+          "pose": false,
+          "events": [
+            {
+              "type": "CNmClipDocEvent_Sound",
+              "name": "SmokeGrenade.PullPin",
+              "frame": 0,
+              "at": 0,
+              "authoredAt": 0,
+              "duration": 0.9666666666666667,
+              "authoredDuration": 0.9666666666666667,
+              "normalized": 0,
+              "position": "EntityEyePos"
+            }
+          ],
+          "graphReferences": [
+            {
+              "name": "pull_pin",
+              "_class": "CNmGraphDocClipNode::CData",
+              "m_clip": "animation/anims/viewmodel/grenade/grenade_smokegrenade/pullpin_smoke.vnmclip",
+              "m_flSpeedMultiplier": 1,
+              "m_nStartSyncEventOffset": 0,
+              "looping": false,
+              "fixedTime": null
+            }
+          ]
+        },
+        "hold-high": {
+          "resource": "animation/anims/viewmodel/grenade/grenade_smokegrenade/throwcharge_high_smoke.vnmclip_c",
+          "sha256": "5bee5a88693c9c7fcad0e614d090c516cfef65563bd785b739cf2dbdda1750e1",
+          "definitionSha256": "6c6ec98b2d21e663fef7276e0859aa5b9d7d1f090a7cb9b0a733b2bf2601cf71",
+          "frames": 31,
+          "fps": 30,
+          "seconds": 1,
+          "exportedSeconds": 0,
+          "pose": false,
+          "events": [],
+          "graphReferences": [
+            {
+              "name": "High",
+              "_class": "CNmGraphDocAnimationPoseNode::CData",
+              "m_clip": "animation/anims/viewmodel/grenade/grenade_smokegrenade/throwcharge_high_smoke.vnmclip",
+              "m_variationTimeValue": -1,
+              "looping": false,
+              "fixedTime": 0
+            }
+          ]
+        },
+        "hold-mid": {
+          "resource": "animation/anims/viewmodel/grenade/grenade_smokegrenade/throwcharge_mid_smoke.vnmclip_c",
+          "sha256": "21508b09abbf58b7b46db13ac5d307dd4cd56653f710e842c5e65ec2a04601be",
+          "definitionSha256": "dbbd2b78211906c261bd839582ecd05fb00f2cf1d47a3dbf69553b6e70cc7ceb",
+          "frames": 31,
+          "fps": 30,
+          "seconds": 1,
+          "exportedSeconds": 0,
+          "pose": false,
+          "events": [],
+          "graphReferences": [
+            {
+              "name": "Mid",
+              "_class": "CNmGraphDocAnimationPoseNode::CData",
+              "m_clip": "animation/anims/viewmodel/grenade/grenade_smokegrenade/throwcharge_mid_smoke.vnmclip",
+              "m_variationTimeValue": -1,
+              "looping": false,
+              "fixedTime": 0
+            }
+          ]
+        },
+        "hold-low": {
+          "resource": "animation/anims/viewmodel/grenade/grenade_smokegrenade/throwcharge_low_smoke.vnmclip_c",
+          "sha256": "556b3602cfc179960478772e3d95e068ee6c7db9243b3bfa34cd6e40524d246c",
+          "definitionSha256": "9bdd07e989a208da03b4cc7024bd9cb8b3e3c82a62f84207e04714b8acf42bfc",
+          "frames": 31,
+          "fps": 30,
+          "seconds": 1,
+          "exportedSeconds": 0,
+          "pose": false,
+          "events": [],
+          "graphReferences": [
+            {
+              "name": "Low",
+              "_class": "CNmGraphDocAnimationPoseNode::CData",
+              "m_clip": "animation/anims/viewmodel/grenade/grenade_smokegrenade/throwcharge_low_smoke.vnmclip",
+              "m_variationTimeValue": -1,
+              "looping": false,
+              "fixedTime": 0
+            }
+          ]
+        },
+        "throw-high": {
+          "resource": "animation/anims/viewmodel/grenade/grenade_smokegrenade/throw_overhand_smoke.vnmclip_c",
+          "sha256": "054b510e6f2275369d14f941889dfbcdf96be0967d6036c071fae36c60faa299",
+          "definitionSha256": "1195b64fdcef8bb5030bdf3d6ce7984d412b9b01afec00a140f71a6c2227b339",
+          "frames": 24,
+          "fps": 30,
+          "seconds": 0.7666666666666667,
+          "exportedSeconds": 0.7333333333333333,
+          "pose": false,
+          "events": [
+            {
+              "type": "CNmClipDocEvent_Sound",
+              "name": "Grenade.PreThrow.Gear",
+              "frame": 0,
+              "at": 0,
+              "authoredAt": 0,
+              "duration": 0,
+              "authoredDuration": 0,
+              "normalized": 0,
+              "position": "EntityEyePos"
+            },
+            {
+              "type": "CNmClipDocEvent_Sound",
+              "name": "SmokeGrenade.Throw",
+              "frame": 2,
+              "at": 0.06666703333333333,
+              "authoredAt": 0.06666666666666667,
+              "duration": 0,
+              "authoredDuration": 0,
+              "normalized": 0.086957,
+              "position": "EntityEyePos"
+            }
+          ],
+          "graphReferences": [
+            {
+              "name": "throw_overhand",
+              "_class": "CNmGraphDocClipNode::CData",
+              "m_clip": "animation/anims/viewmodel/grenade/grenade_smokegrenade/throw_overhand_smoke.vnmclip",
+              "m_flSpeedMultiplier": 1,
+              "m_nStartSyncEventOffset": 0,
+              "looping": false,
+              "fixedTime": null
+            }
+          ]
+        },
+        "throw-low": {
+          "resource": "animation/anims/viewmodel/grenade/grenade_smokegrenade/throw_underhand_smoke.vnmclip_c",
+          "sha256": "086092f0f7f3660ab21c4ff7252d5e5fca0e704d8df110bb631d7096dfd9d966",
+          "definitionSha256": "081c11e8a4335196ed0350f81f512e63bb90091ccb6ce7dbef203b5e5ed41a1a",
+          "frames": 16,
+          "fps": 30,
+          "seconds": 0.5,
+          "exportedSeconds": 0.5,
+          "pose": false,
+          "events": [
+            {
+              "type": "CNmClipDocEvent_Sound",
+              "name": "Grenade.ThrowUnder.Gear",
+              "frame": 0,
+              "at": 0,
+              "authoredAt": 0,
+              "duration": 0.5,
+              "authoredDuration": 0.5,
+              "normalized": 0,
+              "position": "EntityEyePos"
+            },
+            {
+              "type": "CNmClipDocEvent_Sound",
+              "name": "SmokeGrenade.Throw",
+              "frame": 0,
+              "at": 0,
+              "authoredAt": 0,
+              "duration": 0,
+              "authoredDuration": 0,
+              "normalized": 0,
+              "position": "EntityEyePos"
+            }
+          ],
+          "graphReferences": [
+            {
+              "name": "throw_underhand",
+              "_class": "CNmGraphDocClipNode::CData",
+              "m_clip": "animation/anims/viewmodel/grenade/grenade_smokegrenade/throw_underhand_smoke.vnmclip",
+              "m_flSpeedMultiplier": 1,
+              "m_nStartSyncEventOffset": 0,
+              "looping": false,
+              "fixedTime": null
+            }
+          ]
+        }
+      },
+      "completions": [
+        {
+          "state": "Charge",
+          "stateId": "14e9c341-6563-48bd-8c95-49aeff23ebb6",
+          "event": "WPN_ACTION_COMPLETE",
+          "type": "TimeRemaining",
+          "comparison": "LessThanEqual",
+          "remaining": 0.2,
+          "clips": [
+            {
+              "resource": "animation/anims/viewmodel/grenade/grenade_smokegrenade/pullpin_smoke.vnmclip_c",
+              "speed": 1
+            }
+          ],
+          "actions": [
+            {
+              "action": "pullpin",
+              "at": 0.7666666666666666
+            }
+          ]
+        },
+        {
+          "state": "Throw",
+          "stateId": "20c8aed5-f601-4e3c-a5bf-5d1cc7bd76c7",
+          "event": "WPN_ACTION_COMPLETE",
+          "type": "TimeRemaining",
+          "comparison": "LessThanEqual",
+          "remaining": 0,
+          "clips": [
+            {
+              "resource": "animation/anims/viewmodel/grenade/grenade_smokegrenade/throw_underhand_smoke.vnmclip_c",
+              "speed": 1
+            },
+            {
+              "resource": "animation/anims/viewmodel/grenade/grenade_smokegrenade/throw_overhand_smoke.vnmclip_c",
+              "speed": 1
+            }
+          ],
+          "actions": [
+            {
+              "action": "throw-high",
+              "at": 0.7666666666666667
+            },
+            {
+              "action": "throw-low",
+              "at": 0.5
+            }
+          ]
+        },
+        {
+          "state": "Deploying",
+          "stateId": "d55e4067-9687-45cc-b210-875632f117cc",
+          "event": "WPN_ACTION_COMPLETE",
+          "type": "TimeRemaining",
+          "comparison": "LessThanEqual",
+          "remaining": 0.2,
+          "clips": [
+            {
+              "resource": "animation/anims/viewmodel/grenade/grenade_smokegrenade/draw_smoke.vnmclip_c",
+              "speed": 1
+            },
+            {
+              "resource": "animation/anims/viewmodel/grenade/grenade_smokegrenade/draw_smoke.vnmclip_c",
+              "speed": 1
+            }
+          ],
+          "actions": [
+            {
+              "action": "draw",
+              "at": 0.8
+            }
+          ]
+        }
+      ],
+      "deployDuration": 1
+    },
+    "molotov": {
+      "graph": "animation/graphs/viewmodel/viewmodel_grenade.vnmgraph+molotov.vnmgraph_c",
+      "graphSha256": "0fb5332b3c95de0c2013a867ebdf12df75258dbab4d9b88b2bd3e14e9b78abbe",
+      "transitions": [
+        {
+          "name": "Underhand",
+          "seconds": 0,
+          "target": "f7bfe669-5273-4dff-a2e5-f518507e3f59",
+          "easing": "Linear"
+        },
+        {
+          "name": "Overhand",
+          "seconds": 0,
+          "target": "e7798833-3b38-471f-b2bb-3aa24700d38e",
+          "easing": "Linear"
+        },
+        {
+          "name": "ReadyToThrow",
+          "seconds": 0.2,
+          "target": "84df13ba-a2a3-487b-b21a-2263730408f7",
+          "easing": "Linear"
+        },
+        {
+          "name": "Throw",
+          "seconds": 0,
+          "target": "030d760d-5b92-4b00-997b-cee42b0a9262",
+          "easing": "Linear"
+        },
+        {
+          "name": "Charge",
+          "seconds": 0,
+          "target": "72823c61-3194-4a1e-acde-2240275b2956",
+          "easing": "Linear"
+        },
+        {
+          "name": "DeployOptions1",
+          "seconds": 0,
+          "target": "18787b15-5a52-4303-a5c0-4ca6a74969f2",
+          "easing": "Linear"
+        },
+        {
+          "name": "DeployOptions0",
+          "seconds": 0,
+          "target": "d5deefdc-0057-4cab-b884-b663e2f98d08",
+          "easing": "Linear"
+        },
+        {
+          "name": "Attack",
+          "seconds": 0,
+          "target": "adc9dd81-3b0a-4433-b3c0-3e03ee892fe4",
+          "easing": "Linear"
+        },
+        {
+          "name": "Deploying",
+          "seconds": 0,
+          "target": "1a7e7f89-fa51-4700-93e2-54a024d3d277",
+          "easing": "Linear"
+        },
+        {
+          "name": "Inspect",
+          "seconds": 0.2,
+          "target": "c6577fa6-bdb4-486e-97da-5aed9d7ec1dd",
+          "easing": "Linear"
+        },
+        {
+          "name": "Idle",
+          "seconds": 0.2,
+          "target": "a3eb1956-0a6d-4b9a-a918-1dcd03969f1e",
+          "easing": "Linear"
+        }
+      ],
+      "actions": {
+        "idle": {
+          "resource": "animation/anims/viewmodel/grenade/grenade_molotov/idle_molotov.vnmclip_c",
+          "sha256": "1748e004deb9aa5bbefd4d8a69098f4b8a7e6958a5d1360c6020ff9591779b0b",
+          "definitionSha256": "fe9a3a8f6c45515a9df50b44833b7ffadaad6309377a12ab5a94ad2e49ba7e82",
+          "frames": 1,
+          "fps": 30,
+          "seconds": 0,
+          "exportedSeconds": 0,
+          "pose": true,
+          "events": [],
+          "graphReferences": [
+            {
+              "name": "idle",
+              "_class": "CNmGraphDocClipNode::CData",
+              "m_clip": "animation/anims/viewmodel/grenade/grenade_molotov/idle_molotov.vnmclip",
+              "m_flSpeedMultiplier": 1,
+              "m_nStartSyncEventOffset": 0,
+              "looping": true,
+              "fixedTime": null
+            }
+          ]
+        },
+        "draw": {
+          "resource": "animation/anims/viewmodel/grenade/grenade_molotov/draw_molotov.vnmclip_c",
+          "sha256": "51bc13d5a7188789de6c955149b6ea49fabb0e29b92bf3a8eff1572914b17874",
+          "definitionSha256": "e06f172867f7e2e474178867b8e0c3709c9ec4705618c95480b2e4299afb0c13",
+          "frames": 31,
+          "fps": 30,
+          "seconds": 1,
+          "exportedSeconds": 1,
+          "pose": false,
+          "events": [
+            {
+              "type": "CNmClipDocEvent_Sound",
+              "name": "Draw.Gear",
+              "frame": 0,
+              "at": 0,
+              "authoredAt": 0,
+              "duration": 1,
+              "authoredDuration": 1,
+              "normalized": 0,
+              "position": "EntityEyePos"
+            },
+            {
+              "type": "CNmClipDocEvent_Sound",
+              "name": "Molotov.Draw",
+              "frame": 2,
+              "at": 0.066667,
+              "authoredAt": 0.06666666666666667,
+              "duration": 0.7,
+              "authoredDuration": 0.7,
+              "normalized": 0.066667,
+              "position": "EntityEyePos"
+            }
+          ],
+          "graphReferences": [
+            {
+              "name": "deploy",
+              "_class": "CNmGraphDocClipNode::CData",
+              "m_clip": "animation/anims/viewmodel/grenade/grenade_molotov/draw_molotov.vnmclip",
+              "m_flSpeedMultiplier": 1,
+              "m_nStartSyncEventOffset": 0,
+              "looping": false,
+              "fixedTime": null
+            },
+            {
+              "name": "deploy",
+              "_class": "CNmGraphDocClipNode::CData",
+              "m_clip": "animation/anims/viewmodel/grenade/grenade_molotov/draw_molotov.vnmclip",
+              "m_flSpeedMultiplier": 1,
+              "m_nStartSyncEventOffset": 0,
+              "looping": false,
+              "fixedTime": null
+            }
+          ]
+        },
+        "inspect": {
+          "resource": "animation/anims/viewmodel/grenade/grenade_molotov/lookat01_molotov.vnmclip_c",
+          "sha256": "3cad7b17298089ceea2d7ec989aefd344805541408ea8fe24fe101e9d6a4ebf2",
+          "definitionSha256": "1725a0236efc9f29325b1126d64f1fcbf3f5cef32ae699a1ae4c86b090bc317d",
+          "frames": 162,
+          "fps": 30,
+          "seconds": 5.366666666666666,
+          "exportedSeconds": 5.366666666666666,
+          "pose": false,
+          "events": [
+            {
+              "type": "CNmClipDocEvent_ID",
+              "name": "WPN_INSPECT_INTRO",
+              "frame": 0,
+              "at": 0,
+              "authoredAt": 0,
+              "duration": 1.1333326666666668,
+              "authoredDuration": 1.1333333333333333,
+              "normalized": 0,
+              "position": null
+            },
+            {
+              "type": "CNmClipDocEvent_Sound",
+              "name": "Molotov.Inspect.Liquid",
+              "frame": 1,
+              "at": 0.03333236666666667,
+              "authoredAt": 0.03333333333333333,
+              "duration": 1.6000018999999999,
+              "authoredDuration": 1.6,
+              "normalized": 0.006211,
+              "position": "EntityEyePos"
+            },
+            {
+              "type": "CNmClipDocEvent_Sound",
+              "name": "Inspect.Gear.UltraSmall",
+              "frame": 1,
+              "at": 0.03333236666666667,
+              "authoredAt": 0.03333333333333333,
+              "duration": 1.2333351333333333,
+              "authoredDuration": 1.2333333333333334,
+              "normalized": 0.006211,
+              "position": "EntityEyePos"
+            },
+            {
+              "type": "CNmClipDocEvent_ID",
+              "name": "WPN_INSPECT_LOOP",
+              "frame": 34,
+              "at": 1.1333326666666668,
+              "authoredAt": 1.1333333333333333,
+              "duration": 2.5666673666666666,
+              "authoredDuration": 2.566666666666667,
+              "normalized": 0.21118,
+              "position": null
+            },
+            {
+              "type": "CNmClipDocEvent_ID",
+              "name": "WPN_INSPECT_OUTRO",
+              "frame": 111,
+              "at": 3.700000033333333,
+              "authoredAt": 3.7,
+              "duration": 1.666666633333333,
+              "authoredDuration": 1.6666666666666667,
+              "normalized": 0.689441,
+              "position": null
+            },
+            {
+              "type": "CNmClipDocEvent_Sound",
+              "name": "Molotov.Inspect.Liquid",
+              "frame": 135,
+              "at": 4.4999983,
+              "authoredAt": 4.5,
+              "duration": 0.833336,
+              "authoredDuration": 0.8333333333333334,
+              "normalized": 0.838509,
+              "position": "EntityEyePos"
+            },
+            {
+              "type": "CNmClipDocEvent_Sound",
+              "name": "Inspect.Gear.UltraSmall",
+              "frame": 135,
+              "at": 4.4999983,
+              "authoredAt": 4.5,
+              "duration": 0.8666683666666667,
+              "authoredDuration": 0.8666666666666667,
+              "normalized": 0.838509,
+              "position": "EntityEyePos"
+            }
+          ],
+          "graphReferences": []
+        },
+        "pullpin": {
+          "resource": "animation/anims/viewmodel/grenade/grenade_molotov/pullpin_molotov.vnmclip_c",
+          "sha256": "ea9ab9b4fe4897a3053acb386eafdf64466ca54bc194132d79faff84e1858153",
+          "definitionSha256": "44e71bfce311f5353486d2bfefa1a9c45baf9471954c5a01feeffca7bc402bd8",
+          "frames": 35,
+          "fps": 30,
+          "seconds": 1.1333333333333333,
+          "exportedSeconds": 1.1,
+          "pose": false,
+          "events": [
+            {
+              "type": "CNmClipDocEvent_Sound",
+              "name": "Molotov.IdleLoop",
+              "frame": 3,
+              "at": 0.11276553333333333,
+              "authoredAt": 0.1,
+              "duration": 0,
+              "authoredDuration": 0,
+              "normalized": 0.099499,
+              "position": "EntityEyePos"
+            }
+          ],
+          "graphReferences": [
+            {
+              "name": "pull_pin",
+              "_class": "CNmGraphDocClipNode::CData",
+              "m_clip": "animation/anims/viewmodel/grenade/grenade_molotov/pullpin_molotov.vnmclip",
+              "m_flSpeedMultiplier": 1,
+              "m_nStartSyncEventOffset": 0,
+              "looping": false,
+              "fixedTime": null
+            }
+          ]
+        },
+        "hold-high": {
+          "resource": "animation/anims/viewmodel/grenade/grenade_molotov/throwcharge_high_molotov.vnmclip_c",
+          "sha256": "b8ab8cda5f61b3c62628e721ca4ab356adc0a00912a7ee8e5edbe75001e59244",
+          "definitionSha256": "2ca5ad8d9f4d5a2ab766ae48c5729dfe849103ba2370afbde3d13c72cff1cefb",
+          "frames": 31,
+          "fps": 30,
+          "seconds": 1,
+          "exportedSeconds": 0,
+          "pose": false,
+          "events": [],
+          "graphReferences": [
+            {
+              "name": "High",
+              "_class": "CNmGraphDocAnimationPoseNode::CData",
+              "m_clip": "animation/anims/viewmodel/grenade/grenade_molotov/throwcharge_high_molotov.vnmclip",
+              "m_variationTimeValue": -1,
+              "looping": false,
+              "fixedTime": 0
+            }
+          ]
+        },
+        "hold-mid": {
+          "resource": "animation/anims/viewmodel/grenade/grenade_molotov/throwcharge_mid_molotov.vnmclip_c",
+          "sha256": "f748efe403e4b117573cfdc4fc183d70ce160d641b70f24a3de4194e2c2cc3c9",
+          "definitionSha256": "140cf65a5b7508a4e0d1f8f76a35c101f17263c8179b676ed96d12811f8a9c94",
+          "frames": 31,
+          "fps": 30,
+          "seconds": 1,
+          "exportedSeconds": 0,
+          "pose": false,
+          "events": [],
+          "graphReferences": [
+            {
+              "name": "Mid",
+              "_class": "CNmGraphDocAnimationPoseNode::CData",
+              "m_clip": "animation/anims/viewmodel/grenade/grenade_molotov/throwcharge_mid_molotov.vnmclip",
+              "m_variationTimeValue": -1,
+              "looping": false,
+              "fixedTime": 0
+            }
+          ]
+        },
+        "hold-low": {
+          "resource": "animation/anims/viewmodel/grenade/grenade_molotov/throwcharge_low_molotov.vnmclip_c",
+          "sha256": "b4484f427a90aa14b314e4a2374aa85920e331324e4327dc1f67f2c1a6706ea6",
+          "definitionSha256": "fc7348a10411375486f143deaabcc2c1ebaaec9054243277cad56f4c25283969",
+          "frames": 31,
+          "fps": 30,
+          "seconds": 1,
+          "exportedSeconds": 0,
+          "pose": false,
+          "events": [
+            {
+              "type": "CNmClipDocEvent_Particle",
+              "frame": 0,
+              "at": 0,
+              "authoredAt": 0,
+              "duration": 0.033333,
+              "authoredDuration": 0.03333333333333333,
+              "normalized": 0,
+              "position": null
+            }
+          ],
+          "graphReferences": [
+            {
+              "name": "Low",
+              "_class": "CNmGraphDocAnimationPoseNode::CData",
+              "m_clip": "animation/anims/viewmodel/grenade/grenade_molotov/throwcharge_low_molotov.vnmclip",
+              "m_variationTimeValue": -1,
+              "looping": false,
+              "fixedTime": 0
+            }
+          ]
+        },
+        "throw-high": {
+          "resource": "animation/anims/viewmodel/grenade/grenade_molotov/throw_overhand_molotov.vnmclip_c",
+          "sha256": "1c2f73d5fccf6270cbcfbc0bc538f1b74738fbeb06007b665967c18be8e85026",
+          "definitionSha256": "f16603c507bb336dee2569675aaa7e114db3aab839a9948db33cd9fad9a93945",
+          "frames": 24,
+          "fps": 30,
+          "seconds": 0.7666666666666667,
+          "exportedSeconds": 0.7333333333333333,
+          "pose": false,
+          "events": [
+            {
+              "type": "CNmClipDocEvent_Sound",
+              "name": "Grenade.PreThrow.Gear",
+              "frame": 0,
+              "at": 0,
+              "authoredAt": 0,
+              "duration": 0,
+              "authoredDuration": 0,
+              "normalized": 0,
+              "position": "EntityEyePos"
+            },
+            {
+              "type": "CNmClipDocEvent_Sound",
+              "name": "Molotov.Throw",
+              "frame": 1,
+              "at": 0.033333133333333334,
+              "authoredAt": 0.03333333333333333,
+              "duration": 0,
+              "authoredDuration": 0,
+              "normalized": 0.043478,
+              "position": "EntityEyePos"
+            }
+          ],
+          "graphReferences": [
+            {
+              "name": "throw_overhand",
+              "_class": "CNmGraphDocClipNode::CData",
+              "m_clip": "animation/anims/viewmodel/grenade/grenade_molotov/throw_overhand_molotov.vnmclip",
+              "m_flSpeedMultiplier": 1,
+              "m_nStartSyncEventOffset": 0,
+              "looping": false,
+              "fixedTime": null
+            }
+          ]
+        },
+        "throw-low": {
+          "resource": "animation/anims/viewmodel/grenade/grenade_molotov/throw_underhand_molotov.vnmclip_c",
+          "sha256": "de398aaae38fa7660b013acfe23bd84457bdfcb8054d0ce79dd1cf62bac45215",
+          "definitionSha256": "058e3bbf4c71d81e84d3e6f6663c45ce3918bb7ec42f3c5c59b8c39e0202b8b9",
+          "frames": 16,
+          "fps": 30,
+          "seconds": 0.5,
+          "exportedSeconds": 0.4,
+          "pose": false,
+          "events": [
+            {
+              "type": "CNmClipDocEvent_Sound",
+              "name": "Grenade.ThrowUnder.Gear",
+              "frame": 0,
+              "at": 0,
+              "authoredAt": 0,
+              "duration": 0.4,
+              "authoredDuration": 0.4,
+              "normalized": 0,
+              "position": "EntityEyePos"
+            },
+            {
+              "type": "CNmClipDocEvent_Sound",
+              "name": "Molotov.Throw",
+              "frame": 0,
+              "at": 0,
+              "authoredAt": 0,
+              "duration": 0,
+              "authoredDuration": 0,
+              "normalized": 0,
+              "position": "EntityEyePos"
+            }
+          ],
+          "graphReferences": [
+            {
+              "name": "throw_underhand",
+              "_class": "CNmGraphDocClipNode::CData",
+              "m_clip": "animation/anims/viewmodel/grenade/grenade_molotov/throw_underhand_molotov.vnmclip",
+              "m_flSpeedMultiplier": 1,
+              "m_nStartSyncEventOffset": 0,
+              "looping": false,
+              "fixedTime": null
+            }
+          ]
+        }
+      },
+      "completions": [
+        {
+          "state": "Charge",
+          "stateId": "72823c61-3194-4a1e-acde-2240275b2956",
+          "event": "WPN_ACTION_COMPLETE",
+          "type": "TimeRemaining",
+          "comparison": "LessThanEqual",
+          "remaining": 0.2,
+          "clips": [
+            {
+              "resource": "animation/anims/viewmodel/grenade/grenade_molotov/pullpin_molotov.vnmclip_c",
+              "speed": 1
+            }
+          ],
+          "actions": [
+            {
+              "action": "pullpin",
+              "at": 0.9333333333333333
+            }
+          ]
+        },
+        {
+          "state": "Throw",
+          "stateId": "030d760d-5b92-4b00-997b-cee42b0a9262",
+          "event": "WPN_ACTION_COMPLETE",
+          "type": "TimeRemaining",
+          "comparison": "LessThanEqual",
+          "remaining": 0,
+          "clips": [
+            {
+              "resource": "animation/anims/viewmodel/grenade/grenade_molotov/throw_underhand_molotov.vnmclip_c",
+              "speed": 1
+            },
+            {
+              "resource": "animation/anims/viewmodel/grenade/grenade_molotov/throw_overhand_molotov.vnmclip_c",
+              "speed": 1
+            }
+          ],
+          "actions": [
+            {
+              "action": "throw-high",
+              "at": 0.7666666666666667
+            },
+            {
+              "action": "throw-low",
+              "at": 0.5
+            }
+          ]
+        },
+        {
+          "state": "Deploying",
+          "stateId": "1a7e7f89-fa51-4700-93e2-54a024d3d277",
+          "event": "WPN_ACTION_COMPLETE",
+          "type": "TimeRemaining",
+          "comparison": "LessThanEqual",
+          "remaining": 0.2,
+          "clips": [
+            {
+              "resource": "animation/anims/viewmodel/grenade/grenade_molotov/draw_molotov.vnmclip_c",
+              "speed": 1
+            },
+            {
+              "resource": "animation/anims/viewmodel/grenade/grenade_molotov/draw_molotov.vnmclip_c",
+              "speed": 1
+            }
+          ],
+          "actions": [
+            {
+              "action": "draw",
+              "at": 0.8
+            }
+          ]
+        }
+      ],
+      "deployDuration": 1
+    },
+    "incendiary": {
+      "graph": "animation/graphs/viewmodel/viewmodel_grenade.vnmgraph+incendiary.vnmgraph_c",
+      "graphSha256": "5ffdf4329450dcdf8d26dd493e1a5d59ff6843530167a552df868d578ccc6e8d",
+      "transitions": [
+        {
+          "name": "Underhand",
+          "seconds": 0,
+          "target": "ab7d09c4-f885-4163-b431-1f5571f5683e",
+          "easing": "Linear"
+        },
+        {
+          "name": "Overhand",
+          "seconds": 0,
+          "target": "e5e2bfc4-f586-477d-91c6-64e0438d178e",
+          "easing": "Linear"
+        },
+        {
+          "name": "ReadyToThrow",
+          "seconds": 0.2,
+          "target": "adcdc445-bb63-483a-afa7-78958516d459",
+          "easing": "Linear"
+        },
+        {
+          "name": "Throw",
+          "seconds": 0,
+          "target": "886b77d7-d565-4ab5-a9ba-0e9c10401b4e",
+          "easing": "Linear"
+        },
+        {
+          "name": "Charge",
+          "seconds": 0,
+          "target": "39c66bf5-cfd9-42ad-8b3c-70f76bba4195",
+          "easing": "Linear"
+        },
+        {
+          "name": "DeployOptions1",
+          "seconds": 0,
+          "target": "bb7fa2e6-8ac8-4eea-b661-68862c4d628e",
+          "easing": "Linear"
+        },
+        {
+          "name": "DeployOptions0",
+          "seconds": 0,
+          "target": "23b21702-f5dd-42ec-8992-76bedea0bcae",
+          "easing": "Linear"
+        },
+        {
+          "name": "Attack",
+          "seconds": 0,
+          "target": "2da65289-716f-4e12-9e9a-c734bedd928c",
+          "easing": "Linear"
+        },
+        {
+          "name": "Deploying",
+          "seconds": 0,
+          "target": "3c3ffce6-d75f-4f57-b127-e6f336055d2c",
+          "easing": "Linear"
+        },
+        {
+          "name": "Inspect",
+          "seconds": 0.2,
+          "target": "c8110c6f-6e08-4414-bb6b-2649e1bb975f",
+          "easing": "Linear"
+        },
+        {
+          "name": "Idle",
+          "seconds": 0.2,
+          "target": "da061947-e779-4d24-9021-ce561c25c68d",
+          "easing": "Linear"
+        }
+      ],
+      "actions": {
+        "idle": {
+          "resource": "animation/anims/viewmodel/grenade/grenade_incendiary/idle_incendiary.vnmclip_c",
+          "sha256": "27d0c24a368a9e4333aa4f6038b4189929c0ecb6f4b36f129807876d05c7e63b",
+          "definitionSha256": "b716c2e7e327a0ae8de4895b5c4dae3d1ebe9c679d5542b8d1773198a66553a4",
+          "frames": 31,
+          "fps": 30,
+          "seconds": 1,
+          "exportedSeconds": 0.9666666666666667,
+          "pose": false,
+          "events": [],
+          "graphReferences": [
+            {
+              "name": "idle",
+              "_class": "CNmGraphDocClipNode::CData",
+              "m_clip": "animation/anims/viewmodel/grenade/grenade_incendiary/idle_incendiary.vnmclip",
+              "m_flSpeedMultiplier": 1,
+              "m_nStartSyncEventOffset": 0,
+              "looping": true,
+              "fixedTime": null
+            }
+          ]
+        },
+        "draw": {
+          "resource": "animation/anims/viewmodel/grenade/grenade_incendiary/draw_incendiary.vnmclip_c",
+          "sha256": "ea6bec529e36969376d61ca090ba9a5dc35630e5fb92e784eb076983674d83ce",
+          "definitionSha256": "b3b5f3bb59064fb281532405efe21aa27408e4b8b58b79b77f573d3b2ccd512b",
+          "frames": 31,
+          "fps": 30,
+          "seconds": 1,
+          "exportedSeconds": 1,
+          "pose": false,
+          "events": [
+            {
+              "type": "CNmClipDocEvent_Sound",
+              "name": "Draw.Gear",
+              "frame": 0,
+              "at": 0,
+              "authoredAt": 0,
+              "duration": 1,
+              "authoredDuration": 1,
+              "normalized": 0,
+              "position": "EntityEyePos"
+            },
+            {
+              "type": "CNmClipDocEvent_Sound",
+              "name": "IncGrenade.Draw",
+              "frame": 2,
+              "at": 0.066667,
+              "authoredAt": 0.06666666666666667,
+              "duration": 0.4,
+              "authoredDuration": 0.4,
+              "normalized": 0.066667,
+              "position": "EntityEyePos"
+            },
+            {
+              "type": "CNmClipDocEvent_Sound",
+              "name": "IncGrenade.Draw.Ring",
+              "frame": 7,
+              "at": 0.233333,
+              "authoredAt": 0.23333333333333334,
+              "duration": 0.4,
+              "authoredDuration": 0.4,
+              "normalized": 0.233333,
+              "position": "EntityEyePos"
+            }
+          ],
+          "graphReferences": [
+            {
+              "name": "deploy",
+              "_class": "CNmGraphDocClipNode::CData",
+              "m_clip": "animation/anims/viewmodel/grenade/grenade_incendiary/draw_incendiary.vnmclip",
+              "m_flSpeedMultiplier": 1,
+              "m_nStartSyncEventOffset": 0,
+              "looping": false,
+              "fixedTime": null
+            },
+            {
+              "name": "deploy",
+              "_class": "CNmGraphDocClipNode::CData",
+              "m_clip": "animation/anims/viewmodel/grenade/grenade_incendiary/draw_incendiary.vnmclip",
+              "m_flSpeedMultiplier": 1,
+              "m_nStartSyncEventOffset": 0,
+              "looping": false,
+              "fixedTime": null
+            }
+          ]
+        },
+        "inspect": {
+          "resource": "animation/anims/viewmodel/grenade/grenade_incendiary/lookat01_incendiary.vnmclip_c",
+          "sha256": "bc4330729cbb9712e60594f71c5318db6971795be884610acf7c4b762793d853",
+          "definitionSha256": "4f63ca71b8fa683cd2a37fa8bf850d1e2a31459ff82b1ce7d6c0d4bba7519187",
+          "frames": 159,
+          "fps": 30,
+          "seconds": 5.266666666666667,
+          "exportedSeconds": 5.266666666666667,
+          "pose": false,
+          "events": [
+            {
+              "type": "CNmClipDocEvent_Sound",
+              "name": "Inspect.Gear.Small",
+              "frame": 0,
+              "at": 0,
+              "authoredAt": 0,
+              "duration": 1.1999994666666667,
+              "authoredDuration": 1.2,
+              "normalized": 0,
+              "position": "EntityEyePos"
+            },
+            {
+              "type": "CNmClipDocEvent_ID",
+              "name": "WPN_INSPECT_INTRO",
+              "frame": 0,
+              "at": 0,
+              "authoredAt": 0,
+              "duration": 0.9999977999999998,
+              "authoredDuration": 1,
+              "normalized": 0,
+              "position": null
+            },
+            {
+              "type": "CNmClipDocEvent_Sound",
+              "name": "IncGrenade.Inspect.Move",
+              "frame": 4,
+              "at": 0.13333093333333335,
+              "authoredAt": 0.13333333333333333,
+              "duration": 0.4333308,
+              "authoredDuration": 0.43333333333333335,
+              "normalized": 0.025316,
+              "position": "EntityEyePos"
+            },
+            {
+              "type": "CNmClipDocEvent_ID",
+              "name": "WPN_INSPECT_LOOP",
+              "frame": 30,
+              "at": 0.9999977999999998,
+              "authoredAt": 1,
+              "duration": 3.6666691333333334,
+              "authoredDuration": 3.6666666666666665,
+              "normalized": 0.189873,
+              "position": null
+            },
+            {
+              "type": "CNmClipDocEvent_Sound",
+              "name": "Inspect.Gear.UltraSmall",
+              "frame": 61,
+              "at": 2.0333335999999997,
+              "authoredAt": 2.033333333333333,
+              "duration": 1.1999994666666667,
+              "authoredDuration": 1.2,
+              "normalized": 0.386076,
+              "position": "EntityEyePos"
+            },
+            {
+              "type": "CNmClipDocEvent_Sound",
+              "name": "Inspect.Gear.UltraSmall",
+              "frame": 114,
+              "at": 3.800000066666667,
+              "authoredAt": 3.8,
+              "duration": 1.1999994666666667,
+              "authoredDuration": 1.2,
+              "normalized": 0.721519,
+              "position": "EntityEyePos"
+            },
+            {
+              "type": "CNmClipDocEvent_ID",
+              "name": "WPN_INSPECT_OUTRO",
+              "frame": 140,
+              "at": 4.6666669333333335,
+              "authoredAt": 4.666666666666667,
+              "duration": 0.5999997333333333,
+              "authoredDuration": 0.6,
+              "normalized": 0.886076,
+              "position": null
+            },
+            {
+              "type": "CNmClipDocEvent_Sound",
+              "name": "Inspect.Gear.Small",
+              "frame": 144,
+              "at": 4.799997866666667,
+              "authoredAt": 4.8,
+              "duration": 0.46666880000000005,
+              "authoredDuration": 0.4666666666666667,
+              "normalized": 0.911392,
+              "position": "EntityEyePos"
+            },
+            {
+              "type": "CNmClipDocEvent_Sound",
+              "name": "IncGrenade.Inspect.Move",
+              "frame": 150,
+              "at": 4.999999533333334,
+              "authoredAt": 5,
+              "duration": 0.26666713333333336,
+              "authoredDuration": 0.26666666666666666,
+              "normalized": 0.949367,
+              "position": "EntityEyePos"
+            },
+            {
+              "type": "CNmClipDocEvent_Sound",
+              "name": "IncGrenade.Inspect.RingMove",
+              "frame": 152,
+              "at": 5.066665,
+              "authoredAt": 5.066666666666666,
+              "duration": 0.20000166666666666,
+              "authoredDuration": 0.2,
+              "normalized": 0.962025,
+              "position": "EntityEyePos"
+            }
+          ],
+          "graphReferences": []
+        },
+        "pullpin": {
+          "resource": "animation/anims/viewmodel/grenade/grenade_incendiary/pullpin_incendiary.vnmclip_c",
+          "sha256": "75ed544bf353ff939cc935b80a05836a58da166ef430cbc3c3a79290ee63e84c",
+          "definitionSha256": "96d28421672ae6106e7a81b54b592e48ba01353209d3b13a82655f6ef01b1c0e",
+          "frames": 30,
+          "fps": 30,
+          "seconds": 0.9666666666666667,
+          "exportedSeconds": 0.9666666666666667,
+          "pose": false,
+          "events": [
+            {
+              "type": "CNmClipDocEvent_Sound",
+              "name": "IncGrenade.PullPin",
+              "frame": 0,
+              "at": 0,
+              "authoredAt": 0,
+              "duration": 0.9666666666666667,
+              "authoredDuration": 0.9666666666666667,
+              "normalized": 0,
+              "position": "EntityEyePos"
+            }
+          ],
+          "graphReferences": [
+            {
+              "name": "pull_pin",
+              "_class": "CNmGraphDocClipNode::CData",
+              "m_clip": "animation/anims/viewmodel/grenade/grenade_incendiary/pullpin_incendiary.vnmclip",
+              "m_flSpeedMultiplier": 1,
+              "m_nStartSyncEventOffset": 0,
+              "looping": false,
+              "fixedTime": null
+            }
+          ]
+        },
+        "hold-high": {
+          "resource": "animation/anims/viewmodel/grenade/grenade_incendiary/throwcharge_high_incendiary.vnmclip_c",
+          "sha256": "a181f3a730484ae758261c87d1328ac17c3e29c64fdd650157890e2c0f65d347",
+          "definitionSha256": "027eb511820dc2bce6082ddf48a944d9fec00e7bf19fbc0482374bc63aef4ee0",
+          "frames": 31,
+          "fps": 30,
+          "seconds": 1,
+          "exportedSeconds": 0,
+          "pose": false,
+          "events": [],
+          "graphReferences": [
+            {
+              "name": "High",
+              "_class": "CNmGraphDocAnimationPoseNode::CData",
+              "m_clip": "animation/anims/viewmodel/grenade/grenade_incendiary/throwcharge_high_incendiary.vnmclip",
+              "m_variationTimeValue": -1,
+              "looping": false,
+              "fixedTime": 0
+            }
+          ]
+        },
+        "hold-mid": {
+          "resource": "animation/anims/viewmodel/grenade/grenade_incendiary/throwcharge_mid_incendiary.vnmclip_c",
+          "sha256": "515226b17fad7f5b316dfcd5f5203271f9b36c991fdc0ab91ef002a1c47b1a0d",
+          "definitionSha256": "aa932cbed380bb4984a9deaaf2bbc45fadbb53cd5afa48691efcb84880d0ea0d",
+          "frames": 31,
+          "fps": 30,
+          "seconds": 1,
+          "exportedSeconds": 0,
+          "pose": false,
+          "events": [],
+          "graphReferences": [
+            {
+              "name": "Mid",
+              "_class": "CNmGraphDocAnimationPoseNode::CData",
+              "m_clip": "animation/anims/viewmodel/grenade/grenade_incendiary/throwcharge_mid_incendiary.vnmclip",
+              "m_variationTimeValue": -1,
+              "looping": false,
+              "fixedTime": 0
+            }
+          ]
+        },
+        "hold-low": {
+          "resource": "animation/anims/viewmodel/grenade/grenade_incendiary/throwcharge_low_incendiary.vnmclip_c",
+          "sha256": "643d3d89f75ca4e6b1c7cf55b98bfa1af8e0f50f6c7babdda678db5a8ccefd87",
+          "definitionSha256": "3fde3eb7af2de3a97cd308fcf377bc7d975f947d7a2a1dfd991413ed55513d36",
+          "frames": 31,
+          "fps": 30,
+          "seconds": 1,
+          "exportedSeconds": 0,
+          "pose": false,
+          "events": [],
+          "graphReferences": [
+            {
+              "name": "Low",
+              "_class": "CNmGraphDocAnimationPoseNode::CData",
+              "m_clip": "animation/anims/viewmodel/grenade/grenade_incendiary/throwcharge_low_incendiary.vnmclip",
+              "m_variationTimeValue": -1,
+              "looping": false,
+              "fixedTime": 0
+            }
+          ]
+        },
+        "throw-high": {
+          "resource": "animation/anims/viewmodel/grenade/grenade_incendiary/throw_overhand_incendiary.vnmclip_c",
+          "sha256": "6944333bfa93cd25d17998cbc318a6bfc2344f0e8e9c25c490d8b70031568d4a",
+          "definitionSha256": "9b66aaa0362dcc67280266be793b35e72023d4ba3ba101b8e3054b3d224aacde",
+          "frames": 24,
+          "fps": 30,
+          "seconds": 0.7666666666666667,
+          "exportedSeconds": 0.7333333333333333,
+          "pose": false,
+          "events": [
+            {
+              "type": "CNmClipDocEvent_Sound",
+              "name": "Grenade.PreThrow.Gear",
+              "frame": 0,
+              "at": 0,
+              "authoredAt": 0,
+              "duration": 0,
+              "authoredDuration": 0,
+              "normalized": 0,
+              "position": "EntityEyePos"
+            },
+            {
+              "type": "CNmClipDocEvent_Sound",
+              "name": "IncGrenade.Throw",
+              "frame": 1,
+              "at": 0.033333133333333334,
+              "authoredAt": 0.03333333333333333,
+              "duration": 0,
+              "authoredDuration": 0,
+              "normalized": 0.043478,
+              "position": "EntityEyePos"
+            }
+          ],
+          "graphReferences": [
+            {
+              "name": "throw_overhand",
+              "_class": "CNmGraphDocClipNode::CData",
+              "m_clip": "animation/anims/viewmodel/grenade/grenade_incendiary/throw_overhand_incendiary.vnmclip",
+              "m_flSpeedMultiplier": 1,
+              "m_nStartSyncEventOffset": 0,
+              "looping": false,
+              "fixedTime": null
+            }
+          ]
+        },
+        "throw-low": {
+          "resource": "animation/anims/viewmodel/grenade/grenade_incendiary/throw_underhand_incendiary.vnmclip_c",
+          "sha256": "b980d7a8dda64942ce4980db2a702f7277e9a48df099dea8a4b43f8f6355f3a4",
+          "definitionSha256": "f83f5e1fa073d24bda02b4da6dfb68a50a76bfa6537c8ad54e01e7907894e297",
+          "frames": 16,
+          "fps": 30,
+          "seconds": 0.5,
+          "exportedSeconds": 0.5,
+          "pose": false,
+          "events": [
+            {
+              "type": "CNmClipDocEvent_Sound",
+              "name": "Grenade.ThrowUnder.Gear",
+              "frame": 0,
+              "at": 0,
+              "authoredAt": 0,
+              "duration": 0.5,
+              "authoredDuration": 0.5,
+              "normalized": 0,
+              "position": "EntityEyePos"
+            },
+            {
+              "type": "CNmClipDocEvent_Sound",
+              "name": "IncGrenade.Throw",
+              "frame": 0,
+              "at": 0,
+              "authoredAt": 0,
+              "duration": 0,
+              "authoredDuration": 0,
+              "normalized": 0,
+              "position": "EntityEyePos"
+            }
+          ],
+          "graphReferences": [
+            {
+              "name": "throw_underhand",
+              "_class": "CNmGraphDocClipNode::CData",
+              "m_clip": "animation/anims/viewmodel/grenade/grenade_incendiary/throw_underhand_incendiary.vnmclip",
+              "m_flSpeedMultiplier": 1,
+              "m_nStartSyncEventOffset": 0,
+              "looping": false,
+              "fixedTime": null
+            }
+          ]
+        }
+      },
+      "completions": [
+        {
+          "state": "Charge",
+          "stateId": "39c66bf5-cfd9-42ad-8b3c-70f76bba4195",
+          "event": "WPN_ACTION_COMPLETE",
+          "type": "TimeRemaining",
+          "comparison": "LessThanEqual",
+          "remaining": 0.2,
+          "clips": [
+            {
+              "resource": "animation/anims/viewmodel/grenade/grenade_incendiary/pullpin_incendiary.vnmclip_c",
+              "speed": 1
+            }
+          ],
+          "actions": [
+            {
+              "action": "pullpin",
+              "at": 0.7666666666666666
+            }
+          ]
+        },
+        {
+          "state": "Throw",
+          "stateId": "886b77d7-d565-4ab5-a9ba-0e9c10401b4e",
+          "event": "WPN_ACTION_COMPLETE",
+          "type": "TimeRemaining",
+          "comparison": "LessThanEqual",
+          "remaining": 0,
+          "clips": [
+            {
+              "resource": "animation/anims/viewmodel/grenade/grenade_incendiary/throw_underhand_incendiary.vnmclip_c",
+              "speed": 1
+            },
+            {
+              "resource": "animation/anims/viewmodel/grenade/grenade_incendiary/throw_overhand_incendiary.vnmclip_c",
+              "speed": 1
+            }
+          ],
+          "actions": [
+            {
+              "action": "throw-high",
+              "at": 0.7666666666666667
+            },
+            {
+              "action": "throw-low",
+              "at": 0.5
+            }
+          ]
+        },
+        {
+          "state": "Deploying",
+          "stateId": "3c3ffce6-d75f-4f57-b127-e6f336055d2c",
+          "event": "WPN_ACTION_COMPLETE",
+          "type": "TimeRemaining",
+          "comparison": "LessThanEqual",
+          "remaining": 0.2,
+          "clips": [
+            {
+              "resource": "animation/anims/viewmodel/grenade/grenade_incendiary/draw_incendiary.vnmclip_c",
+              "speed": 1
+            },
+            {
+              "resource": "animation/anims/viewmodel/grenade/grenade_incendiary/draw_incendiary.vnmclip_c",
+              "speed": 1
+            }
+          ],
+          "actions": [
+            {
+              "action": "draw",
+              "at": 0.8
+            }
+          ]
+        }
+      ],
+      "deployDuration": 1
+    },
+    "decoy": {
+      "graph": "animation/graphs/viewmodel/viewmodel_grenade.vnmgraph+decoy.vnmgraph_c",
+      "graphSha256": "3d6634d58ba98d3b555f58b81bc115e96a421c32decc0790079a72db65026dbc",
+      "transitions": [
+        {
+          "name": "Underhand",
+          "seconds": 0,
+          "target": "ba59a99b-06fc-4f78-aa31-4db7aead4734",
+          "easing": "Linear"
+        },
+        {
+          "name": "Overhand",
+          "seconds": 0,
+          "target": "e02afacd-fda8-4132-862c-e2672f7f025b",
+          "easing": "Linear"
+        },
+        {
+          "name": "ReadyToThrow",
+          "seconds": 0.2,
+          "target": "a6eb54e7-a0aa-4c96-ab04-0094816f865d",
+          "easing": "Linear"
+        },
+        {
+          "name": "Throw",
+          "seconds": 0,
+          "target": "7a5dd0f2-3606-4852-89a3-c2c565b3987d",
+          "easing": "Linear"
+        },
+        {
+          "name": "Charge",
+          "seconds": 0,
+          "target": "c1fd73a3-5ee4-42d9-8258-09d803ac1d5d",
+          "easing": "Linear"
+        },
+        {
+          "name": "DeployOptions1",
+          "seconds": 0,
+          "target": "15d27005-10eb-4fa0-8313-de72af0b7da9",
+          "easing": "Linear"
+        },
+        {
+          "name": "DeployOptions0",
+          "seconds": 0,
+          "target": "57860b65-3629-4a43-8176-58c10f3efb52",
+          "easing": "Linear"
+        },
+        {
+          "name": "Attack",
+          "seconds": 0,
+          "target": "3cc64f3c-0eb2-4a77-aecb-5d012a97bac7",
+          "easing": "Linear"
+        },
+        {
+          "name": "Deploying",
+          "seconds": 0,
+          "target": "2b5e2a9b-2665-43a8-b517-186a827f98d5",
+          "easing": "Linear"
+        },
+        {
+          "name": "Inspect",
+          "seconds": 0.2,
+          "target": "8b5ef4d5-9a5a-4fd6-931b-a8a930acfe08",
+          "easing": "Linear"
+        },
+        {
+          "name": "Idle",
+          "seconds": 0.2,
+          "target": "cb95879c-5f3c-4d9c-b253-7bc9fcc34f64",
+          "easing": "Linear"
+        }
+      ],
+      "actions": {
+        "idle": {
+          "resource": "animation/anims/viewmodel/grenade/_default_grenade/idle_grenade.vnmclip_c",
+          "sha256": "013576b3847d184c0a904f11121a1ad9b012e92e60f542531a63d6f9bbd04bb5",
+          "definitionSha256": "e7cdb86b18ab57775e7272beed47dae5d5b89b4526cf517f948df9b4941d19ed",
+          "frames": 1,
+          "fps": 30,
+          "seconds": 0,
+          "exportedSeconds": 0,
+          "pose": true,
+          "events": [],
+          "graphReferences": [
+            {
+              "name": "idle",
+              "_class": "CNmGraphDocClipNode::CData",
+              "m_clip": "animation/anims/viewmodel/grenade/_default_grenade/idle_grenade.vnmclip",
+              "m_flSpeedMultiplier": 1,
+              "m_nStartSyncEventOffset": 0,
+              "looping": true,
+              "fixedTime": null
+            }
+          ]
+        },
+        "draw": {
+          "resource": "animation/anims/viewmodel/grenade/_default_grenade/draw_grenade.vnmclip_c",
+          "sha256": "a3ea8624250ad337f986b0c296c2a0f3df4653bc7da8e5f3bd37c8a2d12761be",
+          "definitionSha256": "c23e002bff205d3ad08a57f71d51a2ec67e046979d58031e71a52479bddba223",
+          "frames": 31,
+          "fps": 30,
+          "seconds": 1,
+          "exportedSeconds": 1,
+          "pose": false,
+          "events": [
+            {
+              "type": "CNmClipDocEvent_Sound",
+              "name": "Draw.Gear",
+              "frame": 0,
+              "at": 0,
+              "authoredAt": 0,
+              "duration": 1,
+              "authoredDuration": 1,
+              "normalized": 0,
+              "position": "EntityEyePos"
+            },
+            {
+              "type": "CNmClipDocEvent_Sound",
+              "name": "Decoy.Draw",
+              "frame": 18,
+              "at": 0.6,
+              "authoredAt": 0.6,
+              "duration": 0.4,
+              "authoredDuration": 0.4,
+              "normalized": 0.6,
+              "position": "EntityEyePos"
+            }
+          ],
+          "graphReferences": [
+            {
+              "name": "deploy",
+              "_class": "CNmGraphDocClipNode::CData",
+              "m_clip": "animation/anims/viewmodel/grenade/_default_grenade/draw_grenade.vnmclip",
+              "m_flSpeedMultiplier": 1,
+              "m_nStartSyncEventOffset": 0,
+              "looping": false,
+              "fixedTime": null
+            },
+            {
+              "name": "deploy",
+              "_class": "CNmGraphDocClipNode::CData",
+              "m_clip": "animation/anims/viewmodel/grenade/_default_grenade/draw_grenade.vnmclip",
+              "m_flSpeedMultiplier": 1,
+              "m_nStartSyncEventOffset": 0,
+              "looping": false,
+              "fixedTime": null
+            }
+          ]
+        },
+        "inspect": {
+          "resource": "animation/anims/viewmodel/grenade/_default_grenade/lookat01_grenade.vnmclip_c",
+          "sha256": "529855e95e99980074bb355b4b22b0c5a525ed610ac6d7edc247dd28069318cd",
+          "definitionSha256": "6c76a3120236a56a8573ff31bb0558a496436f63ec1b16f286fe01dd15e30d27",
+          "frames": 212,
+          "fps": 30,
+          "seconds": 7.033333333333333,
+          "exportedSeconds": 7.033333333333333,
+          "pose": false,
+          "events": [
+            {
+              "type": "CNmClipDocEvent_ID",
+              "name": "WPN_INSPECT_INTRO",
+              "frame": 0,
+              "at": 0,
+              "authoredAt": 0,
+              "duration": 1.4333300333333334,
+              "authoredDuration": 1.4333333333333333,
+              "normalized": 0,
+              "position": null
+            },
+            {
+              "type": "CNmClipDocEvent_Sound",
+              "name": "Inspect.Gear.Small",
+              "frame": 3,
+              "at": 0.09999993333333333,
+              "authoredAt": 0.1,
+              "duration": 1.0666683,
+              "authoredDuration": 1.0666666666666667,
+              "normalized": 0.014218,
+              "position": "EntityEyePos"
+            },
+            {
+              "type": "CNmClipDocEvent_Sound",
+              "name": "Decoy.Inspect02.Spins",
+              "frame": 10,
+              "at": 0.3333307666666666,
+              "authoredAt": 0.3333333333333333,
+              "duration": 0.2666688333333333,
+              "authoredDuration": 0.26666666666666666,
+              "normalized": 0.047393,
+              "position": "EntityEyePos"
+            },
+            {
+              "type": "CNmClipDocEvent_Sound",
+              "name": "Decoy.Inspect01.Ring",
+              "frame": 21,
+              "at": 0.6999995333333333,
+              "authoredAt": 0.7,
+              "duration": 0.4999996666666667,
+              "authoredDuration": 0.5,
+              "normalized": 0.099526,
+              "position": "EntityEyePos"
+            },
+            {
+              "type": "CNmClipDocEvent_Sound",
+              "name": "Decoy.Inspect02.Squeeze",
+              "frame": 33,
+              "at": 1.0999992666666667,
+              "authoredAt": 1.1,
+              "duration": 0.2666688333333333,
+              "authoredDuration": 0.26666666666666666,
+              "normalized": 0.156398,
+              "position": "EntityEyePos"
+            },
+            {
+              "type": "CNmClipDocEvent_ID",
+              "name": "WPN_INSPECT_LOOP",
+              "frame": 43,
+              "at": 1.4333300333333334,
+              "authoredAt": 1.4333333333333333,
+              "duration": 3.2666668333333333,
+              "authoredDuration": 3.2666666666666666,
+              "normalized": 0.203791,
+              "position": null
+            },
+            {
+              "type": "CNmClipDocEvent_Sound",
+              "name": "Inspect.Gear.UltraSmall",
+              "frame": 77,
+              "at": 2.5666672999999998,
+              "authoredAt": 2.566666666666667,
+              "duration": 1.0666683,
+              "authoredDuration": 1.0666666666666667,
+              "normalized": 0.364929,
+              "position": "EntityEyePos"
+            },
+            {
+              "type": "CNmClipDocEvent_Sound",
+              "name": "Inspect.Gear.UltraSmall",
+              "frame": 114,
+              "at": 3.7999974666666665,
+              "authoredAt": 3.8,
+              "duration": 1.0666683,
+              "authoredDuration": 1.0666666666666667,
+              "normalized": 0.540284,
+              "position": "EntityEyePos"
+            },
+            {
+              "type": "CNmClipDocEvent_ID",
+              "name": "WPN_INSPECT_OUTRO",
+              "frame": 141,
+              "at": 4.699996866666667,
+              "authoredAt": 4.7,
+              "duration": 2.3333364666666667,
+              "authoredDuration": 2.3333333333333335,
+              "normalized": 0.668246,
+              "position": null
+            },
+            {
+              "type": "CNmClipDocEvent_Sound",
+              "name": "Inspect.Gear.Small",
+              "frame": 179,
+              "at": 5.966665033333333,
+              "authoredAt": 5.966666666666667,
+              "duration": 1.0666683,
+              "authoredDuration": 1.0666666666666667,
+              "normalized": 0.848341,
+              "position": "EntityEyePos"
+            },
+            {
+              "type": "CNmClipDocEvent_Sound",
+              "name": "Decoy.Inspect02.Spins",
+              "frame": 192,
+              "at": 6.400002766666666,
+              "authoredAt": 6.4,
+              "duration": 0.5999996,
+              "authoredDuration": 0.6,
+              "normalized": 0.909953,
+              "position": "EntityEyePos"
+            },
+            {
+              "type": "CNmClipDocEvent_Sound",
+              "name": "Decoy.Inspect02.Squeeze",
+              "frame": 199,
+              "at": 6.633333599999999,
+              "authoredAt": 6.633333333333334,
+              "duration": 0.2666688333333333,
+              "authoredDuration": 0.26666666666666666,
+              "normalized": 0.943128,
+              "position": "EntityEyePos"
+            }
+          ],
+          "graphReferences": []
+        },
+        "pullpin": {
+          "resource": "animation/anims/viewmodel/grenade/_default_grenade/pullpin_grenade.vnmclip_c",
+          "sha256": "dd2561fc57a7b3ab863325f8e66e0ec87ea8dbdad161d071edad6ef76dbcacdb",
+          "definitionSha256": "33d765a1097d899b98a491507cfb0ca0015289ffb010b6f921cd4f8736945b2d",
+          "frames": 30,
+          "fps": 30,
+          "seconds": 0.9666666666666667,
+          "exportedSeconds": 0.9666666666666667,
+          "pose": false,
+          "events": [
+            {
+              "type": "CNmClipDocEvent_Sound",
+              "name": "Decoy.PullPin",
+              "frame": 5,
+              "at": 0.16666686666666666,
+              "authoredAt": 0.16666666666666666,
+              "duration": 0.6000003333333334,
+              "authoredDuration": 0.6,
+              "normalized": 0.172414,
+              "position": "EntityEyePos"
+            },
+            {
+              "type": "CNmClipDocEvent_Sound",
+              "name": "Grenade.PullPin.Gear",
+              "frame": 6,
+              "at": 0.20000043333333334,
+              "authoredAt": 0.2,
+              "duration": 0,
+              "authoredDuration": 0,
+              "normalized": 0.206897,
+              "position": "EntityEyePos"
+            }
+          ],
+          "graphReferences": [
+            {
+              "name": "pull_pin",
+              "_class": "CNmGraphDocClipNode::CData",
+              "m_clip": "animation/anims/viewmodel/grenade/_default_grenade/pullpin_grenade.vnmclip",
+              "m_flSpeedMultiplier": 1,
+              "m_nStartSyncEventOffset": 0,
+              "looping": false,
+              "fixedTime": null
+            }
+          ]
+        },
+        "hold-high": {
+          "resource": "animation/anims/viewmodel/grenade/_default_grenade/throwcharge_high_grenade.vnmclip_c",
+          "sha256": "3dfe746b7e7855c52728c597a13ee4a575e667c633fc039d52f1047ca8871e63",
+          "definitionSha256": "5af59cc9f6f467d0ac7599e68e1bdae5e75f361a43ea773d1430abe417987e15",
+          "frames": 1,
+          "fps": 30,
+          "seconds": 0,
+          "exportedSeconds": 0,
+          "pose": true,
+          "events": [],
+          "graphReferences": [
+            {
+              "name": "High",
+              "_class": "CNmGraphDocAnimationPoseNode::CData",
+              "m_clip": "animation/anims/viewmodel/grenade/_default_grenade/throwcharge_high_grenade.vnmclip",
+              "m_variationTimeValue": -1,
+              "looping": false,
+              "fixedTime": 0
+            }
+          ]
+        },
+        "hold-mid": {
+          "resource": "animation/anims/viewmodel/grenade/_default_grenade/throwcharge_mid_grenade.vnmclip_c",
+          "sha256": "36515567b67a696b02c7876ee74260d47f84d0c024aedf0cc3b20007bcd9c1ef",
+          "definitionSha256": "2066325be13458ed6481d83e2bbd6f460f332cf8ccd90a8ffad66faf6cc96e01",
+          "frames": 1,
+          "fps": 30,
+          "seconds": 0,
+          "exportedSeconds": 0,
+          "pose": true,
+          "events": [],
+          "graphReferences": [
+            {
+              "name": "Mid",
+              "_class": "CNmGraphDocAnimationPoseNode::CData",
+              "m_clip": "animation/anims/viewmodel/grenade/_default_grenade/throwcharge_mid_grenade.vnmclip",
+              "m_variationTimeValue": -1,
+              "looping": false,
+              "fixedTime": 0
+            }
+          ]
+        },
+        "hold-low": {
+          "resource": "animation/anims/viewmodel/grenade/_default_grenade/throwcharge_low_grenade.vnmclip_c",
+          "sha256": "0f404aa9c54a7873db876c7f75dd3145cdc067e04bc9ba8afd855332eda29ea3",
+          "definitionSha256": "a70a3c42702f3b7b1f3a3ed6390e4f4ff9af1832ab9c18bf06bc34b584eb20ae",
+          "frames": 1,
+          "fps": 30,
+          "seconds": 0,
+          "exportedSeconds": 0,
+          "pose": true,
+          "events": [],
+          "graphReferences": [
+            {
+              "name": "Low",
+              "_class": "CNmGraphDocAnimationPoseNode::CData",
+              "m_clip": "animation/anims/viewmodel/grenade/_default_grenade/throwcharge_low_grenade.vnmclip",
+              "m_variationTimeValue": -1,
+              "looping": false,
+              "fixedTime": 0
+            }
+          ]
+        },
+        "throw-high": {
+          "resource": "animation/anims/viewmodel/grenade/_default_grenade/throw_overhand_grenade.vnmclip_c",
+          "sha256": "5dd04542f3c3567b6ccd214aa9a8fea9d076e725a270a0cb017a605eadd0feaa",
+          "definitionSha256": "937d189566fda039b48e78f278730eaeec9d0faabeaca9455f07d5b82d3193e6",
+          "frames": 24,
+          "fps": 30,
+          "seconds": 0.7666666666666667,
+          "exportedSeconds": 0.7333333333333333,
+          "pose": false,
+          "events": [
+            {
+              "type": "CNmClipDocEvent_Sound",
+              "name": "Grenade.PreThrow.Gear",
+              "frame": 0,
+              "at": 0,
+              "authoredAt": 0,
+              "duration": 0,
+              "authoredDuration": 0,
+              "normalized": 0,
+              "position": "EntityEyePos"
+            },
+            {
+              "type": "CNmClipDocEvent_Sound",
+              "name": "Decoy.Throw",
+              "frame": 2,
+              "at": 0.06666703333333333,
+              "authoredAt": 0.06666666666666667,
+              "duration": 0,
+              "authoredDuration": 0,
+              "normalized": 0.086957,
+              "position": "EntityEyePos"
+            }
+          ],
+          "graphReferences": [
+            {
+              "name": "throw_overhand",
+              "_class": "CNmGraphDocClipNode::CData",
+              "m_clip": "animation/anims/viewmodel/grenade/_default_grenade/throw_overhand_grenade.vnmclip",
+              "m_flSpeedMultiplier": 1,
+              "m_nStartSyncEventOffset": 0,
+              "looping": false,
+              "fixedTime": null
+            }
+          ]
+        },
+        "throw-low": {
+          "resource": "animation/anims/viewmodel/grenade/_default_grenade/throw_underhand_grenade.vnmclip_c",
+          "sha256": "fb9fe90ac429daf9d1780cd0e938075e85b22f390f0515d26bcf40a036dd38dc",
+          "definitionSha256": "c4c1462cdd0c318bec613d13f5a3f11b97ffb38f3069f9ee9b221d8a892e6f2e",
+          "frames": 16,
+          "fps": 30,
+          "seconds": 0.5,
+          "exportedSeconds": 0.5,
+          "pose": false,
+          "events": [
+            {
+              "type": "CNmClipDocEvent_Sound",
+              "name": "Grenade.ThrowUnder.Gear",
+              "frame": 0,
+              "at": 0,
+              "authoredAt": 0,
+              "duration": 0.5,
+              "authoredDuration": 0.5,
+              "normalized": 0,
+              "position": "EntityEyePos"
+            },
+            {
+              "type": "CNmClipDocEvent_Sound",
+              "name": "Decoy.Throw",
+              "frame": 0,
+              "at": 0,
+              "authoredAt": 0,
+              "duration": 0,
+              "authoredDuration": 0,
+              "normalized": 0,
+              "position": "EntityEyePos"
+            }
+          ],
+          "graphReferences": [
+            {
+              "name": "throw_underhand",
+              "_class": "CNmGraphDocClipNode::CData",
+              "m_clip": "animation/anims/viewmodel/grenade/_default_grenade/throw_underhand_grenade.vnmclip",
+              "m_flSpeedMultiplier": 1,
+              "m_nStartSyncEventOffset": 0,
+              "looping": false,
+              "fixedTime": null
+            }
+          ]
+        }
+      },
+      "completions": [
+        {
+          "state": "Charge",
+          "stateId": "c1fd73a3-5ee4-42d9-8258-09d803ac1d5d",
+          "event": "WPN_ACTION_COMPLETE",
+          "type": "TimeRemaining",
+          "comparison": "LessThanEqual",
+          "remaining": 0.2,
+          "clips": [
+            {
+              "resource": "animation/anims/viewmodel/grenade/_default_grenade/pullpin_grenade.vnmclip_c",
+              "speed": 1
+            }
+          ],
+          "actions": [
+            {
+              "action": "pullpin",
+              "at": 0.7666666666666666
+            }
+          ]
+        },
+        {
+          "state": "Throw",
+          "stateId": "7a5dd0f2-3606-4852-89a3-c2c565b3987d",
+          "event": "WPN_ACTION_COMPLETE",
+          "type": "TimeRemaining",
+          "comparison": "LessThanEqual",
+          "remaining": 0,
+          "clips": [
+            {
+              "resource": "animation/anims/viewmodel/grenade/_default_grenade/throw_underhand_grenade.vnmclip_c",
+              "speed": 1
+            },
+            {
+              "resource": "animation/anims/viewmodel/grenade/_default_grenade/throw_overhand_grenade.vnmclip_c",
+              "speed": 1
+            }
+          ],
+          "actions": [
+            {
+              "action": "throw-high",
+              "at": 0.7666666666666667
+            },
+            {
+              "action": "throw-low",
+              "at": 0.5
+            }
+          ]
+        },
+        {
+          "state": "Deploying",
+          "stateId": "2b5e2a9b-2665-43a8-b517-186a827f98d5",
+          "event": "WPN_ACTION_COMPLETE",
+          "type": "TimeRemaining",
+          "comparison": "LessThanEqual",
+          "remaining": 0.2,
+          "clips": [
+            {
+              "resource": "animation/anims/viewmodel/grenade/_default_grenade/draw_grenade.vnmclip_c",
+              "speed": 1
+            },
+            {
+              "resource": "animation/anims/viewmodel/grenade/_default_grenade/draw_grenade.vnmclip_c",
+              "speed": 1
+            }
+          ],
+          "actions": [
+            {
+              "action": "draw",
+              "at": 0.8
+            }
+          ]
+        }
+      ],
+      "deployDuration": 1
+    }
+  }
+}

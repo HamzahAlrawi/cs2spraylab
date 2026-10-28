@@ -8,9 +8,11 @@ export type Footprint = {minX: number; maxX: number; minZ: number; maxZ: number}
 export type POIPart = Solid & {label: string};
 export type POITemplate = {id: string; theme: POITheme; use: string; spawnCover: boolean; parts: POIPart[]; footprint: Footprint;
   environment?: boolean; volumes?: TraversalVolume[]; links?: TraversalLink[]};
+export type POIPlacement = {role: 'spawn-compound' | 'lane-cover' | 'lane-traversal' | 'compound-support';
+  side: -1 | 1; hemisphere: -1 | 1; landmarkId: string; approach: Vec; parentId?: string};
 export type PlacedPOI = {id: string; templateId: string; theme: POITheme; center: Vec;
   mirrorX: -1 | 1; mirrorZ: -1 | 1; footprint: Footprint; reservation: Footprint; solidIndices: number[];
-  surfaceIds?: string[]; traversalIds?: string[]};
+  surfaceIds?: string[]; traversalIds?: string[]; placement?: POIPlacement};
 
 const part = (label: string, x: number, z: number, width: number, height: number, depth: number, style: PropStyle): POIPart => ({
   label, center: {x, y: height / 2, z}, size: {x: width, y: height, z: depth}, style,
@@ -148,6 +150,43 @@ export const arenaPOIs: readonly POITemplate[] = [
     part('mixing counter', -1.4, -.3, 1.2, 1.3, 1.8, 'kiosk'), part('extraction', -1.4, 1, 1.2, 2.6, .8, 'vent'), part('paint stock', 1.3, .3, 1.4, 1.9, 1.8, 'rack')]),
   poi('repair-islands', 'workshop', 'Two repair benches with unequal attached tool towers', [
     part('west bench', -1.4, -.4, 1.4, 1, 1.8, 'bench'), part('west tower', -1.4, .9, 1.4, 2.3, .8, 'cabinet'), part('east bench', 1.4, .3, 1.4, 1, 1.6, 'bench'), part('east tower', 1.4, -1, 1.4, 1.7, 1, 'rack')]),
+  // Compact closed-shell clusters add usable cover without scaling hulls.
+  poi('freight-parcel-elbow', 'freight', 'Parcel tower and packing desk make an unequal L-shaped pickup pocket', [
+    part('parcel tower', -.6, 0, 1.2, 2.1, 2, 'pallets'), part('packing desk', .6, -.6, 1.2, 1, .8, 'bench'),
+    part('dispatch locker', .6, .3, 1.2, 1.6, 1, 'cabinet')]),
+  poi('freight-seal-counter', 'freight', 'Long seal counter joins a narrow receipt booth and strapped export chest', [
+    part('seal counter', 0, -.7, 2.8, 1.1, .6, 'bench'), part('receipt booth', -.9, .2, 1, 2.2, 1.2, 'kiosk'),
+    part('export chest', .5, .2, 1.8, 1.4, 1.2, 'pallets')]),
+  poi('service-valve-elbow', 'service', 'Tall valve bank and low pump intake form a protected utility elbow', [
+    part('valve bank', -.6, 0, 1.2, 2.2, 2.2, 'cabinet'), part('intake pump', .6, -.6, 1.2, 1.5, 1, 'pump'),
+    part('sample station', .6, .5, 1.2, 1, 1.2, 'bench')]),
+  poi('service-filter-bank', 'service', 'Unequal filter housings meet a low service console on a continuous plinth', [
+    part('primary filter', -.9, 0, .6, 2.4, 1.4, 'vent'), part('secondary filter', 0, 0, 1.2, 1.8, 1.4, 'vent'),
+    part('service console', .9, 0, .6, 1.1, 1.4, 'generator')]),
+  poi('courtyard-potting-corner', 'courtyard', 'Planted corner screens a joined potting seat and garden supply chest', [
+    part('planted corner', -.6, 0, 1, 1.2, 2.4, 'planter'), part('potting seat', .6, -.75, 1.4, .9, .9, 'bench'),
+    part('garden chest', .6, .3, 1.4, 1.5, 1.2, 'rack')]),
+  poi('courtyard-parcel-island', 'courtyard', 'Visitor parcel column sits beside a stone seat and low flower border', [
+    part('parcel column', -1, 0, .8, 2.1, 1, 'kiosk'), part('stone seat', 0, 0, 1.2, .9, 1, 'bench'),
+    part('flower border', 1, 0, .8, 1.2, 1, 'planter')]),
+  poi('switchback-signal-pocket', 'switchback', 'Signal pedestal attaches to a staggered pair of short impact stops', [
+    part('signal pedestal', -.7, -.5, 1, 2.2, 1, 'cabinet'), part('near stop', .6, -.5, 1.6, 1.2, 1, 'roadblock'),
+    part('far stop', .6, .6, 1.6, 1.6, 1.2, 'concrete-stack')]),
+  poi('switchback-inspection-island', 'switchback', 'Inspection counter backs onto a narrow guard block and supply locker', [
+    part('inspection desk', 0, -.6, 2.6, 1.1, .8, 'kiosk'), part('guard block', -.8, .5, 1, 1.7, 1.4, 'concrete-stack'),
+    part('supply locker', .5, .5, 1.6, 2, 1.4, 'cabinet')]),
+  poi('loading-returned-cargo', 'loading', 'Returned cargo and a joined scan terminal form a short receiving elbow', [
+    part('return stack', -.5, 0, 1.4, 2, 2.2, 'pallets'), part('scan terminal', .9, -.65, 1.4, 1.6, .9, 'kiosk'),
+    part('low dock block', .9, .45, 1.4, .95, 1.3, 'dock')]),
+  poi('loading-dispatch-counter', 'loading', 'Dispatch counter joins an unequal warehouse rack and parcel drawer bank', [
+    part('dispatch counter', 0, -.65, 2.8, 1, .7, 'bench'), part('warehouse rack', -.95, .35, .9, 2.2, 1.3, 'rack'),
+    part('parcel drawers', .45, .35, 1.9, 1.5, 1.3, 'cabinet')]),
+  poi('workshop-tool-elbow', 'workshop', 'Tool tower, repair bench and compressor make a continuous work corner', [
+    part('tool tower', -.6, 0, 1.2, 2.3, 2.4, 'cabinet'), part('repair bench', .6, -.7, 1.2, 1, 1, 'bench'),
+    part('compact compressor', .6, .5, 1.2, 1.6, 1.4, 'generator')]),
+  poi('workshop-extraction-island', 'workshop', 'Narrow extraction spine meets a low cutting bed and joined timber chest', [
+    part('extraction spine', 0, .8, 2.6, 2.2, .6, 'vent'), part('cutting bed', -.8, -.3, 1, 1, 1.6, 'bench'),
+    part('timber chest', .5, -.3, 1.6, 1.4, 1.6, 'pallets')]),
 ];
 
 const feet = (x: number, y: number, z: number): Vec => ({x, y, z});
@@ -224,7 +263,7 @@ function movable(id: string, theme: POITheme) {
     part('fixed rack', 0, 1.75, 3.5, 1.8, .4, 'rack')], []);
 }
 
-// Separate from the original cover catalog: one pair replaces a flank, never spawn cover.
+// Independent traversal choices for each half; structural camps stay static.
 export const environmentPOIs: readonly POITemplate[] = [
   stairs('freight-inspection-stairs', 'freight', 'metal'), ladder('freight-container-loft', 'freight'),
   ramp('service-access-ramp', 'service'), water('service-drainage-channel', 'service'), passage('service-vent-access', 'service', 'vent'),
@@ -233,6 +272,12 @@ export const environmentPOIs: readonly POITemplate[] = [
   stairs('loading-dock-stairs', 'loading', 'concrete'), passage('loading-receiving-glass', 'loading', 'glass'),
   ladder('workshop-service-loft', 'workshop'), movable('workshop-loose-cargo', 'workshop'), passage('workshop-service-door', 'workshop', 'door'),
   passage('workshop-crawl-vent', 'workshop', 'vent'),
+  movable('freight-loose-dispatch', 'freight'), passage('freight-customs-door', 'freight', 'door'),
+  stairs('service-valve-stairs', 'service', 'metal'), movable('service-spare-cases', 'service'),
+  stairs('courtyard-stone-dais', 'courtyard', 'concrete'), ramp('courtyard-terrace-ramp', 'courtyard'),
+  water('switchback-drainage-crossing', 'switchback'), stairs('switchback-watch-stairs', 'switchback', 'concrete'),
+  ramp('loading-cart-ramp', 'loading'), movable('loading-staging-cases', 'loading'),
+  water('workshop-cooling-channel', 'workshop'),
 ];
 
 export function placePOI(template: POITemplate, center: Vec, mirrorX: -1 | 1, mirrorZ: -1 | 1, id: string, firstIndex: number, gap = 1.2) {

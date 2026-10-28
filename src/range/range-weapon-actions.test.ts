@@ -5,6 +5,7 @@ import {Simulation, STEP, UNIT, type Shot} from './simulation';
 import {DuelWeaponState} from './duel/weapon-state';
 import {randomStream} from './duel/rng';
 import {idleCommand} from './duel/types';
+import {nativeReloadTiming} from './native-view-actions';
 
 const make = (weapon: Simulation['settings']['weapon'] = 'nova', spread = true) =>
   new Simulation({...defaults, mode: 'guided', weapon, spread, burst: 0});
@@ -44,9 +45,21 @@ describe('native range discharge and ammo controller', () => {
   it('completes finite MAG-7 magazine reloads and cannot reload an exhausted reserve', () => {
     const sim = make('mag7'); sim.reloadState.ammo = 2; sim.reloadState.reserve = 1;
     expect(sim.reload()).toBe(true); expect(sim.start()).toBe(false);
-    runTo(sim, equipmentStats('mag7').reload - STEP); expect(sim.loadedAmmo).toBe(2);
+    runTo(sim, 32 / 30 - STEP); expect(sim.loadedAmmo).toBe(2);
+    runTo(sim, 32 / 30 + STEP); expect(sim.loadedAmmo).toBe(3); expect(sim.reloadState.active).toBe(true);
+    expect(sim.start()).toBe(false);
     runTo(sim, equipmentStats('mag7').reload); expect(sim.loadedAmmo).toBe(3); expect(sim.reserveAmmo).toBe(0);
     expect(sim.reload()).toBe(false); expect(sim.drainActionEvents().map(event => event.kind)).toEqual(['reload-start', 'reload-end']);
+  });
+  it.each([false, true])('AK-47 knife/back keeps ammo only after commitment (committed=%s)', committed => {
+    const sim = make('ak47', false); sim.active = true; sim.reloadState.ammo = 11;
+    sim.reload(false); sim.step(committed ? 1.11 : 1.09);
+    const state = sim.reloadState;
+    sim.equip(3); sim.equip(1);
+    expect(sim.reloadState).toBe(state); expect(sim.loadedAmmo).toBe(committed ? 30 : 11);
+    expect(sim.reserveAmmo).toBe(committed ? 71 : 90);
+    expect(sim.reloadState.active).toBe(false);
+    expect(sim.reloadState.fireReadyAt).toBeCloseTo(committed ? state.stats.reload : 0);
   });
   it('supports held-R silent reload and prospective mode changes', () => {
     const sim = make('ak47'); sim.reloadState.ammo = 0; sim.reloadHeld = true;
@@ -99,6 +112,187 @@ describe('native range discharge and ammo controller', () => {
     expect(sim.targetHealth[0]).toBe(81); expect(sim.targetHealth[1]).toBe(100);
     sim.damageTarget(0, false, 10, -1); expect(sim.targetHealth[0]).toBe(81);
     sim.damageTarget(0, false, 10, 200); expect(sim.targetHealth[0]).toBe(0);
+  });
+});
+
+describe('range AK reload fire-gate integration', () => {
+  const tickAt = (time:number) => Math.ceil(time / STEP - 1e-8) * STEP;
+  const setup = (empty:boolean) => {
+    const sim = make('ak47', false), shots:Shot[] = [];
+    sim.active = true; sim.reloadState.ammo = empty ? 0 : 11;
+    sim.onShot = shot => shots.push(shot);
+    const total = sim.loadedAmmo + sim.reserveAmmo, timing = nativeReloadTiming('ak47', empty)!;
+    expect(sim.reload(false)).toBe(true);
+    return {sim, shots, total, timing};
+  };
+
+  for (const route of ['early', 'late'] as const) it.each([false, true])(
+    `${route} knife/back respects max(reload floor, deploy) and matches waiting when possible (empty=%s)`, empty => {
+      const {sim, shots, total, timing} = setup(empty), ak = sim.reloadState;
+      runTo(sim, tickAt(timing.ammoAt) + (route === 'late' ? .75 : 0));
+      expect(sim.loadedAmmo).toBe(30); expect(sim.loadedAmmo + sim.reserveAmmo).toBe(total);
+      expect(sim.reloadEmpty).toBe(empty); expect(sim.reloadState.active).toBe(true);
+      sim.equip(3); sim.equip(1);
+      expect(sim.reloadState).toBe(ak); expect(ak.active).toBe(false);
+      expect(ak.fireReadyAt).toBeCloseTo(timing.attackLock);
+      const deployAt = sim.equipReadyAt, readyAt = Math.max(ak.fireReadyAt, deployAt);
+      expect(route === 'early' ? deployAt < timing.attackLock : deployAt > timing.attackLock).toBe(true);
+      expect(sim.start()).toBe(false);
+      if (route === 'early') {
+        runTo(sim, tickAt(deployAt)); expect(sim.start()).toBe(true);
+        expect(sim.nextShot).toBeCloseTo(readyAt);
+        sim.fire(); expect(shots).toHaveLength(0);
+      }
+      runTo(sim, tickAt(readyAt) - STEP);
+      expect(shots).toHaveLength(0); expect(sim.loadedAmmo).toBe(30);
+      if (route === 'early') {sim.fire(); expect(shots).toHaveLength(0);}
+      else expect(sim.start()).toBe(false);
+      sim.step(STEP);
+      if (route === 'late') expect(sim.start()).toBe(true);
+      expect(shots).toHaveLength(1); expect(shots[0].at).toBeCloseTo(route==='early'?readyAt:tickAt(readyAt), 8);
+      expect(shots[0].at + 1e-9).toBeGreaterThanOrEqual(readyAt);
+      expect(sim.loadedAmmo + sim.reserveAmmo).toBe(total - 1);
+      sim.release('mouse');
+
+      const waiting = setup(empty);
+      runTo(waiting.sim, tickAt(timing.attackLock) - STEP);
+      expect(waiting.sim.start()).toBe(false); expect(waiting.shots).toHaveLength(0);
+      waiting.sim.step(STEP); expect(waiting.sim.start()).toBe(true);
+      expect(waiting.shots).toHaveLength(1);
+      expect(waiting.shots[0].at).toBeCloseTo(tickAt(timing.attackLock), 8);
+      expect(waiting.sim.loadedAmmo).toBe(sim.loadedAmmo);
+      expect(waiting.sim.reserveAmmo).toBe(sim.reserveAmmo);
+      if (route === 'early') expect(waiting.shots[0].at-shots[0].at).toBeLessThan(STEP);
+      else expect(shots[0].at).toBeGreaterThan(waiting.shots[0].at);
+    });
+
+  it.each([false, true])('precommit knife/back cancels the old refill without retaining its floor (empty=%s)', empty => {
+    const {sim, shots, timing} = setup(empty), ammo = sim.loadedAmmo, reserve = sim.reserveAmmo;
+    runTo(sim, tickAt(timing.ammoAt) - STEP);
+    expect(sim.loadedAmmo).toBe(ammo); sim.equip(3); sim.equip(1);
+    expect(sim.reloadState.active).toBe(false); expect(sim.reloadState.fireReadyAt).toBe(0);
+    const deployAt = sim.equipReadyAt;
+    runTo(sim, tickAt(deployAt) - STEP); expect(sim.start()).toBe(false); sim.release('mouse');
+    sim.step(STEP); expect(sim.loadedAmmo).toBe(ammo); expect(sim.reserveAmmo).toBe(reserve);
+    expect(sim.time).toBeGreaterThan(timing.ammoAt); expect(sim.time).toBeLessThan(timing.attackLock);
+    if (!empty) {
+      expect(sim.start()).toBe(true); expect(shots).toHaveLength(1);
+      expect(shots[0].at).toBeCloseTo(tickAt(deployAt), 8);
+      expect(sim.loadedAmmo).toBe(ammo - 1); expect(sim.reserveAmmo).toBe(reserve);
+    } else {
+      expect(sim.reloadState.active).toBe(true);
+      expect(sim.reloadState.startedAt).toBeCloseTo(tickAt(deployAt), 8);
+      runTo(sim, tickAt(timing.attackLock));
+      expect(sim.loadedAmmo).toBe(0); expect(sim.reserveAmmo).toBe(reserve);
+      expect(sim.reloadState.active).toBe(true); expect(shots).toHaveLength(0);
+      expect(sim.start()).toBe(false); expect(sim.reloadState.startedAt).toBeCloseTo(tickAt(deployAt), 8);
+      expect(sim.reloadState.active).toBe(true); expect(shots).toHaveLength(0);
+    }
+  });
+
+  for (const slot of [2, 3] as const) it.each([false, true])(
+    `slot ${slot} uses its own deploy/fire gate while the committed AK floor is pending (empty=%s)`, empty => {
+      const {sim, shots, timing} = setup(empty), ak = sim.reloadState;
+      runTo(sim, tickAt(timing.ammoAt)); sim.equip(slot);
+      const equipment = slot === 2 ? 'usp' : 'knife', deployAt = sim.equipReadyAt;
+      expect(sim.equipped).toBe(equipment); expect(sim.reloadState.fireReadyAt).toBe(0);
+      expect(ak.fireReadyAt).toBeCloseTo(timing.attackLock);
+      expect(sim.start()).toBe(false);
+      runTo(sim, tickAt(deployAt) - STEP); expect(shots).toHaveLength(0); expect(sim.start()).toBe(false);
+      sim.step(STEP); expect(sim.start()).toBe(true);
+      expect(shots).toHaveLength(1); expect(shots[0].equipment).toBe(equipment);
+      expect(shots[0].at).toBeCloseTo(tickAt(deployAt), 8);
+      expect(shots[0].at).toBeLessThan(ak.fireReadyAt);
+      expect(ak.ammo).toBe(30); expect(ak.reserve).toBe(empty ? 60 : 71);
+    });
+});
+
+describe('range empty-magazine idle auto-reload', () => {
+  it('starts passively on the first active idle tick and keeps native commitment timing', () => {
+    const sim = make('ak47'); sim.active = true; sim.reloadState.ammo = 0;
+    sim.step(STEP); const began = sim.time, timing = nativeReloadTiming('ak47', true)!;
+    expect(sim.reloadState.active).toBe(true); expect(sim.reloadState.startedAt).toBe(began);
+    expect(sim.loadedAmmo).toBe(0); expect(sim.reserveAmmo).toBe(90);
+    sim.step(timing.ammoAt - 1e-6); expect(sim.loadedAmmo).toBe(0);
+    sim.step(1e-6); expect(sim.loadedAmmo).toBe(30); expect(sim.reserveAmmo).toBe(60);
+    expect(sim.reloadState.active).toBe(true);
+    expect(sim.reloadState.fireReadyAt).toBeCloseTo(began + timing.attackLock);
+  });
+
+  it('does not instantly reload an empty trigger attempt, but does after release', () => {
+    const sim = make('ak47'); sim.reloadState.ammo = 0;
+    expect(sim.start()).toBe(false); expect(sim.reloadState.active).toBe(false);
+    runTo(sim, 1); expect(sim.reloadState.active).toBe(false);
+    sim.release('mouse'); sim.step(STEP);
+    expect(sim.reloadState.active).toBe(true); expect(sim.reloadState.startedAt).toBe(sim.time);
+    expect(sim.drainActionEvents().map(event => event.kind)).toEqual(['reload-start']);
+  });
+
+  it('does not confuse a finished semi-auto shot or training burst with physical release', () => {
+    for (const id of ['ak47', 'p250'] as const) {
+      const sim = make(id); sim.reloadState.ammo = 1;
+      sim.start(); expect(sim.loadedAmmo).toBe(0); expect(sim.firing).toBe(false);
+      runTo(sim, 2); expect(sim.reloadState.active).toBe(false);
+      sim.release('mouse'); sim.step(STEP); expect(sim.reloadState.active).toBe(true);
+    }
+  });
+
+  it('releases into the existing cycle deadline with no extra delay', () => {
+    const sim = make('ak47'); sim.reloadState.ammo = 1; sim.start();
+    const due = sim.nextShot; sim.release('mouse');
+    sim.step(due - 1e-6); expect(sim.reloadState.active).toBe(false);
+    sim.step(1e-6); expect(sim.reloadState.startedAt).toBeCloseTo(due);
+    expect(sim.reloadState.active).toBe(true);
+  });
+
+  it('lets a released touch burst finish before automatically reloading', () => {
+    const sim = make('ak47'); sim.reloadState.ammo = 2;
+    sim.start(true); sim.release('touch');
+    expect(sim.firing).toBe(true); expect(sim.reloadState.active).toBe(false);
+    runTo(sim, .11); expect(sim.loadedAmmo).toBe(0); expect(sim.firing).toBe(false);
+    expect(sim.reloadState.active).toBe(false);
+    runTo(sim, .21); expect(sim.reloadState.active).toBe(true);
+  });
+
+  it('keeps cancelled empty reloads holstered and waits for the return draw', () => {
+    const sim = make('ak47'); sim.active = true; sim.reloadState.ammo = 0;
+    sim.step(STEP); const ak = sim.reloadState; sim.equip(3);
+    runTo(sim, 3); expect(ak.active).toBe(false); expect(ak.ammo).toBe(0); expect(ak.reserve).toBe(90);
+    sim.equip(1); const ready = sim.equipReadyAt;
+    sim.step(ready - sim.time - 1e-6); expect(ak.active).toBe(false);
+    sim.step(1e-6); expect(ak.active).toBe(true); expect(ak.startedAt).toBeCloseTo(ready);
+  });
+
+  it('waits for mode changes, avoids active reload restarts and respects a pause', () => {
+    const sim = make('sg553'); sim.active = true; sim.reloadState.ammo = 0;
+    sim.actions.secondary(0); const gate = sim.actions.readyAt;
+    expect(gate).toBeGreaterThan(0);
+    sim.step(gate - 1e-6); expect(sim.reloadState.active).toBe(false);
+    sim.step(1e-6); const began = sim.time;
+    sim.step(.1); expect(sim.reloadState.startedAt).toBe(began);
+    expect(sim.drainActionEvents().map(event => event.kind)).toEqual(['reload-start']);
+    sim.cancel(); sim.step(1); expect(sim.reloadState.active).toBe(false);
+  });
+
+  it.each(['knife', 'zeus'] as const)('never starts generic reload for %s', id => {
+    const sim = make(); if (id === 'knife') sim.equip(3); else sim.equip(4);
+    sim.active = true; sim.reloadState.ammo = 0; sim.reloadState.reserve = 90;
+    sim.step(5); expect(sim.reloadState.active).toBe(false);
+  });
+
+  it('does not refill exhausted reserves and preserves finite partial reserve accounting', () => {
+    const sim = make('ak47'); sim.active = true; sim.reloadState.ammo = sim.reloadState.reserve = 0;
+    sim.step(1); expect(sim.reloadState.active).toBe(false); expect(sim.loadedAmmo).toBe(0);
+    sim.reloadState.reserve = 3; sim.step(STEP);
+    const began = sim.time; sim.step(nativeReloadTiming('ak47', true)!.attackLock);
+    expect(sim.reloadState.startedAt).toBe(began); expect(sim.loadedAmmo).toBe(3); expect(sim.reserveAmmo).toBe(0);
+    expect(sim.drainActionEvents().map(event => event.kind)).toEqual(['reload-start', 'reload-end']);
+  });
+
+  it('does not strand the unused remainder of an exhausted burst-fire weapon', () => {
+    const sim = make('famas'); sim.actions.burst = true; sim.reloadState.ammo = 1;
+    sim.start(); sim.release('mouse'); runTo(sim, 1);
+    expect(sim.reloadState.active).toBe(true);
   });
 });
 

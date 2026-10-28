@@ -13,17 +13,20 @@ export function actorShadow(actor:DuelActorSnapshot,arena:Arena):ActorShadow|und
   if(!actor.alive)return;
   const height=1.72-.45*stanceCurve(actor.duckAmount);
   const top={x:actor.position.x,y:actor.feet+height,z:actor.position.z};
+  const support=arena.native?.ray(top,{x:0,y:-1,z:0},height+16);
+  if(arena.native&&!support)return;
+  const floor= support ? top.y-support.distance : 0, shadowY=floor+.015;
   const sunlightLength=Math.hypot(sun.x,sun.y,sun.z);
   if(Number.isFinite(traceSolid(top,{x:sun.x/sunlightLength,y:sun.y/sunlightLength,z:sun.z/sunlightLength},arena,40).distance))return;
   const root={x:actor.position.x,y:actor.feet+.035,z:actor.position.z};
-  const projected={x:top.x-top.y*sun.x/sun.y,y:.015,z:top.z-top.y*sun.z/sun.y};
-  const base={x:root.x-root.y*sun.x/sun.y,y:.015,z:root.z-root.y*sun.z/sun.y};
+  const projected={x:top.x-(top.y-floor)*sun.x/sun.y,y:shadowY,z:top.z-(top.y-floor)*sun.z/sun.y};
+  const base={x:root.x-(root.y-floor)*sun.x/sun.y,y:shadowY,z:root.z-(root.y-floor)*sun.z/sun.y};
   const dx=projected.x-base.x,dz=projected.z-base.z,length=Math.hypot(dx,dz),yaw=Math.atan2(dz,dx);
-  const center={x:(base.x+projected.x)/2,y:.015,z:(base.z+projected.z)/2};
+  const center={x:(base.x+projected.x)/2,y:shadowY,z:(base.z+projected.z)/2};
   const polygon:Vec[]=[];
   for(let i=0;i<12;i++) {
     const a=i*Math.PI/6,x=Math.cos(a)*(length/2+.16),z=Math.sin(a)*.18;
-    const point={x:center.x+x*Math.cos(yaw)-z*Math.sin(yaw),y:.015,z:center.z+x*Math.sin(yaw)+z*Math.cos(yaw)};
+    const point={x:center.x+x*Math.cos(yaw)-z*Math.sin(yaw),y:shadowY,z:center.z+x*Math.sin(yaw)+z*Math.cos(yaw)};
     const vector={x:point.x-top.x,y:point.y-top.y,z:point.z-top.z},distance=Math.hypot(vector.x,vector.y,vector.z);
     if(Number.isFinite(traceSolid(top,{x:vector.x/distance,y:vector.y/distance,z:vector.z/distance},arena,distance-.02).distance))return;
     polygon.push(point);

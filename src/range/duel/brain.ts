@@ -6,6 +6,7 @@ import type {BotTraits} from './skill';
 import type {ActorCommand} from './types';
 import {equipmentStats,knifeModel} from '../equipment';
 import {aimStep, type AimMotor} from './motor';
+import {activeTrade, copyTradeOrder, type ThreatReport, type TradeOrder} from './trading';
 
 const difference = (target: number, current: number) => Math.atan2(Math.sin(target - current), Math.cos(target - current));
 const normal = (random: () => number) => Math.sqrt(-2 * Math.log(Math.max(1e-9, random()))) * Math.cos(2 * Math.PI * random());
@@ -20,14 +21,27 @@ export class BotBrain {
   private willStop = true;
   private observation: BotObservation | null = null;
   private readonly motor: AimMotor = {yawRate: 0, pitchRate: 0};
+  private trade?: TradeOrder;
 
   constructor(private readonly traits: BotTraits, private readonly behavior: BotBehavior,
     private readonly accuracy: number, private readonly random: () => number) {}
 
+  threatReport(time: number): ThreatReport | null {
+    const seen = this.memory.seen;
+    return seen && time >= this.readyAt && time - this.memory.seenAt < 1.5
+      ? {point: {...seen.aimPoint}, observedAt: this.memory.seenAt, readyAt: time, source: 'sight'} : null;
+  }
+  orderTrade(order: TradeOrder) {this.trade = copyTradeOrder(order);}
+
+  decisionSnapshot(time = this.observation?.time ?? 0) {return {attention: this.memory.decision(time)};}
+
   perceive(observation: BotObservation) {
     if (observation.time < (this.observation?.time ?? -Infinity)) return;
     const previousEnemy = this.memory.seen?.id;
-    this.memory.observe(observation);
+    const trade = activeTrade(this.trade, observation.time, observation.self.generation) ? this.trade : undefined;
+    this.memory.observe(observation, trade ? [{source: 'teammate', point: trade.point, observedAt: trade.observedAt,
+      readyAt: trade.readyAt, uncertainty: trade.source === 'sound' ? 3 : .75,
+      confidence: trade.source === 'sound' ? .55 : .85, lifetime: trade.expiresAt - trade.observedAt}] : []);
     this.observation = {...observation, visible: observation.visible ? this.memory.seen : null};
     if (!observation.visible) {
       if (observation.time - this.memory.seenAt > .35) this.firstSeen = -1;
@@ -45,15 +59,16 @@ export class BotBrain {
   command(self: BotObservation['self'], time: number): Partial<ActorCommand> {
     const melee=self.equipment==='knife';
     const visible = currentVisible(this.observation, time);
+    const trade = activeTrade(this.trade, time, self.generation) ? this.trade : undefined;
     const memoryAim = this.memory.focus(time);
     const remembered = memoryAim ? this.memory.seen : null;
+    const tradeAim = trade && (!memoryAim || trade.observedAt >= this.memory.seenAt) ? trade.point : null;
     const identified = visible !== null && time >= this.readyAt;
-    const target = visible ?? remembered;
-    const approachPoint: Vec = target?.position ?? {x: 0, y: self.position.y, z: 5};
+    const approachPoint: Vec = visible?.position ?? tradeAim ?? remembered?.position ?? {x: 0, y: self.position.y, z: 5};
     const dx = approachPoint.x - self.position.x, dz = approachPoint.z - self.position.z;
     const distance = Math.hypot(dx, dz);
     const targetYaw = Math.atan2(-dx, -dz);
-    const aimPoint = (melee?visible?.bodyPoint:visible?.aimPoint)??visible?.aimPoint ?? memoryAim;
+    const aimPoint = (melee?visible?.bodyPoint:visible?.aimPoint)??visible?.aimPoint ?? tradeAim ?? memoryAim;
     const yawGoal = aimPoint ? Math.atan2(-(aimPoint.x - self.position.x), -(aimPoint.z - self.position.z)) + (visible ? this.aimYawError : 0) : targetYaw;
     const pitchGoal = aimPoint ? Math.atan2(aimPoint.y - self.position.y,
       Math.hypot(aimPoint.x - self.position.x, aimPoint.z - self.position.z)) + (visible ? this.aimPitchError : 0) : 0;
@@ -68,7 +83,7 @@ export class BotBrain {
     const engageDistance = melee?range*.8:self.equipment === 'zeus' ? stats.range * UNIT * .85 : closeWeapon ? 8
       : this.behavior === 'aggressive' ? 5 : this.behavior === 'holder' ? 18 : 9;
     const closing = closeWeapon && identified && distance > engageDistance;
-    const advancing = distance > engageDistance && (this.behavior !== 'holder' || !visible || closing);
+    const advancing = distance > engageDistance && (this.behavior !== 'holder' || !visible || closing || !!trade);
     const headingError = difference(targetYaw, self.yaw);
     const stop = identified && !closing && this.willStop && time >= this.readyAt + this.traits.brakeErrorMs / 1000;
     const moving = advancing && !stop;

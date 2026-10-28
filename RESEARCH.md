@@ -164,4 +164,11 @@ USP-S firing is semi-automatic with a persistent magazine and timed reload. Its 
 
 ## Browser Verification Limit
 
+Current accuracy and Prefire refinements are documented separately in
+[the October 9 audit](docs/accuracy-and-peeks-audit.md). It records build-2000930
+offline arithmetic fixtures, the float32 crouch-speed cutoff correction, a fresh
+35-weapon combat-field comparison, facing-aware head geometry and stronger
+native-map peeks. Earlier dated sections below/above remain historical evidence;
+they do not replace that newer audit or imply end-to-end engine parity.
+
 Windows Playwright WebKit loses composited WebGL output after changing the canvas backing-buffer size. Drill framebuffers still contain the rendered scene and interaction checks pass, but the screenshots show only DOM overlays. A standalone WebGL2 canvas that only clears to green reproduces the failure after resizing from 600 x 400 to 600 x 250, without React, Three.js or trainer code. Freezing the original backing dimensions also avoids the failure in the trainer. This establishes a test-runtime issue independent of the app, but does not establish that Apple Safari is unaffected. Physical Safari/iPhone visual verification remains pending. A dedicated screenshot assertion hides all DOM overlays and records an expected failure only for Windows WebKit, alongside the existing framebuffer checks.

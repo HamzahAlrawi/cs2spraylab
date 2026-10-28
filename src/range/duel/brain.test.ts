@@ -14,8 +14,9 @@ describe('autonomous duel perception and execution', () => {
     const behaviors = rosterBehaviors(config, 19);
     expect(behaviors).toEqual(rosterBehaviors(config, 19));
     expect(behaviors[0]).toBe('aggressive');
-    expect(new Set(rosterBehaviors(sanitizeDuelConfig({botCount: 5}), 19))).toEqual(
-      new Set(['holder', 'patient', 'aggressive']));
+    const population=Array.from({length:40},(_,seed)=>rosterBehaviors(sanitizeDuelConfig({botCount:5}),seed)).flat();
+    expect(new Set(population)).toEqual(new Set(['holder','patient','aggressive']));
+    expect(population.filter(role=>role==='holder').length).toBeGreaterThan(population.filter(role=>role==='aggressive').length*3);
   });
 
   it('hides occluded target coordinates from the bot policy', () => {

@@ -11,7 +11,7 @@ import {DuelSimulation} from './simulation';
 import {DuelWeaponState} from './weapon-state';
 
 describe('duel contracts and shared kernels', () => {
-  it('starts new visitors at level 3 without replacing a saved difficulty', () => {
+  it('retains legacy kernel fallbacks without replacing a saved difficulty', () => {
     expect(duelDefaults.skill).toBe(3);
     expect(sanitizeDuelConfig({}).skill).toBe(3);
     expect(sanitizeDuelConfig({skill: 7}).skill).toBe(7);

@@ -33,11 +33,19 @@ test('collection is owned-only and scoped to the active gun, with a separate pur
   await expect(items).toHaveCount(8);
   await expect(items.filter({hasText: deagle[0].label})).toHaveCount(0);
   const boughtName = await items.first().locator('.progression-choice-name').evaluate(node => node.firstChild!.textContent!);
-  await items.first().getByRole('button').click();
+  const price = Number((await items.first().locator('.progression-price').innerText()).replace(/\D/g, ''));
+  await items.first().click();
+  const detail = armory.locator('.armory-detail');
+  await detail.getByRole('button', {name: `Buy ${boughtName} for ${price.toLocaleString('en-US')} credits`, exact: true}).click();
+  await expect(armory.locator('.progression-wallet strong')).toHaveText('10,000');
+  await expect(detail.getByRole('group', {name: 'Purchase confirmation'})).toContainText(`${(10000 - price).toLocaleString('en-US')} credits`);
+  await detail.getByRole('button', {name: 'Confirm purchase', exact: true}).click();
   await expect(armory.getByRole('button', {name: 'Collection', exact: true})).toHaveAttribute('aria-pressed', 'true');
   await expect(items).toHaveCount(4);
+  await expect(armory.locator('.progression-wallet strong')).toHaveText((10000 - price).toLocaleString('en-US'));
   await expect(armory.locator('.progression-action-notice')).toContainText(`${boughtName} purchased`);
-  await items.filter({hasText: boughtName}).getByRole('button').click();
+  await expect(detail.locator('.armory-status')).toHaveText('Owned');
+  await detail.getByRole('button', {name: `Equip ${boughtName}`, exact: true}).click();
   await expect(items.filter({hasText: boughtName})).toHaveClass(/is-equipped/);
   await armory.getByRole('button', {name: 'Close armory'}).click();
   await page.reload();
@@ -59,10 +67,10 @@ test('native glove previews and the focused collection fit small screens', async
   const armory = page.getByRole('dialog', {name: 'Armory'});
   await armory.getByRole('tab', {name: 'Gloves', exact: true}).click();
   await expect(armory.locator('.progression-choice')).toHaveCount(1);
-  await expect(armory.locator('.progression-preview img')).toHaveAttribute('src', '/textures/cosmetics/gloves-standard-preview.webp');
+  await expect(armory.locator('.progression-choice .progression-preview img')).toHaveAttribute('src', '/textures/cosmetics/gloves-standard-preview.webp');
   await armory.getByRole('button', {name: 'Unlocks', exact: true}).click();
   await expect(armory.locator('.progression-choice')).toHaveCount(8);
-  await expect.poll(() => armory.locator('.progression-preview img').evaluateAll(nodes => nodes.every(node => {
+  await expect.poll(() => armory.locator('.progression-choice .progression-preview img').evaluateAll(nodes => nodes.every(node => {
     const image = node as HTMLImageElement; return image.complete && image.naturalWidth >= 128;
   }))).toBe(true);
   await expect(armory.getByRole('tab', {name: 'Gloves', exact: true}).locator('img')).toHaveAttribute('src', '/textures/cosmetics/gloves-standard-preview.webp');

@@ -1,6 +1,7 @@
 node_modules/
 dist/
 .vite-cache/
+*.tsbuildinfo
 .local-tools/
 research/
 art/*.blend*
@@ -8,10 +9,12 @@ public/revamp/models/*
 !public/revamp/models/range-kit.glb
 public/revamp/audio/
 public/revamp/textures/
+public/revamp/maps/
 *.zip
 *.log
 exceptions.txt
 test-results*/
+tmp/
 .sites-runtime/
 playwright-report/
 .codex/

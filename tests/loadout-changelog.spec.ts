@@ -1,5 +1,6 @@
 import {expect, test} from '@playwright/test';
 import {readFileSync} from 'node:fs';
+import {latestChanges,changelogHistory} from '../src/range/changelog-data';
 
 const catalog = JSON.parse(readFileSync('src/range/cosmetics-data.json', 'utf8')).cosmetics as {id: string; equipment: string; label: string}[];
 const ak = catalog.find(item => item.equipment === 'ak47')!;
@@ -99,9 +100,28 @@ test('header changelog preserves history, is keyboard-accessible and does not al
   await expect(dialog).toBeVisible();
   await expect(dialog).toBeFocused();
   await expect(trigger).toHaveAttribute('aria-expanded', 'true');
-  await expect(dialog.getByRole('heading', {name: 'Latest update', exact: true})).toBeVisible();
-  await expect(dialog.locator('code')).toHaveText(['49d8ea6', '06774a9']);
-  await expect(dialog.locator('.changelog-section')).toHaveCount(14);
+  await expect(dialog.getByRole('heading', {name: 'Latest update (October 8)', exact: true})).toBeVisible();
+  await expect(dialog.locator('code')).toHaveText([...Array(6).fill('af175145e581bd4cc853440af1a529856f0a5057'), '49d8ea6', '06774a9']);
+  await expect(dialog.locator('.changelog-update')).toHaveCount(8);
+  await expect(dialog.locator('.changelog-release h2')).toHaveText(['Smoother Dust 2 Duels (October 20)', 'Training reliability (October 19)', 'Dust 2 angle coverage (October 18)', 'CS2 coaching update (October 17)',
+    'Training quality update (October 16)', 'Latest update (October 8)', 'Latest update', 'Previous update (49d8ea6)']);
+  await expect(dialog.locator('.changelog-section')).toHaveCount(40);
+  const october5=dialog.locator('[aria-labelledby="changelog-update-2026-10-05"]');
+  const previous=dialog.locator('[aria-labelledby="changelog-update-49d8ea6"]');
+  await expect(october5.locator('.changelog-section')).toHaveCount(8);
+  await expect(previous.locator('.changelog-section')).toHaveCount(6);
+  const latest = dialog.locator('.changelog-update').first();
+  await expect(latest).toHaveAttribute('aria-labelledby', 'changelog-update-2026-10-20');
+  await expect(latest).toContainText('Blocked bot paths back off');
+  await expect(dialog.locator('[aria-labelledby="changelog-update-2026-10-19"]')).toContainText('Fight replay follows recorded movement');
+  await expect(dialog.locator('[aria-labelledby="changelog-update-2026-10-18"]')).toContainText('CT spawn gains the missing box headglitch');
+  const october8=dialog.locator('[aria-labelledby="changelog-update-2026-10-08"]');
+  await expect(october8.getByRole('heading', {name: 'Measured training feedback', exact: true})).toHaveCount(1);
+  await expect(october8.getByRole('heading', {name: 'Dust2 Prefire', exact: true})).toHaveCount(1);
+  await expect(october8).toContainText('8 routes and 40 sourced common angles');
+  await expect(october8).toContainText('Dust2 wallbangs and material penetration are not reproduced');
+  await expect(october8).toContainText('actor hit shapes retain the existing analytic model');
+  await expect(october8).toContainText('12 new cover clusters and 11 new prop assemblies');
   await expect(dialog.getByRole('heading', {name: 'Responsive combat, radar & armor', exact: true})).toHaveCount(1);
   await expect(dialog.getByRole('heading', {name: 'Previous update (49d8ea6)', exact: true})).toHaveCount(1);
   await expect(dialog.getByRole('heading', {name: 'XP, credits & achievements', exact: true})).toHaveCount(1);
@@ -142,11 +162,14 @@ test('header controls and changelog fit desktop, mobile and landscape without ov
       }
     }
     await expect(page.getByRole('button', {name: 'Changelog', exact: true})).toBeVisible();
-    if (height > 540) await expect(page.locator('.changelog-button span')).toBeVisible();
+    await expect(page.getByRole('button', {name: 'Changelog', exact: true})).toHaveAttribute('title', 'Changelog');
     if ([1440, 390, 320, 844].includes(width)) await page.screenshot({path: `test-results/${info.project.name}-header-${width}.png`});
     await page.getByRole('button', {name: 'Changelog', exact: true}).click();
     const dialog = page.getByRole('dialog', {name: 'Changelog', exact: true});
     await expect(dialog).toBeVisible();
+    const releases=[latestChanges,...changelogHistory];
+    await expect(dialog.locator('.changelog-update')).toHaveCount(releases.length);
+    await expect(dialog.locator('.changelog-section')).toHaveCount(releases.reduce((total,release)=>total+release.sections.length,0));
     expect(await dialog.evaluate(node => node.scrollWidth <= node.clientWidth)).toBe(true);
     expect(await dialog.locator('.changelog-content').evaluate(node => node.scrollWidth <= node.clientWidth)).toBe(true);
     await dialog.locator('.changelog-note').scrollIntoViewIfNeeded();

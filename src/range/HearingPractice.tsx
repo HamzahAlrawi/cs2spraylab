@@ -1,20 +1,22 @@
-import {useEffect, useRef, useState, type KeyboardEvent} from 'react';
+import {useEffect, useMemo, useRef, useState, type KeyboardEvent} from 'react';
 import {ArrowRight, ArrowUp, Check, Crosshair, Ear, Headphones, Play, RotateCcw, RotateCw, Settings2, Trash2, Volume2} from 'lucide-react';
 import {RangeAudio as NativeRangeAudio} from './audio';
+import {CoachingReview} from './CoachingReview';
+import {TipsDisplay} from './DrillPanel';
 import {
   HEARING_CONFIG_KEY, HEARING_HISTORY_KEY, HEARING_HISTORY_LIMIT, HEARING_RADIUS,
   HearingPlayback, HearingTrialDeck, boardHearingPoint, hearingAngle, hearingBoardPosition, hearingDefaults,
-  hearingGunNames, hearingGuns, hearingPoint, hearingScoring, hearingSequence, hearingStats,
+  comparableHearingResults, hearingCoaching, hearingGunNames, hearingGuns, hearingPoint, hearingScoring, hearingSequence, hearingStats,
   normalizeDegrees, normalizeHearingConfig, parseHearingHistory, readHearingStorage, saveHearingStorage, scoreHearing,
   type HearingConfig, type HearingPoint, type HearingResult, type HearingTrial,
 } from './hearing-practice';
 import './hearing-practice.css';
 
 type Phase = 'idle' | 'loading' | 'playing' | 'waiting' | 'review' | 'paused' | 'error';
-export type HearingPracticeProps = {volume: number; suspended?: boolean; openSettings?: () => void};
+export type HearingPracticeProps = {volume: number; showTips?: boolean; suspended?: boolean; openSettings?: () => void};
 const metric = (value: number | null, unit = '') => value === null ? '--' : `${value.toFixed(1)}${unit}`;
 
-export function HearingPractice({volume, suspended = false, openSettings}: HearingPracticeProps) {
+export function HearingPractice({volume, showTips = true, suspended = false, openSettings}: HearingPracticeProps) {
   const [config, setConfig] = useState(() => normalizeHearingConfig(readHearingStorage(HEARING_CONFIG_KEY)));
   const [history, setHistory] = useState(() => parseHearingHistory(readHearingStorage(HEARING_HISTORY_KEY)));
   const [session, setSession] = useState<HearingResult[]>([]);
@@ -29,8 +31,14 @@ export function HearingPractice({volume, suspended = false, openSettings}: Heari
   const gate = playback.current;
   const available = !suspended && !hidden && Number.isFinite(volume) && volume > 0;
   const canAnswer = available && heard.current && !answered.current && (phase === 'playing' || phase === 'waiting');
-  const stats = hearingStats(session), savedStats = hearingStats(history);
+  const resumeTrial = !!trial.current && !result && (phase === 'paused' || phase === 'error');
   const scoring = hearingScoring(config);
+  const audibleVolume = Number.isFinite(volume) ? Math.max(0, Math.min(1, volume)) : 0;
+  const compatibleSession = useMemo(() => comparableHearingResults(config, session, audibleVolume, result ?? undefined), [config, session, audibleVolume, result]);
+  const compatibleHistory = useMemo(() => comparableHearingResults(config, history, audibleVolume, result ?? undefined), [config, history, audibleVolume, result]);
+  const stats = useMemo(() => hearingStats(compatibleSession), [compatibleSession]);
+  const savedStats = useMemo(() => hearingStats(compatibleHistory), [compatibleHistory]);
+  const coaching = useMemo(() => result ? hearingCoaching(result, config, history) : null, [result, config, history]);
 
   useEffect(() => {
     mounted.current = true;
@@ -88,14 +96,14 @@ export function HearingPractice({volume, suspended = false, openSettings}: Heari
       if (!played) {gate.cancel(); heard.current = false; setPhase('error'); setMessage('Native sample unavailable. Replay to retry.'); return;}
       if (!calibration) heard.current = true;
     };
-    setPhase('playing'); setMessage(calibration ? `Calibration: ${calibration}` : 'Listening');
+    setPhase('playing'); setMessage(calibration ? `Calibration: ${calibration}` : answered.current ? 'Playing revealed sound' : 'Listening');
     emit();
     const sequence = hearingSequence(next.steps);
     for (const delay of sequence.slice(1)) gate.schedule(token, delay, emit);
     gate.schedule(token, sequence[sequence.length - 1] + 700, () => {
       native.stopVoices();
       setPhase(calibration ? result ? 'review' : 'paused' : answered.current ? 'review' : 'waiting');
-      setMessage(calibration ? `Calibration complete: ${calibration}` : answered.current ? 'Answer revealed' : 'Awaiting answer');
+      setMessage(calibration ? `Calibration complete: ${calibration}${trial.current && !result ? '. Resume listening to answer.' : ''}` : answered.current ? 'Answer revealed' : 'Awaiting answer');
     });
   }
 
@@ -119,14 +127,17 @@ export function HearingPractice({volume, suspended = false, openSettings}: Heari
   function calibrate(kind: 'left' | 'right' | 'near' | 'far') {
     const bearing = kind === 'left' ? -90 : kind === 'right' ? 90 : 0;
     const metres = kind === 'near' ? 4 : kind === 'far' ? 24 : 8;
-    void playTrial({point: hearingPoint(heading + bearing, metres), event: config.sounds === 'shots' ? config.gun : `step-${config.surface}`,
-      steps: config.sounds !== 'shots', muffled: false}, heading, `${kind}, ${metres} m`);
+    const event = result?.context?.event ?? trial.current?.event ?? (config.sounds === 'shots' ? config.gun : `step-${config.surface}`);
+    void playTrial({point: hearingPoint(heading + bearing, metres), event,
+      steps: event.startsWith('step-'), muffled: false}, heading, `${kind}, ${metres} m`);
   }
   function answer(guess: HearingPoint) {
     if (!canAnswer || !trial.current || answered.current || Math.hypot(guess.x, guess.z) < .25) return;
     answered.current = true; gate.cancel(); heard.current = false;
     const target = {...trial.current.point};
-    const row: HearingResult = {date: new Date().toISOString(), target, guess, scoring, replays: replays.current, ...scoreHearing(target, guess, scoring)};
+    const row: HearingResult = {date: new Date().toISOString(), target, guess, scoring, replays: replays.current,
+      context: {config: {...config}, heading, volume: audibleVolume, event: trial.current.event, muffled: trial.current.muffled},
+      ...scoreHearing(target, guess, scoring)};
     setAngle(hearingAngle(guess)); setDistance(Math.hypot(guess.x, guess.z));
     setResult(row); setPhase('review'); setMessage('Answer revealed');
     setSession(rows => [row, ...rows].slice(0, HEARING_HISTORY_LIMIT));
@@ -172,7 +183,7 @@ export function HearingPractice({volume, suspended = false, openSettings}: Heari
       </div>
       <div className="hearing-legend"><span><Crosshair size={14}/>Your estimate</span>{result && <span><Ear size={14}/>Actual sound</span>}</div>
       <div className="hearing-actions">
-        <button className="hearing-primary" disabled={!available || phase === 'loading'} onClick={nextRound}><Play size={16}/>{result ? 'Next sound' : trial.current ? 'New sound' : 'Start listening'}</button>
+        <button className="hearing-primary" disabled={!available || phase === 'loading'} onClick={() => resumeTrial ? replay() : nextRound()}><Play size={16}/>{result ? 'Next sound' : resumeTrial ? phase === 'error' ? 'Retry sound' : 'Resume listening' : trial.current ? 'New sound' : 'Start listening'}</button>
         <button className="hearing-icon" disabled={!available || !trial.current} onClick={() => replay()} aria-label="Replay sound" title="Replay sound"><RotateCcw size={18}/></button>
         <button className="hearing-icon" disabled={!available || phase === 'loading'} onClick={() => rotate(-90)} aria-label="Turn listener left 90 degrees" title="Turn left 90 degrees and replay"><RotateCcw size={18}/><span>90&deg;</span></button>
         <button className="hearing-icon" disabled={!available || phase === 'loading'} onClick={() => rotate(90)} aria-label="Turn listener right 90 degrees" title="Turn right 90 degrees and replay"><RotateCw size={18}/><span>90&deg;</span></button>
@@ -185,11 +196,9 @@ export function HearingPractice({volume, suspended = false, openSettings}: Heari
         <button disabled={!canAnswer} onClick={() => answer(hearingPoint(angle, distance))}><Check size={17}/>Confirm estimate</button>
       </div>
       <div className="hearing-result" aria-live="polite">
-        {result ? <><dl className="hearing-metrics"><div><dt>Score</dt><dd>{result.score}<small>/ 100</small></dd></div>
-          <div><dt>Direction error</dt><dd>{result.directionError.toFixed(1)}&deg;{result.scoring === 'distance' && <small>Not scored</small>}</dd></div>
-          <div><dt>Distance error</dt><dd>{result.distanceError.toFixed(1)} m{result.scoring === 'direction' && <small>Not scored</small>}</dd></div></dl>
-          <p>Actual: {hearingAngle(result.target).toFixed(0)}&deg; / {Math.hypot(result.target.x, result.target.z).toFixed(1)} m
-            {trial.current?.muffled ? ' / muffled' : ' / clear'} / {result.replays} replays</p></> : <span>Sound position hidden</span>}
+        {result && coaching ? <><TipsDisplay showTips={showTips}><CoachingReview summary={coaching}/></TipsDisplay>
+          <p>Actual: {scoring !== 'distance' && <>{hearingAngle(result.target).toFixed(0)}&deg; / </>}{Math.hypot(result.target.x, result.target.z).toFixed(1)} m
+            {result.context?.muffled ? ' / muffled' : ' / clear'} / {result.replays} replays</p></> : <span>Sound position hidden</span>}
       </div>
     </main><aside className="hearing-settings" aria-label="Hearing configuration">
       <h2>Sound setup</h2>
@@ -203,18 +212,19 @@ export function HearingPractice({volume, suspended = false, openSettings}: Heari
         {option('task', 'Scoring', ['direction-distance', 'direction'], ['Direction + distance', 'Direction only'])}
       </div>
       {config.device === 'mono' && <p className="hearing-note hearing-warning">Mono output is downmixed. Left/right cannot be learned here; only distance is scored.</p>}
-      {config.device === 'stereo' && <p className="hearing-note">Speaker placement affects direction cues. HRTF is intended for headphones.</p>}
+      {showTips && config.device === 'stereo' && <p className="hearing-note">Speaker placement affects direction cues. HRTF is intended for headphones.</p>}
       <label className="hearing-gain"><span><Volume2 size={15}/>Audio level<output>{Math.round(config.gain * 100)}%</output></span>
         <input aria-label="Audio level" type="range" min="10" max="100" step="5" value={config.gain * 100} onChange={e => changeConfig({gain: +e.target.value / 100})}/></label>
       <label className="hearing-toggle"><input type="checkbox" checked={config.muffled} onChange={e => changeConfig({muffled: e.target.checked})}/>Mix muffled sounds</label>
       <h2>Level calibration</h2>
       <div className="hearing-calibration">{(['left', 'right', 'near', 'far'] as const).map(kind => <button key={kind} disabled={!available} onClick={() => calibrate(kind)}><Volume2 size={14}/>{kind}</button>)}</div>
-      <p className="hearing-note">Native sound samples and CS2 distance curves. Browser spatialization is not exact CS2 HRTF. Keep device volume fixed while practicing distance.</p>
+      <p className="hearing-note">Native sound samples and CS2 distance curves. Browser spatialization is not exact CS2 HRTF.{showTips && ' Keep device volume fixed while practicing distance.'}</p>
       <div className="hearing-section-title"><h2>Session</h2><button className="hearing-icon" aria-label="Reset session statistics" title="Reset session statistics" onClick={() => setSession([])}><RotateCcw size={15}/></button></div>
       <dl className="hearing-session"><div><dt>Answers</dt><dd>{stats.count}</dd></div><div><dt>Mean score</dt><dd>{metric(stats.score)}</dd></div>
         <div><dt>Direction</dt><dd>{metric(stats.direction, '\u00b0')}</dd></div><div><dt>Distance</dt><dd>{metric(stats.distance, ' m')}</dd></div></dl>
+      <p className="hearing-note">Current setup only{result ? ', matching this sound, muffling and replay usage' : ''}. {session.length - stats.count > 0 ? `${session.length - stats.count} other session answers excluded. ` : ''}{showTips && 'Keep system volume fixed; '}Comparisons cannot detect external volume changes.</p>
       <details className="hearing-history"><summary>Saved history ({history.length})</summary>
-        <p>Mean score: {metric(savedStats.score)} / 100</p>
+        <p>Comparable answers: {savedStats.count}. Mean score: {metric(savedStats.score)} / 100. Older answers without setup details are kept below, not used as a baseline.</p>
         {history.length > 0 && <><ol>{history.slice(0, 10).map((row, index) => <li key={`${row.date}-${index}`}><span>{new Date(row.date).toLocaleDateString()} <small>{row.scoring}</small></span><b>{row.score}</b></li>)}</ol>
           <button onClick={() => {setHistory([]); setStorageFailed(!saveHearingStorage(HEARING_HISTORY_KEY, []));}}><Trash2 size={14}/>Clear history</button></>}
       </details>

@@ -1,4 +1,5 @@
 import type {Vec} from './actor-physics';
+import type {AcousticNavigation} from './acoustic-navigation';
 
 export type ReverbProfile = 'outdoor' | 'room' | 'warehouse';
 export type AcousticPath = {distance: number; gain: number; lowpass: number; delay: number;
@@ -7,6 +8,13 @@ export type AcousticBox = {center: Vec; size: Vec};
 export type SpatialSound = {position: Vec; occluded?: boolean; range?: number; distanceMapped?: boolean;
   path?: AcousticPath; reverb?: ReverbProfile};
 export type SpatialAudioProfile = {panningModel?: PanningModelType; monoOutput?: boolean};
+
+// Native geometry can establish obstruction even when the small procedural
+// corner graph has no boxes. Never replace that evidence with a clear path.
+export function retainSoundOcclusion(path: AcousticPath, occluded = false): AcousticPath {
+  return occluded && !path.routed && path.gain >= 1
+    ? {...path, gain: .32, lowpass: Math.min(path.lowpass, 1300)} : path;
+}
 
 export function listenerOrientation(yaw: number, pitch: number) {
   return {
@@ -64,6 +72,7 @@ function blocked(a: Vec, b: Vec, box: AcousticBox) {
 
 /** Small visibility graph around nearby solid corners, not Source 2 acoustic portals. */
 export class AcousticScene {
+  private navigation?:AcousticNavigation;
   private boxes: AcousticBox[] = [];
   private cache = new Map<string, {at: number; value: AcousticPath}>();
   computations = 0;
@@ -72,6 +81,7 @@ export class AcousticScene {
     this.boxes = boxes.slice(0, 128).map(box => ({center: {...box.center}, size: {...box.size}}));
     this.cache.clear();
   }
+  setNavigation(graph?:AcousticNavigation){this.navigation=graph;this.cache.clear();}
   resolve(listener: Vec, source: Vec, now = 0): AcousticPath {
     const key = [listener, source].flatMap(p => axes.map(axis => Math.round(p[axis] * 4))).join(',');
     const cached = this.cache.get(key);
@@ -81,7 +91,12 @@ export class AcousticScene {
     const blockers = this.boxes.filter(box => blocked(source, listener, box));
     let value: AcousticPath = {distance: direct, gain: 1, lowpass: 18000,
       delay: Math.min(.18, direct / 343), apparentPosition: {...source}, routed: false, reverb: this.reverb};
-    if (blockers.length) {
+    if(this.navigation&&!this.navigation.direct(source,listener)) {
+      const route=this.navigation.route(source,listener),length=route?.distance??direct;
+      value={distance:length,gain:route?Math.max(.2,.72*Math.exp(-(length-direct)*.08)):.32,
+        lowpass:route?4800:1300,delay:Math.min(.18,length/343),apparentPosition:route?.corner??{...source},
+        routed:!!route,reverb:this.reverb};
+    } else if (blockers.length) {
       const nodes: Vec[] = [{...source}, {...listener}];
       for (const box of blockers.slice(0, 3)) {
         const y = Math.max(source.y, listener.y);

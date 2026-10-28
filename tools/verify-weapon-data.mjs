@@ -7,14 +7,19 @@ import {parseKv3} from './kv3.mjs';
 
 // Independent, read-only comparison against a fresh export of the installed archive.
 const game = process.env.CS2_PATH || 'C:/Program Files (x86)/Steam/steamapps/common/Counter-Strike Global Offensive';
-const cli = path.resolve('.local-tools/vrf/Source2Viewer-CLI.exe');
+const cli = path.resolve(process.env.VRF_PATH || ['vrf-20.1','vrf-dev','vrf']
+  .map(folder=>`.local-tools/${folder}/Source2Viewer-CLI.exe`).find(file=>fs.existsSync(file)) || '.local-tools/vrf/Source2Viewer-CLI.exe');
 const file = path.resolve('research/weapon-stats-audit.vdata');
 fs.mkdirSync(path.dirname(file), {recursive:true});
-execFileSync(cli,['-i',`${game}/game/csgo/pak01_dir.vpk`,'-f','scripts/weapons.vdata_c','-d','-o',file],{stdio:'pipe'});
-const raw = fs.readFileSync(file,'utf8'), native = parseKv3(raw);
+// A native exporter can report a per-resource failure but still exit zero.
+// Never permit a pre-existing output file to masquerade as a fresh extraction.
+const freshDirectory=fs.mkdtempSync(path.join(path.dirname(file),'weapon-fields-')),freshFile=path.join(freshDirectory,'weapons.vdata');
+execFileSync(cli,['-i',`${game}/game/csgo/pak01_dir.vpk`,'-f','scripts/weapons.vdata_c','-d','-o',freshFile],{stdio:'pipe'});
+assert(fs.existsSync(freshFile),'Fresh weapon export missing; old cache is not verification');
+const raw = fs.readFileSync(freshFile,'utf8'), native = parseKv3(raw);
 const runtime = JSON.parse(fs.readFileSync('src/range/game-data.json','utf8'));
 const build = fs.readFileSync(`${game}/game/csgo/steam.inf`,'utf8').match(/ClientVersion=(\d+)/)[1];
-assert.equal(runtime.build,build,'Runtime weapon data was exported from a different game build');
+if(!process.argv.includes('--compare-build'))assert.equal(runtime.build,build,'Runtime weapon data was exported from a different game build');
 const aliases={m4a4:'m4a1',m4a1s:'m4a1_silencer',galil:'galilar',sg553:'sg556',usp:'usp_silencer',zeus:'taser'};
 const fields={damage:'m_nDamage',penetration:'m_flPenetration',armorRatio:'m_flArmorRatio',headshotMultiplier:'m_flHeadshotMultiplier',
   range:'m_flRange',rangeModifier:'m_flRangeModifier',magazine:'m_iMaxClip1',cycle:'m_flCycleTime',speed:'m_flMaxSpeed',
@@ -30,6 +35,8 @@ const flags={fullAuto:'m_bIsFullAuto',zoomLevels:'m_nZoomLevels',hideWhenZoomed:
   unzoomsAfterShot:'m_bUnzoomsAfterShot',isRevolver:'m_bIsRevolver',showCrosshair:'m_bShowCrosshair'};
 const fixture={build,source:'scripts/weapons.vdata_c',sha256:crypto.createHash('sha256').update(raw).digest('hex'),
   limitations:['Exported stats verified; damage hitgroup/armor arithmetic is separately tested, not native-engine emulated.','R8 windup is not present in weapons.vdata and remains an explicit trainer estimate.'],weapons:{}};
+const differences=[];
+const compare=(actual,expected,field)=>{try{assert.deepEqual(actual,expected);}catch{differences.push({field,actual,expected});}};
 for(const [id,weapon] of Object.entries(runtime.weapons)) {
   const source=native[`weapon_${aliases[id]||id}`]; assert(source,`Missing native ${id}`);
   const mode=index=>Object.fromEntries(Object.entries(fields).map(([key,field])=>{
@@ -38,17 +45,21 @@ for(const [id,weapon] of Object.entries(runtime.weapons)) {
   }));
   const primary=mode(['usp','m4a1s'].includes(id)?1:0),alternate=mode(1);
   for(const [name,stats] of [['primary',primary],['alternate',alternate]]) for(const [key,value] of Object.entries(stats))
-    assert.equal((name==='primary'?weapon:weapon.alternate)[key],value,`${id}.${name}.${key}`);
+    compare((name==='primary'?weapon:weapon.alternate)[key],value,`${id}.${name}.${key}`);
   // Non-snipers omit this override; retain the ordinary crosshair by default.
   const controls=Object.fromEntries(Object.entries(flags).map(([key,field])=>[key,key==='showCrosshair'?source[field]??true:source[field]]));
   controls.zoomFov=[source.m_nZoomFOV1,source.m_nZoomFOV2];controls.zoomTime=[source.m_flZoomTime0,source.m_flZoomTime1,source.m_flZoomTime2];
-  for(const [key,value] of Object.entries(controls)) assert.deepEqual(weapon[key],value,`${id}.${key}`);
+  for(const [key,value] of Object.entries(controls)) compare(weapon[key],value,`${id}.${key}`);
   const ammo = {pellets:source.m_nNumBullets, reserveAsClips:source.m_bReserveAmmoAsClips ?? false,
     reserve:source.m_nPrimaryReserveAmmoMax*(source.m_bReserveAmmoAsClips?source.m_iMaxClip1:1),
     reloadsSingleShells:source.m_bReloadsSingleShells ?? false, spreadSeed:source.m_nSpreadSeed};
-  for(const [key,value] of Object.entries(ammo)) assert.deepEqual(weapon[key],value,`${id}.${key}`);
+  for(const [key,value] of Object.entries(ammo)) compare(weapon[key],value,`${id}.${key}`);
   fixture.weapons[id]={primary,alternate,...controls,...ammo};
-  console.log(`${id}: ${primary.damage} damage; ${primary.armorRatio/2*100}% armor penetration; ${primary.magazine} rounds; ${primary.cycle}s cycle. Both modes verified.`);
+  console.log(`${id}: ${primary.damage} damage; ${primary.armorRatio/2*100}% armor penetration; ${primary.magazine} rounds; ${primary.cycle}s cycle. Both modes compared.`);
 }
-if(process.argv.includes('--write-fixture')) fs.writeFileSync('src/range/native-weapon-stats-fixture.json',JSON.stringify(fixture,null,2)+'\n');
+if(process.argv.includes('--write-fixture')) {assert.equal(differences.length,0,'Fix runtime differences before replacing the fixture');fs.writeFileSync('src/range/native-weapon-stats-fixture.json',JSON.stringify(fixture,null,2)+'\n');}
+const report=process.argv.find(arg=>arg.startsWith('--report='))?.slice(9);
+if(report)fs.writeFileSync(report,JSON.stringify({...fixture,runtimeBuild:runtime.build,differences,
+  note:'Fresh static field comparison only; historical runtime build provenance is unchanged. Engine instruction/RNG and complete gameplay parity are not established.'},null,2)+'\n');
+assert.deepEqual(differences,[],'Runtime weapon fields differ from the fresh installed resources');
 console.log(`Verified ${Object.keys(fixture.weapons).length} weapons against installed build ${build}; export SHA256 ${fixture.sha256}`);

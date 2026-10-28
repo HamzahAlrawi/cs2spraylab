@@ -1,0 +1,18 @@
+{
+  "revision": "2026-10-19-coverage-v7",
+  "mapBuild": "2000932",
+  "collisionSha256": "395a10802ed5a26dce1c48b754adc7c2f1418755edc4f62c401597d19f7e6396",
+  "provenance": "SprayLab-authored training placements, surveyed against extracted native static collision and visually checked against the installed map. Not upstream practice exports or measured encounter probabilities.",
+  "calloutReference": "https://yprac.com/cs2-callouts-guide-radar-overviews",
+  "angles": [
+    {"id":"pit-slope","name":"Long pit / slope hold","position":[1320,420,-122.573],"rotation":[0,90,0],"crouched":false,"moving":false,"exclusionGroup":"long-pit-floor"},
+    {"id":"pit-floor","name":"Long pit / low floor","position":[1480,300,-167.953],"rotation":[0,90,0],"crouched":false,"moving":false,"exclusionGroup":"long-pit-floor"},
+    {"id":"car-front-edge","name":"Long car / front edge","position":[1700,1880,1.052],"rotation":[0,-135,0],"crouched":false,"moving":true,"exclusionGroup":"long-car-front"},
+    {"id":"car-back-edge","name":"Long car / rear side","position":[1780,1960,3.285],"rotation":[0,-135,0],"crouched":false,"moving":true,"exclusionGroup":"long-car-rear"},
+    {"id":"a-ninja","name":"A Ninja / back-box tuck","position":[420,2740,97.271],"rotation":[0,-90,0],"crouched":true,"moving":false},
+    {"id":"a-default-box-top","name":"A default box / Short hold","position":[1020,2520,152],"rotation":[0,-140,0],"crouched":false,"moving":false},
+    {"id":"a-short-box-edge","name":"A back boxes / Short peek","position":[780,2680,95.761],"rotation":[0,-110,0],"crouched":false,"moving":true},
+    {"id":"a-ramp-short-low","name":"A ramp / low Short angle","position":[1360,2480,53.739],"rotation":[0,-155,0],"crouched":false,"moving":true,"exclusionGroup":"a-ramp-short"},
+    {"id":"a-ramp-short-high","name":"A ramp / upper Short angle","position":[1440,2560,63.594],"rotation":[0,-155,0],"crouched":false,"moving":true,"exclusionGroup":"a-ramp-short"}
+  ]
+}

@@ -1,0 +1,22 @@
+.controls-settings{min-width:0}
+.controls-settings>header{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.controls-settings h2{font-size:13px;letter-spacing:0}
+.controls-settings .controls-warning,.controls-settings details p,.controls-settings .mouse-capture-status p{font-size:11px;line-height:1.6;overflow-wrap:anywhere;color:#c3cbbd}
+.controls-settings .controls-message{min-height:42px;font-size:12px;line-height:1.5;color:#ebd58e;padding:8px 0;overflow-wrap:anywhere}
+.controls-settings .control-row{display:grid;grid-template-columns:minmax(0,1fr) minmax(88px,124px) 32px;align-items:center;gap:8px;min-height:48px;border-bottom:1px solid #45503f;font-size:12px}
+.controls-settings .control-row>span{min-width:0;overflow-wrap:anywhere}
+.controls-settings .control-row small{display:block;font-size:10px;color:#bac3b5;line-height:1.4}
+.controls-settings .control-binding{display:flex;align-items:center;justify-content:center;gap:7px;border:1px solid #526049;border-radius:4px;min-height:34px;padding:5px;font-size:11px;min-width:0}
+.controls-settings .control-binding svg{flex-shrink:0}
+.controls-settings .control-binding span{overflow-wrap:anywhere;min-width:0}
+.controls-settings .control-binding[aria-pressed=true]{border-color:#ebd58e;background:#35412f}
+.controls-settings button:disabled{opacity:.4;cursor:default}
+.controls-settings .mouse-capture-status{border-left:2px solid #d9c56f;padding:8px 12px;margin:16px 0;font-size:12px}
+.controls-settings .mouse-capture-status p{margin-bottom:0}
+.controls-settings details{font-size:12px;margin:16px 0}
+.controls-settings summary{cursor:pointer;line-height:1.5}
+.controls-settings .two-fields{margin-top:12px;grid-template-columns:repeat(2,minmax(0,1fr))}
+.controls-settings .two-fields label{min-width:0;line-height:1.5;overflow-wrap:anywhere}
+.controls-settings .two-fields input{min-width:0}
+.controls-settings .readout{gap:12px;line-height:1.5}
+.controls-settings .readout b{text-align:right;flex-shrink:0}

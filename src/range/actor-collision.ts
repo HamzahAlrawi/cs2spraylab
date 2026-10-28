@@ -1,6 +1,6 @@
 import type {Vec, ResolveVertical} from './actor-physics';
 import {CONTACT_EPSILON as EPS, TERRAIN_RULES as RULES, add, subtract, scale, dot, collidable,
-  horizontalOverlap, hullPlanes, surfaceHeight, normalize, rampSurface, type TerrainSolid, type TerrainWorld} from './terrain';
+  horizontalOverlap, hullPlanes, surfaceHeight, normalize, rampSurface, type TerrainSolid, type TerrainWorld, type TerrainQueries} from './terrain';
 
 export type HullContact = {normal: Vec; solid?: TerrainSolid};
 export type HullSweep = {position: Vec; fraction: number; contact?: HullContact; startSolid: boolean};
@@ -19,15 +19,16 @@ function overlapsSweptBounds(from: Vec, to: Vec, height: number, solid: TerrainS
     Math.min(from.y, to.y) <= c.y + s.y / 2 + EPS;
 }
 
-export function fitsHull(position: Vec, feet: number, height: number, boxes: readonly TerrainSolid[]) {
+export function fitsHull(position: Vec, feet: number, height: number, boxes: readonly TerrainSolid[], native?: TerrainQueries) {
   const p = {...position, y: feet};
   return !boxes.some(box => collidable(box) && overlapsSweptBounds(p, p, height, box) &&
-    hullPlanes(box, height).every(plane => dot(p, plane.normal) < plane.distance - EPS));
+    hullPlanes(box, height).every(plane => dot(p, plane.normal) < plane.distance - EPS)) && (!native || native.fits(position, feet, height));
 }
 
 // Continuous swept Minkowski hull; tangent motion is not a collision.
-export function sweepHull(from: Vec, to: Vec, height: number, boxes: readonly TerrainSolid[]): HullSweep {
-  let fraction = 1, contact: HullContact | undefined, startSolid = false;
+export function sweepHull(from: Vec, to: Vec, height: number, boxes: readonly TerrainSolid[], native?: TerrainQueries): HullSweep {
+  const hit = native?.sweep(from, to, height);
+  let fraction = hit?.fraction ?? 1, contact: HullContact | undefined = hit?.contact, startSolid = hit?.startSolid ?? false;
   for (const solid of boxes) {
     if (!collidable(solid) || !overlapsSweptBounds(from, to, height, solid)) continue;
     let enter = 0, exit = 1, normal: Vec | undefined, miss = false;
@@ -54,12 +55,12 @@ export function clipContactVelocity(velocity: Vec, normal: Vec): Vec {
   return into < 0 ? subtract(velocity, scale(normal, into)) : {...velocity};
 }
 
-export function slideHull(from: Vec, to: Vec, height: number, boxes: readonly TerrainSolid[]) {
+export function slideHull(from: Vec, to: Vec, height: number, boxes: readonly TerrainSolid[], native?: TerrainQueries) {
   let position = {...from}, remaining = subtract(to, from);
   const contacts: HullContact[] = [];
   let fraction = 1;
   for (let bump = 0; bump < 4 && Math.hypot(remaining.x, remaining.y, remaining.z) > EPS; bump++) {
-    const trace = sweepHull(position, add(position, remaining), height, boxes);
+    const trace = sweepHull(position, add(position, remaining), height, boxes, native);
     position = trace.position;
     if (!trace.contact) break;
     if (!contacts.length) fraction = trace.fraction;
@@ -73,7 +74,7 @@ export function slideHull(from: Vec, to: Vec, height: number, boxes: readonly Te
 }
 
 export function verticalContact(position: Vec, from: number, to: number, height: number,
-  boxes: readonly TerrainSolid[], floor: number | null = 0): ReturnType<ResolveVertical> {
+  boxes: readonly TerrainSolid[], floor: number | null = 0, native?: TerrainQueries): ReturnType<ResolveVertical> {
   let feet = floor === null ? to : Math.max(floor, to), grounded = floor !== null && to <= floor, ceiling = false;
   let normal: Vec | undefined, support: TerrainSolid | undefined;
   for (const box of boxes) {
@@ -87,6 +88,12 @@ export function verticalContact(position: Vec, from: number, to: number, height:
       feet = bottom - height; ceiling = true; grounded = false; normal = {x: 0, y: -1, z: 0};
     }
   }
+  const contact = native?.vertical(position, from, to, height);
+  if (contact && (contact.normal || contact.grounded || contact.ceiling) &&
+    // `to` is only the requested endpoint, not a competing surface. Native
+    // shape queries may refine a contact slightly beyond it within their
+    // float32 tolerance, especially during a crouch on uneven ground.
+    (!(grounded || ceiling || normal) || (to <= from ? contact.feet >= feet : contact.feet <= feet))) return contact;
   return {feet, grounded, ceiling, normal, support};
 }
 
@@ -94,7 +101,7 @@ export function fitsTerrain(position: Vec, feet: number, height: number, world: 
   const b = world.bounds, r = RULES.hullRadius;
   return (world.floor === null || feet >= (world.floor ?? 0) - EPS) &&
     (!b || position.x >= b.minX + r - EPS && position.x <= b.maxX - r + EPS &&
-      position.z >= b.minZ + r - EPS && position.z <= b.maxZ - r + EPS) && fitsHull(position, feet, height, world.solids);
+      position.z >= b.minZ + r - EPS && position.z <= b.maxZ - r + EPS) && fitsHull(position, feet, height, world.solids, world.native);
 }
 
 export function terrainColliders(world: TerrainWorld): readonly TerrainSolid[] {
@@ -110,13 +117,13 @@ export function terrainColliders(world: TerrainWorld): readonly TerrainSolid[] {
 
 export function moveOnTerrain(from: Vec, to: Vec, height: number, world: TerrainWorld, supported = false): TerrainMove {
   const boxes = terrainColliders(world), floor = world.floor === undefined ? 0 : world.floor;
-  let moved = slideHull(from, to, height, boxes), stepped = false;
+  let moved = slideHull(from, to, height, boxes, world.native), stepped = false;
   const distance = (p: Vec) => (p.x - from.x) ** 2 + (p.z - from.z) ** 2;
   // Compare ordinary sliding with up/forward/down. Actors are never stairs.
   if (supported && to.y <= from.y + EPS && moved.contacts.some(c => c.normal.y >= 0)) {
-    const up = sweepHull(from, {...from, y: from.y + RULES.stepHeight}, height, boxes);
-    const across = slideHull(up.position, {x: to.x, y: up.position.y, z: to.z}, height, boxes);
-    const down = verticalContact(across.position, up.position.y, to.y - RULES.stepHeight, height, boxes, floor);
+    const up = sweepHull(from, {...from, y: from.y + RULES.stepHeight}, height, boxes, world.native);
+    const across = slideHull(up.position, {x: to.x, y: up.position.y, z: to.z}, height, boxes, world.native);
+    const down = verticalContact(across.position, up.position.y, to.y - RULES.stepHeight, height, boxes, floor, world.native);
     const landing = {...across.position, y: down.feet};
     if (down.grounded && down.support?.traversal?.kind !== 'actor' && distance(landing) > distance(moved.position) + EPS &&
       fitsTerrain(landing, landing.y, height, world)) {
@@ -125,7 +132,7 @@ export function moveOnTerrain(from: Vec, to: Vec, height: number, world: Terrain
     }
   }
   const down = verticalContact(moved.position, moved.position.y,
-    moved.position.y - (supported && to.y <= from.y + EPS ? RULES.stepHeight : EPS), height, boxes, floor);
+    moved.position.y - (supported && to.y <= from.y + EPS ? RULES.stepHeight : EPS), height, boxes, floor, world.native);
   const snapped = down.grounded && (supported || moved.position.y - down.feet <= EPS) &&
     (down.support?.traversal?.kind !== 'actor' || moved.position.y - down.feet <= EPS);
   if (floor !== null && moved.position.y < floor) moved.position.y = floor;

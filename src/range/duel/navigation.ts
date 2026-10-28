@@ -1,6 +1,7 @@
 import {UNIT, type Vec} from '../actor-physics';
 import type {Arena, Solid} from './geometry';
 import {blocksMovement, environmentSolids, type EnvironmentState} from './environment';
+import {nativeClearSegment, nativeRouteTo} from './native-navigation';
 
 const CELL = .7;
 const RADIUS = .49;
@@ -18,6 +19,7 @@ function blocked(x: number, z: number, arena: Arena, obstacles: readonly Solid[]
 }
 
 export function clearSegment(a: Vec, b: Vec, arena: Arena, state?: EnvironmentState) {
+  if (arena.native) return nativeClearSegment(a,b,arena);
   const distance = Math.hypot(b.x - a.x, b.z - a.z);
   const obstacles = groundObstacles(arena, state), steps = Math.max(1, Math.ceil(distance / .23));
   const escapingMargin = blocked(a.x, a.z, arena, obstacles) && !blocked(a.x, a.z, arena, obstacles, 16 * UNIT - 1e-5);
@@ -35,6 +37,7 @@ export function clearSegment(a: Vec, b: Vec, arena: Arena, state?: EnvironmentSt
 // A bounded, cached occupancy grid route. Only the next bend is used; movement
 // still runs through the shared acceleration and collision kernel.
 export function routeTo(start: Vec, goal: Vec, arena: Arena, state?: EnvironmentState): Vec[] {
+  if (arena.native) return nativeRouteTo(start,goal,arena);
   if (clearSegment(start, goal, arena, state)) return [goal];
   const nx = Math.ceil((arena.maxX - arena.minX) / CELL);
   const nz = Math.ceil((arena.maxZ - arena.minZ) / CELL);

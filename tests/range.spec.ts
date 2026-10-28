@@ -42,6 +42,7 @@ test('range renders real models, settings persist, and viewport has no overflow'
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
   await page.getByRole('button', { name: 'Settings', exact: true }).click();
   await page.getByLabel('Invert mouse Y').check();
+  await page.getByRole('tab', {name: 'Training', exact: true}).click();
   await page.getByLabel('Follow recoil', { exact: true }).check();
   await page.getByRole('tab', { name: 'Crosshair', exact: true }).click();
   await page.getByRole('button', { name: 'Dot', exact: true }).click();
@@ -51,6 +52,7 @@ test('range renders real models, settings persist, and viewport has no overflow'
   await page.reload();
   await page.getByRole('button', { name: 'Settings', exact: true }).click();
   await expect(page.getByLabel('Invert mouse Y')).toBeChecked();
+  await page.getByRole('tab', {name: 'Training', exact: true}).click();
   await expect(page.getByLabel('Follow recoil', { exact: true })).toBeChecked();
   expect(errors).toEqual([]);
 });
@@ -65,6 +67,7 @@ test('tap emits exactly a timed five-shot burst, without audio or Pointer Lock',
   await expect(page.getByRole('button', { name: 'Enter range', exact: true })).toBeEnabled({timeout: 45000});
   await page.getByLabel('Training mode').selectOption('guided');
   await page.getByRole('button', { name: 'Settings', exact: true }).click();
+  await page.getByRole('tab', {name: 'Training', exact: true}).click();
   await page.getByLabel('Burst length').selectOption('5');
   await page.getByRole('button', { name: 'Done', exact: true }).click();
   const canvas = page.locator('canvas[data-range]');
@@ -87,6 +90,8 @@ test('moving targets animate in shooting modes without starting a burst', async 
   await expect(page.getByRole('button', { name: 'Enter range', exact: true })).toBeEnabled({timeout: 45000});
   await page.getByLabel('Training mode').selectOption('spray');
   await page.getByRole('button', {name: 'Settings', exact: true}).click();
+  await page.getByRole('tab', {name: 'Training', exact: true}).click();
+  await page.locator('summary').filter({hasText: /^Peeking & movement$/}).click();
   await page.getByLabel('Moving target', {exact: true}).check();
   await page.getByRole('button', {name: 'Done', exact: true}).click();
   const canvas = page.locator('canvas[data-range]');
@@ -171,7 +176,8 @@ test('guided cues, immediate repeat ammo, visible feedback and project links', a
   await expect(page.getByRole('link', { name: 'Source' })).toHaveAttribute('href', 'https://github.com/HamzahAlrawi/cs2spraylab');
   await expect(page.getByLabel('Target distance', { exact: true })).toHaveCount(0);
   await page.getByRole('button', { name: 'Settings', exact: true }).click();
-  await expect(page.getByLabel('Sensitivity', { exact: true })).toHaveValue('1');
+  await expect(page.getByLabel('Sensitivity', { exact: true })).toHaveValue('0.5');
+  await page.getByRole('tab', {name: 'Training', exact: true}).click();
   await page.getByLabel('Burst length').selectOption('5');
   await page.getByRole('button', { name: 'Done', exact: true }).click();
   const canvas = page.locator('canvas[data-range]');
@@ -223,6 +229,8 @@ test('walking controls distance, jump changes view and stationary backstop stays
   await page.waitForTimeout(900);
   await page.screenshot({ path: `test-results/${info.project.name}-close-target.png` });
   await page.getByRole('button', { name: 'Settings', exact: true }).click();
+  await page.getByRole('tab', {name: 'Training', exact: true}).click();
+  await page.locator('summary').filter({hasText: /^Peeking & movement$/}).click();
   await page.getByLabel('Moving target', { exact: true }).check();
   await page.getByRole('button', { name: 'Done', exact: true }).click();
   await page.getByRole('button', { name: 'Enter range', exact: true }).click();

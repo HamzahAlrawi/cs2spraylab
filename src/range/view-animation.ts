@@ -81,7 +81,12 @@ export class ViewAnimation {
       name = options.reloadEmpty && this.has('reload-empty') ? 'reload-empty' : 'reload';
       const progress = THREE.MathUtils.clamp(Number.isFinite(options.reloadProgress) ? options.reloadProgress! : 1 - remaining / duration, 0, 1);
       const window = nativeReloadWindow(options.equipment, options.reloadPhase);
-      time = window ? Math.min(this.duration(name), window.start + progress * window.duration) : progress * this.duration(name);
+      // Phase progress is unscaled reload work, including prospective hold-R changes.
+      // A magazine's attack lock is not the animation duration: play at source speed,
+      // then hold the final pose if the gate outlasts the clip. Legacy callers retain
+      // their old normalized mapping when they do not identify the reload phase.
+      time = window ? Math.min(this.duration(name), window.start + progress * window.duration)
+        : options.reloadPhase === 'magazine' ? Math.min(this.duration(name), progress * duration) : progress * this.duration(name);
       weight = Math.max(0, Math.min(1, progress * duration / .06, remaining / .08));
       // Native shell phases join each other directly, never fade back to loaded idle between inserts.
       if (window) weight = options.reloadPhase === 'start' ? Math.min(1, progress * duration / .06)

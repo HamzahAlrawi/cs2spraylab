@@ -12,7 +12,14 @@ import {createHash} from 'node:crypto';
 describe('installed CS2 recoil math', () => {
   it('pins current weapon data and recoil tables separately from the older full-math audit', () => {
     expect(gameData.build).toBe(provenance.weaponDataAudit.build);
-    expect(createHash('sha256').update(JSON.stringify(gameData.weapons)).digest('hex')).toBe(provenance.weaponDataAudit.parametersSha256);
+    // The historical arithmetic audit remains pinned, rather than being
+    // relabeled when an unrelated current-build reload field changes.
+    const historical=structuredClone(gameData.weapons);
+    expect(gameData.staticUpdates).toEqual(expect.arrayContaining([expect.objectContaining({build:'2000935',
+      sha256:'cc04aa26fd8d4a34119df7c4b7f4f29c7ebe0c7862ce78e0a2a753642502ba0a',fields:['aug.reload','aug.alternate.reload']})]));
+    expect(gameData.weapons.aug.reload).toBe(3.2);expect(gameData.weapons.aug.alternate.reload).toBe(3.2);
+    historical.aug.reload=historical.aug.alternate.reload=3.766667;
+    expect(createHash('sha256').update(JSON.stringify(historical)).digest('hex')).toBe(provenance.weaponDataAudit.parametersSha256);
     expect(provenance.build).toBe('2000908');
     expect(provenance.tableAudit.build).toBe(gameData.build);
     expect(provenance.tableAudit.clientSha256).toBe(provenance.weaponDataAudit.clientSha256);

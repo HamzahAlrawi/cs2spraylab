@@ -1,0 +1,188 @@
+{
+  "build": "2000935",
+  "serverSha256": "2a229dd46c8af0b52c1f49a3e343b99d9ffe946c102c56102a45b00f6a52349c",
+  "clipRva": "0xe94610..0xe94699",
+  "source": "Isolated native clipping arithmetic from static bytes; no DLL loading or process access.",
+  "excluded": "Full contact dispatcher, support predicates, moving surfaces, breakables and engine first-think ordering. Think examples reproduce audited float32 arithmetic, not runtime measurements.",
+  "constants": {
+    "elasticity": {
+      "rva": "0x17cf12c",
+      "value": 0.44999998807907104
+    },
+    "maximumElasticity": {
+      "rva": "0x1795d78",
+      "value": 0.8999999761581421
+    },
+    "normalBias": {
+      "rva": "0x178adf0",
+      "value": 0.03125
+    },
+    "stopSpeedSquared": {
+      "rva": "0x17b84c0",
+      "value": 400.0
+    },
+    "highSpeedSquared": {
+      "rva": "0x18ef870",
+      "value": 96000.0
+    },
+    "smokeMinimumAge": {
+      "rva": "0x18ef818",
+      "value": 1.187999963760376
+    },
+    "smokeDetonateSpeed": {
+      "rva": "0x1795d58",
+      "value": 0.10000000149011612
+    },
+    "timerInterval": {
+      "rva": "0x178adf8",
+      "value": 0.20000000298023224
+    }
+  },
+  "clipCases": [
+    {
+      "velocitySourceUnits": [
+        100,
+        0,
+        -200
+      ],
+      "normalSource": [
+        0,
+        0,
+        1
+      ],
+      "clippedSourceUnits": [
+        100.0,
+        0.0,
+        200.03125
+      ]
+    },
+    {
+      "velocitySourceUnits": [
+        100,
+        50,
+        0
+      ],
+      "normalSource": [
+        -1,
+        0,
+        0
+      ],
+      "clippedSourceUnits": [
+        -100.03125,
+        50.0,
+        0.0
+      ]
+    },
+    {
+      "velocitySourceUnits": [
+        0,
+        0,
+        20
+      ],
+      "normalSource": [
+        0,
+        0,
+        1
+      ],
+      "clippedSourceUnits": [
+        0.0,
+        0.0,
+        20.03125
+      ]
+    },
+    {
+      "velocitySourceUnits": [
+        0,
+        0,
+        0
+      ],
+      "normalSource": [
+        0,
+        0,
+        1
+      ],
+      "clippedSourceUnits": [
+        0.0,
+        0.0,
+        0.03125
+      ]
+    },
+    {
+      "velocitySourceUnits": [
+        300,
+        -200,
+        -900
+      ],
+      "normalSource": [
+        0,
+        0,
+        1
+      ],
+      "clippedSourceUnits": [
+        300.0,
+        -200.0,
+        900.03125
+      ]
+    },
+    {
+      "velocitySourceUnits": [
+        300,
+        40,
+        -500
+      ],
+      "normalSource": [
+        0.6,
+        0,
+        0.8
+      ],
+      "clippedSourceUnits": [
+        564.018798828125,
+        40.0,
+        -147.97500610351562
+      ]
+    },
+    {
+      "velocitySourceUnits": [
+        20,
+        -40,
+        55
+      ],
+      "normalSource": [
+        0,
+        -0.8,
+        0.6
+      ],
+      "clippedSourceUnits": [
+        20.0,
+        -40.025001525878906,
+        55.01874923706055
+      ]
+    }
+  ],
+  "thinkCases": [
+    {
+      "requested": 0,
+      "tick": 0
+    },
+    {
+      "requested": 0.2,
+      "tick": 13
+    },
+    {
+      "requested": 0.4,
+      "tick": 26
+    },
+    {
+      "requested": 1,
+      "tick": 64
+    },
+    {
+      "requested": 1.5,
+      "tick": 96
+    },
+    {
+      "requested": 1000.2,
+      "tick": 64013
+    }
+  ]
+}

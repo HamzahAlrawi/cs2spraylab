@@ -3,6 +3,12 @@ import {gameData, weaponNames, type Weapon, type Pistol} from './config';
 
 export type Equipment = Weapon | 'usp' | 'knife';
 export type Slot = 1 | 2 | 3 | 4;
+export function equipmentControlSlot(action: string, current: Slot, utilitySelected = false): Slot | undefined {
+  if (action === 'slot3') return current === 3 && !utilitySelected ? 4 : 3;
+  if (action === 'slot1') return 1;
+  if (action === 'slot2') return 2;
+  if (action === 'slot4') return 4;
+}
 export const equipmentNames: Record<Equipment,string> = {...weaponNames, knife: 'Default knife'};
 export const equipmentStats = (id: Equipment) => id === 'knife' ? data.weapons[id] : gameData.weapons[id];
 export const equipmentForSlot = (slot: Slot, primary: Weapon, sidearm: Pistol = 'usp'): Equipment => slot === 1 ? primary : slot === 2 ? sidearm : slot === 4 ? 'zeus' : 'knife';

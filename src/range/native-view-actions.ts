@@ -1,5 +1,18 @@
 import {SkinnedMesh, type Object3D} from 'three';
 import reloadPresentation from './native-reload-presentation.json';
+import reloadTiming from './native-reload-runtime.json';
+
+type ReloadMarker = {ammoAt:number; animationEnd:number};
+type ReloadTiming = {attackLock:number; singleShells:boolean; reload:ReloadMarker; empty?:ReloadMarker};
+
+export function nativeReloadTiming(id: string, empty = false) {
+  const weapon = (reloadTiming as Record<string, ReloadTiming | undefined>)[id];
+  if (!weapon) return undefined;
+  const clip = empty ? weapon.empty ?? weapon.reload : weapon.reload;
+  if (!Number.isFinite(weapon.attackLock) || !Number.isFinite(clip.ammoAt) ||
+    !weapon.singleShells && clip.ammoAt > weapon.attackLock) return undefined;
+  return {attackLock:weapon.attackLock, ...clip, singleShells:weapon.singleShells};
+}
 
 export function nativeReloadWindow(id: string | undefined, phase: 'idle' | 'magazine' | 'start' | 'shell' | 'finish' | undefined) {
   if (!id || !phase || phase === 'idle' || phase === 'magazine') return undefined;

@@ -2,6 +2,7 @@ import {describe,it,expect,vi} from 'vitest';
 import {WeaponRecovery,movementInaccuracy,recoveryTime,airborneInaccuracy} from './ballistics';
 import {defaults,gameData,sanitizeSettings,weaponIds,recoilPattern} from './config';
 import {Simulation,STEP,UNIT,type Shot} from './simulation';
+import nativeAccuracy from './native-accuracy-fixture.json';
 const ak=gameData.weapons.ak47;
 const advance=(s:Simulation,seconds:number)=>{for(let i=0;i<Math.round(seconds/STEP);i++)s.step(STEP);};
 
@@ -10,7 +11,7 @@ describe('Recovered accuracy formulas',()=>{
     expect(movementInaccuracy(ak,.34)).toBe(0);
     expect(movementInaccuracy(ak,.35)).toBeCloseTo(ak.move*Math.pow(.01/.61,.25));
     expect(movementInaccuracy(ak,.65)).toBeCloseTo(ak.move*Math.pow(.31/.61,.25));
-    expect(movementInaccuracy(ak,1)).toBe(ak.move);
+    expect(movementInaccuracy(ak,1)).toBe(Math.fround(ak.move));
     expect(movementInaccuracy(ak,.52,true)).toBeCloseTo(ak.move*.18/.61);
   });
   it('uses integer recoil-index recovery transitions and crouched/airborne parameters',()=>{
@@ -40,6 +41,55 @@ describe('Recovered accuracy formulas',()=>{
     expect(sanitizeSettings({spread:false}).spread).toBe(false);
     expect(sanitizeSettings({impactSize:Infinity}).impactSize).toBe(1.5);
     expect(sanitizeSettings({impactSize:100}).impactSize).toBe(4);
+  });
+});
+
+describe('Accuracy parameter transitions',()=>{
+  // The fixture's native recovery slice receives the new baseline and previous
+  // absolute penalty independently; it never subtracts the old mode baseline.
+  it.each(nativeAccuracy.penalty)('$weapon mode change preserves native penalty before=$before crouch=$crouch airborne=$airborne',sample=>{
+    const weapon=gameData.weapons[sample.weapon as keyof typeof gameData.weapons];
+    const state=new WeaponRecovery({...weapon,stand:sample.before});
+    state.index=sample.index;
+    state.setParameters(weapon);
+    expect(state.penalty).toBe(sample.before);
+    state.advance(sample.dt,sample.crouch,sample.airborne);
+    expect(state.penalty).toBeCloseTo(sample.result,7);
+  });
+  it.each(['awp','ssg08','g3sg1','scar20','sg553'] as const)('%s zoom does not instantly replace accumulated inaccuracy with its scoped baseline',id=>{
+    const weapon=gameData.weapons[id],scoped={...weapon,...weapon.alternate};
+    const state=new WeaponRecovery(weapon);
+    state.fire();state.advance(.05);
+    const before=state.penalty,index=state.index,time=state.time,recoil={...state.recoil};
+    state.setParameters(scoped);
+    expect(state.penalty).toBe(before);
+    expect(state.index).toBe(index);expect(state.time).toBe(time);expect(state.recoil).toEqual(recoil);
+    state.advance(1/64);
+    expect(state.penalty).toBeLessThan(before);
+    expect(state.penalty).toBeGreaterThan(scoped.stand);
+  });
+  it('uses the crouched scoped baseline for recovery, without first raising it to scoped standing accuracy',()=>{
+    const weapon=gameData.weapons.awp,scoped={...weapon,...weapon.alternate};
+    const state=new WeaponRecovery(weapon);
+    state.penalty=scoped.crouch;
+    state.setParameters(scoped);state.advance(1/64,true);
+    expect(state.penalty).toBe(scoped.crouch);
+  });
+  it('raises an insufficient penalty to the new unscoped baseline during the native update',()=>{
+    const weapon=gameData.weapons.awp,scoped={...weapon,...weapon.alternate};
+    const state=new WeaponRecovery(scoped);
+    state.setParameters(weapon);
+    expect(state.penalty).toBe(scoped.stand);
+    state.advance(1/64,true);
+    expect(state.penalty).toBe(weapon.crouch);
+  });
+  it('does not manufacture firing error by toggling zoom without advancing time',()=>{
+    const weapon=gameData.weapons.awp,scoped={...weapon,...weapon.alternate};
+    const state=new WeaponRecovery(weapon);
+    state.advance(2,true);
+    const before=state.penalty;
+    for(let i=0;i<10;i++){state.setParameters(scoped);state.setParameters(weapon);}
+    expect(state.penalty).toBe(before);
   });
 });
 

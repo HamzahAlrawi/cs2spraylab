@@ -1,0 +1,248 @@
+.duel-controls-body.duel-setup {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  min-width: 0;
+  padding: 14px 15px;
+  font-size: 13px;
+  line-height: 1.45;
+  letter-spacing: 0;
+  scrollbar-gutter: stable;
+}
+
+.duel-setup .duel-setup-basics {
+  padding-bottom: 18px;
+}
+
+.duel-setup h3,
+.duel-setup legend {
+  margin: 0 0 12px;
+  padding: 0;
+  color: #e8ede3;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.5;
+}
+
+.duel-setup .duel-setup-basics-grid {
+  display: grid;
+  grid-template-columns: minmax(0, .85fr) minmax(0, 1.15fr);
+  gap: 14px 12px;
+  align-items: start;
+}
+
+.duel-setup .duel-setup-fields {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 180px), 1fr));
+  gap: 14px;
+  align-items: start;
+}
+
+.duel-setup .duel-setup-wide {
+  grid-column: 1 / -1;
+}
+
+.duel-setup .duel-field,
+.duel-setup .duel-check {
+  min-width: 0;
+  gap: 7px;
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.duel-setup .duel-field > span {
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 8px;
+}
+
+.duel-setup .duel-field output,
+.duel-setup summary output {
+  color: #d7dfd6;
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+}
+
+.duel-setup .duel-field > span,
+.duel-setup .duel-check > span,
+.duel-setup summary > span {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.duel-setup .duel-field input[type=number],
+.duel-setup .duel-field select,
+.duel-setup .duel-weapon-add select {
+  min-width: 0;
+  height: 36px;
+  border-radius: 4px;
+  font-size: 13px;
+}
+
+.duel-setup .duel-field input[type=range] {
+  min-width: 0;
+  min-height: 28px;
+  margin: 0;
+}
+
+.duel-setup .duel-check {
+  min-height: 32px;
+  gap: 12px;
+  cursor: pointer;
+}
+
+.duel-setup .duel-check input {
+  flex: none;
+  margin: 0;
+}
+
+.duel-setup .duel-field :disabled {
+  opacity: .5;
+  cursor: default;
+}
+
+.duel-setup .duel-weapon-add {
+  gap: 8px;
+}
+
+.duel-setup .duel-weapon-add button {
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border: 1px solid #627269;
+  border-radius: 4px;
+  background: #3d4b43;
+  color: #e8ede3;
+}
+
+.duel-setup .duel-weapon-pool {
+  display: flex;
+  gap: 6px;
+}
+
+.duel-setup .duel-weapon-pool > span {
+  min-width: 0;
+  max-width: 100%;
+  gap: 5px;
+  padding: 2px 2px 2px 8px;
+  background: #344139;
+  border-radius: 4px;
+  font-size: 13px;
+  overflow-wrap: anywhere;
+}
+
+.duel-setup .duel-weapon-pool button {
+  flex: none;
+  width: 28px;
+  height: 28px;
+}
+
+.duel-setup .duel-weapon-add button:hover,
+.duel-setup .duel-weapon-pool button:not(:disabled):hover {
+  background: #4b5b50;
+}
+
+.duel-setup .duel-setup-section,
+.duel-setup .duel-setup-bot {
+  min-width: 0;
+  border: 0;
+  border-top: 1px solid #425047;
+  border-radius: 0;
+  background: transparent;
+}
+
+.duel-setup .duel-setup-section > summary,
+.duel-setup .duel-setup-bot > summary {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 8px;
+  min-height: 44px;
+  padding: 10px 0;
+  color: #e0e7de;
+  font-size: 13px;
+  line-height: 1.5;
+  list-style: none;
+  cursor: pointer;
+}
+
+.duel-setup summary::-webkit-details-marker {
+  display: none;
+}
+
+.duel-setup .duel-setup-section > summary > svg,
+.duel-setup .duel-setup-bot > summary > svg {
+  flex: none;
+  color: #aebcaf;
+  transition: transform .16s ease;
+}
+
+.duel-setup .duel-setup-section[open] > summary > svg,
+.duel-setup .duel-setup-bot[open] > summary > svg {
+  transform: rotate(90deg);
+}
+
+.duel-setup summary:hover {
+  color: #fff;
+}
+
+.duel-setup summary:focus-visible {
+  outline: 2px solid #efd974;
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+.duel-setup summary output {
+  margin-left: auto;
+}
+
+.duel-setup .duel-setup-section > .duel-setup-fields {
+  padding: 4px 0 18px;
+}
+
+.duel-setup .duel-setup-fieldset {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.duel-setup .duel-setup-fieldset legend {
+  margin: 0;
+  padding-bottom: 10px;
+}
+
+.duel-setup .duel-setup-roster {
+  padding-bottom: 8px;
+}
+
+.duel-setup .duel-setup-bot:first-child {
+  border-top: 0;
+}
+
+.duel-setup .duel-setup-bot > summary {
+  display: grid;
+  grid-template-columns: 16px auto minmax(0, 1fr);
+}
+
+.duel-setup .duel-setup-bot > summary > span {
+  margin-left: 0;
+  color: #b8c6ba;
+  font-size: 13px;
+  text-align: right;
+  white-space: normal;
+}
+
+.duel-setup .duel-setup-bot-content {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 0 0 16px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .duel-setup .duel-setup-section > summary > svg,
+  .duel-setup .duel-setup-bot > summary > svg {
+    transition: none;
+  }
+}

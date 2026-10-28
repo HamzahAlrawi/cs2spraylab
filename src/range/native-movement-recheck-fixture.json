@@ -1,0 +1,7595 @@
+{
+  "build": "2000930",
+  "serverSha256": "9f31fc84164f7822e015dcd95ea958f9dd33d02308a646a2bee5c9b39bd6fc28",
+  "convarSnapshotSha256": "5f7d0b3e965fc9aa5260f7ef084f86f46557e8ed87835fe6e4d6644121f9a079",
+  "scope": "Isolated arithmetic; pawn/weapon/scalar helper stubs. No native traces, input scheduling, or complete air/jump integration.",
+  "registeredDefaultRvas": {
+    "sv_accelerate": "0x17b7c80",
+    "sv_friction": "0x19c2378",
+    "sv_stopspeed": "0x178bffc",
+    "sv_airaccelerate": "0x17b7c88",
+    "sv_air_max_wishspeed": "0x178bfe0",
+    "sv_gravity": "0x17aaa40",
+    "sv_jump_impulse": "0x191e744"
+  },
+  "registeredDefaults": {
+    "sv_accelerate": 5.5,
+    "sv_friction": 5.199999809265137,
+    "sv_stopspeed": 80.0,
+    "sv_airaccelerate": 12.0,
+    "sv_air_max_wishspeed": 30.0,
+    "sv_gravity": 800.0,
+    "sv_jump_impulse": 301.9933776855469
+  },
+  "blocks": {
+    "acceleration": "0xaaf850..0xaafdb5",
+    "friction": "0xabdebc,0xabdefc..0xabdf64,0xabe0b7..0xabe123",
+    "crouch": "0xabb4e8..0xabb53b",
+    "walk": "0xab5b65..0xab5b8d"
+  },
+  "acceleration": [
+    {
+      "weaponSpeed": 150,
+      "stance": "run",
+      "tag": 1,
+      "current": 0,
+      "dt": 0.0078125,
+      "surfaceFriction": 1,
+      "wishSpeed": 150,
+      "result": 6.4453125
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "run",
+      "tag": 1,
+      "current": 0,
+      "dt": 0.015625,
+      "surfaceFriction": 1,
+      "wishSpeed": 150,
+      "result": 12.890625
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "run",
+      "tag": 1,
+      "current": -80,
+      "dt": 0.0078125,
+      "surfaceFriction": 1,
+      "wishSpeed": 150,
+      "result": -73.5546875
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "run",
+      "tag": 1,
+      "current": -80,
+      "dt": 0.015625,
+      "surfaceFriction": 1,
+      "wishSpeed": 150,
+      "result": -67.109375
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "run",
+      "tag": 1,
+      "current": 135.0,
+      "dt": 0.0078125,
+      "surfaceFriction": 1,
+      "wishSpeed": 150,
+      "result": 141.4453125
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "run",
+      "tag": 1,
+      "current": 135.0,
+      "dt": 0.015625,
+      "surfaceFriction": 1,
+      "wishSpeed": 150,
+      "result": 147.890625
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "run",
+      "tag": 1,
+      "current": 150,
+      "dt": 0.0078125,
+      "surfaceFriction": 1,
+      "wishSpeed": 150,
+      "result": 150.0
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "run",
+      "tag": 1,
+      "current": 150,
+      "dt": 0.015625,
+      "surfaceFriction": 1,
+      "wishSpeed": 150,
+      "result": 150.0
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "run",
+      "tag": 1,
+      "current": 0,
+      "dt": 0.0078125,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 150,
+      "result": 3.22265625
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "run",
+      "tag": 1,
+      "current": 0,
+      "dt": 0.015625,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 150,
+      "result": 6.4453125
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "run",
+      "tag": 1,
+      "current": -80,
+      "dt": 0.0078125,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 150,
+      "result": -76.77734375
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "run",
+      "tag": 1,
+      "current": -80,
+      "dt": 0.015625,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 150,
+      "result": -73.5546875
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "run",
+      "tag": 1,
+      "current": 135.0,
+      "dt": 0.0078125,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 150,
+      "result": 138.22265625
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "run",
+      "tag": 1,
+      "current": 135.0,
+      "dt": 0.015625,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 150,
+      "result": 141.4453125
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "run",
+      "tag": 1,
+      "current": 150,
+      "dt": 0.0078125,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 150,
+      "result": 150.0
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "run",
+      "tag": 1,
+      "current": 150,
+      "dt": 0.015625,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 150,
+      "result": 150.0
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "run",
+      "tag": 1,
+      "current": 0,
+      "dt": 0.0078125,
+      "surfaceFriction": 0,
+      "wishSpeed": 150,
+      "result": 0.0
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "run",
+      "tag": 1,
+      "current": 0,
+      "dt": 0.015625,
+      "surfaceFriction": 0,
+      "wishSpeed": 150,
+      "result": 0.0
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "run",
+      "tag": 1,
+      "current": -80,
+      "dt": 0.0078125,
+      "surfaceFriction": 0,
+      "wishSpeed": 150,
+      "result": -80.0
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "run",
+      "tag": 1,
+      "current": -80,
+      "dt": 0.015625,
+      "surfaceFriction": 0,
+      "wishSpeed": 150,
+      "result": -80.0
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "run",
+      "tag": 1,
+      "current": 135.0,
+      "dt": 0.0078125,
+      "surfaceFriction": 0,
+      "wishSpeed": 150,
+      "result": 135.0
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "run",
+      "tag": 1,
+      "current": 135.0,
+      "dt": 0.015625,
+      "surfaceFriction": 0,
+      "wishSpeed": 150,
+      "result": 135.0
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "run",
+      "tag": 1,
+      "current": 150,
+      "dt": 0.0078125,
+      "surfaceFriction": 0,
+      "wishSpeed": 150,
+      "result": 150.0
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "run",
+      "tag": 1,
+      "current": 150,
+      "dt": 0.015625,
+      "surfaceFriction": 0,
+      "wishSpeed": 150,
+      "result": 150.0
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "run",
+      "tag": 0.35,
+      "current": 0,
+      "dt": 0.0078125,
+      "surfaceFriction": 1,
+      "wishSpeed": 52.5,
+      "result": 6.4453125
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "run",
+      "tag": 0.35,
+      "current": 0,
+      "dt": 0.015625,
+      "surfaceFriction": 1,
+      "wishSpeed": 52.5,
+      "result": 12.890625
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "run",
+      "tag": 0.35,
+      "current": -80,
+      "dt": 0.0078125,
+      "surfaceFriction": 1,
+      "wishSpeed": 52.5,
+      "result": -73.5546875
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "run",
+      "tag": 0.35,
+      "current": -80,
+      "dt": 0.015625,
+      "surfaceFriction": 1,
+      "wishSpeed": 52.5,
+      "result": -67.109375
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "run",
+      "tag": 0.35,
+      "current": 135.0,
+      "dt": 0.0078125,
+      "surfaceFriction": 1,
+      "wishSpeed": 52.5,
+      "result": 135.0
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "run",
+      "tag": 0.35,
+      "current": 135.0,
+      "dt": 0.015625,
+      "surfaceFriction": 1,
+      "wishSpeed": 52.5,
+      "result": 135.0
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "run",
+      "tag": 0.35,
+      "current": 150,
+      "dt": 0.0078125,
+      "surfaceFriction": 1,
+      "wishSpeed": 52.5,
+      "result": 150.0
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "run",
+      "tag": 0.35,
+      "current": 150,
+      "dt": 0.015625,
+      "surfaceFriction": 1,
+      "wishSpeed": 52.5,
+      "result": 150.0
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "run",
+      "tag": 0.35,
+      "current": 0,
+      "dt": 0.0078125,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 52.5,
+      "result": 3.22265625
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "run",
+      "tag": 0.35,
+      "current": 0,
+      "dt": 0.015625,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 52.5,
+      "result": 6.4453125
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "run",
+      "tag": 0.35,
+      "current": -80,
+      "dt": 0.0078125,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 52.5,
+      "result": -76.77734375
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "run",
+      "tag": 0.35,
+      "current": -80,
+      "dt": 0.015625,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 52.5,
+      "result": -73.5546875
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "run",
+      "tag": 0.35,
+      "current": 135.0,
+      "dt": 0.0078125,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 52.5,
+      "result": 135.0
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "run",
+      "tag": 0.35,
+      "current": 135.0,
+      "dt": 0.015625,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 52.5,
+      "result": 135.0
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "run",
+      "tag": 0.35,
+      "current": 150,
+      "dt": 0.0078125,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 52.5,
+      "result": 150.0
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "run",
+      "tag": 0.35,
+      "current": 150,
+      "dt": 0.015625,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 52.5,
+      "result": 150.0
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "run",
+      "tag": 0.35,
+      "current": 0,
+      "dt": 0.0078125,
+      "surfaceFriction": 0,
+      "wishSpeed": 52.5,
+      "result": 0.0
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "run",
+      "tag": 0.35,
+      "current": 0,
+      "dt": 0.015625,
+      "surfaceFriction": 0,
+      "wishSpeed": 52.5,
+      "result": 0.0
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "run",
+      "tag": 0.35,
+      "current": -80,
+      "dt": 0.0078125,
+      "surfaceFriction": 0,
+      "wishSpeed": 52.5,
+      "result": -80.0
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "run",
+      "tag": 0.35,
+      "current": -80,
+      "dt": 0.015625,
+      "surfaceFriction": 0,
+      "wishSpeed": 52.5,
+      "result": -80.0
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "run",
+      "tag": 0.35,
+      "current": 135.0,
+      "dt": 0.0078125,
+      "surfaceFriction": 0,
+      "wishSpeed": 52.5,
+      "result": 135.0
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "run",
+      "tag": 0.35,
+      "current": 135.0,
+      "dt": 0.015625,
+      "surfaceFriction": 0,
+      "wishSpeed": 52.5,
+      "result": 135.0
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "run",
+      "tag": 0.35,
+      "current": 150,
+      "dt": 0.0078125,
+      "surfaceFriction": 0,
+      "wishSpeed": 52.5,
+      "result": 150.0
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "run",
+      "tag": 0.35,
+      "current": 150,
+      "dt": 0.015625,
+      "surfaceFriction": 0,
+      "wishSpeed": 52.5,
+      "result": 150.0
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "walk",
+      "tag": 1,
+      "current": 0,
+      "dt": 0.0078125,
+      "surfaceFriction": 1,
+      "wishSpeed": 78.0,
+      "result": 5.5859375
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "walk",
+      "tag": 1,
+      "current": 0,
+      "dt": 0.015625,
+      "surfaceFriction": 1,
+      "wishSpeed": 78.0,
+      "result": 11.171875
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "walk",
+      "tag": 1,
+      "current": -80,
+      "dt": 0.0078125,
+      "surfaceFriction": 1,
+      "wishSpeed": 78.0,
+      "result": -74.4140625
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "walk",
+      "tag": 1,
+      "current": -80,
+      "dt": 0.015625,
+      "surfaceFriction": 1,
+      "wishSpeed": 78.0,
+      "result": -68.828125
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "walk",
+      "tag": 1,
+      "current": 70.2,
+      "dt": 0.0078125,
+      "surfaceFriction": 1,
+      "wishSpeed": 78.0,
+      "result": 75.78593444824219
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "walk",
+      "tag": 1,
+      "current": 70.2,
+      "dt": 0.015625,
+      "surfaceFriction": 1,
+      "wishSpeed": 78.0,
+      "result": 78.0
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "walk",
+      "tag": 1,
+      "current": 78.0,
+      "dt": 0.0078125,
+      "surfaceFriction": 1,
+      "wishSpeed": 78.0,
+      "result": 78.0
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "walk",
+      "tag": 1,
+      "current": 78.0,
+      "dt": 0.015625,
+      "surfaceFriction": 1,
+      "wishSpeed": 78.0,
+      "result": 78.0
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "walk",
+      "tag": 1,
+      "current": 0,
+      "dt": 0.0078125,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 78.0,
+      "result": 2.79296875
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "walk",
+      "tag": 1,
+      "current": 0,
+      "dt": 0.015625,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 78.0,
+      "result": 5.5859375
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "walk",
+      "tag": 1,
+      "current": -80,
+      "dt": 0.0078125,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 78.0,
+      "result": -77.20703125
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "walk",
+      "tag": 1,
+      "current": -80,
+      "dt": 0.015625,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 78.0,
+      "result": -74.4140625
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "walk",
+      "tag": 1,
+      "current": 70.2,
+      "dt": 0.0078125,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 78.0,
+      "result": 72.99296569824219
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "walk",
+      "tag": 1,
+      "current": 70.2,
+      "dt": 0.015625,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 78.0,
+      "result": 75.78593444824219
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "walk",
+      "tag": 1,
+      "current": 78.0,
+      "dt": 0.0078125,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 78.0,
+      "result": 78.0
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "walk",
+      "tag": 1,
+      "current": 78.0,
+      "dt": 0.015625,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 78.0,
+      "result": 78.0
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "walk",
+      "tag": 1,
+      "current": 0,
+      "dt": 0.0078125,
+      "surfaceFriction": 0,
+      "wishSpeed": 78.0,
+      "result": 0.0
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "walk",
+      "tag": 1,
+      "current": 0,
+      "dt": 0.015625,
+      "surfaceFriction": 0,
+      "wishSpeed": 78.0,
+      "result": 0.0
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "walk",
+      "tag": 1,
+      "current": -80,
+      "dt": 0.0078125,
+      "surfaceFriction": 0,
+      "wishSpeed": 78.0,
+      "result": -80.0
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "walk",
+      "tag": 1,
+      "current": -80,
+      "dt": 0.015625,
+      "surfaceFriction": 0,
+      "wishSpeed": 78.0,
+      "result": -80.0
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "walk",
+      "tag": 1,
+      "current": 70.2,
+      "dt": 0.0078125,
+      "surfaceFriction": 0,
+      "wishSpeed": 78.0,
+      "result": 70.19999694824219
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "walk",
+      "tag": 1,
+      "current": 70.2,
+      "dt": 0.015625,
+      "surfaceFriction": 0,
+      "wishSpeed": 78.0,
+      "result": 70.19999694824219
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "walk",
+      "tag": 1,
+      "current": 78.0,
+      "dt": 0.0078125,
+      "surfaceFriction": 0,
+      "wishSpeed": 78.0,
+      "result": 78.0
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "walk",
+      "tag": 1,
+      "current": 78.0,
+      "dt": 0.015625,
+      "surfaceFriction": 0,
+      "wishSpeed": 78.0,
+      "result": 78.0
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "walk",
+      "tag": 0.35,
+      "current": 0,
+      "dt": 0.0078125,
+      "surfaceFriction": 1,
+      "wishSpeed": 27.299999999999997,
+      "result": 5.5859375
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "walk",
+      "tag": 0.35,
+      "current": 0,
+      "dt": 0.015625,
+      "surfaceFriction": 1,
+      "wishSpeed": 27.299999999999997,
+      "result": 11.171875
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "walk",
+      "tag": 0.35,
+      "current": -80,
+      "dt": 0.0078125,
+      "surfaceFriction": 1,
+      "wishSpeed": 27.299999999999997,
+      "result": -74.4140625
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "walk",
+      "tag": 0.35,
+      "current": -80,
+      "dt": 0.015625,
+      "surfaceFriction": 1,
+      "wishSpeed": 27.299999999999997,
+      "result": -68.828125
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "walk",
+      "tag": 0.35,
+      "current": 70.2,
+      "dt": 0.0078125,
+      "surfaceFriction": 1,
+      "wishSpeed": 27.299999999999997,
+      "result": 70.19999694824219
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "walk",
+      "tag": 0.35,
+      "current": 70.2,
+      "dt": 0.015625,
+      "surfaceFriction": 1,
+      "wishSpeed": 27.299999999999997,
+      "result": 70.19999694824219
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "walk",
+      "tag": 0.35,
+      "current": 78.0,
+      "dt": 0.0078125,
+      "surfaceFriction": 1,
+      "wishSpeed": 27.299999999999997,
+      "result": 78.0
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "walk",
+      "tag": 0.35,
+      "current": 78.0,
+      "dt": 0.015625,
+      "surfaceFriction": 1,
+      "wishSpeed": 27.299999999999997,
+      "result": 78.0
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "walk",
+      "tag": 0.35,
+      "current": 0,
+      "dt": 0.0078125,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 27.299999999999997,
+      "result": 2.79296875
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "walk",
+      "tag": 0.35,
+      "current": 0,
+      "dt": 0.015625,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 27.299999999999997,
+      "result": 5.5859375
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "walk",
+      "tag": 0.35,
+      "current": -80,
+      "dt": 0.0078125,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 27.299999999999997,
+      "result": -77.20703125
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "walk",
+      "tag": 0.35,
+      "current": -80,
+      "dt": 0.015625,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 27.299999999999997,
+      "result": -74.4140625
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "walk",
+      "tag": 0.35,
+      "current": 70.2,
+      "dt": 0.0078125,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 27.299999999999997,
+      "result": 70.19999694824219
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "walk",
+      "tag": 0.35,
+      "current": 70.2,
+      "dt": 0.015625,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 27.299999999999997,
+      "result": 70.19999694824219
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "walk",
+      "tag": 0.35,
+      "current": 78.0,
+      "dt": 0.0078125,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 27.299999999999997,
+      "result": 78.0
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "walk",
+      "tag": 0.35,
+      "current": 78.0,
+      "dt": 0.015625,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 27.299999999999997,
+      "result": 78.0
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "walk",
+      "tag": 0.35,
+      "current": 0,
+      "dt": 0.0078125,
+      "surfaceFriction": 0,
+      "wishSpeed": 27.299999999999997,
+      "result": 0.0
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "walk",
+      "tag": 0.35,
+      "current": 0,
+      "dt": 0.015625,
+      "surfaceFriction": 0,
+      "wishSpeed": 27.299999999999997,
+      "result": 0.0
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "walk",
+      "tag": 0.35,
+      "current": -80,
+      "dt": 0.0078125,
+      "surfaceFriction": 0,
+      "wishSpeed": 27.299999999999997,
+      "result": -80.0
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "walk",
+      "tag": 0.35,
+      "current": -80,
+      "dt": 0.015625,
+      "surfaceFriction": 0,
+      "wishSpeed": 27.299999999999997,
+      "result": -80.0
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "walk",
+      "tag": 0.35,
+      "current": 70.2,
+      "dt": 0.0078125,
+      "surfaceFriction": 0,
+      "wishSpeed": 27.299999999999997,
+      "result": 70.19999694824219
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "walk",
+      "tag": 0.35,
+      "current": 70.2,
+      "dt": 0.015625,
+      "surfaceFriction": 0,
+      "wishSpeed": 27.299999999999997,
+      "result": 70.19999694824219
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "walk",
+      "tag": 0.35,
+      "current": 78.0,
+      "dt": 0.0078125,
+      "surfaceFriction": 0,
+      "wishSpeed": 27.299999999999997,
+      "result": 78.0
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "walk",
+      "tag": 0.35,
+      "current": 78.0,
+      "dt": 0.015625,
+      "surfaceFriction": 0,
+      "wishSpeed": 27.299999999999997,
+      "result": 78.0
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "crouch",
+      "tag": 1,
+      "current": 0,
+      "dt": 0.0078125,
+      "surfaceFriction": 1,
+      "wishSpeed": 51.00000000000001,
+      "result": 3.65234375
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "crouch",
+      "tag": 1,
+      "current": 0,
+      "dt": 0.015625,
+      "surfaceFriction": 1,
+      "wishSpeed": 51.00000000000001,
+      "result": 7.3046875
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "crouch",
+      "tag": 1,
+      "current": -80,
+      "dt": 0.0078125,
+      "surfaceFriction": 1,
+      "wishSpeed": 51.00000000000001,
+      "result": -76.34765625
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "crouch",
+      "tag": 1,
+      "current": -80,
+      "dt": 0.015625,
+      "surfaceFriction": 1,
+      "wishSpeed": 51.00000000000001,
+      "result": -72.6953125
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "crouch",
+      "tag": 1,
+      "current": 45.900000000000006,
+      "dt": 0.0078125,
+      "surfaceFriction": 1,
+      "wishSpeed": 51.00000000000001,
+      "result": 49.552345275878906
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "crouch",
+      "tag": 1,
+      "current": 45.900000000000006,
+      "dt": 0.015625,
+      "surfaceFriction": 1,
+      "wishSpeed": 51.00000000000001,
+      "result": 51.0
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "crouch",
+      "tag": 1,
+      "current": 51.00000000000001,
+      "dt": 0.0078125,
+      "surfaceFriction": 1,
+      "wishSpeed": 51.00000000000001,
+      "result": 51.0
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "crouch",
+      "tag": 1,
+      "current": 51.00000000000001,
+      "dt": 0.015625,
+      "surfaceFriction": 1,
+      "wishSpeed": 51.00000000000001,
+      "result": 51.0
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "crouch",
+      "tag": 1,
+      "current": 0,
+      "dt": 0.0078125,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 51.00000000000001,
+      "result": 1.826171875
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "crouch",
+      "tag": 1,
+      "current": 0,
+      "dt": 0.015625,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 51.00000000000001,
+      "result": 3.65234375
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "crouch",
+      "tag": 1,
+      "current": -80,
+      "dt": 0.0078125,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 51.00000000000001,
+      "result": -78.173828125
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "crouch",
+      "tag": 1,
+      "current": -80,
+      "dt": 0.015625,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 51.00000000000001,
+      "result": -76.34765625
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "crouch",
+      "tag": 1,
+      "current": 45.900000000000006,
+      "dt": 0.0078125,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 51.00000000000001,
+      "result": 47.726173400878906
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "crouch",
+      "tag": 1,
+      "current": 45.900000000000006,
+      "dt": 0.015625,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 51.00000000000001,
+      "result": 49.552345275878906
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "crouch",
+      "tag": 1,
+      "current": 51.00000000000001,
+      "dt": 0.0078125,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 51.00000000000001,
+      "result": 51.0
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "crouch",
+      "tag": 1,
+      "current": 51.00000000000001,
+      "dt": 0.015625,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 51.00000000000001,
+      "result": 51.0
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "crouch",
+      "tag": 1,
+      "current": 0,
+      "dt": 0.0078125,
+      "surfaceFriction": 0,
+      "wishSpeed": 51.00000000000001,
+      "result": 0.0
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "crouch",
+      "tag": 1,
+      "current": 0,
+      "dt": 0.015625,
+      "surfaceFriction": 0,
+      "wishSpeed": 51.00000000000001,
+      "result": 0.0
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "crouch",
+      "tag": 1,
+      "current": -80,
+      "dt": 0.0078125,
+      "surfaceFriction": 0,
+      "wishSpeed": 51.00000000000001,
+      "result": -80.0
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "crouch",
+      "tag": 1,
+      "current": -80,
+      "dt": 0.015625,
+      "surfaceFriction": 0,
+      "wishSpeed": 51.00000000000001,
+      "result": -80.0
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "crouch",
+      "tag": 1,
+      "current": 45.900000000000006,
+      "dt": 0.0078125,
+      "surfaceFriction": 0,
+      "wishSpeed": 51.00000000000001,
+      "result": 45.900001525878906
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "crouch",
+      "tag": 1,
+      "current": 45.900000000000006,
+      "dt": 0.015625,
+      "surfaceFriction": 0,
+      "wishSpeed": 51.00000000000001,
+      "result": 45.900001525878906
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "crouch",
+      "tag": 1,
+      "current": 51.00000000000001,
+      "dt": 0.0078125,
+      "surfaceFriction": 0,
+      "wishSpeed": 51.00000000000001,
+      "result": 51.0
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "crouch",
+      "tag": 1,
+      "current": 51.00000000000001,
+      "dt": 0.015625,
+      "surfaceFriction": 0,
+      "wishSpeed": 51.00000000000001,
+      "result": 51.0
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "crouch",
+      "tag": 0.35,
+      "current": 0,
+      "dt": 0.0078125,
+      "surfaceFriction": 1,
+      "wishSpeed": 17.85,
+      "result": 3.65234375
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "crouch",
+      "tag": 0.35,
+      "current": 0,
+      "dt": 0.015625,
+      "surfaceFriction": 1,
+      "wishSpeed": 17.85,
+      "result": 7.3046875
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "crouch",
+      "tag": 0.35,
+      "current": -80,
+      "dt": 0.0078125,
+      "surfaceFriction": 1,
+      "wishSpeed": 17.85,
+      "result": -76.34765625
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "crouch",
+      "tag": 0.35,
+      "current": -80,
+      "dt": 0.015625,
+      "surfaceFriction": 1,
+      "wishSpeed": 17.85,
+      "result": -72.6953125
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "crouch",
+      "tag": 0.35,
+      "current": 45.900000000000006,
+      "dt": 0.0078125,
+      "surfaceFriction": 1,
+      "wishSpeed": 17.85,
+      "result": 45.900001525878906
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "crouch",
+      "tag": 0.35,
+      "current": 45.900000000000006,
+      "dt": 0.015625,
+      "surfaceFriction": 1,
+      "wishSpeed": 17.85,
+      "result": 45.900001525878906
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "crouch",
+      "tag": 0.35,
+      "current": 51.00000000000001,
+      "dt": 0.0078125,
+      "surfaceFriction": 1,
+      "wishSpeed": 17.85,
+      "result": 51.0
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "crouch",
+      "tag": 0.35,
+      "current": 51.00000000000001,
+      "dt": 0.015625,
+      "surfaceFriction": 1,
+      "wishSpeed": 17.85,
+      "result": 51.0
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "crouch",
+      "tag": 0.35,
+      "current": 0,
+      "dt": 0.0078125,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 17.85,
+      "result": 1.826171875
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "crouch",
+      "tag": 0.35,
+      "current": 0,
+      "dt": 0.015625,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 17.85,
+      "result": 3.65234375
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "crouch",
+      "tag": 0.35,
+      "current": -80,
+      "dt": 0.0078125,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 17.85,
+      "result": -78.173828125
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "crouch",
+      "tag": 0.35,
+      "current": -80,
+      "dt": 0.015625,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 17.85,
+      "result": -76.34765625
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "crouch",
+      "tag": 0.35,
+      "current": 45.900000000000006,
+      "dt": 0.0078125,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 17.85,
+      "result": 45.900001525878906
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "crouch",
+      "tag": 0.35,
+      "current": 45.900000000000006,
+      "dt": 0.015625,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 17.85,
+      "result": 45.900001525878906
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "crouch",
+      "tag": 0.35,
+      "current": 51.00000000000001,
+      "dt": 0.0078125,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 17.85,
+      "result": 51.0
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "crouch",
+      "tag": 0.35,
+      "current": 51.00000000000001,
+      "dt": 0.015625,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 17.85,
+      "result": 51.0
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "crouch",
+      "tag": 0.35,
+      "current": 0,
+      "dt": 0.0078125,
+      "surfaceFriction": 0,
+      "wishSpeed": 17.85,
+      "result": 0.0
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "crouch",
+      "tag": 0.35,
+      "current": 0,
+      "dt": 0.015625,
+      "surfaceFriction": 0,
+      "wishSpeed": 17.85,
+      "result": 0.0
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "crouch",
+      "tag": 0.35,
+      "current": -80,
+      "dt": 0.0078125,
+      "surfaceFriction": 0,
+      "wishSpeed": 17.85,
+      "result": -80.0
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "crouch",
+      "tag": 0.35,
+      "current": -80,
+      "dt": 0.015625,
+      "surfaceFriction": 0,
+      "wishSpeed": 17.85,
+      "result": -80.0
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "crouch",
+      "tag": 0.35,
+      "current": 45.900000000000006,
+      "dt": 0.0078125,
+      "surfaceFriction": 0,
+      "wishSpeed": 17.85,
+      "result": 45.900001525878906
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "crouch",
+      "tag": 0.35,
+      "current": 45.900000000000006,
+      "dt": 0.015625,
+      "surfaceFriction": 0,
+      "wishSpeed": 17.85,
+      "result": 45.900001525878906
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "crouch",
+      "tag": 0.35,
+      "current": 51.00000000000001,
+      "dt": 0.0078125,
+      "surfaceFriction": 0,
+      "wishSpeed": 17.85,
+      "result": 51.0
+    },
+    {
+      "weaponSpeed": 150,
+      "stance": "crouch",
+      "tag": 0.35,
+      "current": 51.00000000000001,
+      "dt": 0.015625,
+      "surfaceFriction": 0,
+      "wishSpeed": 17.85,
+      "result": 51.0
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "run",
+      "tag": 1,
+      "current": 0,
+      "dt": 0.0078125,
+      "surfaceFriction": 1,
+      "wishSpeed": 215,
+      "result": 9.23828125
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "run",
+      "tag": 1,
+      "current": 0,
+      "dt": 0.015625,
+      "surfaceFriction": 1,
+      "wishSpeed": 215,
+      "result": 18.4765625
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "run",
+      "tag": 1,
+      "current": -80,
+      "dt": 0.0078125,
+      "surfaceFriction": 1,
+      "wishSpeed": 215,
+      "result": -70.76171875
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "run",
+      "tag": 1,
+      "current": -80,
+      "dt": 0.015625,
+      "surfaceFriction": 1,
+      "wishSpeed": 215,
+      "result": -61.5234375
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "run",
+      "tag": 1,
+      "current": 193.5,
+      "dt": 0.0078125,
+      "surfaceFriction": 1,
+      "wishSpeed": 215,
+      "result": 202.73828125
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "run",
+      "tag": 1,
+      "current": 193.5,
+      "dt": 0.015625,
+      "surfaceFriction": 1,
+      "wishSpeed": 215,
+      "result": 211.9765625
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "run",
+      "tag": 1,
+      "current": 215,
+      "dt": 0.0078125,
+      "surfaceFriction": 1,
+      "wishSpeed": 215,
+      "result": 215.0
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "run",
+      "tag": 1,
+      "current": 215,
+      "dt": 0.015625,
+      "surfaceFriction": 1,
+      "wishSpeed": 215,
+      "result": 215.0
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "run",
+      "tag": 1,
+      "current": 0,
+      "dt": 0.0078125,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 215,
+      "result": 4.619140625
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "run",
+      "tag": 1,
+      "current": 0,
+      "dt": 0.015625,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 215,
+      "result": 9.23828125
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "run",
+      "tag": 1,
+      "current": -80,
+      "dt": 0.0078125,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 215,
+      "result": -75.380859375
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "run",
+      "tag": 1,
+      "current": -80,
+      "dt": 0.015625,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 215,
+      "result": -70.76171875
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "run",
+      "tag": 1,
+      "current": 193.5,
+      "dt": 0.0078125,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 215,
+      "result": 198.119140625
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "run",
+      "tag": 1,
+      "current": 193.5,
+      "dt": 0.015625,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 215,
+      "result": 202.73828125
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "run",
+      "tag": 1,
+      "current": 215,
+      "dt": 0.0078125,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 215,
+      "result": 215.0
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "run",
+      "tag": 1,
+      "current": 215,
+      "dt": 0.015625,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 215,
+      "result": 215.0
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "run",
+      "tag": 1,
+      "current": 0,
+      "dt": 0.0078125,
+      "surfaceFriction": 0,
+      "wishSpeed": 215,
+      "result": 0.0
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "run",
+      "tag": 1,
+      "current": 0,
+      "dt": 0.015625,
+      "surfaceFriction": 0,
+      "wishSpeed": 215,
+      "result": 0.0
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "run",
+      "tag": 1,
+      "current": -80,
+      "dt": 0.0078125,
+      "surfaceFriction": 0,
+      "wishSpeed": 215,
+      "result": -80.0
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "run",
+      "tag": 1,
+      "current": -80,
+      "dt": 0.015625,
+      "surfaceFriction": 0,
+      "wishSpeed": 215,
+      "result": -80.0
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "run",
+      "tag": 1,
+      "current": 193.5,
+      "dt": 0.0078125,
+      "surfaceFriction": 0,
+      "wishSpeed": 215,
+      "result": 193.5
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "run",
+      "tag": 1,
+      "current": 193.5,
+      "dt": 0.015625,
+      "surfaceFriction": 0,
+      "wishSpeed": 215,
+      "result": 193.5
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "run",
+      "tag": 1,
+      "current": 215,
+      "dt": 0.0078125,
+      "surfaceFriction": 0,
+      "wishSpeed": 215,
+      "result": 215.0
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "run",
+      "tag": 1,
+      "current": 215,
+      "dt": 0.015625,
+      "surfaceFriction": 0,
+      "wishSpeed": 215,
+      "result": 215.0
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "run",
+      "tag": 0.35,
+      "current": 0,
+      "dt": 0.0078125,
+      "surfaceFriction": 1,
+      "wishSpeed": 75.25,
+      "result": 9.23828125
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "run",
+      "tag": 0.35,
+      "current": 0,
+      "dt": 0.015625,
+      "surfaceFriction": 1,
+      "wishSpeed": 75.25,
+      "result": 18.4765625
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "run",
+      "tag": 0.35,
+      "current": -80,
+      "dt": 0.0078125,
+      "surfaceFriction": 1,
+      "wishSpeed": 75.25,
+      "result": -70.76171875
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "run",
+      "tag": 0.35,
+      "current": -80,
+      "dt": 0.015625,
+      "surfaceFriction": 1,
+      "wishSpeed": 75.25,
+      "result": -61.5234375
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "run",
+      "tag": 0.35,
+      "current": 193.5,
+      "dt": 0.0078125,
+      "surfaceFriction": 1,
+      "wishSpeed": 75.25,
+      "result": 193.5
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "run",
+      "tag": 0.35,
+      "current": 193.5,
+      "dt": 0.015625,
+      "surfaceFriction": 1,
+      "wishSpeed": 75.25,
+      "result": 193.5
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "run",
+      "tag": 0.35,
+      "current": 215,
+      "dt": 0.0078125,
+      "surfaceFriction": 1,
+      "wishSpeed": 75.25,
+      "result": 215.0
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "run",
+      "tag": 0.35,
+      "current": 215,
+      "dt": 0.015625,
+      "surfaceFriction": 1,
+      "wishSpeed": 75.25,
+      "result": 215.0
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "run",
+      "tag": 0.35,
+      "current": 0,
+      "dt": 0.0078125,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 75.25,
+      "result": 4.619140625
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "run",
+      "tag": 0.35,
+      "current": 0,
+      "dt": 0.015625,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 75.25,
+      "result": 9.23828125
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "run",
+      "tag": 0.35,
+      "current": -80,
+      "dt": 0.0078125,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 75.25,
+      "result": -75.380859375
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "run",
+      "tag": 0.35,
+      "current": -80,
+      "dt": 0.015625,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 75.25,
+      "result": -70.76171875
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "run",
+      "tag": 0.35,
+      "current": 193.5,
+      "dt": 0.0078125,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 75.25,
+      "result": 193.5
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "run",
+      "tag": 0.35,
+      "current": 193.5,
+      "dt": 0.015625,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 75.25,
+      "result": 193.5
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "run",
+      "tag": 0.35,
+      "current": 215,
+      "dt": 0.0078125,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 75.25,
+      "result": 215.0
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "run",
+      "tag": 0.35,
+      "current": 215,
+      "dt": 0.015625,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 75.25,
+      "result": 215.0
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "run",
+      "tag": 0.35,
+      "current": 0,
+      "dt": 0.0078125,
+      "surfaceFriction": 0,
+      "wishSpeed": 75.25,
+      "result": 0.0
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "run",
+      "tag": 0.35,
+      "current": 0,
+      "dt": 0.015625,
+      "surfaceFriction": 0,
+      "wishSpeed": 75.25,
+      "result": 0.0
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "run",
+      "tag": 0.35,
+      "current": -80,
+      "dt": 0.0078125,
+      "surfaceFriction": 0,
+      "wishSpeed": 75.25,
+      "result": -80.0
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "run",
+      "tag": 0.35,
+      "current": -80,
+      "dt": 0.015625,
+      "surfaceFriction": 0,
+      "wishSpeed": 75.25,
+      "result": -80.0
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "run",
+      "tag": 0.35,
+      "current": 193.5,
+      "dt": 0.0078125,
+      "surfaceFriction": 0,
+      "wishSpeed": 75.25,
+      "result": 193.5
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "run",
+      "tag": 0.35,
+      "current": 193.5,
+      "dt": 0.015625,
+      "surfaceFriction": 0,
+      "wishSpeed": 75.25,
+      "result": 193.5
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "run",
+      "tag": 0.35,
+      "current": 215,
+      "dt": 0.0078125,
+      "surfaceFriction": 0,
+      "wishSpeed": 75.25,
+      "result": 215.0
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "run",
+      "tag": 0.35,
+      "current": 215,
+      "dt": 0.015625,
+      "surfaceFriction": 0,
+      "wishSpeed": 75.25,
+      "result": 215.0
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "walk",
+      "tag": 1,
+      "current": 0,
+      "dt": 0.0078125,
+      "surfaceFriction": 1,
+      "wishSpeed": 111.8,
+      "result": 5.5859375
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "walk",
+      "tag": 1,
+      "current": 0,
+      "dt": 0.015625,
+      "surfaceFriction": 1,
+      "wishSpeed": 111.8,
+      "result": 11.171875
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "walk",
+      "tag": 1,
+      "current": -80,
+      "dt": 0.0078125,
+      "surfaceFriction": 1,
+      "wishSpeed": 111.8,
+      "result": -74.4140625
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "walk",
+      "tag": 1,
+      "current": -80,
+      "dt": 0.015625,
+      "surfaceFriction": 1,
+      "wishSpeed": 111.8,
+      "result": -68.828125
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "walk",
+      "tag": 1,
+      "current": 100.62,
+      "dt": 0.0078125,
+      "surfaceFriction": 1,
+      "wishSpeed": 111.8,
+      "result": 106.20594024658203
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "walk",
+      "tag": 1,
+      "current": 100.62,
+      "dt": 0.015625,
+      "surfaceFriction": 1,
+      "wishSpeed": 111.8,
+      "result": 111.79187774658203
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "walk",
+      "tag": 1,
+      "current": 111.8,
+      "dt": 0.0078125,
+      "surfaceFriction": 1,
+      "wishSpeed": 111.8,
+      "result": 111.80000305175781
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "walk",
+      "tag": 1,
+      "current": 111.8,
+      "dt": 0.015625,
+      "surfaceFriction": 1,
+      "wishSpeed": 111.8,
+      "result": 111.80000305175781
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "walk",
+      "tag": 1,
+      "current": 0,
+      "dt": 0.0078125,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 111.8,
+      "result": 2.79296875
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "walk",
+      "tag": 1,
+      "current": 0,
+      "dt": 0.015625,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 111.8,
+      "result": 5.5859375
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "walk",
+      "tag": 1,
+      "current": -80,
+      "dt": 0.0078125,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 111.8,
+      "result": -77.20703125
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "walk",
+      "tag": 1,
+      "current": -80,
+      "dt": 0.015625,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 111.8,
+      "result": -74.4140625
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "walk",
+      "tag": 1,
+      "current": 100.62,
+      "dt": 0.0078125,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 111.8,
+      "result": 103.41297149658203
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "walk",
+      "tag": 1,
+      "current": 100.62,
+      "dt": 0.015625,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 111.8,
+      "result": 106.20594024658203
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "walk",
+      "tag": 1,
+      "current": 111.8,
+      "dt": 0.0078125,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 111.8,
+      "result": 111.80000305175781
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "walk",
+      "tag": 1,
+      "current": 111.8,
+      "dt": 0.015625,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 111.8,
+      "result": 111.80000305175781
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "walk",
+      "tag": 1,
+      "current": 0,
+      "dt": 0.0078125,
+      "surfaceFriction": 0,
+      "wishSpeed": 111.8,
+      "result": 0.0
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "walk",
+      "tag": 1,
+      "current": 0,
+      "dt": 0.015625,
+      "surfaceFriction": 0,
+      "wishSpeed": 111.8,
+      "result": 0.0
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "walk",
+      "tag": 1,
+      "current": -80,
+      "dt": 0.0078125,
+      "surfaceFriction": 0,
+      "wishSpeed": 111.8,
+      "result": -80.0
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "walk",
+      "tag": 1,
+      "current": -80,
+      "dt": 0.015625,
+      "surfaceFriction": 0,
+      "wishSpeed": 111.8,
+      "result": -80.0
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "walk",
+      "tag": 1,
+      "current": 100.62,
+      "dt": 0.0078125,
+      "surfaceFriction": 0,
+      "wishSpeed": 111.8,
+      "result": 100.62000274658203
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "walk",
+      "tag": 1,
+      "current": 100.62,
+      "dt": 0.015625,
+      "surfaceFriction": 0,
+      "wishSpeed": 111.8,
+      "result": 100.62000274658203
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "walk",
+      "tag": 1,
+      "current": 111.8,
+      "dt": 0.0078125,
+      "surfaceFriction": 0,
+      "wishSpeed": 111.8,
+      "result": 111.80000305175781
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "walk",
+      "tag": 1,
+      "current": 111.8,
+      "dt": 0.015625,
+      "surfaceFriction": 0,
+      "wishSpeed": 111.8,
+      "result": 111.80000305175781
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "walk",
+      "tag": 0.35,
+      "current": 0,
+      "dt": 0.0078125,
+      "surfaceFriction": 1,
+      "wishSpeed": 39.129999999999995,
+      "result": 5.5859375
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "walk",
+      "tag": 0.35,
+      "current": 0,
+      "dt": 0.015625,
+      "surfaceFriction": 1,
+      "wishSpeed": 39.129999999999995,
+      "result": 11.171875
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "walk",
+      "tag": 0.35,
+      "current": -80,
+      "dt": 0.0078125,
+      "surfaceFriction": 1,
+      "wishSpeed": 39.129999999999995,
+      "result": -74.4140625
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "walk",
+      "tag": 0.35,
+      "current": -80,
+      "dt": 0.015625,
+      "surfaceFriction": 1,
+      "wishSpeed": 39.129999999999995,
+      "result": -68.828125
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "walk",
+      "tag": 0.35,
+      "current": 100.62,
+      "dt": 0.0078125,
+      "surfaceFriction": 1,
+      "wishSpeed": 39.129999999999995,
+      "result": 100.62000274658203
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "walk",
+      "tag": 0.35,
+      "current": 100.62,
+      "dt": 0.015625,
+      "surfaceFriction": 1,
+      "wishSpeed": 39.129999999999995,
+      "result": 100.62000274658203
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "walk",
+      "tag": 0.35,
+      "current": 111.8,
+      "dt": 0.0078125,
+      "surfaceFriction": 1,
+      "wishSpeed": 39.129999999999995,
+      "result": 111.80000305175781
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "walk",
+      "tag": 0.35,
+      "current": 111.8,
+      "dt": 0.015625,
+      "surfaceFriction": 1,
+      "wishSpeed": 39.129999999999995,
+      "result": 111.80000305175781
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "walk",
+      "tag": 0.35,
+      "current": 0,
+      "dt": 0.0078125,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 39.129999999999995,
+      "result": 2.79296875
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "walk",
+      "tag": 0.35,
+      "current": 0,
+      "dt": 0.015625,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 39.129999999999995,
+      "result": 5.5859375
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "walk",
+      "tag": 0.35,
+      "current": -80,
+      "dt": 0.0078125,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 39.129999999999995,
+      "result": -77.20703125
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "walk",
+      "tag": 0.35,
+      "current": -80,
+      "dt": 0.015625,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 39.129999999999995,
+      "result": -74.4140625
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "walk",
+      "tag": 0.35,
+      "current": 100.62,
+      "dt": 0.0078125,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 39.129999999999995,
+      "result": 100.62000274658203
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "walk",
+      "tag": 0.35,
+      "current": 100.62,
+      "dt": 0.015625,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 39.129999999999995,
+      "result": 100.62000274658203
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "walk",
+      "tag": 0.35,
+      "current": 111.8,
+      "dt": 0.0078125,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 39.129999999999995,
+      "result": 111.80000305175781
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "walk",
+      "tag": 0.35,
+      "current": 111.8,
+      "dt": 0.015625,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 39.129999999999995,
+      "result": 111.80000305175781
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "walk",
+      "tag": 0.35,
+      "current": 0,
+      "dt": 0.0078125,
+      "surfaceFriction": 0,
+      "wishSpeed": 39.129999999999995,
+      "result": 0.0
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "walk",
+      "tag": 0.35,
+      "current": 0,
+      "dt": 0.015625,
+      "surfaceFriction": 0,
+      "wishSpeed": 39.129999999999995,
+      "result": 0.0
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "walk",
+      "tag": 0.35,
+      "current": -80,
+      "dt": 0.0078125,
+      "surfaceFriction": 0,
+      "wishSpeed": 39.129999999999995,
+      "result": -80.0
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "walk",
+      "tag": 0.35,
+      "current": -80,
+      "dt": 0.015625,
+      "surfaceFriction": 0,
+      "wishSpeed": 39.129999999999995,
+      "result": -80.0
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "walk",
+      "tag": 0.35,
+      "current": 100.62,
+      "dt": 0.0078125,
+      "surfaceFriction": 0,
+      "wishSpeed": 39.129999999999995,
+      "result": 100.62000274658203
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "walk",
+      "tag": 0.35,
+      "current": 100.62,
+      "dt": 0.015625,
+      "surfaceFriction": 0,
+      "wishSpeed": 39.129999999999995,
+      "result": 100.62000274658203
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "walk",
+      "tag": 0.35,
+      "current": 111.8,
+      "dt": 0.0078125,
+      "surfaceFriction": 0,
+      "wishSpeed": 39.129999999999995,
+      "result": 111.80000305175781
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "walk",
+      "tag": 0.35,
+      "current": 111.8,
+      "dt": 0.015625,
+      "surfaceFriction": 0,
+      "wishSpeed": 39.129999999999995,
+      "result": 111.80000305175781
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "crouch",
+      "tag": 1,
+      "current": 0,
+      "dt": 0.0078125,
+      "surfaceFriction": 1,
+      "wishSpeed": 73.10000000000001,
+      "result": 3.65234375
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "crouch",
+      "tag": 1,
+      "current": 0,
+      "dt": 0.015625,
+      "surfaceFriction": 1,
+      "wishSpeed": 73.10000000000001,
+      "result": 7.3046875
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "crouch",
+      "tag": 1,
+      "current": -80,
+      "dt": 0.0078125,
+      "surfaceFriction": 1,
+      "wishSpeed": 73.10000000000001,
+      "result": -76.34765625
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "crouch",
+      "tag": 1,
+      "current": -80,
+      "dt": 0.015625,
+      "surfaceFriction": 1,
+      "wishSpeed": 73.10000000000001,
+      "result": -72.6953125
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "crouch",
+      "tag": 1,
+      "current": 65.79,
+      "dt": 0.0078125,
+      "surfaceFriction": 1,
+      "wishSpeed": 73.10000000000001,
+      "result": 69.44234466552734
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "crouch",
+      "tag": 1,
+      "current": 65.79,
+      "dt": 0.015625,
+      "surfaceFriction": 1,
+      "wishSpeed": 73.10000000000001,
+      "result": 73.09468841552734
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "crouch",
+      "tag": 1,
+      "current": 73.10000000000001,
+      "dt": 0.0078125,
+      "surfaceFriction": 1,
+      "wishSpeed": 73.10000000000001,
+      "result": 73.0999984741211
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "crouch",
+      "tag": 1,
+      "current": 73.10000000000001,
+      "dt": 0.015625,
+      "surfaceFriction": 1,
+      "wishSpeed": 73.10000000000001,
+      "result": 73.0999984741211
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "crouch",
+      "tag": 1,
+      "current": 0,
+      "dt": 0.0078125,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 73.10000000000001,
+      "result": 1.826171875
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "crouch",
+      "tag": 1,
+      "current": 0,
+      "dt": 0.015625,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 73.10000000000001,
+      "result": 3.65234375
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "crouch",
+      "tag": 1,
+      "current": -80,
+      "dt": 0.0078125,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 73.10000000000001,
+      "result": -78.173828125
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "crouch",
+      "tag": 1,
+      "current": -80,
+      "dt": 0.015625,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 73.10000000000001,
+      "result": -76.34765625
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "crouch",
+      "tag": 1,
+      "current": 65.79,
+      "dt": 0.0078125,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 73.10000000000001,
+      "result": 67.61617279052734
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "crouch",
+      "tag": 1,
+      "current": 65.79,
+      "dt": 0.015625,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 73.10000000000001,
+      "result": 69.44234466552734
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "crouch",
+      "tag": 1,
+      "current": 73.10000000000001,
+      "dt": 0.0078125,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 73.10000000000001,
+      "result": 73.0999984741211
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "crouch",
+      "tag": 1,
+      "current": 73.10000000000001,
+      "dt": 0.015625,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 73.10000000000001,
+      "result": 73.0999984741211
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "crouch",
+      "tag": 1,
+      "current": 0,
+      "dt": 0.0078125,
+      "surfaceFriction": 0,
+      "wishSpeed": 73.10000000000001,
+      "result": 0.0
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "crouch",
+      "tag": 1,
+      "current": 0,
+      "dt": 0.015625,
+      "surfaceFriction": 0,
+      "wishSpeed": 73.10000000000001,
+      "result": 0.0
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "crouch",
+      "tag": 1,
+      "current": -80,
+      "dt": 0.0078125,
+      "surfaceFriction": 0,
+      "wishSpeed": 73.10000000000001,
+      "result": -80.0
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "crouch",
+      "tag": 1,
+      "current": -80,
+      "dt": 0.015625,
+      "surfaceFriction": 0,
+      "wishSpeed": 73.10000000000001,
+      "result": -80.0
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "crouch",
+      "tag": 1,
+      "current": 65.79,
+      "dt": 0.0078125,
+      "surfaceFriction": 0,
+      "wishSpeed": 73.10000000000001,
+      "result": 65.79000091552734
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "crouch",
+      "tag": 1,
+      "current": 65.79,
+      "dt": 0.015625,
+      "surfaceFriction": 0,
+      "wishSpeed": 73.10000000000001,
+      "result": 65.79000091552734
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "crouch",
+      "tag": 1,
+      "current": 73.10000000000001,
+      "dt": 0.0078125,
+      "surfaceFriction": 0,
+      "wishSpeed": 73.10000000000001,
+      "result": 73.0999984741211
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "crouch",
+      "tag": 1,
+      "current": 73.10000000000001,
+      "dt": 0.015625,
+      "surfaceFriction": 0,
+      "wishSpeed": 73.10000000000001,
+      "result": 73.0999984741211
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "crouch",
+      "tag": 0.35,
+      "current": 0,
+      "dt": 0.0078125,
+      "surfaceFriction": 1,
+      "wishSpeed": 25.585,
+      "result": 3.65234375
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "crouch",
+      "tag": 0.35,
+      "current": 0,
+      "dt": 0.015625,
+      "surfaceFriction": 1,
+      "wishSpeed": 25.585,
+      "result": 7.3046875
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "crouch",
+      "tag": 0.35,
+      "current": -80,
+      "dt": 0.0078125,
+      "surfaceFriction": 1,
+      "wishSpeed": 25.585,
+      "result": -76.34765625
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "crouch",
+      "tag": 0.35,
+      "current": -80,
+      "dt": 0.015625,
+      "surfaceFriction": 1,
+      "wishSpeed": 25.585,
+      "result": -72.6953125
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "crouch",
+      "tag": 0.35,
+      "current": 65.79,
+      "dt": 0.0078125,
+      "surfaceFriction": 1,
+      "wishSpeed": 25.585,
+      "result": 65.79000091552734
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "crouch",
+      "tag": 0.35,
+      "current": 65.79,
+      "dt": 0.015625,
+      "surfaceFriction": 1,
+      "wishSpeed": 25.585,
+      "result": 65.79000091552734
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "crouch",
+      "tag": 0.35,
+      "current": 73.10000000000001,
+      "dt": 0.0078125,
+      "surfaceFriction": 1,
+      "wishSpeed": 25.585,
+      "result": 73.0999984741211
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "crouch",
+      "tag": 0.35,
+      "current": 73.10000000000001,
+      "dt": 0.015625,
+      "surfaceFriction": 1,
+      "wishSpeed": 25.585,
+      "result": 73.0999984741211
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "crouch",
+      "tag": 0.35,
+      "current": 0,
+      "dt": 0.0078125,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 25.585,
+      "result": 1.826171875
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "crouch",
+      "tag": 0.35,
+      "current": 0,
+      "dt": 0.015625,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 25.585,
+      "result": 3.65234375
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "crouch",
+      "tag": 0.35,
+      "current": -80,
+      "dt": 0.0078125,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 25.585,
+      "result": -78.173828125
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "crouch",
+      "tag": 0.35,
+      "current": -80,
+      "dt": 0.015625,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 25.585,
+      "result": -76.34765625
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "crouch",
+      "tag": 0.35,
+      "current": 65.79,
+      "dt": 0.0078125,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 25.585,
+      "result": 65.79000091552734
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "crouch",
+      "tag": 0.35,
+      "current": 65.79,
+      "dt": 0.015625,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 25.585,
+      "result": 65.79000091552734
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "crouch",
+      "tag": 0.35,
+      "current": 73.10000000000001,
+      "dt": 0.0078125,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 25.585,
+      "result": 73.0999984741211
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "crouch",
+      "tag": 0.35,
+      "current": 73.10000000000001,
+      "dt": 0.015625,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 25.585,
+      "result": 73.0999984741211
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "crouch",
+      "tag": 0.35,
+      "current": 0,
+      "dt": 0.0078125,
+      "surfaceFriction": 0,
+      "wishSpeed": 25.585,
+      "result": 0.0
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "crouch",
+      "tag": 0.35,
+      "current": 0,
+      "dt": 0.015625,
+      "surfaceFriction": 0,
+      "wishSpeed": 25.585,
+      "result": 0.0
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "crouch",
+      "tag": 0.35,
+      "current": -80,
+      "dt": 0.0078125,
+      "surfaceFriction": 0,
+      "wishSpeed": 25.585,
+      "result": -80.0
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "crouch",
+      "tag": 0.35,
+      "current": -80,
+      "dt": 0.015625,
+      "surfaceFriction": 0,
+      "wishSpeed": 25.585,
+      "result": -80.0
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "crouch",
+      "tag": 0.35,
+      "current": 65.79,
+      "dt": 0.0078125,
+      "surfaceFriction": 0,
+      "wishSpeed": 25.585,
+      "result": 65.79000091552734
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "crouch",
+      "tag": 0.35,
+      "current": 65.79,
+      "dt": 0.015625,
+      "surfaceFriction": 0,
+      "wishSpeed": 25.585,
+      "result": 65.79000091552734
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "crouch",
+      "tag": 0.35,
+      "current": 73.10000000000001,
+      "dt": 0.0078125,
+      "surfaceFriction": 0,
+      "wishSpeed": 25.585,
+      "result": 73.0999984741211
+    },
+    {
+      "weaponSpeed": 215,
+      "stance": "crouch",
+      "tag": 0.35,
+      "current": 73.10000000000001,
+      "dt": 0.015625,
+      "surfaceFriction": 0,
+      "wishSpeed": 25.585,
+      "result": 73.0999984741211
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "run",
+      "tag": 1,
+      "current": 0,
+      "dt": 0.0078125,
+      "surfaceFriction": 1,
+      "wishSpeed": 225,
+      "result": 9.66796875
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "run",
+      "tag": 1,
+      "current": 0,
+      "dt": 0.015625,
+      "surfaceFriction": 1,
+      "wishSpeed": 225,
+      "result": 19.3359375
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "run",
+      "tag": 1,
+      "current": -80,
+      "dt": 0.0078125,
+      "surfaceFriction": 1,
+      "wishSpeed": 225,
+      "result": -70.33203125
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "run",
+      "tag": 1,
+      "current": -80,
+      "dt": 0.015625,
+      "surfaceFriction": 1,
+      "wishSpeed": 225,
+      "result": -60.6640625
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "run",
+      "tag": 1,
+      "current": 202.5,
+      "dt": 0.0078125,
+      "surfaceFriction": 1,
+      "wishSpeed": 225,
+      "result": 212.16796875
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "run",
+      "tag": 1,
+      "current": 202.5,
+      "dt": 0.015625,
+      "surfaceFriction": 1,
+      "wishSpeed": 225,
+      "result": 221.8359375
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "run",
+      "tag": 1,
+      "current": 225,
+      "dt": 0.0078125,
+      "surfaceFriction": 1,
+      "wishSpeed": 225,
+      "result": 225.0
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "run",
+      "tag": 1,
+      "current": 225,
+      "dt": 0.015625,
+      "surfaceFriction": 1,
+      "wishSpeed": 225,
+      "result": 225.0
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "run",
+      "tag": 1,
+      "current": 0,
+      "dt": 0.0078125,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 225,
+      "result": 4.833984375
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "run",
+      "tag": 1,
+      "current": 0,
+      "dt": 0.015625,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 225,
+      "result": 9.66796875
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "run",
+      "tag": 1,
+      "current": -80,
+      "dt": 0.0078125,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 225,
+      "result": -75.166015625
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "run",
+      "tag": 1,
+      "current": -80,
+      "dt": 0.015625,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 225,
+      "result": -70.33203125
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "run",
+      "tag": 1,
+      "current": 202.5,
+      "dt": 0.0078125,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 225,
+      "result": 207.333984375
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "run",
+      "tag": 1,
+      "current": 202.5,
+      "dt": 0.015625,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 225,
+      "result": 212.16796875
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "run",
+      "tag": 1,
+      "current": 225,
+      "dt": 0.0078125,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 225,
+      "result": 225.0
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "run",
+      "tag": 1,
+      "current": 225,
+      "dt": 0.015625,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 225,
+      "result": 225.0
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "run",
+      "tag": 1,
+      "current": 0,
+      "dt": 0.0078125,
+      "surfaceFriction": 0,
+      "wishSpeed": 225,
+      "result": 0.0
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "run",
+      "tag": 1,
+      "current": 0,
+      "dt": 0.015625,
+      "surfaceFriction": 0,
+      "wishSpeed": 225,
+      "result": 0.0
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "run",
+      "tag": 1,
+      "current": -80,
+      "dt": 0.0078125,
+      "surfaceFriction": 0,
+      "wishSpeed": 225,
+      "result": -80.0
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "run",
+      "tag": 1,
+      "current": -80,
+      "dt": 0.015625,
+      "surfaceFriction": 0,
+      "wishSpeed": 225,
+      "result": -80.0
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "run",
+      "tag": 1,
+      "current": 202.5,
+      "dt": 0.0078125,
+      "surfaceFriction": 0,
+      "wishSpeed": 225,
+      "result": 202.5
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "run",
+      "tag": 1,
+      "current": 202.5,
+      "dt": 0.015625,
+      "surfaceFriction": 0,
+      "wishSpeed": 225,
+      "result": 202.5
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "run",
+      "tag": 1,
+      "current": 225,
+      "dt": 0.0078125,
+      "surfaceFriction": 0,
+      "wishSpeed": 225,
+      "result": 225.0
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "run",
+      "tag": 1,
+      "current": 225,
+      "dt": 0.015625,
+      "surfaceFriction": 0,
+      "wishSpeed": 225,
+      "result": 225.0
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "run",
+      "tag": 0.35,
+      "current": 0,
+      "dt": 0.0078125,
+      "surfaceFriction": 1,
+      "wishSpeed": 78.75,
+      "result": 9.66796875
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "run",
+      "tag": 0.35,
+      "current": 0,
+      "dt": 0.015625,
+      "surfaceFriction": 1,
+      "wishSpeed": 78.75,
+      "result": 19.3359375
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "run",
+      "tag": 0.35,
+      "current": -80,
+      "dt": 0.0078125,
+      "surfaceFriction": 1,
+      "wishSpeed": 78.75,
+      "result": -70.33203125
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "run",
+      "tag": 0.35,
+      "current": -80,
+      "dt": 0.015625,
+      "surfaceFriction": 1,
+      "wishSpeed": 78.75,
+      "result": -60.6640625
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "run",
+      "tag": 0.35,
+      "current": 202.5,
+      "dt": 0.0078125,
+      "surfaceFriction": 1,
+      "wishSpeed": 78.75,
+      "result": 202.5
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "run",
+      "tag": 0.35,
+      "current": 202.5,
+      "dt": 0.015625,
+      "surfaceFriction": 1,
+      "wishSpeed": 78.75,
+      "result": 202.5
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "run",
+      "tag": 0.35,
+      "current": 225,
+      "dt": 0.0078125,
+      "surfaceFriction": 1,
+      "wishSpeed": 78.75,
+      "result": 225.0
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "run",
+      "tag": 0.35,
+      "current": 225,
+      "dt": 0.015625,
+      "surfaceFriction": 1,
+      "wishSpeed": 78.75,
+      "result": 225.0
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "run",
+      "tag": 0.35,
+      "current": 0,
+      "dt": 0.0078125,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 78.75,
+      "result": 4.833984375
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "run",
+      "tag": 0.35,
+      "current": 0,
+      "dt": 0.015625,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 78.75,
+      "result": 9.66796875
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "run",
+      "tag": 0.35,
+      "current": -80,
+      "dt": 0.0078125,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 78.75,
+      "result": -75.166015625
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "run",
+      "tag": 0.35,
+      "current": -80,
+      "dt": 0.015625,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 78.75,
+      "result": -70.33203125
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "run",
+      "tag": 0.35,
+      "current": 202.5,
+      "dt": 0.0078125,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 78.75,
+      "result": 202.5
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "run",
+      "tag": 0.35,
+      "current": 202.5,
+      "dt": 0.015625,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 78.75,
+      "result": 202.5
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "run",
+      "tag": 0.35,
+      "current": 225,
+      "dt": 0.0078125,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 78.75,
+      "result": 225.0
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "run",
+      "tag": 0.35,
+      "current": 225,
+      "dt": 0.015625,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 78.75,
+      "result": 225.0
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "run",
+      "tag": 0.35,
+      "current": 0,
+      "dt": 0.0078125,
+      "surfaceFriction": 0,
+      "wishSpeed": 78.75,
+      "result": 0.0
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "run",
+      "tag": 0.35,
+      "current": 0,
+      "dt": 0.015625,
+      "surfaceFriction": 0,
+      "wishSpeed": 78.75,
+      "result": 0.0
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "run",
+      "tag": 0.35,
+      "current": -80,
+      "dt": 0.0078125,
+      "surfaceFriction": 0,
+      "wishSpeed": 78.75,
+      "result": -80.0
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "run",
+      "tag": 0.35,
+      "current": -80,
+      "dt": 0.015625,
+      "surfaceFriction": 0,
+      "wishSpeed": 78.75,
+      "result": -80.0
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "run",
+      "tag": 0.35,
+      "current": 202.5,
+      "dt": 0.0078125,
+      "surfaceFriction": 0,
+      "wishSpeed": 78.75,
+      "result": 202.5
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "run",
+      "tag": 0.35,
+      "current": 202.5,
+      "dt": 0.015625,
+      "surfaceFriction": 0,
+      "wishSpeed": 78.75,
+      "result": 202.5
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "run",
+      "tag": 0.35,
+      "current": 225,
+      "dt": 0.0078125,
+      "surfaceFriction": 0,
+      "wishSpeed": 78.75,
+      "result": 225.0
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "run",
+      "tag": 0.35,
+      "current": 225,
+      "dt": 0.015625,
+      "surfaceFriction": 0,
+      "wishSpeed": 78.75,
+      "result": 225.0
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "walk",
+      "tag": 1,
+      "current": 0,
+      "dt": 0.0078125,
+      "surfaceFriction": 1,
+      "wishSpeed": 117.0,
+      "result": 5.5859375
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "walk",
+      "tag": 1,
+      "current": 0,
+      "dt": 0.015625,
+      "surfaceFriction": 1,
+      "wishSpeed": 117.0,
+      "result": 11.171875
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "walk",
+      "tag": 1,
+      "current": -80,
+      "dt": 0.0078125,
+      "surfaceFriction": 1,
+      "wishSpeed": 117.0,
+      "result": -74.4140625
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "walk",
+      "tag": 1,
+      "current": -80,
+      "dt": 0.015625,
+      "surfaceFriction": 1,
+      "wishSpeed": 117.0,
+      "result": -68.828125
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "walk",
+      "tag": 1,
+      "current": 105.3,
+      "dt": 0.0078125,
+      "surfaceFriction": 1,
+      "wishSpeed": 117.0,
+      "result": 110.88594055175781
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "walk",
+      "tag": 1,
+      "current": 105.3,
+      "dt": 0.015625,
+      "surfaceFriction": 1,
+      "wishSpeed": 117.0,
+      "result": 116.47187805175781
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "walk",
+      "tag": 1,
+      "current": 117.0,
+      "dt": 0.0078125,
+      "surfaceFriction": 1,
+      "wishSpeed": 117.0,
+      "result": 117.0
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "walk",
+      "tag": 1,
+      "current": 117.0,
+      "dt": 0.015625,
+      "surfaceFriction": 1,
+      "wishSpeed": 117.0,
+      "result": 117.0
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "walk",
+      "tag": 1,
+      "current": 0,
+      "dt": 0.0078125,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 117.0,
+      "result": 2.79296875
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "walk",
+      "tag": 1,
+      "current": 0,
+      "dt": 0.015625,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 117.0,
+      "result": 5.5859375
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "walk",
+      "tag": 1,
+      "current": -80,
+      "dt": 0.0078125,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 117.0,
+      "result": -77.20703125
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "walk",
+      "tag": 1,
+      "current": -80,
+      "dt": 0.015625,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 117.0,
+      "result": -74.4140625
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "walk",
+      "tag": 1,
+      "current": 105.3,
+      "dt": 0.0078125,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 117.0,
+      "result": 108.09297180175781
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "walk",
+      "tag": 1,
+      "current": 105.3,
+      "dt": 0.015625,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 117.0,
+      "result": 110.88594055175781
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "walk",
+      "tag": 1,
+      "current": 117.0,
+      "dt": 0.0078125,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 117.0,
+      "result": 117.0
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "walk",
+      "tag": 1,
+      "current": 117.0,
+      "dt": 0.015625,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 117.0,
+      "result": 117.0
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "walk",
+      "tag": 1,
+      "current": 0,
+      "dt": 0.0078125,
+      "surfaceFriction": 0,
+      "wishSpeed": 117.0,
+      "result": 0.0
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "walk",
+      "tag": 1,
+      "current": 0,
+      "dt": 0.015625,
+      "surfaceFriction": 0,
+      "wishSpeed": 117.0,
+      "result": 0.0
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "walk",
+      "tag": 1,
+      "current": -80,
+      "dt": 0.0078125,
+      "surfaceFriction": 0,
+      "wishSpeed": 117.0,
+      "result": -80.0
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "walk",
+      "tag": 1,
+      "current": -80,
+      "dt": 0.015625,
+      "surfaceFriction": 0,
+      "wishSpeed": 117.0,
+      "result": -80.0
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "walk",
+      "tag": 1,
+      "current": 105.3,
+      "dt": 0.0078125,
+      "surfaceFriction": 0,
+      "wishSpeed": 117.0,
+      "result": 105.30000305175781
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "walk",
+      "tag": 1,
+      "current": 105.3,
+      "dt": 0.015625,
+      "surfaceFriction": 0,
+      "wishSpeed": 117.0,
+      "result": 105.30000305175781
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "walk",
+      "tag": 1,
+      "current": 117.0,
+      "dt": 0.0078125,
+      "surfaceFriction": 0,
+      "wishSpeed": 117.0,
+      "result": 117.0
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "walk",
+      "tag": 1,
+      "current": 117.0,
+      "dt": 0.015625,
+      "surfaceFriction": 0,
+      "wishSpeed": 117.0,
+      "result": 117.0
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "walk",
+      "tag": 0.35,
+      "current": 0,
+      "dt": 0.0078125,
+      "surfaceFriction": 1,
+      "wishSpeed": 40.949999999999996,
+      "result": 5.5859375
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "walk",
+      "tag": 0.35,
+      "current": 0,
+      "dt": 0.015625,
+      "surfaceFriction": 1,
+      "wishSpeed": 40.949999999999996,
+      "result": 11.171875
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "walk",
+      "tag": 0.35,
+      "current": -80,
+      "dt": 0.0078125,
+      "surfaceFriction": 1,
+      "wishSpeed": 40.949999999999996,
+      "result": -74.4140625
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "walk",
+      "tag": 0.35,
+      "current": -80,
+      "dt": 0.015625,
+      "surfaceFriction": 1,
+      "wishSpeed": 40.949999999999996,
+      "result": -68.828125
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "walk",
+      "tag": 0.35,
+      "current": 105.3,
+      "dt": 0.0078125,
+      "surfaceFriction": 1,
+      "wishSpeed": 40.949999999999996,
+      "result": 105.30000305175781
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "walk",
+      "tag": 0.35,
+      "current": 105.3,
+      "dt": 0.015625,
+      "surfaceFriction": 1,
+      "wishSpeed": 40.949999999999996,
+      "result": 105.30000305175781
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "walk",
+      "tag": 0.35,
+      "current": 117.0,
+      "dt": 0.0078125,
+      "surfaceFriction": 1,
+      "wishSpeed": 40.949999999999996,
+      "result": 117.0
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "walk",
+      "tag": 0.35,
+      "current": 117.0,
+      "dt": 0.015625,
+      "surfaceFriction": 1,
+      "wishSpeed": 40.949999999999996,
+      "result": 117.0
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "walk",
+      "tag": 0.35,
+      "current": 0,
+      "dt": 0.0078125,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 40.949999999999996,
+      "result": 2.79296875
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "walk",
+      "tag": 0.35,
+      "current": 0,
+      "dt": 0.015625,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 40.949999999999996,
+      "result": 5.5859375
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "walk",
+      "tag": 0.35,
+      "current": -80,
+      "dt": 0.0078125,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 40.949999999999996,
+      "result": -77.20703125
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "walk",
+      "tag": 0.35,
+      "current": -80,
+      "dt": 0.015625,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 40.949999999999996,
+      "result": -74.4140625
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "walk",
+      "tag": 0.35,
+      "current": 105.3,
+      "dt": 0.0078125,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 40.949999999999996,
+      "result": 105.30000305175781
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "walk",
+      "tag": 0.35,
+      "current": 105.3,
+      "dt": 0.015625,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 40.949999999999996,
+      "result": 105.30000305175781
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "walk",
+      "tag": 0.35,
+      "current": 117.0,
+      "dt": 0.0078125,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 40.949999999999996,
+      "result": 117.0
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "walk",
+      "tag": 0.35,
+      "current": 117.0,
+      "dt": 0.015625,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 40.949999999999996,
+      "result": 117.0
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "walk",
+      "tag": 0.35,
+      "current": 0,
+      "dt": 0.0078125,
+      "surfaceFriction": 0,
+      "wishSpeed": 40.949999999999996,
+      "result": 0.0
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "walk",
+      "tag": 0.35,
+      "current": 0,
+      "dt": 0.015625,
+      "surfaceFriction": 0,
+      "wishSpeed": 40.949999999999996,
+      "result": 0.0
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "walk",
+      "tag": 0.35,
+      "current": -80,
+      "dt": 0.0078125,
+      "surfaceFriction": 0,
+      "wishSpeed": 40.949999999999996,
+      "result": -80.0
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "walk",
+      "tag": 0.35,
+      "current": -80,
+      "dt": 0.015625,
+      "surfaceFriction": 0,
+      "wishSpeed": 40.949999999999996,
+      "result": -80.0
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "walk",
+      "tag": 0.35,
+      "current": 105.3,
+      "dt": 0.0078125,
+      "surfaceFriction": 0,
+      "wishSpeed": 40.949999999999996,
+      "result": 105.30000305175781
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "walk",
+      "tag": 0.35,
+      "current": 105.3,
+      "dt": 0.015625,
+      "surfaceFriction": 0,
+      "wishSpeed": 40.949999999999996,
+      "result": 105.30000305175781
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "walk",
+      "tag": 0.35,
+      "current": 117.0,
+      "dt": 0.0078125,
+      "surfaceFriction": 0,
+      "wishSpeed": 40.949999999999996,
+      "result": 117.0
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "walk",
+      "tag": 0.35,
+      "current": 117.0,
+      "dt": 0.015625,
+      "surfaceFriction": 0,
+      "wishSpeed": 40.949999999999996,
+      "result": 117.0
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "crouch",
+      "tag": 1,
+      "current": 0,
+      "dt": 0.0078125,
+      "surfaceFriction": 1,
+      "wishSpeed": 76.5,
+      "result": 3.65234375
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "crouch",
+      "tag": 1,
+      "current": 0,
+      "dt": 0.015625,
+      "surfaceFriction": 1,
+      "wishSpeed": 76.5,
+      "result": 7.3046875
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "crouch",
+      "tag": 1,
+      "current": -80,
+      "dt": 0.0078125,
+      "surfaceFriction": 1,
+      "wishSpeed": 76.5,
+      "result": -76.34765625
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "crouch",
+      "tag": 1,
+      "current": -80,
+      "dt": 0.015625,
+      "surfaceFriction": 1,
+      "wishSpeed": 76.5,
+      "result": -72.6953125
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "crouch",
+      "tag": 1,
+      "current": 68.85000000000001,
+      "dt": 0.0078125,
+      "surfaceFriction": 1,
+      "wishSpeed": 76.5,
+      "result": 72.5023422241211
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "crouch",
+      "tag": 1,
+      "current": 68.85000000000001,
+      "dt": 0.015625,
+      "surfaceFriction": 1,
+      "wishSpeed": 76.5,
+      "result": 76.1546859741211
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "crouch",
+      "tag": 1,
+      "current": 76.5,
+      "dt": 0.0078125,
+      "surfaceFriction": 1,
+      "wishSpeed": 76.5,
+      "result": 76.5
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "crouch",
+      "tag": 1,
+      "current": 76.5,
+      "dt": 0.015625,
+      "surfaceFriction": 1,
+      "wishSpeed": 76.5,
+      "result": 76.5
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "crouch",
+      "tag": 1,
+      "current": 0,
+      "dt": 0.0078125,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 76.5,
+      "result": 1.826171875
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "crouch",
+      "tag": 1,
+      "current": 0,
+      "dt": 0.015625,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 76.5,
+      "result": 3.65234375
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "crouch",
+      "tag": 1,
+      "current": -80,
+      "dt": 0.0078125,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 76.5,
+      "result": -78.173828125
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "crouch",
+      "tag": 1,
+      "current": -80,
+      "dt": 0.015625,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 76.5,
+      "result": -76.34765625
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "crouch",
+      "tag": 1,
+      "current": 68.85000000000001,
+      "dt": 0.0078125,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 76.5,
+      "result": 70.6761703491211
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "crouch",
+      "tag": 1,
+      "current": 68.85000000000001,
+      "dt": 0.015625,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 76.5,
+      "result": 72.5023422241211
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "crouch",
+      "tag": 1,
+      "current": 76.5,
+      "dt": 0.0078125,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 76.5,
+      "result": 76.5
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "crouch",
+      "tag": 1,
+      "current": 76.5,
+      "dt": 0.015625,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 76.5,
+      "result": 76.5
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "crouch",
+      "tag": 1,
+      "current": 0,
+      "dt": 0.0078125,
+      "surfaceFriction": 0,
+      "wishSpeed": 76.5,
+      "result": 0.0
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "crouch",
+      "tag": 1,
+      "current": 0,
+      "dt": 0.015625,
+      "surfaceFriction": 0,
+      "wishSpeed": 76.5,
+      "result": 0.0
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "crouch",
+      "tag": 1,
+      "current": -80,
+      "dt": 0.0078125,
+      "surfaceFriction": 0,
+      "wishSpeed": 76.5,
+      "result": -80.0
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "crouch",
+      "tag": 1,
+      "current": -80,
+      "dt": 0.015625,
+      "surfaceFriction": 0,
+      "wishSpeed": 76.5,
+      "result": -80.0
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "crouch",
+      "tag": 1,
+      "current": 68.85000000000001,
+      "dt": 0.0078125,
+      "surfaceFriction": 0,
+      "wishSpeed": 76.5,
+      "result": 68.8499984741211
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "crouch",
+      "tag": 1,
+      "current": 68.85000000000001,
+      "dt": 0.015625,
+      "surfaceFriction": 0,
+      "wishSpeed": 76.5,
+      "result": 68.8499984741211
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "crouch",
+      "tag": 1,
+      "current": 76.5,
+      "dt": 0.0078125,
+      "surfaceFriction": 0,
+      "wishSpeed": 76.5,
+      "result": 76.5
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "crouch",
+      "tag": 1,
+      "current": 76.5,
+      "dt": 0.015625,
+      "surfaceFriction": 0,
+      "wishSpeed": 76.5,
+      "result": 76.5
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "crouch",
+      "tag": 0.35,
+      "current": 0,
+      "dt": 0.0078125,
+      "surfaceFriction": 1,
+      "wishSpeed": 26.775,
+      "result": 3.65234375
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "crouch",
+      "tag": 0.35,
+      "current": 0,
+      "dt": 0.015625,
+      "surfaceFriction": 1,
+      "wishSpeed": 26.775,
+      "result": 7.3046875
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "crouch",
+      "tag": 0.35,
+      "current": -80,
+      "dt": 0.0078125,
+      "surfaceFriction": 1,
+      "wishSpeed": 26.775,
+      "result": -76.34765625
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "crouch",
+      "tag": 0.35,
+      "current": -80,
+      "dt": 0.015625,
+      "surfaceFriction": 1,
+      "wishSpeed": 26.775,
+      "result": -72.6953125
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "crouch",
+      "tag": 0.35,
+      "current": 68.85000000000001,
+      "dt": 0.0078125,
+      "surfaceFriction": 1,
+      "wishSpeed": 26.775,
+      "result": 68.8499984741211
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "crouch",
+      "tag": 0.35,
+      "current": 68.85000000000001,
+      "dt": 0.015625,
+      "surfaceFriction": 1,
+      "wishSpeed": 26.775,
+      "result": 68.8499984741211
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "crouch",
+      "tag": 0.35,
+      "current": 76.5,
+      "dt": 0.0078125,
+      "surfaceFriction": 1,
+      "wishSpeed": 26.775,
+      "result": 76.5
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "crouch",
+      "tag": 0.35,
+      "current": 76.5,
+      "dt": 0.015625,
+      "surfaceFriction": 1,
+      "wishSpeed": 26.775,
+      "result": 76.5
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "crouch",
+      "tag": 0.35,
+      "current": 0,
+      "dt": 0.0078125,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 26.775,
+      "result": 1.826171875
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "crouch",
+      "tag": 0.35,
+      "current": 0,
+      "dt": 0.015625,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 26.775,
+      "result": 3.65234375
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "crouch",
+      "tag": 0.35,
+      "current": -80,
+      "dt": 0.0078125,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 26.775,
+      "result": -78.173828125
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "crouch",
+      "tag": 0.35,
+      "current": -80,
+      "dt": 0.015625,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 26.775,
+      "result": -76.34765625
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "crouch",
+      "tag": 0.35,
+      "current": 68.85000000000001,
+      "dt": 0.0078125,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 26.775,
+      "result": 68.8499984741211
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "crouch",
+      "tag": 0.35,
+      "current": 68.85000000000001,
+      "dt": 0.015625,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 26.775,
+      "result": 68.8499984741211
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "crouch",
+      "tag": 0.35,
+      "current": 76.5,
+      "dt": 0.0078125,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 26.775,
+      "result": 76.5
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "crouch",
+      "tag": 0.35,
+      "current": 76.5,
+      "dt": 0.015625,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 26.775,
+      "result": 76.5
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "crouch",
+      "tag": 0.35,
+      "current": 0,
+      "dt": 0.0078125,
+      "surfaceFriction": 0,
+      "wishSpeed": 26.775,
+      "result": 0.0
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "crouch",
+      "tag": 0.35,
+      "current": 0,
+      "dt": 0.015625,
+      "surfaceFriction": 0,
+      "wishSpeed": 26.775,
+      "result": 0.0
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "crouch",
+      "tag": 0.35,
+      "current": -80,
+      "dt": 0.0078125,
+      "surfaceFriction": 0,
+      "wishSpeed": 26.775,
+      "result": -80.0
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "crouch",
+      "tag": 0.35,
+      "current": -80,
+      "dt": 0.015625,
+      "surfaceFriction": 0,
+      "wishSpeed": 26.775,
+      "result": -80.0
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "crouch",
+      "tag": 0.35,
+      "current": 68.85000000000001,
+      "dt": 0.0078125,
+      "surfaceFriction": 0,
+      "wishSpeed": 26.775,
+      "result": 68.8499984741211
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "crouch",
+      "tag": 0.35,
+      "current": 68.85000000000001,
+      "dt": 0.015625,
+      "surfaceFriction": 0,
+      "wishSpeed": 26.775,
+      "result": 68.8499984741211
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "crouch",
+      "tag": 0.35,
+      "current": 76.5,
+      "dt": 0.0078125,
+      "surfaceFriction": 0,
+      "wishSpeed": 26.775,
+      "result": 76.5
+    },
+    {
+      "weaponSpeed": 225,
+      "stance": "crouch",
+      "tag": 0.35,
+      "current": 76.5,
+      "dt": 0.015625,
+      "surfaceFriction": 0,
+      "wishSpeed": 26.775,
+      "result": 76.5
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "run",
+      "tag": 1,
+      "current": 0,
+      "dt": 0.0078125,
+      "surfaceFriction": 1,
+      "wishSpeed": 240,
+      "result": 10.3125
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "run",
+      "tag": 1,
+      "current": 0,
+      "dt": 0.015625,
+      "surfaceFriction": 1,
+      "wishSpeed": 240,
+      "result": 20.625
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "run",
+      "tag": 1,
+      "current": -80,
+      "dt": 0.0078125,
+      "surfaceFriction": 1,
+      "wishSpeed": 240,
+      "result": -69.6875
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "run",
+      "tag": 1,
+      "current": -80,
+      "dt": 0.015625,
+      "surfaceFriction": 1,
+      "wishSpeed": 240,
+      "result": -59.375
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "run",
+      "tag": 1,
+      "current": 216.0,
+      "dt": 0.0078125,
+      "surfaceFriction": 1,
+      "wishSpeed": 240,
+      "result": 226.3125
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "run",
+      "tag": 1,
+      "current": 216.0,
+      "dt": 0.015625,
+      "surfaceFriction": 1,
+      "wishSpeed": 240,
+      "result": 236.625
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "run",
+      "tag": 1,
+      "current": 240,
+      "dt": 0.0078125,
+      "surfaceFriction": 1,
+      "wishSpeed": 240,
+      "result": 240.0
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "run",
+      "tag": 1,
+      "current": 240,
+      "dt": 0.015625,
+      "surfaceFriction": 1,
+      "wishSpeed": 240,
+      "result": 240.0
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "run",
+      "tag": 1,
+      "current": 0,
+      "dt": 0.0078125,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 240,
+      "result": 5.15625
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "run",
+      "tag": 1,
+      "current": 0,
+      "dt": 0.015625,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 240,
+      "result": 10.3125
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "run",
+      "tag": 1,
+      "current": -80,
+      "dt": 0.0078125,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 240,
+      "result": -74.84375
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "run",
+      "tag": 1,
+      "current": -80,
+      "dt": 0.015625,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 240,
+      "result": -69.6875
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "run",
+      "tag": 1,
+      "current": 216.0,
+      "dt": 0.0078125,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 240,
+      "result": 221.15625
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "run",
+      "tag": 1,
+      "current": 216.0,
+      "dt": 0.015625,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 240,
+      "result": 226.3125
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "run",
+      "tag": 1,
+      "current": 240,
+      "dt": 0.0078125,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 240,
+      "result": 240.0
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "run",
+      "tag": 1,
+      "current": 240,
+      "dt": 0.015625,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 240,
+      "result": 240.0
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "run",
+      "tag": 1,
+      "current": 0,
+      "dt": 0.0078125,
+      "surfaceFriction": 0,
+      "wishSpeed": 240,
+      "result": 0.0
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "run",
+      "tag": 1,
+      "current": 0,
+      "dt": 0.015625,
+      "surfaceFriction": 0,
+      "wishSpeed": 240,
+      "result": 0.0
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "run",
+      "tag": 1,
+      "current": -80,
+      "dt": 0.0078125,
+      "surfaceFriction": 0,
+      "wishSpeed": 240,
+      "result": -80.0
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "run",
+      "tag": 1,
+      "current": -80,
+      "dt": 0.015625,
+      "surfaceFriction": 0,
+      "wishSpeed": 240,
+      "result": -80.0
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "run",
+      "tag": 1,
+      "current": 216.0,
+      "dt": 0.0078125,
+      "surfaceFriction": 0,
+      "wishSpeed": 240,
+      "result": 216.0
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "run",
+      "tag": 1,
+      "current": 216.0,
+      "dt": 0.015625,
+      "surfaceFriction": 0,
+      "wishSpeed": 240,
+      "result": 216.0
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "run",
+      "tag": 1,
+      "current": 240,
+      "dt": 0.0078125,
+      "surfaceFriction": 0,
+      "wishSpeed": 240,
+      "result": 240.0
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "run",
+      "tag": 1,
+      "current": 240,
+      "dt": 0.015625,
+      "surfaceFriction": 0,
+      "wishSpeed": 240,
+      "result": 240.0
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "run",
+      "tag": 0.35,
+      "current": 0,
+      "dt": 0.0078125,
+      "surfaceFriction": 1,
+      "wishSpeed": 84.0,
+      "result": 10.3125
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "run",
+      "tag": 0.35,
+      "current": 0,
+      "dt": 0.015625,
+      "surfaceFriction": 1,
+      "wishSpeed": 84.0,
+      "result": 20.625
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "run",
+      "tag": 0.35,
+      "current": -80,
+      "dt": 0.0078125,
+      "surfaceFriction": 1,
+      "wishSpeed": 84.0,
+      "result": -69.6875
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "run",
+      "tag": 0.35,
+      "current": -80,
+      "dt": 0.015625,
+      "surfaceFriction": 1,
+      "wishSpeed": 84.0,
+      "result": -59.375
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "run",
+      "tag": 0.35,
+      "current": 216.0,
+      "dt": 0.0078125,
+      "surfaceFriction": 1,
+      "wishSpeed": 84.0,
+      "result": 216.0
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "run",
+      "tag": 0.35,
+      "current": 216.0,
+      "dt": 0.015625,
+      "surfaceFriction": 1,
+      "wishSpeed": 84.0,
+      "result": 216.0
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "run",
+      "tag": 0.35,
+      "current": 240,
+      "dt": 0.0078125,
+      "surfaceFriction": 1,
+      "wishSpeed": 84.0,
+      "result": 240.0
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "run",
+      "tag": 0.35,
+      "current": 240,
+      "dt": 0.015625,
+      "surfaceFriction": 1,
+      "wishSpeed": 84.0,
+      "result": 240.0
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "run",
+      "tag": 0.35,
+      "current": 0,
+      "dt": 0.0078125,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 84.0,
+      "result": 5.15625
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "run",
+      "tag": 0.35,
+      "current": 0,
+      "dt": 0.015625,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 84.0,
+      "result": 10.3125
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "run",
+      "tag": 0.35,
+      "current": -80,
+      "dt": 0.0078125,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 84.0,
+      "result": -74.84375
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "run",
+      "tag": 0.35,
+      "current": -80,
+      "dt": 0.015625,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 84.0,
+      "result": -69.6875
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "run",
+      "tag": 0.35,
+      "current": 216.0,
+      "dt": 0.0078125,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 84.0,
+      "result": 216.0
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "run",
+      "tag": 0.35,
+      "current": 216.0,
+      "dt": 0.015625,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 84.0,
+      "result": 216.0
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "run",
+      "tag": 0.35,
+      "current": 240,
+      "dt": 0.0078125,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 84.0,
+      "result": 240.0
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "run",
+      "tag": 0.35,
+      "current": 240,
+      "dt": 0.015625,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 84.0,
+      "result": 240.0
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "run",
+      "tag": 0.35,
+      "current": 0,
+      "dt": 0.0078125,
+      "surfaceFriction": 0,
+      "wishSpeed": 84.0,
+      "result": 0.0
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "run",
+      "tag": 0.35,
+      "current": 0,
+      "dt": 0.015625,
+      "surfaceFriction": 0,
+      "wishSpeed": 84.0,
+      "result": 0.0
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "run",
+      "tag": 0.35,
+      "current": -80,
+      "dt": 0.0078125,
+      "surfaceFriction": 0,
+      "wishSpeed": 84.0,
+      "result": -80.0
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "run",
+      "tag": 0.35,
+      "current": -80,
+      "dt": 0.015625,
+      "surfaceFriction": 0,
+      "wishSpeed": 84.0,
+      "result": -80.0
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "run",
+      "tag": 0.35,
+      "current": 216.0,
+      "dt": 0.0078125,
+      "surfaceFriction": 0,
+      "wishSpeed": 84.0,
+      "result": 216.0
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "run",
+      "tag": 0.35,
+      "current": 216.0,
+      "dt": 0.015625,
+      "surfaceFriction": 0,
+      "wishSpeed": 84.0,
+      "result": 216.0
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "run",
+      "tag": 0.35,
+      "current": 240,
+      "dt": 0.0078125,
+      "surfaceFriction": 0,
+      "wishSpeed": 84.0,
+      "result": 240.0
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "run",
+      "tag": 0.35,
+      "current": 240,
+      "dt": 0.015625,
+      "surfaceFriction": 0,
+      "wishSpeed": 84.0,
+      "result": 240.0
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "walk",
+      "tag": 1,
+      "current": 0,
+      "dt": 0.0078125,
+      "surfaceFriction": 1,
+      "wishSpeed": 124.80000000000001,
+      "result": 5.5859375
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "walk",
+      "tag": 1,
+      "current": 0,
+      "dt": 0.015625,
+      "surfaceFriction": 1,
+      "wishSpeed": 124.80000000000001,
+      "result": 11.171875
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "walk",
+      "tag": 1,
+      "current": -80,
+      "dt": 0.0078125,
+      "surfaceFriction": 1,
+      "wishSpeed": 124.80000000000001,
+      "result": -74.4140625
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "walk",
+      "tag": 1,
+      "current": -80,
+      "dt": 0.015625,
+      "surfaceFriction": 1,
+      "wishSpeed": 124.80000000000001,
+      "result": -68.828125
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "walk",
+      "tag": 1,
+      "current": 112.32000000000001,
+      "dt": 0.0078125,
+      "surfaceFriction": 1,
+      "wishSpeed": 124.80000000000001,
+      "result": 117.90593719482422
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "walk",
+      "tag": 1,
+      "current": 112.32000000000001,
+      "dt": 0.015625,
+      "surfaceFriction": 1,
+      "wishSpeed": 124.80000000000001,
+      "result": 123.49187469482422
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "walk",
+      "tag": 1,
+      "current": 124.80000000000001,
+      "dt": 0.0078125,
+      "surfaceFriction": 1,
+      "wishSpeed": 124.80000000000001,
+      "result": 124.80000305175781
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "walk",
+      "tag": 1,
+      "current": 124.80000000000001,
+      "dt": 0.015625,
+      "surfaceFriction": 1,
+      "wishSpeed": 124.80000000000001,
+      "result": 124.80000305175781
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "walk",
+      "tag": 1,
+      "current": 0,
+      "dt": 0.0078125,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 124.80000000000001,
+      "result": 2.79296875
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "walk",
+      "tag": 1,
+      "current": 0,
+      "dt": 0.015625,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 124.80000000000001,
+      "result": 5.5859375
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "walk",
+      "tag": 1,
+      "current": -80,
+      "dt": 0.0078125,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 124.80000000000001,
+      "result": -77.20703125
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "walk",
+      "tag": 1,
+      "current": -80,
+      "dt": 0.015625,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 124.80000000000001,
+      "result": -74.4140625
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "walk",
+      "tag": 1,
+      "current": 112.32000000000001,
+      "dt": 0.0078125,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 124.80000000000001,
+      "result": 115.11296844482422
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "walk",
+      "tag": 1,
+      "current": 112.32000000000001,
+      "dt": 0.015625,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 124.80000000000001,
+      "result": 117.90593719482422
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "walk",
+      "tag": 1,
+      "current": 124.80000000000001,
+      "dt": 0.0078125,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 124.80000000000001,
+      "result": 124.80000305175781
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "walk",
+      "tag": 1,
+      "current": 124.80000000000001,
+      "dt": 0.015625,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 124.80000000000001,
+      "result": 124.80000305175781
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "walk",
+      "tag": 1,
+      "current": 0,
+      "dt": 0.0078125,
+      "surfaceFriction": 0,
+      "wishSpeed": 124.80000000000001,
+      "result": 0.0
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "walk",
+      "tag": 1,
+      "current": 0,
+      "dt": 0.015625,
+      "surfaceFriction": 0,
+      "wishSpeed": 124.80000000000001,
+      "result": 0.0
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "walk",
+      "tag": 1,
+      "current": -80,
+      "dt": 0.0078125,
+      "surfaceFriction": 0,
+      "wishSpeed": 124.80000000000001,
+      "result": -80.0
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "walk",
+      "tag": 1,
+      "current": -80,
+      "dt": 0.015625,
+      "surfaceFriction": 0,
+      "wishSpeed": 124.80000000000001,
+      "result": -80.0
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "walk",
+      "tag": 1,
+      "current": 112.32000000000001,
+      "dt": 0.0078125,
+      "surfaceFriction": 0,
+      "wishSpeed": 124.80000000000001,
+      "result": 112.31999969482422
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "walk",
+      "tag": 1,
+      "current": 112.32000000000001,
+      "dt": 0.015625,
+      "surfaceFriction": 0,
+      "wishSpeed": 124.80000000000001,
+      "result": 112.31999969482422
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "walk",
+      "tag": 1,
+      "current": 124.80000000000001,
+      "dt": 0.0078125,
+      "surfaceFriction": 0,
+      "wishSpeed": 124.80000000000001,
+      "result": 124.80000305175781
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "walk",
+      "tag": 1,
+      "current": 124.80000000000001,
+      "dt": 0.015625,
+      "surfaceFriction": 0,
+      "wishSpeed": 124.80000000000001,
+      "result": 124.80000305175781
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "walk",
+      "tag": 0.35,
+      "current": 0,
+      "dt": 0.0078125,
+      "surfaceFriction": 1,
+      "wishSpeed": 43.68,
+      "result": 5.5859375
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "walk",
+      "tag": 0.35,
+      "current": 0,
+      "dt": 0.015625,
+      "surfaceFriction": 1,
+      "wishSpeed": 43.68,
+      "result": 11.171875
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "walk",
+      "tag": 0.35,
+      "current": -80,
+      "dt": 0.0078125,
+      "surfaceFriction": 1,
+      "wishSpeed": 43.68,
+      "result": -74.4140625
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "walk",
+      "tag": 0.35,
+      "current": -80,
+      "dt": 0.015625,
+      "surfaceFriction": 1,
+      "wishSpeed": 43.68,
+      "result": -68.828125
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "walk",
+      "tag": 0.35,
+      "current": 112.32000000000001,
+      "dt": 0.0078125,
+      "surfaceFriction": 1,
+      "wishSpeed": 43.68,
+      "result": 112.31999969482422
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "walk",
+      "tag": 0.35,
+      "current": 112.32000000000001,
+      "dt": 0.015625,
+      "surfaceFriction": 1,
+      "wishSpeed": 43.68,
+      "result": 112.31999969482422
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "walk",
+      "tag": 0.35,
+      "current": 124.80000000000001,
+      "dt": 0.0078125,
+      "surfaceFriction": 1,
+      "wishSpeed": 43.68,
+      "result": 124.80000305175781
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "walk",
+      "tag": 0.35,
+      "current": 124.80000000000001,
+      "dt": 0.015625,
+      "surfaceFriction": 1,
+      "wishSpeed": 43.68,
+      "result": 124.80000305175781
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "walk",
+      "tag": 0.35,
+      "current": 0,
+      "dt": 0.0078125,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 43.68,
+      "result": 2.79296875
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "walk",
+      "tag": 0.35,
+      "current": 0,
+      "dt": 0.015625,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 43.68,
+      "result": 5.5859375
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "walk",
+      "tag": 0.35,
+      "current": -80,
+      "dt": 0.0078125,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 43.68,
+      "result": -77.20703125
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "walk",
+      "tag": 0.35,
+      "current": -80,
+      "dt": 0.015625,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 43.68,
+      "result": -74.4140625
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "walk",
+      "tag": 0.35,
+      "current": 112.32000000000001,
+      "dt": 0.0078125,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 43.68,
+      "result": 112.31999969482422
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "walk",
+      "tag": 0.35,
+      "current": 112.32000000000001,
+      "dt": 0.015625,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 43.68,
+      "result": 112.31999969482422
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "walk",
+      "tag": 0.35,
+      "current": 124.80000000000001,
+      "dt": 0.0078125,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 43.68,
+      "result": 124.80000305175781
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "walk",
+      "tag": 0.35,
+      "current": 124.80000000000001,
+      "dt": 0.015625,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 43.68,
+      "result": 124.80000305175781
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "walk",
+      "tag": 0.35,
+      "current": 0,
+      "dt": 0.0078125,
+      "surfaceFriction": 0,
+      "wishSpeed": 43.68,
+      "result": 0.0
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "walk",
+      "tag": 0.35,
+      "current": 0,
+      "dt": 0.015625,
+      "surfaceFriction": 0,
+      "wishSpeed": 43.68,
+      "result": 0.0
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "walk",
+      "tag": 0.35,
+      "current": -80,
+      "dt": 0.0078125,
+      "surfaceFriction": 0,
+      "wishSpeed": 43.68,
+      "result": -80.0
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "walk",
+      "tag": 0.35,
+      "current": -80,
+      "dt": 0.015625,
+      "surfaceFriction": 0,
+      "wishSpeed": 43.68,
+      "result": -80.0
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "walk",
+      "tag": 0.35,
+      "current": 112.32000000000001,
+      "dt": 0.0078125,
+      "surfaceFriction": 0,
+      "wishSpeed": 43.68,
+      "result": 112.31999969482422
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "walk",
+      "tag": 0.35,
+      "current": 112.32000000000001,
+      "dt": 0.015625,
+      "surfaceFriction": 0,
+      "wishSpeed": 43.68,
+      "result": 112.31999969482422
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "walk",
+      "tag": 0.35,
+      "current": 124.80000000000001,
+      "dt": 0.0078125,
+      "surfaceFriction": 0,
+      "wishSpeed": 43.68,
+      "result": 124.80000305175781
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "walk",
+      "tag": 0.35,
+      "current": 124.80000000000001,
+      "dt": 0.015625,
+      "surfaceFriction": 0,
+      "wishSpeed": 43.68,
+      "result": 124.80000305175781
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "crouch",
+      "tag": 1,
+      "current": 0,
+      "dt": 0.0078125,
+      "surfaceFriction": 1,
+      "wishSpeed": 81.60000000000001,
+      "result": 3.65234375
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "crouch",
+      "tag": 1,
+      "current": 0,
+      "dt": 0.015625,
+      "surfaceFriction": 1,
+      "wishSpeed": 81.60000000000001,
+      "result": 7.3046875
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "crouch",
+      "tag": 1,
+      "current": -80,
+      "dt": 0.0078125,
+      "surfaceFriction": 1,
+      "wishSpeed": 81.60000000000001,
+      "result": -76.34765625
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "crouch",
+      "tag": 1,
+      "current": -80,
+      "dt": 0.015625,
+      "surfaceFriction": 1,
+      "wishSpeed": 81.60000000000001,
+      "result": -72.6953125
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "crouch",
+      "tag": 1,
+      "current": 73.44000000000001,
+      "dt": 0.0078125,
+      "surfaceFriction": 1,
+      "wishSpeed": 81.60000000000001,
+      "result": 77.09234619140625
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "crouch",
+      "tag": 1,
+      "current": 73.44000000000001,
+      "dt": 0.015625,
+      "surfaceFriction": 1,
+      "wishSpeed": 81.60000000000001,
+      "result": 80.74468994140625
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "crouch",
+      "tag": 1,
+      "current": 81.60000000000001,
+      "dt": 0.0078125,
+      "surfaceFriction": 1,
+      "wishSpeed": 81.60000000000001,
+      "result": 81.5999984741211
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "crouch",
+      "tag": 1,
+      "current": 81.60000000000001,
+      "dt": 0.015625,
+      "surfaceFriction": 1,
+      "wishSpeed": 81.60000000000001,
+      "result": 81.5999984741211
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "crouch",
+      "tag": 1,
+      "current": 0,
+      "dt": 0.0078125,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 81.60000000000001,
+      "result": 1.826171875
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "crouch",
+      "tag": 1,
+      "current": 0,
+      "dt": 0.015625,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 81.60000000000001,
+      "result": 3.65234375
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "crouch",
+      "tag": 1,
+      "current": -80,
+      "dt": 0.0078125,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 81.60000000000001,
+      "result": -78.173828125
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "crouch",
+      "tag": 1,
+      "current": -80,
+      "dt": 0.015625,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 81.60000000000001,
+      "result": -76.34765625
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "crouch",
+      "tag": 1,
+      "current": 73.44000000000001,
+      "dt": 0.0078125,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 81.60000000000001,
+      "result": 75.26617431640625
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "crouch",
+      "tag": 1,
+      "current": 73.44000000000001,
+      "dt": 0.015625,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 81.60000000000001,
+      "result": 77.09234619140625
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "crouch",
+      "tag": 1,
+      "current": 81.60000000000001,
+      "dt": 0.0078125,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 81.60000000000001,
+      "result": 81.5999984741211
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "crouch",
+      "tag": 1,
+      "current": 81.60000000000001,
+      "dt": 0.015625,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 81.60000000000001,
+      "result": 81.5999984741211
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "crouch",
+      "tag": 1,
+      "current": 0,
+      "dt": 0.0078125,
+      "surfaceFriction": 0,
+      "wishSpeed": 81.60000000000001,
+      "result": 0.0
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "crouch",
+      "tag": 1,
+      "current": 0,
+      "dt": 0.015625,
+      "surfaceFriction": 0,
+      "wishSpeed": 81.60000000000001,
+      "result": 0.0
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "crouch",
+      "tag": 1,
+      "current": -80,
+      "dt": 0.0078125,
+      "surfaceFriction": 0,
+      "wishSpeed": 81.60000000000001,
+      "result": -80.0
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "crouch",
+      "tag": 1,
+      "current": -80,
+      "dt": 0.015625,
+      "surfaceFriction": 0,
+      "wishSpeed": 81.60000000000001,
+      "result": -80.0
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "crouch",
+      "tag": 1,
+      "current": 73.44000000000001,
+      "dt": 0.0078125,
+      "surfaceFriction": 0,
+      "wishSpeed": 81.60000000000001,
+      "result": 73.44000244140625
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "crouch",
+      "tag": 1,
+      "current": 73.44000000000001,
+      "dt": 0.015625,
+      "surfaceFriction": 0,
+      "wishSpeed": 81.60000000000001,
+      "result": 73.44000244140625
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "crouch",
+      "tag": 1,
+      "current": 81.60000000000001,
+      "dt": 0.0078125,
+      "surfaceFriction": 0,
+      "wishSpeed": 81.60000000000001,
+      "result": 81.5999984741211
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "crouch",
+      "tag": 1,
+      "current": 81.60000000000001,
+      "dt": 0.015625,
+      "surfaceFriction": 0,
+      "wishSpeed": 81.60000000000001,
+      "result": 81.5999984741211
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "crouch",
+      "tag": 0.35,
+      "current": 0,
+      "dt": 0.0078125,
+      "surfaceFriction": 1,
+      "wishSpeed": 28.560000000000002,
+      "result": 3.65234375
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "crouch",
+      "tag": 0.35,
+      "current": 0,
+      "dt": 0.015625,
+      "surfaceFriction": 1,
+      "wishSpeed": 28.560000000000002,
+      "result": 7.3046875
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "crouch",
+      "tag": 0.35,
+      "current": -80,
+      "dt": 0.0078125,
+      "surfaceFriction": 1,
+      "wishSpeed": 28.560000000000002,
+      "result": -76.34765625
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "crouch",
+      "tag": 0.35,
+      "current": -80,
+      "dt": 0.015625,
+      "surfaceFriction": 1,
+      "wishSpeed": 28.560000000000002,
+      "result": -72.6953125
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "crouch",
+      "tag": 0.35,
+      "current": 73.44000000000001,
+      "dt": 0.0078125,
+      "surfaceFriction": 1,
+      "wishSpeed": 28.560000000000002,
+      "result": 73.44000244140625
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "crouch",
+      "tag": 0.35,
+      "current": 73.44000000000001,
+      "dt": 0.015625,
+      "surfaceFriction": 1,
+      "wishSpeed": 28.560000000000002,
+      "result": 73.44000244140625
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "crouch",
+      "tag": 0.35,
+      "current": 81.60000000000001,
+      "dt": 0.0078125,
+      "surfaceFriction": 1,
+      "wishSpeed": 28.560000000000002,
+      "result": 81.5999984741211
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "crouch",
+      "tag": 0.35,
+      "current": 81.60000000000001,
+      "dt": 0.015625,
+      "surfaceFriction": 1,
+      "wishSpeed": 28.560000000000002,
+      "result": 81.5999984741211
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "crouch",
+      "tag": 0.35,
+      "current": 0,
+      "dt": 0.0078125,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 28.560000000000002,
+      "result": 1.826171875
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "crouch",
+      "tag": 0.35,
+      "current": 0,
+      "dt": 0.015625,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 28.560000000000002,
+      "result": 3.65234375
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "crouch",
+      "tag": 0.35,
+      "current": -80,
+      "dt": 0.0078125,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 28.560000000000002,
+      "result": -78.173828125
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "crouch",
+      "tag": 0.35,
+      "current": -80,
+      "dt": 0.015625,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 28.560000000000002,
+      "result": -76.34765625
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "crouch",
+      "tag": 0.35,
+      "current": 73.44000000000001,
+      "dt": 0.0078125,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 28.560000000000002,
+      "result": 73.44000244140625
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "crouch",
+      "tag": 0.35,
+      "current": 73.44000000000001,
+      "dt": 0.015625,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 28.560000000000002,
+      "result": 73.44000244140625
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "crouch",
+      "tag": 0.35,
+      "current": 81.60000000000001,
+      "dt": 0.0078125,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 28.560000000000002,
+      "result": 81.5999984741211
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "crouch",
+      "tag": 0.35,
+      "current": 81.60000000000001,
+      "dt": 0.015625,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 28.560000000000002,
+      "result": 81.5999984741211
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "crouch",
+      "tag": 0.35,
+      "current": 0,
+      "dt": 0.0078125,
+      "surfaceFriction": 0,
+      "wishSpeed": 28.560000000000002,
+      "result": 0.0
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "crouch",
+      "tag": 0.35,
+      "current": 0,
+      "dt": 0.015625,
+      "surfaceFriction": 0,
+      "wishSpeed": 28.560000000000002,
+      "result": 0.0
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "crouch",
+      "tag": 0.35,
+      "current": -80,
+      "dt": 0.0078125,
+      "surfaceFriction": 0,
+      "wishSpeed": 28.560000000000002,
+      "result": -80.0
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "crouch",
+      "tag": 0.35,
+      "current": -80,
+      "dt": 0.015625,
+      "surfaceFriction": 0,
+      "wishSpeed": 28.560000000000002,
+      "result": -80.0
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "crouch",
+      "tag": 0.35,
+      "current": 73.44000000000001,
+      "dt": 0.0078125,
+      "surfaceFriction": 0,
+      "wishSpeed": 28.560000000000002,
+      "result": 73.44000244140625
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "crouch",
+      "tag": 0.35,
+      "current": 73.44000000000001,
+      "dt": 0.015625,
+      "surfaceFriction": 0,
+      "wishSpeed": 28.560000000000002,
+      "result": 73.44000244140625
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "crouch",
+      "tag": 0.35,
+      "current": 81.60000000000001,
+      "dt": 0.0078125,
+      "surfaceFriction": 0,
+      "wishSpeed": 28.560000000000002,
+      "result": 81.5999984741211
+    },
+    {
+      "weaponSpeed": 240,
+      "stance": "crouch",
+      "tag": 0.35,
+      "current": 81.60000000000001,
+      "dt": 0.015625,
+      "surfaceFriction": 0,
+      "wishSpeed": 28.560000000000002,
+      "result": 81.5999984741211
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "run",
+      "tag": 1,
+      "current": 0,
+      "dt": 0.0078125,
+      "surfaceFriction": 1,
+      "wishSpeed": 250,
+      "result": 10.7421875
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "run",
+      "tag": 1,
+      "current": 0,
+      "dt": 0.015625,
+      "surfaceFriction": 1,
+      "wishSpeed": 250,
+      "result": 21.484375
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "run",
+      "tag": 1,
+      "current": -80,
+      "dt": 0.0078125,
+      "surfaceFriction": 1,
+      "wishSpeed": 250,
+      "result": -69.2578125
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "run",
+      "tag": 1,
+      "current": -80,
+      "dt": 0.015625,
+      "surfaceFriction": 1,
+      "wishSpeed": 250,
+      "result": -58.515625
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "run",
+      "tag": 1,
+      "current": 225.0,
+      "dt": 0.0078125,
+      "surfaceFriction": 1,
+      "wishSpeed": 250,
+      "result": 235.7421875
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "run",
+      "tag": 1,
+      "current": 225.0,
+      "dt": 0.015625,
+      "surfaceFriction": 1,
+      "wishSpeed": 250,
+      "result": 246.484375
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "run",
+      "tag": 1,
+      "current": 250,
+      "dt": 0.0078125,
+      "surfaceFriction": 1,
+      "wishSpeed": 250,
+      "result": 250.0
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "run",
+      "tag": 1,
+      "current": 250,
+      "dt": 0.015625,
+      "surfaceFriction": 1,
+      "wishSpeed": 250,
+      "result": 250.0
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "run",
+      "tag": 1,
+      "current": 0,
+      "dt": 0.0078125,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 250,
+      "result": 5.37109375
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "run",
+      "tag": 1,
+      "current": 0,
+      "dt": 0.015625,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 250,
+      "result": 10.7421875
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "run",
+      "tag": 1,
+      "current": -80,
+      "dt": 0.0078125,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 250,
+      "result": -74.62890625
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "run",
+      "tag": 1,
+      "current": -80,
+      "dt": 0.015625,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 250,
+      "result": -69.2578125
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "run",
+      "tag": 1,
+      "current": 225.0,
+      "dt": 0.0078125,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 250,
+      "result": 230.37109375
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "run",
+      "tag": 1,
+      "current": 225.0,
+      "dt": 0.015625,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 250,
+      "result": 235.7421875
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "run",
+      "tag": 1,
+      "current": 250,
+      "dt": 0.0078125,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 250,
+      "result": 250.0
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "run",
+      "tag": 1,
+      "current": 250,
+      "dt": 0.015625,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 250,
+      "result": 250.0
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "run",
+      "tag": 1,
+      "current": 0,
+      "dt": 0.0078125,
+      "surfaceFriction": 0,
+      "wishSpeed": 250,
+      "result": 0.0
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "run",
+      "tag": 1,
+      "current": 0,
+      "dt": 0.015625,
+      "surfaceFriction": 0,
+      "wishSpeed": 250,
+      "result": 0.0
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "run",
+      "tag": 1,
+      "current": -80,
+      "dt": 0.0078125,
+      "surfaceFriction": 0,
+      "wishSpeed": 250,
+      "result": -80.0
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "run",
+      "tag": 1,
+      "current": -80,
+      "dt": 0.015625,
+      "surfaceFriction": 0,
+      "wishSpeed": 250,
+      "result": -80.0
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "run",
+      "tag": 1,
+      "current": 225.0,
+      "dt": 0.0078125,
+      "surfaceFriction": 0,
+      "wishSpeed": 250,
+      "result": 225.0
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "run",
+      "tag": 1,
+      "current": 225.0,
+      "dt": 0.015625,
+      "surfaceFriction": 0,
+      "wishSpeed": 250,
+      "result": 225.0
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "run",
+      "tag": 1,
+      "current": 250,
+      "dt": 0.0078125,
+      "surfaceFriction": 0,
+      "wishSpeed": 250,
+      "result": 250.0
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "run",
+      "tag": 1,
+      "current": 250,
+      "dt": 0.015625,
+      "surfaceFriction": 0,
+      "wishSpeed": 250,
+      "result": 250.0
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "run",
+      "tag": 0.35,
+      "current": 0,
+      "dt": 0.0078125,
+      "surfaceFriction": 1,
+      "wishSpeed": 87.5,
+      "result": 10.7421875
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "run",
+      "tag": 0.35,
+      "current": 0,
+      "dt": 0.015625,
+      "surfaceFriction": 1,
+      "wishSpeed": 87.5,
+      "result": 21.484375
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "run",
+      "tag": 0.35,
+      "current": -80,
+      "dt": 0.0078125,
+      "surfaceFriction": 1,
+      "wishSpeed": 87.5,
+      "result": -69.2578125
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "run",
+      "tag": 0.35,
+      "current": -80,
+      "dt": 0.015625,
+      "surfaceFriction": 1,
+      "wishSpeed": 87.5,
+      "result": -58.515625
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "run",
+      "tag": 0.35,
+      "current": 225.0,
+      "dt": 0.0078125,
+      "surfaceFriction": 1,
+      "wishSpeed": 87.5,
+      "result": 225.0
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "run",
+      "tag": 0.35,
+      "current": 225.0,
+      "dt": 0.015625,
+      "surfaceFriction": 1,
+      "wishSpeed": 87.5,
+      "result": 225.0
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "run",
+      "tag": 0.35,
+      "current": 250,
+      "dt": 0.0078125,
+      "surfaceFriction": 1,
+      "wishSpeed": 87.5,
+      "result": 250.0
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "run",
+      "tag": 0.35,
+      "current": 250,
+      "dt": 0.015625,
+      "surfaceFriction": 1,
+      "wishSpeed": 87.5,
+      "result": 250.0
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "run",
+      "tag": 0.35,
+      "current": 0,
+      "dt": 0.0078125,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 87.5,
+      "result": 5.37109375
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "run",
+      "tag": 0.35,
+      "current": 0,
+      "dt": 0.015625,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 87.5,
+      "result": 10.7421875
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "run",
+      "tag": 0.35,
+      "current": -80,
+      "dt": 0.0078125,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 87.5,
+      "result": -74.62890625
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "run",
+      "tag": 0.35,
+      "current": -80,
+      "dt": 0.015625,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 87.5,
+      "result": -69.2578125
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "run",
+      "tag": 0.35,
+      "current": 225.0,
+      "dt": 0.0078125,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 87.5,
+      "result": 225.0
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "run",
+      "tag": 0.35,
+      "current": 225.0,
+      "dt": 0.015625,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 87.5,
+      "result": 225.0
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "run",
+      "tag": 0.35,
+      "current": 250,
+      "dt": 0.0078125,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 87.5,
+      "result": 250.0
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "run",
+      "tag": 0.35,
+      "current": 250,
+      "dt": 0.015625,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 87.5,
+      "result": 250.0
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "run",
+      "tag": 0.35,
+      "current": 0,
+      "dt": 0.0078125,
+      "surfaceFriction": 0,
+      "wishSpeed": 87.5,
+      "result": 0.0
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "run",
+      "tag": 0.35,
+      "current": 0,
+      "dt": 0.015625,
+      "surfaceFriction": 0,
+      "wishSpeed": 87.5,
+      "result": 0.0
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "run",
+      "tag": 0.35,
+      "current": -80,
+      "dt": 0.0078125,
+      "surfaceFriction": 0,
+      "wishSpeed": 87.5,
+      "result": -80.0
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "run",
+      "tag": 0.35,
+      "current": -80,
+      "dt": 0.015625,
+      "surfaceFriction": 0,
+      "wishSpeed": 87.5,
+      "result": -80.0
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "run",
+      "tag": 0.35,
+      "current": 225.0,
+      "dt": 0.0078125,
+      "surfaceFriction": 0,
+      "wishSpeed": 87.5,
+      "result": 225.0
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "run",
+      "tag": 0.35,
+      "current": 225.0,
+      "dt": 0.015625,
+      "surfaceFriction": 0,
+      "wishSpeed": 87.5,
+      "result": 225.0
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "run",
+      "tag": 0.35,
+      "current": 250,
+      "dt": 0.0078125,
+      "surfaceFriction": 0,
+      "wishSpeed": 87.5,
+      "result": 250.0
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "run",
+      "tag": 0.35,
+      "current": 250,
+      "dt": 0.015625,
+      "surfaceFriction": 0,
+      "wishSpeed": 87.5,
+      "result": 250.0
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "walk",
+      "tag": 1,
+      "current": 0,
+      "dt": 0.0078125,
+      "surfaceFriction": 1,
+      "wishSpeed": 130.0,
+      "result": 5.5859375
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "walk",
+      "tag": 1,
+      "current": 0,
+      "dt": 0.015625,
+      "surfaceFriction": 1,
+      "wishSpeed": 130.0,
+      "result": 11.171875
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "walk",
+      "tag": 1,
+      "current": -80,
+      "dt": 0.0078125,
+      "surfaceFriction": 1,
+      "wishSpeed": 130.0,
+      "result": -74.4140625
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "walk",
+      "tag": 1,
+      "current": -80,
+      "dt": 0.015625,
+      "surfaceFriction": 1,
+      "wishSpeed": 130.0,
+      "result": -68.828125
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "walk",
+      "tag": 1,
+      "current": 117.0,
+      "dt": 0.0078125,
+      "surfaceFriction": 1,
+      "wishSpeed": 130.0,
+      "result": 122.5859375
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "walk",
+      "tag": 1,
+      "current": 117.0,
+      "dt": 0.015625,
+      "surfaceFriction": 1,
+      "wishSpeed": 130.0,
+      "result": 128.171875
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "walk",
+      "tag": 1,
+      "current": 130.0,
+      "dt": 0.0078125,
+      "surfaceFriction": 1,
+      "wishSpeed": 130.0,
+      "result": 130.0
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "walk",
+      "tag": 1,
+      "current": 130.0,
+      "dt": 0.015625,
+      "surfaceFriction": 1,
+      "wishSpeed": 130.0,
+      "result": 130.0
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "walk",
+      "tag": 1,
+      "current": 0,
+      "dt": 0.0078125,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 130.0,
+      "result": 2.79296875
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "walk",
+      "tag": 1,
+      "current": 0,
+      "dt": 0.015625,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 130.0,
+      "result": 5.5859375
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "walk",
+      "tag": 1,
+      "current": -80,
+      "dt": 0.0078125,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 130.0,
+      "result": -77.20703125
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "walk",
+      "tag": 1,
+      "current": -80,
+      "dt": 0.015625,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 130.0,
+      "result": -74.4140625
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "walk",
+      "tag": 1,
+      "current": 117.0,
+      "dt": 0.0078125,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 130.0,
+      "result": 119.79296875
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "walk",
+      "tag": 1,
+      "current": 117.0,
+      "dt": 0.015625,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 130.0,
+      "result": 122.5859375
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "walk",
+      "tag": 1,
+      "current": 130.0,
+      "dt": 0.0078125,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 130.0,
+      "result": 130.0
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "walk",
+      "tag": 1,
+      "current": 130.0,
+      "dt": 0.015625,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 130.0,
+      "result": 130.0
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "walk",
+      "tag": 1,
+      "current": 0,
+      "dt": 0.0078125,
+      "surfaceFriction": 0,
+      "wishSpeed": 130.0,
+      "result": 0.0
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "walk",
+      "tag": 1,
+      "current": 0,
+      "dt": 0.015625,
+      "surfaceFriction": 0,
+      "wishSpeed": 130.0,
+      "result": 0.0
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "walk",
+      "tag": 1,
+      "current": -80,
+      "dt": 0.0078125,
+      "surfaceFriction": 0,
+      "wishSpeed": 130.0,
+      "result": -80.0
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "walk",
+      "tag": 1,
+      "current": -80,
+      "dt": 0.015625,
+      "surfaceFriction": 0,
+      "wishSpeed": 130.0,
+      "result": -80.0
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "walk",
+      "tag": 1,
+      "current": 117.0,
+      "dt": 0.0078125,
+      "surfaceFriction": 0,
+      "wishSpeed": 130.0,
+      "result": 117.0
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "walk",
+      "tag": 1,
+      "current": 117.0,
+      "dt": 0.015625,
+      "surfaceFriction": 0,
+      "wishSpeed": 130.0,
+      "result": 117.0
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "walk",
+      "tag": 1,
+      "current": 130.0,
+      "dt": 0.0078125,
+      "surfaceFriction": 0,
+      "wishSpeed": 130.0,
+      "result": 130.0
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "walk",
+      "tag": 1,
+      "current": 130.0,
+      "dt": 0.015625,
+      "surfaceFriction": 0,
+      "wishSpeed": 130.0,
+      "result": 130.0
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "walk",
+      "tag": 0.35,
+      "current": 0,
+      "dt": 0.0078125,
+      "surfaceFriction": 1,
+      "wishSpeed": 45.5,
+      "result": 5.5859375
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "walk",
+      "tag": 0.35,
+      "current": 0,
+      "dt": 0.015625,
+      "surfaceFriction": 1,
+      "wishSpeed": 45.5,
+      "result": 11.171875
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "walk",
+      "tag": 0.35,
+      "current": -80,
+      "dt": 0.0078125,
+      "surfaceFriction": 1,
+      "wishSpeed": 45.5,
+      "result": -74.4140625
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "walk",
+      "tag": 0.35,
+      "current": -80,
+      "dt": 0.015625,
+      "surfaceFriction": 1,
+      "wishSpeed": 45.5,
+      "result": -68.828125
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "walk",
+      "tag": 0.35,
+      "current": 117.0,
+      "dt": 0.0078125,
+      "surfaceFriction": 1,
+      "wishSpeed": 45.5,
+      "result": 117.0
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "walk",
+      "tag": 0.35,
+      "current": 117.0,
+      "dt": 0.015625,
+      "surfaceFriction": 1,
+      "wishSpeed": 45.5,
+      "result": 117.0
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "walk",
+      "tag": 0.35,
+      "current": 130.0,
+      "dt": 0.0078125,
+      "surfaceFriction": 1,
+      "wishSpeed": 45.5,
+      "result": 130.0
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "walk",
+      "tag": 0.35,
+      "current": 130.0,
+      "dt": 0.015625,
+      "surfaceFriction": 1,
+      "wishSpeed": 45.5,
+      "result": 130.0
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "walk",
+      "tag": 0.35,
+      "current": 0,
+      "dt": 0.0078125,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 45.5,
+      "result": 2.79296875
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "walk",
+      "tag": 0.35,
+      "current": 0,
+      "dt": 0.015625,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 45.5,
+      "result": 5.5859375
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "walk",
+      "tag": 0.35,
+      "current": -80,
+      "dt": 0.0078125,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 45.5,
+      "result": -77.20703125
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "walk",
+      "tag": 0.35,
+      "current": -80,
+      "dt": 0.015625,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 45.5,
+      "result": -74.4140625
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "walk",
+      "tag": 0.35,
+      "current": 117.0,
+      "dt": 0.0078125,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 45.5,
+      "result": 117.0
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "walk",
+      "tag": 0.35,
+      "current": 117.0,
+      "dt": 0.015625,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 45.5,
+      "result": 117.0
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "walk",
+      "tag": 0.35,
+      "current": 130.0,
+      "dt": 0.0078125,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 45.5,
+      "result": 130.0
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "walk",
+      "tag": 0.35,
+      "current": 130.0,
+      "dt": 0.015625,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 45.5,
+      "result": 130.0
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "walk",
+      "tag": 0.35,
+      "current": 0,
+      "dt": 0.0078125,
+      "surfaceFriction": 0,
+      "wishSpeed": 45.5,
+      "result": 0.0
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "walk",
+      "tag": 0.35,
+      "current": 0,
+      "dt": 0.015625,
+      "surfaceFriction": 0,
+      "wishSpeed": 45.5,
+      "result": 0.0
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "walk",
+      "tag": 0.35,
+      "current": -80,
+      "dt": 0.0078125,
+      "surfaceFriction": 0,
+      "wishSpeed": 45.5,
+      "result": -80.0
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "walk",
+      "tag": 0.35,
+      "current": -80,
+      "dt": 0.015625,
+      "surfaceFriction": 0,
+      "wishSpeed": 45.5,
+      "result": -80.0
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "walk",
+      "tag": 0.35,
+      "current": 117.0,
+      "dt": 0.0078125,
+      "surfaceFriction": 0,
+      "wishSpeed": 45.5,
+      "result": 117.0
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "walk",
+      "tag": 0.35,
+      "current": 117.0,
+      "dt": 0.015625,
+      "surfaceFriction": 0,
+      "wishSpeed": 45.5,
+      "result": 117.0
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "walk",
+      "tag": 0.35,
+      "current": 130.0,
+      "dt": 0.0078125,
+      "surfaceFriction": 0,
+      "wishSpeed": 45.5,
+      "result": 130.0
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "walk",
+      "tag": 0.35,
+      "current": 130.0,
+      "dt": 0.015625,
+      "surfaceFriction": 0,
+      "wishSpeed": 45.5,
+      "result": 130.0
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "crouch",
+      "tag": 1,
+      "current": 0,
+      "dt": 0.0078125,
+      "surfaceFriction": 1,
+      "wishSpeed": 85.0,
+      "result": 3.65234375
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "crouch",
+      "tag": 1,
+      "current": 0,
+      "dt": 0.015625,
+      "surfaceFriction": 1,
+      "wishSpeed": 85.0,
+      "result": 7.3046875
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "crouch",
+      "tag": 1,
+      "current": -80,
+      "dt": 0.0078125,
+      "surfaceFriction": 1,
+      "wishSpeed": 85.0,
+      "result": -76.34765625
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "crouch",
+      "tag": 1,
+      "current": -80,
+      "dt": 0.015625,
+      "surfaceFriction": 1,
+      "wishSpeed": 85.0,
+      "result": -72.6953125
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "crouch",
+      "tag": 1,
+      "current": 76.5,
+      "dt": 0.0078125,
+      "surfaceFriction": 1,
+      "wishSpeed": 85.0,
+      "result": 80.15234375
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "crouch",
+      "tag": 1,
+      "current": 76.5,
+      "dt": 0.015625,
+      "surfaceFriction": 1,
+      "wishSpeed": 85.0,
+      "result": 83.8046875
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "crouch",
+      "tag": 1,
+      "current": 85.0,
+      "dt": 0.0078125,
+      "surfaceFriction": 1,
+      "wishSpeed": 85.0,
+      "result": 85.0
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "crouch",
+      "tag": 1,
+      "current": 85.0,
+      "dt": 0.015625,
+      "surfaceFriction": 1,
+      "wishSpeed": 85.0,
+      "result": 85.0
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "crouch",
+      "tag": 1,
+      "current": 0,
+      "dt": 0.0078125,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 85.0,
+      "result": 1.826171875
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "crouch",
+      "tag": 1,
+      "current": 0,
+      "dt": 0.015625,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 85.0,
+      "result": 3.65234375
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "crouch",
+      "tag": 1,
+      "current": -80,
+      "dt": 0.0078125,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 85.0,
+      "result": -78.173828125
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "crouch",
+      "tag": 1,
+      "current": -80,
+      "dt": 0.015625,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 85.0,
+      "result": -76.34765625
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "crouch",
+      "tag": 1,
+      "current": 76.5,
+      "dt": 0.0078125,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 85.0,
+      "result": 78.326171875
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "crouch",
+      "tag": 1,
+      "current": 76.5,
+      "dt": 0.015625,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 85.0,
+      "result": 80.15234375
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "crouch",
+      "tag": 1,
+      "current": 85.0,
+      "dt": 0.0078125,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 85.0,
+      "result": 85.0
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "crouch",
+      "tag": 1,
+      "current": 85.0,
+      "dt": 0.015625,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 85.0,
+      "result": 85.0
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "crouch",
+      "tag": 1,
+      "current": 0,
+      "dt": 0.0078125,
+      "surfaceFriction": 0,
+      "wishSpeed": 85.0,
+      "result": 0.0
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "crouch",
+      "tag": 1,
+      "current": 0,
+      "dt": 0.015625,
+      "surfaceFriction": 0,
+      "wishSpeed": 85.0,
+      "result": 0.0
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "crouch",
+      "tag": 1,
+      "current": -80,
+      "dt": 0.0078125,
+      "surfaceFriction": 0,
+      "wishSpeed": 85.0,
+      "result": -80.0
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "crouch",
+      "tag": 1,
+      "current": -80,
+      "dt": 0.015625,
+      "surfaceFriction": 0,
+      "wishSpeed": 85.0,
+      "result": -80.0
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "crouch",
+      "tag": 1,
+      "current": 76.5,
+      "dt": 0.0078125,
+      "surfaceFriction": 0,
+      "wishSpeed": 85.0,
+      "result": 76.5
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "crouch",
+      "tag": 1,
+      "current": 76.5,
+      "dt": 0.015625,
+      "surfaceFriction": 0,
+      "wishSpeed": 85.0,
+      "result": 76.5
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "crouch",
+      "tag": 1,
+      "current": 85.0,
+      "dt": 0.0078125,
+      "surfaceFriction": 0,
+      "wishSpeed": 85.0,
+      "result": 85.0
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "crouch",
+      "tag": 1,
+      "current": 85.0,
+      "dt": 0.015625,
+      "surfaceFriction": 0,
+      "wishSpeed": 85.0,
+      "result": 85.0
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "crouch",
+      "tag": 0.35,
+      "current": 0,
+      "dt": 0.0078125,
+      "surfaceFriction": 1,
+      "wishSpeed": 29.749999999999996,
+      "result": 3.65234375
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "crouch",
+      "tag": 0.35,
+      "current": 0,
+      "dt": 0.015625,
+      "surfaceFriction": 1,
+      "wishSpeed": 29.749999999999996,
+      "result": 7.3046875
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "crouch",
+      "tag": 0.35,
+      "current": -80,
+      "dt": 0.0078125,
+      "surfaceFriction": 1,
+      "wishSpeed": 29.749999999999996,
+      "result": -76.34765625
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "crouch",
+      "tag": 0.35,
+      "current": -80,
+      "dt": 0.015625,
+      "surfaceFriction": 1,
+      "wishSpeed": 29.749999999999996,
+      "result": -72.6953125
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "crouch",
+      "tag": 0.35,
+      "current": 76.5,
+      "dt": 0.0078125,
+      "surfaceFriction": 1,
+      "wishSpeed": 29.749999999999996,
+      "result": 76.5
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "crouch",
+      "tag": 0.35,
+      "current": 76.5,
+      "dt": 0.015625,
+      "surfaceFriction": 1,
+      "wishSpeed": 29.749999999999996,
+      "result": 76.5
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "crouch",
+      "tag": 0.35,
+      "current": 85.0,
+      "dt": 0.0078125,
+      "surfaceFriction": 1,
+      "wishSpeed": 29.749999999999996,
+      "result": 85.0
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "crouch",
+      "tag": 0.35,
+      "current": 85.0,
+      "dt": 0.015625,
+      "surfaceFriction": 1,
+      "wishSpeed": 29.749999999999996,
+      "result": 85.0
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "crouch",
+      "tag": 0.35,
+      "current": 0,
+      "dt": 0.0078125,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 29.749999999999996,
+      "result": 1.826171875
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "crouch",
+      "tag": 0.35,
+      "current": 0,
+      "dt": 0.015625,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 29.749999999999996,
+      "result": 3.65234375
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "crouch",
+      "tag": 0.35,
+      "current": -80,
+      "dt": 0.0078125,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 29.749999999999996,
+      "result": -78.173828125
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "crouch",
+      "tag": 0.35,
+      "current": -80,
+      "dt": 0.015625,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 29.749999999999996,
+      "result": -76.34765625
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "crouch",
+      "tag": 0.35,
+      "current": 76.5,
+      "dt": 0.0078125,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 29.749999999999996,
+      "result": 76.5
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "crouch",
+      "tag": 0.35,
+      "current": 76.5,
+      "dt": 0.015625,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 29.749999999999996,
+      "result": 76.5
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "crouch",
+      "tag": 0.35,
+      "current": 85.0,
+      "dt": 0.0078125,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 29.749999999999996,
+      "result": 85.0
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "crouch",
+      "tag": 0.35,
+      "current": 85.0,
+      "dt": 0.015625,
+      "surfaceFriction": 0.5,
+      "wishSpeed": 29.749999999999996,
+      "result": 85.0
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "crouch",
+      "tag": 0.35,
+      "current": 0,
+      "dt": 0.0078125,
+      "surfaceFriction": 0,
+      "wishSpeed": 29.749999999999996,
+      "result": 0.0
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "crouch",
+      "tag": 0.35,
+      "current": 0,
+      "dt": 0.015625,
+      "surfaceFriction": 0,
+      "wishSpeed": 29.749999999999996,
+      "result": 0.0
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "crouch",
+      "tag": 0.35,
+      "current": -80,
+      "dt": 0.0078125,
+      "surfaceFriction": 0,
+      "wishSpeed": 29.749999999999996,
+      "result": -80.0
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "crouch",
+      "tag": 0.35,
+      "current": -80,
+      "dt": 0.015625,
+      "surfaceFriction": 0,
+      "wishSpeed": 29.749999999999996,
+      "result": -80.0
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "crouch",
+      "tag": 0.35,
+      "current": 76.5,
+      "dt": 0.0078125,
+      "surfaceFriction": 0,
+      "wishSpeed": 29.749999999999996,
+      "result": 76.5
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "crouch",
+      "tag": 0.35,
+      "current": 76.5,
+      "dt": 0.015625,
+      "surfaceFriction": 0,
+      "wishSpeed": 29.749999999999996,
+      "result": 76.5
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "crouch",
+      "tag": 0.35,
+      "current": 85.0,
+      "dt": 0.0078125,
+      "surfaceFriction": 0,
+      "wishSpeed": 29.749999999999996,
+      "result": 85.0
+    },
+    {
+      "weaponSpeed": 250,
+      "stance": "crouch",
+      "tag": 0.35,
+      "current": 85.0,
+      "dt": 0.015625,
+      "surfaceFriction": 0,
+      "wishSpeed": 29.749999999999996,
+      "result": 85.0
+    }
+  ],
+  "friction": [
+    {
+      "current": 0.05,
+      "surfaceFriction": 1,
+      "dt": 0.0078125,
+      "result": 0.05000000074505806
+    },
+    {
+      "current": 0.05,
+      "surfaceFriction": 1,
+      "dt": 0.015625,
+      "result": 0.05000000074505806
+    },
+    {
+      "current": 0.05,
+      "surfaceFriction": 0.5,
+      "dt": 0.0078125,
+      "result": 0.05000000074505806
+    },
+    {
+      "current": 0.05,
+      "surfaceFriction": 0.5,
+      "dt": 0.015625,
+      "result": 0.05000000074505806
+    },
+    {
+      "current": 0.05,
+      "surfaceFriction": 0,
+      "dt": 0.0078125,
+      "result": 0.05000000074505806
+    },
+    {
+      "current": 0.05,
+      "surfaceFriction": 0,
+      "dt": 0.015625,
+      "result": 0.05000000074505806
+    },
+    {
+      "current": 0.1,
+      "surfaceFriction": 1,
+      "dt": 0.0078125,
+      "result": 0.0
+    },
+    {
+      "current": 0.1,
+      "surfaceFriction": 1,
+      "dt": 0.015625,
+      "result": 0.0
+    },
+    {
+      "current": 0.1,
+      "surfaceFriction": 0.5,
+      "dt": 0.0078125,
+      "result": 0.0
+    },
+    {
+      "current": 0.1,
+      "surfaceFriction": 0.5,
+      "dt": 0.015625,
+      "result": 0.0
+    },
+    {
+      "current": 0.1,
+      "surfaceFriction": 0,
+      "dt": 0.0078125,
+      "result": 0.10000000149011612
+    },
+    {
+      "current": 0.1,
+      "surfaceFriction": 0,
+      "dt": 0.015625,
+      "result": 0.10000000149011612
+    },
+    {
+      "current": 1,
+      "surfaceFriction": 1,
+      "dt": 0.0078125,
+      "result": 0.0
+    },
+    {
+      "current": 1,
+      "surfaceFriction": 1,
+      "dt": 0.015625,
+      "result": 0.0
+    },
+    {
+      "current": 1,
+      "surfaceFriction": 0.5,
+      "dt": 0.0078125,
+      "result": 0.0
+    },
+    {
+      "current": 1,
+      "surfaceFriction": 0.5,
+      "dt": 0.015625,
+      "result": 0.0
+    },
+    {
+      "current": 1,
+      "surfaceFriction": 0,
+      "dt": 0.0078125,
+      "result": 1.0
+    },
+    {
+      "current": 1,
+      "surfaceFriction": 0,
+      "dt": 0.015625,
+      "result": 1.0
+    },
+    {
+      "current": 55,
+      "surfaceFriction": 1,
+      "dt": 0.0078125,
+      "result": 51.75
+    },
+    {
+      "current": 55,
+      "surfaceFriction": 1,
+      "dt": 0.015625,
+      "result": 48.5
+    },
+    {
+      "current": 55,
+      "surfaceFriction": 0.5,
+      "dt": 0.0078125,
+      "result": 53.375
+    },
+    {
+      "current": 55,
+      "surfaceFriction": 0.5,
+      "dt": 0.015625,
+      "result": 51.75
+    },
+    {
+      "current": 55,
+      "surfaceFriction": 0,
+      "dt": 0.0078125,
+      "result": 55.0
+    },
+    {
+      "current": 55,
+      "surfaceFriction": 0,
+      "dt": 0.015625,
+      "result": 55.0
+    },
+    {
+      "current": 80,
+      "surfaceFriction": 1,
+      "dt": 0.0078125,
+      "result": 76.75
+    },
+    {
+      "current": 80,
+      "surfaceFriction": 1,
+      "dt": 0.015625,
+      "result": 73.5
+    },
+    {
+      "current": 80,
+      "surfaceFriction": 0.5,
+      "dt": 0.0078125,
+      "result": 78.375
+    },
+    {
+      "current": 80,
+      "surfaceFriction": 0.5,
+      "dt": 0.015625,
+      "result": 76.75
+    },
+    {
+      "current": 80,
+      "surfaceFriction": 0,
+      "dt": 0.0078125,
+      "result": 80.0
+    },
+    {
+      "current": 80,
+      "surfaceFriction": 0,
+      "dt": 0.015625,
+      "result": 80.0
+    },
+    {
+      "current": 215,
+      "surfaceFriction": 1,
+      "dt": 0.0078125,
+      "result": 206.265625
+    },
+    {
+      "current": 215,
+      "surfaceFriction": 1,
+      "dt": 0.015625,
+      "result": 197.53125
+    },
+    {
+      "current": 215,
+      "surfaceFriction": 0.5,
+      "dt": 0.0078125,
+      "result": 210.6328125
+    },
+    {
+      "current": 215,
+      "surfaceFriction": 0.5,
+      "dt": 0.015625,
+      "result": 206.265625
+    },
+    {
+      "current": 215,
+      "surfaceFriction": 0,
+      "dt": 0.0078125,
+      "result": 215.0
+    },
+    {
+      "current": 215,
+      "surfaceFriction": 0,
+      "dt": 0.015625,
+      "result": 215.0
+    },
+    {
+      "current": 300,
+      "surfaceFriction": 1,
+      "dt": 0.0078125,
+      "result": 287.8125
+    },
+    {
+      "current": 300,
+      "surfaceFriction": 1,
+      "dt": 0.015625,
+      "result": 275.625
+    },
+    {
+      "current": 300,
+      "surfaceFriction": 0.5,
+      "dt": 0.0078125,
+      "result": 293.90625
+    },
+    {
+      "current": 300,
+      "surfaceFriction": 0.5,
+      "dt": 0.015625,
+      "result": 287.8125
+    },
+    {
+      "current": 300,
+      "surfaceFriction": 0,
+      "dt": 0.0078125,
+      "result": 300.0
+    },
+    {
+      "current": 300,
+      "surfaceFriction": 0,
+      "dt": 0.015625,
+      "result": 300.0
+    }
+  ],
+  "crouch": [
+    {
+      "duckAmount": 0,
+      "weaponSpeed": 215,
+      "result": 215.0,
+      "forward": 215.0
+    },
+    {
+      "duckAmount": 0.25,
+      "weaponSpeed": 215,
+      "result": 179.52500915527344,
+      "forward": 179.52500915527344
+    },
+    {
+      "duckAmount": 0.5,
+      "weaponSpeed": 215,
+      "result": 144.04998779296875,
+      "forward": 144.04998779296875
+    },
+    {
+      "duckAmount": 0.75,
+      "weaponSpeed": 215,
+      "result": 108.57499694824219,
+      "forward": 108.57499694824219
+    },
+    {
+      "duckAmount": 1,
+      "weaponSpeed": 215,
+      "result": 73.10000610351562,
+      "forward": 73.10000610351562
+    }
+  ],
+  "walk": [
+    {
+      "weaponSpeed": 150,
+      "currentSpeed": 0,
+      "result": 78.0
+    },
+    {
+      "weaponSpeed": 150,
+      "currentSpeed": 102.0,
+      "result": 78.0
+    },
+    {
+      "weaponSpeed": 150,
+      "currentSpeed": 103.0,
+      "result": 150.0
+    },
+    {
+      "weaponSpeed": 150,
+      "currentSpeed": 104.0,
+      "result": 150.0
+    },
+    {
+      "weaponSpeed": 150,
+      "currentSpeed": 300,
+      "result": 150.0
+    },
+    {
+      "weaponSpeed": 215,
+      "currentSpeed": 0,
+      "result": 111.79999542236328
+    },
+    {
+      "weaponSpeed": 215,
+      "currentSpeed": 135.8,
+      "result": 111.79999542236328
+    },
+    {
+      "weaponSpeed": 215,
+      "currentSpeed": 136.8,
+      "result": 215.0
+    },
+    {
+      "weaponSpeed": 215,
+      "currentSpeed": 137.8,
+      "result": 215.0
+    },
+    {
+      "weaponSpeed": 215,
+      "currentSpeed": 300,
+      "result": 215.0
+    },
+    {
+      "weaponSpeed": 250,
+      "currentSpeed": 0,
+      "result": 130.0
+    },
+    {
+      "weaponSpeed": 250,
+      "currentSpeed": 154.0,
+      "result": 130.0
+    },
+    {
+      "weaponSpeed": 250,
+      "currentSpeed": 155.0,
+      "result": 250.0
+    },
+    {
+      "weaponSpeed": 250,
+      "currentSpeed": 156.0,
+      "result": 250.0
+    },
+    {
+      "weaponSpeed": 250,
+      "currentSpeed": 300,
+      "result": 250.0
+    }
+  ]
+}

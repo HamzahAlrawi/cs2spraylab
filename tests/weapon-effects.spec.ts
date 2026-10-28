@@ -1,4 +1,5 @@
 import {expect, test} from '@playwright/test';
+import {readFileSync} from 'node:fs';
 import {canvasColors} from './render-frame';
 
 test('range resolves hits immediately, flashes at the barrel, and suppressed weapons never trace', async ({page}, info) => {
@@ -47,17 +48,40 @@ test('knife shop filters by native model and owns every native preview before eq
   await shop.getByRole('button',{name:'Unlocks',exact:true}).click();
   await shop.getByRole('tab',{name:'Knives',exact:true}).click();
   const filter = shop.getByLabel('Knife type');
-  await expect(filter.locator('option')).toHaveCount(22);
+  await expect(filter.locator('option:not([value="all"])')).toHaveCount(22);
+  await expect(filter.locator('option[value="all"]')).toHaveText('All knife models');
   await filter.selectOption('knife-karambit');
-  expect(await shop.locator('.progression-choice').count()).toBeGreaterThan(10);
-  expect(await shop.locator('.progression-choice').count()).toBeLessThan(40);
+  const expected = JSON.parse(readFileSync('src/range/cosmetics-data.json', 'utf8')).cosmetics
+    .filter((item: {assetKey: string}) => item.assetKey === 'knife-karambit');
+  const seen: string[] = [];
+  const choices = shop.locator('.progression-choice');
+  for (;;) {
+    expect(await choices.count()).toBeLessThanOrEqual(8);
+    seen.push(...await choices.locator('.progression-choice-name').evaluateAll(nodes => nodes.map(node => node.firstChild!.textContent!)));
+    for (const image of await choices.locator('img').all()) {
+      await image.scrollIntoViewIfNeeded();
+      await expect.poll(() => image.evaluate(node => (node as HTMLImageElement).naturalWidth)).toBeGreaterThan(100);
+    }
+    const next = shop.getByRole('button', {name: 'Next page', exact: true});
+    if (await next.isDisabled()) break;
+    await next.click();
+  }
+  expect(seen.length).toBeGreaterThan(10);
+  expect(seen.length).toBeLessThan(40);
+  expect(seen.sort()).toEqual(expected.map((item: {label: string}) => item.label).sort());
+  await shop.getByRole('searchbox', {name: 'Search cosmetics'}).fill('Gamma Doppler Emerald');
   const emerald = shop.locator('.progression-choice').filter({hasText:'Karambit | Gamma Doppler Emerald'});
   await expect(emerald).toHaveCount(1);
   const image = emerald.locator('img'); await image.scrollIntoViewIfNeeded();
   await expect.poll(() => image.evaluate(node => (node as HTMLImageElement).naturalWidth)).toBeGreaterThan(100);
-  await emerald.getByRole('button').click();
+  await emerald.click();
+  const detail = shop.locator('.armory-detail');
+  await detail.getByRole('button', {name: /^Buy /}).click();
+  await expect(shop.locator('.progression-wallet strong')).toHaveText('1,000,000');
+  await detail.getByRole('button', {name: 'Confirm purchase', exact: true}).click();
   await expect(shop.getByRole('button',{name:'Collection',exact:true})).toHaveAttribute('aria-pressed','true');
   await expect(shop.locator('.progression-choice')).toHaveCount(1);
-  await shop.locator('.progression-choice').getByRole('button').click();
+  await expect(detail.locator('.armory-status')).toHaveText('Owned');
+  await detail.getByRole('button', {name: 'Equip Karambit | Gamma Doppler Emerald', exact: true}).click();
   expect(await page.evaluate(() => JSON.parse(localStorage.getItem('spraylab.progression.v1')!).equipped.knife)).toContain('knife-karambit');
 });

@@ -3,6 +3,56 @@ import path from 'node:path';
 import {execFileSync} from 'node:child_process';
 import crypto from 'node:crypto';
 import {parseKv3} from './kv3.mjs';
+import {extractFootsteps, footstepDefinition, selectFootstepSamples} from './native-footsteps.mjs';
+
+function importFootsteps() {
+  const game = process.env.CS2_PATH || 'C:/Program Files (x86)/Steam/steamapps/common/Counter-Strike Global Offensive';
+  const cli = process.env.SOURCE2VIEWER || path.resolve('.local-tools/vrf/Source2Viewer-CLI.exe');
+  const run = (...args) => execFileSync(cli, ['-i', `${game}/game/csgo/pak01_dir.vpk`, ...args],
+    {stdio: 'pipe', windowsHide: true, maxBuffer: 20e6});
+  fs.mkdirSync('research/audio-events/samples', {recursive: true});
+  fs.mkdirSync('public/revamp/audio/native', {recursive: true});
+  const sourceHashes = {};
+  const read = (source, output, decompile = false) => {
+    run('-f', source, ...(decompile ? ['-d'] : []), '-o', output);
+    const raw = fs.readFileSync(output, 'utf8');
+    sourceHashes[source] = crypto.createHash('sha256').update(raw).digest('hex');
+    return parseKv3(raw);
+  };
+  const sources = read('soundevents/game_sounds_footsteps.vsndevts_c', 'research/audio-events/footsteps.vsndevts', true);
+  const mappings = read('scripts/surfaceproperties_footsteps.txt', 'research/audio-events/surfaceproperties_footsteps.txt');
+  const physics = read('surfaceproperties/surfaceproperties.vsurf_c', 'research/audio-events/surfaces.vsurf', true).SurfacePropertiesList;
+  const {surfaces, events: names, landingFallbacks, rightFootOverrides} = extractFootsteps(physics, mappings, sources);
+  const manifestPath = 'public/revamp/audio/events.json';
+  const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
+  const events = {}, decoded = new Map();
+  for (const [key, name] of Object.entries(names)) {
+    const source = footstepDefinition(sources, name);
+    const common = /^(step|land)-(concrete|metal|wood)$/.test(key);
+    const sampleSources = selectFootstepSamples(source.vsnd_files_track_01, common && key.startsWith('step-') ? 8 : 4);
+    const samples = sampleSources.map(file => {
+      if (decoded.has(file)) return decoded.get(file);
+      const id = crypto.createHash('sha256').update(file).digest('hex').slice(0, 16);
+      const url = `/audio/native/footstep-${id}.wav`, staging = `research/audio-events/samples/footstep-${id}.audio`;
+      run('-f', `${file}_c`, '-d', '-o', staging);
+      const bytes = fs.readFileSync(staging);
+      if (bytes.toString('ascii', 0, 4) === 'RIFF' && bytes.toString('ascii', 8, 12) === 'WAVE') fs.copyFileSync(staging, `public/revamp${url}`);
+      else execFileSync(process.env.FFMPEG || 'ffmpeg', ['-hide_banner', '-loglevel', 'error', '-y', '-i', staging,
+        '-c:a', 'pcm_s16le', `public/revamp${url}`], {stdio: 'pipe', windowsHide: true});
+      decoded.set(file, url); return url;
+    });
+    events[key] = {source: name, volume: source.volume ?? 1, pitch: source.pitch ?? 1,
+      distanceCurve: source.distance_volume_mapping_curve.map(row => row.slice(0, 2)), samples, sampleSources};
+  }
+  const build = fs.readFileSync(`${game}/game/csgo/steam.inf`, 'utf8').match(/ClientVersion=(\d+)/)[1];
+  const metadata = {build, sourceHashes, surfaces, landingFallbacks, rightFootOverrides,
+    events: Object.fromEntries(Object.entries(events).map(([key, {samples, sampleSources, ...event}]) => [key, event]))};
+  manifest.events = {...manifest.events, ...events};
+  manifest.footsteps = {build, sourceHashes, landingFallbacks, rightFootOverrides};
+  fs.writeFileSync(manifestPath, JSON.stringify(manifest, null, 2) + '\n');
+  fs.writeFileSync('src/range/native-footsteps-data.json', JSON.stringify(metadata, null, 2) + '\n');
+  console.log(`Footsteps: ${Object.keys(surfaces).length} source surfaces, ${Object.keys(events).length} events, ${decoded.size} unique samples; build ${build}.`);
+}
 
 function writeSoundMetadata(manifest) {
   const keys = Object.keys(JSON.parse(fs.readFileSync('src/range/game-data.json','utf8')).weapons).concat('knife');
@@ -18,6 +68,19 @@ function writeSoundMetadata(manifest) {
       cues: timeline.cues.map(({time, key, audience}) => ({time, key, audience}))}]))]));
   fs.writeFileSync('src/range/sound-events-data.json',JSON.stringify({build:manifest.build,weapons,cues,timelines},null,2)+'\n');
 }
+export function extractCompiledSourceFps(raw) {
+  try {
+    // Match the reload audit: ignore CLI preamble and binary pose blobs, not timing fields.
+    const data = parseKv3(raw.slice(Math.max(0, raw.indexOf('<!-- kv3'))).replace(/#\[[\s\S]*?\]/g, '[]'));
+    if (!Number.isInteger(data?.m_nNumFrames) || data.m_nNumFrames <= 1 ||
+      !Number.isFinite(data.m_flDuration) || data.m_flDuration <= 0) return 30;
+    const fps = Math.round((data.m_nNumFrames - 1) / data.m_flDuration);
+    return Number.isFinite(fps) && fps > 0 ? fps : 30;
+  } catch {
+    return 30;
+  }
+}
+
 export function extractSoundTimeline(raw, duration, fps = 30) {
   const clip = parseKv3(raw);
   if (!Number.isFinite(duration) || duration <= 0 || !Number.isFinite(fps) || fps <= 0) return null;
@@ -34,7 +97,16 @@ export function extractSoundTimeline(raw, duration, fps = 30) {
     sha256: crypto.createHash('sha256').update(raw).digest('hex'), cues};
 }
 
+export function mergeAudioManifest(manifest, update) {
+  const timelines = {...manifest.timelines};
+  for (const [id, actions] of Object.entries(update.timelines ?? {}))
+    timelines[id] = {...timelines[id], ...actions};
+  return {...manifest, ...update, events: {...manifest.events, ...update.events}, timelines,
+    audit: {...manifest.audit, ...update.audit}};
+}
+
 async function main() {
+if (process.argv.includes('--footsteps-only')) {importFootsteps(); return;}
 if (process.argv.includes('--metadata-only')) {
   writeSoundMetadata(JSON.parse(fs.readFileSync('public/revamp/audio/events.json','utf8')));
   return;
@@ -53,10 +125,12 @@ for (const name of ['footsteps', 'player', 'weapons']) {
   if (!actionsOnly || !fs.existsSync(file)) run('-f', `soundevents/game_sounds_${name}.vsndevts_c`, '-d', '-o', file);
   Object.assign(sources, parseKv3(fs.readFileSync(file, 'utf8')));
 }
-const old = actionsOnly ? JSON.parse(fs.readFileSync('public/revamp/audio/events.json', 'utf8')) : {};
-const events = old.events ?? {};
+const manifestPath = 'public/revamp/audio/events.json';
+const readManifest = () => fs.existsSync(manifestPath) ? JSON.parse(fs.readFileSync(manifestPath, 'utf8')) : {};
+const old = readManifest();
+const events = {};
 const add = (key, name, limit = 4) => {
-  if (actionsOnly && events[key]?.samples.every(sample => fs.existsSync(`public/revamp${sample}`))) return;
+  if (actionsOnly && (events[key] ?? old.events?.[key])?.samples.every(sample => fs.existsSync(`public/revamp${sample}`))) return;
   const canonical = Object.keys(sources).find(key => key.toLowerCase() === name.toLowerCase());
   const source = sources[canonical];
   if (!source) throw new Error(`Missing sound event ${name}`);
@@ -129,7 +203,11 @@ for (const [id, weapon] of Object.entries(inventory.weapons)) {
     const file = `research/${path.posix.basename(clip.path).replace(/_c$/, '')}`;
     if (!fs.existsSync(file)) run('-f', clip.path, '-d', '-o', file);
     const raw = fs.readFileSync(file, 'utf8');
-    const timeline = extractSoundTimeline(raw, clip.seconds);
+    const compiledFile = `${file}_c`;
+    if (!fs.existsSync(compiledFile)) run('-f', clip.path, '-o', compiledFile);
+    const compiled = execFileSync(cli, ['-i', compiledFile, '-b', 'DATA'],
+      {encoding: 'utf8', windowsHide: true, maxBuffer: 30e6});
+    const timeline = extractSoundTimeline(raw, clip.seconds, extractCompiledSourceFps(compiled));
     if (timeline.source !== clip.path) throw new Error(`Wrong native namespace for ${id}/${action}`);
     // Physical shot events already play gunfire/slash; retain only bolt/foley cues here.
     timeline.cues = timeline.cues.filter(cue => !/\.(?:Single|SingleDistant|Silenced|SilencedShot|Slash|Stab)$/i.test(cue.key));
@@ -156,12 +234,15 @@ for (const [id, weapon] of Object.entries(inventory.weapons)) {
 const build = fs.readFileSync(`${game}/game/csgo/steam.inf`, 'utf8').match(/ClientVersion=(\d+)/)[1];
 const definitionBuild = actionsOnly ? inventory.weapons.ak47?.build ?? old.build ?? build : build;
 fs.writeFileSync('src/range/native-reload-presentation.json', JSON.stringify({definitionBuild, installedBuild: build, weapons: reloadWindows}, null, 2));
-fs.writeFileSync('public/revamp/audio/events.json', JSON.stringify({build: definitionBuild, installedBuild: build, events, timelines,
-  audit: {missing, cachedDefinitions: actionsOnly, timing: 'Native frame markers / 30 Hz; duration from audited DMX; runtime retimes to presentation duration.',
-    provenance: 'Cached event/clip definitions may predate installedBuild; newly decoded samples come from installed static VPK. No parity claim.'}}, null, 2));
-if (!actionsOnly) writeSoundMetadata({build: definitionBuild,events});
-console.log(`Exported ${Object.keys(events).length} native sound events from CS2 ${build}.`);
+// Re-read at commit time and merge only generated keys so other imports survive.
+const manifest = mergeAudioManifest(readManifest(), {build: definitionBuild, installedBuild: build, events, timelines,
+  audit: {missing, cachedDefinitions: actionsOnly, timing: 'Native frame markers / compiled source FPS (30 Hz fallback); duration from audited DMX; runtime retimes to presentation duration.',
+    provenance: 'Cached event/clip definitions may predate installedBuild; newly decoded samples come from installed static VPK. No parity claim.'}});
+fs.writeFileSync(manifestPath, JSON.stringify(manifest, null, 2));
+if (!actionsOnly) writeSoundMetadata(manifest);
+console.log(`Exported ${Object.keys(manifest.events).length} native sound events from CS2 ${build}.`);
 console.log(`${Object.keys(timelines).length} action sets; ${missing.length} unresolved native sound references.`);
+if (!actionsOnly) importFootsteps();
 }
 if (process.argv[1] && path.resolve(process.argv[1]) === import.meta.filename)
   main().catch(error => {console.error(error); process.exitCode = 1;});

@@ -1,6 +1,7 @@
 import {describe, expect, it, vi} from 'vitest';
 import {BoostPlanner, TeamTacticsPlanner, type BoostPOI, type TacticalPeer, type TeamContact} from './coordination';
 import type {CoverLane} from './geometry';
+import {coordinationTiming} from './skill';
 
 const peer = (id: number, x = id * 1.5): TacticalPeer => ({level: 8, actor: {
   id, generation: 1, side: 'enemy', position: {x, y: 1.62, z: -6}, feet: 0, grounded: true,
@@ -17,6 +18,13 @@ const poi: BoostPOI = {id: 'test-perch', base: {x: 0, y: 0, z: -6}, mount: {x: 1
   perch: {x: 0, y: 1.2, z: -6}, dismount: {x: -2, y: 0, z: -6}, lookAt: {x: 4, y: 1.62, z: 5}};
 
 describe('evidence-only allied tactics', () => {
+  it('can disable trading without disabling independent crossfire roles', () => {
+    const planner = new TeamTacticsPlanner(), peers = [peer(1, 5), peer(2, 3.85), peer(3, -5)];
+    expect(planner.plan(0, peers, lanes, [contact()]).some(assignment => assignment.role === 'trade')).toBe(true);
+    const independent = planner.plan(.01, peers, lanes, [contact()], false);
+    expect(independent.every(assignment => assignment.role !== 'trade' && !assignment.waitForPartner)).toBe(true);
+    expect(planner.plan(.3, peers, lanes, [contact(.3)], false).some(assignment => assignment.role === 'crossfire')).toBe(true);
+  });
   it('assigns a healthy entry, close trader, opposite crossfire, and sniper anchor deterministically', () => {
     const peers = [peer(1, 5), peer(2, 3.85), peer(3, -5), peer(4, -6)];
     peers[3].actor.equipment = 'awp';
@@ -32,7 +40,7 @@ describe('evidence-only allied tactics', () => {
     const peers = [peer(1, 5), peer(2, 1)];
     const planner = new TeamTacticsPlanner();
     expect(planner.plan(0, peers, lanes, [contact()]).every(a => a.waitForPartner)).toBe(true);
-    peers[1].actor.position.x = 3.85;
+    peers[1].actor.position.x = 5;
     const ready = planner.plan(.3, peers, lanes, [contact(.3)]);
     expect(ready.every(a => !a.waitForPartner)).toBe(true);
     const next = planner.plan(.6, peers, lanes, [contact(.6)]);
@@ -43,21 +51,22 @@ describe('evidence-only allied tactics', () => {
     for (const down of [false, true]) {
       const peers = [peer(1, 5), peer(2, 3.85)], planner = new TeamTacticsPlanner();
       const first = planner.plan(0, peers, lanes, [contact()]);
-      expect(first.find(a => a.role === 'trade')?.peekAt).toBeCloseTo(.32);
+      const timing = coordinationTiming(8, 2, 1);
+      expect(first.find(a => a.role === 'trade')?.peekAt).toBeCloseTo(timing.contactDelay + timing.tradeGap);
       if (down) {peers[0].actor.alive = false; peers[0].lastDownAt = .05;}
       else peers[0].lastShotAt = .05;
       const trade = planner.plan(.06, peers, lanes, [contact()]).find(a => a.role === 'trade');
-      expect(trade?.peekAt).toBeCloseTo(.1);
+      expect(trade?.peekAt).toBeCloseTo(.06 + timing.followupDelay);
       if (down) expect(planner.plan(.3, peers, lanes, [contact()])[0].role).toBe('trade');
     }
   });
 
-  it('excludes novices, opponents, empty/reloading/busy allies and ignores future/expired reports', () => {
+  it('includes novices, excludes opponents and unavailable allies, and ignores future/expired reports', () => {
     const peers = [peer(1), peer(2), peer(3), peer(4), peer(5), peer(6), peer(7)];
     peers[1].level = 3; peers[2].actor.side = 'player'; peers[3].actor.ammo = 0;
     peers[4].actor.reloading = true; peers[5].busy = true;
     const planner = new TeamTacticsPlanner();
-    expect(planner.plan(0, peers, lanes, [contact()]).map(a => a.actorId).sort()).toEqual([1, 7]);
+    expect(planner.plan(0, peers, lanes, [contact()]).map(a => a.actorId).sort()).toEqual([1, 2, 7]);
     expect(planner.plan(.1, peers, lanes, [contact(1)])).toEqual([]);
     expect(planner.plan(3, peers, lanes, [contact()])).toEqual([]);
     expect(planner.plan(4, peers, [], [contact(4)])).toEqual([]);
@@ -78,6 +87,36 @@ describe('evidence-only allied tactics', () => {
     peers[0].actor.health = 25; peers[0].actor.armor = 0; peers[2].actor.ammo = 0;
     const result = new TeamTacticsPlanner().plan(0, peers, lanes, [contact()]);
     expect(result.find(a => a.role === 'entry')?.actorId).toBe(2);
+  });
+  it('retains a released death trade until its evidence expires, not just the first death-cue window', () => {
+    const peers = [peer(1, 5), peer(2, 3.85)], planner = new TeamTacticsPlanner();
+    planner.plan(0, peers, lanes, [contact()]);
+    peers[0].actor.alive = false; peers[0].lastDownAt = .05;
+    const released = planner.plan(.06, peers, lanes, [contact()])[0];
+    expect(released).toMatchObject({role: 'trade', waitForPartner: false});
+    for (const time of [.3, .8, 1.4, 1.9]) {
+      const trade = planner.plan(time, peers, lanes, [contact()])[0];
+      expect(trade).toMatchObject({actorId: 2, role: 'trade', peekAt: released.peekAt, expiresAt: 2});
+    }
+    expect(planner.plan(2, peers, lanes, [contact()])).toEqual([]);
+  });
+  it('bounds a blocked partner staging wait even as fresh reports keep arriving', () => {
+    const peers = [peer(1, 5), peer(2, 1)], planner = new TeamTacticsPlanner();
+    const first = planner.plan(0, peers, lanes, [contact()]);
+    expect(first.every(a => a.waitForPartner)).toBe(true);
+    for (const time of [.3, .6, .9, 1.2]) planner.plan(time, peers, lanes, [contact(time)]);
+    const released = planner.plan(1.5, peers, lanes, [contact(1.5)]);
+    expect(released.every(a => !a.waitForPartner && a.peekAt <= 1.5)).toBe(true);
+  });
+  it('allows two nearby support candidates only when the second has a separate local opening', () => {
+    const peers = [peer(1, 2), peer(2, 1), peer(3, -4), peer(4, -5)];
+    const result = new TeamTacticsPlanner().plan(0, peers, lanes, [contact()]);
+    const trades = result.filter(a => a.role === 'trade');
+    expect(trades).toHaveLength(2);
+    expect(new Set(trades.map(a => a.lane.side)).size).toBe(2);
+    expect(trades[1].peekAt).toBeGreaterThan(trades[0].peekAt);
+    const narrow = new TeamTacticsPlanner().plan(0, peers, lanes.filter(lane => lane.side === 1), [contact()]);
+    expect(narrow.filter(a => a.role === 'trade')).toHaveLength(1);
   });
 });
 

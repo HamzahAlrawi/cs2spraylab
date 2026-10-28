@@ -1,24 +1,29 @@
 import * as THREE from 'three';
 import {GLTFLoader} from 'three/examples/jsm/loaders/GLTFLoader.js';
 import {clone as cloneSkeleton} from 'three/examples/jsm/utils/SkeletonUtils.js';
-import {DEG, UNIT, type Vec} from '../actor-physics';
+import {DEG, STEP, UNIT, type Vec} from '../actor-physics';
 import {RangeAudio} from '../audio';
 import {gameData,loadoutWeapon, type Settings, type Weapon} from '../config';
-import {requestRawLock} from '../input';
-import {mouseAngle, VERTICAL_FOV} from '../simulation';
+import {bindGameplayWheel, requestRawLock} from '../input';
+import {VERTICAL_FOV} from '../simulation';
+import {actionsForCode, grenadeForControl, ignoreGameplayKey, isEditingTarget, movementControls, type ControlAction} from '../controls';
+import {mouseLookDelta} from '../input-sensitivity';
 import {VIEWMODEL_FOV, VIEWMODEL_OFFSET, viewmodelViewport} from '../viewmodel';
 import {botConfig, type DuelConfig} from './config';
 import {duelArena, traceSolid} from './geometry';
 import {DuelSimulation} from './simulation';
 import type {DuelActorSnapshot, DuelEvent} from './types';
 import {DuelAnimator, nativeGestureClips} from './animation';
+import {prepareRapier} from '../rapier-runtime';
+import {deathCameraGoal} from './death-camera';
 import {batchStaticMeshes, disposeResources, disposeSkeletons} from './render-resources';
 import {fullyOccluded} from './visibility';
 import {muzzleAnchor, viewMuzzleToWorld} from './tracers';
 import type {SpatialSound} from '../spatial-audio';
 import {recoilView} from '../view-recoil';
 import {RoundFlow, deathView, deathFeet} from './round-flow';
-import {type Equipment, type Slot} from '../equipment';
+import {sampleHitReaction} from './hit-reaction';
+import {equipmentControlSlot, type Equipment, type Slot} from '../equipment';
 import {DamageFeedback} from './damage-feedback';
 import {loadDuelHistory, type DuelReview, type DuelHistory} from './coaching';
 import {FOOTSTEP_RANGE} from '../sound-model';
@@ -28,6 +33,9 @@ import {ScopeOverlay} from '../scope-overlay';
 import {addArenaCover,addArenaTraversal,createEnvironmentRenderMap,syncEnvironmentRenderMap} from './arena-props';
 import {blocksMovement} from './environment';
 import {AcousticScene} from '../spatial-audio';
+import {configureArenaAcoustics} from './native-acoustics';
+import {nativeFlinchClips} from './native-flinch';
+import {loadCombatModel} from '../combat-model-delivery';
 import {seedForDesign} from './arena-layout';
 import {applyCosmetic, cosmeticAsset, cosmeticCatalog} from '../cosmetics';
 import weaponMounts from '../weapon-mounts.json';
@@ -40,6 +48,25 @@ import {ShortcutGuard} from '../shortcut-guard';
 import {MuzzleFlashes, ShotEffects} from '../weapon-effects';
 import {DuelRadar} from './radar';
 import {actorShadows,ActorShadowRenderer} from './shadow-scene';
+import type {DuelScenario, PrefireStats} from './scenario';
+import {PrefireLighting,takePreparedLighting} from '../prefire/lighting';
+import {StepView} from './step-view';
+import type {ShotState} from '../shot-state';
+import {NativeActorHitboxes} from './actor-hitboxes';
+import {type CombatRecording, type ReplayActor, type ReplayShot, downloadRecording} from './combat-replay';
+import {PlaybackScene, type ReplayVisual} from './playback-scene';
+import {surfaceFootstepMaterial} from '../prefire/native-surfaces';
+import {setupKey} from '../setup-key';
+import {prewarmShaders, compileRetainedShaders, warmRetainedFirstUse, disposeWarmRenderer} from '../shader-warmup';
+import {WeaponPreloader} from '../weapon-preloader';
+import {prepareSceneGpu} from './scene-preparation';
+import {backgroundFrame} from '../prefire/background-work';
+import {KillFeedModel,type KillFeedEntry} from './kill-feed';
+import {CharacterHitEffects} from './character-hit-effects';
+import {type UtilityKind, type UtilityInventory, utilityNames} from './utility-loadout';
+import {nextUtility} from './utility-ui';
+import {UtilityRenderer, utilityFlashOpacity} from './utility-render';
+import {nativeUtilityPresentation, utilityNativeTiming, UtilitySoundTimeline, type UtilityViewAction} from './utility-presentation';
 
 export type DuelStatus = {
   phase: 'ready' | 'fighting' | 'result'; paused: boolean; outcome?: 'won' | 'lost' | 'draw';
@@ -48,10 +75,22 @@ export type DuelStatus = {
   shortcutProtected: boolean;
   nextRoundIn: number;
   equipped?: Equipment; review?: DuelReview; history?: DuelHistory[];
-  loadout?: {primary: Weapon | null; sidearm: Settings['sidearm'] | null}; pickup?: Equipment;
+  loadout?: {primary: Weapon | null; sidearm: Settings['sidearm'] | null}; pickup?: Equipment; pickupUtility?: UtilityKind;
   interaction?:string;
   reserve?:number; reloadSilent?:boolean; recharge?:number;
   arenaDesign?: string;
+  loadingMap?: boolean;
+  preparingNextRound?:boolean;
+  nextRoundError?:string;
+  postWinPlayable?:boolean;
+  prefire?: PrefireStats;
+  lastShot?: {weapon: Equipment; state: ShotState};
+  replayShots?: number;
+  replayAvailable?: boolean;
+  completedRound?: {id: string; setupKey: string; review: DuelReview};
+  killFeed?: readonly KillFeedEntry[];
+  selectedUtility?: UtilityKind;
+  utilityInventory?: UtilityInventory;
 };
 
 const v3 = (point: Vec) => new THREE.Vector3(point.x, point.y, point.z);
@@ -80,12 +119,26 @@ export class DuelEngine {
   private last = 0;
   private statusAt = 0;
   private disposed = false;
+  private loadingMap = false;
+  private mapAbort?: AbortController;
+  private nextRoundAbort?:AbortController;
+  private nextRoundError?:string;
+  private seamlessHandoff=false;
   private paused = false;
   private pointer: number | null = null;
   private pointerX = 0;
   private pointerY = 0;
   private seed = Math.floor(Math.random() * 0x7fffffff);
+  private criticalReady=false;
+  private actorBuildRevision=0;
+  private prefetchedSeed=-1;
+  private pendingMapSelection=false;
+  private pendingSetupRestart=false;
+  private prefetchAt=-Infinity;
   private viewAnimation?: ViewAnimation;
+  private loadedViewEquipment?: Equipment;
+  private pendingInspect?: Equipment;
+  private presentingUtility?: UtilityKind;
   private kick = 0;
   private inputName = 'Ready';
   private caption = '';
@@ -95,18 +148,39 @@ export class DuelEngine {
   private enterRevision = 0;
   private kills = 0;
   private damage = 0;
+  private lastShot?: DuelStatus['lastShot'];
   private models = new Map<number, THREE.Group>();
   private heldWeapons = new Map<number, THREE.Object3D>();
+  private readonly actorWeaponCache = new Map<number, Map<Equipment, THREE.Object3D>>();
+  private readonly actorEquipment = new Map<number, Equipment>();
+  private heldGrenades = new Map<number, THREE.Group>();
+  private utilityGestures: THREE.AnimationClip[] = [];
+  private utilityPreparing?: Promise<void>;
+  private utilityActorActions = new Map<number, {selectedAt: number; primedAt?: number}>();
+  private utilityThrownAt = new Map<number, number>();
+  private utilitySounds = new Map<number,{key:string;kind:UtilityKind;action:UtilityViewAction;started:number;timeline:UtilitySoundTimeline}>();
   private animators = new Map<number, DuelAnimator>();
+  private hitboxes = new Map<number, NativeActorHitboxes>();
+  private poseTimes = new Map<number, number>();
+  private sampledPoses = new Set<number>();
   private gestureClips=new Map<Equipment,THREE.AnimationClip[]>();
   private gestureLoading=new Set<Equipment>();
   private targetScene?: THREE.Object3D;
   private targetClips: THREE.AnimationClip[] = [];
   private motionReady = false;
   private worldWeapons = new Map<Equipment, THREE.Object3D>();
-  private worldLoading = new Set<Equipment>();
+  private worldLoading = new Map<Equipment,Promise<void>>();
   private viewRevision = 0;
+  private viewCosmeticRevision = 0;
+  private readonly viewModels = new Map<Equipment, {scene: THREE.Group; animation: ViewAnimation; muzzle?: THREE.Object3D}>();
+  private readonly viewLoading = new Map<Equipment, Promise<void>>();
+  private readonly viewPreloader = new WeaponPreloader();
   private shotEffects: ShotEffects;
+  private readonly killFeed = new KillFeedModel();
+  private characterHits: CharacterHitEffects;
+  private readonly utilityRenderer: UtilityRenderer;
+  private readonly utilityFlash: HTMLDivElement;
+  private readonly utilitySmoke: HTMLDivElement;
   private viewFlashes: MuzzleFlashes;
   private shotCounts = new Map<number, number>();
   private ownTraceColor = new THREE.Color('#fff0c9');
@@ -117,6 +191,11 @@ export class DuelEngine {
   private readonly frustum = new THREE.Frustum();
   private readonly projectionView = new THREE.Matrix4();
   private readonly actorBounds = new THREE.Sphere(new THREE.Vector3(), 1.9);
+  private playerCorpse?: {root: THREE.Group; animator: DuelAnimator; origin: THREE.Vector3; rotation: THREE.Quaternion; orbitYaw: number};
+  private readonly deathFocus = new THREE.Vector3();
+  private readonly deathCamera = new THREE.Vector3();
+  private readonly deathRotation = new THREE.Quaternion();
+  private readonly deathLookMatrix = new THREE.Matrix4();
   private animationTimes = new Map<number, number>();
   private animationClock = 0;
   private viewAnimationElapsed = 0;
@@ -126,6 +205,7 @@ export class DuelEngine {
   private viewMuzzle?: THREE.Object3D;
   private botMuzzles = new Map<number, THREE.Object3D>();
   private readonly roundFlow = new RoundFlow();
+  private readonly stepView = new StepView();
   private sessionStarted = false;
   private deaths = new Map<number, number>();
   private readonly damageFeedback: DamageFeedback;
@@ -147,11 +227,19 @@ export class DuelEngine {
   private radarAt = 0;
   private readonly actorShadows=new ActorShadowRenderer();
   private shadowAt=0;
+  private mapLighting?: PrefireLighting;
+  private previousRecording?: CombatRecording;
+  private completedRound?: DuelStatus['completedRound'];
+  private readonly reviewIdentity = `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+  private replayView?: {recording: CombatRecording; shot?: ReplayShot; time: number; overview: boolean; diagnostic: boolean};
+  private readonly replayScene = new PlaybackScene();
+  private replayRevision = 0;
+  private replayAssets = new Map<Equipment, THREE.Object3D>();
 
   constructor(private readonly host: HTMLElement, private readonly crosshair: HTMLElement,
     private readonly onStatus: (status: DuelStatus) => void,
     private readonly onError: (message: string) => void, private settings: Settings, private config: DuelConfig,
-    private readonly progression?: ProgressionController) {
+    private readonly progression?: ProgressionController, private readonly scenario?: DuelScenario) {
     this.cosmeticKey = JSON.stringify(progression?.getSnapshot().profile.equipped);
     this.sim = this.createSimulation();
     this.radar = new DuelRadar(host);
@@ -169,13 +257,16 @@ export class DuelEngine {
     host.prepend(this.renderer.domElement);
     this.scene.background = new THREE.Color('#9baaa5');
     this.scene.fog = new THREE.Fog('#9baaa5', 36, 75);
-    this.scene.add(new THREE.HemisphereLight('#f5f7ef', '#4d5d55', 2));
-    this.scene.add(new THREE.AmbientLight('#bec9c3', .7));
-    const sun = new THREE.DirectionalLight('#fff4dc', 2.4);
-    sun.position.set(-9, 18, 8); this.scene.add(sun);
+    if (!scenario) {
+      this.scene.add(new THREE.HemisphereLight('#f5f7ef', '#4d5d55', 2));
+      this.scene.add(new THREE.AmbientLight('#bec9c3', .7));
+      const sun = new THREE.DirectionalLight('#fff4dc', 2.4);
+      sun.position.set(-9, 18, 8); this.scene.add(sun);
+    }
     this.viewScene.add(new THREE.HemisphereLight('#ffffff', '#66675b', 1.4));
     const viewLight = new THREE.DirectionalLight('#fff2dd', 2); viewLight.position.set(-2, 4, 2); this.viewScene.add(viewLight);
     this.viewScene.add(this.viewRoot);
+    if (!scenario) {
     const floorMaterial = surface('#a5aea3');
     const floorTexture = new THREE.TextureLoader().load('/textures/floor.webp');
     floorTexture.colorSpace = THREE.SRGBColorSpace;
@@ -208,25 +299,62 @@ export class DuelEngine {
     this.decorateShell();
     const lane = new THREE.Mesh(new THREE.BoxGeometry(.08, .005, 30), surface('#c5c7a6'));
     lane.position.set(0, .002, -4); this.scene.add(lane);
+    }
     for (const object of [...this.scene.children]) if (object instanceof THREE.Mesh) this.shell.add(object);
     this.shell.scale.set(config.arenaScale, 1, config.arenaScale);
     this.scene.add(this.shell); batchStaticMeshes(this.shell);
-    this.scene.add(this.actors, this.covers, this.dynamicCovers, this.effects,this.actorShadows.group);
+    if (scenario) {
+      this.shell.visible = false;
+      this.scene.add(scenario.scene);
+      this.mapLighting = new PrefireLighting(this.scene, scenario.scene);
+      this.mapLighting.configure(this.renderer, settings.quality);
+      this.scene.background = new THREE.Color('#bbc9d1');
+      this.scene.fog = new THREE.Fog('#bbc9d1', 75, 150);
+      this.camera.far = 180;
+      this.camera.updateProjectionMatrix();
+      this.renderer.domElement.setAttribute('aria-label', scenario.kind === 'duel-map' ? 'Dust 2 Duel map chunk' : 'Dust 2 prefire map');
+    }
+    this.scene.add(this.actors, this.covers, this.dynamicCovers, this.effects,this.actorShadows.group, this.replayScene.group);
     this.audio.setAcoustics(this.acoustics);
     this.shotEffects = new ShotEffects(this.effects); this.viewFlashes = new MuzzleFlashes(this.viewScene, 2);
+    this.characterHits = new CharacterHitEffects(this.effects);
+    this.utilityRenderer = new UtilityRenderer(this.effects, this.viewScene);
+    this.utilityFlash = document.createElement('div'); this.utilityFlash.className = 'duel-utility-flash';
+    this.utilityFlash.setAttribute('aria-hidden', 'true'); host.append(this.utilityFlash);
+    this.utilitySmoke = document.createElement('div'); this.utilitySmoke.className = 'duel-utility-interior-smoke';
+    this.utilitySmoke.setAttribute('aria-hidden', 'true'); host.append(this.utilitySmoke);
     this.rebuildCovers();
     this.bindInput();
     this.observer = new ResizeObserver(() => this.resize()); this.observer.observe(host);
     this.resize();
-    void this.loadTarget(); void this.loadViewModel(loadoutWeapon(settings));
+    void Promise.all([this.loadTarget(),this.loadViewModel(loadoutWeapon(settings)),prepareRapier(),
+      this.config.utilitiesEnabled ? this.prepareUtilities() : Promise.resolve()]).then(async()=>{
+      if(this.disposed)return;
+      if(!this.targetScene||!this.loadedViewEquipment)return;
+      this.audio.prepare();
+      if (this.config.utilitiesEnabled && this.settings.volume > 0) void this.audio.preloadUtilities().catch(() => {});
+      await Promise.all([scenario?compileRetainedShaders(this.renderer,this.scene,this.camera):prewarmShaders(this.renderer,this.scene,this.camera),prewarmShaders(this.renderer,this.viewScene,this.viewCamera)]);
+      if(!this.disposed) {
+        warmRetainedFirstUse(this.renderer,this.scene,this.camera,[this.actors]);
+        warmRetainedFirstUse(this.renderer,this.viewScene,this.viewCamera,[this.viewRoot,this.utilityRenderer.held]);
+      }
+      if(this.disposed)return;
+      this.criticalReady=true;this.preloadViewModels();this.report();
+    }).catch(()=>{if(!this.disposed)this.onError('The range could not finish preparing. Reload to retry.');});
     this.report();
     this.frame = requestAnimationFrame(time => this.tick(time));
   }
 
   private createSimulation() {
     const seed = seedForDesign(this.seed++, this.config.mapDesign);
-    const simulation = new DuelSimulation(this.config, seed, duelArena(seed, this.config.arenaScale), this.settings.weapon, this.settings.sidearm, this.settings.primaryEnabled);
+    this.scenario?.configureDuel?.(this.config);
+    const simulation = this.scenario?.create(this.settings, seed) ?? new DuelSimulation(this.config, seed, duelArena(seed, this.config.arenaScale), this.settings.weapon, this.settings.sidearm, this.settings.primaryEnabled);
+    simulation.configureUtilities(this.config);
+    if (this.scenario && this.scenario.kind !== 'duel-map') this.config = simulation.config;
     simulation.playerAspect = this.camera.aspect;
+    simulation.actorHitPose = (actor, time) => this.sampleActorHitPose(actor, time);
+    simulation.actorSensorPose = simulation.actorHitPose;
+    simulation.actorPoseTick = (actor, time) => this.animators.get(actor.id)?.recordPose(actor, time, simulation.actorBodyYaw(actor, time));
     return simulation;
   }
 
@@ -251,7 +379,7 @@ export class DuelEngine {
     if(this.environmentRevision===this.sim.environment.revision)return;
     this.environmentRevision=this.sim.environment.revision;
     syncEnvironmentRenderMap(this.environmentModels,this.sim.environment);
-    this.acoustics.setBoxes(this.sim.arena.solids.filter(blocksMovement));
+    configureArenaAcoustics(this.acoustics,this.sim.arena);
     for(const animator of this.animators.values())animator.setDeathWorld({floor:0,boxes:this.sim.arena.solids.filter(blocksMovement)});
   }
 
@@ -303,63 +431,138 @@ export class DuelEngine {
       const profile=this.progression?.getSnapshot().profile;
       const id = profile ? equippedCosmetic(profile,cosmeticCatalog,'agent')?.id : undefined;
       const instance = id && id !== 'agent-standard' ? await loadAgent(id, undefined, this.actorLoader) : undefined;
-      const {scene, animations} = instance ?? await new GLTFLoader().loadAsync('/models/target.glb');
+      const {scene, animations} = instance ?? await loadCombatModel('/models/target.glb');
       if (this.disposed || revision !== this.agentRevision) {if (instance) instance.dispose(); else disposeResources([scene]); return;}
       const oldScene = this.targetScene, oldInstance = this.agentInstance;
       this.agentInstance = instance;
       this.targetScene = scene; this.targetClips = animations;
       this.rebuildActors();
+      if (!this.sessionStarted || this.paused) prewarmShaders(this.renderer,this.scene,this.camera);
       if (oldInstance) oldInstance.dispose(); else if (oldScene) disposeResources([oldScene]);
-      this.loadWorldWeapons();
+      const weaponsReady=this.loadWorldWeapons();
       try {
-        const motion = await new GLTFLoader().loadAsync('/models/duel-motion.glb?v=extended-actions-2');
-        if (this.disposed || revision !== this.agentRevision) {disposeResources([motion.scene]);return;}
-        this.targetClips = motion.animations;
+        const [motion,flinches]=await Promise.all([loadCombatModel('/models/duel-motion.glb?v=extended-actions-2'),
+          loadCombatModel('/models/duel-flinches.glb').catch(()=>undefined)]);
+        if (this.disposed || revision !== this.agentRevision) {disposeResources([motion.scene,...(flinches?[flinches.scene]:[])]);return;}
+        this.targetClips = [...motion.animations,...(flinches?nativeFlinchClips(flinches):[])];
+        if(flinches)disposeResources([flinches.scene]);
         this.motionReady = true;
         this.rebuildActors();
       } catch { /* Keep the baseline idle/run set if local native clips are absent. */ }
+      await weaponsReady;
+      if (this.config.utilitiesEnabled) await this.prepareUtilities();
     } catch { if (!this.disposed) this.onError('The player model is unavailable. Run npm run assets:build, then reload.'); }
   }
 
   private rebuildActors() {
-    this.animators.forEach(animator => animator.dispose()); this.animators.clear();
-    this.animationTimes.clear();
-    this.botMuzzles.clear();
-    disposeSkeletons(this.actors);
-    this.actors.clear(); this.models.clear(); this.heldWeapons.clear();
+    this.clearActors();
     if (!this.targetScene) return;
-    for (const actor of this.sim.snapshot().slice(1)) {
-      const root = new THREE.Group();
-      const model = cloneSkeleton(this.targetScene);
-      const held = this.attachWorldWeapon(model, actor.equipment);
-      if (held) {held.visible = actor.alive; this.heldWeapons.set(actor.id, held);}
-      const muzzle = held ? muzzleAnchor(held) : undefined;
-      if (muzzle) this.botMuzzles.set(actor.id, muzzle);
-      root.add(model); this.actors.add(root); this.models.set(actor.id, root);
-      const animator=new DuelAnimator(model, this.targetClips, (actor.id * .317) % 1, actor.equipment);
-      animator.addGestureClips(this.gestureClips.get(actor.equipment)??[]);
-      animator.setDeathWorld({floor:0,boxes:this.sim.arena.solids.filter(blocksMovement)});
-      this.animators.set(actor.id,animator);
+    for (const actor of this.sim.snapshot().slice(1)) this.buildActor(actor);
+  }
+
+  private async rebuildActorsPrepared(signal:AbortSignal) {
+    this.clearActors();
+    if (!this.targetScene) return;
+    const revision=this.actorBuildRevision;
+    for(const actor of this.sim.snapshot().slice(1)) {
+      await backgroundFrame(signal);
+      if(this.disposed||revision!==this.actorBuildRevision)return;
+      this.buildActor(actor);
     }
   }
 
+  private clearActors() {
+    this.actorBuildRevision++;
+    this.clearPlayerCorpse();
+    this.animators.forEach(animator => animator.dispose()); this.animators.clear();
+    this.animationTimes.clear();
+    this.hitboxes.clear(); this.poseTimes.clear(); this.sampledPoses.clear();
+    this.botMuzzles.clear();
+    for (const mesh of this.heldGrenades.values()) this.utilityRenderer.releaseWorldHeld(mesh);
+    this.heldGrenades.clear();
+    this.utilityActorActions.clear(); this.utilityThrownAt.clear();
+    disposeSkeletons(this.actors);
+    this.actors.clear(); this.models.clear(); this.heldWeapons.clear(); this.actorWeaponCache.clear(); this.actorEquipment.clear();
+  }
+
+  private buildActor(actor:DuelActorSnapshot) {
+    if(!this.targetScene)return;
+    const root = new THREE.Group();
+    const model = cloneSkeleton(this.targetScene);
+    const held = this.attachWorldWeapon(model, actor.equipment);
+    if (held) {
+      held.visible = actor.alive && !actor.utility; this.heldWeapons.set(actor.id, held);
+      if (this.worldWeapons.has(actor.equipment) || actor.equipment === 'm4a1s') {
+        this.actorWeaponCache.set(actor.id, new Map([[actor.equipment, held]])); this.actorEquipment.set(actor.id, actor.equipment);
+      }
+    }
+    const utilityMount = model.getObjectByName('hand_R');
+    if (utilityMount) this.heldGrenades.set(actor.id, this.utilityRenderer.createWorldHeld(utilityMount));
+    const muzzle = held ? muzzleAnchor(held) : undefined;
+    if (muzzle) this.botMuzzles.set(actor.id, muzzle);
+    root.add(model); this.actors.add(root); this.models.set(actor.id, root);
+    const animator=new DuelAnimator(model, this.targetClips, (actor.id * .317) % 1, actor.equipment);
+    animator.addGestureClips(this.gestureClips.get(actor.equipment)??[]);
+    animator.addGestureClips(this.utilityGestures);
+    animator.setDeathWorld({floor:0,boxes:this.sim.arena.solids.filter(blocksMovement)});
+    let nextBodySound=0;
+    animator.onDeathContact=contact=>{
+      if(this.animationClock<nextBodySound||!['pelvis','spine_2','head_0'].includes(contact.body))return;
+      nextBodySound=this.animationClock+1;
+      this.audio.playBodyContact(contact.speed,this.settings.volume,this.soundLocation(contact.point));
+    };
+    this.animators.set(actor.id,animator);
+    animator.recordPose(actor, this.sim.time, this.sim.actorBodyYaw(actor));
+    const hitboxes = new NativeActorHitboxes(root);
+    if (hitboxes.pose.capsules.length === 19) this.hitboxes.set(actor.id, hitboxes);
+  }
+
+  // Sample on the authoritative firing tick, not from the last rendered frame.
+  // Reuse the rig and capsule buffers; no second skeleton or per-frame ray sweep.
+  private sampleActorHitPose(actor: DuelActorSnapshot, time = this.sim.time) {
+    const hitboxes = this.hitboxes.get(actor.id), model = this.models.get(actor.id), animator = this.animators.get(actor.id);
+    if (!hitboxes || !model || !animator || !actor.alive) return;
+    model.position.set(actor.position.x, actor.feet, actor.position.z);
+    const bodyYaw = this.sim.actorBodyYaw(actor, time);
+    model.rotation.y = bodyYaw - Math.PI;
+    const weapon = this.sim.actors[actor.id].weapon;
+    animator.update(actor, 0, undefined,
+      {reloadRemaining: Math.max(0, weapon.reloadUntil - this.sim.time), reloadDuration: weapon.reload.phaseDuration || equipmentStats(actor.equipment).reload,
+        reloadPhase: weapon.reloadPhase, reloadProgress: weapon.reload.progress, bodyYaw, poseTime: time});
+    this.poseTimes.set(actor.id, time);
+    this.sampledPoses.add(actor.id);
+    model.updateWorldMatrix(true, true);
+    return hitboxes.capture();
+  }
+
   private loadWorldWeapons() {
-    for (const weapon of new Set(this.sim.snapshot().slice(1).map(actor => actor.equipment))) {
+    const jobs:Promise<void>[]=[];
+    for (const weapon of new Set(this.sim.actors.slice(1).flatMap(actor => [actor.weapon.id, ...actor.inventory.keys()]))) {
       this.loadGesturePack(weapon);
       const cached = this.worldWeapons.get(weapon);
       if (cached) {this.worldWeapons.delete(weapon); this.worldWeapons.set(weapon, cached); continue;}
-      if (this.worldLoading.has(weapon)) continue;
-      this.worldLoading.add(weapon);
-      void new GLTFLoader().loadAsync(`/models/${weapon}.glb`).then(({scene}) => {
+      const pending=this.worldLoading.get(weapon);if(pending){jobs.push(pending);continue;}
+      const job=loadCombatModel(`/models/${weapon}.glb`).then(({scene}) => {
         if (this.disposed) {disposeResources([scene]); return;}
         this.worldWeapons.set(weapon, scene);
-        this.rebuildActors();
+        for(const actor of this.sim.snapshot().slice(1)) {
+          if(actor.equipment!==weapon)continue;
+          const model=this.models.get(actor.id);if(!model)continue;
+          const previous=this.heldWeapons.get(actor.id);if(previous)previous.visible=false;
+          const held=this.attachWorldWeapon(model,weapon);if(!held)continue;
+          held.visible=actor.alive&&!actor.utility;this.heldWeapons.set(actor.id,held);
+          const cache = this.actorWeaponCache.get(actor.id) ?? new Map<Equipment, THREE.Object3D>();
+          cache.set(weapon, held); this.actorWeaponCache.set(actor.id, cache); this.actorEquipment.set(actor.id, weapon);
+          const muzzle=muzzleAnchor(held);if(muzzle)this.botMuzzles.set(actor.id,muzzle);
+        }
         this.trimWorldWeapons();
       }).catch(() => {
         if (!this.disposed) this.onError(`The ${weapon} world model is unavailable. Run npm run assets:build, then reload.`);
       }).finally(() => this.worldLoading.delete(weapon));
+      this.worldLoading.set(weapon,job);jobs.push(job);
     }
     this.trimWorldWeapons();
+    return Promise.all(jobs).then(()=>{});
   }
 
   private loadGesturePack(equipment:Equipment) {
@@ -379,7 +582,7 @@ export class DuelEngine {
   }
 
   private trimWorldWeapons() {
-    const active = new Set(this.sim.snapshot().slice(1).map(actor => actor.equipment));
+    const active = new Set(this.sim.actors.slice(1).flatMap(actor => [actor.weapon.id, ...actor.inventory.keys()]));
     for (const drop of this.sim.drops) if (!drop.picked) active.add(drop.equipment);
     for (const [weapon, scene] of this.worldWeapons) {
       if (this.worldWeapons.size <= 8) break;
@@ -388,12 +591,11 @@ export class DuelEngine {
     }
   }
 
-  private attachWorldWeapon(model: THREE.Object3D, weapon: Equipment) {
+  private attachWorldWeapon(model: THREE.Object3D, weapon: Equipment, source = this.worldWeapons.get(weapon)) {
     // GLTFLoader sanitizes periods in animation node names.
     const held = model.getObjectByName('held_weapon_target001') ?? model.getObjectByName('held_weapon_target.001');
     if (weapon === 'm4a1s' && held) return held;
     const mount = model.getObjectByName('wpn');
-    const source = this.worldWeapons.get(weapon);
     if (!mount || !source) return held;
     if (held) held.visible = false;
     const replacement = source.clone(true);
@@ -404,26 +606,89 @@ export class DuelEngine {
     return replacement;
   }
 
+  private async prepareViewModel(weapon: Equipment) {
+    if (this.viewModels.has(weapon)) return;
+    let pending = this.viewLoading.get(weapon);
+    if (!pending) {
+      const cosmeticRevision = this.viewCosmeticRevision;
+      const profile = this.progression?.getSnapshot().profile;
+      const asset = profile ? cosmeticAsset(profile, weapon) : weapon;
+      pending = (async () => {
+        const {scene, animations} = await loadCombatModel(`/models/view-${asset}.glb`);
+        prepareNativeViewAssembly(scene);
+        try {if (profile) await applyCosmetic(scene, profile, weapon);}
+        catch {disposeResources([scene]); throw new Error('Cosmetic could not load');}
+        if (this.disposed || cosmeticRevision !== this.viewCosmeticRevision) {disposeResources([scene]); return;}
+        scene.rotation.y = Math.PI;
+        const model = {scene, animation: new ViewAnimation(scene, animations), muzzle: muzzleAnchor(scene)};
+        if (weapon === 'elite') {muzzleAnchor(scene, 'left'); muzzleAnchor(scene, 'right');}
+        this.viewModels.set(weapon, model);
+        // Snapshot the new assembly with the real view lights, then detach before the next render.
+        this.viewScene.add(scene);
+        prewarmShaders(this.renderer, this.viewScene, this.viewCamera);
+        scene.removeFromParent();
+      })().finally(() => {if (cosmeticRevision === this.viewCosmeticRevision) this.viewLoading.delete(weapon);});
+      this.viewLoading.set(weapon, pending);
+    }
+    await pending;
+  }
+
+  private trimViewModels() {
+    // Each native GLB includes its own glove textures; bound retained GPU assemblies.
+    for (const [weapon, model] of this.viewModels) {
+      if (this.viewModels.size <= 3) break;
+      if (weapon === this.renderedEquipment || weapon === this.loadedViewEquipment) continue;
+      this.viewModels.delete(weapon); model.animation.dispose(); disposeResources([model.scene]);
+    }
+  }
+
+  private prepareUtilities() {
+    return this.utilityPreparing ??= Promise.all([this.utilityRenderer.prepare(), loadCombatModel('/models/utility-gestures.glb')])
+      .then(async ([, asset]) => {
+        disposeResources([asset.scene]); if (this.disposed) return;
+        this.utilityGestures = nativeGestureClips(asset);
+        for (const animator of this.animators.values()) animator.addGestureClips(this.utilityGestures);
+        await this.utilityRenderer.setGloves(this.progression?.getSnapshot().profile);
+      }).catch(error => {this.utilityPreparing = undefined; throw error;});
+  }
+
+  private preloadViewModels() {
+    if (this.disposed) return;
+    const {primary, sidearm} = this.sim.loadout;
+    this.viewPreloader.start([...(primary ? [primary] : []), ...(sidearm ? [sidearm] : []), 'knife'], async weapon => {
+      await this.prepareViewModel(weapon); this.trimViewModels();
+    }, () => !this.disposed && (!this.sessionStarted || this.paused));
+  }
+
+  private clearViewModels() {
+    this.viewPreloader.cancel(); this.viewCosmeticRevision++; this.viewRevision++;
+    this.viewRoot.clear(); this.viewLoading.clear();
+    this.viewAnimation = undefined; this.loadedViewEquipment = undefined; this.viewMuzzle = undefined;
+    for (const model of this.viewModels.values()) {model.animation.dispose(); disposeResources([model.scene]);}
+    this.viewModels.clear();
+  }
+
   private async loadViewModel(weapon: Equipment) {
+    if (this.pendingInspect !== weapon) this.pendingInspect = undefined;
     this.renderedEquipment = weapon;
     const revision = ++this.viewRevision;
     try {
-      const profile = this.progression?.getSnapshot().profile;
-      const asset = profile ? cosmeticAsset(profile, weapon) : weapon;
-      const {scene, animations} = await new GLTFLoader().loadAsync(`/models/view-${asset}.glb`);
-      prepareNativeViewAssembly(scene);
-      try {if (profile) await applyCosmetic(scene, profile, weapon);}
-      catch {disposeResources([scene]); throw new Error('Cosmetic could not load');}
-      if (this.disposed || revision !== this.viewRevision) {disposeResources([scene]); return;}
-      this.viewAnimation?.dispose();
-      disposeResources([this.viewRoot]);
-      this.viewRoot.clear(); scene.rotation.y = Math.PI; this.viewRoot.add(scene);
-      this.viewAnimation = new ViewAnimation(scene, animations);
-      this.viewMuzzle = muzzleAnchor(scene);
-      if (weapon === 'elite') {muzzleAnchor(scene, 'left'); muzzleAnchor(scene, 'right');}
+      // No await or GLTF decode on a hot switch: attach the existing rig immediately.
+      if (!this.viewModels.has(weapon)) await this.prepareViewModel(weapon);
+      if (this.disposed || revision !== this.viewRevision) {this.trimViewModels(); return;}
+      const model = this.viewModels.get(weapon);
+      if (!model) return;
+      this.viewModels.delete(weapon); this.viewModels.set(weapon, model);
+      this.viewAnimation?.cancel();
+      this.viewRoot.clear(); this.viewRoot.add(model.scene);
+      this.viewAnimation = model.animation; this.viewAnimationElapsed = 0;
+      this.loadedViewEquipment = weapon;
+      this.viewMuzzle = model.muzzle;
       const duration = Math.max(.01, this.sim.actors[0].equipReadyAt - this.sim.time);
       if (this.pickupDrawing) this.viewAnimation.playPickup(duration); else this.viewAnimation.playDraw(duration);
       this.pickupDrawing = false;
+      if (this.pendingInspect === weapon && this.sim.actors[0].weapon.id === weapon) {this.pendingInspect = undefined; this.inspect();}
+      this.trimViewModels();
     } catch { if (!this.disposed && revision === this.viewRevision) this.onError('The weapon model is unavailable. Run npm run assets:build, then reload.'); }
   }
 
@@ -432,8 +697,11 @@ export class DuelEngine {
     if (key === this.cosmeticKey) return;
     const oldAgent = JSON.parse(this.cosmeticKey || '{}')?.agent;
     this.cosmeticKey = key;
+    this.clearViewModels();
     if (oldAgent !== this.progression?.getSnapshot().profile.equipped.agent) await this.loadTarget();
     await this.loadViewModel(this.sim.actors[0].weapon.id);
+    await this.utilityRenderer.setGloves(this.progression?.getSnapshot().profile);
+    this.preloadViewModels();
   }
 
   private xpSetup(): DuelXpSetup {
@@ -443,6 +711,7 @@ export class DuelEngine {
 
   private beginProgression() {
     this.xpDamage.clear();
+    if (this.scenario && this.scenario.kind !== 'duel-map') return;
     this.xpAttempt = this.progression?.beginDuel(this.xpSetup(), String(this.xpRevision)) ?? null;
   }
 
@@ -451,20 +720,104 @@ export class DuelEngine {
     const weaponChanged = settings.weapon !== this.settings.weapon || settings.sidearm !== this.settings.sidearm || settings.primaryEnabled !== this.settings.primaryEnabled;
     const qualityChanged = settings.quality !== this.settings.quality;
     this.settings = settings;
+    if (this.scenario) this.config = {...this.config, shortcutProtection: settings.protectShortcuts};
+    if (weaponChanged) {
+      if(this.loadingMap)this.pendingSetupRestart=true;else this.restart(false,false);
+    }
     if (weaponChanged) void this.loadViewModel(loadoutWeapon(settings));
-    if (weaponChanged) this.restart();
-    if (qualityChanged) this.metrics.resetResolution();
+    if (weaponChanged) this.preloadViewModels();
+    if (qualityChanged) {
+      this.metrics.resetResolution();
+      this.mapLighting?.configure(this.renderer, settings.quality);
+    }
     this.meter.configure(settings.showFps);
     this.resize();
   }
 
   setConfig(config: DuelConfig) {
     if (config === this.config) return;
+    const changeMap = this.scenario?.kind === 'duel-map' && config.realMapChunk !== this.config.realMapChunk;
+    const displayOnly=this.scenario?.kind==='duel-map' &&
+      JSON.stringify({...config,routeGuide:false})===JSON.stringify({...this.config,routeGuide:false});
     this.config = config;
-    this.restart();
+    if (config.utilitiesEnabled) void this.prepareUtilities().catch(() => this.onError('Grenade models could not load. Reload to retry.'));
+    this.scenario?.configureDuel?.(config);
+    if(displayOnly){this.report();return;}
+    if(this.loadingMap){if(changeMap)this.pendingMapSelection=true;else this.pendingSetupRestart=true;return;}
+    this.restart(false,changeMap);
   }
 
-  restart(continuous = false) {
+  restart(continuous = false, changeMap = true) {
+    if (this.loadingMap) return;
+    if(continuous && this.sim.postWinPlayable && this.scenario?.stageRound) {
+      if(this.nextRoundAbort)return;
+      const controller=new AbortController();this.nextRoundAbort=controller;this.nextRoundError=undefined;this.report();
+      void this.scenario.stageRound(this.seed,controller.signal,
+        (scene,signal)=>prepareSceneGpu(this.renderer,scene,this.scene,this.camera,signal,this.settings.quality)).then(()=>{
+        if(this.disposed||controller.signal.aborted)return;
+        this.nextRoundAbort=undefined;this.activateRound(continuous,changeMap);
+      }).catch(error=>{
+        if(this.disposed||controller.signal.aborted)return;
+        this.nextRoundAbort=undefined;this.roundFlow.reset();
+        this.nextRoundError=error instanceof Error?error.message:'Next round unavailable';this.report();
+      });
+      return;
+    }
+    this.nextRoundAbort?.abort();this.nextRoundAbort=undefined;
+    this.activateRound(continuous,changeMap);
+  }
+
+  private activateRound(continuous:boolean,changeMap:boolean) {
+    this.seamlessHandoff=continuous&&this.sim.postWinPlayable;
+    this.nextRoundError=undefined;
+    this.closeReplay();
+    this.mapAbort = new AbortController();this.loadingMap=true;
+    this.sim.pause();this.audio.stopVoices();this.report();
+    const preparation=changeMap&&this.scenario?.prepareRound
+      ? this.scenario.prepareRound(this.seed,this.mapAbort.signal):Promise.resolve(false);
+    void preparation.then(async changed=>{
+      if(this.disposed)return;
+      if(changed) {
+        if(this.mapLighting) {
+          this.scene.remove(this.mapLighting.sky,this.mapLighting.fill,this.mapLighting.sun,this.mapLighting.sun.target);
+          this.mapLighting.dispose();
+        }
+        this.mapLighting=takePreparedLighting(this.scene,this.scenario!.scene)??new PrefireLighting(this.scene,this.scenario!.scene);
+        this.mapLighting.configure(this.renderer,this.settings.quality);
+      }
+      const pausedDuringLoad=this.paused;
+      const weaponsReady=this.finishRestart(continuous,true);
+      await this.rebuildActorsPrepared(this.mapAbort!.signal);
+      await weaponsReady;
+      if(this.disposed)return;
+      const player=this.sim.snapshot()[0];
+      this.camera.position.copy(player.position);this.camera.rotation.set(player.pitch,player.yaw,0,'YXZ');this.camera.updateMatrixWorld();
+      this.syncActors(this.sim.snapshot(),0);
+      await compileRetainedShaders(this.renderer,this.scene,this.camera);
+      if(this.disposed)return;
+      this.mapLighting?.beginFrame(this.renderer,this.camera.position);
+      warmRetainedFirstUse(this.renderer,this.scene,this.camera,[this.actors,this.scenario?.scene.getObjectByName('duel-route-arrows')].filter((root):root is THREE.Object3D=>!!root));
+      this.loadingMap=false;this.seamlessHandoff=false;
+      if(continuous){this.sim.start();this.beginProgression();this.updateMovement();}
+      this.last=0;this.report();
+      if(continuous && (pausedDuringLoad||this.paused))this.pause();
+      if(this.pendingMapSelection){this.pendingMapSelection=false;this.pendingSetupRestart=false;this.restart(false,true);}
+      else if(this.pendingSetupRestart){this.pendingSetupRestart=false;this.restart(false,false);}
+    }).catch(error=>{
+      if(this.disposed || this.mapAbort?.signal.aborted)return;
+      this.loadingMap=false;this.seamlessHandoff=false;
+      if(this.pendingMapSelection){this.pendingMapSelection=false;this.pendingSetupRestart=false;this.restart(false,true);return;}
+      if(this.pendingSetupRestart){this.pendingSetupRestart=false;this.restart(false,false);return;}
+      this.pause();
+      this.onError(error instanceof Error ? error.message : 'Could not load this map chunk.');
+    });
+  }
+
+  private finishRestart(continuous = false, deferStart = false) {
+    const recording = this.sim.replay.release();
+    if (recording.shots.length || recording.frames.length > 1) this.previousRecording = recording;
+    this.closeReplay();
+    this.scenario?.beforeRestart?.(this.sim.outcome, continuous);
     if (this.xpAttempt) this.progression?.cancelAttempt(this.xpAttempt);
     this.xpAttempt = null; this.xpRevision++;
     this.paused = false; this.pointer = null; this.pickupDrawing = false; this.viewAnimation?.cancel();
@@ -476,19 +829,26 @@ export class DuelEngine {
       this.releaseShortcuts();
       if (document.pointerLockElement === this.renderer.domElement) document.exitPointerLock();
     }
-    this.sim = this.createSimulation(); this.kills = this.damage = 0;
+    this.sim = this.createSimulation(); this.kills = this.damage = 0; this.lastShot = undefined;
+    this.stepView.reset();
     this.shell.scale.set(this.config.arenaScale, 1, this.config.arenaScale);
     this.damageFeedback.clear(); this.wasReloading = false;
     this.roundFlow.reset(); this.deaths.clear();
     this.caption = ''; this.captionUntil = 0; this.kick = 0;
-    this.audio.stopVoices();this.clearEffects(); this.rebuildCovers(); this.rebuildActors(); this.report();
-    this.loadWorldWeapons();
-    if (continuous) {this.sim.start(); this.beginProgression(); this.updateMovement(); this.report();}
+    this.audio.stopVoices();this.clearEffects(); this.rebuildCovers();
+    if(!deferStart)this.rebuildActors();
+    this.report();
+    const weaponsReady=this.loadWorldWeapons();
+    this.last=0;
+    if (continuous && !deferStart) {this.sim.start(); this.beginProgression(); this.updateMovement(); this.report();}
+    return weaponsReady;
   }
 
   async enter() {
-    if (this.disposed || this.entering) return;
+    if (this.disposed || this.entering || this.loadingMap || !this.criticalReady) return;
+    this.closeReplay();
     const revision = ++this.enterRevision; this.entering = true;
+    this.last=0;
     if (this.sim.phase === 'ready') {this.sim.start(); this.beginProgression();} else this.sim.resume();
     this.sessionStarted = true;
     this.paused = false;
@@ -499,15 +859,17 @@ export class DuelEngine {
     const pointerLock = !coarse ? requestRawLock(this.renderer.domElement) : Promise.resolve<'drag'>('drag');
     const guard = this.shortcuts.enter(!coarse && supported && this.config.shortcutProtection);
     void this.audio.unlock(this.settings.weapon);
+    if (this.config.utilitiesEnabled && this.settings.volume > 0) void this.audio.preloadUtilities().catch(() => {});
     void this.audio.unlock(this.settings.sidearm); void this.audio.unlock('knife');
-    for (const actor of this.sim.actors.slice(1)) if (actor.weapon.id !== this.settings.weapon) void this.audio.unlock(actor.weapon.id);
+    for (const weapon of new Set(this.sim.actors.slice(1).flatMap(actor => [actor.weapon.id, ...actor.inventory.keys()])))
+      if (weapon !== this.settings.weapon) void this.audio.unlock(weapon);
     try {
       const mode = await pointerLock;
       await guard;
       if (revision !== this.enterRevision || this.disposed || this.paused) return;
       if (!coarse && supported && (mode === 'drag' || document.pointerLockElement !== this.renderer.domElement)) {
         this.pause(); this.inputName = 'Mouse capture blocked. Click Resume duel again.';
-      } else this.inputName = coarse ? 'Touch' : !supported ? 'Drag aim (mouse capture unsupported)' : mode === 'raw' ? 'Raw mouse' : 'Standard mouse';
+      } else this.inputName = coarse ? 'Touch' : !supported ? 'Drag aim (mouse capture unsupported)' : mode === 'raw' ? 'Raw mouse (verify cm/360)' : 'Standard mouse (raw unverified)';
       this.report();
     } finally {
       if (revision === this.enterRevision) this.entering = false;
@@ -521,12 +883,13 @@ export class DuelEngine {
   }
 
   pause() {
-    if (this.sim.phase === 'ready') return;
+    if (this.sim.phase === 'ready'&&!this.loadingMap) return;
     this.paused = true; this.sim.pause(); this.keys.clear(); this.updateMovement();
     this.caption = ''; this.captionUntil = 0;
+    for(const action of this.utilitySounds.values())action.timeline.cancel();this.utilitySounds.clear();this.audio.cancelUtilityCues();
     this.damageFeedback.clear();
     this.releaseShortcuts();
-    this.sim.command(0, {fireHeld: false});
+    this.sim.command(0, {fireHeld: false, secondaryHeld: false});
     if (document.pointerLockElement === this.renderer.domElement) document.exitPointerLock();
     this.report();
   }
@@ -537,20 +900,38 @@ export class DuelEngine {
 
   private bindInput() {
     const canvas = this.renderer.domElement;
+    const weaponSlot = (): Slot => {
+      const id = this.sim.actors[0].weapon.id;
+      return id === 'knife' ? 3 : id === 'zeus' ? 4 : id === this.sim.loadout.sidearm ? 2 : 1;
+    };
+    let observedSlot = weaponSlot(), previousSlot: Slot = observedSlot === 1 ? 2 : 1;
+    this.cleanup.push(bindGameplayWheel(canvas, () => this.settings.controls,
+      () => this.sim.playable && !this.paused && !this.entering, actions => {
+        const currentSlot = weaponSlot();
+        if (currentSlot !== observedSlot) {previousSlot = observedSlot; observedSlot = currentSlot;}
+        if (actions.includes('jump')) this.sim.command(0, {jumpPressed: true});
+        if (actions.includes('reload')) this.sim.command(0, {reloadPressed: true});
+        if (actions.includes('inspect')) this.inspect();
+        if (actions.includes('use')) this.sim.command(0, {usePressed: true});
+        if (actions.includes('pickup')) this.pickup();
+        if (actions.includes('drop')) this.sim.command(0, {dropPressed: true});
+        this.equipControls(actions, currentSlot);
+        if (actions.includes('lastWeapon')) this.equip(this.sim.selectedUtility ? currentSlot : previousSlot);
+      }));
     this.listen(canvas, 'pointerdown', ((event: PointerEvent) => {
-      if (event.button === 2 && this.sim.phase === 'fighting' && !this.paused) {
+      if (event.button === 2 && this.sim.playable && !this.paused) {
         event.preventDefault(); this.sim.command(0, {secondaryPressed: true, secondaryHeld: true}); return;
       }
       if (event.button !== 0) return;
       if (this.sim.phase === 'ready' || this.paused) { void this.enter(); return; }
-      if (this.sim.phase !== 'fighting') return;
+      if (!this.sim.playable) return;
       this.pointer = event.pointerId; this.pointerX = event.clientX; this.pointerY = event.clientY;
       if (event.pointerType !== 'mouse') this.sim.command(0, {firePressed: true});
       else this.sim.command(0, {fireHeld: true, firePressed: true});
       if (!document.pointerLockElement) canvas.setPointerCapture(event.pointerId);
     }) as EventListener);
     this.listen(document, 'pointermove', ((event: PointerEvent) => {
-      if (this.sim.phase !== 'fighting' || this.paused) return;
+      if (!this.sim.playable || this.paused) return;
       let dx = 0, dy = 0;
       if (document.pointerLockElement === canvas && event.pointerType === 'mouse') {
         dx = event.movementX; dy = event.movementY;
@@ -558,9 +939,13 @@ export class DuelEngine {
         dx = event.clientX - this.pointerX; dy = event.clientY - this.pointerY;
         this.pointerX = event.clientX; this.pointerY = event.clientY;
       }
-      const scale = (event.pointerType === 'mouse' ? mouseAngle(1, this.settings.sensitivity) : .0025) * this.sim.actors[0].weapon.actions.sensitivityScale;
-      if (dx || dy) this.sim.command(0, {yawDelta: -dx * scale,
-        pitchDelta: -dy * scale * (this.settings.invertY ? -1 : 1)});
+      if (dx || dy) {
+        const actions = this.sim.actors[0].weapon.actions;
+        const utility = !!this.sim.selectedUtility;
+        const touchScale = .0025 * (utility ? 1 : actions.sensitivityScale);
+        this.sim.command(0, event.pointerType === 'mouse' ? mouseLookDelta(dx, dy, this.settings, utility ? 90 : actions.horizontalFov) :
+          {yawDelta: -dx * touchScale, pitchDelta: -dy * touchScale * (this.settings.invertY ? -1 : 1)});
+      }
     }) as EventListener);
     this.listen(document, 'pointerup', ((event: PointerEvent) => {
       if (event.button === 2) {this.sim.command(0, {secondaryHeld: false}); return;}
@@ -570,25 +955,35 @@ export class DuelEngine {
     this.listen(canvas, 'pointercancel', (() => this.pause()) as EventListener);
     this.listen(canvas, 'contextmenu', (event => event.preventDefault()) as EventListener);
     this.listen(window, 'keydown', ((event: KeyboardEvent) => {
-      if (event.ctrlKey && event.code === 'KeyW' && this.sessionStarted) event.preventDefault();
+      if (ignoreGameplayKey(event)) return;
       if (event.code === 'Escape' && this.sim.phase !== 'ready') {this.pause(); return;}
-      if (this.sim.phase === 'ready' || this.paused || event.target instanceof HTMLElement && event.target.matches('input,select,button,textarea')) return;
-      if (['KeyW', 'KeyA', 'KeyS', 'KeyD', 'ShiftLeft', 'ShiftRight', 'ControlLeft', 'ControlRight', 'KeyC', 'Space'].includes(event.code)) {
-        event.preventDefault(); this.keys.add(event.code); this.updateMovement();
-      }
-      if (event.code === 'Space' && !event.repeat) this.sim.command(0,{jumpPressed:true});
-      if (event.code === 'KeyR' && !event.repeat) this.sim.command(0, {reloadPressed: true,reloadHeld:true});
-      if (event.code === 'KeyF' && !event.repeat) {event.preventDefault(); this.inspect();}
-      if (event.code === 'KeyE' && !event.repeat) {event.preventDefault(); this.sim.command(0,{usePressed:true});this.pickup();}
-      if (event.code === 'KeyG' && !event.repeat) {event.preventDefault();this.sim.command(0,{dropPressed:true});}
-      if (['Digit1', 'Digit2', 'Digit3', 'Digit4'].includes(event.code) && !event.repeat) this.equip(Number(event.code.slice(-1)) as Slot);
+      if (this.sim.phase === 'ready' || this.paused) return;
+      const currentSlot = weaponSlot();
+      if (currentSlot !== observedSlot) {previousSlot = observedSlot; observedSlot = currentSlot;}
+      const actions = actionsForCode(this.settings.controls, event.code);
+      if (!actions.length) return;
+      event.preventDefault(); this.keys.add(event.code); this.updateMovement();
+      if (event.repeat) return;
+      if (actions.includes('jump')) this.sim.command(0, {jumpPressed: true});
+      if (actions.includes('reload')) this.sim.command(0, {reloadPressed: true, reloadHeld: true});
+      if (actions.includes('inspect')) this.inspect();
+      if (actions.includes('use')) this.sim.command(0, {usePressed: true});
+      if (actions.includes('pickup')) this.pickup();
+      if (actions.includes('drop')) this.sim.command(0, {dropPressed: true});
+      this.equipControls(actions, currentSlot);
+      if (actions.includes('lastWeapon')) this.equip(this.sim.selectedUtility ? currentSlot : previousSlot);
     }) as EventListener);
-    this.listen(window, 'keyup', ((event: KeyboardEvent) => {this.keys.delete(event.code);if(event.code==='KeyR')this.sim.command(0,{reloadHeld:false}); this.updateMovement();}) as EventListener);
+    this.listen(window, 'keyup', ((event: KeyboardEvent) => {
+      this.keys.delete(event.code);
+      if (actionsForCode(this.settings.controls, event.code).includes('reload')) this.sim.command(0, {reloadHeld: false});
+      this.updateMovement();
+    }) as EventListener);
+    this.listen(window, 'focusin', (event => {if (!this.paused && isEditingTarget(event.target)) this.pause();}) as EventListener);
     this.listen(window, 'blur', (() => {if (!this.entering) this.pause();}) as EventListener);
     this.listen(document, 'visibilitychange', (() => {if (document.hidden) this.pause();}) as EventListener);
     this.listen(document, 'pointerlockchange', (() => {
       if (this.entering) return;
-      if (document.pointerLockElement !== canvas && this.inputName !== 'Drag aim' && this.sim.phase !== 'ready') this.pause();
+      if (document.pointerLockElement !== canvas && !this.inputName.startsWith('Drag aim') && this.inputName !== 'Touch' && this.sim.phase !== 'ready') this.pause();
     }) as EventListener);
     this.listen(document, 'fullscreenchange', (() => {
       if (!this.entering && this.shortcuts.protected && !document.fullscreenElement && this.sim.phase !== 'ready') this.pause();
@@ -596,22 +991,126 @@ export class DuelEngine {
   }
 
   private updateMovement() {
-    this.sim.command(0, {forward: +this.keys.has('KeyW') - +this.keys.has('KeyS'),
-      side: +this.keys.has('KeyD') - +this.keys.has('KeyA'),
-      walk: this.keys.has('ShiftLeft') || this.keys.has('ShiftRight'),
-      crouch: this.keys.has('ControlLeft') || this.keys.has('ControlRight') || this.keys.has('KeyC'), jump: this.keys.has('Space')});
+    this.sim.command(0, movementControls(this.settings.controls, this.keys));
   }
 
-  equip(slot: Slot) {this.sim.command(0,{equipSlot:slot});if(this.sim.phase==='ready')this.sim.equipPlayer(slot); this.report(); this.renderer.domElement.focus({preventScroll: true});}
+  openReplay() {
+    this.pause();
+    const current = this.sim.replay.export();
+    const recording = this.sim.phase !== 'ready' && (current.frames.length > 1 || current.shots.length) ? current : this.previousRecording;
+    if (!recording) return;
+    const revision = ++this.replayRevision;
+    this.replayScene.setActorFactory((actor, source) => this.createReplayActor(actor, source));
+    void this.replayScene.prepareUtilities(recording).catch(()=>{});
+    for (const equipment of new Set(recording.frames.flatMap(frame => frame.actors.map(actor => actor.equipment)))) {
+      if (this.worldWeapons.has(equipment) || this.replayAssets.has(equipment)) continue;
+      void new GLTFLoader().loadAsync(`/models/${equipment}.glb`).then(({scene}) => {
+        if (this.disposed || revision !== this.replayRevision) {disposeResources([scene]); return;}
+        this.replayAssets.set(equipment, scene);
+        this.replayScene.setActorFactory((actor, source) => this.createReplayActor(actor, source));
+      }).catch(() => { /* Keep the recorded body visible if a weapon asset is unavailable. */ });
+    }
+    return recording;
+  }
+  private createReplayActor(actor: ReplayActor, recording: CombatRecording): ReplayVisual | undefined {
+    if (!this.targetScene) return;
+    const model = cloneSkeleton(this.targetScene), root = new THREE.Group(); root.add(model);
+    const weapon = this.attachWorldWeapon(model, actor.equipment, this.replayAssets.get(actor.equipment) ?? this.worldWeapons.get(actor.equipment));
+    const animator = new DuelAnimator(model, this.targetClips, 0, actor.equipment);
+    animator.addGestureClips(this.gestureClips.get(actor.equipment) ?? []);
+    animator.addGestureClips(this.utilityGestures);
+    for (const frame of recording.frames) {
+      const sample = frame.actors.find(item => item.id === actor.id);
+      if (sample) animator.recordPose(sample, frame.time, sample.bodyYaw ?? sample.yaw);
+    }
+    let utilityGesture = false;
+    return {root, utilityMount:model.getObjectByName('hand_R'),weapons:weapon?[weapon]:[],
+      updateUtility:pose=>{
+        if(pose)animator.playAction(pose.kind==='molotov'?'utility-molotov':'utility',pose.action,
+          {startedAt:pose.startedAt,duration:pose.duration,crouched:pose.crouched});
+        else if(utilityGesture)animator.playAction(actor.equipment,'cancel');
+        utilityGesture=!!pose;
+      },
+      update: (sample, time, deathAge) => {
+        animator.update(utilityGesture?{...sample,action:undefined,reloading:false}:sample,0,deathAge,
+          {bodyYaw:sample.bodyYaw??sample.yaw,poseTime:time});
+      }, dispose: () => {animator.dispose(); disposeSkeletons(root); root.removeFromParent();}};
+  }
+  showReplay(recording: CombatRecording, shot: ReplayShot | undefined, time: number, overview: boolean, diagnostic = false) {
+    this.audio.setFlashExposure(0);
+    this.scenario?.replayMap?.(recording.setup?.geometrySha256);
+    if(this.scenario?.kind==='duel-map' && this.mapLighting)this.mapLighting.sun.castShadow=false;
+    this.replayView = {recording, shot, time, overview, diagnostic};
+    this.replayScene.show(recording, shot, time, diagnostic);
+    this.actors.visible = this.effects.visible = this.actorShadows.group.visible = false;
+    if (this.replayScene.hasWorld) this.covers.visible = this.dynamicCovers.visible = this.shell.visible = false;
+    this.crosshair.style.visibility = 'hidden';
+    this.scope.element.hidden = true; this.radar.canvas.hidden = true;
+    this.utilityFlash.style.opacity = '0'; this.utilityRenderer.held.visible = false;
+    this.utilitySmoke.style.opacity = '0';
+  }
+  closeReplay() {
+    this.scenario?.replayMap?.();
+    if(this.scenario?.kind==='duel-map')this.mapLighting?.configure(this.renderer,this.settings.quality);
+    this.replayRevision++;
+    this.replayView = undefined; this.replayScene.clear();
+    for (const source of this.replayAssets.values()) disposeResources([source]); this.replayAssets.clear();
+    this.actors.visible = this.effects.visible = this.actorShadows.group.visible = true;
+    this.covers.visible = this.dynamicCovers.visible = true; this.shell.visible = !this.scenario;
+    this.crosshair.style.visibility = 'visible';
+  }
+  performanceReport() {const assets = this.scenario?.loadingReport?.(); return {...this.metrics.exportReport({quality: this.settings.quality, browser: navigator.userAgent,
+    frameLimit: this.settings.frameLimit, mode: this.scenario && this.scenario.kind !== 'duel-map' ? 'prefire' : 'duel', route: this.scenario?.name,
+    botCount: this.sim.actors.length - 1, intervalSource: 'raw', loading: assets ? assets.decodedReused ? 'warm' : 'cold' : 'unknown'}, true), assets};}
+  exportReplay(recording: CombatRecording) {downloadRecording(recording, this.performanceReport());}
+
+  equip(slot: Slot) {this.utilityRenderer.cancelHeld();this.sim.selectUtility(null);this.sim.command(0,{equipSlot:slot,fireHeld:false,secondaryHeld:false});if(this.sim.phase==='ready')this.sim.equipPlayer(slot); this.report(); this.renderer.domElement.focus({preventScroll: true});}
+  private equipControls(actions: ControlAction[], currentSlot: Slot) {
+    for (const action of actions) {
+      const slot = equipmentControlSlot(action, this.sim.actors[0].command.equipSlot ?? currentSlot, !!this.sim.selectedUtility);
+      if (slot) this.equip(slot);
+      if (action === 'utility') this.cycleUtility();
+      const grenade = grenadeForControl(action);
+      if (grenade) this.selectUtility(grenade);
+    }
+  }
+  selectUtility(kind: UtilityKind) {
+    if (this.replayView || this.paused || !this.sim.actors[0].alive || this.loadingMap) return;
+    this.pendingInspect = undefined;
+    this.sim.command(0, {fireHeld: false, secondaryHeld: false, equipSlot: undefined});
+    this.sim.selectUtility(kind);
+    if (this.sim.selectedUtility) {this.viewAnimation?.cancel(); this.audio.cancelAction(0); this.kick = 0;}
+    this.report(); this.renderer.domElement.focus({preventScroll: true});
+  }
+  private cycleUtility() {
+    const kind = nextUtility(this.sim.utilityInventory(), this.sim.selectedUtility);
+    if (kind) this.selectUtility(kind);
+  }
+  throwUtility(lob = false) {
+    const kind = this.sim.selectedUtility;
+    if (!kind || this.paused || this.replayView || !this.sim.playable) return;
+    this.sim.queueUtilityThrow(0, lob ? 0 : 1);
+    this.report(); this.renderer.domElement.focus({preventScroll: true});
+  }
   pickup() {
-    if(!this.sim.nearestPickup())return;
-    this.pickupDrawing=true;this.sim.command(0,{pickupPressed:true});
+    const item=this.sim.nearestItemPickup();if(!item)return;
+    this.pickupDrawing='equipment' in item;this.sim.command(0,{pickupPressed:true});
     this.renderer.domElement.focus({preventScroll:true});
   }
-  inspect() {const actor = this.sim.actors[0]; if (actor.alive && !actor.weapon.reloadUntil && !actor.command.fireHeld && this.sim.time >= actor.equipReadyAt) {
+  inspect() {const actor = this.sim.actors[0];
+    if (!actor.alive) return;
+    if (this.sim.selectedUtility) {
+      if(this.utilityRenderer.inspect(this.sim.time))this.startUtilitySound(0,this.sim.selectedUtility,'inspect',this.sim.time);
+      return;
+    }
+    const slot = actor.command.equipSlot, loadout = this.sim.loadout;
+    const queued = slot === 1 ? loadout.primary : slot === 2 ? loadout.sidearm : slot === 3 ? 'knife' : slot === 4 ? 'zeus' : undefined;
+    if (queued && queued !== actor.weapon.id) {this.pendingInspect = queued; return;}
+    if (!actor.weapon.reloadUntil && !actor.command.fireHeld) {
+    if (this.loadedViewEquipment !== actor.weapon.id || this.renderedEquipment !== actor.weapon.id) {this.pendingInspect = actor.weapon.id; return;}
     if(this.viewAnimation?.playInspect())this.audio.playAction(0,this.sim.actors[0].weapon.id,'inspect',this.sim.time,{local:true,volume:this.settings.volume*.5});
   }}
-  secondary() {this.sim.command(0, {secondaryPressed: true});}
+  secondary() {if (this.sim.selectedUtility) this.throwUtility(true); else this.sim.command(0, {secondaryPressed: true});}
 
   private processEvents(events: DuelEvent[]) {
     if (!events.length) return;
@@ -622,6 +1121,20 @@ export class DuelEngine {
     };
     const player = this.sim.snapshot()[0];
     for (const event of events) {
+      if (event.kind === 'utility') {
+        if (event.action === 'throw' && event.actorId === 0) this.utilityRenderer.throw(event.utility, event.tick * STEP, event.strength,event.throwStartedAt);
+        if (event.action === 'throw'&&event.throwStartedAt!==undefined)
+          this.startUtilitySound(event.actorId,event.utility,(event.strength??1)<.25?'throw-low':'throw-high',event.throwStartedAt);
+        if (event.action === 'throw' && event.actorId > 0) this.animators.get(event.actorId)?.playAction(
+          event.utility === 'molotov' ? 'utility-molotov' : 'utility', (event.strength ?? 1) < .25 ? 'throw-low' : 'throw-high',
+          {crouched: (this.sim.actors[event.actorId].duckAmount ?? 0) > .5, startedAt: event.tick * STEP});
+        if (event.action === 'throw' && event.actorId > 0) this.utilityThrownAt.set(event.actorId, event.tick * STEP);
+        if (event.action === 'decoy' && event.equipment) this.audio.play(event.equipment,
+          this.settings.volume * .65, this.soundLocation(event.point));
+        else if (event.sound || event.action === 'throw'&&event.throwStartedAt===undefined) this.audio.playUtility(event.utility, event.action,
+          this.settings.volume * .65, this.soundLocation(event.point), event.sound);
+        continue;
+      }
       if(event.kind==='action') {
         const actor=this.sim.actors[event.actorId],local=event.actorId===0;
         const action=event.action==='reload-start'?(actor.weapon.reloadEmpty?'reload-empty':'reload'):
@@ -633,7 +1146,7 @@ export class DuelEngine {
       }else if(event.kind==='environment') {
         if(event.action==='break')this.audio.playImpact(this.sim.authoredArena.solids.find(solid=>solid.id===event.environmentId)?.material==='glass'?'glass':'metal',
           this.settings.volume*.6,this.soundLocation(event.point));
-      }else if (event.kind === 'pickup') {
+      }else if (event.kind === 'pickup' || event.kind === 'utility-pickup') {
         const model = this.dropModels.get(event.dropId);
         if (model) this.scene.remove(model);
         this.dropModels.delete(event.dropId);
@@ -642,6 +1155,7 @@ export class DuelEngine {
         this.animators.get(event.actorId)?.playAction(event.equipment,event.alternate?'fire-alt':'fire',
           {side:this.sim.actors[event.actorId].weapon.ammo%2?'right':'left',lastShot:this.sim.actors[event.actorId].weapon.ammo===0});
         if (event.actorId === 0) {
+          if (event.accuracy) this.lastShot = {weapon: event.equipment, state: event.accuracy};
           const weapon = this.sim.actors[0].weapon;
           this.viewAnimation?.playFire(event.equipment,{side:weapon.ammo%2?'right':'left',lastShot:weapon.ammo===0,alternate:weapon.actions.alternateFire,zoomed:weapon.actions.zoom>0,
             ...(['awp','ssg08'].includes(event.equipment)?{duration:weapon.actions.base.cycle}:{})});
@@ -660,7 +1174,10 @@ export class DuelEngine {
           const point = {...event.point, y: (this.sim.actors[event.actorId]?.feet ?? 0) + .06};
           const support = this.sim.arena.solids.find(solid => Math.abs(solid.center.y + solid.size.y / 2 - point.y + .06) < .05 &&
             Math.abs(point.x - solid.center.x) < solid.size.x / 2 + .2 && Math.abs(point.z - solid.center.z) < solid.size.z / 2 + .2);
-          const material = support?.kind === 'crate' ? 'wood' : support?.kind === 'cargo' ? 'metal' : 'concrete';
+          const native = this.sim.arena.native?.floorSurfaceAt?.(point.x, point.z, point.y + .2, .5);
+          const material = native ? surfaceFootstepMaterial(native.surface)
+            : support?.material === 'wood' || support?.kind === 'crate' ? 'wood'
+              : support?.material === 'metal' || support?.material === 'grate' || support?.kind === 'cargo' ? 'metal' : 'concrete';
           this.audio.playStep(this.settings.volume * (own ? .45 : 1), 0, event.sound === 'landing',
             own ? undefined : this.soundLocation(point, FOOTSTEP_RANGE), material);
         }
@@ -671,30 +1188,43 @@ export class DuelEngine {
           this.settings.volume*.35,this.soundLocation(event.point));
       }
       else if (event.kind === 'hit') {
-        endpoint(event.shotId,event.point);
-        this.shotEffects.impact(v3(event.point),this.settings.impactSize,event.shooter===0?this.ownTraceColor:this.enemyTraceColor,this.animationClock);
+        if(!event.utility)endpoint(event.shotId,event.point);
+        // Local hit points lie inside the first-person camera's body envelope.
+        // Damage arcs provide feedback without near-camera impact spheres.
+        if (event.victim !== 0 && !event.utility) {
+          const source=shots.get(event.shotId)?.origin??this.sim.actors[event.shooter]?.position;
+          const direction=event.direction??(source?{x:event.point.x-source.x,y:event.point.y-source.y,z:event.point.z-source.z}:undefined);
+          if(direction)this.characterHits.emit({point:event.point,direction,headshot:event.group==='head',helmet:!!event.helmet,lethal:event.lethal});
+        }
+        if(event.lethal)this.killFeed.push({shooter:event.shooter,victim:event.victim,shotId:event.shotId,
+          equipment:shots.get(event.shotId)?.equipment??this.sim.actors[event.shooter].weapon.id,utility:event.utility,headshot:!event.utility&&event.group==='head'},this.animationClock);
         if(event.lethal)this.animationTimes.delete(event.victim);
         if (event.lethal && !this.deaths.has(event.victim)) this.deaths.set(event.victim, this.animationClock);
         if (event.lethal && event.victim > 0) {
+          if(this.sim.arena.native?.sweepSphere)this.animators.get(event.victim)?.setDeathWorld({floor:-1000,boxes:[],
+            sweepSphere:this.sim.arena.native.sweepSphere.bind(this.sim.arena.native),
+            corpseGeometry:this.sim.arena.native.corpseGeometry?.bind(this.sim.arena.native)});
           const held = this.heldWeapons.get(event.victim);
           if (held) held.visible = false;
         }
-        if (event.shooter === 0) {
+        if (event.shooter === 0 && event.victim !== 0) {
           this.xpDamage.set(event.victim, (this.xpDamage.get(event.victim) ?? 0) + event.healthDamage);
-          this.audio.playHit(event.group === 'head', event.armorDamage > 0, false, this.settings.volume);
+          if(!event.utility)this.audio.playHit(event.group === 'head', event.group==='head'?!!event.helmet:!!event.armored,
+            false,this.settings.volume,undefined,event.lethal);
           this.damage += event.healthDamage;
           if (event.lethal) this.kills++;
-          this.caption = event.group === 'head' ? 'HEADSHOT' : 'BODY HIT';
+          this.caption = event.utility ? `${utilityNames[event.utility]} HIT` : event.group === 'head' ? 'HEADSHOT' : 'BODY HIT';
           this.captionUntil = this.animationClock + .65;
         } else if (event.victim === 0) {
           const source = this.sim.actors[event.shooter]?.position;
           if (source) this.damageFeedback.hit(player.position, source, event.healthDamage, this.animationClock);
-          this.audio.playHit(event.group === 'head', event.armorDamage > 0, true, this.settings.volume);
+          if(!event.utility)this.audio.playHit(event.group === 'head', event.group==='head'?!!event.helmet:!!event.armored,
+            true,this.settings.volume,undefined,event.lethal);
           this.caption = `HIT -${Math.round(event.healthDamage)}`;
           this.captionUntil = this.animationClock + .65;
         }
-        if (event.lethal) this.audio.playEvent('death', this.settings.volume * .4,
-          event.victim === 0 ? undefined : this.soundLocation(event.point));
+        if(!event.utility&&event.shooter!==0&&event.victim!==0)this.audio.playHit(event.group==='head',event.group==='head'?!!event.helmet:!!event.armored,
+          false,this.settings.volume,this.soundLocation(event.point),event.lethal,'onlooker');
       } else if (event.kind === 'round') {
         this.roundFlow.finish();
         if (this.xpAttempt) this.progression?.completeDuel(this.xpAttempt, {
@@ -702,9 +1232,14 @@ export class DuelEngine {
           opponents: this.sim.actors.slice(1).map(actor => ({id: String(actor.id), healthDamage: this.xpDamage.get(actor.id) ?? 0, killed: !actor.alive})),
         }, this.xpSetup(), String(this.xpRevision));
         this.xpAttempt = null;
-        this.history.unshift({date: new Date().toISOString(), outcome: event.outcome, review: this.sim.coach.review()});
-        this.history = this.history.slice(0, 50);
-        try {localStorage.setItem('spraylab.duel.history.v1', JSON.stringify(this.history));} catch { /* Session-only history. */ }
+        if (!this.scenario || this.scenario.kind === 'duel-map') {
+          const date = new Date().toISOString(), review = this.sim.coach.review();
+          this.completedRound = {id: `${this.reviewIdentity}:${date}`, setupKey: setupKey([this.config, this.sim.loadout]), review};
+          this.history.unshift({date, outcome: event.outcome, review, setupKey: this.completedRound.setupKey});
+          this.history = this.history.slice(0, 50);
+          try {localStorage.setItem('spraylab.duel.history.v1', JSON.stringify(this.history));} catch { /* Session-only history. */ }
+        }
+        if(event.outcome==='won')this.sim.enablePostWinPlay();
       }
     }
     for (const [id, shot] of shots) {
@@ -753,10 +1288,16 @@ export class DuelEngine {
   }
 
   private clearEffects() {
+    for(const action of this.utilitySounds.values())action.timeline.cancel();this.utilitySounds.clear();this.audio.cancelUtilityCues();
+    this.audio.setFlashExposure(0);
     this.shotEffects.clear(); this.viewFlashes.clear(); this.shotCounts.clear();
+    this.characterHits.clear();this.killFeed.clear();
+    this.utilityRenderer.clear(); this.utilityFlash.style.opacity = '0';
+    this.utilitySmoke.style.opacity = '0';
   }
 
   private syncDrops() {
+    this.utilityRenderer.syncDrops(this.sim.utilityDrops);
     for(const drop of this.sim.drops) {
       if(drop.picked)continue;
       const existing=this.dropModels.get(drop.id);
@@ -769,42 +1310,180 @@ export class DuelEngine {
     }
   }
 
+  private startUtilitySound(actorId:number,kind:UtilityKind,action:UtilityViewAction,started:number) {
+    const key=`${kind}:${action}:${started}`;
+    if(this.utilitySounds.get(actorId)?.key===key)return;
+    this.audio.cancelUtilityCues(actorId);
+    const timeline=new UtilitySoundTimeline();timeline.start(kind,action,started);
+    this.utilitySounds.set(actorId,{key,kind,action,started,timeline});
+    if(this.settings.volume>0)void this.audio.preloadUtilityCues(nativeUtilityPresentation.utilities[kind].actions[action].events.flatMap(cue=>cue.name?[cue.name]:[])).catch(()=>{});
+  }
+  private updateUtilitySounds() {
+    if(this.paused||this.replayView||this.sim.phase==='ready')return;
+    for(const actor of this.sim.actors) {
+      const state=this.sim.utilityPresentation(actor.id),previous=this.utilitySounds.get(actor.id);
+      if(!actor.alive){previous?.timeline.cancel();this.utilitySounds.delete(actor.id);this.audio.cancelUtilityCues(actor.id);continue;}
+      if(state) {
+        if(state.throwStartedAt!==undefined&&this.sim.time>=state.throwStartedAt)
+          this.startUtilitySound(actor.id,state.kind,(state.strength??1)<.25?'throw-low':'throw-high',state.throwStartedAt);
+        else if(state.primedAt!==undefined&&this.sim.time>=state.primedAt)
+          this.startUtilitySound(actor.id,state.kind,'pullpin',state.primedAt);
+        else if(this.sim.time<state.selectedAt+utilityNativeTiming(state.kind).draw)
+          this.startUtilitySound(actor.id,state.kind,'draw',state.selectedAt);
+        else if(previous?.action!=='inspect'||this.sim.time>=previous.started+nativeUtilityPresentation.utilities[state.kind].actions.inspect.seconds)
+          this.startUtilitySound(actor.id,state.kind,'idle',previous?.action==='idle'?previous.started:this.sim.time);
+      } else if(previous&&!previous.action.startsWith('throw')) {
+        previous.timeline.cancel();this.utilitySounds.delete(actor.id);this.audio.cancelUtilityCues(actor.id);
+      }
+      const sound=this.utilitySounds.get(actor.id);if(!sound)continue;
+      for(const cue of sound.timeline.advance(this.sim.time))if(this.sim.time-cue.at<.15)
+        this.audio.playUtilityCue(cue.name,this.settings.volume*.55,actor.id===0?undefined:this.soundLocation(actor.position),actor.id,
+          cue.endAt===undefined?undefined:Math.max(.001,cue.endAt-this.sim.time));
+    }
+  }
+
   private syncActors(snapshots: DuelActorSnapshot[], dt: number) {
     this.animationClock += dt;
     this.frustum.setFromProjectionMatrix(this.projectionView.multiplyMatrices(this.camera.projectionMatrix, this.camera.matrixWorldInverse));
     for (const actor of snapshots.slice(1)) {
       const model = this.models.get(actor.id);
       if (!model) continue;
+      if (this.actorEquipment.get(actor.id) !== actor.equipment) {
+        const cache = this.actorWeaponCache.get(actor.id) ?? new Map<Equipment, THREE.Object3D>();
+        let replacement = cache.get(actor.equipment);
+        if (!replacement && this.worldWeapons.has(actor.equipment)) {
+          replacement = this.attachWorldWeapon(model, actor.equipment);
+          if (replacement) cache.set(actor.equipment, replacement);
+        }
+        if (replacement) {
+          const previous = this.heldWeapons.get(actor.id); if (previous) previous.visible = false;
+          this.actorWeaponCache.set(actor.id, cache); this.actorEquipment.set(actor.id, actor.equipment);
+          this.heldWeapons.set(actor.id, replacement);
+          const muzzle = muzzleAnchor(replacement);
+          if (muzzle) this.botMuzzles.set(actor.id, muzzle); else this.botMuzzles.delete(actor.id);
+          this.animators.get(actor.id)?.addGestureClips(this.gestureClips.get(actor.equipment) ?? []);
+        }
+      }
+      const held = this.heldWeapons.get(actor.id), grenade = this.heldGrenades.get(actor.id);
+      if (held) held.visible = actor.alive && !actor.utility && this.sim.time - (this.utilityThrownAt.get(actor.id) ?? -Infinity) >= .4;
+      if (grenade) this.utilityRenderer.updateWorldHeld(grenade, actor.utility, actor.alive);
+      const utility = this.sim.utilityPresentation(actor.id), previousUtility = this.utilityActorActions.get(actor.id);
+      if (utility) {
+        const family = utility.kind === 'molotov' ? 'utility-molotov' : 'utility';
+        if (utility.primedAt !== undefined && this.sim.time>=utility.primedAt && utility.primedAt !== previousUtility?.primedAt)
+          this.animators.get(actor.id)?.playAction(family, 'pullpin', {crouched: actor.duckAmount > .5, startedAt: utility.primedAt});
+        else if (utility.selectedAt !== previousUtility?.selectedAt)
+          this.animators.get(actor.id)?.playAction(family, 'draw', {crouched: actor.duckAmount > .5, startedAt: utility.selectedAt,
+            duration: Math.max(.01, utility.readyAt - utility.selectedAt)});
+        this.utilityActorActions.set(actor.id, {selectedAt: utility.selectedAt, primedAt:utility.primedAt!==undefined&&this.sim.time>=utility.primedAt?utility.primedAt:undefined});
+      } else this.utilityActorActions.delete(actor.id);
       this.actorBounds.center.set(actor.position.x, actor.feet + 1, actor.position.z);
+      if (!actor.alive) this.animators.get(actor.id)?.corpseCenter(this.actorBounds.center);
       model.visible = this.frustum.intersectsSphere(this.actorBounds) &&
-        (!this.covers.visible || !fullyOccluded(this.camera.position, actor, this.sim.arena));
+        (!actor.alive || !this.covers.visible || !fullyOccluded(this.camera.position, actor, this.sim.arena));
       if (!actor.alive && !this.deaths.has(actor.id)) {
         this.deaths.set(actor.id, this.animationClock); this.animationTimes.delete(actor.id);
+        if (this.sim.arena.native) {
+          const native=this.sim.arena.native;
+          this.animators.get(actor.id)?.setDeathWorld({floor:-1000,boxes:[],sweepSphere:native.sweepSphere?.bind(native),
+            corpseGeometry:this.sim.arena.native.corpseGeometry?.bind(native)});
+        }
       }
       const deathAge = this.animationClock - (this.deaths.get(actor.id) ?? this.animationClock);
       model.position.set(actor.position.x, actor.alive ? actor.feet : deathFeet(actor, deathAge, this.sim.arena.solids,
-        this.sim.actors[actor.id].verticalVelocity), actor.position.z);
-      model.rotation.y = actor.yaw - Math.PI;
+        this.sim.actors[actor.id].verticalVelocity, this.sim.arena.native), actor.position.z);
+      const presentationTime = this.sim.playable && !this.paused ? Math.max(0, this.sim.time - STEP + this.sim.accumulator) : this.sim.time;
+      const bodyYaw = this.sim.actorBodyYaw(actor, presentationTime);
+      model.rotation.y = bodyYaw - Math.PI;
       if (model.visible || !actor.alive) {
         const elapsed = this.animationTimes.has(actor.id) ? this.animationClock - this.animationTimes.get(actor.id)! : dt;
-        if (dt > 0 && this.animationTimes.has(actor.id) && elapsed < 1 / this.metrics.animationRate(this.settings.quality)) continue;
+        // A sensor/shot query may have rewound this shared rig since its last render.
+        if (dt > 0 && !this.sampledPoses.has(actor.id) && this.animationTimes.has(actor.id) && elapsed < 1 / this.metrics.animationRate(this.settings.quality)) continue;
         const weapon=this.sim.actors[actor.id].weapon;
+        const poseTime = presentationTime;
+        const poseElapsed = actor.alive ? 0 : dt > 0 ? elapsed : 0;
         this.animators.get(actor.id)?.update(this.sim.phase === 'result' && actor.alive
-          ? {...actor, velocity: {x: 0, z: 0}} : actor, dt > 0 ? elapsed : 0, actor.alive ? undefined : deathAge,
+          ? {...actor, velocity: {x: 0, z: 0}} : actor, poseElapsed, actor.alive ? undefined : deathAge,
           {reloadRemaining:Math.max(0,weapon.reloadUntil-this.sim.time),reloadDuration:weapon.reload.phaseDuration||equipmentStats(actor.equipment).reload,
             reloadPhase:weapon.reloadPhase,reloadProgress:weapon.reload.progress,
-            deathVelocity:{...actor.velocity,y:actor.verticalVelocity??0}});
+            deathVelocity:{...actor.velocity,y:actor.verticalVelocity??0}, bodyYaw, poseTime});
         this.animationTimes.set(actor.id, this.animationClock);
+        this.sampledPoses.delete(actor.id);
+        if (actor.alive) this.poseTimes.set(actor.id, poseTime);
       }
     }
   }
 
+  private clearPlayerCorpse() {
+    if (!this.playerCorpse) return;
+    this.playerCorpse.animator.dispose(); disposeSkeletons(this.playerCorpse.root);
+    this.playerCorpse.root.removeFromParent(); this.playerCorpse = undefined;
+  }
+
+  private updatePlayerDeath(player: DuelActorSnapshot, age: number) {
+    if (player.alive) {this.clearPlayerCorpse(); return;}
+    if (!this.targetScene) return;
+    if (!this.playerCorpse) {
+      const root = new THREE.Group(), model = cloneSkeleton(this.targetScene);
+      model.traverse(node => {if (node.name.startsWith('held_weapon_target')) node.visible = false;});
+      root.add(model); root.position.set(player.position.x, player.feet, player.position.z);
+      root.rotation.y = player.yaw - Math.PI;
+      const animator = new DuelAnimator(model, this.targetClips, 0, player.equipment);
+      animator.update({...player, alive: true}, 0, undefined, {bodyYaw: player.yaw, poseTime: this.sim.time});
+      const native = this.sim.arena.native;
+      animator.setDeathWorld(native ? {floor: -1000, boxes: [], sweepSphere: native.sweepSphere?.bind(native),
+        corpseGeometry: native.corpseGeometry?.bind(native)} : {floor: 0, boxes: this.sim.arena.solids.filter(blocksMovement)});
+      let nextBodySound = 0;
+      animator.onDeathContact = contact => {
+        if (this.animationClock >= nextBodySound && ['pelvis', 'spine_2'].includes(contact.body)) {
+          nextBodySound = this.animationClock + .6;
+          this.audio.playBodyContact(contact.speed, this.settings.volume * .7);
+        }
+      };
+      this.actors.add(root);
+      this.playerCorpse = {root, animator, origin: new THREE.Vector3(player.position.x, player.position.y, player.position.z), rotation: this.camera.quaternion.clone(), orbitYaw: player.yaw};
+    }
+    const corpse = this.playerCorpse;
+    corpse.animator.update(player, 0, age, {deathVelocity: {x: player.velocity.x, y: player.verticalVelocity ?? 0, z: player.velocity.z}});
+    corpse.root.visible = age > .10;
+    if (!corpse.animator.corpseCenter(this.deathFocus)) return;
+    this.deathFocus.y += .2;
+    const native = this.sim.arena.native;
+    const clip = (from: Vec, to: Vec) => {
+      const delta = new THREE.Vector3().copy(to).sub(from), arena = this.sim.arena;
+      let fraction = 1;
+      for (const [axis, min, max] of [['x', arena.minX + .25, arena.maxX - .25], ['z', arena.minZ + .25, arena.maxZ - .25]] as const) {
+        if (to[axis] < min && delta[axis] < 0) fraction = Math.min(fraction, (min - from[axis]) / delta[axis]);
+        if (to[axis] > max && delta[axis] > 0) fraction = Math.min(fraction, (max - from[axis]) / delta[axis]);
+      }
+      const bounded = new THREE.Vector3().copy(from).addScaledVector(delta, Math.max(0, fraction));
+      if (native?.sweepSphere) return native.sweepSphere(from, bounded, .16).position;
+      const direction = bounded.clone().sub(from), length = direction.length();
+      const hit = traceSolid(from, direction.normalize(), this.sim.arena, length);
+      return hit.distance < length ? new THREE.Vector3().copy(from).addScaledVector(direction, Math.max(0, hit.distance - .2)) : bounded;
+    };
+    deathCameraGoal(this.deathFocus, corpse.orbitYaw, clip, this.deathCamera);
+    if (Math.hypot(this.deathCamera.x - this.deathFocus.x, this.deathCamera.z - this.deathFocus.z) > .1)
+      corpse.orbitYaw = Math.atan2(this.deathCamera.x - this.deathFocus.x, this.deathCamera.z - this.deathFocus.z);
+    const phase = THREE.MathUtils.clamp(age / .65, 0, 1), blend = phase * phase * (3 - 2 * phase);
+    this.camera.position.lerpVectors(corpse.origin, this.deathCamera, blend);
+    this.camera.position.copy(clip(this.deathFocus, this.camera.position));
+    this.deathLookMatrix.lookAt(this.deathCamera, this.deathFocus, this.camera.up);
+    this.deathRotation.setFromRotationMatrix(this.deathLookMatrix);
+    this.camera.quaternion.copy(corpse.rotation).slerp(this.deathRotation, blend);
+    if (player.deathDirection) {
+      const side = player.deathDirection.x * Math.cos(player.yaw) - player.deathDirection.z * Math.sin(player.yaw);
+      this.camera.rotateZ(THREE.MathUtils.clamp(side, -1, 1) * .12 * blend);
+    }
+  }
+
   private resize() {
-    const width = this.host.clientWidth, height = this.host.clientHeight;
+    const {width, height} = this.host.getBoundingClientRect();
     if (!width || !height) return;
     this.width = width; this.height = height;
     this.renderer.setPixelRatio(renderPixelRatio(width, height, devicePixelRatio || 1, this.settings.quality, this.metrics.adaptive));
-    this.renderer.setSize(width, height);
+    // Preserve CSS's fractional layout size so the reticle and canvas share a center.
+    this.renderer.setSize(width, height, false);
     this.camera.aspect = this.settings.aspect === 'native' ? width / height
       : this.settings.aspect.split(':').map(Number).reduce((a, b) => a / b);
     this.sim.playerAspect = this.camera.aspect;
@@ -814,41 +1493,74 @@ export class DuelEngine {
   }
 
   private report() {
+    if (this.disposed) return;
     const [player, ...bots] = this.sim.renderSnapshot();
+    const pickup=this.sim.nearestItemPickup();
     this.onStatus({phase: this.sim.phase, paused: this.paused, outcome: this.sim.phase==='result'?this.sim.outcome:undefined,
       health: player.health, armor: player.armor, ammo: player.ammo, reloading: player.reloading,
       reserve:player.reserve,reloadSilent:player.reloadSilent,recharge:Math.max(0,this.sim.actors[0].weapon.rechargeUntil-this.sim.time),
-      enemies: bots.filter(bot => bot.alive).length, seconds: this.sim.time, kills: this.kills,
+      enemies: bots.filter(bot => bot.alive).length, seconds: this.sim.completedAt??this.sim.time, kills: this.kills,
       damage: this.damage, input: this.inputName, caption: this.animationClock < this.captionUntil ? this.caption : '',
-      shortcutProtected: this.shortcuts.protected, nextRoundIn: this.roundFlow.remaining(this.config.feedbackSeconds),
+      shortcutProtected: this.shortcuts.protected, nextRoundIn: this.roundFlow.remaining(this.scenario?.feedbackSeconds?.() ?? this.config.feedbackSeconds),
       equipped: player.equipment, review: this.sim.coach.review(), history: this.history,
-      loadout: this.sim.loadout, pickup: this.sim.nearestPickup()?.equipment, interaction:this.sim.nearestDoor()?.open?'Close door':this.sim.nearestDoor()?'Open door':undefined, arenaDesign: this.sim.arena.design});
+      loadout: this.sim.loadout, pickup:pickup&&'equipment' in pickup?pickup.equipment:undefined,
+      pickupUtility:pickup&&'utility' in pickup?pickup.utility:undefined,
+      interaction:this.sim.nearestDoor()?.open?'Close door':this.sim.nearestDoor()?'Open door':undefined,
+      arenaDesign: this.sim.arena.design, loadingMap:this.loadingMap||!this.criticalReady, prefire: this.scenario?.report?.(this.sim), lastShot: this.lastShot,
+      preparingNextRound:!!this.nextRoundAbort||this.seamlessHandoff,nextRoundError:this.nextRoundError,postWinPlayable:this.sim.postWinPlayable,
+      replayShots: this.sim.replay.shotCount || this.previousRecording?.shots.length || 0,
+      replayAvailable: this.sim.replay.frameCount > 1 || !!this.previousRecording?.frames.length, completedRound: this.completedRound,
+      killFeed:this.killFeed.entries(this.animationClock),selectedUtility:this.sim.selectedUtility,utilityInventory:this.sim.utilityInventory()});
   }
 
   private tick(timestamp: number) {
     if (this.disposed) return;
     this.frame = requestAnimationFrame(time => this.tick(time));
     const active = this.sim.phase !== 'ready' && !this.paused;
-    if (document.hidden || !this.pacer.ready(timestamp, active ? this.settings.frameLimit : 15)) {
+    if(this.criticalReady&&!this.loadingMap&&!this.replayView&&!this.nextRoundError&&(this.prefetchedSeed!==this.seed||timestamp-this.prefetchAt>5000)) {
+      this.prefetchedSeed=this.seed;this.prefetchAt=timestamp;this.scenario?.prefetchRound?.(this.seed,
+        (scene,signal)=>prepareSceneGpu(this.renderer,scene,this.scene,this.camera,signal,this.settings.quality));
+    }
+    this.metrics.setVisible(!document.hidden);
+    // The retained framebuffer stays visible while the next actors and shaders
+    // are prepared. Do not render a partial lineup or advance a half-ready round.
+    if(this.loadingMap){this.last=0;return;}
+    if (document.hidden || !this.pacer.ready(timestamp, this.replayView ? 60 : active ? this.settings.frameLimit : 15)) {
       if (document.hidden) this.last = timestamp;
       return;
     }
     const cpuStart = performance.now();
-    const dt = this.last ? Math.min((timestamp - this.last) / 1000, .25) : 0;
+    const frameDt = this.last ? (timestamp - this.last) / 1000 : 0;
+    const dt = Math.min(frameDt, .25);
     this.last = timestamp;
-    if (this.sessionStarted && this.roundFlow.advance(dt, this.paused, this.config.feedbackSeconds)) this.restart(true);
+    if (this.replayView) {
+      const replay = this.replayView;
+      this.replayScene.show(replay.recording, replay.shot, replay.time, replay.diagnostic);
+      this.replayScene.camera(this.camera, replay.shot, replay.overview, replay.diagnostic);
+      this.renderer.setViewport(0, 0, this.width, this.height); this.renderer.autoClear = true;
+      this.scenario?.updateView?.(this.camera.position);
+      this.mapLighting?.beginFrame(this.renderer, this.camera.position);
+      this.renderer.render(this.scene, this.camera);
+      this.replayScene.renderUtilityView(this.renderer,this.width,this.height);
+      return;
+    }
+    if (this.sessionStarted && this.roundFlow.advance(dt, this.paused, this.scenario?.feedbackSeconds?.() ?? this.config.feedbackSeconds)) this.restart(true);
     this.sim.advance(dt);
     this.syncEnvironment();this.syncDrops();
     const snapshots = this.sim.renderSnapshot();
     const events=this.sim.drainEvents();
     const player = snapshots[0];
+    this.audio.setFlashExposure(this.sim.flashAmount(0));
     const viewWeapon=this.sim.actors[0].weapon;
+    if (this.presentingUtility && !this.sim.selectedUtility) this.renderedEquipment = undefined;
+    this.presentingUtility = this.sim.selectedUtility;
     if(timestamp-this.shadowAt>=50){this.shadowAt=timestamp;this.actorShadows.update(actorShadows(snapshots,this.sim.arena));}
-    if(timestamp-this.radarAt>=100) {this.radarAt=timestamp;this.radar.update(player,this.sim.radar.snapshot(this.sim.time),this.sim.time,this.sim.arena,this.config);}
+    if(timestamp-this.radarAt>=100) {this.radarAt=timestamp;this.radar.update(player,this.sim.radar.snapshot(this.sim.time),
+      this.sim.time,this.sim.arena,this.config,this.scenario?.radarOverview?.(player.feet)??this.scenario?.scene);}
     if (player.equipment !== this.renderedEquipment) {
       void this.loadViewModel(player.equipment);
       void this.audio.unlock(player.equipment).then(() => {
-        if (!this.disposed && this.sim.actors[0].weapon.id === player.equipment && !this.paused)
+        if (!this.disposed && !this.sim.selectedUtility && this.sim.actors[0].weapon.id === player.equipment && !this.paused && this.viewAnimation?.activeAction !== 'inspect' && this.pendingInspect !== player.equipment)
           if(!this.audio.playAction(0,player.equipment,'draw',this.sim.time,{local:true,volume:this.settings.volume*.5,duration:equipmentStats(player.equipment).deploy}))
             this.audio.playEvent(`${player.equipment}-draw`, this.settings.volume * .5);
       });
@@ -861,27 +1573,37 @@ export class DuelEngine {
         reloadProgress:viewWeapon.reload.progress,charging:viewWeapon.actions.charging,chargeDuration:REVOLVER_WINDUP});
     this.viewAnimationElapsed = 0;
     }
-    const visualRecoil = viewWeapon.recovery.predict(this.sim.accumulator);
-    const punch = this.sim.actors[0].punch.predict(this.paused || this.sim.phase !== 'fighting' ? 0 : this.sim.accumulator,
+    // Pause/result snapshots are authoritative, not sub-tick predictions.
+    const aimRemainder = this.paused || !this.sim.playable ? 0 : this.sim.accumulator;
+    const visualRecoil = viewWeapon.recovery.predict(aimRemainder);
+    const punch = this.sim.actors[0].punch.predict(aimRemainder,
       viewWeapon.recovery.angle);
     const view = recoilView(player.yaw - punch.yaw * DEG, player.pitch + punch.pitch * DEG, visualRecoil);
     const deathAge = this.animationClock - (this.deaths.get(0) ?? this.animationClock);
-    const death = deathView(deathAge, player.position.y - player.feet);
+    const death = deathView(deathAge, player.position.y - player.feet,player.deathDirection?
+      {direction:player.deathDirection,yaw:player.yaw,headshot:player.deathGroup==='head'}:undefined);
     this.camera.position.set(player.position.x, player.position.y, player.position.z);
+    // Keep the world camera at the actor eye. A cosmetic stair lag must not
+    // move the crosshair's origin away from the origin used by shot physics.
+    const stairLag = this.sim.arena.native ? this.stepView.update(player, active ? dt : 0) - player.position.y : 0;
     if (!player.alive) this.camera.position.y = deathFeet(player, deathAge, this.sim.arena.solids,
-      this.sim.actors[0].verticalVelocity) + death.height;
+      this.sim.actors[0].verticalVelocity, this.sim.arena.native) + death.height;
     this.camera.rotation.set(view.pitch + (player.alive ? 0 : death.pitch), view.yaw, punch.roll * DEG + (player.alive ? 0 : death.roll), 'YXZ');
-    const scoped = this.scope.update(viewWeapon.actions, this.camera, player.alive);
+    this.updatePlayerDeath(player, deathAge);
+    const selectedUtility = this.sim.selectedUtility;
+    const scoped = this.scope.update(viewWeapon.actions, this.camera, player.alive && !selectedUtility);
     this.camera.updateMatrixWorld();
     this.syncActors(snapshots, this.sim.phase !== 'ready' && !this.paused ? dt : 0);
     this.kick = Math.max(0, this.kick - dt * 8);
     const speed = Math.hypot(player.velocity.x, player.velocity.z);
     this.viewRoot.position.set(VIEWMODEL_OFFSET.x,
-      VIEWMODEL_OFFSET.y + Math.sin(this.sim.time * 12) * Math.min(speed, 1) * .002 - (player.alive ? 0 : death.weaponDrop * .5), this.kick * .018);
-    this.viewRoot.visible = !scoped && (player.alive || deathAge < .25);
-    this.viewRoot.rotation.x = this.kick * (player.equipment === 'knife' ? 0 : .035) + view.weaponPitch;
+      VIEWMODEL_OFFSET.y + stairLag * .06 + Math.sin(this.sim.time * 12) * Math.min(speed, 1) * .002 - (player.alive ? 0 : death.weaponDrop * .5), this.kick * .018);
+    this.utilityRenderer.updateHeld(selectedUtility, player.alive, this.sim.time, speed, this.sim.utilityPresentation());
+    this.viewRoot.visible = !selectedUtility && !this.utilityRenderer.held.visible && !scoped && (player.alive || deathAge < .08);
+    const flinch=player.alive&&player.recentHits?.some(hit=>this.sim.time-hit.time<.25)?sampleHitReaction(player.recentHits,this.sim.time):undefined;
+    this.viewRoot.rotation.x = this.kick * (player.equipment === 'knife' ? 0 : .035) + view.weaponPitch+(flinch?.spine.rotation.x??0)*.35;
     this.viewRoot.rotation.y = view.weaponYaw;
-    this.viewRoot.rotation.z = 0;
+    this.viewRoot.rotation.z = (flinch?.spine.rotation.z??0)*.4;
     this.audio.updateListener(this.camera.position, view.yaw, view.pitch);
     for(const actor of snapshots) {
       const state=actor.id===0?viewWeapon:this.sim.actors[actor.id].weapon;
@@ -892,45 +1614,63 @@ export class DuelEngine {
         this.sim.time,this.settings.volume*.55,actor.id===0?undefined:this.soundLocation(actor.position));
     }
     this.processEvents(events);
+    this.updateUtilitySounds();
     this.audio.updateActions(this.sim.time);
     this.damageFeedback.update(this.animationClock, player.yaw);
-    const recoil = this.settings.follow ? viewWeapon.recovery.recoil : {yaw: 0, pitch: 0};
+    // Camera and followed aim must use the same presentation time. Reading the
+    // last fixed-tick recoil here makes the reticle lag between simulation ticks.
+    const recoil = this.settings.follow ? visualRecoil : {yaw: 0, pitch: 0};
     const yaw = player.yaw - (recoil.yaw + punch.yaw) * DEG, pitch = player.pitch + (recoil.pitch + punch.pitch) * DEG;
     const followPoint = this.followPoint.set(-Math.sin(yaw) * Math.cos(pitch), Math.sin(pitch),
       -Math.cos(yaw) * Math.cos(pitch)).multiplyScalar(10).add(this.camera.position).project(this.camera);
     if (!this.settings.follow) followPoint.set(0, 0, 0);
-    this.crosshair.style.visibility = player.alive && !scoped && (player.equipment==='knife'||gameData.weapons[player.equipment].showCrosshair) ? '' : 'hidden';
+    this.crosshair.style.visibility = player.alive && !scoped && (selectedUtility||player.equipment==='knife'||gameData.weapons[player.equipment].showCrosshair) ? '' : 'hidden';
     this.crosshair.style.transform = `translate(${followPoint.x * this.width / 2}px, ${-followPoint.y * this.height / 2}px)`;
     this.crosshair.style.setProperty('--motion-gap', this.settings.crosshair.dynamic ? `${speed * 1.2 + this.kick * 4}px` : '0px');
     this.shotEffects.update(this.animationClock); this.viewFlashes.update(this.animationClock);
+    this.characterHits.update(this.paused?0:dt);
+    this.utilityRenderer.update(this.sim.utilities.projectiles, this.sim.utilities.effects, this.sim.time, this.camera);
+    this.utilityFlash.style.opacity = String(utilityFlashOpacity(player.alive ? this.sim.flashAmount(0) : 0));
+    this.utilitySmoke.style.opacity = String(player.alive ? this.utilityRenderer.interiorSmokeOpacity : 0);
     this.renderer.setViewport(0, 0, this.width, this.height);
+    this.scenario?.updateView?.(this.camera.position);
+    this.mapLighting?.beginFrame(this.renderer, this.camera.position);
     this.renderer.autoClear = true; this.renderer.render(this.scene, this.camera);
     this.renderer.autoClear = false; this.renderer.clearDepth();
     const viewport = viewmodelViewport(this.width, this.height);
     this.renderer.setViewport(viewport.x, viewport.y, viewport.width, viewport.height);
     this.renderer.render(this.viewScene, this.viewCamera);
     const oldResolution = this.metrics.adaptive;
-    if (this.metrics.sample(dt, performance.now() - cpuStart, this.settings.quality === 'auto', active, this.settings.frameLimit)) {
+    if (this.metrics.sample(frameDt, performance.now() - cpuStart, this.settings.quality === 'auto', active, this.settings.frameLimit)) {
       this.meter.update(this.metrics, this.renderer.getPixelRatio());
       if (oldResolution !== this.metrics.adaptive) this.resize();
     }
-    if (events.some(event => event.kind === 'hit' || event.kind === 'round') || timestamp - this.statusAt > 100) {
+    if (events.some(event => event.kind === 'hit' || event.kind === 'round' || event.kind === 'utility') || timestamp - this.statusAt > 100) {
       this.statusAt = timestamp; this.report();
     }
   }
 
   dispose() {
+    this.clearPlayerCorpse();
+    this.mapAbort?.abort();
+    this.nextRoundAbort?.abort();
     if (this.xpAttempt) this.progression?.cancelAttempt(this.xpAttempt);
     this.disposed = true; cancelAnimationFrame(this.frame); this.pause(); this.releaseShortcuts(); this.observer.disconnect();
     this.cleanup.forEach(fn => fn()); this.clearEffects(); this.audio.dispose(); this.damageFeedback.dispose();
-    this.animators.forEach(animator => animator.dispose()); this.viewAnimation?.dispose(); this.scope.dispose();
+    this.animators.forEach(animator => animator.dispose()); this.clearViewModels(); this.scope.dispose();
     this.gestureClips.clear();
     this.meter.dispose();
+    this.replayScene.dispose();
+    for (const source of this.replayAssets.values()) disposeResources([source]); this.replayAssets.clear();
     this.radar.dispose();
     this.actorShadows.dispose();
+    this.mapLighting?.dispose();
+    this.scenario?.scene.removeFromParent();
     this.shotEffects.dispose(); this.viewFlashes.dispose();
+    this.characterHits.dispose();
+    this.utilityRenderer.dispose(); this.utilityFlash.remove(); this.utilitySmoke.remove();
     disposeResources([this.scene, this.viewScene, ...this.worldWeapons.values(), ...(this.targetScene && !this.agentInstance ? [this.targetScene] : [])]);
     this.agentRevision++;this.agentInstance?.dispose();this.actorLoader.dispose();
-    this.renderer.dispose(); this.renderer.domElement.remove();
+    disposeWarmRenderer(this.renderer); this.renderer.domElement.remove();
   }
 }

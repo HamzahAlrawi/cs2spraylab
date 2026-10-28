@@ -26,3 +26,10 @@ it('prioritizes a fresh cue and handles arenas without useful alternate angles',
   expect(awareness.look(self, .2, expected, angles, testArena())).toBe(expected);
   expect(awareness.look(self, 1, expected, [], testArena())).toBe(expected);
 });
+it('does not abandon an expected approach to inspect unrelated rear corners', () => {
+  const awareness = new AngleAwareness(10, () => .5);
+  const rear = [{x: -4, y: 1.6, z: 15}, {x: 4, y: 1.6, z: 18}];
+  for (let tick = 0; tick < 60 * 32; tick++) {
+    expect(awareness.look(self, tick / 32, expected, rear, testArena())).toBe(expected);
+  }
+});

@@ -125,6 +125,10 @@ export function addArenaTraversal(volume: TraversalVolume, parent: THREE.Group, 
 export function propDetails(solid: Solid, parent: THREE.Group, materials: {metal: THREE.Material; dark: THREE.Material; label: THREE.Material; wood: THREE.Material}) {
   const {center: c, size: s, style} = solid;
   if (!style || style === 'plain') return;
+  // Stable shell variants use authored IDs and placement, not runtime randomness.
+  let detailSeed = Math.round(c.x * 10) ^ Math.round(c.z * 10);
+  for (const character of solid.id ?? style) detailSeed = Math.imul(detailSeed ^ character.charCodeAt(0), 31);
+  const variant = (detailSeed >>> 0) % 3;
   const box = (x: number, y: number, z: number, sx: number, sy: number, sz: number, material: THREE.Material) => {
     const mesh = new THREE.Mesh(new THREE.BoxGeometry(sx, sy, sz), material);
     mesh.position.set(c.x + x, c.y + y, c.z + z); mesh.updateMatrix(); mesh.matrixAutoUpdate = false; parent.add(mesh);
@@ -133,7 +137,9 @@ export function propDetails(solid: Solid, parent: THREE.Group, materials: {metal
     for (const side of [-1, 1]) {
       box(0, s.y * .18, side * (s.z / 2 + .015), s.x * .65, s.y * .32, .025, materials.dark);
       box(0, s.y * .02, side * (s.z / 2 + .025), s.x * .7, .05, .04, materials.metal);
-      box(0, s.y * .39, side * (s.z / 2 + .015), s.x * .46, .1, .025, materials.label);
+      box((variant - 1) * s.x * .16, s.y * .39, side * (s.z / 2 + .015), s.x * .3, .1, .025, materials.label);
+      for (let pane = 1; pane <= variant; pane++) box(-s.x * .325 + pane * s.x * .65 / (variant + 1), s.y * .18,
+        side * (s.z / 2 + .031), .025, s.y * .3, .015, materials.metal);
     }
   } else if (style === 'rack') {
     // Closed storage backing remains visible behind the shelves.
@@ -144,6 +150,8 @@ export function propDetails(solid: Solid, parent: THREE.Group, materials: {metal
   } else if (style === 'planter') {
     box(0, s.y / 2 + .015, 0, s.x * .8, .03, s.z * .8, materials.dark);
     for (const side of [-1, 1]) box(0, s.y * .25, side * (s.z / 2 + .012), s.x * .95, .04, .025, materials.metal);
+    for (let inset = 0; inset <= variant; inset++) box(-s.x * .3 + (inset + .5) * s.x * .6 / (variant + 1),
+      -s.y * .12, s.z / 2 + .013, s.x * .45 / (variant + 1), s.y * .35, .018, materials.label);
   } else if (style === 'dock' || style === 'bench') {
     box(0, s.y / 2 + .015, 0, s.x, .03, s.z, style === 'bench' ? materials.wood : materials.metal);
     for (const side of [-1, 1]) {
@@ -158,22 +166,36 @@ export function propDetails(solid: Solid, parent: THREE.Group, materials: {metal
     }
   } else if (style === 'generator' || style === 'vent') {
     for (const side of [-1, 1]) {
-      for (let row = 0; row < 5; row++) box(0, (row - 2) * s.y / 8, side * (s.z / 2 + .012), s.x * .72, .04, .025, materials.dark);
+      const rows = style === 'vent' ? 5 + variant : 3 + variant;
+      for (let row = 0; row < rows; row++) box(style === 'generator' ? -s.x * .12 : 0,
+        (row - (rows - 1) / 2) * s.y / (rows + 3), side * (s.z / 2 + .012),
+        s.x * (style === 'vent' ? .72 : .48), .04, .025, materials.dark);
       box(s.x * .34, s.y * .3, side * (s.z / 2 + .03), s.x * .16, s.y * .13, .04, materials.label);
+      if (style === 'generator') {
+        box(s.x * .3, -s.y * .08, side * (s.z / 2 + .016), s.x * .2, s.y * .24, .025, materials.metal);
+        box(s.x * .3, -s.y * .04, side * (s.z / 2 + .034), s.x * .1, .04, .015, materials.dark);
+      }
     }
     box(0, s.y / 2 + .008, 0, s.x * .75, .025, s.z * .75, materials.metal);
   } else if (style === 'cabinet') {
     for (const side of [-1, 1]) {
-      box(0, 0, side * (s.z / 2 + .012), .025, s.y * .92, .025, materials.dark);
-      box(s.x * .12, 0, side * (s.z / 2 + .03), .045, .23, .045, materials.metal);
+      const seam = (variant - 1) * s.x * .2;
+      box(seam, 0, side * (s.z / 2 + .012), .025, s.y * .92, .025, materials.dark);
+      box(seam + s.x * .12, 0, side * (s.z / 2 + .03), .045, .23, .045, materials.metal);
       box(-s.x * .2, s.y * .3, side * (s.z / 2 + .025), s.x * .25, .16, .03, materials.label);
     }
   } else if (style === 'pallets') {
-    for (let row = 0; row < Math.min(12, Math.ceil(s.y / .26)); row++) {
+    for (let row = 0; row < Math.min(12, Math.floor((s.y - .12) / .26) + 1); row++) {
       const y = -s.y / 2 + .08 + row * .26;
       for (const side of [-1, 1]) box(0, y, side * (s.z / 2 + .006), s.x, .04, .018, materials.wood);
     }
-    for (const x of [-s.x * .25, s.x * .25]) box(x, 0, s.z / 2 + .015, .07, s.y, .025, materials.dark);
+    for (const x of variant === 0 ? [0] : [-s.x * .25, s.x * .25]) box(x, 0, s.z / 2 + .015, .07, s.y, .025, materials.dark);
+    box((variant - 1) * s.x * .2, s.y * .24, s.z / 2 + .032, s.x * .22, .14, .018, materials.label);
+  } else if (style === 'movable') {
+    for (const side of [-1, 1]) {
+      box(0, 0, side * (s.z / 2 + .014), s.x * .8, .055, .025, materials.wood);
+      box((variant - 1) * s.x * .2, s.y * .15, side * (s.z / 2 + .02), s.x * .22, s.y * .2, .025, materials.label);
+    }
   } else if (style === 'concrete-stack') {
     for (let y = -s.y / 2 + .45; y < s.y / 2; y += .5) {
       for (const side of [-1, 1]) box(0, y, side * (s.z / 2 + .003), s.x, .018, .01, materials.dark);

@@ -57,6 +57,7 @@ test('performance preset and opt-in FPS work in both engines and persist', async
   await page.goto('/');
   await expect(page.getByLabel('Performance monitor')).toBeHidden();
   await page.getByRole('button',{name:'Settings',exact:true}).click();
+  await page.getByRole('tab',{name:'Audio & video',exact:true}).click();
   await page.getByLabel('Render quality').selectOption('performance');
   await expect(page.getByLabel('Frame limit')).toHaveValue('60');
   await page.getByLabel('Show FPS counter').check();
@@ -82,6 +83,7 @@ test('performance preset and opt-in FPS work in both engines and persist', async
   if (info.project.name.startsWith('mobile')) await page.getByRole('button',{name:'Pause range',exact:true}).click(); else await page.keyboard.press('Escape');
   await page.reload();
   await page.getByRole('button',{name:'Settings',exact:true}).click();
+  await page.getByRole('tab',{name:'Audio & video',exact:true}).click();
   await expect(page.getByLabel('Render quality')).toHaveValue('performance');
   await expect(page.getByLabel('Show FPS counter')).toBeChecked();
   await page.getByLabel('Show FPS counter').uncheck();
@@ -107,6 +109,7 @@ test('toolbar FPS toggle stays synchronized with settings and mode changes', asy
   await expect(toggle).toHaveAttribute('aria-pressed','true');
   await expect(page.getByLabel('Performance monitor')).toBeVisible();
   await page.getByRole('button',{name:'Settings',exact:true}).click();
+  await page.getByRole('tab',{name:'Audio & video',exact:true}).click();
   await expect(page.getByLabel('Show FPS counter')).toBeChecked();
   await page.getByLabel('Show FPS counter').uncheck();
   await page.getByRole('button',{name:'Done',exact:true}).click();

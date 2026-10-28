@@ -1,25 +1,24 @@
-import {EXCESS_MOUSE_LIMIT,REPOSITION_SHOTS,type DrillMetrics,type DrillMode} from './drills';
+import {drillCoaching,type DrillMetrics,type DrillMode} from './drills';
+import type {CoachingSummary} from './coaching-types';
 
-function issue(mode:DrillMode,m:DrillMetrics) {
-  if(!m.shots)return 'late';
-  if(mode==='peek'&&m.entryError===null)return 'cover';
-  if(mode==='precision'&&(m.entrySpeedRatio ?? 0)<.65)return 'stationary';
-  if(m.settledShots<m.shots)return 'moving';
-  if((mode==='peek'||mode==='precision')&&!m.counterStrafed)return 'braking';
-  if(m.excessCorrection>EXCESS_MOUSE_LIMIT)return 'mouse';
-  if(m.passed)return 'clean';
-  if(m.diagonal&&mode!=='precision')return 'diagonal';
-  if(!m.hits)return 'aim';
-  if(!m.heads&&mode!=='burst')return 'height';
-  if(mode==='burst'&&m.hits<Math.ceil(REPOSITION_SHOTS*2/3))return 'spray';
-  return 'alignment';
+function smallerPractice(focus:string,mode:DrillMode) {
+  if(focus==='Build a real entry')return 'Take 3 single-shot reps: build 65%+ running speed, counter-strafe, then fire. Train the stop before chasing headshots.';
+  if(focus==='Brake before the opening shot'||focus==='Land before the opening shot'||focus==='Keep the burst settled')
+    return 'Take 3 grounded single-shot reps. Release the strafe key, tap the opposite direction and click after stopping. Add the burst only after 3 clean openings.';
+  if(focus==='Use the opposite key')return 'Take 3 dry peeks: build speed, release the strafe key, tap the opposite direction and stop. Then add one shot after the counter-strafe.';
+  if(focus==='Clear the cover first')return 'Repeat this angle slowly 3 times. Follow the peek arrow to a clear sightline, then counter-strafe and fire at the exposed part.';
+  if(focus==='Prepare the common angle')return 'Repeat this angle 3 times. Pre-aim before leaving cover, strafe into the line, then stop and correct onto the exposed target before clicking.';
+  if(focus==='Hold the last three shots')return 'Repeat the six-shot burst at this range. Keep the first three hits and adjust from the late impact group; aim for 2/3 late hits.';
+  if(focus==='Commit after alignment')return 'Repeat 3 entries at this angle. Keep the opening hit; shorten only the pause after the crosshair and stop are ready.';
+  return mode==='burst'?'Repeat one six-shot burst without moving. Compare the first-three and last-three impact groups, then reposition.':
+    'Take 3 deliberate one-shot entries. Pre-aim, counter-strafe and correct to the exposed target before clicking; check each impact before speeding up.';
 }
-const messages={clean:'Clean rep',late:'No shot before the timer ended',cover:'Your shot was blocked by cover',stationary:'Move, then counter-strafe',mouse:'Your aim needed extra correction',moving:'You fired while still moving',braking:'You stopped without counter-strafing',diagonal:'You moved diagonally around the corner',aim:'Your shot missed the target',height:'Body hit: start your aim higher',spray:'Too many shots missed the burst',alignment:'Your aim settled after your movement'};
-const tips={clean:'Keep the same stop-and-shoot rhythm for the next repetition.',late:'Move out of cover, stop, then fire. Practice pace gives you longer to prepare.',cover:'Move farther sideways until you can see and hit the head. Do not shoot through the wall.',stationary:'Hold A or D to build sideways speed. Release it, briefly tap the opposite key, then shoot.',mouse:'Start at head height. Use a small strafe for horizontal alignment; mouse correction is normal for unexpected positions.',moving:'Moving right? Release D, tap A briefly, then fire as you stop. Crouching alone is not an instant stop.',braking:'Counter-strafing means briefly pressing the opposite movement key to brake. Release D and tap A, or release A and tap D.',diagonal:'Release W or S before the edge. Using A or D alone makes your sideways stop easier to time.',aim:'Move the crosshair onto the visible head before firing. Use the mouse if movement alone cannot line it up.',height:'Raise your crosshair to head height before moving out. Let a small sideways move finish the horizontal alignment.',spray:'Stop before the burst, then pull down as recoil climbs. Review the impact marks to see where the shots went.',alignment:'Prepare the crosshair near the head before moving out, so you need less adjustment after stopping.'};
-export type RepFeedback={message:string;tip?:string;passed:boolean};
+
+export type RepFeedback={message:string;tip?:string;passed:boolean;evidence?:string;goal?:string;coaching?:CoachingSummary};
 export function makeRepFeedback(mode:DrillMode,m:DrillMetrics,previous:DrillMetrics[]):RepFeedback {
-  const key=issue(mode,m);
-  const repeated=key!=='clean'&&previous.length>=2&&previous.slice(0,2).every(p=>issue(mode,p)===key);
-  return {message:mode==='precision'?`${messages[key]} / ${m.movementScore ?? 0}/100`:messages[key],passed:m.passed,
-    tip: `${repeated ? 'Try this next: ' : ''}${key==='aim'&&m.covered?'Aim at the exposed part of the target, not through cover.':tips[key]}`};
+  const summary=m.coaching??drillCoaching(mode,m);
+  const repeated=!summary.focus.startsWith('Repeat the controlled')&&previous.length>=2&&previous.slice(0,2).every(p=>(p.coaching??drillCoaching(mode,p)).focus===summary.focus);
+  const action=repeated?`Try this next (3 similar reps): ${smallerPractice(summary.focus,mode)}`:summary.action;
+  return {message:`${summary.focus}${summary.score===null?'':` / ${summary.score}/100`}`,passed:m.passed,
+    evidence:summary.evidence,goal:summary.goal,coaching:{...summary,action},tip:action};
 }

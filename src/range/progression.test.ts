@@ -40,7 +40,7 @@ const award = (controller: ReturnType<typeof createProgressionController>, confi
   return controller.completeDuel(id, win(config, score), config, 'settings:0');
 };
 const savedProfile = (patch: Record<string, unknown> = {}) => ({version: PROGRESSION_VERSION, xp: 0, balance: 0,
-  creditsEarned: 0, creditsSpent: 0, owned: [], equipped: {}, completedDuels: 0, completedDrills: 0, milestones: [], achievements: sanitizeAchievements(undefined), ...patch});
+  creditsEarned: 0, creditsSpent: 0, owned: [], equipped: {}, completedDuels: 0, completedDrills: 0, milestones: [], achievements: sanitizeAchievements(undefined), redeemedGifts: [], ...patch});
 
 describe('progression level curve and native catalog boundary', () => {
   it('begins at level one, crosses exact thresholds, and has increasingly spaced levels', () => {
@@ -607,6 +607,8 @@ describe('earned currency and deliberate purchases', () => {
   it('denies unknown, locked, and unaffordable items with no mutation or write', () => {
     const {storage} = memory(savedProfile({balance: 179, xp: xpForLevel(2)}));
     const controller = createProgressionController({storage, catalog: definitions}), before = controller.getSnapshot();
+    // Loading creates recovery copies; rejected purchases must not add any writes.
+    vi.mocked(storage.setItem).mockClear();
     for (const [id, reason] of [['missing', 'unknown-cosmetic'], [BUTTERFLY_EMERALD_ID, 'level-locked'], ['test-finish', 'insufficient-credits']] as const) {
       expect(controller.canPurchase(id)).toBe(false);
       expect(controller.purchase(id)).toMatchObject({success: false, reason, spent: 0});

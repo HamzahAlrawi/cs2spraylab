@@ -1,6 +1,8 @@
 import type {DuelReview} from './duel/coaching';
 import type {SkillLevel} from './duel/config';
 import {recordDrillAchievements, recordDuelAchievements, sanitizeAchievements, unlockAchievements, type AchievementState} from './achievements';
+import {verifyGiftCode} from './gift-codes';
+import {browserProfileMirror, decodeProfileCopy, MAX_PROFILE_BYTES, profileChecksum, profileCopy, readProfileCopies, writeProfileCopies, type ProfileCopy, type ProfileMirror} from './progression-persistence';
 
 export const PROGRESSION_KEY = 'spraylab.progression.v1';
 export const PROGRESSION_VERSION = 2;
@@ -53,11 +55,12 @@ export type ProgressionProfile = Readonly<{
   milestones: readonly string[];
   equipped: Readonly<Record<string, string>>;
   achievements: AchievementState;
+  redeemedGifts: readonly string[];
 }>;
 export type ProgressionStorage = Pick<Storage, 'getItem' | 'setItem'>;
-export type StorageStatus = 'saved' | 'memory-only' | 'unsupported-version';
+export type StorageStatus = 'saved' | 'memory-only' | 'unsupported-version' | 'corrupt-save';
 export type XpNotice = Readonly<{
-  id: string; xp: number; source: 'duel' | DrillMode | 'collection';
+  id: string; xp: number; source: 'duel' | DrillMode | 'collection' | 'gift' | 'recovery';
   levelBefore: number; levelAfter: number; unlockedIds: readonly string[];
   credits: number; milestoneCredits: number; milestoneIds: readonly string[];
   achievementIds: readonly string[];
@@ -118,6 +121,10 @@ export type PurchaseResult = Readonly<
   {success: true; reason: 'purchased' | 'already-owned'; cosmeticId: string; spent: number} |
   {success: false; reason: 'unknown-cosmetic' | 'level-locked' | 'insufficient-credits' | 'counter-limit' | 'disposed'; cosmeticId: string; spent: 0}
 >;
+export type GiftResult = Readonly<{success: boolean; reason: 'redeemed' | 'already-redeemed' | 'invalid-code' | 'expired' |
+  'storage-unavailable' | 'unsupported-version' | 'disposed' | 'busy'; xp: number; credits: number; level: number}>;
+export type RestoreResult = Readonly<{success: boolean; reason: 'restored' | 'invalid-backup' | 'unsupported-version' |
+  'storage-unavailable' | 'disposed'; level: number}>;
 
 const record = (value: unknown): Record<string, unknown> => value !== null && typeof value === 'object' && !Array.isArray(value)
   ? value as Record<string, unknown> : {};
@@ -223,7 +230,27 @@ export function sanitizeProgression(raw: unknown, catalog: readonly CosmeticDefi
   return Object.freeze({version: PROGRESSION_VERSION, xp, balance: credits, owned: Object.freeze([...owned]), creditsEarned: earned, creditsSpent: spent,
     completedDuels: current && integer(value.completedDuels, 0, MAX_COMPLETIONS) ? value.completedDuels : 0,
     completedDrills: current && integer(value.completedDrills, 0, MAX_COMPLETIONS) ? value.completedDrills : 0,
-    milestones: Object.freeze([...milestones]), equipped: Object.freeze(equipped), achievements: sanitizeAchievements(current ? value.achievements : undefined)});
+    milestones: Object.freeze([...milestones]), equipped: Object.freeze(equipped), achievements: sanitizeAchievements(current ? value.achievements : undefined),
+    redeemedGifts: Object.freeze(current && Array.isArray(value.redeemedGifts) ? [...new Set(value.redeemedGifts.filter(identifier).slice(0, 10_000))] : [])});
+}
+
+/** Recovery estimate: XP-weighted 80% Duel / 20% drills by default; no invented match/achievement history. */
+export function levelGiftEntitlement(level: number, duelShare = .8) {
+  const xp = xpForLevel(level), share = clamp(Number.isFinite(duelShare) ? duelShare : .8, 0, 1);
+  const levelMilestones = PROGRESSION_MILESTONES.filter(item => item.kind === 'level' && item.target <= levelProgress(xp).level);
+  const playCredits = Math.floor(xp * (share * CREDIT_RATES.duel + (1 - share) * CREDIT_RATES.drill));
+  return {xp, playCredits, milestoneCredits: levelMilestones.reduce((sum, item) => sum + item.credits, 0),
+    credits: playCredits + levelMilestones.reduce((sum, item) => sum + item.credits, 0), milestoneIds: levelMilestones.map(item => item.id)};
+}
+
+function usableSavedProfile(raw: unknown): boolean {
+  const value = record(raw);
+  if (value.version === 1) return finite(value.xp, 0, MAX_XP);
+  if (value.version !== PROGRESSION_VERSION || value.xp !== undefined && !integer(value.xp, 0, MAX_XP)) return false;
+  return [['balance', MAX_CREDITS], ['creditsSpent', MAX_CREDIT_COUNTER], ['creditsEarned', MAX_CREDIT_COUNTER],
+    ['completedDuels', MAX_COMPLETIONS], ['completedDrills', MAX_COMPLETIONS]].every(([key, max]) =>
+      value[key] === undefined || integer(value[key], 0, max as number)) &&
+    ['owned', 'milestones', 'redeemedGifts'].every(key => value[key] === undefined || Array.isArray(value[key]));
 }
 
 export function equippedCosmetic(profile: ProgressionProfile, catalog: readonly CosmeticDefinition[], equipment: string): CosmeticDefinition | undefined {
@@ -298,6 +325,7 @@ type ActiveAttempt = {id: string; revision: string; kind: 'duel'; setup: DuelXpS
   {id: string; revision: string; kind: 'drill'; mode: DrillMode};
 export type ProgressionController = {
   readonly catalog: readonly CosmeticDefinition[];
+  readonly ready: Promise<void>;
   getSnapshot(): ProgressionSnapshot;
   subscribe(listener: () => void): () => void;
   /** One active attempt. Starting another abandons the previous one. Store this ID on the round. */
@@ -311,6 +339,9 @@ export type ProgressionController = {
   /** Buying never auto-equips. Repeating a successful purchase cannot charge twice. */
   canPurchase(cosmeticId: string): boolean;
   purchase(cosmeticId: string): PurchaseResult;
+  redeemCode(code: string): Promise<GiftResult>;
+  exportBackup(): string;
+  restoreBackup(text: string): RestoreResult;
   dismissNotification(): void;
   dispose(): void;
 };
@@ -320,34 +351,122 @@ export function createProgressionController(options: {
   /** null forces session-only storage; omitted uses localStorage when accessible. */
   storage?: ProgressionStorage | null;
   storageKey?: string;
+  /** Browser defaults to a separate IndexedDB recovery copy; injectable for tests. */
+  mirror?: ProfileMirror | null;
 } = {}): ProgressionController {
   const catalog = prepareCosmeticCatalog(options.catalog);
   const key = options.storageKey ?? PROGRESSION_KEY;
   let storage = options.storage ?? null;
   if (options.storage === undefined) try {storage = typeof localStorage === 'undefined' ? null : localStorage;} catch {storage = null;}
-  let raw: unknown, storageStatus: StorageStatus = storage ? 'saved' : 'memory-only';
-  let savedText: string | null | undefined;
-  try {savedText = storage?.getItem(key);} catch {storageStatus = 'memory-only'; storage = null;}
-  try {raw = savedText ? JSON.parse(savedText) : undefined;} catch {storageStatus = 'memory-only';}
-  if (record(raw).version !== undefined && record(raw).version !== 1 && record(raw).version !== PROGRESSION_VERSION) storageStatus = 'unsupported-version';
+  let raw: unknown, storageStatus: StorageStatus = storage ? 'saved' : 'memory-only', revision = 0;
+  let lastCopy: ProfileCopy | undefined, writeBlocked = false;
+  const future = (value: unknown) => record(value).version !== undefined && ![1, PROGRESSION_VERSION].includes(record(value).version as number);
+  const read = () => {
+    if (!storage) return;
+    try {
+      const copies = readProfileCopies(storage, key), main = copies[0];
+      if (copies.some(copy => copy.unsupported || future(copy.raw))) {storageStatus = 'unsupported-version'; writeBlocked = true; return;}
+      const valid = copies.filter(copy => usableSavedProfile(copy.raw)).sort((a, b) => b.revision - a.revision);
+      const best = valid[0];
+      if (main.text && !usableSavedProfile(main.raw)) {
+        // Keep the original bytes before repairing a broken primary save.
+        try {
+          if (main.text.length > MAX_PROFILE_BYTES) throw Error('Oversize save');
+          storage.setItem(`${key}.corrupt`, main.text);
+        } catch {writeBlocked = true;}
+        if (!best) storageStatus = 'corrupt-save';
+      }
+      return best;
+    } catch {storageStatus = 'memory-only'; storage = null;}
+  };
+  const initial = read();
+  if (initial) {raw = initial.raw; revision = initial.revision;}
   let snapshot: ProgressionSnapshot = Object.freeze({profile: sanitizeProgression(raw, catalog), storageStatus, notification: null});
   const recognized = unlockAchievements(snapshot.profile, catalog, levelProgress(snapshot.profile.xp).level, 0);
   if (recognized.ids.length) snapshot = Object.freeze({...snapshot, profile: sanitizeProgression({...snapshot.profile, achievements: recognized.state}, catalog)});
-  if ((record(raw).version === 1 || recognized.ids.length) && storage && storageStatus !== 'unsupported-version') {
-    try {storage.setItem(key, JSON.stringify(snapshot.profile));} catch {storageStatus = 'memory-only';}
-    snapshot = Object.freeze({...snapshot, storageStatus});
-  }
   const listeners = new Set<() => void>();
   let active: ActiveAttempt | null = null, disposed = false, serial = 0;
+  const mirror = options.mirror === undefined ? options.storage === undefined && storage ? browserProfileMirror(key) : null : options.mirror;
+  let restoring = !!mirror, hydrated = !mirror, redeeming = false, volatile = false;
+  let mirrorWrites: Promise<unknown> = Promise.resolve();
   const session = typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function' ? crypto.randomUUID() : `${Date.now().toString(36)}-${Math.random().toString(36).slice(2)}`;
-  const publish = (profile: ProgressionProfile, notification = snapshot.notification) => {
-    if (snapshot.storageStatus !== 'unsupported-version') {
-      try {if (storage) {storage.setItem(key, JSON.stringify(profile)); storageStatus = 'saved';} else storageStatus = 'memory-only';}
-      catch {storageStatus = 'memory-only';}
-    }
-    snapshot = Object.freeze({profile, storageStatus, notification});
-    for (const listener of listeners) listener();
+  const notify = () => {for (const listener of listeners) listener();};
+  const queueMirror = (copy: ProfileCopy) => {
+    if (mirror && hydrated && !writeBlocked) mirrorWrites = mirrorWrites.then(async () => {
+      if (writeBlocked || disposed) return false;
+      const saved = await mirror.write(copy);
+      if (writeBlocked || disposed) return false;
+      if (saved && !volatile && copy.revision === revision && profileChecksum(snapshot.profile) === copy.checksum && storageStatus !== 'unsupported-version') {
+        lastCopy = copy; storageStatus = 'saved'; volatile = false;
+        if (snapshot.storageStatus !== 'saved') {snapshot = Object.freeze({...snapshot, storageStatus}); notify();}
+      }
+      return saved;
+    }).catch(() => false);
   };
+  const save = (profile: ProgressionProfile): boolean => {
+    if (storageStatus === 'unsupported-version' || writeBlocked || !storage) return false;
+    const current = read();
+    if (writeBlocked || !storage) return false;
+    // Do not overwrite a save that changed after the operation's synchronization.
+    if (current && current.revision > revision) {writeBlocked = true; storageStatus = 'memory-only'; return false;}
+    const next = profileCopy(profile, Math.max(Date.now(), revision + 1));
+    if (!writeProfileCopies(storage, key, next, lastCopy)) return false;
+    revision = next.revision; lastCopy = next; storageStatus = 'saved'; volatile = false; queueMirror(next); return true;
+  };
+  const synchronize = () => {
+    if (disposed) return;
+    const candidate = read();
+    if (candidate && candidate.revision > revision) {
+      if (volatile) {
+        writeBlocked = true; storageStatus = 'memory-only';
+        snapshot = Object.freeze({...snapshot, storageStatus}); notify(); return;
+      }
+      revision = candidate.revision;
+      const profile = sanitizeProgression(candidate.raw, catalog);
+      lastCopy = profileCopy(profile, revision);
+      snapshot = Object.freeze({profile, storageStatus, notification: null}); notify();
+    } else if (storageStatus !== snapshot.storageStatus) {
+      snapshot = Object.freeze({...snapshot, storageStatus}); notify();
+    }
+  };
+  const storageChanged = (event: StorageEvent) => {
+    if (!disposed && (!event.key || event.key === key || event.key.startsWith(`${key}.backup.`))) synchronize();
+  };
+  const publish = (profile: ProgressionProfile, notification = snapshot.notification, requireSaved = false) => {
+    const saved = save(profile);
+    if (!saved && storageStatus !== 'unsupported-version' && storageStatus !== 'corrupt-save') storageStatus = 'memory-only';
+    if (!saved && requireSaved) {
+      snapshot = Object.freeze({...snapshot, storageStatus}); notify(); return false;
+    }
+    if (!saved) volatile = true;
+    snapshot = Object.freeze({profile, storageStatus, notification});
+    notify(); return true;
+  };
+  if (initial && !writeBlocked) {
+    lastCopy = profileCopy(snapshot.profile, revision);
+    if (!mirror && !save(snapshot.profile) && !writeBlocked) storageStatus = 'memory-only';
+    snapshot = Object.freeze({...snapshot, storageStatus});
+  }
+  const ready: Promise<void> = (mirror ? mirror.read().then(value => {
+    synchronize();
+    const copy = decodeProfileCopy(value);
+    if (record(value).format === 'spraylab-profile-copy' && record(value).version !== 1 || copy && future(copy.profile)) {
+      writeBlocked = true; storageStatus = 'unsupported-version';
+    }
+    else if (copy && usableSavedProfile(copy.profile) && copy.revision > revision && !disposed && storageStatus !== 'unsupported-version') {
+      revision = copy.revision; lastCopy = copy;
+      const profile = sanitizeProgression(copy.profile, catalog);
+      // Compare both stores before repairing either one; a second tab may have saved during startup.
+      snapshot = Object.freeze({profile, storageStatus, notification: null});
+    }
+  }).catch(() => {}) : Promise.resolve()).then(() => {
+    restoring = false; hydrated = true;
+    synchronize();
+    if (mirror && lastCopy && storageStatus !== 'unsupported-version' && !disposed && !save(snapshot.profile)) storageStatus = 'memory-only';
+    snapshot = Object.freeze({...snapshot, storageStatus});
+    if (lastCopy && storageStatus === 'saved' && !disposed) queueMirror(lastCopy);
+    notify();
+  });
   // Fast consecutive rounds must not erase an achievement before its toast has been read.
   const pendingAchievements = (ids: readonly string[]) => Object.freeze([...new Set([...(snapshot.notification?.achievementIds ?? []), ...ids])]);
   const settle = (attempt: ActiveAttempt, evaluation: XpEvaluation, activeSeconds: number, achievements: AchievementState): AwardResult => {
@@ -384,23 +503,29 @@ export function createProgressionController(options: {
   const denied = (reason: AwardResult['reason']): AwardResult => ({awarded: false, xp: 0, credits: 0, reason});
   const validRevision = (revision: string) => typeof revision === 'string' && revision.length > 0 && revision.length <= 512;
   return {
-    catalog,
+    catalog, ready,
     getSnapshot: () => snapshot,
-    subscribe(listener) {if (disposed) return () => {}; listeners.add(listener); return () => {listeners.delete(listener);};},
+    subscribe(listener) {
+      if (disposed) return () => {};
+      if (!listeners.size && typeof window !== 'undefined') window.addEventListener('storage', storageChanged);
+      listeners.add(listener);
+      return () => {listeners.delete(listener); if (!listeners.size && typeof window !== 'undefined') window.removeEventListener('storage', storageChanged);};
+    },
     beginDuel(setup, revision) {
       active = null;
-      if (disposed || !validSetup(setup) || !validRevision(revision)) return null;
+      if (disposed || restoring || !validSetup(setup) || !validRevision(revision)) return null;
       active = {id: `${session}:${++serial}`, kind: 'duel', revision,
         setup: {playerHealth: setup.playerHealth, playerArmor: setup.playerArmor, bots: setup.bots.map(bot => ({...bot}))}};
       return active.id;
     },
     beginDrill(mode, revision) {
       active = null;
-      if (disposed || !drillModes.includes(mode) || !validRevision(revision)) return null;
+      if (disposed || restoring || !drillModes.includes(mode) || !validRevision(revision)) return null;
       active = {id: `${session}:${++serial}`, kind: 'drill', revision, mode};
       return active.id;
     },
     completeDuel(id, result, finalSetup, revision) {
+      synchronize();
       const attempt = takeAttempt(id, 'duel');
       if (attempt?.kind !== 'duel') return denied('unknown-attempt');
       if (attempt.revision !== revision || !validSetup(finalSetup) || setupKey(attempt.setup) !== setupKey(finalSetup)) return denied('settings-changed');
@@ -408,6 +533,7 @@ export function createProgressionController(options: {
       return settle(attempt, evaluation, result?.activeSeconds, evaluation.xp ? recordDuelAchievements(snapshot.profile.achievements, attempt.setup, result) : snapshot.profile.achievements);
     },
     completeDrill(id, result, revision) {
+      synchronize();
       const attempt = takeAttempt(id, 'drill');
       if (attempt?.kind !== 'drill') return denied('unknown-attempt');
       if (attempt.revision !== revision) return denied('settings-changed');
@@ -416,7 +542,8 @@ export function createProgressionController(options: {
     },
     cancelAttempt(id) {if (id === undefined || active?.id === id) active = null;},
     equip(equipment, id) {
-      if (disposed || !identifier(equipment)) return false;
+      synchronize();
+      if (disposed || restoring || !identifier(equipment)) return false;
       const item = catalog.find(candidate => candidate.equipment === equipment && candidate.id === id);
       if (!item || !ownsCosmetic(snapshot.profile, item)) return false;
       if (snapshot.profile.equipped[equipment] === id) return true;
@@ -424,20 +551,23 @@ export function createProgressionController(options: {
       return true;
     },
     resetEquipment(equipment) {
-      if (disposed || !identifier(equipment)) return false;
+      synchronize();
+      if (disposed || restoring || !identifier(equipment)) return false;
       const equipped = {...snapshot.profile.equipped};
       delete equipped[equipment];
       publish(sanitizeProgression({...snapshot.profile, equipped}, catalog));
       return true;
     },
     canPurchase(id) {
+      synchronize();
       const item = catalog.find(candidate => candidate.id === id), profile = snapshot.profile;
-      return !disposed && !!item && !ownsCosmetic(profile, item) && item.unlockLevel <= levelProgress(profile.xp).level &&
+      return !disposed && !restoring && !!item && !ownsCosmetic(profile, item) && item.unlockLevel <= levelProgress(profile.xp).level &&
         cosmeticPrice(item) <= profile.balance && cosmeticPrice(item) <= MAX_CREDIT_COUNTER - profile.creditsSpent;
     },
     purchase(id) {
+      synchronize();
       const fail = (reason: Extract<PurchaseResult, {success: false}>['reason']): PurchaseResult => ({success: false, reason, cosmeticId: id, spent: 0});
-      if (disposed) return fail('disposed');
+      if (disposed || restoring) return fail('disposed');
       const item = catalog.find(candidate => candidate.id === id);
       if (!item) return fail('unknown-cosmetic');
       const previous = snapshot.profile;
@@ -453,11 +583,79 @@ export function createProgressionController(options: {
         levelBefore: level, levelAfter: level, unlockedIds: Object.freeze([]), milestoneCredits: 0, milestoneIds: Object.freeze([]), achievementIds: pendingAchievements(unlocked.ids)}) : snapshot.notification);
       return {success: true, reason: 'purchased', cosmeticId: id, spent: price};
     },
+    async redeemCode(code) {
+      const fail = (reason: GiftResult['reason']): GiftResult => ({success: false, reason, xp: 0, credits: 0, level: levelProgress(snapshot.profile.xp).level});
+      if (disposed) return fail('disposed');
+      if (redeeming) return fail('busy');
+      redeeming = true;
+      try {
+        await ready;
+        const verified = await verifyGiftCode(code);
+        if (!verified.success) return fail(verified.reason);
+        const apply = async (): Promise<GiftResult> => {
+          if (disposed) return fail('disposed');
+          synchronize();
+          if (verified.payload.expiresAt !== undefined && Date.now() >= verified.payload.expiresAt) return fail('expired');
+          if (storageStatus === 'unsupported-version') return fail('unsupported-version');
+          if (!storage || writeBlocked) return fail('storage-unavailable');
+          const {payload} = verified, previous = snapshot.profile;
+          if (previous.redeemedGifts.includes(payload.id)) return fail('already-redeemed');
+          if (previous.redeemedGifts.length >= 10_000) return fail('invalid-code');
+          const levelBefore = levelProgress(previous.xp).level;
+          const entitlement = payload.reward.kind === 'restore-level' ? levelGiftEntitlement(payload.reward.level, payload.reward.duelShare) : undefined;
+          const xp = Math.min(MAX_XP - previous.xp, entitlement ? Math.max(0, entitlement.xp - previous.xp) : payload.reward.kind === 'grant' ? payload.reward.xp : 0);
+          const levelAfter = levelProgress(previous.xp + xp).level;
+          const milestones = PROGRESSION_MILESTONES.filter(item => item.kind === 'level' && !previous.milestones.includes(item.id) &&
+            item.target <= (entitlement ? levelProgress(entitlement.xp).level : levelAfter));
+          const milestoneCredits = entitlement ? 0 : milestones.reduce((sum, item) => sum + item.credits, 0);
+          const wantedCredits = entitlement ? Math.max(0, entitlement.credits - previous.creditsEarned) :
+            (payload.reward.kind === 'grant' ? payload.reward.credits : 0) + milestoneCredits;
+          const credits = Math.min(wantedCredits, MAX_CREDITS - previous.balance, MAX_CREDIT_COUNTER - previous.creditsEarned);
+          const updated = sanitizeProgression({...previous, xp: previous.xp + xp, balance: previous.balance + credits,
+            redeemedGifts: [...previous.redeemedGifts, payload.id], milestones: [...previous.milestones, ...milestones.map(item => item.id)]}, catalog);
+          const unlocked = unlockAchievements(updated, catalog, levelAfter, Date.now());
+          const profile = sanitizeProgression({...updated, achievements: unlocked.state}, catalog);
+          const notification: XpNotice = Object.freeze({id: `${session}:gift:${payload.id}`, source: 'gift', xp, credits,
+            levelBefore, levelAfter, unlockedIds: Object.freeze([]), milestoneCredits: Math.min(credits, milestoneCredits),
+            milestoneIds: Object.freeze(milestones.map(item => item.id)), achievementIds: pendingAchievements(unlocked.ids)});
+          // The redemption marker and rewards are committed in the same saved document.
+          if (!publish(profile, notification, true)) return fail('storage-unavailable');
+          await mirrorWrites;
+          return {success: true, reason: 'redeemed', xp, credits, level: levelAfter};
+        };
+        return typeof navigator !== 'undefined' && navigator.locks?.request
+          ? await navigator.locks.request(`${key}:gift-redemption`, apply) : await apply();
+      } finally {redeeming = false;}
+    },
+    exportBackup() {
+      synchronize();
+      return JSON.stringify({format: 'spraylab-progress-backup', version: 1, exportedAt: new Date().toISOString(),
+        origin: typeof location === 'undefined' ? null : location.origin, copy: profileCopy(snapshot.profile, revision)}, null, 2);
+    },
+    restoreBackup(text) {
+      const fail = (reason: RestoreResult['reason']): RestoreResult => ({success: false, reason, level: levelProgress(snapshot.profile.xp).level});
+      if (disposed) return fail('disposed');
+      if (restoring) return fail('storage-unavailable');
+      synchronize();
+      if (storageStatus === 'unsupported-version') return fail('unsupported-version');
+      try {
+        if (typeof text !== 'string' || text.length > MAX_PROFILE_BYTES) return fail('invalid-backup');
+        const document = JSON.parse(text), copy = decodeProfileCopy(document.copy);
+        if (document.format !== 'spraylab-progress-backup' || document.version !== 1 || !copy) return fail('invalid-backup');
+        if (future(copy.profile)) return fail('unsupported-version');
+        if (!usableSavedProfile(copy.profile)) return fail('invalid-backup');
+        const restored = sanitizeProgression(copy.profile, catalog);
+        const profile = sanitizeProgression({...restored, redeemedGifts: [...new Set([...restored.redeemedGifts, ...snapshot.profile.redeemedGifts])]}, catalog);
+        if (!publish(profile, null, true)) return fail('storage-unavailable');
+        active = null;
+        return {success: true, reason: 'restored', level: levelProgress(profile.xp).level};
+      } catch {return fail('invalid-backup');}
+    },
     dismissNotification() {
       if (!snapshot.notification) return;
       snapshot = Object.freeze({...snapshot, notification: null});
       for (const listener of listeners) listener();
     },
-    dispose() {disposed = true; active = null; listeners.clear();},
+    dispose() {disposed = true; active = null; listeners.clear(); if (typeof window !== 'undefined') window.removeEventListener('storage', storageChanged);},
   };
 }

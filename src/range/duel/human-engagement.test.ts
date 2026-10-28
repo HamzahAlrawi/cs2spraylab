@@ -105,7 +105,7 @@ describe('weapon-appropriate committed combat plans', () => {
     }
   });
 
-  it('keeps a useful covered hold stable initially but does not sit there indefinitely', () => {
+  it('fires a controlled exchange from useful cover then rechecks instead of sitting indefinitely', () => {
     for (const seed of [1, 17, 42]) {
       const {step} = encounter(seed, true);
       let firstMovement = Infinity, shots = 0;
@@ -114,8 +114,8 @@ describe('weapon-appropriate committed combat plans', () => {
         if (frame.time > .4 && Math.hypot(frame.command.forward ?? 0, frame.command.side ?? 0) > .2)
           firstMovement = Math.min(firstMovement, frame.time);
       }
-      expect(firstMovement, `seed ${seed}`).toBeGreaterThan(3);
-      expect(firstMovement).toBeLessThan(7);
+      expect(firstMovement, `seed ${seed}`).toBeGreaterThan(1.2);
+      expect(firstMovement).toBeLessThan(4);
       expect(shots).toBeGreaterThan(15);
     }
   });

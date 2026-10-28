@@ -9,6 +9,7 @@ test('FPS controls work before mouse capture across browser engines', async ({pa
   await expect(page.getByLabel('Performance monitor')).toBeVisible();
   await expect(page.getByLabel('Performance monitor')).toContainText(/\d+ FPS/);
   await page.getByRole('button', {name: 'Settings', exact: true}).click();
+  await page.getByRole('tab', {name: 'Audio & video', exact: true}).click();
   await expect(page.getByLabel('Show FPS counter')).toBeChecked();
   await page.getByRole('button', {name: 'Done', exact: true}).click();
   await page.getByLabel('Training mode').selectOption('guided');

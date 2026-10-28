@@ -1,0 +1,41 @@
+.duel-live-overlay{position:absolute;top:60px;right:20px;bottom:118px;width:min(360px,calc(100% - 40px));display:flex;flex-direction:column;align-items:flex-end;gap:8px;pointer-events:none}
+.duel-view .duel-live-overlay>.duel-tools{position:static;max-width:100%;width:100%;flex:none}
+.kill-feed{position:relative;flex:1;width:100%;min-height:0;container-type:size;container-name:kill-feed;pointer-events:none;letter-spacing:0}
+.kill-feed ol{position:absolute;inset:0;display:flex;flex-direction:column;align-items:flex-end;gap:3px;list-style:none;margin:0;padding:0;overflow:hidden}
+.kill-feed-row{box-sizing:border-box;display:flex;align-items:center;justify-content:flex-end;gap:6px;flex:none;max-width:100%;height:26px;padding:0 7px;border:1px solid #ffffff24;border-radius:1px;background:#101512df;color:#edf1ef;font-size:11px;font-weight:600;line-height:1;text-shadow:0 1px 2px #000}
+.kill-feed-kill{border-color:#eac567;box-shadow:inset 2px 0 #eac567}
+.kill-feed-death{border-color:#ed8282;box-shadow:inset 2px 0 #ed8282}
+.kill-feed-shooter,.kill-feed-victim{min-width:0;max-width:105px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.kill-feed-shooter{color:#eac567}.kill-feed-victim{color:#9fcbee}
+.kill-feed-death .kill-feed-victim{color:#ff9999}
+.kill-feed-weapon{display:flex;align-items:center;justify-content:center;gap:4px;flex:none;font-size:9px;font-weight:400;color:#dee4df;white-space:nowrap}
+.kill-feed-weapon img{display:block;width:40px;height:20px;object-fit:contain;filter:brightness(0) invert(1);opacity:.9}
+.kill-feed-headshot{flex:none;color:#f5f5ed}
+.duel-view.replaying .duel-live-overlay{display:none}
+@container kill-feed (max-height:170px){.kill-feed-row:nth-child(n+6){display:none}}
+@container kill-feed (max-height:141px){.kill-feed-row:nth-child(n+5){display:none}}
+@container kill-feed (max-height:112px){.kill-feed-row:nth-child(n+4){display:none}}
+@container kill-feed (max-height:83px){.kill-feed-row:nth-child(n+3){display:none}}
+@container kill-feed (max-height:54px){.kill-feed-row:nth-child(n+2){display:none}}
+@container kill-feed (max-height:25px){.kill-feed-row{display:none}}
+@container duel-view (max-height:420px){
+  .duel-live-overlay{top:56px;right:12px;bottom:100px;width:min(360px,calc(100% - 24px));gap:5px}
+  .duel-view .duel-live-overlay>.duel-tools{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:start;gap:4px}
+  .duel-live-overlay .duel-tools>.equipment-slots{grid-column:1;grid-row:1;justify-self:end;gap:3px}
+  .duel-live-overlay .equipment-slots button{width:42px;height:28px}
+  .duel-live-overlay .equipment-slots img{width:28px;height:22px}
+  .duel-live-overlay .duel-tools>.weapon-action-tools{grid-column:2;grid-row:1}
+  .duel-live-overlay .duel-tools>.duel-exit{grid-column:2;grid-row:2;justify-self:end;padding:0;background:none}
+  .duel-live-overlay .duel-exit>span{display:none}
+  .duel-live-overlay .duel-tools>.duel-shortcut-warning{grid-column:1;grid-row:2;justify-self:end;font-size:9px;padding:4px 6px;max-width:100%;box-sizing:border-box}
+}
+@container duel-view (max-width:400px){
+  .duel-live-overlay{right:12px;width:calc(100% - 24px)}
+  .kill-feed-shooter,.kill-feed-victim{max-width:80px}
+  .kill-feed-weapon img{width:30px}
+}
+@container duel-view (max-width:600px){
+  .duel-view:has(>.prefire-navigation) .kill-feed{width:calc(100% - 142px)}
+  .duel-view:has(>.prefire-navigation) .kill-feed-weapon>span{display:none}
+  .duel-view:has(.kill-feed)>.prefire-navigation{left:12px;max-width:130px;box-sizing:border-box}
+}

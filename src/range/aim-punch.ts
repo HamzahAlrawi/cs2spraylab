@@ -30,8 +30,8 @@ export function recoverDamagePunch(angle: PunchAngle, dt: number): PunchAngle {
 }
 
 // Damage punch belongs to the actor, not the weapon. Its native angle gets the
-// same 2x physical aim scale as recoil, but full camera motion (not the recoil
-// camera's presentation fraction). No weapon RNG, recoil index or bloom changes.
+// same 2x physical aim scale as recoil, but full external camera motion. The
+// weapon-recoil camera fraction is separate. No RNG, recoil index or bloom changes.
 export class DamagePunch {
   angle: PunchAngle = {pitch: 0, yaw: 0, roll: 0};
   constructor(private readonly random: () => number = Math.random) {}

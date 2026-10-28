@@ -1,0 +1,3529 @@
+{
+  "build": "2000930",
+  "clientSha256": "44af2aa0d2c64f90d273444cb393b8b679094f0b02136dbdb89d4ec82a560008",
+  "instructionRanges": {
+    "movement": "80b9a5..80b9ed",
+    "remap": "280040..280091",
+    "recoveryTime": "80c5d0..80c6bc",
+    "penalty": "8274ab..827522",
+    "landing": "81f370..81f398",
+    "firing": "803553..803566"
+  },
+  "limitations": [
+    "Only isolated inspected SSE arithmetic; no DLL loading or game process.",
+    "Owner/MoveType lookup stubbed; ordinary movement flags and weapon stats supplied explicitly.",
+    "powf/logf/expf imports use Python math rounded to float32, not native CRT implementations.",
+    "Penalty baseline is supplied, not captured from the complete native entity state machine.",
+    "Native penalty slice advances one 64 Hz tick; browser fixed-step integration is not subtick parity.",
+    "Landing fixture verifies coefficient multiplication/addition only; caller input meaning is not verified.",
+    "No spread command seed, end-to-end firing, hitboxes, rendered camera or stance-transition timing parity."
+  ],
+  "movement": [
+    {
+      "weapon": "ak47",
+      "speedRatio": 0,
+      "walking": false,
+      "nativeInputs": {
+        "speed": 0.0,
+        "low": 73.0999984741211,
+        "high": 204.25,
+        "remapped": 0.0,
+        "cap": 215
+      },
+      "result": 0.0
+    },
+    {
+      "weapon": "ak47",
+      "speedRatio": 0,
+      "walking": true,
+      "nativeInputs": {
+        "speed": 0.0,
+        "low": 73.0999984741211,
+        "high": 204.25,
+        "remapped": 0.0,
+        "cap": 215
+      },
+      "result": 0.0
+    },
+    {
+      "weapon": "ak47",
+      "speedRatio": 0.3399,
+      "walking": false,
+      "nativeInputs": {
+        "speed": 73.07849884033203,
+        "low": 73.0999984741211,
+        "high": 204.25,
+        "remapped": 0.0,
+        "cap": 215
+      },
+      "result": 0.0
+    },
+    {
+      "weapon": "ak47",
+      "speedRatio": 0.3399,
+      "walking": true,
+      "nativeInputs": {
+        "speed": 73.07849884033203,
+        "low": 73.0999984741211,
+        "high": 204.25,
+        "remapped": 0.0,
+        "cap": 215
+      },
+      "result": 0.0
+    },
+    {
+      "weapon": "ak47",
+      "speedRatio": 0.34,
+      "walking": false,
+      "nativeInputs": {
+        "speed": 73.0999984741211,
+        "low": 73.0999984741211,
+        "high": 204.25,
+        "remapped": 0.0,
+        "cap": 215
+      },
+      "result": 0.0
+    },
+    {
+      "weapon": "ak47",
+      "speedRatio": 0.34,
+      "walking": true,
+      "nativeInputs": {
+        "speed": 73.0999984741211,
+        "low": 73.0999984741211,
+        "high": 204.25,
+        "remapped": 0.0,
+        "cap": 215
+      },
+      "result": 0.0
+    },
+    {
+      "weapon": "ak47",
+      "speedRatio": 0.3400000000000001,
+      "walking": false,
+      "nativeInputs": {
+        "speed": 73.0999984741211,
+        "low": 73.0999984741211,
+        "high": 204.25,
+        "remapped": 0.0,
+        "cap": 215
+      },
+      "result": 0.0
+    },
+    {
+      "weapon": "ak47",
+      "speedRatio": 0.3400000000000001,
+      "walking": true,
+      "nativeInputs": {
+        "speed": 73.0999984741211,
+        "low": 73.0999984741211,
+        "high": 204.25,
+        "remapped": 0.0,
+        "cap": 215
+      },
+      "result": 0.0
+    },
+    {
+      "weapon": "ak47",
+      "speedRatio": 0.340000000001,
+      "walking": false,
+      "nativeInputs": {
+        "speed": 73.0999984741211,
+        "low": 73.0999984741211,
+        "high": 204.25,
+        "remapped": 0.0,
+        "cap": 215
+      },
+      "result": 0.0
+    },
+    {
+      "weapon": "ak47",
+      "speedRatio": 0.340000000001,
+      "walking": true,
+      "nativeInputs": {
+        "speed": 73.0999984741211,
+        "low": 73.0999984741211,
+        "high": 204.25,
+        "remapped": 0.0,
+        "cap": 215
+      },
+      "result": 0.0
+    },
+    {
+      "weapon": "ak47",
+      "speedRatio": 0.3401,
+      "walking": false,
+      "nativeInputs": {
+        "speed": 73.12149810791016,
+        "low": 73.0999984741211,
+        "high": 204.25,
+        "remapped": 0.0001639316469663754,
+        "cap": 215
+      },
+      "result": 0.01980854757130146
+    },
+    {
+      "weapon": "ak47",
+      "speedRatio": 0.3401,
+      "walking": true,
+      "nativeInputs": {
+        "speed": 73.12149810791016,
+        "low": 73.0999984741211,
+        "high": 204.25,
+        "remapped": 0.0001639316469663754,
+        "cap": 215
+      },
+      "result": 2.8697875677607954e-05
+    },
+    {
+      "weapon": "ak47",
+      "speedRatio": 0.35,
+      "walking": false,
+      "nativeInputs": {
+        "speed": 75.25,
+        "low": 73.0999984741211,
+        "high": 204.25,
+        "remapped": 0.016393454745411873,
+        "cap": 215
+      },
+      "result": 0.06264040619134903
+    },
+    {
+      "weapon": "ak47",
+      "speedRatio": 0.35,
+      "walking": true,
+      "nativeInputs": {
+        "speed": 75.25,
+        "low": 73.0999984741211,
+        "high": 204.25,
+        "remapped": 0.016393454745411873,
+        "cap": 215
+      },
+      "result": 0.002869838150218129
+    },
+    {
+      "weapon": "ak47",
+      "speedRatio": 0.52,
+      "walking": false,
+      "nativeInputs": {
+        "speed": 111.80000305175781,
+        "low": 73.0999984741211,
+        "high": 204.25,
+        "remapped": 0.2950820028781891,
+        "cap": 215
+      },
+      "result": 0.12902462482452393
+    },
+    {
+      "weapon": "ak47",
+      "speedRatio": 0.52,
+      "walking": true,
+      "nativeInputs": {
+        "speed": 111.80000305175781,
+        "low": 73.0999984741211,
+        "high": 204.25,
+        "remapped": 0.2950820028781891,
+        "cap": 215
+      },
+      "result": 0.0516570582985878
+    },
+    {
+      "weapon": "ak47",
+      "speedRatio": 0.65,
+      "walking": false,
+      "nativeInputs": {
+        "speed": 139.75,
+        "low": 73.0999984741211,
+        "high": 204.25,
+        "remapped": 0.5081967711448669,
+        "cap": 215
+      },
+      "result": 0.14780697226524353
+    },
+    {
+      "weapon": "ak47",
+      "speedRatio": 0.65,
+      "walking": true,
+      "nativeInputs": {
+        "speed": 139.75,
+        "low": 73.0999984741211,
+        "high": 204.25,
+        "remapped": 0.5081967711448669,
+        "cap": 215
+      },
+      "result": 0.08896493166685104
+    },
+    {
+      "weapon": "ak47",
+      "speedRatio": 0.9499,
+      "walking": false,
+      "nativeInputs": {
+        "speed": 204.22850036621094,
+        "low": 73.0999984741211,
+        "high": 204.25,
+        "remapped": 0.9998362064361572,
+        "cap": 215
+      },
+      "result": 0.17505283653736115
+    },
+    {
+      "weapon": "ak47",
+      "speedRatio": 0.9499,
+      "walking": true,
+      "nativeInputs": {
+        "speed": 204.22850036621094,
+        "low": 73.0999984741211,
+        "high": 204.25,
+        "remapped": 0.9998362064361572,
+        "cap": 215
+      },
+      "result": 0.17503133416175842
+    },
+    {
+      "weapon": "ak47",
+      "speedRatio": 0.95,
+      "walking": false,
+      "nativeInputs": {
+        "speed": 204.25,
+        "low": 73.0999984741211,
+        "high": 204.25,
+        "remapped": 1.0,
+        "cap": 215
+      },
+      "result": 0.17506000399589539
+    },
+    {
+      "weapon": "ak47",
+      "speedRatio": 0.95,
+      "walking": true,
+      "nativeInputs": {
+        "speed": 204.25,
+        "low": 73.0999984741211,
+        "high": 204.25,
+        "remapped": 1.0,
+        "cap": 215
+      },
+      "result": 0.17506000399589539
+    },
+    {
+      "weapon": "ak47",
+      "speedRatio": 1,
+      "walking": false,
+      "nativeInputs": {
+        "speed": 215.0,
+        "low": 73.0999984741211,
+        "high": 204.25,
+        "remapped": 1.0,
+        "cap": 215
+      },
+      "result": 0.17506000399589539
+    },
+    {
+      "weapon": "ak47",
+      "speedRatio": 1,
+      "walking": true,
+      "nativeInputs": {
+        "speed": 215.0,
+        "low": 73.0999984741211,
+        "high": 204.25,
+        "remapped": 1.0,
+        "cap": 215
+      },
+      "result": 0.17506000399589539
+    },
+    {
+      "weapon": "ak47",
+      "speedRatio": 1.2,
+      "walking": false,
+      "nativeInputs": {
+        "speed": 258.0,
+        "low": 73.0999984741211,
+        "high": 204.25,
+        "remapped": 1.0,
+        "cap": 215
+      },
+      "result": 0.17506000399589539
+    },
+    {
+      "weapon": "ak47",
+      "speedRatio": 1.2,
+      "walking": true,
+      "nativeInputs": {
+        "speed": 258.0,
+        "low": 73.0999984741211,
+        "high": 204.25,
+        "remapped": 1.0,
+        "cap": 215
+      },
+      "result": 0.17506000399589539
+    },
+    {
+      "weapon": "m4a4",
+      "speedRatio": 0,
+      "walking": false,
+      "nativeInputs": {
+        "speed": 0.0,
+        "low": 76.5,
+        "high": 213.75,
+        "remapped": 0.0,
+        "cap": 225
+      },
+      "result": 0.0
+    },
+    {
+      "weapon": "m4a4",
+      "speedRatio": 0,
+      "walking": true,
+      "nativeInputs": {
+        "speed": 0.0,
+        "low": 76.5,
+        "high": 213.75,
+        "remapped": 0.0,
+        "cap": 225
+      },
+      "result": 0.0
+    },
+    {
+      "weapon": "m4a4",
+      "speedRatio": 0.3399,
+      "walking": false,
+      "nativeInputs": {
+        "speed": 76.47750091552734,
+        "low": 76.5,
+        "high": 213.75,
+        "remapped": 0.0,
+        "cap": 225
+      },
+      "result": 0.0
+    },
+    {
+      "weapon": "m4a4",
+      "speedRatio": 0.3399,
+      "walking": true,
+      "nativeInputs": {
+        "speed": 76.47750091552734,
+        "low": 76.5,
+        "high": 213.75,
+        "remapped": 0.0,
+        "cap": 225
+      },
+      "result": 0.0
+    },
+    {
+      "weapon": "m4a4",
+      "speedRatio": 0.34,
+      "walking": false,
+      "nativeInputs": {
+        "speed": 76.5,
+        "low": 76.5,
+        "high": 213.75,
+        "remapped": 0.0,
+        "cap": 225
+      },
+      "result": 0.0
+    },
+    {
+      "weapon": "m4a4",
+      "speedRatio": 0.34,
+      "walking": true,
+      "nativeInputs": {
+        "speed": 76.5,
+        "low": 76.5,
+        "high": 213.75,
+        "remapped": 0.0,
+        "cap": 225
+      },
+      "result": 0.0
+    },
+    {
+      "weapon": "m4a4",
+      "speedRatio": 0.3400000000000001,
+      "walking": false,
+      "nativeInputs": {
+        "speed": 76.5,
+        "low": 76.5,
+        "high": 213.75,
+        "remapped": 0.0,
+        "cap": 225
+      },
+      "result": 0.0
+    },
+    {
+      "weapon": "m4a4",
+      "speedRatio": 0.3400000000000001,
+      "walking": true,
+      "nativeInputs": {
+        "speed": 76.5,
+        "low": 76.5,
+        "high": 213.75,
+        "remapped": 0.0,
+        "cap": 225
+      },
+      "result": 0.0
+    },
+    {
+      "weapon": "m4a4",
+      "speedRatio": 0.340000000001,
+      "walking": false,
+      "nativeInputs": {
+        "speed": 76.5,
+        "low": 76.5,
+        "high": 213.75,
+        "remapped": 0.0,
+        "cap": 225
+      },
+      "result": 0.0
+    },
+    {
+      "weapon": "m4a4",
+      "speedRatio": 0.340000000001,
+      "walking": true,
+      "nativeInputs": {
+        "speed": 76.5,
+        "low": 76.5,
+        "high": 213.75,
+        "remapped": 0.0,
+        "cap": 225
+      },
+      "result": 0.0
+    },
+    {
+      "weapon": "m4a4",
+      "speedRatio": 0.3401,
+      "walking": false,
+      "nativeInputs": {
+        "speed": 76.52249908447266,
+        "low": 76.5,
+        "high": 213.75,
+        "remapped": 0.00016392776160500944,
+        "cap": 225
+      },
+      "result": 0.015601430088281631
+    },
+    {
+      "weapon": "m4a4",
+      "speedRatio": 0.3401,
+      "walking": true,
+      "nativeInputs": {
+        "speed": 76.52249908447266,
+        "low": 76.5,
+        "high": 213.75,
+        "remapped": 0.00016392776160500944,
+        "cap": 225
+      },
+      "result": 2.2602358512813225e-05
+    },
+    {
+      "weapon": "m4a4",
+      "speedRatio": 0.35,
+      "walking": false,
+      "nativeInputs": {
+        "speed": 78.75,
+        "low": 76.5,
+        "high": 213.75,
+        "remapped": 0.016393441706895828,
+        "cap": 225
+      },
+      "result": 0.04933655261993408
+    },
+    {
+      "weapon": "m4a4",
+      "speedRatio": 0.35,
+      "walking": true,
+      "nativeInputs": {
+        "speed": 78.75,
+        "low": 76.5,
+        "high": 213.75,
+        "remapped": 0.016393441706895828,
+        "cap": 225
+      },
+      "result": 0.0022603278048336506
+    },
+    {
+      "weapon": "m4a4",
+      "speedRatio": 0.52,
+      "walking": false,
+      "nativeInputs": {
+        "speed": 117.0,
+        "low": 76.5,
+        "high": 213.75,
+        "remapped": 0.2950819730758667,
+        "cap": 225
+      },
+      "result": 0.10162181407213211
+    },
+    {
+      "weapon": "m4a4",
+      "speedRatio": 0.52,
+      "walking": true,
+      "nativeInputs": {
+        "speed": 117.0,
+        "low": 76.5,
+        "high": 213.75,
+        "remapped": 0.2950819730758667,
+        "cap": 225
+      },
+      "result": 0.040685903280973434
+    },
+    {
+      "weapon": "m4a4",
+      "speedRatio": 0.65,
+      "walking": false,
+      "nativeInputs": {
+        "speed": 146.25,
+        "low": 76.5,
+        "high": 213.75,
+        "remapped": 0.5081967115402222,
+        "cap": 225
+      },
+      "result": 0.11641507595777512
+    },
+    {
+      "weapon": "m4a4",
+      "speedRatio": 0.65,
+      "walking": true,
+      "nativeInputs": {
+        "speed": 146.25,
+        "low": 76.5,
+        "high": 213.75,
+        "remapped": 0.5081967115402222,
+        "cap": 225
+      },
+      "result": 0.07007016241550446
+    },
+    {
+      "weapon": "m4a4",
+      "speedRatio": 0.9499,
+      "walking": false,
+      "nativeInputs": {
+        "speed": 213.7274932861328,
+        "low": 76.5,
+        "high": 213.75,
+        "remapped": 0.9998360276222229,
+        "cap": 225
+      },
+      "result": 0.13787434995174408
+    },
+    {
+      "weapon": "m4a4",
+      "speedRatio": 0.9499,
+      "walking": true,
+      "nativeInputs": {
+        "speed": 213.7274932861328,
+        "low": 76.5,
+        "high": 213.75,
+        "remapped": 0.9998360276222229,
+        "cap": 225
+      },
+      "result": 0.13785739243030548
+    },
+    {
+      "weapon": "m4a4",
+      "speedRatio": 0.95,
+      "walking": false,
+      "nativeInputs": {
+        "speed": 213.75,
+        "low": 76.5,
+        "high": 213.75,
+        "remapped": 1.0,
+        "cap": 225
+      },
+      "result": 0.13787999749183655
+    },
+    {
+      "weapon": "m4a4",
+      "speedRatio": 0.95,
+      "walking": true,
+      "nativeInputs": {
+        "speed": 213.75,
+        "low": 76.5,
+        "high": 213.75,
+        "remapped": 1.0,
+        "cap": 225
+      },
+      "result": 0.13787999749183655
+    },
+    {
+      "weapon": "m4a4",
+      "speedRatio": 1,
+      "walking": false,
+      "nativeInputs": {
+        "speed": 225.0,
+        "low": 76.5,
+        "high": 213.75,
+        "remapped": 1.0,
+        "cap": 225
+      },
+      "result": 0.13787999749183655
+    },
+    {
+      "weapon": "m4a4",
+      "speedRatio": 1,
+      "walking": true,
+      "nativeInputs": {
+        "speed": 225.0,
+        "low": 76.5,
+        "high": 213.75,
+        "remapped": 1.0,
+        "cap": 225
+      },
+      "result": 0.13787999749183655
+    },
+    {
+      "weapon": "m4a4",
+      "speedRatio": 1.2,
+      "walking": false,
+      "nativeInputs": {
+        "speed": 270.0,
+        "low": 76.5,
+        "high": 213.75,
+        "remapped": 1.0,
+        "cap": 225
+      },
+      "result": 0.13787999749183655
+    },
+    {
+      "weapon": "m4a4",
+      "speedRatio": 1.2,
+      "walking": true,
+      "nativeInputs": {
+        "speed": 270.0,
+        "low": 76.5,
+        "high": 213.75,
+        "remapped": 1.0,
+        "cap": 225
+      },
+      "result": 0.13787999749183655
+    },
+    {
+      "weapon": "usp",
+      "speedRatio": 0,
+      "walking": false,
+      "nativeInputs": {
+        "speed": 0.0,
+        "low": 81.5999984741211,
+        "high": 228.0,
+        "remapped": 0.0,
+        "cap": 240
+      },
+      "result": 0.0
+    },
+    {
+      "weapon": "usp",
+      "speedRatio": 0,
+      "walking": true,
+      "nativeInputs": {
+        "speed": 0.0,
+        "low": 81.5999984741211,
+        "high": 228.0,
+        "remapped": 0.0,
+        "cap": 240
+      },
+      "result": 0.0
+    },
+    {
+      "weapon": "usp",
+      "speedRatio": 0.3399,
+      "walking": false,
+      "nativeInputs": {
+        "speed": 81.57599639892578,
+        "low": 81.5999984741211,
+        "high": 228.0,
+        "remapped": 0.0,
+        "cap": 240
+      },
+      "result": 0.0
+    },
+    {
+      "weapon": "usp",
+      "speedRatio": 0.3399,
+      "walking": true,
+      "nativeInputs": {
+        "speed": 81.57599639892578,
+        "low": 81.5999984741211,
+        "high": 228.0,
+        "remapped": 0.0,
+        "cap": 240
+      },
+      "result": 0.0
+    },
+    {
+      "weapon": "usp",
+      "speedRatio": 0.34,
+      "walking": false,
+      "nativeInputs": {
+        "speed": 81.5999984741211,
+        "low": 81.5999984741211,
+        "high": 228.0,
+        "remapped": 0.0,
+        "cap": 240
+      },
+      "result": 0.0
+    },
+    {
+      "weapon": "usp",
+      "speedRatio": 0.34,
+      "walking": true,
+      "nativeInputs": {
+        "speed": 81.5999984741211,
+        "low": 81.5999984741211,
+        "high": 228.0,
+        "remapped": 0.0,
+        "cap": 240
+      },
+      "result": 0.0
+    },
+    {
+      "weapon": "usp",
+      "speedRatio": 0.3400000000000001,
+      "walking": false,
+      "nativeInputs": {
+        "speed": 81.5999984741211,
+        "low": 81.5999984741211,
+        "high": 228.0,
+        "remapped": 0.0,
+        "cap": 240
+      },
+      "result": 0.0
+    },
+    {
+      "weapon": "usp",
+      "speedRatio": 0.3400000000000001,
+      "walking": true,
+      "nativeInputs": {
+        "speed": 81.5999984741211,
+        "low": 81.5999984741211,
+        "high": 228.0,
+        "remapped": 0.0,
+        "cap": 240
+      },
+      "result": 0.0
+    },
+    {
+      "weapon": "usp",
+      "speedRatio": 0.340000000001,
+      "walking": false,
+      "nativeInputs": {
+        "speed": 81.5999984741211,
+        "low": 81.5999984741211,
+        "high": 228.0,
+        "remapped": 0.0,
+        "cap": 240
+      },
+      "result": 0.0
+    },
+    {
+      "weapon": "usp",
+      "speedRatio": 0.340000000001,
+      "walking": true,
+      "nativeInputs": {
+        "speed": 81.5999984741211,
+        "low": 81.5999984741211,
+        "high": 228.0,
+        "remapped": 0.0,
+        "cap": 240
+      },
+      "result": 0.0
+    },
+    {
+      "weapon": "usp",
+      "speedRatio": 0.3401,
+      "walking": false,
+      "nativeInputs": {
+        "speed": 81.6240005493164,
+        "low": 81.5999984741211,
+        "high": 228.0,
+        "remapped": 0.00016394861449953169,
+        "cap": 240
+      },
+      "result": 0.0015694714384153485
+    },
+    {
+      "weapon": "usp",
+      "speedRatio": 0.3401,
+      "walking": true,
+      "nativeInputs": {
+        "speed": 81.6240005493164,
+        "low": 81.5999984741211,
+        "high": 228.0,
+        "remapped": 0.00016394861449953169,
+        "cap": 240
+      },
+      "result": 2.27396731133922e-06
+    },
+    {
+      "weapon": "usp",
+      "speedRatio": 0.35,
+      "walking": false,
+      "nativeInputs": {
+        "speed": 84.0,
+        "low": 81.5999984741211,
+        "high": 228.0,
+        "remapped": 0.016393452882766724,
+        "cap": 240
+      },
+      "result": 0.0049629975110292435
+    },
+    {
+      "weapon": "usp",
+      "speedRatio": 0.35,
+      "walking": true,
+      "nativeInputs": {
+        "speed": 84.0,
+        "low": 81.5999984741211,
+        "high": 228.0,
+        "remapped": 0.016393452882766724,
+        "cap": 240
+      },
+      "result": 0.00022737719700671732
+    },
+    {
+      "weapon": "usp",
+      "speedRatio": 0.52,
+      "walking": false,
+      "nativeInputs": {
+        "speed": 124.80000305175781,
+        "low": 81.5999984741211,
+        "high": 228.0,
+        "remapped": 0.2950820028781891,
+        "cap": 240
+      },
+      "result": 0.010222618468105793
+    },
+    {
+      "weapon": "usp",
+      "speedRatio": 0.52,
+      "walking": true,
+      "nativeInputs": {
+        "speed": 124.80000305175781,
+        "low": 81.5999984741211,
+        "high": 228.0,
+        "remapped": 0.2950820028781891,
+        "cap": 240
+      },
+      "result": 0.004092787392437458
+    },
+    {
+      "weapon": "usp",
+      "speedRatio": 0.65,
+      "walking": false,
+      "nativeInputs": {
+        "speed": 156.0,
+        "low": 81.5999984741211,
+        "high": 228.0,
+        "remapped": 0.5081967711448669,
+        "cap": 240
+      },
+      "result": 0.011710742488503456
+    },
+    {
+      "weapon": "usp",
+      "speedRatio": 0.65,
+      "walking": true,
+      "nativeInputs": {
+        "speed": 156.0,
+        "low": 81.5999984741211,
+        "high": 228.0,
+        "remapped": 0.5081967711448669,
+        "cap": 240
+      },
+      "result": 0.007048689294606447
+    },
+    {
+      "weapon": "usp",
+      "speedRatio": 0.9499,
+      "walking": false,
+      "nativeInputs": {
+        "speed": 227.9759979248047,
+        "low": 81.5999984741211,
+        "high": 228.0,
+        "remapped": 0.9998361468315125,
+        "cap": 240
+      },
+      "result": 0.013869431801140308
+    },
+    {
+      "weapon": "usp",
+      "speedRatio": 0.9499,
+      "walking": true,
+      "nativeInputs": {
+        "speed": 227.9759979248047,
+        "low": 81.5999984741211,
+        "high": 228.0,
+        "remapped": 0.9998361468315125,
+        "cap": 240
+      },
+      "result": 0.013867727480828762
+    },
+    {
+      "weapon": "usp",
+      "speedRatio": 0.95,
+      "walking": false,
+      "nativeInputs": {
+        "speed": 228.0,
+        "low": 81.5999984741211,
+        "high": 228.0,
+        "remapped": 1.0,
+        "cap": 240
+      },
+      "result": 0.013869999907910824
+    },
+    {
+      "weapon": "usp",
+      "speedRatio": 0.95,
+      "walking": true,
+      "nativeInputs": {
+        "speed": 228.0,
+        "low": 81.5999984741211,
+        "high": 228.0,
+        "remapped": 1.0,
+        "cap": 240
+      },
+      "result": 0.013869999907910824
+    },
+    {
+      "weapon": "usp",
+      "speedRatio": 1,
+      "walking": false,
+      "nativeInputs": {
+        "speed": 240.0,
+        "low": 81.5999984741211,
+        "high": 228.0,
+        "remapped": 1.0,
+        "cap": 240
+      },
+      "result": 0.013869999907910824
+    },
+    {
+      "weapon": "usp",
+      "speedRatio": 1,
+      "walking": true,
+      "nativeInputs": {
+        "speed": 240.0,
+        "low": 81.5999984741211,
+        "high": 228.0,
+        "remapped": 1.0,
+        "cap": 240
+      },
+      "result": 0.013869999907910824
+    },
+    {
+      "weapon": "usp",
+      "speedRatio": 1.2,
+      "walking": false,
+      "nativeInputs": {
+        "speed": 288.0,
+        "low": 81.5999984741211,
+        "high": 228.0,
+        "remapped": 1.0,
+        "cap": 240
+      },
+      "result": 0.013869999907910824
+    },
+    {
+      "weapon": "usp",
+      "speedRatio": 1.2,
+      "walking": true,
+      "nativeInputs": {
+        "speed": 288.0,
+        "low": 81.5999984741211,
+        "high": 228.0,
+        "remapped": 1.0,
+        "cap": 240
+      },
+      "result": 0.013869999907910824
+    },
+    {
+      "weapon": "awp",
+      "speedRatio": 0,
+      "walking": false,
+      "nativeInputs": {
+        "speed": 0.0,
+        "low": 68.0,
+        "high": 190.0,
+        "remapped": 0.0,
+        "cap": 200
+      },
+      "result": 0.0
+    },
+    {
+      "weapon": "awp",
+      "speedRatio": 0,
+      "walking": true,
+      "nativeInputs": {
+        "speed": 0.0,
+        "low": 68.0,
+        "high": 190.0,
+        "remapped": 0.0,
+        "cap": 200
+      },
+      "result": 0.0
+    },
+    {
+      "weapon": "awp",
+      "speedRatio": 0.3399,
+      "walking": false,
+      "nativeInputs": {
+        "speed": 67.9800033569336,
+        "low": 68.0,
+        "high": 190.0,
+        "remapped": 0.0,
+        "cap": 200
+      },
+      "result": 0.0
+    },
+    {
+      "weapon": "awp",
+      "speedRatio": 0.3399,
+      "walking": true,
+      "nativeInputs": {
+        "speed": 67.9800033569336,
+        "low": 68.0,
+        "high": 190.0,
+        "remapped": 0.0,
+        "cap": 200
+      },
+      "result": 0.0
+    },
+    {
+      "weapon": "awp",
+      "speedRatio": 0.34,
+      "walking": false,
+      "nativeInputs": {
+        "speed": 68.0,
+        "low": 68.0,
+        "high": 190.0,
+        "remapped": 0.0,
+        "cap": 200
+      },
+      "result": 0.0
+    },
+    {
+      "weapon": "awp",
+      "speedRatio": 0.34,
+      "walking": true,
+      "nativeInputs": {
+        "speed": 68.0,
+        "low": 68.0,
+        "high": 190.0,
+        "remapped": 0.0,
+        "cap": 200
+      },
+      "result": 0.0
+    },
+    {
+      "weapon": "awp",
+      "speedRatio": 0.3400000000000001,
+      "walking": false,
+      "nativeInputs": {
+        "speed": 68.0,
+        "low": 68.0,
+        "high": 190.0,
+        "remapped": 0.0,
+        "cap": 200
+      },
+      "result": 0.0
+    },
+    {
+      "weapon": "awp",
+      "speedRatio": 0.3400000000000001,
+      "walking": true,
+      "nativeInputs": {
+        "speed": 68.0,
+        "low": 68.0,
+        "high": 190.0,
+        "remapped": 0.0,
+        "cap": 200
+      },
+      "result": 0.0
+    },
+    {
+      "weapon": "awp",
+      "speedRatio": 0.340000000001,
+      "walking": false,
+      "nativeInputs": {
+        "speed": 68.0,
+        "low": 68.0,
+        "high": 190.0,
+        "remapped": 0.0,
+        "cap": 200
+      },
+      "result": 0.0
+    },
+    {
+      "weapon": "awp",
+      "speedRatio": 0.340000000001,
+      "walking": true,
+      "nativeInputs": {
+        "speed": 68.0,
+        "low": 68.0,
+        "high": 190.0,
+        "remapped": 0.0,
+        "cap": 200
+      },
+      "result": 0.0
+    },
+    {
+      "weapon": "awp",
+      "speedRatio": 0.3401,
+      "walking": false,
+      "nativeInputs": {
+        "speed": 68.0199966430664,
+        "low": 68.0,
+        "high": 190.0,
+        "remapped": 0.0001639069087104872,
+        "cap": 200
+      },
+      "result": 0.019968470558524132
+    },
+    {
+      "weapon": "awp",
+      "speedRatio": 0.3401,
+      "walking": true,
+      "nativeInputs": {
+        "speed": 68.0199966430664,
+        "low": 68.0,
+        "high": 190.0,
+        "remapped": 0.0001639069087104872,
+        "cap": 200
+      },
+      "result": 2.8926289814990014e-05
+    },
+    {
+      "weapon": "awp",
+      "speedRatio": 0.35,
+      "walking": false,
+      "nativeInputs": {
+        "speed": 70.0,
+        "low": 68.0,
+        "high": 190.0,
+        "remapped": 0.016393441706895828,
+        "cap": 200
+      },
+      "result": 0.06314849853515625
+    },
+    {
+      "weapon": "awp",
+      "speedRatio": 0.35,
+      "walking": true,
+      "nativeInputs": {
+        "speed": 70.0,
+        "low": 68.0,
+        "high": 190.0,
+        "remapped": 0.016393441706895828,
+        "cap": 200
+      },
+      "result": 0.00289311446249485
+    },
+    {
+      "weapon": "awp",
+      "speedRatio": 0.52,
+      "walking": false,
+      "nativeInputs": {
+        "speed": 104.0,
+        "low": 68.0,
+        "high": 190.0,
+        "remapped": 0.2950819730758667,
+        "cap": 200
+      },
+      "result": 0.13007120788097382
+    },
+    {
+      "weapon": "awp",
+      "speedRatio": 0.52,
+      "walking": true,
+      "nativeInputs": {
+        "speed": 104.0,
+        "low": 68.0,
+        "high": 190.0,
+        "remapped": 0.2950819730758667,
+        "cap": 200
+      },
+      "result": 0.0520760640501976
+    },
+    {
+      "weapon": "awp",
+      "speedRatio": 0.65,
+      "walking": false,
+      "nativeInputs": {
+        "speed": 130.0,
+        "low": 68.0,
+        "high": 190.0,
+        "remapped": 0.5081967115402222,
+        "cap": 200
+      },
+      "result": 0.14900588989257812
+    },
+    {
+      "weapon": "awp",
+      "speedRatio": 0.65,
+      "walking": true,
+      "nativeInputs": {
+        "speed": 130.0,
+        "low": 68.0,
+        "high": 190.0,
+        "remapped": 0.5081967115402222,
+        "cap": 200
+      },
+      "result": 0.0896865501999855
+    },
+    {
+      "weapon": "awp",
+      "speedRatio": 0.9499,
+      "walking": false,
+      "nativeInputs": {
+        "speed": 189.97999572753906,
+        "low": 68.0,
+        "high": 190.0,
+        "remapped": 0.9998360276222229,
+        "cap": 200
+      },
+      "result": 0.1764727532863617
+    },
+    {
+      "weapon": "awp",
+      "speedRatio": 0.9499,
+      "walking": true,
+      "nativeInputs": {
+        "speed": 189.97999572753906,
+        "low": 68.0,
+        "high": 190.0,
+        "remapped": 0.9998360276222229,
+        "cap": 200
+      },
+      "result": 0.17645105719566345
+    },
+    {
+      "weapon": "awp",
+      "speedRatio": 0.95,
+      "walking": false,
+      "nativeInputs": {
+        "speed": 190.0,
+        "low": 68.0,
+        "high": 190.0,
+        "remapped": 1.0,
+        "cap": 200
+      },
+      "result": 0.1764799952507019
+    },
+    {
+      "weapon": "awp",
+      "speedRatio": 0.95,
+      "walking": true,
+      "nativeInputs": {
+        "speed": 190.0,
+        "low": 68.0,
+        "high": 190.0,
+        "remapped": 1.0,
+        "cap": 200
+      },
+      "result": 0.1764799952507019
+    },
+    {
+      "weapon": "awp",
+      "speedRatio": 1,
+      "walking": false,
+      "nativeInputs": {
+        "speed": 200.0,
+        "low": 68.0,
+        "high": 190.0,
+        "remapped": 1.0,
+        "cap": 200
+      },
+      "result": 0.1764799952507019
+    },
+    {
+      "weapon": "awp",
+      "speedRatio": 1,
+      "walking": true,
+      "nativeInputs": {
+        "speed": 200.0,
+        "low": 68.0,
+        "high": 190.0,
+        "remapped": 1.0,
+        "cap": 200
+      },
+      "result": 0.1764799952507019
+    },
+    {
+      "weapon": "awp",
+      "speedRatio": 1.2,
+      "walking": false,
+      "nativeInputs": {
+        "speed": 240.0,
+        "low": 68.0,
+        "high": 190.0,
+        "remapped": 1.0,
+        "cap": 200
+      },
+      "result": 0.1764799952507019
+    },
+    {
+      "weapon": "awp",
+      "speedRatio": 1.2,
+      "walking": true,
+      "nativeInputs": {
+        "speed": 240.0,
+        "low": 68.0,
+        "high": 190.0,
+        "remapped": 1.0,
+        "cap": 200
+      },
+      "result": 0.1764799952507019
+    },
+    {
+      "weapon": "mp9",
+      "speedRatio": 0,
+      "walking": false,
+      "nativeInputs": {
+        "speed": 0.0,
+        "low": 81.5999984741211,
+        "high": 228.0,
+        "remapped": 0.0,
+        "cap": 240
+      },
+      "result": 0.0
+    },
+    {
+      "weapon": "mp9",
+      "speedRatio": 0,
+      "walking": true,
+      "nativeInputs": {
+        "speed": 0.0,
+        "low": 81.5999984741211,
+        "high": 228.0,
+        "remapped": 0.0,
+        "cap": 240
+      },
+      "result": 0.0
+    },
+    {
+      "weapon": "mp9",
+      "speedRatio": 0.3399,
+      "walking": false,
+      "nativeInputs": {
+        "speed": 81.57599639892578,
+        "low": 81.5999984741211,
+        "high": 228.0,
+        "remapped": 0.0,
+        "cap": 240
+      },
+      "result": 0.0
+    },
+    {
+      "weapon": "mp9",
+      "speedRatio": 0.3399,
+      "walking": true,
+      "nativeInputs": {
+        "speed": 81.57599639892578,
+        "low": 81.5999984741211,
+        "high": 228.0,
+        "remapped": 0.0,
+        "cap": 240
+      },
+      "result": 0.0
+    },
+    {
+      "weapon": "mp9",
+      "speedRatio": 0.34,
+      "walking": false,
+      "nativeInputs": {
+        "speed": 81.5999984741211,
+        "low": 81.5999984741211,
+        "high": 228.0,
+        "remapped": 0.0,
+        "cap": 240
+      },
+      "result": 0.0
+    },
+    {
+      "weapon": "mp9",
+      "speedRatio": 0.34,
+      "walking": true,
+      "nativeInputs": {
+        "speed": 81.5999984741211,
+        "low": 81.5999984741211,
+        "high": 228.0,
+        "remapped": 0.0,
+        "cap": 240
+      },
+      "result": 0.0
+    },
+    {
+      "weapon": "mp9",
+      "speedRatio": 0.3400000000000001,
+      "walking": false,
+      "nativeInputs": {
+        "speed": 81.5999984741211,
+        "low": 81.5999984741211,
+        "high": 228.0,
+        "remapped": 0.0,
+        "cap": 240
+      },
+      "result": 0.0
+    },
+    {
+      "weapon": "mp9",
+      "speedRatio": 0.3400000000000001,
+      "walking": true,
+      "nativeInputs": {
+        "speed": 81.5999984741211,
+        "low": 81.5999984741211,
+        "high": 228.0,
+        "remapped": 0.0,
+        "cap": 240
+      },
+      "result": 0.0
+    },
+    {
+      "weapon": "mp9",
+      "speedRatio": 0.340000000001,
+      "walking": false,
+      "nativeInputs": {
+        "speed": 81.5999984741211,
+        "low": 81.5999984741211,
+        "high": 228.0,
+        "remapped": 0.0,
+        "cap": 240
+      },
+      "result": 0.0
+    },
+    {
+      "weapon": "mp9",
+      "speedRatio": 0.340000000001,
+      "walking": true,
+      "nativeInputs": {
+        "speed": 81.5999984741211,
+        "low": 81.5999984741211,
+        "high": 228.0,
+        "remapped": 0.0,
+        "cap": 240
+      },
+      "result": 0.0
+    },
+    {
+      "weapon": "mp9",
+      "speedRatio": 0.3401,
+      "walking": false,
+      "nativeInputs": {
+        "speed": 81.6240005493164,
+        "low": 81.5999984741211,
+        "high": 228.0,
+        "remapped": 0.00016394861449953169,
+        "cap": 240
+      },
+      "result": 0.003286045277491212
+    },
+    {
+      "weapon": "mp9",
+      "speedRatio": 0.3401,
+      "walking": true,
+      "nativeInputs": {
+        "speed": 81.6240005493164,
+        "low": 81.5999984741211,
+        "high": 228.0,
+        "remapped": 0.00016394861449953169,
+        "cap": 240
+      },
+      "result": 4.7610678848286625e-06
+    },
+    {
+      "weapon": "mp9",
+      "speedRatio": 0.35,
+      "walking": false,
+      "nativeInputs": {
+        "speed": 84.0,
+        "low": 81.5999984741211,
+        "high": 228.0,
+        "remapped": 0.016393452882766724,
+        "cap": 240
+      },
+      "result": 0.01039116457104683
+    },
+    {
+      "weapon": "mp9",
+      "speedRatio": 0.35,
+      "walking": true,
+      "nativeInputs": {
+        "speed": 84.0,
+        "low": 81.5999984741211,
+        "high": 228.0,
+        "remapped": 0.016393452882766724,
+        "cap": 240
+      },
+      "result": 0.00047606584848836064
+    },
+    {
+      "weapon": "mp9",
+      "speedRatio": 0.52,
+      "walking": false,
+      "nativeInputs": {
+        "speed": 124.80000305175781,
+        "low": 81.5999984741211,
+        "high": 228.0,
+        "remapped": 0.2950820028781891,
+        "cap": 240
+      },
+      "result": 0.021403376013040543
+    },
+    {
+      "weapon": "mp9",
+      "speedRatio": 0.52,
+      "walking": true,
+      "nativeInputs": {
+        "speed": 124.80000305175781,
+        "low": 81.5999984741211,
+        "high": 228.0,
+        "remapped": 0.2950820028781891,
+        "cap": 240
+      },
+      "result": 0.008569180965423584
+    },
+    {
+      "weapon": "mp9",
+      "speedRatio": 0.65,
+      "walking": false,
+      "nativeInputs": {
+        "speed": 156.0,
+        "low": 81.5999984741211,
+        "high": 228.0,
+        "remapped": 0.5081967711448669,
+        "cap": 240
+      },
+      "result": 0.02451910264790058
+    },
+    {
+      "weapon": "mp9",
+      "speedRatio": 0.65,
+      "walking": true,
+      "nativeInputs": {
+        "speed": 156.0,
+        "low": 81.5999984741211,
+        "high": 228.0,
+        "remapped": 0.5081967711448669,
+        "cap": 240
+      },
+      "result": 0.0147580336779356
+    },
+    {
+      "weapon": "mp9",
+      "speedRatio": 0.9499,
+      "walking": false,
+      "nativeInputs": {
+        "speed": 227.9759979248047,
+        "low": 81.5999984741211,
+        "high": 228.0,
+        "remapped": 0.9998361468315125,
+        "cap": 240
+      },
+      "result": 0.0290388111025095
+    },
+    {
+      "weapon": "mp9",
+      "speedRatio": 0.9499,
+      "walking": true,
+      "nativeInputs": {
+        "speed": 227.9759979248047,
+        "low": 81.5999984741211,
+        "high": 228.0,
+        "remapped": 0.9998361468315125,
+        "cap": 240
+      },
+      "result": 0.029035240411758423
+    },
+    {
+      "weapon": "mp9",
+      "speedRatio": 0.95,
+      "walking": false,
+      "nativeInputs": {
+        "speed": 228.0,
+        "low": 81.5999984741211,
+        "high": 228.0,
+        "remapped": 1.0,
+        "cap": 240
+      },
+      "result": 0.029039999470114708
+    },
+    {
+      "weapon": "mp9",
+      "speedRatio": 0.95,
+      "walking": true,
+      "nativeInputs": {
+        "speed": 228.0,
+        "low": 81.5999984741211,
+        "high": 228.0,
+        "remapped": 1.0,
+        "cap": 240
+      },
+      "result": 0.029039999470114708
+    },
+    {
+      "weapon": "mp9",
+      "speedRatio": 1,
+      "walking": false,
+      "nativeInputs": {
+        "speed": 240.0,
+        "low": 81.5999984741211,
+        "high": 228.0,
+        "remapped": 1.0,
+        "cap": 240
+      },
+      "result": 0.029039999470114708
+    },
+    {
+      "weapon": "mp9",
+      "speedRatio": 1,
+      "walking": true,
+      "nativeInputs": {
+        "speed": 240.0,
+        "low": 81.5999984741211,
+        "high": 228.0,
+        "remapped": 1.0,
+        "cap": 240
+      },
+      "result": 0.029039999470114708
+    },
+    {
+      "weapon": "mp9",
+      "speedRatio": 1.2,
+      "walking": false,
+      "nativeInputs": {
+        "speed": 288.0,
+        "low": 81.5999984741211,
+        "high": 228.0,
+        "remapped": 1.0,
+        "cap": 240
+      },
+      "result": 0.029039999470114708
+    },
+    {
+      "weapon": "mp9",
+      "speedRatio": 1.2,
+      "walking": true,
+      "nativeInputs": {
+        "speed": 288.0,
+        "low": 81.5999984741211,
+        "high": 228.0,
+        "remapped": 1.0,
+        "cap": 240
+      },
+      "result": 0.029039999470114708
+    }
+  ],
+  "recoveryTime": [
+    {
+      "weapon": "ak47",
+      "index": 0,
+      "crouch": false,
+      "airborne": false,
+      "result": 0.36800000071525574
+    },
+    {
+      "weapon": "ak47",
+      "index": 2,
+      "crouch": false,
+      "airborne": false,
+      "result": 0.36800000071525574
+    },
+    {
+      "weapon": "ak47",
+      "index": 2.99,
+      "crouch": false,
+      "airborne": false,
+      "result": 0.36800000071525574
+    },
+    {
+      "weapon": "ak47",
+      "index": 3,
+      "crouch": false,
+      "airborne": false,
+      "result": 0.414000004529953
+    },
+    {
+      "weapon": "ak47",
+      "index": 4,
+      "crouch": false,
+      "airborne": false,
+      "result": 0.4599999785423279
+    },
+    {
+      "weapon": "ak47",
+      "index": 5,
+      "crouch": false,
+      "airborne": false,
+      "result": 0.5059999823570251
+    },
+    {
+      "weapon": "ak47",
+      "index": 8,
+      "crouch": false,
+      "airborne": false,
+      "result": 0.5059999823570251
+    },
+    {
+      "weapon": "ak47",
+      "index": 0,
+      "crouch": true,
+      "airborne": false,
+      "result": 0.30525699257850647
+    },
+    {
+      "weapon": "ak47",
+      "index": 2,
+      "crouch": true,
+      "airborne": false,
+      "result": 0.30525699257850647
+    },
+    {
+      "weapon": "ak47",
+      "index": 2.99,
+      "crouch": true,
+      "airborne": false,
+      "result": 0.30525699257850647
+    },
+    {
+      "weapon": "ak47",
+      "index": 3,
+      "crouch": true,
+      "airborne": false,
+      "result": 0.3434140086174011
+    },
+    {
+      "weapon": "ak47",
+      "index": 4,
+      "crouch": true,
+      "airborne": false,
+      "result": 0.3815709948539734
+    },
+    {
+      "weapon": "ak47",
+      "index": 5,
+      "crouch": true,
+      "airborne": false,
+      "result": 0.41972801089286804
+    },
+    {
+      "weapon": "ak47",
+      "index": 8,
+      "crouch": true,
+      "airborne": false,
+      "result": 0.41972801089286804
+    },
+    {
+      "weapon": "ak47",
+      "index": 0,
+      "crouch": false,
+      "airborne": true,
+      "result": 1.2210279703140259
+    },
+    {
+      "weapon": "ak47",
+      "index": 2,
+      "crouch": false,
+      "airborne": true,
+      "result": 1.2210279703140259
+    },
+    {
+      "weapon": "ak47",
+      "index": 2.99,
+      "crouch": false,
+      "airborne": true,
+      "result": 1.2210279703140259
+    },
+    {
+      "weapon": "ak47",
+      "index": 3,
+      "crouch": false,
+      "airborne": true,
+      "result": 1.2210279703140259
+    },
+    {
+      "weapon": "ak47",
+      "index": 4,
+      "crouch": false,
+      "airborne": true,
+      "result": 1.2210279703140259
+    },
+    {
+      "weapon": "ak47",
+      "index": 5,
+      "crouch": false,
+      "airborne": true,
+      "result": 1.2210279703140259
+    },
+    {
+      "weapon": "ak47",
+      "index": 8,
+      "crouch": false,
+      "airborne": true,
+      "result": 1.2210279703140259
+    },
+    {
+      "weapon": "m4a4",
+      "index": 0,
+      "crouch": false,
+      "airborne": false,
+      "result": 0.3389410078525543
+    },
+    {
+      "weapon": "m4a4",
+      "index": 2,
+      "crouch": false,
+      "airborne": false,
+      "result": 0.3389410078525543
+    },
+    {
+      "weapon": "m4a4",
+      "index": 2.99,
+      "crouch": false,
+      "airborne": false,
+      "result": 0.3389410078525543
+    },
+    {
+      "weapon": "m4a4",
+      "index": 3,
+      "crouch": false,
+      "airborne": false,
+      "result": 0.3813086748123169
+    },
+    {
+      "weapon": "m4a4",
+      "index": 4,
+      "crouch": false,
+      "airborne": false,
+      "result": 0.42367634177207947
+    },
+    {
+      "weapon": "m4a4",
+      "index": 5,
+      "crouch": false,
+      "airborne": false,
+      "result": 0.46604400873184204
+    },
+    {
+      "weapon": "m4a4",
+      "index": 8,
+      "crouch": false,
+      "airborne": false,
+      "result": 0.46604400873184204
+    },
+    {
+      "weapon": "m4a4",
+      "index": 0,
+      "crouch": true,
+      "airborne": false,
+      "result": 0.24210000038146973
+    },
+    {
+      "weapon": "m4a4",
+      "index": 2,
+      "crouch": true,
+      "airborne": false,
+      "result": 0.24210000038146973
+    },
+    {
+      "weapon": "m4a4",
+      "index": 2.99,
+      "crouch": true,
+      "airborne": false,
+      "result": 0.24210000038146973
+    },
+    {
+      "weapon": "m4a4",
+      "index": 3,
+      "crouch": true,
+      "airborne": false,
+      "result": 0.27236267924308777
+    },
+    {
+      "weapon": "m4a4",
+      "index": 4,
+      "crouch": true,
+      "airborne": false,
+      "result": 0.3026253283023834
+    },
+    {
+      "weapon": "m4a4",
+      "index": 5,
+      "crouch": true,
+      "airborne": false,
+      "result": 0.33288800716400146
+    },
+    {
+      "weapon": "m4a4",
+      "index": 8,
+      "crouch": true,
+      "airborne": false,
+      "result": 0.33288800716400146
+    },
+    {
+      "weapon": "m4a4",
+      "index": 0,
+      "crouch": false,
+      "airborne": true,
+      "result": 0.9684000015258789
+    },
+    {
+      "weapon": "m4a4",
+      "index": 2,
+      "crouch": false,
+      "airborne": true,
+      "result": 0.9684000015258789
+    },
+    {
+      "weapon": "m4a4",
+      "index": 2.99,
+      "crouch": false,
+      "airborne": true,
+      "result": 0.9684000015258789
+    },
+    {
+      "weapon": "m4a4",
+      "index": 3,
+      "crouch": false,
+      "airborne": true,
+      "result": 0.9684000015258789
+    },
+    {
+      "weapon": "m4a4",
+      "index": 4,
+      "crouch": false,
+      "airborne": true,
+      "result": 0.9684000015258789
+    },
+    {
+      "weapon": "m4a4",
+      "index": 5,
+      "crouch": false,
+      "airborne": true,
+      "result": 0.9684000015258789
+    },
+    {
+      "weapon": "m4a4",
+      "index": 8,
+      "crouch": false,
+      "airborne": true,
+      "result": 0.9684000015258789
+    },
+    {
+      "weapon": "usp",
+      "index": 0,
+      "crouch": false,
+      "airborne": false,
+      "result": 0.34953200817108154
+    },
+    {
+      "weapon": "usp",
+      "index": 2,
+      "crouch": false,
+      "airborne": false,
+      "result": 0.34953200817108154
+    },
+    {
+      "weapon": "usp",
+      "index": 2.99,
+      "crouch": false,
+      "airborne": false,
+      "result": 0.34953200817108154
+    },
+    {
+      "weapon": "usp",
+      "index": 3,
+      "crouch": false,
+      "airborne": false,
+      "result": 0.34953200817108154
+    },
+    {
+      "weapon": "usp",
+      "index": 4,
+      "crouch": false,
+      "airborne": false,
+      "result": 0.34953200817108154
+    },
+    {
+      "weapon": "usp",
+      "index": 5,
+      "crouch": false,
+      "airborne": false,
+      "result": 0.34953200817108154
+    },
+    {
+      "weapon": "usp",
+      "index": 8,
+      "crouch": false,
+      "airborne": false,
+      "result": 0.34953200817108154
+    },
+    {
+      "weapon": "usp",
+      "index": 0,
+      "crouch": true,
+      "airborne": false,
+      "result": 0.2912769913673401
+    },
+    {
+      "weapon": "usp",
+      "index": 2,
+      "crouch": true,
+      "airborne": false,
+      "result": 0.2912769913673401
+    },
+    {
+      "weapon": "usp",
+      "index": 2.99,
+      "crouch": true,
+      "airborne": false,
+      "result": 0.2912769913673401
+    },
+    {
+      "weapon": "usp",
+      "index": 3,
+      "crouch": true,
+      "airborne": false,
+      "result": 0.2912769913673401
+    },
+    {
+      "weapon": "usp",
+      "index": 4,
+      "crouch": true,
+      "airborne": false,
+      "result": 0.2912769913673401
+    },
+    {
+      "weapon": "usp",
+      "index": 5,
+      "crouch": true,
+      "airborne": false,
+      "result": 0.2912769913673401
+    },
+    {
+      "weapon": "usp",
+      "index": 8,
+      "crouch": true,
+      "airborne": false,
+      "result": 0.2912769913673401
+    },
+    {
+      "weapon": "usp",
+      "index": 0,
+      "crouch": false,
+      "airborne": true,
+      "result": 1.1651079654693604
+    },
+    {
+      "weapon": "usp",
+      "index": 2,
+      "crouch": false,
+      "airborne": true,
+      "result": 1.1651079654693604
+    },
+    {
+      "weapon": "usp",
+      "index": 2.99,
+      "crouch": false,
+      "airborne": true,
+      "result": 1.1651079654693604
+    },
+    {
+      "weapon": "usp",
+      "index": 3,
+      "crouch": false,
+      "airborne": true,
+      "result": 1.1651079654693604
+    },
+    {
+      "weapon": "usp",
+      "index": 4,
+      "crouch": false,
+      "airborne": true,
+      "result": 1.1651079654693604
+    },
+    {
+      "weapon": "usp",
+      "index": 5,
+      "crouch": false,
+      "airborne": true,
+      "result": 1.1651079654693604
+    },
+    {
+      "weapon": "usp",
+      "index": 8,
+      "crouch": false,
+      "airborne": true,
+      "result": 1.1651079654693604
+    },
+    {
+      "weapon": "awp",
+      "index": 0,
+      "crouch": false,
+      "airborne": false,
+      "result": 0.3453899919986725
+    },
+    {
+      "weapon": "awp",
+      "index": 2,
+      "crouch": false,
+      "airborne": false,
+      "result": 0.3453899919986725
+    },
+    {
+      "weapon": "awp",
+      "index": 2.99,
+      "crouch": false,
+      "airborne": false,
+      "result": 0.3453899919986725
+    },
+    {
+      "weapon": "awp",
+      "index": 3,
+      "crouch": false,
+      "airborne": false,
+      "result": 0.3453899919986725
+    },
+    {
+      "weapon": "awp",
+      "index": 4,
+      "crouch": false,
+      "airborne": false,
+      "result": 0.3453899919986725
+    },
+    {
+      "weapon": "awp",
+      "index": 5,
+      "crouch": false,
+      "airborne": false,
+      "result": 0.3453899919986725
+    },
+    {
+      "weapon": "awp",
+      "index": 8,
+      "crouch": false,
+      "airborne": false,
+      "result": 0.3453899919986725
+    },
+    {
+      "weapon": "awp",
+      "index": 0,
+      "crouch": true,
+      "airborne": false,
+      "result": 0.24671000242233276
+    },
+    {
+      "weapon": "awp",
+      "index": 2,
+      "crouch": true,
+      "airborne": false,
+      "result": 0.24671000242233276
+    },
+    {
+      "weapon": "awp",
+      "index": 2.99,
+      "crouch": true,
+      "airborne": false,
+      "result": 0.24671000242233276
+    },
+    {
+      "weapon": "awp",
+      "index": 3,
+      "crouch": true,
+      "airborne": false,
+      "result": 0.24671000242233276
+    },
+    {
+      "weapon": "awp",
+      "index": 4,
+      "crouch": true,
+      "airborne": false,
+      "result": 0.24671000242233276
+    },
+    {
+      "weapon": "awp",
+      "index": 5,
+      "crouch": true,
+      "airborne": false,
+      "result": 0.24671000242233276
+    },
+    {
+      "weapon": "awp",
+      "index": 8,
+      "crouch": true,
+      "airborne": false,
+      "result": 0.24671000242233276
+    },
+    {
+      "weapon": "awp",
+      "index": 0,
+      "crouch": false,
+      "airborne": true,
+      "result": 0.986840009689331
+    },
+    {
+      "weapon": "awp",
+      "index": 2,
+      "crouch": false,
+      "airborne": true,
+      "result": 0.986840009689331
+    },
+    {
+      "weapon": "awp",
+      "index": 2.99,
+      "crouch": false,
+      "airborne": true,
+      "result": 0.986840009689331
+    },
+    {
+      "weapon": "awp",
+      "index": 3,
+      "crouch": false,
+      "airborne": true,
+      "result": 0.986840009689331
+    },
+    {
+      "weapon": "awp",
+      "index": 4,
+      "crouch": false,
+      "airborne": true,
+      "result": 0.986840009689331
+    },
+    {
+      "weapon": "awp",
+      "index": 5,
+      "crouch": false,
+      "airborne": true,
+      "result": 0.986840009689331
+    },
+    {
+      "weapon": "awp",
+      "index": 8,
+      "crouch": false,
+      "airborne": true,
+      "result": 0.986840009689331
+    },
+    {
+      "weapon": "mp9",
+      "index": 0,
+      "crouch": false,
+      "airborne": false,
+      "result": 0.257889986038208
+    },
+    {
+      "weapon": "mp9",
+      "index": 2,
+      "crouch": false,
+      "airborne": false,
+      "result": 0.257889986038208
+    },
+    {
+      "weapon": "mp9",
+      "index": 2.99,
+      "crouch": false,
+      "airborne": false,
+      "result": 0.257889986038208
+    },
+    {
+      "weapon": "mp9",
+      "index": 3,
+      "crouch": false,
+      "airborne": false,
+      "result": 0.257889986038208
+    },
+    {
+      "weapon": "mp9",
+      "index": 4,
+      "crouch": false,
+      "airborne": false,
+      "result": 0.257889986038208
+    },
+    {
+      "weapon": "mp9",
+      "index": 5,
+      "crouch": false,
+      "airborne": false,
+      "result": 0.257889986038208
+    },
+    {
+      "weapon": "mp9",
+      "index": 8,
+      "crouch": false,
+      "airborne": false,
+      "result": 0.257889986038208
+    },
+    {
+      "weapon": "mp9",
+      "index": 0,
+      "crouch": true,
+      "airborne": false,
+      "result": 0.1842070072889328
+    },
+    {
+      "weapon": "mp9",
+      "index": 2,
+      "crouch": true,
+      "airborne": false,
+      "result": 0.1842070072889328
+    },
+    {
+      "weapon": "mp9",
+      "index": 2.99,
+      "crouch": true,
+      "airborne": false,
+      "result": 0.1842070072889328
+    },
+    {
+      "weapon": "mp9",
+      "index": 3,
+      "crouch": true,
+      "airborne": false,
+      "result": 0.1842070072889328
+    },
+    {
+      "weapon": "mp9",
+      "index": 4,
+      "crouch": true,
+      "airborne": false,
+      "result": 0.1842070072889328
+    },
+    {
+      "weapon": "mp9",
+      "index": 5,
+      "crouch": true,
+      "airborne": false,
+      "result": 0.1842070072889328
+    },
+    {
+      "weapon": "mp9",
+      "index": 8,
+      "crouch": true,
+      "airborne": false,
+      "result": 0.1842070072889328
+    },
+    {
+      "weapon": "mp9",
+      "index": 0,
+      "crouch": false,
+      "airborne": true,
+      "result": 0.7368280291557312
+    },
+    {
+      "weapon": "mp9",
+      "index": 2,
+      "crouch": false,
+      "airborne": true,
+      "result": 0.7368280291557312
+    },
+    {
+      "weapon": "mp9",
+      "index": 2.99,
+      "crouch": false,
+      "airborne": true,
+      "result": 0.7368280291557312
+    },
+    {
+      "weapon": "mp9",
+      "index": 3,
+      "crouch": false,
+      "airborne": true,
+      "result": 0.7368280291557312
+    },
+    {
+      "weapon": "mp9",
+      "index": 4,
+      "crouch": false,
+      "airborne": true,
+      "result": 0.7368280291557312
+    },
+    {
+      "weapon": "mp9",
+      "index": 5,
+      "crouch": false,
+      "airborne": true,
+      "result": 0.7368280291557312
+    },
+    {
+      "weapon": "mp9",
+      "index": 8,
+      "crouch": false,
+      "airborne": true,
+      "result": 0.7368280291557312
+    }
+  ],
+  "penalty": [
+    {
+      "weapon": "ak47",
+      "index": 1,
+      "crouch": false,
+      "airborne": false,
+      "baseline": 0.00641,
+      "before": 0,
+      "dt": 0.015625,
+      "result": 0.006409999914467335
+    },
+    {
+      "weapon": "ak47",
+      "index": 1,
+      "crouch": false,
+      "airborne": false,
+      "baseline": 0.00641,
+      "before": 0.00481,
+      "dt": 0.015625,
+      "result": 0.006409999914467335
+    },
+    {
+      "weapon": "ak47",
+      "index": 1,
+      "crouch": false,
+      "airborne": false,
+      "baseline": 0.00641,
+      "before": 0.00641,
+      "dt": 0.015625,
+      "result": 0.006409999914467335
+    },
+    {
+      "weapon": "ak47",
+      "index": 1,
+      "crouch": false,
+      "airborne": false,
+      "baseline": 0.00641,
+      "before": 0.01421,
+      "dt": 0.015625,
+      "result": 0.013483515940606594
+    },
+    {
+      "weapon": "ak47",
+      "index": 1,
+      "crouch": false,
+      "airborne": false,
+      "baseline": 0.00641,
+      "before": 0.03761,
+      "dt": 0.015625,
+      "result": 0.034704066812992096
+    },
+    {
+      "weapon": "ak47",
+      "index": 1,
+      "crouch": true,
+      "airborne": false,
+      "baseline": 0.00481,
+      "before": 0,
+      "dt": 0.015625,
+      "result": 0.004809999838471413
+    },
+    {
+      "weapon": "ak47",
+      "index": 1,
+      "crouch": true,
+      "airborne": false,
+      "baseline": 0.00481,
+      "before": 0.00481,
+      "dt": 0.015625,
+      "result": 0.004809999838471413
+    },
+    {
+      "weapon": "ak47",
+      "index": 1,
+      "crouch": true,
+      "airborne": false,
+      "baseline": 0.00481,
+      "before": 0.00641,
+      "dt": 0.015625,
+      "result": 0.006232111249119043
+    },
+    {
+      "weapon": "ak47",
+      "index": 1,
+      "crouch": true,
+      "airborne": false,
+      "baseline": 0.00481,
+      "before": 0.01261,
+      "dt": 0.015625,
+      "result": 0.011742793023586273
+    },
+    {
+      "weapon": "ak47",
+      "index": 1,
+      "crouch": true,
+      "airborne": false,
+      "baseline": 0.00481,
+      "before": 0.03601,
+      "dt": 0.015625,
+      "result": 0.032541170716285706
+    },
+    {
+      "weapon": "ak47",
+      "index": 1,
+      "crouch": false,
+      "airborne": true,
+      "baseline": 0.14717,
+      "before": 0,
+      "dt": 0.015625,
+      "result": 0.14717000722885132
+    },
+    {
+      "weapon": "ak47",
+      "index": 1,
+      "crouch": false,
+      "airborne": true,
+      "baseline": 0.14717,
+      "before": 0.00481,
+      "dt": 0.015625,
+      "result": 0.14717000722885132
+    },
+    {
+      "weapon": "ak47",
+      "index": 1,
+      "crouch": false,
+      "airborne": true,
+      "baseline": 0.14717,
+      "before": 0.00641,
+      "dt": 0.015625,
+      "result": 0.14717000722885132
+    },
+    {
+      "weapon": "ak47",
+      "index": 1,
+      "crouch": false,
+      "airborne": true,
+      "baseline": 0.14717,
+      "before": 0.14717,
+      "dt": 0.015625,
+      "result": 0.14717000722885132
+    },
+    {
+      "weapon": "ak47",
+      "index": 1,
+      "crouch": false,
+      "airborne": true,
+      "baseline": 0.14717,
+      "before": 0.15497,
+      "dt": 0.015625,
+      "result": 0.1547435224056244
+    },
+    {
+      "weapon": "ak47",
+      "index": 1,
+      "crouch": false,
+      "airborne": true,
+      "baseline": 0.14717,
+      "before": 0.17837,
+      "dt": 0.015625,
+      "result": 0.177464097738266
+    },
+    {
+      "weapon": "m4a4",
+      "index": 1,
+      "crouch": false,
+      "airborne": false,
+      "baseline": 0.0049,
+      "before": 0,
+      "dt": 0.015625,
+      "result": 0.004900000058114529
+    },
+    {
+      "weapon": "m4a4",
+      "index": 1,
+      "crouch": false,
+      "airborne": false,
+      "baseline": 0.0049,
+      "before": 0.0041,
+      "dt": 0.015625,
+      "result": 0.004900000058114529
+    },
+    {
+      "weapon": "m4a4",
+      "index": 1,
+      "crouch": false,
+      "airborne": false,
+      "baseline": 0.0049,
+      "before": 0.0049,
+      "dt": 0.015625,
+      "result": 0.004900000058114529
+    },
+    {
+      "weapon": "m4a4",
+      "index": 1,
+      "crouch": false,
+      "airborne": false,
+      "baseline": 0.0049,
+      "before": 0.0119,
+      "dt": 0.015625,
+      "result": 0.011195041239261627
+    },
+    {
+      "weapon": "m4a4",
+      "index": 1,
+      "crouch": false,
+      "airborne": false,
+      "baseline": 0.0049,
+      "before": 0.0329,
+      "dt": 0.015625,
+      "result": 0.030080165714025497
+    },
+    {
+      "weapon": "m4a4",
+      "index": 1,
+      "crouch": true,
+      "airborne": false,
+      "baseline": 0.0041,
+      "before": 0,
+      "dt": 0.015625,
+      "result": 0.004100000020116568
+    },
+    {
+      "weapon": "m4a4",
+      "index": 1,
+      "crouch": true,
+      "airborne": false,
+      "baseline": 0.0041,
+      "before": 0.0041,
+      "dt": 0.015625,
+      "result": 0.004100000020116568
+    },
+    {
+      "weapon": "m4a4",
+      "index": 1,
+      "crouch": true,
+      "airborne": false,
+      "baseline": 0.0041,
+      "before": 0.0049,
+      "dt": 0.015625,
+      "result": 0.004789525642991066
+    },
+    {
+      "weapon": "m4a4",
+      "index": 1,
+      "crouch": true,
+      "airborne": false,
+      "baseline": 0.0041,
+      "before": 0.0111,
+      "dt": 0.015625,
+      "result": 0.010133350268006325
+    },
+    {
+      "weapon": "m4a4",
+      "index": 1,
+      "crouch": true,
+      "airborne": false,
+      "baseline": 0.0041,
+      "before": 0.032100000000000004,
+      "dt": 0.015625,
+      "result": 0.028233403339982033
+    },
+    {
+      "weapon": "m4a4",
+      "index": 1,
+      "crouch": false,
+      "airborne": true,
+      "baseline": 0.10217,
+      "before": 0,
+      "dt": 0.015625,
+      "result": 0.10216999799013138
+    },
+    {
+      "weapon": "m4a4",
+      "index": 1,
+      "crouch": false,
+      "airborne": true,
+      "baseline": 0.10217,
+      "before": 0.0041,
+      "dt": 0.015625,
+      "result": 0.10216999799013138
+    },
+    {
+      "weapon": "m4a4",
+      "index": 1,
+      "crouch": false,
+      "airborne": true,
+      "baseline": 0.10217,
+      "before": 0.0049,
+      "dt": 0.015625,
+      "result": 0.10216999799013138
+    },
+    {
+      "weapon": "m4a4",
+      "index": 1,
+      "crouch": false,
+      "airborne": true,
+      "baseline": 0.10217,
+      "before": 0.10217,
+      "dt": 0.015625,
+      "result": 0.10216999799013138
+    },
+    {
+      "weapon": "m4a4",
+      "index": 1,
+      "crouch": false,
+      "airborne": true,
+      "baseline": 0.10217,
+      "before": 0.10917,
+      "dt": 0.015625,
+      "result": 0.10891470313072205
+    },
+    {
+      "weapon": "m4a4",
+      "index": 1,
+      "crouch": false,
+      "airborne": true,
+      "baseline": 0.10217,
+      "before": 0.13017,
+      "dt": 0.015625,
+      "result": 0.12914884090423584
+    },
+    {
+      "weapon": "usp",
+      "index": 1,
+      "crouch": false,
+      "airborne": false,
+      "baseline": 0.0049,
+      "before": 0,
+      "dt": 0.015625,
+      "result": 0.004900000058114529
+    },
+    {
+      "weapon": "usp",
+      "index": 1,
+      "crouch": false,
+      "airborne": false,
+      "baseline": 0.0049,
+      "before": 0.00368,
+      "dt": 0.015625,
+      "result": 0.004900000058114529
+    },
+    {
+      "weapon": "usp",
+      "index": 1,
+      "crouch": false,
+      "airborne": false,
+      "baseline": 0.0049,
+      "before": 0.0049,
+      "dt": 0.015625,
+      "result": 0.004900000058114529
+    },
+    {
+      "weapon": "usp",
+      "index": 1,
+      "crouch": false,
+      "airborne": false,
+      "baseline": 0.0049,
+      "before": 0.0569,
+      "dt": 0.015625,
+      "result": 0.05181380733847618
+    },
+    {
+      "weapon": "usp",
+      "index": 1,
+      "crouch": false,
+      "airborne": false,
+      "baseline": 0.0049,
+      "before": 0.21289999999999998,
+      "dt": 0.015625,
+      "result": 0.192555233836174
+    },
+    {
+      "weapon": "usp",
+      "index": 1,
+      "crouch": true,
+      "airborne": false,
+      "baseline": 0.00368,
+      "before": 0,
+      "dt": 0.015625,
+      "result": 0.0036800000816583633
+    },
+    {
+      "weapon": "usp",
+      "index": 1,
+      "crouch": true,
+      "airborne": false,
+      "baseline": 0.00368,
+      "before": 0.00368,
+      "dt": 0.015625,
+      "result": 0.0036800000816583633
+    },
+    {
+      "weapon": "usp",
+      "index": 1,
+      "crouch": true,
+      "airborne": false,
+      "baseline": 0.00368,
+      "before": 0.0049,
+      "dt": 0.015625,
+      "result": 0.004758243449032307
+    },
+    {
+      "weapon": "usp",
+      "index": 1,
+      "crouch": true,
+      "airborne": false,
+      "baseline": 0.00368,
+      "before": 0.05568,
+      "dt": 0.015625,
+      "result": 0.04963790625333786
+    },
+    {
+      "weapon": "usp",
+      "index": 1,
+      "crouch": true,
+      "airborne": false,
+      "baseline": 0.00368,
+      "before": 0.21167999999999998,
+      "dt": 0.015625,
+      "result": 0.1875116229057312
+    },
+    {
+      "weapon": "usp",
+      "index": 1,
+      "crouch": false,
+      "airborne": true,
+      "baseline": 0.09938,
+      "before": 0,
+      "dt": 0.015625,
+      "result": 0.0993800014257431
+    },
+    {
+      "weapon": "usp",
+      "index": 1,
+      "crouch": false,
+      "airborne": true,
+      "baseline": 0.09938,
+      "before": 0.00368,
+      "dt": 0.015625,
+      "result": 0.0993800014257431
+    },
+    {
+      "weapon": "usp",
+      "index": 1,
+      "crouch": false,
+      "airborne": true,
+      "baseline": 0.09938,
+      "before": 0.0049,
+      "dt": 0.015625,
+      "result": 0.0993800014257431
+    },
+    {
+      "weapon": "usp",
+      "index": 1,
+      "crouch": false,
+      "airborne": true,
+      "baseline": 0.09938,
+      "before": 0.09938,
+      "dt": 0.015625,
+      "result": 0.0993800014257431
+    },
+    {
+      "weapon": "usp",
+      "index": 1,
+      "crouch": false,
+      "airborne": true,
+      "baseline": 0.09938,
+      "before": 0.15138,
+      "dt": 0.015625,
+      "result": 0.14979881048202515
+    },
+    {
+      "weapon": "usp",
+      "index": 1,
+      "crouch": false,
+      "airborne": true,
+      "baseline": 0.09938,
+      "before": 0.30738,
+      "dt": 0.015625,
+      "result": 0.3010552227497101
+    },
+    {
+      "weapon": "awp",
+      "index": 1,
+      "crouch": false,
+      "airborne": false,
+      "baseline": 0.0808,
+      "before": 0,
+      "dt": 0.015625,
+      "result": 0.08079999685287476
+    },
+    {
+      "weapon": "awp",
+      "index": 1,
+      "crouch": false,
+      "airborne": false,
+      "baseline": 0.0808,
+      "before": 0.0606,
+      "dt": 0.015625,
+      "result": 0.08079999685287476
+    },
+    {
+      "weapon": "awp",
+      "index": 1,
+      "crouch": false,
+      "airborne": false,
+      "baseline": 0.0808,
+      "before": 0.0808,
+      "dt": 0.015625,
+      "result": 0.08079999685287476
+    },
+    {
+      "weapon": "awp",
+      "index": 1,
+      "crouch": false,
+      "airborne": false,
+      "baseline": 0.0808,
+      "before": 0.13465,
+      "dt": 0.015625,
+      "result": 0.12932293117046356
+    },
+    {
+      "weapon": "awp",
+      "index": 1,
+      "crouch": false,
+      "airborne": false,
+      "baseline": 0.0808,
+      "before": 0.2962,
+      "dt": 0.015625,
+      "result": 0.27489173412323
+    },
+    {
+      "weapon": "awp",
+      "index": 1,
+      "crouch": true,
+      "airborne": false,
+      "baseline": 0.0606,
+      "before": 0,
+      "dt": 0.015625,
+      "result": 0.060600001364946365
+    },
+    {
+      "weapon": "awp",
+      "index": 1,
+      "crouch": true,
+      "airborne": false,
+      "baseline": 0.0606,
+      "before": 0.0606,
+      "dt": 0.015625,
+      "result": 0.060600001364946365
+    },
+    {
+      "weapon": "awp",
+      "index": 1,
+      "crouch": true,
+      "airborne": false,
+      "baseline": 0.0606,
+      "before": 0.0808,
+      "dt": 0.015625,
+      "result": 0.07805893570184708
+    },
+    {
+      "weapon": "awp",
+      "index": 1,
+      "crouch": true,
+      "airborne": false,
+      "baseline": 0.0606,
+      "before": 0.11445,
+      "dt": 0.015625,
+      "result": 0.10714277625083923
+    },
+    {
+      "weapon": "awp",
+      "index": 1,
+      "crouch": true,
+      "airborne": false,
+      "baseline": 0.0606,
+      "before": 0.276,
+      "dt": 0.015625,
+      "result": 0.24677108228206635
+    },
+    {
+      "weapon": "awp",
+      "index": 1,
+      "crouch": false,
+      "airborne": true,
+      "baseline": 0.21463,
+      "before": 0,
+      "dt": 0.015625,
+      "result": 0.21462999284267426
+    },
+    {
+      "weapon": "awp",
+      "index": 1,
+      "crouch": false,
+      "airborne": true,
+      "baseline": 0.21463,
+      "before": 0.0606,
+      "dt": 0.015625,
+      "result": 0.21462999284267426
+    },
+    {
+      "weapon": "awp",
+      "index": 1,
+      "crouch": false,
+      "airborne": true,
+      "baseline": 0.21463,
+      "before": 0.0808,
+      "dt": 0.015625,
+      "result": 0.21462999284267426
+    },
+    {
+      "weapon": "awp",
+      "index": 1,
+      "crouch": false,
+      "airborne": true,
+      "baseline": 0.21463,
+      "before": 0.21463,
+      "dt": 0.015625,
+      "result": 0.21462999284267426
+    },
+    {
+      "weapon": "awp",
+      "index": 1,
+      "crouch": false,
+      "airborne": true,
+      "baseline": 0.21463,
+      "before": 0.26848,
+      "dt": 0.015625,
+      "result": 0.2665521204471588
+    },
+    {
+      "weapon": "awp",
+      "index": 1,
+      "crouch": false,
+      "airborne": true,
+      "baseline": 0.21463,
+      "before": 0.43003,
+      "dt": 0.015625,
+      "result": 0.4223184287548065
+    },
+    {
+      "weapon": "mp9",
+      "index": 1,
+      "crouch": false,
+      "airborne": false,
+      "baseline": 0.009,
+      "before": 0,
+      "dt": 0.015625,
+      "result": 0.008999999612569809
+    },
+    {
+      "weapon": "mp9",
+      "index": 1,
+      "crouch": false,
+      "airborne": false,
+      "baseline": 0.009,
+      "before": 0.008,
+      "dt": 0.015625,
+      "result": 0.008999999612569809
+    },
+    {
+      "weapon": "mp9",
+      "index": 1,
+      "crouch": false,
+      "airborne": false,
+      "baseline": 0.009,
+      "before": 0.009,
+      "dt": 0.015625,
+      "result": 0.008999999612569809
+    },
+    {
+      "weapon": "mp9",
+      "index": 1,
+      "crouch": false,
+      "airborne": false,
+      "baseline": 0.009,
+      "before": 0.0127,
+      "dt": 0.015625,
+      "result": 0.012218206189572811
+    },
+    {
+      "weapon": "mp9",
+      "index": 1,
+      "crouch": false,
+      "airborne": false,
+      "baseline": 0.009,
+      "before": 0.0238,
+      "dt": 0.015625,
+      "result": 0.021872825920581818
+    },
+    {
+      "weapon": "mp9",
+      "index": 1,
+      "crouch": true,
+      "airborne": false,
+      "baseline": 0.008,
+      "before": 0,
+      "dt": 0.015625,
+      "result": 0.00800000037997961
+    },
+    {
+      "weapon": "mp9",
+      "index": 1,
+      "crouch": true,
+      "airborne": false,
+      "baseline": 0.008,
+      "before": 0.008,
+      "dt": 0.015625,
+      "result": 0.00800000037997961
+    },
+    {
+      "weapon": "mp9",
+      "index": 1,
+      "crouch": true,
+      "airborne": false,
+      "baseline": 0.008,
+      "before": 0.009,
+      "dt": 0.015625,
+      "result": 0.008822577074170113
+    },
+    {
+      "weapon": "mp9",
+      "index": 1,
+      "crouch": true,
+      "airborne": false,
+      "baseline": 0.008,
+      "before": 0.0117,
+      "dt": 0.015625,
+      "result": 0.01104353740811348
+    },
+    {
+      "weapon": "mp9",
+      "index": 1,
+      "crouch": true,
+      "airborne": false,
+      "baseline": 0.008,
+      "before": 0.0228,
+      "dt": 0.015625,
+      "result": 0.020174149423837662
+    },
+    {
+      "weapon": "mp9",
+      "index": 1,
+      "crouch": false,
+      "airborne": true,
+      "baseline": 0.059000000000000004,
+      "before": 0,
+      "dt": 0.015625,
+      "result": 0.05900000035762787
+    },
+    {
+      "weapon": "mp9",
+      "index": 1,
+      "crouch": false,
+      "airborne": true,
+      "baseline": 0.059000000000000004,
+      "before": 0.008,
+      "dt": 0.015625,
+      "result": 0.05900000035762787
+    },
+    {
+      "weapon": "mp9",
+      "index": 1,
+      "crouch": false,
+      "airborne": true,
+      "baseline": 0.059000000000000004,
+      "before": 0.009,
+      "dt": 0.015625,
+      "result": 0.05900000035762787
+    },
+    {
+      "weapon": "mp9",
+      "index": 1,
+      "crouch": false,
+      "airborne": true,
+      "baseline": 0.059000000000000004,
+      "before": 0.059000000000000004,
+      "dt": 0.015625,
+      "result": 0.05900000035762787
+    },
+    {
+      "weapon": "mp9",
+      "index": 1,
+      "crouch": false,
+      "airborne": true,
+      "baseline": 0.059000000000000004,
+      "before": 0.0627,
+      "dt": 0.015625,
+      "result": 0.06252367794513702
+    },
+    {
+      "weapon": "mp9",
+      "index": 1,
+      "crouch": false,
+      "airborne": true,
+      "baseline": 0.059000000000000004,
+      "before": 0.0738,
+      "dt": 0.015625,
+      "result": 0.07309470325708389
+    }
+  ],
+  "landing": [
+    {
+      "weapon": "ak47",
+      "input": 0,
+      "coefficient": 0.000242,
+      "before": 0.00641,
+      "result": 0.006409999914467335
+    },
+    {
+      "weapon": "ak47",
+      "input": 100,
+      "coefficient": 0.000242,
+      "before": 0.00641,
+      "result": 0.03060999885201454
+    },
+    {
+      "weapon": "ak47",
+      "input": 200,
+      "coefficient": 0.000242,
+      "before": 0.00641,
+      "result": 0.05480999872088432
+    },
+    {
+      "weapon": "ak47",
+      "input": 301.993,
+      "coefficient": 0.000242,
+      "before": 0.00641,
+      "result": 0.07949230819940567
+    },
+    {
+      "weapon": "ak47",
+      "input": 500,
+      "coefficient": 0.000242,
+      "before": 0.00641,
+      "result": 0.12740999460220337
+    },
+    {
+      "weapon": "m4a4",
+      "input": 0,
+      "coefficient": 0.000192,
+      "before": 0.0049,
+      "result": 0.004900000058114529
+    },
+    {
+      "weapon": "m4a4",
+      "input": 100,
+      "coefficient": 0.000192,
+      "before": 0.0049,
+      "result": 0.02410000190138817
+    },
+    {
+      "weapon": "m4a4",
+      "input": 200,
+      "coefficient": 0.000192,
+      "before": 0.0049,
+      "result": 0.04330000281333923
+    },
+    {
+      "weapon": "m4a4",
+      "input": 301.993,
+      "coefficient": 0.000192,
+      "before": 0.0049,
+      "result": 0.06288266181945801
+    },
+    {
+      "weapon": "m4a4",
+      "input": 500,
+      "coefficient": 0.000192,
+      "before": 0.0049,
+      "result": 0.10090000182390213
+    },
+    {
+      "weapon": "usp",
+      "input": 0,
+      "coefficient": 0.000198,
+      "before": 0.0049,
+      "result": 0.004900000058114529
+    },
+    {
+      "weapon": "usp",
+      "input": 100,
+      "coefficient": 0.000198,
+      "before": 0.0049,
+      "result": 0.024700000882148743
+    },
+    {
+      "weapon": "usp",
+      "input": 200,
+      "coefficient": 0.000198,
+      "before": 0.0049,
+      "result": 0.04450000077486038
+    },
+    {
+      "weapon": "usp",
+      "input": 301.993,
+      "coefficient": 0.000198,
+      "before": 0.0049,
+      "result": 0.0646946132183075
+    },
+    {
+      "weapon": "usp",
+      "input": 500,
+      "coefficient": 0.000198,
+      "before": 0.0049,
+      "result": 0.1039000004529953
+    },
+    {
+      "weapon": "awp",
+      "input": 0,
+      "coefficient": 0.000307,
+      "before": 0.0808,
+      "result": 0.08079999685287476
+    },
+    {
+      "weapon": "awp",
+      "input": 100,
+      "coefficient": 0.000307,
+      "before": 0.0808,
+      "result": 0.11149999499320984
+    },
+    {
+      "weapon": "awp",
+      "input": 200,
+      "coefficient": 0.000307,
+      "before": 0.0808,
+      "result": 0.14219999313354492
+    },
+    {
+      "weapon": "awp",
+      "input": 301.993,
+      "coefficient": 0.000307,
+      "before": 0.0808,
+      "result": 0.17351186275482178
+    },
+    {
+      "weapon": "awp",
+      "input": 500,
+      "coefficient": 0.000307,
+      "before": 0.0808,
+      "result": 0.23430000245571136
+    },
+    {
+      "weapon": "mp9",
+      "input": 0,
+      "coefficient": 5.6e-05,
+      "before": 0.009,
+      "result": 0.008999999612569809
+    },
+    {
+      "weapon": "mp9",
+      "input": 100,
+      "coefficient": 5.6e-05,
+      "before": 0.009,
+      "result": 0.014599999412894249
+    },
+    {
+      "weapon": "mp9",
+      "input": 200,
+      "coefficient": 5.6e-05,
+      "before": 0.009,
+      "result": 0.02019999921321869
+    },
+    {
+      "weapon": "mp9",
+      "input": 301.993,
+      "coefficient": 5.6e-05,
+      "before": 0.009,
+      "result": 0.025911608710885048
+    },
+    {
+      "weapon": "mp9",
+      "input": 500,
+      "coefficient": 5.6e-05,
+      "before": 0.009,
+      "result": 0.03700000047683716
+    }
+  ],
+  "firing": [
+    {
+      "weapon": "ak47",
+      "before": 0,
+      "fire": 0.0078,
+      "result": 0.007799999788403511
+    },
+    {
+      "weapon": "ak47",
+      "before": 0.00641,
+      "fire": 0.0078,
+      "result": 0.014209999702870846
+    },
+    {
+      "weapon": "ak47",
+      "before": 0.03761,
+      "fire": 0.0078,
+      "result": 0.045409999787807465
+    },
+    {
+      "weapon": "m4a4",
+      "before": 0,
+      "fire": 0.007,
+      "result": 0.007000000216066837
+    },
+    {
+      "weapon": "m4a4",
+      "before": 0.0049,
+      "fire": 0.007,
+      "result": 0.011900000274181366
+    },
+    {
+      "weapon": "m4a4",
+      "before": 0.0329,
+      "fire": 0.007,
+      "result": 0.039900001138448715
+    },
+    {
+      "weapon": "usp",
+      "before": 0,
+      "fire": 0.052,
+      "result": 0.052000001072883606
+    },
+    {
+      "weapon": "usp",
+      "before": 0.0049,
+      "fire": 0.052,
+      "result": 0.05690000206232071
+    },
+    {
+      "weapon": "usp",
+      "before": 0.21289999999999998,
+      "fire": 0.052,
+      "result": 0.26489999890327454
+    },
+    {
+      "weapon": "awp",
+      "before": 0,
+      "fire": 0.05385,
+      "result": 0.053849998861551285
+    },
+    {
+      "weapon": "awp",
+      "before": 0.0808,
+      "fire": 0.05385,
+      "result": 0.13464999198913574
+    },
+    {
+      "weapon": "awp",
+      "before": 0.2962,
+      "fire": 0.05385,
+      "result": 0.3500500023365021
+    },
+    {
+      "weapon": "mp9",
+      "before": 0,
+      "fire": 0.0037,
+      "result": 0.003700000001117587
+    },
+    {
+      "weapon": "mp9",
+      "before": 0.009,
+      "fire": 0.0037,
+      "result": 0.01269999984651804
+    },
+    {
+      "weapon": "mp9",
+      "before": 0.0238,
+      "fire": 0.0037,
+      "result": 0.027499999850988388
+    }
+  ],
+  "weaponStatAudit": {
+    "runtimeBuild": "2000924",
+    "weaponCount": 35,
+    "comparisons": 2030,
+    "differences": [],
+    "exportSha256": "46e7a84b46c620e8daf11c403ee9152a5faa1a033407748b527862aa3147236b",
+    "installedBuild": "2000930"
+  }
+}

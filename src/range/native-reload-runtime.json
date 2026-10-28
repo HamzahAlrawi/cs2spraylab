@@ -1,0 +1,306 @@
+{
+  "ak47": {
+    "attackLock": 2.466667,
+    "singleShells": false,
+    "reload": {
+      "ammoAt": 1.1,
+      "animationEnd": 2.433333333333333
+    }
+  },
+  "m4a4": {
+    "attackLock": 3.066667,
+    "singleShells": false,
+    "reload": {
+      "ammoAt": 1.3666666666666667,
+      "animationEnd": 3.066666666666667
+    }
+  },
+  "m4a1s": {
+    "attackLock": 3.066667,
+    "singleShells": false,
+    "reload": {
+      "ammoAt": 1.3666666666666667,
+      "animationEnd": 3.066666666666667
+    }
+  },
+  "galil": {
+    "attackLock": 3.033333,
+    "singleShells": false,
+    "reload": {
+      "ammoAt": 1.1666666666666667,
+      "animationEnd": 3.033333333333333
+    }
+  },
+  "famas": {
+    "attackLock": 3.3,
+    "singleShells": false,
+    "reload": {
+      "ammoAt": 1.6666666666666667,
+      "animationEnd": 3.3
+    }
+  },
+  "sg553": {
+    "attackLock": 2.766667,
+    "singleShells": false,
+    "reload": {
+      "ammoAt": 1.0333333333333334,
+      "animationEnd": 2.7666666666666666
+    }
+  },
+  "aug": {
+    "attackLock": 3.2,
+    "singleShells": false,
+    "reload": {
+      "ammoAt": 1.4,
+      "animationEnd": 3.2
+    }
+  },
+  "mp9": {
+    "attackLock": 2.133333,
+    "singleShells": false,
+    "reload": {
+      "ammoAt": 0.8666666666666667,
+      "animationEnd": 2.1333333333333333
+    }
+  },
+  "mp7": {
+    "attackLock": 3.166667,
+    "singleShells": false,
+    "reload": {
+      "ammoAt": 1.4333333333333333,
+      "animationEnd": 3.1333333333333333
+    }
+  },
+  "mp5sd": {
+    "attackLock": 2.966667,
+    "singleShells": false,
+    "reload": {
+      "ammoAt": 2,
+      "animationEnd": 2.966666666666667
+    }
+  },
+  "mac10": {
+    "attackLock": 2.566667,
+    "singleShells": false,
+    "reload": {
+      "ammoAt": 1.2,
+      "animationEnd": 2.566666666666667
+    }
+  },
+  "ump45": {
+    "attackLock": 3.466667,
+    "singleShells": false,
+    "reload": {
+      "ammoAt": 1.5333333333333334,
+      "animationEnd": 3.433333333333333
+    }
+  },
+  "p90": {
+    "attackLock": 3.366667,
+    "singleShells": false,
+    "reload": {
+      "ammoAt": 2,
+      "animationEnd": 3.3666666666666667
+    }
+  },
+  "bizon": {
+    "attackLock": 2.433333,
+    "singleShells": false,
+    "reload": {
+      "ammoAt": 1.1333333333333333,
+      "animationEnd": 2.433333333333333
+    }
+  },
+  "m249": {
+    "attackLock": 5.7,
+    "singleShells": false,
+    "reload": {
+      "ammoAt": 3.7333333333333334,
+      "animationEnd": 5.7
+    }
+  },
+  "negev": {
+    "attackLock": 5.7,
+    "singleShells": false,
+    "reload": {
+      "ammoAt": 3.8333333333333335,
+      "animationEnd": 5.7
+    }
+  },
+  "cz75a": {
+    "attackLock": 2.733333,
+    "singleShells": false,
+    "reload": {
+      "ammoAt": 1.5666666666666667,
+      "animationEnd": 2.7333333333333334
+    },
+    "empty": {
+      "ammoAt": 1.6666666666666667,
+      "animationEnd": 2.7333333333333334
+    }
+  },
+  "usp": {
+    "attackLock": 2.2,
+    "singleShells": false,
+    "reload": {
+      "ammoAt": 0.9,
+      "animationEnd": 2.1666666666666665
+    },
+    "empty": {
+      "ammoAt": 1,
+      "animationEnd": 2.1666666666666665
+    }
+  },
+  "glock": {
+    "attackLock": 2.266667,
+    "singleShells": false,
+    "reload": {
+      "ammoAt": 0.9333333333333333,
+      "animationEnd": 2.2666666666666666
+    },
+    "empty": {
+      "ammoAt": 1.2666666666666666,
+      "animationEnd": 2.2666666666666666
+    }
+  },
+  "hkp2000": {
+    "attackLock": 2.266667,
+    "singleShells": false,
+    "reload": {
+      "ammoAt": 0.9333333333333333,
+      "animationEnd": 2.2666666666666666
+    },
+    "empty": {
+      "ammoAt": 1.2,
+      "animationEnd": 2.2666666666666666
+    }
+  },
+  "p250": {
+    "attackLock": 2.266667,
+    "singleShells": false,
+    "reload": {
+      "ammoAt": 0.9333333333333333,
+      "animationEnd": 2.2666666666666666
+    },
+    "empty": {
+      "ammoAt": 1.2,
+      "animationEnd": 2.2666666666666666
+    }
+  },
+  "deagle": {
+    "attackLock": 2.2,
+    "singleShells": false,
+    "reload": {
+      "ammoAt": 0.7666666666666667,
+      "animationEnd": 2.2
+    },
+    "empty": {
+      "ammoAt": 1.0333333333333334,
+      "animationEnd": 2.2
+    }
+  },
+  "elite": {
+    "attackLock": 3.766667,
+    "singleShells": false,
+    "reload": {
+      "ammoAt": 2.933333333333333,
+      "animationEnd": 3.7666666666666666
+    }
+  },
+  "fiveseven": {
+    "attackLock": 2.266667,
+    "singleShells": false,
+    "reload": {
+      "ammoAt": 0.9666666666666667,
+      "animationEnd": 2.2666666666666666
+    },
+    "empty": {
+      "ammoAt": 1.2,
+      "animationEnd": 2.2666666666666666
+    }
+  },
+  "tec9": {
+    "attackLock": 2.566667,
+    "singleShells": false,
+    "reload": {
+      "ammoAt": 1.4333333333333333,
+      "animationEnd": 2.566666666666667
+    }
+  },
+  "revolver": {
+    "attackLock": 2.266667,
+    "singleShells": false,
+    "reload": {
+      "ammoAt": 1.9666666666666666,
+      "animationEnd": 2.2666666666666666
+    }
+  },
+  "awp": {
+    "attackLock": 3.666667,
+    "singleShells": false,
+    "reload": {
+      "ammoAt": 2,
+      "animationEnd": 3.6666666666666665
+    }
+  },
+  "ssg08": {
+    "attackLock": 3.7,
+    "singleShells": false,
+    "reload": {
+      "ammoAt": 2,
+      "animationEnd": 3.7
+    }
+  },
+  "g3sg1": {
+    "attackLock": 4.666667,
+    "singleShells": false,
+    "reload": {
+      "ammoAt": 2.6666666666666665,
+      "animationEnd": 4.666666666666667
+    }
+  },
+  "scar20": {
+    "attackLock": 3.066667,
+    "singleShells": false,
+    "reload": {
+      "ammoAt": 1.5333333333333334,
+      "animationEnd": 3.066666666666667
+    },
+    "empty": {
+      "ammoAt": 1.4666666666666666,
+      "animationEnd": 3.066666666666667
+    }
+  },
+  "nova": {
+    "attackLock": 0.466667,
+    "singleShells": true,
+    "reload": {
+      "ammoAt": 0.6666666666666666,
+      "animationEnd": 1.6333333333333333
+    }
+  },
+  "xm1014": {
+    "attackLock": 0.6,
+    "singleShells": true,
+    "reload": {
+      "ammoAt": 1.0333333333333334,
+      "animationEnd": 1.7333333333333334
+    }
+  },
+  "mag7": {
+    "attackLock": 2.5,
+    "singleShells": false,
+    "reload": {
+      "ammoAt": 1.0666666666666667,
+      "animationEnd": 2.466666666666667
+    }
+  },
+  "sawedoff": {
+    "attackLock": 0.466667,
+    "singleShells": true,
+    "reload": {
+      "ammoAt": 0.6666666666666666,
+      "animationEnd": 1.7333333333333334
+    }
+  }
+}

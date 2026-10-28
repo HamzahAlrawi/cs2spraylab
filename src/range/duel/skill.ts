@@ -20,8 +20,8 @@ export const skilledFamilyWeights = {rifle, smg, pistol, lmg};
 const anchors: {level: number; weights: Weights; advancedCap: number; shoulderCap: number}[] = [
   {level: 1, weights: {shoulder: 0, quick: 10, wide: 30, ferrari: 0, crouch: 12, prefire: 0,
     slice: 0, jump: 0, run: 48, crouchWide: 0}, advancedCap: 0, shoulderCap: 0},
-  {level: 3, weights: {shoulder: .6, quick: 17, wide: 27, ferrari: 0, crouch: 12, prefire: 1.2,
-    slice: .7, jump: 0, run: 41.5, crouchWide: 0}, advancedCap: .025, shoulderCap: .006},
+  {level: 3, weights: {shoulder: 0, quick: 18, wide: 27, ferrari: 0, crouch: 12, prefire: 0,
+    slice: 0, jump: 0, run: 43, crouchWide: 0}, advancedCap: 0, shoulderCap: 0},
   {level: 6, weights: {shoulder: 5, quick: 23, wide: 23, ferrari: 2, crouch: 10, prefire: 6,
     slice: 5, jump: 1, run: 21, crouchWide: 4}, advancedCap: .25, shoulderCap: .08},
   {level: 9, weights: {shoulder: 10, quick: 25, wide: 18, ferrari: 4, crouch: 8, prefire: 9,
@@ -29,7 +29,6 @@ const anchors: {level: number; weights: Weights; advancedCap: number; shoulderCa
   {level: 10, weights: rifle, advancedCap: 1, shoulderCap: 1},
 ];
 const advanced = new Set<PeekType>(['shoulder', 'ferrari', 'prefire', 'slice', 'jump', 'crouchWide']);
-const lowAdvancedLocks = new Set<PeekType>(['ferrari', 'jump', 'crouchWide']);
 const sum = (weights: Partial<Weights>, types: PeekType[]) => types.reduce((total, type) => total + (weights[type] ?? 0), 0);
 const numberLevel = (level: SkillLevel) => level === '10+' ? 10 : level;
 
@@ -56,7 +55,7 @@ export function peekDistribution(level: SkillLevel, weapon: Weapon,
   const family = skilledFamilyWeights[weaponFamily(weapon)];
   const raw = Object.fromEntries(peekTypes.map(type => {
     const factor = context[type] ?? 1;
-    return [type, eligible[type] === false || numberLevel(level) <= 3 && lowAdvancedLocks.has(type)
+    return [type, eligible[type] === false || numberLevel(level) <= 3 && advanced.has(type)
       || !Number.isFinite(factor) ? 0 : prior[type] * family[type] / rifle[type] * Math.max(0, factor)];
   })) as Weights;
   const simpleTypes = peekTypes.filter(type => !advanced.has(type));
@@ -106,6 +105,16 @@ export type BotTraits = {
   lowAimTendency: number;
   stopTendency: number;
 };
+
+// Stable per-partner timing avoids rolling a new delay on every fresh callout.
+// Novices can follow contact, but do not synchronize with elite precision.
+export function coordinationTiming(level: SkillLevel, actorId: number, generation: number) {
+  const novice = level === '10+' ? 0 : (10 - level) / 9;
+  const random = randomStream(generation, `team-timing:${actorId}`);
+  return {contactDelay: .22 + novice * (.12 + random() * .3),
+    tradeGap: .1 + novice * (.04 + random() * .18),
+    followupDelay: .04 + novice * (.1 + random() * .18)};
+}
 
 // All skill curves are training heuristics, not measured FACEIT population statistics.
 export function combatStyle(level: SkillLevel) {
@@ -157,15 +166,17 @@ export function createBotTraits(level: SkillLevel, seed: number, actorId: number
   const aimStrength = .5 * general + Math.sqrt(.75) * aim;
   const movementStrength = .4 * general + Math.sqrt(.84) * movement;
   const midrank = typeof level === 'number' && level >= 5 && level <= 8 ? 1 : 0;
-  const stopBase = interpolate(level, [.45, .72, .93, .96]) - midrank * .025;
+  const easing = typeof level === 'number' ? Math.max(0, Math.min(1, (7 - level) / 4)) : 0;
+  const noviceAim = typeof level === 'number' && level <= 4 ? easing : 0;
+  const stopBase = interpolate(level, [.45, .72, .93, .96]) - midrank * .025 - easing * .015;
   const logit = Math.log(stopBase / (1 - stopBase));
   return {
-    recognitionMedianMs: interpolate(level, [360, 260, 190, 165]) * (1 + midrank * .08) * Math.exp(-.12 * recognitionStrength),
-    motorSettlingMs: interpolate(level, [300, 220, 150, 125]) * (1 + midrank * .08) * Math.exp(-.12 * aimStrength),
-    endpointErrorDegrees: interpolate(level, [1.8, 1, .45, .3]) * (1 + midrank * .16) * Math.exp(-.18 * aimStrength),
-    preaimErrorDegrees: interpolate(level, [5.8, 2.8, .9, .7]) * (1 + midrank * .15) * Math.exp(-.18 * aimStrength),
-    brakeErrorMs: interpolate(level, [110, 65, 20, 16]) * (1 + midrank * .12) * Math.exp(-.15 * movementStrength),
-    lowAimTendency: interpolate(level, [.8, .4, .1, .08]) + midrank * .04,
+    recognitionMedianMs: interpolate(level, [360, 260, 190, 165]) * (1 + midrank * .08 + easing * .08) * Math.exp(-.12 * recognitionStrength),
+    motorSettlingMs: interpolate(level, [300, 220, 150, 125]) * (1 + midrank * .08 + easing * .08) * Math.exp(-.12 * aimStrength),
+    endpointErrorDegrees: interpolate(level, [1.8, 1, .45, .3]) * (1 + midrank * .16 + noviceAim * .12) * Math.exp(-.18 * aimStrength),
+    preaimErrorDegrees: interpolate(level, [5.8, 2.8, .9, .7]) * (1 + midrank * .15 + noviceAim * .1) * Math.exp(-.18 * aimStrength),
+    brakeErrorMs: interpolate(level, [110, 65, 20, 16]) * (1 + midrank * .12 + noviceAim * .08) * Math.exp(-.15 * movementStrength),
+    lowAimTendency: interpolate(level, [.8, .4, .1, .08]) + midrank * .04 + easing * .025,
     stopTendency: 1 / (1 + Math.exp(-(logit + .4 * movementStrength))),
   };
 }

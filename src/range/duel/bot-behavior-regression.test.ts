@@ -195,8 +195,10 @@ describe('novice angles and dynamic idle decisions', () => {
   });
 
   it('novices are more likely to waste an angle check on occluded geometry', () => {
-    const arena = map(), self = actor().position, expected = {x: 0, y: self.y, z: -18};
-    const angles = [{x: 0, y: self.y, z: 8}, {x: 8, y: self.y, z: -8}];
+    const arena = map(), self = actor().position, expected = {x: 0, y: self.y, z: 18};
+    // Compare a blocked and open check in the incoming threat sector, not an
+    // unrelated corner behind a bot that should be holding this approach.
+    const angles = [{x: 0, y: self.y, z: 8}, {x: 8, y: self.y, z: 8}];
     const blocked = (level: SkillLevel) => {
       let count = 0;
       for (let seed = 1; seed <= 256; seed++) {

@@ -10,6 +10,15 @@ const contact = (position: ActorKinematics['position'], from: number, to: number
   verticalContact(position, from, to, height, [box]);
 
 describe('shared vertical movement', () => {
+  it('retains native ground and ceiling contacts refined beyond the requested endpoint', () => {
+    const native = {fits: () => true, sweep: (_from: any, to: any) => ({position: to, fraction: 1, startSolid: false}),
+      vertical: (_position: any, from: number, to: number) => ({feet: to + (to <= from ? -.0001 : .0001),
+        grounded: to <= from, ceiling: to > from, normal: {x: 0, y: to <= from ? 1 : -1, z: 0}})};
+    const p = {x: 0, y: 1, z: 0};
+    expect(verticalContact(p, 1, 1 - 1e-7, 1.8, [], null, native).grounded).toBe(true);
+    expect(verticalContact(p, 1, 1 + 1e-7, 1.8, [], null, native).ceiling).toBe(true);
+    expect(verticalContact(p, 0, -1e-7, 1.8, [], 0, native).feet).toBe(0);
+  });
   it('tucks the feet without pulling the airborne eye down', () => {
     let standing = actor(), ducking = actor();
     // A fresh key edge consumes crouch speed; allow the resulting transition
@@ -65,7 +74,9 @@ describe('shared vertical movement', () => {
     const initial = {...actor(), feet: .8, verticalVelocity: 1};
     const a = advanceActor(initial, {...idleInput(), side: 1}, 250 * UNIT, STEP);
     const b = advanceActor(initial, {...idleInput(), side: 1, crouch: true}, 250 * UNIT, STEP);
-    expect(a.velocity).toEqual(b.velocity);
+    expect(b.velocity.x).toBeGreaterThan(0);
+    expect(b.velocity.x).toBeLessThanOrEqual(a.velocity.x);
+    expect(b.velocity.z).toBe(a.velocity.z);
   });
 
   it('requires a full standing hull when releasing crouch under a ceiling', () => {

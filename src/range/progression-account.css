@@ -1,0 +1,32 @@
+.progression-save-gifts {border-bottom:1px solid #414742;min-width:0;font-size:12px;letter-spacing:0}
+.progression-save-gifts summary {padding:10px 0;cursor:pointer;color:#d7e1da}
+.progression-save-content {display:grid;gap:12px;padding:0 0 14px;min-width:0}
+.progression-save-content p {margin:0;overflow-wrap:anywhere}
+.progression-save-note,.progression-save-persistence p {color:#b7c0ba;font-size:11px;line-height:1.6}
+.progression-gift-form {display:grid;gap:5px;min-width:0}
+.progression-gift-form label {color:#d7e1da;font-size:12px}
+.progression-gift-entry {display:flex;align-items:stretch;gap:8px;min-width:0}
+.progression-gift-entry textarea {display:block;flex:1;min-width:0;width:100%;max-width:100%;resize:vertical;min-height:44px;max-height:180px;padding:8px;background:#292e2a;color:#f1f4f2;border:1px solid #637068;border-radius:4px;font:inherit;line-height:1.5;overflow-wrap:anywhere}
+.progression-save-content button {display:inline-flex;align-items:center;justify-content:center;gap:7px;min-height:40px;max-width:100%;padding:8px 12px;border:1px solid #637068;border-radius:4px;background:transparent;color:#d7e1da;font:inherit;line-height:1.5;white-space:normal;overflow-wrap:anywhere;cursor:pointer}
+.progression-save-content button svg {flex:none}
+.progression-save-content button:hover:not(:disabled) {background:#ffffff0d}
+.progression-save-content button:disabled,.progression-gift-entry textarea:disabled {opacity:.6;cursor:default}
+.progression-save-actions {display:flex;flex-wrap:wrap;gap:8px;min-width:0}
+.progression-save-file-label {position:absolute;width:1px;height:1px;padding:0;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+.progression-save-content .progression-save-status {color:#a8e2c5;line-height:1.6}
+.progression-save-status:empty {display:none}
+.progression-save-content .progression-save-status.is-error {color:#f0b4a6}
+.progression-restore-confirmation {border-left:2px solid #e8c77e;padding:0 0 0 12px;min-width:0;color:#f5dcb4}
+.progression-restore-confirmation p {margin-bottom:10px}
+.progression-save-persistence {display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;min-width:0}
+.progression-save-persistence p {flex:1;min-width:min(220px,100%)}
+.progression-save-gifts summary:focus-visible,.progression-save-content button:focus-visible,.progression-save-content textarea:focus-visible,.progression-save-status:focus,.progression-restore-confirmation:focus {outline:2px solid #f2d889;outline-offset:3px}
+@media(max-width:480px) {
+  .progression-gift-entry {flex-wrap:wrap}
+  .progression-gift-entry textarea {flex-basis:100%;font-size:16px}
+  .progression-save-actions button {flex:1 1 140px}
+  .progression-save-persistence {align-items:flex-start}
+}
+.progression-storage-banner{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:9px 18px;background:#382b1c;color:#ffdda6;font-size:12px;line-height:1.5;flex-wrap:wrap}
+.progression-storage-banner>span{flex:1;min-width:180px;overflow-wrap:anywhere}
+.progression-storage-banner>button{display:inline-flex;align-items:center;gap:6px;flex-shrink:0;padding:5px 8px;border:1px solid #96774c;border-radius:4px}

@@ -93,7 +93,7 @@ async function confirmCapture(page: Page, mode: Mode, fullscreen: boolean) {
     const engine = window.inputCaptureEngines[mode]!;
     const active = mode === 'duel' ? !engine.paused && engine.sim.phase === 'fighting' : engine.sim.active;
     const input = mode === 'duel' ? engine.inputName : engine.inputStatus;
-    return !!active && !engine.entering && /^(Raw|Standard) mouse$/.test(input ?? '') && document.pointerLockElement === engine.renderer.domElement;
+    return !!active && !engine.entering && /^(Raw|Standard) mouse(?: \(|$)/.test(input ?? '') && document.pointerLockElement === engine.renderer.domElement;
   }, mode), {message: `${mode} must own native pointer lock after entry`}).toBe(true);
   await expect(page.getByRole('button', {name: pauseLabel(mode), exact: true})).toBeVisible();
   if (fullscreen) {
@@ -156,6 +156,7 @@ async function mouseOnlyAim(page: Page, mode: Mode) {
 test.beforeEach(async ({page}, info) => {
   test.skip(info.project.name.startsWith('mobile') && !info.title.startsWith('mobile entry'), 'Desktop mouse capture regression');
   await page.addInitScript(() => {
+    performance.setResourceTimingBufferSize(10000);
     localStorage.setItem('spraylab.range.v2', JSON.stringify({mode: 'duel', volume: 0, quality: 'performance', frameLimit: 60, protectShortcuts: true}));
     localStorage.setItem('spraylab.duel.v1', JSON.stringify({skill: 1, behavior: 'patient', playerHealth: 500, shortcutProtection: true}));
     window.inputCaptureEvents = [];
@@ -256,7 +257,10 @@ for (const mode of ['duel', 'guided'] as const) {
     const capabilities = await nativeCapabilities(page);
     test.skip(!capabilities.pointerLock, 'Browser does not expose native Pointer Lock');
     // Isolate legacy event completion from the separate fullscreen activation path.
-    if (mode === 'duel') await page.getByLabel('Protect Ctrl+W', {exact: true}).uncheck();
+    if (mode === 'duel') {
+      await page.locator('summary').filter({hasText: /^Advanced combat & radar$/}).click();
+      await page.getByLabel('Protect Ctrl+W', {exact: true}).uncheck();
+    }
     else {
       await page.getByLabel('Training mode').selectOption(mode);
       await page.getByRole('button', {name: 'Settings', exact: true}).click();

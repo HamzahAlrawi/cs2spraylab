@@ -16,9 +16,10 @@ try {
   page.on('pageerror',error => errors.push(error.message));
   await page.addInitScript(quality => {
     localStorage.setItem('spraylab.range.v2',JSON.stringify({mode:'duel',volume:0,quality,frameLimit:60}));
-    localStorage.setItem('spraylab.duel.v1',JSON.stringify({botCount:5,skill:5,playerHealth:500,roundSeconds:180}));
+    localStorage.setItem('spraylab.duel.v1',JSON.stringify({generatedMaps:true,botCount:5,skill:5,playerHealth:500,roundSeconds:180}));
   },quality);
   await page.goto(`http://127.0.0.1:${server.httpServer.address().port}/`);
+  await page.locator('canvas[data-duel]').waitFor();
   await page.evaluate(async () => {
     const url = performance.getEntriesByType('resource').find(e => e.name.includes('/duel/DuelEngine.ts')).name;
     const {DuelEngine} = await import(url), tick = DuelEngine.prototype.tick;
@@ -40,47 +41,72 @@ try {
       const start = performance.now(); tick.call(this,time);
       if (this.renderer.info.render.calls) {
         if (p.collect) p.records.push({cpu:performance.now()-start,frame:time-last,calls:this.renderer.info.render.calls,
-          visible:[...this.models.values()].filter(m=>m.visible).length,...p.stages});
+          visible:[...this.models.values()].filter(m=>m.visible).length,
+          smoke:this.scene.getObjectByName('utility-smoke')?.count??0,fire:this.scene.getObjectByName('utility-fire')?.count??0,...p.stages});
         last = time;
       }
     };
   });
   await page.waitForFunction(() => {
     const e=window.duelProfile?.engine;
-    return e?.motionReady&&!e.worldLoading.size&&!e.gestureLoading.size;
+    return e?.criticalReady&&!e.loadingMap&&!e.worldLoading.size&&!e.gestureLoading.size;
   });
   const session = await page.context().newCDPSession(page);
   await session.send('Emulation.setCPUThrottlingRate',{rate});
   if(cpuProfile){await session.send('Profiler.enable');await session.send('Profiler.start');}
   const results = [];
-  for (const [bots,scale,stress] of [[1,.65,false],[5,1,false],[5,1,true]]) {
-    await page.evaluate(({bots,scale,stress}) => {
+  for (const [bots,scale,stress,utilities] of [[1,.65,false,false],[5,1,false,false],[5,1,true,false],[5,1,true,true]]) {
+    await page.evaluate(({bots,scale}) => {
       const p = window.duelProfile,e = p.engine;
       window.profileCoverClone?.removeFromParent();
       e.seed=431;
       e.setConfig({...e.config,botCount:bots,arenaScale:scale,mapDesign:'Freight yard'});
       e.covers.visible=true;
+    },{bots,scale});
+    await page.waitForFunction(()=>{
+      const e=window.duelProfile.engine;return !e.loadingMap&&!e.worldLoading.size&&!e.gestureLoading.size;
+    });
+    await page.evaluate(({stress,utilities})=>{
+      const e=window.duelProfile.engine;
       if (stress) {
-        // Keep scenery rendered while forcing the worst-case visible-bone cost.
+        // Bypass cover culling but retain the frustum; visibleBots reports the
+        // actual actor coverage instead of assuming a worst-case rig sample.
         window.profileCoverClone = e.covers.clone(true); e.scene.add(window.profileCoverClone); e.covers.visible = false;
+        // Apply only AFTER async restart, which otherwise overwrites this setup.
+        e.sim.actors[0].position={x:0,y:1.6256,z:8};e.sim.actors[0].feet=0;e.sim.actors[0].yaw=0;e.sim.actors[0].pitch=0;
+        for(const actor of e.sim.actors.slice(1)) {
+          actor.position={x:(actor.id-3)*1.2,y:1.6256,z:-4};actor.feet=0;actor.velocity={x:0,z:0};
+          e.sim.command(actor.id,{});
+        }
       }
       e.sim.start(); e.sim.resume(); e.paused = false; e.sim.actors[0].health = 10000;
-    },{bots,scale,stress});
-    await page.waitForFunction(()=>{
-      const e=window.duelProfile.engine;return !e.worldLoading.size&&!e.gestureLoading.size;
-    });
+      if(utilities)for(const [kind,x]of [['smoke',-2],['molotov',2]])
+        e.sim.utilities.throw({actorId:0,side:'player',kind,origin:{x,y:.1,z:2},direction:{x:0,y:-1,z:0},
+          velocity:{x:0,y:4.572,z:0},strength:0,time:e.sim.time});
+    },{stress,utilities});
     await page.waitForTimeout(1500);
-    await page.evaluate(() => {window.duelProfile.records.length=0;window.duelProfile.collect=true;});
+    await page.evaluate(async () => {
+      const path='/src/range/performance.ts', {FrameMetrics}=await import(path);
+      const e=window.duelProfile.engine;
+      e.inputName='Drag aim (automated CPU profile)';e.renderer.domElement.focus();
+      e.sim.start();e.sim.resume();e.paused=false;e.sessionStarted=true;e.last=0;
+      window.duelProfile.startedAt=e.sim.time;
+      e.metrics=new FrameMetrics();
+      window.duelProfile.records.length=0;window.duelProfile.collect=true;
+    });
     await page.waitForTimeout(4500);
-    results.push(await page.evaluate(({bots,scale,stress,rate}) => {
+    results.push(await page.evaluate(({bots,scale,stress,utilities,rate}) => {
       const p = window.duelProfile,e = p.engine;p.collect=false;e.pause();
+      if(e.sim.time-p.startedAt<1)throw new Error('CPU profile did not advance a live fight; reject paused/loading measurements');
       const quantile = (key,q) => {const values=p.records.map(r=>r[key]).sort((a,b)=>a-b);return +(values[Math.min(values.length-1,Math.floor(values.length*q))]??0).toFixed(2);};
-      return {bots,scale,stress,rate,frames:p.records.length,
-        cpuMs:{p50:quantile('cpu',.5),p95:quantile('cpu',.95)},frameMs:{p50:quantile('frame',.5),p95:quantile('frame',.95)},
+      if(utilities&&(!p.records.some(r=>r.smoke>0)||!p.records.some(r=>r.fire>0)))throw new Error('Utility stress did not render smoke and fire');
+      return {bots,scale,stress,utilities,rate,frames:p.records.length,simulatedSeconds:e.sim.time-p.startedAt,
+        cpuMs:{p50:quantile('cpu',.5),p95:quantile('cpu',.95),p99:quantile('cpu',.99)},frameMs:{p50:quantile('frame',.5),p95:quantile('frame',.95)},
         stages:Object.fromEntries(['simulation','syncActors','render','processEvents','syncEnvironment'].map(key=>[key,{p50:quantile(key,.5),p95:quantile(key,.95)}])),
         drawCalls:{p50:quantile('calls',.5),p95:quantile('calls',.95)},visibleBots:{p50:quantile('visible',.5),max:quantile('visible',1)},
-        buffer:[e.renderer.domElement.width,e.renderer.domElement.height]};
-    },{bots,scale,stress,rate}));
+        utilityInstances:{smoke:quantile('smoke',1),fire:quantile('fire',1)},
+        buffer:[e.renderer.domElement.width,e.renderer.domElement.height], performance:e.performanceReport()};
+    },{bots,scale,stress,utilities,rate}));
   }
   if(cpuProfile){const {profile}=await session.send('Profiler.stop');
     await fs.writeFile(`${output}/cpu-profile.json`,JSON.stringify(profile));}
@@ -104,8 +130,9 @@ try {
     return {vendor:info?gl.getParameter(info.UNMASKED_VENDOR_WEBGL):gl.getParameter(gl.VENDOR),
       renderer:info?gl.getParameter(info.UNMASKED_RENDERER_WEBGL):gl.getParameter(gl.RENDERER)};
   });
-  const report={results,errors,seed:431,quality,graphics,note:`${rate}x CPU throttling, fixed Freight yard seed; synthetic stress forces visible bones, not an old-CPU/iGPU FPS guarantee.`};
+  const report={results,errors,seed:431,quality,graphics,browser:await browser.version(),headless:true,
+    note:`${rate}x CPU throttling, live fixed Freight yard fight. Stress bypasses cover culling but retains frustum checks; inspect visibleBots for actual rig coverage. Not an old-CPU/iGPU FPS guarantee; other application load is uncontrolled.`};
   await fs.writeFile(`${output}/results.json`,JSON.stringify(report,null,2));
-  console.log(JSON.stringify(report,null,2));
+  console.log(JSON.stringify({...report,results:results.map(({performance,...row})=>({...row,frameDiagnostics:performance.summary}))},null,2));
   if(errors.length) throw new Error('Duel profile produced page errors');
 } finally {await browser.close();await server.close();}

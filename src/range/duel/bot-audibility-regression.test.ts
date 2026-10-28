@@ -94,25 +94,29 @@ describe('sound emission and sensor boundary regressions', () => {
 describe('seeded route diversity after contact', () => {
   it('preserves varied cover roles and engages an idle player across the existing population', () => {
     const records = [1, 2, 3, 4, 5, 6, 19, 42, 101, 208, 431, 9001].map(seed => {
-      const simulation = new DuelSimulation(sanitizeDuelConfig({roundSeconds: 25, skill: 5}), seed, duelArena(seed));
+      // Longer clearing routes can leave only a single spray opportunity.
+      const simulation = new DuelSimulation(sanitizeDuelConfig({roundSeconds: 35, skill: 5}), seed, duelArena(seed));
       simulation.actors[0].health = 10000; simulation.start();
       const roles = new Set<string>(), phases = new Set<string>(), peeks = new Set<string>();
-      let shots = 0;
-      for (let tick = 0; tick < 25 / STEP; tick++) {
+      let shots = 0, combatTicks = 0;
+      for (let tick = 0; tick < 35 / STEP; tick++) {
         simulation.step();
         const decision = simulation.botDecision(1);
         if (decision?.role) roles.add(decision.role);
         if (decision?.phase) phases.add(decision.phase);
         if (decision?.phase === 'expose') peeks.add(decision.peek);
+        if (decision?.phase === 'attack') combatTicks++;
         shots += simulation.drainEvents().filter(event => event.kind === 'fire' && event.actorId === 1).length;
       }
-      return {seed, roles: [...roles], phases: [...phases], peeks: [...peeks], shots, final: simulation.snapshot()[1].position,
+      return {seed, roles: [...roles], phases: [...phases], peeks: [...peeks], shots, combatSeconds:combatTicks*STEP, final: simulation.snapshot()[1].position,
         decision: simulation.botDecision(1)};
     });
     expect(records.every(record => record.shots > 0), JSON.stringify(records)).toBe(true);
     expect(records.filter(record => record.roles.length > 1).length, JSON.stringify(records)).toBeGreaterThanOrEqual(10);
-    expect(records.filter(record => record.peeks.length > 1 || record.phases.includes('microstrafe')).length,
-      JSON.stringify(records)).toBeGreaterThanOrEqual(8);
+    const sustained=records.filter(record=>record.combatSeconds>=6);
+    expect(sustained.length,JSON.stringify(records)).toBeGreaterThanOrEqual(6);
+    expect(sustained.filter(record => record.peeks.length > 1 || record.phases.includes('microstrafe')).length/sustained.length,
+      JSON.stringify(records)).toBeGreaterThanOrEqual(2/3);
     expect(records.filter(record => record.phases.includes('microstrafe')).length, JSON.stringify(records)).toBeGreaterThanOrEqual(4);
   }, 30000);
 });

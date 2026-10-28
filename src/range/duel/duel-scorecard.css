@@ -1,0 +1,57 @@
+.duel-scorecard{min-width:0;width:100%;color:#d8e3df;font-size:12px;line-height:1.5;letter-spacing:0;overflow-wrap:anywhere}
+.duel-scorecard .duel-scorecard-round{margin:0 0 9px;color:#a5b9ae;font-size:11px}
+.duel-scorecard-verdict{display:grid;grid-template-columns:minmax(0,1fr);gap:8px;align-items:start}
+.duel-scorecard-verdict h3{margin:0;color:#f0f6f3;font-size:15px;font-weight:600;line-height:1.4}
+.duel-scorecard-verdict>div{display:flex;flex-wrap:wrap;align-items:baseline;gap:5px 9px;font-variant-numeric:tabular-nums}
+.duel-scorecard-verdict span{color:#a5b9ae;font-size:10px}
+.duel-scorecard-verdict strong{color:#83e2c1;font-size:15px}
+.duel-scorecard .duel-scorecard-action{margin:12px 0;padding-left:10px;border-left:2px solid #83e2c1;font-size:12px;line-height:1.6}
+.duel-scorecard-action>b{display:block;color:#f0f6f3;font-size:11px;margin-bottom:3px}
+.duel-scorecard .duel-scorecard-evidence{margin:10px 0;color:#eef4f0;font-size:12px;line-height:1.6}
+.duel-scorecard-findings>section{padding:10px 0;border-top:1px solid #ffffff12}
+.duel-scorecard-findings h4{margin:0 0 5px;font-size:12px;color:#e0ebe5}
+.duel-scorecard-findings p{margin:4px 0;font-size:11px}
+.duel-scorecard .duel-scorecard-fights{display:block;padding:0;list-style:none}
+.duel-scorecard .duel-scorecard-fights li{display:block;padding:10px 0;border-bottom:1px solid #ffffff12}
+.duel-scorecard-fights strong,.duel-scorecard-fights span{display:block;white-space:normal;font-size:11px}
+.duel-scorecard-fights span{margin-top:3px;color:#b8c5be}
+.duel-aim-profile{padding:12px 0;margin:12px 0;border-block:1px solid #ffffff20}
+.duel-aim-profile>header{display:flex;justify-content:space-between;align-items:start;gap:10px}
+.duel-aim-profile h4{margin:0;font-size:13px;color:#edf4ef}
+.duel-aim-profile h4 small{display:block;font-size:10px;font-weight:400;color:#a5b9ae}
+.duel-aim-profile>header>strong{font-size:18px;color:#83e2c1;font-variant-numeric:tabular-nums}
+.duel-aim-profile .duel-aim-scope{font-size:10px;margin:5px 0;color:#bac9c0}
+.duel-aim-profile dd small{display:block;color:#9caf9f;font-size:10px}
+.duel-aim-weaknesses h5{font-size:11px;margin:12px 0 5px;color:#e8b89c}
+.duel-aim-weaknesses>section{padding:8px 0;border-top:1px solid #ffffff12}
+.duel-aim-weaknesses b{font-size:11px;color:#edccba}
+.duel-aim-weaknesses p{margin:4px 0;font-size:11px}
+.duel-scorecard .duel-scorecard-stats{margin:12px 0}
+.duel-scorecard .duel-scorecard-stats>div{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);align-items:baseline;gap:6px 10px;padding:8px 0;border-bottom:1px solid #ffffff12;font-size:11px}
+.duel-scorecard .duel-scorecard-stats dt{min-width:0;color:#b8c5be}
+.duel-scorecard .duel-scorecard-stats dd{min-width:0;margin:0;text-align:right;white-space:normal;color:#eef4f0;font-variant-numeric:tabular-nums}
+.duel-scorecard-details{margin-top:4px;border-top:1px solid #ffffff12;font-size:11px;color:#bccdc3}
+.duel-scorecard-details>summary{padding:9px 0;min-height:34px;cursor:pointer;color:#d8e3df;font-weight:500}
+.duel-scorecard-details>summary:focus-visible{outline:2px solid #83e2c1;outline-offset:2px}
+.duel-scorecard-details>p{margin:6px 0 10px}
+.duel-scorecard .duel-scorecard-confidence{color:#a5b9ae;font-size:10px}
+.duel-scorecard .duel-scorecard-skills{display:block;margin:10px 0}
+.duel-scorecard .duel-scorecard-skills>div{display:block;min-width:0;padding:10px 0;border-bottom:1px solid #ffffff12}
+.duel-scorecard .duel-scorecard-skills dt{color:#b8c5be;font-size:11px}
+.duel-scorecard .duel-scorecard-skills dd{margin:3px 0 0;min-width:0;text-align:left;white-space:normal}
+.duel-scorecard-skills dd>span{color:#eef4f0;font-size:14px;font-variant-numeric:tabular-nums}
+.duel-scorecard-skills dd>p{color:#a5b9ae;font-size:10px;line-height:1.5;margin:5px 0 7px}
+.duel-scorecard-skills meter{display:block;width:100%;height:6px;accent-color:#83e2c1}
+.duel-scorecard-history-heading{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.duel-scorecard-history-heading button{flex:none;width:30px;height:30px;display:grid;place-items:center}
+.duel-scorecard .duel-scorecard-details li{align-items:baseline;gap:8px;font-size:11px}
+.duel-scorecard .duel-scorecard-details li b{font-size:11px;font-weight:500;min-width:0;white-space:normal;text-transform:none}
+[data-coaching-tips="false"] .duel-scorecard-verdict h3,
+[data-coaching-tips="false"] .duel-scorecard-action,
+[data-coaching-tips="false"] .duel-finding-action,
+[data-coaching-tips="false"] .duel-scorecard-findings h4,
+[data-coaching-tips="false"] .duel-aim-weaknesses h5,
+[data-coaching-tips="false"] .duel-scorecard-skills dd>p,
+[data-coaching-tips="false"] .duel-scorecard-goal,
+[data-coaching-tips="false"] .duel-scorecard-strength{display:none}
+[data-coaching-tips="false"] .duel-aim-profile .duel-scorecard-skills dd>.duel-aim-measurement{display:block}

@@ -27,22 +27,23 @@ describe('duel frame presentation', () => {
   });
 
   it('samples death clips in real seconds without compressing them, then holds the final pose', () => {
-    const model = new Object3D();
+    const model = new Object3D(), pelvis = new Bone(); pelvis.name = 'pelvis'; model.add(pelvis);
     const clip = new AnimationClip('animation/anims/world/death_chest_b', 3,
-      [new VectorKeyframeTrack('.position', [0, 3], [0, 0, 0, 3, 0, 0])]);
+      [new VectorKeyframeTrack('pelvis.position', [0, 3], [0, 1, 0, 3, 1, 0]),
+        new VectorKeyframeTrack('.position', [0, 3], [0, 0, 0, 300, 0, 0])]);
     const animator = new DuelAnimator(model, [clip]);
     const actor = new DuelSimulation().snapshot()[1]; actor.alive = false;
     animator.update(actor, 0, 0);
     expect(model.position.x).toBe(0);
     animator.update(actor, .1, BOT_COLLAPSE_SECONDS / 2);
-    expect(model.position.x).toBeCloseTo(BOT_COLLAPSE_SECONDS / 2, 3);
+    expect(pelvis.position.x).toBeCloseTo(BOT_COLLAPSE_SECONDS / 2, 3);
     animator.update(actor, .1, BOT_COLLAPSE_SECONDS);
-    expect(model.position.x).toBeCloseTo(BOT_COLLAPSE_SECONDS, 3);
+    expect(pelvis.position.x).toBeCloseTo(BOT_COLLAPSE_SECONDS, 3);
     animator.update(actor, .1, 3);
-    expect(model.position.x).toBeCloseTo(3, 3);
-    const settled = model.position.clone();
+    expect(pelvis.position.x).toBeCloseTo(3, 3);
+    const settled = pelvis.position.clone();
     animator.update(actor, .1, 4);
-    expect(model.position).toEqual(settled);
+    expect(pelvis.position).toEqual(settled); expect(model.position.toArray()).toEqual([0, 0, 0]);
     animator.dispose();
   });
 

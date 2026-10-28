@@ -1,8 +1,29 @@
 import {describe, expect, it} from 'vitest';
 import {equipmentIds} from './equipment';
 import soundEvents from './sound-events-data.json';
-import {ActionSoundTimeline, curveGain, gunshotGain, gunshotRange, propagatedGunshotGain, propagatedFootstepGain, sampleIndex} from './sound-model';
+import nativeFootsteps from './native-footsteps-data.json';
+import {ActionSoundTimeline, curveGain, footstepEventKey, footstepGain, FOOTSTEP_RANGE, gunshotGain, gunshotRange, propagatedGunshotGain, propagatedFootstepGain, sampleIndex} from './sound-model';
 import {AcousticScene} from './spatial-audio';
+
+describe('native footstep hearing metadata', () => {
+  it('includes native event volume and distinguishes quiet dirt, landings and silent surfaces', () => {
+    expect(footstepGain(116.563492 * .0254)).toBeCloseTo(.9);
+    expect(footstepGain(116.563492 * .0254, 'dirt')).toBeCloseTo(.6);
+    expect(footstepGain(0, 'concrete', true)).toBe(1);
+    expect(footstepGain(0, 'silent')).toBe(0);
+    expect(FOOTSTEP_RANGE).toBeCloseTo(27.94);
+    expect(footstepGain(FOOTSTEP_RANGE + .01)).toBe(0);
+  });
+  it('keeps returned bank names stable and unknown presentation fallbacks concrete', () => {
+    expect(footstepEventKey('wood_solid')).toBe('step-wood_solid');
+    expect(footstepEventKey('metalgrate', true)).toBe('land-metalgrate');
+    expect(footstepEventKey('not-a-surface')).toBe('step-concrete');
+    for (const bank of Object.values(nativeFootsteps.surfaces)) {
+      expect(nativeFootsteps.events).toHaveProperty(footstepEventKey(bank));
+      expect(nativeFootsteps.events).toHaveProperty(footstepEventKey(bank, true));
+    }
+  });
+});
 
 describe('native weapon hearing metadata', () => {
   it('covers every equipped weapon with ordered, finite native curve knots', () => {

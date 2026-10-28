@@ -1,10 +1,15 @@
 import {GRAVITY, type Vec} from '../actor-physics';
+import type {HullSweep} from '../actor-collision';
 
 export type DeathBody = {name: string; position: Vec; radius: number; mass?: number};
 export type DeathLink = {a: string; b: string};
 export type DeathContact = {body: string; point: Vec; normal: Vec; speed: number; solid: number};
 export type DeathBox = {center: Vec; size: Vec};
-export type DeathWorld = {floor?: number; boxes?: readonly DeathBox[]; gravity?: number};
+export type DeathWorld = {floor?: number; boxes?: readonly DeathBox[]; gravity?: number;
+  corpseGeometry?:(center:Vec,radius:number)=>{vertices:Float32Array;indices:Uint32Array};
+  sweepSphere?:(from:Vec,to:Vec,radius:number)=>HullSweep};
+/** World-space cosmetic pose samples, in the same order as bodies. Never actor collision. */
+export type DeathPoseDrive = {frames: readonly {time: number; positions: readonly Vec[]}[]};
 const axes = ['x', 'y', 'z'] as const;
 const STEP = 1 / 120;
 
@@ -19,12 +24,21 @@ export class DeathPhysics {
   private age = 0;
   private quiet = 0;
   private lastContacts = new Map<number, number>();
+  private readonly drive?: DeathPoseDrive;
   sleeping = false;
-  constructor(bodies: readonly DeathBody[], links: readonly DeathLink[], velocity: Vec = {x: 0, y: 0, z: 0}) {
+  constructor(bodies: readonly DeathBody[], links: readonly DeathLink[], velocity: Vec = {x: 0, y: 0, z: 0}, drive?: DeathPoseDrive) {
     if (bodies.length > 24 || new Set(bodies.map(b => b.name)).size !== bodies.length ||
       bodies.some(b => !axes.every(a => Number.isFinite(b.position[a])) || !Number.isFinite(b.radius) || b.radius <= 0 ||
         b.mass !== undefined && (!Number.isFinite(b.mass) || b.mass <= 0)))
       throw new Error('Death bodies must be finite, unique, positive-radius and bounded to 24.');
+    if (drive) {
+      if (drive.frames.length < 2 || drive.frames.length > 90 || drive.frames[0].time !== 0 ||
+        drive.frames.some((frame, i, frames) => !Number.isFinite(frame.time) || frame.time < 0 || frame.time > 2 ||
+          i > 0 && frame.time <= frames[i - 1].time || frame.positions.length !== bodies.length ||
+          frame.positions.some(point => !axes.every(axis => Number.isFinite(point[axis])))))
+        throw new Error('Death pose drive must contain 2..90 ordered finite frames within two seconds.');
+      this.drive = {frames: drive.frames.map(frame => ({time: frame.time, positions: frame.positions.map(point => ({...point}))}))};
+    }
     this.bodies = bodies.map(b => ({...b, position: {...b.position}}));
     this.positions = new Float64Array(bodies.flatMap(b => axes.map(a => b.position[a])));
     this.previous = this.positions.slice();
@@ -59,6 +73,7 @@ export class DeathPhysics {
         const gravity = Number.isFinite(world.gravity) && world.gravity! >= 0 ? world.gravity! : GRAVITY;
         this.previous[i] = p; this.positions[i] += delta - (i % 3 === 1 ? gravity * STEP * STEP : 0);
       }
+      this.guidePose();
       // Sweep before link relaxation, then project contacts after every iteration.
       for (let i = 0; i < this.bodies.length; i++) boxes.forEach((box, solid) => this.sweep(i, box, solid, contacts));
       for (let iteration = 0; iteration < 8; iteration++) {
@@ -79,6 +94,22 @@ export class DeathPhysics {
           boxes.forEach((box, solid) => this.collide(i, box, solid, contacts));
         }
       }
+      if(world.sweepSphere)for(let i=0;i<this.bodies.length;i++) {
+        const at=i*3,from={x:this.previous[at],y:this.previous[at+1],z:this.previous[at+2]},
+          to={x:this.positions[at],y:this.positions[at+1],z:this.positions[at+2]};
+        const hit=world.sweepSphere(from,to,this.bodies[i].radius);
+        if(hit.fraction<1) {
+          const normal=hit.contact?.normal??{x:0,y:1,z:0};
+          const speed=Math.hypot(to.x-from.x,to.y-from.y,to.z-from.z)/STEP;
+          this.positions[at]=hit.position.x;this.positions[at+1]=hit.position.y;this.positions[at+2]=hit.position.z;
+          const inward=(to.x-from.x)*normal.x+(to.y-from.y)*normal.y+(to.z-from.z)*normal.z;
+          for(let k=0;k<3;k++)this.previous[at+k]=this.positions[at+k]-
+            ((to[axes[k]]-from[axes[k]])-Math.min(0,inward)*normal[axes[k]])*.65;
+          if(speed>.6&&this.age-(this.lastContacts.get(i)??-Infinity)>.12){this.lastContacts.set(i,this.age);
+            contacts.push({body:this.bodies[i].name,point:{x:hit.position.x-normal.x*this.bodies[i].radius,
+              y:hit.position.y-normal.y*this.bodies[i].radius,z:hit.position.z-normal.z*this.bodies[i].radius},normal,speed,solid:-2});}
+        }
+      }
       let motion = 0;
       for (let i = 0; i < this.positions.length; i++) motion = Math.max(motion, Math.abs(this.positions[i] - this.previous[i]) / STEP);
       this.quiet = motion < .045 ? this.quiet + STEP : 0;
@@ -86,6 +117,27 @@ export class DeathPhysics {
       if (this.quiet > .5 || this.age > 8) this.sleeping = true;
     }
     return contacts;
+  }
+  private guidePose() {
+    const frames = this.drive?.frames;
+    if (!frames) return;
+    const end = frames[frames.length - 1].time;
+    if (this.age >= end) return;
+    let next = 1;
+    while (next < frames.length - 1 && frames[next].time < this.age) next++;
+    const a = frames[next - 1], b = frames[next], span = b.time - a.time;
+    const t = (this.age - a.time) / span;
+    // A short, fading critically damped pose motor. Contacts/links are still
+    // solved afterwards, so authored motion cannot drag a limb through cover.
+    const strength = Math.min(1, (end - this.age) / .2), omega = 26;
+    for (let i = 0; i < this.bodies.length; i++) for (let k = 0; k < 3; k++) {
+      const axis = axes[k], at = i * 3 + k;
+      const target = a.positions[i][axis] + (b.positions[i][axis] - a.positions[i][axis]) * t;
+      const speed = (b.positions[i][axis] - a.positions[i][axis]) / span;
+      const velocity = (this.positions[at] - this.previous[at]) / STEP;
+      const acceleration = omega * omega * (target - this.positions[at]) + 2 * omega * (speed - velocity);
+      this.positions[at] += Math.max(-.035, Math.min(.035, acceleration * STEP * STEP * strength));
+    }
   }
   private contact(body: number, axis: number, value: number, solid: number, contacts: DeathContact[]) {
     const index = body * 3 + axis, speed = Math.abs(this.positions[index] - this.previous[index]) / STEP;
@@ -136,9 +188,15 @@ export class DeathPhysics {
 }
 
 export const skeletalDeathLinks: DeathLink[] = [
+  ['pelvis', 'spine_0'], ['spine_0', 'spine_1'], ['spine_1', 'spine_2'],
+  ['spine_2', 'spine_3'], ['spine_3', 'neck_0'], ['neck_0', 'head_0'],
   ['pelvis', 'spine_2'], ['spine_2', 'head_0'],
+  ['spine_3', 'clavicle_L'], ['clavicle_L', 'arm_upper_L'],
+  ['spine_3', 'clavicle_R'], ['clavicle_R', 'arm_upper_R'],
   ['spine_2', 'arm_upper_L'], ['arm_upper_L', 'arm_lower_L'], ['arm_lower_L', 'hand_L'],
   ['spine_2', 'arm_upper_R'], ['arm_upper_R', 'arm_lower_R'], ['arm_lower_R', 'hand_R'],
   ['pelvis', 'leg_lower_L'], ['leg_lower_L', 'ankle_L'], ['pelvis', 'leg_lower_R'], ['leg_lower_R', 'ankle_R'],
+  ['pelvis', 'leg_upper_L'], ['leg_upper_L', 'leg_lower_L'], ['ankle_L', 'ball_L'],
+  ['pelvis', 'leg_upper_R'], ['leg_upper_R', 'leg_lower_R'], ['ankle_R', 'ball_R'],
   ['arm_upper_L', 'arm_upper_R'], ['pelvis', 'arm_upper_L'], ['pelvis', 'arm_upper_R'],
 ].map(([a, b]) => ({a, b}));

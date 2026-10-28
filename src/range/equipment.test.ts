@@ -1,9 +1,17 @@
 import {describe,it,expect,vi} from 'vitest';
 import {Simulation,STEP,UNIT} from './simulation';
 import {defaults} from './config';
-import {equipmentData} from './equipment';
+import {equipmentControlSlot, equipmentData} from './equipment';
 
 describe('Always-available sidearm and knife',()=>{
+  it('cycles knife then Zeus on the knife key, but exits grenades to knife first',()=>{
+    expect(equipmentControlSlot('slot3', 1)).toBe(3);
+    expect(equipmentControlSlot('slot3', 3)).toBe(4);
+    expect(equipmentControlSlot('slot3', 4)).toBe(3);
+    expect(equipmentControlSlot('slot3', 3, true)).toBe(3);
+    expect(equipmentControlSlot('slot4', 1)).toBe(4);
+    expect(equipmentControlSlot('utility', 1)).toBeUndefined();
+  });
   it('retains the selected primary across slot swaps and applies native movement caps',()=>{
     const sim=new Simulation({...defaults,weapon:'m4a4'});sim.equip(3);sim.active=true;sim.input.side=1;
     for(let i=0;i<128;i++)sim.step(STEP);
@@ -20,13 +28,15 @@ describe('Always-available sidearm and knife',()=>{
     sim.start();expect(shots).toHaveBeenCalledTimes(2);
     sim.start();sim.advance(.1);expect(shots).toHaveBeenCalledTimes(2);
     sim.advance(.08);expect(shots).toHaveBeenCalledTimes(3);
-    expect(shots.mock.calls[2][0].at-shots.mock.calls[1][0].at).toBeGreaterThanOrEqual(.17);
+    expect(shots.mock.calls[2][0].at-shots.mock.calls[1][0].at).toBeCloseTo(.17,10);
   });
   it('preserves ammo when switching and uses the installed reload duration',()=>{
     const sim=new Simulation(defaults);sim.equip(2);sim.active=true;sim.time=1;
     for(let i=0;i<12;i++){sim.start();sim.advance(.2);}
-    expect(sim.pistolAmmo).toBe(0);sim.start();expect(sim.pistolReloadAt-sim.time).toBeCloseTo(equipmentData.weapons.usp.reload);
-    for(let i=0;i<8;i++)sim.advance(.25);expect(sim.pistolAmmo).toBe(0);
+    expect(sim.pistolAmmo).toBe(0);sim.start();expect(sim.reloadState.active).toBe(false);
+    sim.release('mouse');sim.step(STEP);expect(sim.pistolReloadAt-sim.time).toBeCloseTo(equipmentData.weapons.usp.reload);
+    for(let i=0;i<3;i++)sim.advance(.25);expect(sim.pistolAmmo).toBe(0);
+    for(let i=0;i<5;i++)sim.advance(.25);expect(sim.pistolAmmo).toBe(12);expect(sim.reloadState.active).toBe(true);
     sim.advance(.25);expect(sim.pistolAmmo).toBe(12);
     sim.start();sim.equip(3);sim.equip(2);expect(sim.pistolAmmo).toBe(11);
   });

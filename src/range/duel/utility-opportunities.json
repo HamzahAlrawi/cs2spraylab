@@ -1,0 +1,4363 @@
+{
+  "version": 2,
+  "kernelVersion": "native-launch-contact-think-inferno-2000935-v4",
+  "source": "Independently authored from native Dust 2 training approaches; trajectories tested with installed chunk collision and trainer launch kernel. Not copied upstream lineup data or native-engine certification.",
+  "entries": [
+    {
+      "id": "dust2-long-doors:0:flash",
+      "map": "dust2",
+      "chunk": "dust2-long-doors",
+      "course": "long-doors",
+      "name": "Long doors left: flash toward Outside Long to pit",
+      "kind": "flash",
+      "feet": {
+        "x": 13.69139375,
+        "y": 0.034664130137600745,
+        "z": -17.6890520742
+      },
+      "eye": {
+        "x": 13.69139375,
+        "y": 1.6602641301376007,
+        "z": -17.6890520742
+      },
+      "target": {
+        "x": 16.764,
+        "y": 1.2486595882973228,
+        "z": -8.889999999999999
+      },
+      "yaw": -2.8056330096879156,
+      "pitch": -0.0902595743091143,
+      "landing": {
+        "x": 16.82752199037861,
+        "y": 0.07195057087243144,
+        "z": -9.176276682363024
+      },
+      "flightSeconds": 1.625,
+      "collisionSha256": "afe6379dd4ca66091412e5a0ad7833f1b66762bbbcaf486bc9b3f5593917a67a",
+      "tolerance": 0.35
+    },
+    {
+      "id": "dust2-long-doors:1:he",
+      "map": "dust2",
+      "chunk": "dust2-long-doors",
+      "course": "long-doors",
+      "name": "Long doors left: he toward Outside Long to pit",
+      "kind": "he",
+      "feet": {
+        "x": 13.69139375,
+        "y": 0.034664130137600745,
+        "z": -17.6890520742
+      },
+      "eye": {
+        "x": 13.69139375,
+        "y": 1.6602641301376007,
+        "z": -17.6890520742
+      },
+      "target": {
+        "x": 16.764,
+        "y": 0.09865958829732291,
+        "z": -8.889999999999999
+      },
+      "yaw": -2.8056330096879156,
+      "pitch": -0.20149341855536734,
+      "landing": {
+        "x": 16.23207598744083,
+        "y": 0.07541933397801252,
+        "z": -8.417849631508073
+      },
+      "flightSeconds": 1.625,
+      "collisionSha256": "afe6379dd4ca66091412e5a0ad7833f1b66762bbbcaf486bc9b3f5593917a67a",
+      "tolerance": 0.35
+    },
+    {
+      "id": "dust2-long-doors:2:smoke",
+      "map": "dust2",
+      "chunk": "dust2-long-doors",
+      "course": "long-doors",
+      "name": "Long doors left: smoke toward Outside Long to pit",
+      "kind": "smoke",
+      "feet": {
+        "x": 13.69139375,
+        "y": 0.034664130137600745,
+        "z": -17.6890520742
+      },
+      "eye": {
+        "x": 13.69139375,
+        "y": 1.6602641301376007,
+        "z": -17.6890520742
+      },
+      "target": {
+        "x": 16.764,
+        "y": 0.09865958829732291,
+        "z": -8.889999999999999
+      },
+      "yaw": -2.8056330096879156,
+      "pitch": -0.20149341855536734,
+      "landing": {
+        "x": 16.23207598744083,
+        "y": 0.07541933397801252,
+        "z": -8.417849631508073
+      },
+      "flightSeconds": 1.4765625,
+      "collisionSha256": "afe6379dd4ca66091412e5a0ad7833f1b66762bbbcaf486bc9b3f5593917a67a",
+      "tolerance": 0.35
+    },
+    {
+      "id": "dust2-long-doors:3:molotov",
+      "map": "dust2",
+      "chunk": "dust2-long-doors",
+      "course": "long-doors",
+      "name": "Long doors left: molotov toward Outside Long to pit",
+      "kind": "molotov",
+      "feet": {
+        "x": 13.69139375,
+        "y": 0.034664130137600745,
+        "z": -17.6890520742
+      },
+      "eye": {
+        "x": 13.69139375,
+        "y": 1.6602641301376007,
+        "z": -17.6890520742
+      },
+      "target": {
+        "x": 16.764,
+        "y": 0.09865958829732291,
+        "z": -8.889999999999999
+      },
+      "yaw": -2.8056330096879156,
+      "pitch": -0.20149341855536734,
+      "landing": {
+        "x": 16.80744632270071,
+        "y": 0.08489607891367328,
+        "z": -8.76595002806041
+      },
+      "flightSeconds": 0.53125,
+      "collisionSha256": "afe6379dd4ca66091412e5a0ad7833f1b66762bbbcaf486bc9b3f5593917a67a",
+      "tolerance": 0.35
+    },
+    {
+      "id": "dust2-long-doors:4:flash",
+      "map": "dust2",
+      "chunk": "dust2-long-doors",
+      "course": "long-doors",
+      "name": "Wide long: flash toward Outside Long to pit",
+      "kind": "flash",
+      "feet": {
+        "x": 43.382449658599995,
+        "y": 0.029975624064407028,
+        "z": -25.68530042
+      },
+      "eye": {
+        "x": 43.382449658599995,
+        "y": 1.655575624064407,
+        "z": -25.68530042
+      },
+      "target": {
+        "x": 17.779999999999998,
+        "y": 1.2319529473642934,
+        "z": -20.32
+      },
+      "yaw": 1.7773689789679175,
+      "pitch": 0.21995046737143695,
+      "landing": {
+        "x": 17.589070526322267,
+        "y": 1.1470396408880834,
+        "z": -20.279989091298912
+      },
+      "flightSeconds": 1.625,
+      "collisionSha256": "afe6379dd4ca66091412e5a0ad7833f1b66762bbbcaf486bc9b3f5593917a67a",
+      "tolerance": 0.35
+    },
+    {
+      "id": "dust2-long-doors:5:he",
+      "map": "dust2",
+      "chunk": "dust2-long-doors",
+      "course": "long-doors",
+      "name": "Wide long: he toward Outside Long to pit",
+      "kind": "he",
+      "feet": {
+        "x": 43.382449658599995,
+        "y": 0.029975624064407028,
+        "z": -25.68530042
+      },
+      "eye": {
+        "x": 43.382449658599995,
+        "y": 1.655575624064407,
+        "z": -25.68530042
+      },
+      "target": {
+        "x": 17.779999999999998,
+        "y": 0.08195294736429348,
+        "z": -20.32
+      },
+      "yaw": 1.7773689789679175,
+      "pitch": 0.1610940647331168,
+      "landing": {
+        "x": 17.440763276309298,
+        "y": 0.1832765990367092,
+        "z": -20.25169754488845
+      },
+      "flightSeconds": 1.625,
+      "collisionSha256": "afe6379dd4ca66091412e5a0ad7833f1b66762bbbcaf486bc9b3f5593917a67a",
+      "tolerance": 0.35
+    },
+    {
+      "id": "dust2-long-doors:6:smoke",
+      "map": "dust2",
+      "chunk": "dust2-long-doors",
+      "course": "long-doors",
+      "name": "Wide long: smoke toward Outside Long to pit",
+      "kind": "smoke",
+      "feet": {
+        "x": 43.382449658599995,
+        "y": 0.029975624064407028,
+        "z": -25.68530042
+      },
+      "eye": {
+        "x": 43.382449658599995,
+        "y": 1.655575624064407,
+        "z": -25.68530042
+      },
+      "target": {
+        "x": 17.779999999999998,
+        "y": 0.08195294736429348,
+        "z": -20.32
+      },
+      "yaw": 1.7773689789679175,
+      "pitch": 0.1610940647331168,
+      "landing": {
+        "x": 17.494838604102718,
+        "y": 0.04064830049720676,
+        "z": -21.787277046914006
+      },
+      "flightSeconds": 2.8359375,
+      "collisionSha256": "afe6379dd4ca66091412e5a0ad7833f1b66762bbbcaf486bc9b3f5593917a67a",
+      "tolerance": 0.35
+    },
+    {
+      "id": "dust2-long-doors:7:molotov",
+      "map": "dust2",
+      "chunk": "dust2-long-doors",
+      "course": "long-doors",
+      "name": "Wide long: molotov toward Outside Long to pit",
+      "kind": "molotov",
+      "feet": {
+        "x": 43.382449658599995,
+        "y": 0.029975624064407028,
+        "z": -25.68530042
+      },
+      "eye": {
+        "x": 43.382449658599995,
+        "y": 1.655575624064407,
+        "z": -25.68530042
+      },
+      "target": {
+        "x": 17.779999999999998,
+        "y": 0.08195294736429348,
+        "z": -20.32
+      },
+      "yaw": 1.7773689789679175,
+      "pitch": 0.1610940647331168,
+      "landing": {
+        "x": 17.664561631411843,
+        "y": 0.07863942977096214,
+        "z": -20.296346142867996
+      },
+      "flightSeconds": 1.59375,
+      "collisionSha256": "afe6379dd4ca66091412e5a0ad7833f1b66762bbbcaf486bc9b3f5593917a67a",
+      "tolerance": 0.35
+    },
+    {
+      "id": "dust2-long-doors:8:he",
+      "map": "dust2",
+      "chunk": "dust2-long-doors",
+      "course": "long-doors",
+      "name": "Blue deep: he toward Outside Long to pit",
+      "kind": "he",
+      "feet": {
+        "x": 13.564393749999999,
+        "y": 0.07427302805869948,
+        "z": -29.3935050686
+      },
+      "eye": {
+        "x": 13.564393749999999,
+        "y": 1.6998730280586993,
+        "z": -29.3935050686
+      },
+      "target": {
+        "x": 17.779999999999998,
+        "y": 0.08195294736429348,
+        "z": -20.32
+      },
+      "yaw": -2.7066588600016797,
+      "pitch": -0.18788434911972718,
+      "landing": {
+        "x": 18.226216242412466,
+        "y": 0.04868747369330241,
+        "z": -20.598514101676873
+      },
+      "flightSeconds": 1.625,
+      "collisionSha256": "afe6379dd4ca66091412e5a0ad7833f1b66762bbbcaf486bc9b3f5593917a67a",
+      "tolerance": 0.35
+    },
+    {
+      "id": "dust2-long-doors:9:smoke",
+      "map": "dust2",
+      "chunk": "dust2-long-doors",
+      "course": "long-doors",
+      "name": "Blue deep: smoke toward Outside Long to pit",
+      "kind": "smoke",
+      "feet": {
+        "x": 13.564393749999999,
+        "y": 0.07427302805869948,
+        "z": -29.3935050686
+      },
+      "eye": {
+        "x": 13.564393749999999,
+        "y": 1.6998730280586993,
+        "z": -29.3935050686
+      },
+      "target": {
+        "x": 17.779999999999998,
+        "y": 0.08195294736429348,
+        "z": -20.32
+      },
+      "yaw": -2.7066588600016797,
+      "pitch": -0.18788434911972718,
+      "landing": {
+        "x": 18.226216242412466,
+        "y": 0.04868747369330241,
+        "z": -20.598514101676873
+      },
+      "flightSeconds": 1.2109375,
+      "collisionSha256": "afe6379dd4ca66091412e5a0ad7833f1b66762bbbcaf486bc9b3f5593917a67a",
+      "tolerance": 0.35
+    },
+    {
+      "id": "dust2-long-doors:10:molotov",
+      "map": "dust2",
+      "chunk": "dust2-long-doors",
+      "course": "long-doors",
+      "name": "Blue deep: molotov toward Outside Long to pit",
+      "kind": "molotov",
+      "feet": {
+        "x": 13.564393749999999,
+        "y": 0.07427302805869948,
+        "z": -29.3935050686
+      },
+      "eye": {
+        "x": 13.564393749999999,
+        "y": 1.6998730280586993,
+        "z": -29.3935050686
+      },
+      "target": {
+        "x": 17.779999999999998,
+        "y": 0.08195294736429348,
+        "z": -20.32
+      },
+      "yaw": -2.7066588600016797,
+      "pitch": -0.18788434911972718,
+      "landing": {
+        "x": 17.835220839960915,
+        "y": 0.06438787195466181,
+        "z": -20.20163882676395
+      },
+      "flightSeconds": 0.5703125,
+      "collisionSha256": "afe6379dd4ca66091412e5a0ad7833f1b66762bbbcaf486bc9b3f5593917a67a",
+      "tolerance": 0.35
+    },
+    {
+      "id": "dust2-long-doors:11:smoke",
+      "map": "dust2",
+      "chunk": "dust2-long-doors",
+      "course": "long-doors",
+      "name": "Long cross: smoke toward Outside Long to pit",
+      "kind": "smoke",
+      "feet": {
+        "x": 34.07946254526689,
+        "y": -0.18502552107913287,
+        "z": -33.596835942609715
+      },
+      "eye": {
+        "x": 34.07946254526689,
+        "y": 1.440574478920867,
+        "z": -33.596835942609715
+      },
+      "target": {
+        "x": 15.697199999999999,
+        "y": 0.0990561112023316,
+        "z": -18.5928
+      },
+      "yaw": 2.2553517007829935,
+      "pitch": 1.1833197742283672,
+      "landing": {
+        "x": 14.307353638885271,
+        "y": 0.08083884589575902,
+        "z": -17.405382064587695
+      },
+      "flightSeconds": 5.84375,
+      "collisionSha256": "afe6379dd4ca66091412e5a0ad7833f1b66762bbbcaf486bc9b3f5593917a67a",
+      "tolerance": 0.35
+    },
+    {
+      "id": "dust2-long-doors:12:flash",
+      "map": "dust2",
+      "chunk": "dust2-long-doors",
+      "course": "long-doors",
+      "name": "Long wide corner: flash toward Outside Long to pit",
+      "kind": "flash",
+      "feet": {
+        "x": 40.4677531512,
+        "y": 0.03351869061589241,
+        "z": -30.803524448199997
+      },
+      "eye": {
+        "x": 40.4677531512,
+        "y": 1.6591186906158923,
+        "z": -30.803524448199997
+      },
+      "target": {
+        "x": 15.697199999999999,
+        "y": 1.2490561112023317,
+        "z": -18.5928
+      },
+      "yaw": 2.028790653431907,
+      "pitch": 0.25407638526158743,
+      "landing": {
+        "x": 17.119045308445582,
+        "y": 1.9451729772094348,
+        "z": -19.293702404145336
+      },
+      "flightSeconds": 1.625,
+      "collisionSha256": "afe6379dd4ca66091412e5a0ad7833f1b66762bbbcaf486bc9b3f5593917a67a",
+      "tolerance": 0.35
+    },
+    {
+      "id": "dust2-long-doors:13:he",
+      "map": "dust2",
+      "chunk": "dust2-long-doors",
+      "course": "long-doors",
+      "name": "Long wide corner: he toward Outside Long to pit",
+      "kind": "he",
+      "feet": {
+        "x": 40.4677531512,
+        "y": 0.03351869061589241,
+        "z": -30.803524448199997
+      },
+      "eye": {
+        "x": 40.4677531512,
+        "y": 1.6591186906158923,
+        "z": -30.803524448199997
+      },
+      "target": {
+        "x": 15.697199999999999,
+        "y": 0.0990561112023316,
+        "z": -18.5928
+      },
+      "yaw": 2.028790653431907,
+      "pitch": 0.19642799263750732,
+      "landing": {
+        "x": 16.643524318298102,
+        "y": 0.5973632788219985,
+        "z": -19.05929405003881
+      },
+      "flightSeconds": 1.625,
+      "collisionSha256": "afe6379dd4ca66091412e5a0ad7833f1b66762bbbcaf486bc9b3f5593917a67a",
+      "tolerance": 0.35
+    },
+    {
+      "id": "dust2-long-doors:14:molotov",
+      "map": "dust2",
+      "chunk": "dust2-long-doors",
+      "course": "long-doors",
+      "name": "Long wide corner: molotov toward Outside Long to pit",
+      "kind": "molotov",
+      "feet": {
+        "x": 40.4677531512,
+        "y": 0.03351869061589241,
+        "z": -30.803524448199997
+      },
+      "eye": {
+        "x": 40.4677531512,
+        "y": 1.6591186906158923,
+        "z": -30.803524448199997
+      },
+      "target": {
+        "x": 15.697199999999999,
+        "y": 0.0990561112023316,
+        "z": -18.5928
+      },
+      "yaw": 2.028790653431907,
+      "pitch": 0.19642799263750732,
+      "landing": {
+        "x": 15.6393914250491,
+        "y": 0.07833590758971441,
+        "z": -18.56428193256845
+      },
+      "flightSeconds": 1.6953125,
+      "collisionSha256": "afe6379dd4ca66091412e5a0ad7833f1b66762bbbcaf486bc9b3f5593917a67a",
+      "tolerance": 0.35
+    },
+    {
+      "id": "dust2-long-doors:15:molotov",
+      "map": "dust2",
+      "chunk": "dust2-long-doors",
+      "course": "long-doors",
+      "name": "Pit platform: molotov toward Outside Long to pit",
+      "kind": "molotov",
+      "feet": {
+        "x": 44.931809348799995,
+        "y": 1.478561445493843,
+        "z": -7.874793749999999
+      },
+      "eye": {
+        "x": 44.931809348799995,
+        "y": 3.104161445493843,
+        "z": -7.874793749999999
+      },
+      "target": {
+        "x": 17.779999999999998,
+        "y": 0.06526180024674155,
+        "z": -23.114
+      },
+      "yaw": 1.0593498355814053,
+      "pitch": 0.21667131228013595,
+      "landing": {
+        "x": 17.709754486112324,
+        "y": 0.05839856313302135,
+        "z": -23.153186869964138
+      },
+      "flightSeconds": 1.9296875,
+      "collisionSha256": "afe6379dd4ca66091412e5a0ad7833f1b66762bbbcaf486bc9b3f5593917a67a",
+      "tolerance": 0.35
+    },
+    {
+      "id": "dust2-b-entry:0:smoke",
+      "map": "dust2",
+      "chunk": "dust2-b-entry",
+      "course": "b-tunnels",
+      "name": "B back platform / window cover: smoke toward Upper tunnels to B",
+      "kind": "smoke",
+      "feet": {
+        "x": -40.1272313024,
+        "y": 0.2679480763199094,
+        "z": -72.095952836
+      },
+      "eye": {
+        "x": -40.1272313024,
+        "y": 1.8935480763199093,
+        "z": -72.095952836
+      },
+      "target": {
+        "x": -45.400340555546364,
+        "y": -0.04212082450361132,
+        "z": -52.90019996734016
+      },
+      "yaw": 2.8735036307577637,
+      "pitch": 1.2569029551161268,
+      "landing": {
+        "x": -45.87195205449312,
+        "y": -0.0456447144769389,
+        "z": -51.33903002340727
+      },
+      "flightSeconds": 5.9375,
+      "collisionSha256": "bf94ed571baf8133a64cad45801320222ebd83db04332eda551f2243f07f7ebe",
+      "tolerance": 0.35
+    },
+    {
+      "id": "dust2-b-entry:1:molotov",
+      "map": "dust2",
+      "chunk": "dust2-b-entry",
+      "course": "b-tunnels",
+      "name": "B back platform / window cover: molotov toward Upper tunnels to B",
+      "kind": "molotov",
+      "feet": {
+        "x": -35.3040776264,
+        "y": 0.4342655617568619,
+        "z": -70.6176802782
+      },
+      "eye": {
+        "x": -35.3040776264,
+        "y": 2.0598655617568618,
+        "z": -70.6176802782
+      },
+      "target": {
+        "x": -50.291999999999994,
+        "y": 0.8821091858874082,
+        "z": -43.434
+      },
+      "yaw": 2.6377079159138743,
+      "pitch": 0.30358789662452995,
+      "landing": {
+        "x": -50.35030816846028,
+        "y": 0.8586006641378587,
+        "z": -43.33209590740166
+      },
+      "flightSeconds": 1.9921875,
+      "collisionSha256": "bf94ed571baf8133a64cad45801320222ebd83db04332eda551f2243f07f7ebe",
+      "tolerance": 0.35
+    },
+    {
+      "id": "dust2-b-entry:2:he",
+      "map": "dust2",
+      "chunk": "dust2-b-entry",
+      "course": "b-tunnels",
+      "name": "B site / box cover: he toward Upper tunnels to B",
+      "kind": "he",
+      "feet": {
+        "x": -34.69719375,
+        "y": 0.11693400066559823,
+        "z": -65.17560625
+      },
+      "eye": {
+        "x": -34.69719375,
+        "y": 1.7425340006655983,
+        "z": -65.17560625
+      },
+      "target": {
+        "x": -49.32696200361115,
+        "y": 0.9137999731063842,
+        "z": -45.88733581308734
+      },
+      "yaw": 2.492686369378649,
+      "pitch": 0.15599071600168785,
+      "landing": {
+        "x": -50.097606184624276,
+        "y": 1.234506038096983,
+        "z": -44.87113711574063
+      },
+      "flightSeconds": 1.625,
+      "collisionSha256": "bf94ed571baf8133a64cad45801320222ebd83db04332eda551f2243f07f7ebe",
+      "tolerance": 0.35
+    },
+    {
+      "id": "dust2-b-entry:3:smoke",
+      "map": "dust2",
+      "chunk": "dust2-b-entry",
+      "course": "b-tunnels",
+      "name": "B site / box cover: smoke toward Upper tunnels to B",
+      "kind": "smoke",
+      "feet": {
+        "x": -34.69719375,
+        "y": 0.11693400066559823,
+        "z": -65.17560625
+      },
+      "eye": {
+        "x": -34.69719375,
+        "y": 1.7425340006655983,
+        "z": -65.17560625
+      },
+      "target": {
+        "x": -49.32696200361115,
+        "y": 0.9137999731063842,
+        "z": -45.88733581308734
+      },
+      "yaw": 2.492686369378649,
+      "pitch": 1.1703538697489453,
+      "landing": {
+        "x": -50.33423255133764,
+        "y": 0.06627432070310588,
+        "z": -47.10979488055714
+      },
+      "flightSeconds": 5.8515625,
+      "collisionSha256": "bf94ed571baf8133a64cad45801320222ebd83db04332eda551f2243f07f7ebe",
+      "tolerance": 0.35
+    },
+    {
+      "id": "dust2-b-entry:4:molotov",
+      "map": "dust2",
+      "chunk": "dust2-b-entry",
+      "course": "b-tunnels",
+      "name": "B site / box cover: molotov toward Upper tunnels to B",
+      "kind": "molotov",
+      "feet": {
+        "x": -34.69719375,
+        "y": 0.11693400066559823,
+        "z": -65.17560625
+      },
+      "eye": {
+        "x": -34.69719375,
+        "y": 1.7425340006655983,
+        "z": -65.17560625
+      },
+      "target": {
+        "x": -49.32696200361115,
+        "y": 0.9137999731063842,
+        "z": -45.88733581308734
+      },
+      "yaw": 2.492686369378649,
+      "pitch": 0.15599071600168785,
+      "landing": {
+        "x": -49.40453735747203,
+        "y": 0.8660064257655924,
+        "z": -45.7850588019131
+      },
+      "flightSeconds": 1.46875,
+      "collisionSha256": "bf94ed571baf8133a64cad45801320222ebd83db04332eda551f2243f07f7ebe",
+      "tolerance": 0.35
+    },
+    {
+      "id": "dust2-b-entry:5:molotov",
+      "map": "dust2",
+      "chunk": "dust2-b-entry",
+      "course": "b-tunnels",
+      "name": "B tunnel exit / close cover: molotov toward Upper tunnels to B",
+      "kind": "molotov",
+      "feet": {
+        "x": -38.446670325199996,
+        "y": 4.8446654687950286e-8,
+        "z": -46.784620299000004
+      },
+      "eye": {
+        "x": -38.446670325199996,
+        "y": 1.6256000484466546,
+        "z": -46.784620299000004
+      },
+      "target": {
+        "x": -47.98466272303158,
+        "y": 0.07646540263146151,
+        "z": -48.199259259181545
+      },
+      "yaw": 1.4235535150735499,
+      "pitch": -0.19141073480810092,
+      "landing": {
+        "x": -48.090813199600895,
+        "y": 0.05650456781588939,
+        "z": -48.215298982330346
+      },
+      "flightSeconds": 0.546875,
+      "collisionSha256": "bf94ed571baf8133a64cad45801320222ebd83db04332eda551f2243f07f7ebe",
+      "tolerance": 0.35
+    },
+    {
+      "id": "dust2-b-entry:6:molotov",
+      "map": "dust2",
+      "chunk": "dust2-b-entry",
+      "course": "b-tunnels",
+      "name": "B tunnel exit / close cover: molotov toward Upper tunnels to B",
+      "kind": "molotov",
+      "feet": {
+        "x": -41.0547002628,
+        "y": 0.05718902964521275,
+        "z": -41.6885654416
+      },
+      "eye": {
+        "x": -41.0547002628,
+        "y": 1.6827890296452126,
+        "z": -41.6885654416
+      },
+      "target": {
+        "x": -43.23702099136633,
+        "y": 0.03713579814047607,
+        "z": -57.60859867918914
+      },
+      "yaw": 0.1362310910328016,
+      "pitch": -0.057287591333003395,
+      "landing": {
+        "x": -43.25574142335432,
+        "y": 0.01066776340135124,
+        "z": -57.748633700333855
+      },
+      "flightSeconds": 0.9296875,
+      "collisionSha256": "bf94ed571baf8133a64cad45801320222ebd83db04332eda551f2243f07f7ebe",
+      "tolerance": 0.35
+    },
+    {
+      "id": "dust2-b-entry:7:molotov",
+      "map": "dust2",
+      "chunk": "dust2-b-entry",
+      "course": "b-tunnels",
+      "name": "B tunnel exit / close cover: molotov toward Upper tunnels to B",
+      "kind": "molotov",
+      "feet": {
+        "x": -40.3901299892,
+        "y": 1.549399971961975,
+        "z": -43.1455214812
+      },
+      "eye": {
+        "x": -40.3901299892,
+        "y": 3.174999971961975,
+        "z": -43.1455214812
+      },
+      "target": {
+        "x": -46.482,
+        "y": 0.026226098768252326,
+        "z": -50.546
+      },
+      "yaw": 0.6887116440728476,
+      "pitch": -0.3362985494229217,
+      "landing": {
+        "x": -46.55625936765631,
+        "y": -0.015433700006053612,
+        "z": -50.63695901479446
+      },
+      "flightSeconds": 0.5546875,
+      "collisionSha256": "bf94ed571baf8133a64cad45801320222ebd83db04332eda551f2243f07f7ebe",
+      "tolerance": 0.35
+    },
+    {
+      "id": "dust2-b-entry:8:flash",
+      "map": "dust2",
+      "chunk": "dust2-b-entry",
+      "course": "b-tunnels",
+      "name": "B elevated site box: flash toward Upper tunnels to B",
+      "kind": "flash",
+      "feet": {
+        "x": -40.375586,
+        "y": 1.6510000228881836,
+        "z": -70.06107399999999
+      },
+      "eye": {
+        "x": -40.375586,
+        "y": 3.2766000228881835,
+        "z": -70.06107399999999
+      },
+      "target": {
+        "x": -47.98466272303158,
+        "y": 1.2264654026314616,
+        "z": -48.199259259181545
+      },
+      "yaw": 2.806653141364063,
+      "pitch": 0.06668900391859806,
+      "landing": {
+        "x": -48.80445346745124,
+        "y": 0.40430668508091905,
+        "z": -47.12073094814672
+      },
+      "flightSeconds": 1.625,
+      "collisionSha256": "bf94ed571baf8133a64cad45801320222ebd83db04332eda551f2243f07f7ebe",
+      "tolerance": 0.35
+    },
+    {
+      "id": "dust2-b-entry:9:smoke",
+      "map": "dust2",
+      "chunk": "dust2-b-entry",
+      "course": "b-tunnels",
+      "name": "B elevated site box: smoke toward Upper tunnels to B",
+      "kind": "smoke",
+      "feet": {
+        "x": -40.375586,
+        "y": 1.6510000228881836,
+        "z": -70.06107399999999
+      },
+      "eye": {
+        "x": -40.375586,
+        "y": 3.2766000228881835,
+        "z": -70.06107399999999
+      },
+      "target": {
+        "x": -47.98466272303158,
+        "y": 0.07646540263146151,
+        "z": -48.199259259181545
+      },
+      "yaw": 2.806653141364063,
+      "pitch": 0.005034025420211141,
+      "landing": {
+        "x": -49.52626884294628,
+        "y": 0.07324759493531258,
+        "z": -48.081180330464235
+      },
+      "flightSeconds": 2.75,
+      "collisionSha256": "bf94ed571baf8133a64cad45801320222ebd83db04332eda551f2243f07f7ebe",
+      "tolerance": 0.35
+    },
+    {
+      "id": "dust2-b-entry:10:molotov",
+      "map": "dust2",
+      "chunk": "dust2-b-entry",
+      "course": "b-tunnels",
+      "name": "B elevated site box: molotov toward Upper tunnels to B",
+      "kind": "molotov",
+      "feet": {
+        "x": -40.375586,
+        "y": 1.6510000228881836,
+        "z": -70.06107399999999
+      },
+      "eye": {
+        "x": -40.375586,
+        "y": 3.2766000228881835,
+        "z": -70.06107399999999
+      },
+      "target": {
+        "x": -47.98466272303158,
+        "y": 0.07646540263146151,
+        "z": -48.199259259181545
+      },
+      "yaw": 2.806653141364063,
+      "pitch": 0.005034025420211141,
+      "landing": {
+        "x": -48.002152809619304,
+        "y": 0.05230496961578334,
+        "z": -48.149006815931166
+      },
+      "flightSeconds": 1.3515625,
+      "collisionSha256": "bf94ed571baf8133a64cad45801320222ebd83db04332eda551f2243f07f7ebe",
+      "tolerance": 0.35
+    },
+    {
+      "id": "dust2-b-entry:11:smoke",
+      "map": "dust2",
+      "chunk": "dust2-b-entry",
+      "course": "b-tunnels",
+      "name": "B back platform / window cover: smoke toward Upper tunnels to B",
+      "kind": "smoke",
+      "feet": {
+        "x": -39.266431118999996,
+        "y": 0.22149133423410317,
+        "z": -71.1068721116
+      },
+      "eye": {
+        "x": -39.266431118999996,
+        "y": 1.847091334234103,
+        "z": -71.1068721116
+      },
+      "target": {
+        "x": -46.482,
+        "y": 0.026226098768252326,
+        "z": -50.546
+      },
+      "yaw": 2.8040834163984414,
+      "pitch": 1.222629944313327,
+      "landing": {
+        "x": -47.27042428451315,
+        "y": -0.0021618793854849805,
+        "z": -49.68847621953918
+      },
+      "flightSeconds": 5.9375,
+      "collisionSha256": "bf94ed571baf8133a64cad45801320222ebd83db04332eda551f2243f07f7ebe",
+      "tolerance": 0.35
+    },
+    {
+      "id": "dust2-b-entry:12:he",
+      "map": "dust2",
+      "chunk": "dust2-b-entry",
+      "course": "b-tunnels",
+      "name": "B car / back-site cover: he toward Upper tunnels to B",
+      "kind": "he",
+      "feet": {
+        "x": -54.812406249999995,
+        "y": 0.10283860572411606,
+        "z": -46.0809206142
+      },
+      "eye": {
+        "x": -54.812406249999995,
+        "y": 1.728438605724116,
+        "z": -46.0809206142
+      },
+      "target": {
+        "x": -49.32696200361115,
+        "y": 0.9137999731063842,
+        "z": -45.88733581308734
+      },
+      "yaw": -1.6060723203260316,
+      "pitch": -0.23148320293328903,
+      "landing": {
+        "x": -47.581991468153554,
+        "y": 0.051340896927472186,
+        "z": -45.944711122009906
+      },
+      "flightSeconds": 1.625,
+      "collisionSha256": "bf94ed571baf8133a64cad45801320222ebd83db04332eda551f2243f07f7ebe",
+      "tolerance": 0.35
+    },
+    {
+      "id": "dust2-b-entry:13:smoke",
+      "map": "dust2",
+      "chunk": "dust2-b-entry",
+      "course": "b-tunnels",
+      "name": "B car / back-site cover: smoke toward Upper tunnels to B",
+      "kind": "smoke",
+      "feet": {
+        "x": -54.812406249999995,
+        "y": 0.10283860572411606,
+        "z": -46.0809206142
+      },
+      "eye": {
+        "x": -54.812406249999995,
+        "y": 1.728438605724116,
+        "z": -46.0809206142
+      },
+      "target": {
+        "x": -49.32696200361115,
+        "y": 0.9137999731063842,
+        "z": -45.88733581308734
+      },
+      "yaw": -1.6060723203260316,
+      "pitch": -0.23148320293328903,
+      "landing": {
+        "x": -47.581991468153554,
+        "y": 0.051340896927472186,
+        "z": -45.944711122009906
+      },
+      "flightSeconds": 1.1953125,
+      "collisionSha256": "bf94ed571baf8133a64cad45801320222ebd83db04332eda551f2243f07f7ebe",
+      "tolerance": 0.35
+    },
+    {
+      "id": "dust2-b-entry:14:molotov",
+      "map": "dust2",
+      "chunk": "dust2-b-entry",
+      "course": "b-tunnels",
+      "name": "B car / back-site cover: molotov toward Upper tunnels to B",
+      "kind": "molotov",
+      "feet": {
+        "x": -54.812406249999995,
+        "y": 0.10283860572411606,
+        "z": -46.0809206142
+      },
+      "eye": {
+        "x": -54.812406249999995,
+        "y": 1.728438605724116,
+        "z": -46.0809206142
+      },
+      "target": {
+        "x": -49.32696200361115,
+        "y": 0.9137999731063842,
+        "z": -45.88733581308734
+      },
+      "yaw": -1.6060723203260316,
+      "pitch": -0.23148320293328903,
+      "landing": {
+        "x": -47.704150097789004,
+        "y": 0.05230076544925827,
+        "z": -45.94045201878384
+      },
+      "flightSeconds": 0.6796875,
+      "collisionSha256": "bf94ed571baf8133a64cad45801320222ebd83db04332eda551f2243f07f7ebe",
+      "tolerance": 0.35
+    },
+    {
+      "id": "dust2-b-entry:15:molotov",
+      "map": "dust2",
+      "chunk": "dust2-b-entry",
+      "course": "b-tunnels",
+      "name": "Upper deep right: molotov toward Upper tunnels to B",
+      "kind": "molotov",
+      "feet": {
+        "x": -55.09180625,
+        "y": 1.0198687614324327,
+        "z": -26.467596848799996
+      },
+      "eye": {
+        "x": -55.09180625,
+        "y": 2.645468761432433,
+        "z": -26.467596848799996
+      },
+      "target": {
+        "x": -42.546692434138556,
+        "y": 0.8671561601308688,
+        "z": -27.05879297402914
+      },
+      "yaw": -1.5237055575263183,
+      "pitch": -0.13813110500061979,
+      "landing": {
+        "x": -42.41537168689121,
+        "y": 0.8443841161052206,
+        "z": -27.064598582078595
+      },
+      "flightSeconds": 0.71875,
+      "collisionSha256": "bf94ed571baf8133a64cad45801320222ebd83db04332eda551f2243f07f7ebe",
+      "tolerance": 0.35
+    },
+    {
+      "id": "dust2-mid-ct:0:molotov",
+      "map": "dust2",
+      "chunk": "dust2-mid-ct",
+      "course": "mid-doors",
+      "name": "Short ramp: molotov toward Mid slope to CT",
+      "kind": "molotov",
+      "feet": {
+        "x": 14.326465073199998,
+        "y": 1.701799988746643,
+        "z": -60.45120625
+      },
+      "eye": {
+        "x": 14.326465073199998,
+        "y": 3.327399988746643,
+        "z": -60.45120625
+      },
+      "target": {
+        "x": 13.970000000000056,
+        "y": -2.915137514226805,
+        "z": -55.372
+      },
+      "yaw": 3.0715262822360434,
+      "pitch": -0.902003083871595,
+      "landing": {
+        "x": 13.946089797458102,
+        "y": -3.003660528110228,
+        "z": -55.25998905426368
+      },
+      "flightSeconds": 0.4296875,
+      "collisionSha256": "f8155888b03b6e2320adcbb77dc3985a3fdb9c7b79533c218d78fbe828e53ef7",
+      "tolerance": 0.35
+    },
+    {
+      "id": "dust2-mid-ct:1:molotov",
+      "map": "dust2",
+      "chunk": "dust2-mid-ct",
+      "course": "mid-doors",
+      "name": "CT spawn / mid cover: molotov toward Mid slope to CT",
+      "kind": "molotov",
+      "feet": {
+        "x": 2.0074710676,
+        "y": -1.6915409564971924,
+        "z": -60.206148345399995
+      },
+      "eye": {
+        "x": 2.0074710676,
+        "y": -0.06594095649719245,
+        "z": -60.206148345399995
+      },
+      "target": {
+        "x": -9.905999999999999,
+        "y": -3.164383393626176,
+        "z": -51.308
+      },
+      "yaw": 2.2123092318477124,
+      "pitch": -0.1695333439255759,
+      "landing": {
+        "x": -9.99055190231013,
+        "y": -3.187416512923262,
+        "z": -51.24532308244209
+      },
+      "flightSeconds": 0.8515625,
+      "collisionSha256": "f8155888b03b6e2320adcbb77dc3985a3fdb9c7b79533c218d78fbe828e53ef7",
+      "tolerance": 0.35
+    },
+    {
+      "id": "dust2-mid-ct:2:flash",
+      "map": "dust2",
+      "chunk": "dust2-mid-ct",
+      "course": "mid-doors",
+      "name": "CT back: flash toward Mid slope to CT",
+      "kind": "flash",
+      "feet": {
+        "x": -8.3272746586,
+        "y": -3.1202403397326544,
+        "z": -56.7247422272
+      },
+      "eye": {
+        "x": -8.3272746586,
+        "y": -1.4946403397326544,
+        "z": -56.7247422272
+      },
+      "target": {
+        "x": -10.668,
+        "y": -1.9715899124331049,
+        "z": -41.452799999999996
+      },
+      "yaw": 2.989506541723005,
+      "pitch": 0.0021059094725325855,
+      "landing": {
+        "x": -9.653083900815005,
+        "y": -3.161196327019689,
+        "z": -40.922796580989605
+      },
+      "flightSeconds": 1.625,
+      "collisionSha256": "f8155888b03b6e2320adcbb77dc3985a3fdb9c7b79533c218d78fbe828e53ef7",
+      "tolerance": 0.35
+    },
+    {
+      "id": "dust2-mid-ct:3:he",
+      "map": "dust2",
+      "chunk": "dust2-mid-ct",
+      "course": "mid-doors",
+      "name": "CT back: he toward Mid slope to CT",
+      "kind": "he",
+      "feet": {
+        "x": -8.3272746586,
+        "y": -3.1202403397326544,
+        "z": -56.7247422272
+      },
+      "eye": {
+        "x": -8.3272746586,
+        "y": -1.4946403397326544,
+        "z": -56.7247422272
+      },
+      "target": {
+        "x": -10.668,
+        "y": -3.1215899124331052,
+        "z": -41.452799999999996
+      },
+      "yaw": 2.989506541723005,
+      "pitch": -0.06803317421795642,
+      "landing": {
+        "x": -9.695422782183822,
+        "y": -3.1789814064800646,
+        "z": -41.47874033443254
+      },
+      "flightSeconds": 1.625,
+      "collisionSha256": "f8155888b03b6e2320adcbb77dc3985a3fdb9c7b79533c218d78fbe828e53ef7",
+      "tolerance": 0.35
+    },
+    {
+      "id": "dust2-mid-ct:4:smoke",
+      "map": "dust2",
+      "chunk": "dust2-mid-ct",
+      "course": "mid-doors",
+      "name": "CT back: smoke toward Mid slope to CT",
+      "kind": "smoke",
+      "feet": {
+        "x": -8.3272746586,
+        "y": -3.1202403397326544,
+        "z": -56.7247422272
+      },
+      "eye": {
+        "x": -8.3272746586,
+        "y": -1.4946403397326544,
+        "z": -56.7247422272
+      },
+      "target": {
+        "x": -10.668,
+        "y": -3.1215899124331052,
+        "z": -41.452799999999996
+      },
+      "yaw": 2.989506541723005,
+      "pitch": -0.06803317421795642,
+      "landing": {
+        "x": -9.667107287828854,
+        "y": -3.1915615643772566,
+        "z": -41.50489818759915
+      },
+      "flightSeconds": 1.6796875,
+      "collisionSha256": "f8155888b03b6e2320adcbb77dc3985a3fdb9c7b79533c218d78fbe828e53ef7",
+      "tolerance": 0.35
+    },
+    {
+      "id": "dust2-mid-ct:5:molotov",
+      "map": "dust2",
+      "chunk": "dust2-mid-ct",
+      "course": "mid-doors",
+      "name": "CT back: molotov toward Mid slope to CT",
+      "kind": "molotov",
+      "feet": {
+        "x": -8.3272746586,
+        "y": -3.1202403397326544,
+        "z": -56.7247422272
+      },
+      "eye": {
+        "x": -8.3272746586,
+        "y": -1.4946403397326544,
+        "z": -56.7247422272
+      },
+      "target": {
+        "x": -10.668,
+        "y": -3.1215899124331052,
+        "z": -41.452799999999996
+      },
+      "yaw": 2.989506541723005,
+      "pitch": -0.06803317421795642,
+      "landing": {
+        "x": -10.68822907433204,
+        "y": -3.1574178753874658,
+        "z": -41.31962840646621
+      },
+      "flightSeconds": 0.890625,
+      "collisionSha256": "f8155888b03b6e2320adcbb77dc3985a3fdb9c7b79533c218d78fbe828e53ef7",
+      "tolerance": 0.35
+    },
+    {
+      "id": "dust2-mid-ct:6:molotov",
+      "map": "dust2",
+      "chunk": "dust2-mid-ct",
+      "course": "mid-doors",
+      "name": "Catwalk edge: molotov toward Mid slope to CT",
+      "kind": "molotov",
+      "feet": {
+        "x": -2.8693969536,
+        "y": 0.022461951709446013,
+        "z": -38.92514653359999
+      },
+      "eye": {
+        "x": -2.8693969536,
+        "y": 1.648061951709446,
+        "z": -38.92514653359999
+      },
+      "target": {
+        "x": -10.033,
+        "y": -1.3167454824453608,
+        "z": -25.5016
+      },
+      "yaw": 2.651381430667409,
+      "pitch": -0.15310075916195903,
+      "landing": {
+        "x": -10.120934460446515,
+        "y": -1.387228434157834,
+        "z": -25.338313989898644
+      },
+      "flightSeconds": 0.875,
+      "collisionSha256": "f8155888b03b6e2320adcbb77dc3985a3fdb9c7b79533c218d78fbe828e53ef7",
+      "tolerance": 0.35
+    },
+    {
+      "id": "dust2-mid-ct:7:molotov",
+      "map": "dust2",
+      "chunk": "dust2-mid-ct",
+      "course": "mid-doors",
+      "name": "CT spawn / mid cover: molotov toward Mid slope to CT",
+      "kind": "molotov",
+      "feet": {
+        "x": -4.29339375,
+        "y": -3.1063830250591415,
+        "z": -51.054793749999995
+      },
+      "eye": {
+        "x": -4.29339375,
+        "y": -1.4807830250591416,
+        "z": -51.054793749999995
+      },
+      "target": {
+        "x": -9.905999999999999,
+        "y": -3.164383393626176,
+        "z": -51.308
+      },
+      "yaw": 1.525713050311186,
+      "pitch": -0.35970450090790873,
+      "landing": {
+        "x": -10.014795241975406,
+        "y": -3.1921880458444147,
+        "z": -51.31311366836651
+      },
+      "flightSeconds": 0.3203125,
+      "collisionSha256": "f8155888b03b6e2320adcbb77dc3985a3fdb9c7b79533c218d78fbe828e53ef7",
+      "tolerance": 0.35
+    },
+    {
+      "id": "dust2-mid-ct:8:he",
+      "map": "dust2",
+      "chunk": "dust2-mid-ct",
+      "course": "mid-doors",
+      "name": "A Ninja / back-platform cover: he toward Mid slope to CT",
+      "kind": "he",
+      "feet": {
+        "x": 12.0391465338,
+        "y": -3.0037235715189277,
+        "z": -61.3541898898
+      },
+      "eye": {
+        "x": 12.0391465338,
+        "y": -1.3781235715189277,
+        "z": -61.3541898898
+      },
+      "target": {
+        "x": -9.905999999999999,
+        "y": -3.164383393626176,
+        "z": -51.308
+      },
+      "yaw": 2.0001065370092492,
+      "pitch": 0.10345255983524052,
+      "landing": {
+        "x": -11.239222711122569,
+        "y": -2.7359170824539127,
+        "z": -50.721342690488946
+      },
+      "flightSeconds": 1.625,
+      "collisionSha256": "f8155888b03b6e2320adcbb77dc3985a3fdb9c7b79533c218d78fbe828e53ef7",
+      "tolerance": 0.35
+    },
+    {
+      "id": "dust2-mid-ct:9:molotov",
+      "map": "dust2",
+      "chunk": "dust2-mid-ct",
+      "course": "mid-doors",
+      "name": "A Ninja / back-platform cover: molotov toward Mid slope to CT",
+      "kind": "molotov",
+      "feet": {
+        "x": 12.0391465338,
+        "y": -3.0037235715189277,
+        "z": -61.3541898898
+      },
+      "eye": {
+        "x": 12.0391465338,
+        "y": -1.3781235715189277,
+        "z": -61.3541898898
+      },
+      "target": {
+        "x": -9.905999999999999,
+        "y": -3.164383393626176,
+        "z": -51.308
+      },
+      "yaw": 2.0001065370092492,
+      "pitch": 0.10345255983524052,
+      "landing": {
+        "x": -10.011532380283427,
+        "y": -3.1817291374813976,
+        "z": -51.26034276048871
+      },
+      "flightSeconds": 1.4453125,
+      "collisionSha256": "f8155888b03b6e2320adcbb77dc3985a3fdb9c7b79533c218d78fbe828e53ef7",
+      "tolerance": 0.35
+    },
+    {
+      "id": "dust2-mid-ct:10:molotov",
+      "map": "dust2",
+      "chunk": "dust2-mid-ct",
+      "course": "mid-doors",
+      "name": "CT spawn / mid cover: molotov toward Mid slope to CT",
+      "kind": "molotov",
+      "feet": {
+        "x": -15.3916016018,
+        "y": -2.9918267037241066,
+        "z": -46.0022587446
+      },
+      "eye": {
+        "x": -15.3916016018,
+        "y": -1.3662267037241067,
+        "z": -46.0022587446
+      },
+      "target": {
+        "x": -10.668,
+        "y": -3.1215899124331052,
+        "z": -41.452799999999996
+      },
+      "yaw": -2.337417259857294,
+      "pitch": -0.3216841309676288,
+      "landing": {
+        "x": -10.569884072195586,
+        "y": -3.1553023033852443,
+        "z": -41.35836393554342
+      },
+      "flightSeconds": 0.375,
+      "collisionSha256": "f8155888b03b6e2320adcbb77dc3985a3fdb9c7b79533c218d78fbe828e53ef7",
+      "tolerance": 0.35
+    },
+    {
+      "id": "dust2-mid-ct:11:molotov",
+      "map": "dust2",
+      "chunk": "dust2-mid-ct",
+      "course": "mid-doors",
+      "name": "Mid doors / Xbox cover: molotov toward Mid slope to CT",
+      "kind": "molotov",
+      "feet": {
+        "x": -12.44520625,
+        "y": -3.146367856433507,
+        "z": -40.192213367
+      },
+      "eye": {
+        "x": -12.44520625,
+        "y": -1.520767856433507,
+        "z": -40.192213367
+      },
+      "target": {
+        "x": -10.033,
+        "y": -1.3167454824453608,
+        "z": -25.5016
+      },
+      "yaw": -2.9788444324900043,
+      "pitch": 0.04507783191996235,
+      "landing": {
+        "x": -9.98739065411199,
+        "y": -1.3631266899014811,
+        "z": -25.226905450304564
+      },
+      "flightSeconds": 0.8828125,
+      "collisionSha256": "f8155888b03b6e2320adcbb77dc3985a3fdb9c7b79533c218d78fbe828e53ef7",
+      "tolerance": 0.35
+    },
+    {
+      "id": "dust2-mid-ct:12:molotov",
+      "map": "dust2",
+      "chunk": "dust2-mid-ct",
+      "course": "mid-doors",
+      "name": "Mid doors / Xbox cover: molotov toward Mid slope to CT",
+      "kind": "molotov",
+      "feet": {
+        "x": -6.985775157199999,
+        "y": -3.119192537400078,
+        "z": -34.172587001400004
+      },
+      "eye": {
+        "x": -6.985775157199999,
+        "y": -1.4935925374000782,
+        "z": -34.172587001400004
+      },
+      "target": {
+        "x": -10.033,
+        "y": -1.3167454824453608,
+        "z": -25.5016
+      },
+      "yaw": 2.80364652578861,
+      "pitch": -0.03399389569197126,
+      "landing": {
+        "x": -10.150468067064198,
+        "y": -1.3510603580437683,
+        "z": -25.167940831372665
+      },
+      "flightSeconds": 0.5390625,
+      "collisionSha256": "f8155888b03b6e2320adcbb77dc3985a3fdb9c7b79533c218d78fbe828e53ef7",
+      "tolerance": 0.35
+    },
+    {
+      "id": "dust2-a-long:0:molotov",
+      "map": "dust2",
+      "chunk": "dust2-a-long",
+      "course": "long-a",
+      "name": "Long doors left: molotov toward Long corner to A",
+      "kind": "molotov",
+      "feet": {
+        "x": 13.69139375,
+        "y": 0.034664130137600745,
+        "z": -17.6890520742
+      },
+      "eye": {
+        "x": 13.69139375,
+        "y": 1.6602641301376007,
+        "z": -17.6890520742
+      },
+      "target": {
+        "x": 20.370792845341093,
+        "y": 0.07525216129864876,
+        "z": -23.113998253365104
+      },
+      "yaw": -0.8886660761053666,
+      "pitch": -0.22495059023569738,
+      "landing": {
+        "x": 20.481687860585314,
+        "y": 0.06829685606362926,
+        "z": -23.2040917966915
+      },
+      "flightSeconds": 0.4921875,
+      "collisionSha256": "c95e2f0341bc8dcddfb05ca3d2926af2c0a9661b5048ec7f66c3139b7bc1d1df",
+      "tolerance": 0.35
+    },
+    {
+      "id": "dust2-a-long:1:molotov",
+      "map": "dust2",
+      "chunk": "dust2-a-long",
+      "course": "long-a",
+      "name": "Blue corner: molotov toward Long corner to A",
+      "kind": "molotov",
+      "feet": {
+        "x": 13.107193749999999,
+        "y": 0.048808930783990144,
+        "z": -20.52399375
+      },
+      "eye": {
+        "x": 13.107193749999999,
+        "y": 1.67440893078399,
+        "z": -20.52399375
+      },
+      "target": {
+        "x": 17.779999999999998,
+        "y": 0.06526180024674155,
+        "z": -23.114
+      },
+      "yaw": -1.0646790913883095,
+      "pitch": -0.3642721775132674,
+      "landing": {
+        "x": 17.868773407378583,
+        "y": 0.05064842018020959,
+        "z": -23.16316938778124
+      },
+      "flightSeconds": 0.3046875,
+      "collisionSha256": "c95e2f0341bc8dcddfb05ca3d2926af2c0a9661b5048ec7f66c3139b7bc1d1df",
+      "tolerance": 0.35
+    },
+    {
+      "id": "dust2-a-long:2:molotov",
+      "map": "dust2",
+      "chunk": "dust2-a-long",
+      "course": "long-a",
+      "name": "Close doors crouched: molotov toward Long corner to A",
+      "kind": "molotov",
+      "feet": {
+        "x": 21.8449239758,
+        "y": 0.10873741789343105,
+        "z": -20.06679375
+      },
+      "eye": {
+        "x": 21.8449239758,
+        "y": 1.734337417893431,
+        "z": -20.06679375
+      },
+      "target": {
+        "x": 17.779999999999998,
+        "y": 0.06526180024674155,
+        "z": -23.114
+      },
+      "yaw": 0.9275293368798097,
+      "pitch": -0.3898350127927211,
+      "landing": {
+        "x": 17.712714965205578,
+        "y": 0.044630245744043014,
+        "z": -23.164351534854664
+      },
+      "flightSeconds": 0.2890625,
+      "collisionSha256": "c95e2f0341bc8dcddfb05ca3d2926af2c0a9661b5048ec7f66c3139b7bc1d1df",
+      "tolerance": 0.35
+    },
+    {
+      "id": "dust2-a-long:3:flash",
+      "map": "dust2",
+      "chunk": "dust2-a-long",
+      "course": "long-a",
+      "name": "Long corner tight: flash toward Long corner to A",
+      "kind": "flash",
+      "feet": {
+        "x": 16.417835083999996,
+        "y": 0.05648358283270438,
+        "z": -29.987974212399997
+      },
+      "eye": {
+        "x": 16.417835083999996,
+        "y": 1.6820835828327043,
+        "z": -29.987974212399997
+      },
+      "target": {
+        "x": 17.779999999999998,
+        "y": 1.2152618002467417,
+        "z": -23.114
+      },
+      "yaw": -2.945964403240329,
+      "pitch": -0.13962851241469523,
+      "landing": {
+        "x": 18.990076704386336,
+        "y": 0.04583157755068023,
+        "z": -22.14898350730002
+      },
+      "flightSeconds": 1.625,
+      "collisionSha256": "c95e2f0341bc8dcddfb05ca3d2926af2c0a9661b5048ec7f66c3139b7bc1d1df",
+      "tolerance": 0.35
+    },
+    {
+      "id": "dust2-a-long:4:molotov",
+      "map": "dust2",
+      "chunk": "dust2-a-long",
+      "course": "long-a",
+      "name": "Long corner tight: molotov toward Long corner to A",
+      "kind": "molotov",
+      "feet": {
+        "x": 16.417835083999996,
+        "y": 0.05648358283270438,
+        "z": -29.987974212399997
+      },
+      "eye": {
+        "x": 16.417835083999996,
+        "y": 1.6820835828327043,
+        "z": -29.987974212399997
+      },
+      "target": {
+        "x": 17.779999999999998,
+        "y": 0.06526180024674155,
+        "z": -23.114
+      },
+      "yaw": -2.945964403240329,
+      "pitch": -0.28480927162818614,
+      "landing": {
+        "x": 17.802557615878648,
+        "y": 0.04886487941419866,
+        "z": -22.999634336679954
+      },
+      "flightSeconds": 0.3984375,
+      "collisionSha256": "c95e2f0341bc8dcddfb05ca3d2926af2c0a9661b5048ec7f66c3139b7bc1d1df",
+      "tolerance": 0.35
+    },
+    {
+      "id": "dust2-a-long:5:molotov",
+      "map": "dust2",
+      "chunk": "dust2-a-long",
+      "course": "long-a",
+      "name": "Blue deep: molotov toward Long corner to A",
+      "kind": "molotov",
+      "feet": {
+        "x": 13.564393749999999,
+        "y": 0.07427302805869948,
+        "z": -29.3935050686
+      },
+      "eye": {
+        "x": 13.564393749999999,
+        "y": 1.6998730280586993,
+        "z": -29.3935050686
+      },
+      "target": {
+        "x": 17.779999999999998,
+        "y": 0.06526180024674155,
+        "z": -23.114
+      },
+      "yaw": -2.55037005788571,
+      "pitch": -0.26548883379408544,
+      "landing": {
+        "x": 17.844416107966104,
+        "y": 0.048200528610117255,
+        "z": -23.01785192868854
+      },
+      "flightSeconds": 0.4296875,
+      "collisionSha256": "c95e2f0341bc8dcddfb05ca3d2926af2c0a9661b5048ec7f66c3139b7bc1d1df",
+      "tolerance": 0.35
+    },
+    {
+      "id": "dust2-a-long:6:smoke",
+      "map": "dust2",
+      "chunk": "dust2-a-long",
+      "course": "long-a",
+      "name": "Long cross: smoke toward Long corner to A",
+      "kind": "smoke",
+      "feet": {
+        "x": 34.595339496,
+        "y": -0.24442665141528933,
+        "z": -32.9687318018
+      },
+      "eye": {
+        "x": 34.595339496,
+        "y": 1.3811733485847106,
+        "z": -32.9687318018
+      },
+      "target": {
+        "x": 17.779999999999998,
+        "y": 0.06526180024674155,
+        "z": -23.114
+      },
+      "yaw": 2.1008998407896993,
+      "pitch": 1.261300192852355,
+      "landing": {
+        "x": 16.487811355375914,
+        "y": 0.04057926551071069,
+        "z": -22.350057131135337
+      },
+      "flightSeconds": 5.8984375,
+      "collisionSha256": "c95e2f0341bc8dcddfb05ca3d2926af2c0a9661b5048ec7f66c3139b7bc1d1df",
+      "tolerance": 0.35
+    },
+    {
+      "id": "dust2-a-long:7:he",
+      "map": "dust2",
+      "chunk": "dust2-a-long",
+      "course": "long-a",
+      "name": "Long wide corner: he toward Long corner to A",
+      "kind": "he",
+      "feet": {
+        "x": 40.4677531512,
+        "y": 0.03351869061589241,
+        "z": -30.803524448199997
+      },
+      "eye": {
+        "x": 40.4677531512,
+        "y": 1.6591186906158923,
+        "z": -30.803524448199997
+      },
+      "target": {
+        "x": 17.779999999999998,
+        "y": 0.06526180024674155,
+        "z": -23.114
+      },
+      "yaw": 1.8975739833755307,
+      "pitch": 0.10957510120640677,
+      "landing": {
+        "x": 16.34638310489728,
+        "y": 0.4994140081468869,
+        "z": -22.625309474388885
+      },
+      "flightSeconds": 1.625,
+      "collisionSha256": "c95e2f0341bc8dcddfb05ca3d2926af2c0a9661b5048ec7f66c3139b7bc1d1df",
+      "tolerance": 0.35
+    },
+    {
+      "id": "dust2-a-long:8:molotov",
+      "map": "dust2",
+      "chunk": "dust2-a-long",
+      "course": "long-a",
+      "name": "Long wide corner: molotov toward Long corner to A",
+      "kind": "molotov",
+      "feet": {
+        "x": 40.4677531512,
+        "y": 0.03351869061589241,
+        "z": -30.803524448199997
+      },
+      "eye": {
+        "x": 40.4677531512,
+        "y": 1.6591186906158923,
+        "z": -30.803524448199997
+      },
+      "target": {
+        "x": 17.779999999999998,
+        "y": 0.06526180024674155,
+        "z": -23.114
+      },
+      "yaw": 1.8975739833755307,
+      "pitch": 0.10957510120640677,
+      "landing": {
+        "x": 17.67083859882427,
+        "y": 0.05883559532797801,
+        "z": -23.076904075257104
+      },
+      "flightSeconds": 1.4375,
+      "collisionSha256": "c95e2f0341bc8dcddfb05ca3d2926af2c0a9661b5048ec7f66c3139b7bc1d1df",
+      "tolerance": 0.35
+    },
+    {
+      "id": "dust2-a-long:9:smoke",
+      "map": "dust2",
+      "chunk": "dust2-a-long",
+      "course": "long-a",
+      "name": "Car: smoke toward Long corner to A",
+      "kind": "smoke",
+      "feet": {
+        "x": 44.1722743172,
+        "y": 0.04597793430688534,
+        "z": -47.8092275208
+      },
+      "eye": {
+        "x": 44.1722743172,
+        "y": 1.6715779343068853,
+        "z": -47.8092275208
+      },
+      "target": {
+        "x": 34.82449367402044,
+        "y": -0.14269289633292748,
+        "z": -28.645298878132643
+      },
+      "yaw": 2.6877687681903613,
+      "pitch": 1.2310984393524034,
+      "landing": {
+        "x": 34.45418326108641,
+        "y": -0.16411771596965236,
+        "z": -27.308639280739342
+      },
+      "flightSeconds": 5.90625,
+      "collisionSha256": "c95e2f0341bc8dcddfb05ca3d2926af2c0a9661b5048ec7f66c3139b7bc1d1df",
+      "tolerance": 0.35
+    },
+    {
+      "id": "dust2-a-long:10:molotov",
+      "map": "dust2",
+      "chunk": "dust2-a-long",
+      "course": "long-a",
+      "name": "Car approach off-angle: molotov toward Long corner to A",
+      "kind": "molotov",
+      "feet": {
+        "x": 41.2626286506,
+        "y": 0.02716660685837269,
+        "z": -43.4391779678
+      },
+      "eye": {
+        "x": 41.2626286506,
+        "y": 1.6527666068583726,
+        "z": -43.4391779678
+      },
+      "target": {
+        "x": 28.813132358086158,
+        "y": 0.026175526396558402,
+        "z": -24.644805463507858
+      },
+      "yaw": 2.556545871822153,
+      "pitch": 0.07615384814600597,
+      "landing": {
+        "x": 28.72982847529314,
+        "y": 0.012733050897249545,
+        "z": -24.521445648078902
+      },
+      "flightSeconds": 1.34375,
+      "collisionSha256": "c95e2f0341bc8dcddfb05ca3d2926af2c0a9661b5048ec7f66c3139b7bc1d1df",
+      "tolerance": 0.35
+    },
+    {
+      "id": "dust2-a-long:11:molotov",
+      "map": "dust2",
+      "chunk": "dust2-a-long",
+      "course": "long-a",
+      "name": "Short platform standing: molotov toward Long corner to A",
+      "kind": "molotov",
+      "feet": {
+        "x": 12.75295646,
+        "y": 2.440021846767322,
+        "z": -68.9741898898
+      },
+      "eye": {
+        "x": 12.75295646,
+        "y": 4.065621846767321,
+        "z": -68.9741898898
+      },
+      "target": {
+        "x": 36.95925251346466,
+        "y": -0.1943641581003528,
+        "z": -48.20615328545011
+      },
+      "yaw": -2.2798935352260448,
+      "pitch": 0.18179302308130935,
+      "landing": {
+        "x": 37.017831602003234,
+        "y": -0.21898390475417326,
+        "z": -48.15636832411058
+      },
+      "flightSeconds": 1.953125,
+      "collisionSha256": "c95e2f0341bc8dcddfb05ca3d2926af2c0a9661b5048ec7f66c3139b7bc1d1df",
+      "tolerance": 0.35
+    },
+    {
+      "id": "dust2-a-long:12:he",
+      "map": "dust2",
+      "chunk": "dust2-a-long",
+      "course": "long-a",
+      "name": "Short ramp: he toward Long corner to A",
+      "kind": "he",
+      "feet": {
+        "x": 14.326465073199998,
+        "y": 1.701799988746643,
+        "z": -60.45120625
+      },
+      "eye": {
+        "x": 14.326465073199998,
+        "y": 3.327399988746643,
+        "z": -60.45120625
+      },
+      "target": {
+        "x": 37.086115372206855,
+        "y": -0.18196964007520777,
+        "z": -50.895561439107105
+      },
+      "yaw": -1.9682970142426612,
+      "pitch": 0.027449668355378865,
+      "landing": {
+        "x": 38.39367857372819,
+        "y": 0.28529752848772894,
+        "z": -50.33684124676591
+      },
+      "flightSeconds": 1.625,
+      "collisionSha256": "c95e2f0341bc8dcddfb05ca3d2926af2c0a9661b5048ec7f66c3139b7bc1d1df",
+      "tolerance": 0.35
+    },
+    {
+      "id": "dust2-a-long:13:molotov",
+      "map": "dust2",
+      "chunk": "dust2-a-long",
+      "course": "long-a",
+      "name": "Short ramp: molotov toward Long corner to A",
+      "kind": "molotov",
+      "feet": {
+        "x": 14.326465073199998,
+        "y": 1.701799988746643,
+        "z": -60.45120625
+      },
+      "eye": {
+        "x": 14.326465073199998,
+        "y": 3.327399988746643,
+        "z": -60.45120625
+      },
+      "target": {
+        "x": 37.086115372206855,
+        "y": -0.18196964007520777,
+        "z": -50.895561439107105
+      },
+      "yaw": -1.9682970142426612,
+      "pitch": 0.027449668355378865,
+      "landing": {
+        "x": 37.18021374933772,
+        "y": -0.20485818764538888,
+        "z": -50.855843321698934
+      },
+      "flightSeconds": 1.453125,
+      "collisionSha256": "c95e2f0341bc8dcddfb05ca3d2926af2c0a9661b5048ec7f66c3139b7bc1d1df",
+      "tolerance": 0.35
+    },
+    {
+      "id": "dust2-a-long:14:molotov",
+      "map": "dust2",
+      "chunk": "dust2-a-long",
+      "course": "long-a",
+      "name": "A site box: molotov toward Long corner to A",
+      "kind": "molotov",
+      "feet": {
+        "x": 18.258387841799998,
+        "y": 4.319962024688721,
+        "z": -70.20480624999999
+      },
+      "eye": {
+        "x": 18.258387841799998,
+        "y": 5.945562024688721,
+        "z": -70.20480624999999
+      },
+      "target": {
+        "x": 36.83,
+        "y": -0.12707727076869757,
+        "z": -45.466
+      },
+      "yaw": -2.4976387753507154,
+      "pitch": 0.07467671437283674,
+      "landing": {
+        "x": 36.88723925288787,
+        "y": -0.12788931388812105,
+        "z": -45.390836170846356
+      },
+      "flightSeconds": 1.84375,
+      "collisionSha256": "c95e2f0341bc8dcddfb05ca3d2926af2c0a9661b5048ec7f66c3139b7bc1d1df",
+      "tolerance": 0.35
+    },
+    {
+      "id": "dust2-a-long:15:flash",
+      "map": "dust2",
+      "chunk": "dust2-a-long",
+      "course": "long-a",
+      "name": "A ramp / CT cross: flash toward Long corner to A",
+      "kind": "flash",
+      "feet": {
+        "x": 32.258700735199994,
+        "y": 0.041221575869857786,
+        "z": -51.3088402574
+      },
+      "eye": {
+        "x": 32.258700735199994,
+        "y": 1.6668215758698577,
+        "z": -51.3088402574
+      },
+      "target": {
+        "x": 31.75,
+        "y": 1.2259522556216922,
+        "z": -25.4
+      },
+      "yaw": 3.121960922622464,
+      "pitch": 0.213612649142512,
+      "landing": {
+        "x": 31.74024354329984,
+        "y": 1.0096576487359232,
+        "z": -24.903090674318083
+      },
+      "flightSeconds": 1.625,
+      "collisionSha256": "c95e2f0341bc8dcddfb05ca3d2926af2c0a9661b5048ec7f66c3139b7bc1d1df",
+      "tolerance": 0.35
+    },
+    {
+      "id": "dust2-a-long:16:he",
+      "map": "dust2",
+      "chunk": "dust2-a-long",
+      "course": "long-a",
+      "name": "A ramp / CT cross: he toward Long corner to A",
+      "kind": "he",
+      "feet": {
+        "x": 32.258700735199994,
+        "y": 0.041221575869857786,
+        "z": -51.3088402574
+      },
+      "eye": {
+        "x": 32.258700735199994,
+        "y": 1.6668215758698577,
+        "z": -51.3088402574
+      },
+      "target": {
+        "x": 31.75,
+        "y": 0.07595225562169206,
+        "z": -25.4
+      },
+      "yaw": 3.121960922622464,
+      "pitch": 0.15451330067731361,
+      "landing": {
+        "x": 31.738627624673715,
+        "y": 0.23251618208424468,
+        "z": -24.92494140826951
+      },
+      "flightSeconds": 1.625,
+      "collisionSha256": "c95e2f0341bc8dcddfb05ca3d2926af2c0a9661b5048ec7f66c3139b7bc1d1df",
+      "tolerance": 0.35
+    },
+    {
+      "id": "dust2-a-long:17:molotov",
+      "map": "dust2",
+      "chunk": "dust2-a-long",
+      "course": "long-a",
+      "name": "A ramp / CT cross: molotov toward Long corner to A",
+      "kind": "molotov",
+      "feet": {
+        "x": 32.258700735199994,
+        "y": 0.041221575869857786,
+        "z": -51.3088402574
+      },
+      "eye": {
+        "x": 32.258700735199994,
+        "y": 1.6668215758698577,
+        "z": -51.3088402574
+      },
+      "target": {
+        "x": 31.75,
+        "y": 0.07595225562169206,
+        "z": -25.4
+      },
+      "yaw": 3.121960922622464,
+      "pitch": 0.15451330067731361,
+      "landing": {
+        "x": 31.74846125910613,
+        "y": 0.06016658219830415,
+        "z": -25.32646359917414
+      },
+      "flightSeconds": 1.5703125,
+      "collisionSha256": "c95e2f0341bc8dcddfb05ca3d2926af2c0a9661b5048ec7f66c3139b7bc1d1df",
+      "tolerance": 0.35
+    },
+    {
+      "id": "dust2-a-short:0:molotov",
+      "map": "dust2",
+      "chunk": "dust2-a-short",
+      "course": "long-a",
+      "name": "Long doors left: molotov toward Long corner to A",
+      "kind": "molotov",
+      "feet": {
+        "x": 13.69139375,
+        "y": 0.034664130137600745,
+        "z": -17.6890520742
+      },
+      "eye": {
+        "x": 13.69139375,
+        "y": 1.6602641301376007,
+        "z": -17.6890520742
+      },
+      "target": {
+        "x": 20.370792845341093,
+        "y": 0.07525216129864876,
+        "z": -23.113998253365104
+      },
+      "yaw": -0.8886660761053666,
+      "pitch": -0.22495059023569738,
+      "landing": {
+        "x": 20.481687860585314,
+        "y": 0.06829685606362926,
+        "z": -23.2040917966915
+      },
+      "flightSeconds": 0.4921875,
+      "collisionSha256": "1b1a97b1ac6185091041c9a7193e3e54b3b13003a9fdb2789b7aa0ee71350a6b",
+      "tolerance": 0.35
+    },
+    {
+      "id": "dust2-a-short:1:molotov",
+      "map": "dust2",
+      "chunk": "dust2-a-short",
+      "course": "long-a",
+      "name": "Blue corner: molotov toward Long corner to A",
+      "kind": "molotov",
+      "feet": {
+        "x": 13.107193749999999,
+        "y": 0.048808930783990144,
+        "z": -20.52399375
+      },
+      "eye": {
+        "x": 13.107193749999999,
+        "y": 1.67440893078399,
+        "z": -20.52399375
+      },
+      "target": {
+        "x": 17.779999999999998,
+        "y": 0.06526180024674155,
+        "z": -23.114
+      },
+      "yaw": -1.0646790913883095,
+      "pitch": -0.3642721775132674,
+      "landing": {
+        "x": 17.868773407378583,
+        "y": 0.05064842018020959,
+        "z": -23.16316938778124
+      },
+      "flightSeconds": 0.3046875,
+      "collisionSha256": "1b1a97b1ac6185091041c9a7193e3e54b3b13003a9fdb2789b7aa0ee71350a6b",
+      "tolerance": 0.35
+    },
+    {
+      "id": "dust2-a-short:2:molotov",
+      "map": "dust2",
+      "chunk": "dust2-a-short",
+      "course": "long-a",
+      "name": "Close doors crouched: molotov toward Long corner to A",
+      "kind": "molotov",
+      "feet": {
+        "x": 21.8449239758,
+        "y": 0.10873741789343105,
+        "z": -20.06679375
+      },
+      "eye": {
+        "x": 21.8449239758,
+        "y": 1.734337417893431,
+        "z": -20.06679375
+      },
+      "target": {
+        "x": 17.779999999999998,
+        "y": 0.06526180024674155,
+        "z": -23.114
+      },
+      "yaw": 0.9275293368798097,
+      "pitch": -0.3898350127927211,
+      "landing": {
+        "x": 17.712714965205578,
+        "y": 0.044630245744043014,
+        "z": -23.164351534854664
+      },
+      "flightSeconds": 0.2890625,
+      "collisionSha256": "1b1a97b1ac6185091041c9a7193e3e54b3b13003a9fdb2789b7aa0ee71350a6b",
+      "tolerance": 0.35
+    },
+    {
+      "id": "dust2-a-short:3:smoke",
+      "map": "dust2",
+      "chunk": "dust2-a-short",
+      "course": "long-a",
+      "name": "Outside doors left: smoke toward Long corner to A",
+      "kind": "smoke",
+      "feet": {
+        "x": 13.69139375,
+        "y": 0.03901946403558173,
+        "z": -8.6971823008
+      },
+      "eye": {
+        "x": 13.69139375,
+        "y": 1.6646194640355816,
+        "z": -8.6971823008
+      },
+      "target": {
+        "x": 17.779999999999998,
+        "y": 0.06526180024674155,
+        "z": -23.114
+      },
+      "yaw": -0.2763436435995633,
+      "pitch": 1.338814042376201,
+      "landing": {
+        "x": 18.01663807007923,
+        "y": 0.042599845200286444,
+        "z": -24.08100664642911
+      },
+      "flightSeconds": 5.96875,
+      "collisionSha256": "1b1a97b1ac6185091041c9a7193e3e54b3b13003a9fdb2789b7aa0ee71350a6b",
+      "tolerance": 0.35
+    },
+    {
+      "id": "dust2-a-short:4:molotov",
+      "map": "dust2",
+      "chunk": "dust2-a-short",
+      "course": "long-a",
+      "name": "Outside doors left: molotov toward Long corner to A",
+      "kind": "molotov",
+      "feet": {
+        "x": 13.69139375,
+        "y": 0.03901946403558173,
+        "z": -8.6971823008
+      },
+      "eye": {
+        "x": 13.69139375,
+        "y": 1.6646194640355816,
+        "z": -8.6971823008
+      },
+      "target": {
+        "x": 17.779999999999998,
+        "y": 0.06526180024674155,
+        "z": -23.114
+      },
+      "yaw": -0.2763436435995633,
+      "pitch": -0.07537157717684836,
+      "landing": {
+        "x": 17.80411639655872,
+        "y": 0.03967945226138274,
+        "z": -23.19906196828262
+      },
+      "flightSeconds": 0.859375,
+      "collisionSha256": "1b1a97b1ac6185091041c9a7193e3e54b3b13003a9fdb2789b7aa0ee71350a6b",
+      "tolerance": 0.35
+    },
+    {
+      "id": "dust2-a-short:5:flash",
+      "map": "dust2",
+      "chunk": "dust2-a-short",
+      "course": "long-a",
+      "name": "Long corner tight: flash toward Long corner to A",
+      "kind": "flash",
+      "feet": {
+        "x": 16.417835083999996,
+        "y": 0.05648358283270438,
+        "z": -29.987974212399997
+      },
+      "eye": {
+        "x": 16.417835083999996,
+        "y": 1.6820835828327043,
+        "z": -29.987974212399997
+      },
+      "target": {
+        "x": 17.779999999999998,
+        "y": 1.2152618002467417,
+        "z": -23.114
+      },
+      "yaw": -2.945964403240329,
+      "pitch": -0.13962851241469523,
+      "landing": {
+        "x": 18.990076704386336,
+        "y": 0.04583157755068023,
+        "z": -22.14898350730002
+      },
+      "flightSeconds": 1.625,
+      "collisionSha256": "1b1a97b1ac6185091041c9a7193e3e54b3b13003a9fdb2789b7aa0ee71350a6b",
+      "tolerance": 0.35
+    },
+    {
+      "id": "dust2-a-short:6:molotov",
+      "map": "dust2",
+      "chunk": "dust2-a-short",
+      "course": "long-a",
+      "name": "Long corner tight: molotov toward Long corner to A",
+      "kind": "molotov",
+      "feet": {
+        "x": 16.417835083999996,
+        "y": 0.05648358283270438,
+        "z": -29.987974212399997
+      },
+      "eye": {
+        "x": 16.417835083999996,
+        "y": 1.6820835828327043,
+        "z": -29.987974212399997
+      },
+      "target": {
+        "x": 17.779999999999998,
+        "y": 0.06526180024674155,
+        "z": -23.114
+      },
+      "yaw": -2.945964403240329,
+      "pitch": -0.28480927162818614,
+      "landing": {
+        "x": 17.802557615878648,
+        "y": 0.04886487941419866,
+        "z": -22.999634336679954
+      },
+      "flightSeconds": 0.3984375,
+      "collisionSha256": "1b1a97b1ac6185091041c9a7193e3e54b3b13003a9fdb2789b7aa0ee71350a6b",
+      "tolerance": 0.35
+    },
+    {
+      "id": "dust2-a-short:7:molotov",
+      "map": "dust2",
+      "chunk": "dust2-a-short",
+      "course": "long-a",
+      "name": "Blue deep: molotov toward Long corner to A",
+      "kind": "molotov",
+      "feet": {
+        "x": 13.564393749999999,
+        "y": 0.07427302805869948,
+        "z": -29.3935050686
+      },
+      "eye": {
+        "x": 13.564393749999999,
+        "y": 1.6998730280586993,
+        "z": -29.3935050686
+      },
+      "target": {
+        "x": 17.779999999999998,
+        "y": 0.06526180024674155,
+        "z": -23.114
+      },
+      "yaw": -2.55037005788571,
+      "pitch": -0.26548883379408544,
+      "landing": {
+        "x": 17.844416107966104,
+        "y": 0.048200528610117255,
+        "z": -23.01785192868854
+      },
+      "flightSeconds": 0.4296875,
+      "collisionSha256": "1b1a97b1ac6185091041c9a7193e3e54b3b13003a9fdb2789b7aa0ee71350a6b",
+      "tolerance": 0.35
+    },
+    {
+      "id": "dust2-a-short:8:smoke",
+      "map": "dust2",
+      "chunk": "dust2-a-short",
+      "course": "long-a",
+      "name": "Long cross: smoke toward Long corner to A",
+      "kind": "smoke",
+      "feet": {
+        "x": 34.595339496,
+        "y": -0.24442665141528933,
+        "z": -32.9687318018
+      },
+      "eye": {
+        "x": 34.595339496,
+        "y": 1.3811733485847106,
+        "z": -32.9687318018
+      },
+      "target": {
+        "x": 17.779999999999998,
+        "y": 0.06526180024674155,
+        "z": -23.114
+      },
+      "yaw": 2.1008998407896993,
+      "pitch": 1.261300192852355,
+      "landing": {
+        "x": 16.487811355375914,
+        "y": 0.04057926551071069,
+        "z": -22.350057131135337
+      },
+      "flightSeconds": 5.8984375,
+      "collisionSha256": "1b1a97b1ac6185091041c9a7193e3e54b3b13003a9fdb2789b7aa0ee71350a6b",
+      "tolerance": 0.35
+    },
+    {
+      "id": "dust2-a-short:9:molotov",
+      "map": "dust2",
+      "chunk": "dust2-a-short",
+      "course": "long-a",
+      "name": "Pit upper edge: molotov toward Long corner to A",
+      "kind": "molotov",
+      "feet": {
+        "x": 32.687021875,
+        "y": 0.8127999901771545,
+        "z": -8.6367983982
+      },
+      "eye": {
+        "x": 32.687021875,
+        "y": 2.4383999901771545,
+        "z": -8.6367983982
+      },
+      "target": {
+        "x": 20.370792845341093,
+        "y": 0.07525216129864876,
+        "z": -23.113998253365104
+      },
+      "yaw": 0.7049193490355754,
+      "pitch": -0.03913279787937046,
+      "landing": {
+        "x": 20.312271247940718,
+        "y": 0.0590373837698612,
+        "z": -23.182707166989257
+      },
+      "flightSeconds": 1.1015625,
+      "collisionSha256": "1b1a97b1ac6185091041c9a7193e3e54b3b13003a9fdb2789b7aa0ee71350a6b",
+      "tolerance": 0.35
+    },
+    {
+      "id": "dust2-a-short:10:smoke",
+      "map": "dust2",
+      "chunk": "dust2-a-short",
+      "course": "long-a",
+      "name": "Pit approach: smoke toward Long corner to A",
+      "kind": "smoke",
+      "feet": {
+        "x": 24.58799375,
+        "y": 0.3327915420726901,
+        "z": -5.46179375
+      },
+      "eye": {
+        "x": 24.58799375,
+        "y": 1.95839154207269,
+        "z": -5.46179375
+      },
+      "target": {
+        "x": 25.861165899531038,
+        "y": 0.06839149478893747,
+        "z": -23.88572837416512
+      },
+      "yaw": -0.06899456214525705,
+      "pitch": 1.2816303701775633,
+      "landing": {
+        "x": 26.20462838869795,
+        "y": 0.02274310142275558,
+        "z": -25.362604897725067
+      },
+      "flightSeconds": 5.984375,
+      "collisionSha256": "1b1a97b1ac6185091041c9a7193e3e54b3b13003a9fdb2789b7aa0ee71350a6b",
+      "tolerance": 0.35
+    },
+    {
+      "id": "dust2-a-short:11:molotov",
+      "map": "dust2",
+      "chunk": "dust2-a-short",
+      "course": "long-a",
+      "name": "Pit approach: molotov toward Long corner to A",
+      "kind": "molotov",
+      "feet": {
+        "x": 24.58799375,
+        "y": 0.3327915420726901,
+        "z": -5.46179375
+      },
+      "eye": {
+        "x": 24.58799375,
+        "y": 1.95839154207269,
+        "z": -5.46179375
+      },
+      "target": {
+        "x": 25.861165899531038,
+        "y": 0.06839149478893747,
+        "z": -23.88572837416512
+      },
+      "yaw": -0.06899456214525705,
+      "pitch": -0.02546430858761314,
+      "landing": {
+        "x": 25.872273742920424,
+        "y": 0.05466148759029879,
+        "z": -24.036681090414536
+      },
+      "flightSeconds": 1.078125,
+      "collisionSha256": "1b1a97b1ac6185091041c9a7193e3e54b3b13003a9fdb2789b7aa0ee71350a6b",
+      "tolerance": 0.35
+    },
+    {
+      "id": "dust2-a-short:12:molotov",
+      "map": "dust2",
+      "chunk": "dust2-a-short",
+      "course": "long-a",
+      "name": "Long pit / slope hold: molotov toward Long corner to A",
+      "kind": "molotov",
+      "feet": {
+        "x": 33.528,
+        "y": -3.1133599267763814,
+        "z": -10.668
+      },
+      "eye": {
+        "x": 33.528,
+        "y": -1.4877599267763815,
+        "z": -10.668
+      },
+      "target": {
+        "x": 31.75,
+        "y": 0.07595225562169206,
+        "z": -25.4
+      },
+      "yaw": 0.1201087355669128,
+      "pitch": 0.15194511896060295,
+      "landing": {
+        "x": 31.7248822782874,
+        "y": 0.052254369741920936,
+        "z": -25.60801420176015
+      },
+      "flightSeconds": 0.8984375,
+      "collisionSha256": "1b1a97b1ac6185091041c9a7193e3e54b3b13003a9fdb2789b7aa0ee71350a6b",
+      "tolerance": 0.35
+    },
+    {
+      "id": "dust2-a-short:13:molotov",
+      "map": "dust2",
+      "chunk": "dust2-a-short",
+      "course": "long-a",
+      "name": "Long pit / low floor: molotov toward Long corner to A",
+      "kind": "molotov",
+      "feet": {
+        "x": 37.592,
+        "y": -4.266014357504349,
+        "z": -7.62
+      },
+      "eye": {
+        "x": 37.592,
+        "y": -2.640414357504349,
+        "z": -7.62
+      },
+      "target": {
+        "x": 31.75,
+        "y": 0.07595225562169206,
+        "z": -25.4
+      },
+      "yaw": 0.317458735254631,
+      "pitch": 0.27218576822809454,
+      "landing": {
+        "x": 31.70260575117905,
+        "y": 0.051269521894698154,
+        "z": -25.544233574356085
+      },
+      "flightSeconds": 1.1796875,
+      "collisionSha256": "1b1a97b1ac6185091041c9a7193e3e54b3b13003a9fdb2789b7aa0ee71350a6b",
+      "tolerance": 0.35
+    },
+    {
+      "id": "dust2-a-short:14:molotov",
+      "map": "dust2",
+      "chunk": "dust2-a-short",
+      "course": "long-a",
+      "name": "Short platform standing: molotov toward Long corner to A",
+      "kind": "molotov",
+      "feet": {
+        "x": 12.75295646,
+        "y": 2.440021846767322,
+        "z": -68.9741898898
+      },
+      "eye": {
+        "x": 12.75295646,
+        "y": 4.065621846767321,
+        "z": -68.9741898898
+      },
+      "target": {
+        "x": 36.95925251346466,
+        "y": -0.1943641581003528,
+        "z": -48.20615328545011
+      },
+      "yaw": -2.2798935352260448,
+      "pitch": 0.18179302308130935,
+      "landing": {
+        "x": 37.017831602003234,
+        "y": -0.21898390475417326,
+        "z": -48.15636832411058
+      },
+      "flightSeconds": 1.953125,
+      "collisionSha256": "1b1a97b1ac6185091041c9a7193e3e54b3b13003a9fdb2789b7aa0ee71350a6b",
+      "tolerance": 0.35
+    },
+    {
+      "id": "dust2-a-short:15:he",
+      "map": "dust2",
+      "chunk": "dust2-a-short",
+      "course": "long-a",
+      "name": "Short ramp: he toward Long corner to A",
+      "kind": "he",
+      "feet": {
+        "x": 14.326465073199998,
+        "y": 1.701799988746643,
+        "z": -60.45120625
+      },
+      "eye": {
+        "x": 14.326465073199998,
+        "y": 3.327399988746643,
+        "z": -60.45120625
+      },
+      "target": {
+        "x": 37.086115372206855,
+        "y": -0.18196964007520777,
+        "z": -50.895561439107105
+      },
+      "yaw": -1.9682970142426612,
+      "pitch": 0.027449668355378865,
+      "landing": {
+        "x": 38.39367857372819,
+        "y": 0.28529752848772894,
+        "z": -50.33684124676591
+      },
+      "flightSeconds": 1.625,
+      "collisionSha256": "1b1a97b1ac6185091041c9a7193e3e54b3b13003a9fdb2789b7aa0ee71350a6b",
+      "tolerance": 0.35
+    },
+    {
+      "id": "dust2-a-short:16:molotov",
+      "map": "dust2",
+      "chunk": "dust2-a-short",
+      "course": "long-a",
+      "name": "Short ramp: molotov toward Long corner to A",
+      "kind": "molotov",
+      "feet": {
+        "x": 14.326465073199998,
+        "y": 1.701799988746643,
+        "z": -60.45120625
+      },
+      "eye": {
+        "x": 14.326465073199998,
+        "y": 3.327399988746643,
+        "z": -60.45120625
+      },
+      "target": {
+        "x": 37.086115372206855,
+        "y": -0.18196964007520777,
+        "z": -50.895561439107105
+      },
+      "yaw": -1.9682970142426612,
+      "pitch": 0.027449668355378865,
+      "landing": {
+        "x": 37.18021374933772,
+        "y": -0.20485818764538888,
+        "z": -50.855843321698934
+      },
+      "flightSeconds": 1.453125,
+      "collisionSha256": "1b1a97b1ac6185091041c9a7193e3e54b3b13003a9fdb2789b7aa0ee71350a6b",
+      "tolerance": 0.35
+    },
+    {
+      "id": "dust2-b-doors:0:molotov",
+      "map": "dust2",
+      "chunk": "dust2-b-doors",
+      "course": "b-doors",
+      "name": "CT left: molotov toward CT mid to B retake",
+      "kind": "molotov",
+      "feet": {
+        "x": -8.1557858982,
+        "y": -3.24731257666746,
+        "z": -52.744104595399996
+      },
+      "eye": {
+        "x": -8.1557858982,
+        "y": -1.62171257666746,
+        "z": -52.744104595399996
+      },
+      "target": {
+        "x": -10.16,
+        "y": -3.1543888714224266,
+        "z": -47.498
+      },
+      "yaw": 2.77666553916884,
+      "pitch": -0.33743244158356195,
+      "landing": {
+        "x": -10.208442431408272,
+        "y": -3.1863510372031354,
+        "z": -47.370501562690244
+      },
+      "flightSeconds": 0.3203125,
+      "collisionSha256": "1d945f864047ac7be62df297bdf1f09c2d1b69f7904625803890ad8c3ab82079",
+      "tolerance": 0.35
+    },
+    {
+      "id": "dust2-b-doors:1:molotov",
+      "map": "dust2",
+      "chunk": "dust2-b-doors",
+      "course": "b-doors",
+      "name": "CT spawn / mid cover: molotov toward CT mid to B retake",
+      "kind": "molotov",
+      "feet": {
+        "x": -16.108639995,
+        "y": -2.076651509745901,
+        "z": -64.77334243680001
+      },
+      "eye": {
+        "x": -16.108639995,
+        "y": -0.45105150974590114,
+        "z": -64.77334243680001
+      },
+      "target": {
+        "x": -12.450853154210657,
+        "y": -3.04510734635838,
+        "z": -47.99601155526314
+      },
+      "yaw": -2.9269321126037147,
+      "pitch": -0.08828307427785949,
+      "landing": {
+        "x": -12.41396264279204,
+        "y": -3.093445965426489,
+        "z": -47.83265144841536
+      },
+      "flightSeconds": 0.9921875,
+      "collisionSha256": "1d945f864047ac7be62df297bdf1f09c2d1b69f7904625803890ad8c3ab82079",
+      "tolerance": 0.35
+    },
+    {
+      "id": "dust2-b-doors:2:smoke",
+      "map": "dust2",
+      "chunk": "dust2-b-doors",
+      "course": "b-doors",
+      "name": "Tunnel exit right: smoke toward CT mid to B retake",
+      "kind": "smoke",
+      "feet": {
+        "x": -48.9116656512,
+        "y": 0.01340904017693445,
+        "z": -48.67663503159999
+      },
+      "eye": {
+        "x": -48.9116656512,
+        "y": 1.6390090401769344,
+        "z": -48.67663503159999
+      },
+      "target": {
+        "x": -42.8752,
+        "y": 0.2594311448127844,
+        "z": -65.6336
+      },
+      "yaw": -0.34199880477763045,
+      "pitch": 1.2875107551723521,
+      "landing": {
+        "x": -41.72052338358889,
+        "y": 0.14248797417157597,
+        "z": -66.53757267134193
+      },
+      "flightSeconds": 5.9375,
+      "collisionSha256": "1d945f864047ac7be62df297bdf1f09c2d1b69f7904625803890ad8c3ab82079",
+      "tolerance": 0.35
+    },
+    {
+      "id": "dust2-b-doors:3:flash",
+      "map": "dust2",
+      "chunk": "dust2-b-doors",
+      "course": "b-doors",
+      "name": "Back platform: flash toward CT mid to B retake",
+      "kind": "flash",
+      "feet": {
+        "x": -52.64176045159999,
+        "y": 0.8593952381851143,
+        "z": -74.3470712446
+      },
+      "eye": {
+        "x": -52.64176045159999,
+        "y": 2.4849952381851144,
+        "z": -74.3470712446
+      },
+      "target": {
+        "x": -33.782,
+        "y": 1.2974249640352888,
+        "z": -54.864
+      },
+      "yaw": -2.3724493119559495,
+      "pitch": 0.20303675841333843,
+      "landing": {
+        "x": -34.207436145186804,
+        "y": 1.5791069365672852,
+        "z": -55.30349609585187
+      },
+      "flightSeconds": 1.625,
+      "collisionSha256": "1d945f864047ac7be62df297bdf1f09c2d1b69f7904625803890ad8c3ab82079",
+      "tolerance": 0.35
+    },
+    {
+      "id": "dust2-b-doors:4:he",
+      "map": "dust2",
+      "chunk": "dust2-b-doors",
+      "course": "b-doors",
+      "name": "Back platform: he toward CT mid to B retake",
+      "kind": "he",
+      "feet": {
+        "x": -52.64176045159999,
+        "y": 0.8593952381851143,
+        "z": -74.3470712446
+      },
+      "eye": {
+        "x": -52.64176045159999,
+        "y": 2.4849952381851144,
+        "z": -74.3470712446
+      },
+      "target": {
+        "x": -33.782,
+        "y": 0.14742496403528893,
+        "z": -54.864
+      },
+      "yaw": -2.3724493119559495,
+      "pitch": 0.14587106687722187,
+      "landing": {
+        "x": -33.88412207734484,
+        "y": 0.22021262826033378,
+        "z": -54.969498036293245
+      },
+      "flightSeconds": 1.625,
+      "collisionSha256": "1d945f864047ac7be62df297bdf1f09c2d1b69f7904625803890ad8c3ab82079",
+      "tolerance": 0.35
+    },
+    {
+      "id": "dust2-b-doors:5:smoke",
+      "map": "dust2",
+      "chunk": "dust2-b-doors",
+      "course": "b-doors",
+      "name": "Back platform: smoke toward CT mid to B retake",
+      "kind": "smoke",
+      "feet": {
+        "x": -52.64176045159999,
+        "y": 0.8593952381851143,
+        "z": -74.3470712446
+      },
+      "eye": {
+        "x": -52.64176045159999,
+        "y": 2.4849952381851144,
+        "z": -74.3470712446
+      },
+      "target": {
+        "x": -33.782,
+        "y": 0.14742496403528893,
+        "z": -54.864
+      },
+      "yaw": -2.3724493119559495,
+      "pitch": 0.14587106687722187,
+      "landing": {
+        "x": -35.6669776283505,
+        "y": 0.05852682071032914,
+        "z": -54.75921527879389
+      },
+      "flightSeconds": 2.7578125,
+      "collisionSha256": "1d945f864047ac7be62df297bdf1f09c2d1b69f7904625803890ad8c3ab82079",
+      "tolerance": 0.35
+    },
+    {
+      "id": "dust2-b-doors:6:molotov",
+      "map": "dust2",
+      "chunk": "dust2-b-doors",
+      "course": "b-doors",
+      "name": "Back platform: molotov toward CT mid to B retake",
+      "kind": "molotov",
+      "feet": {
+        "x": -52.64176045159999,
+        "y": 0.8593952381851143,
+        "z": -74.3470712446
+      },
+      "eye": {
+        "x": -52.64176045159999,
+        "y": 2.4849952381851144,
+        "z": -74.3470712446
+      },
+      "target": {
+        "x": -33.782,
+        "y": 0.14742496403528893,
+        "z": -54.864
+      },
+      "yaw": -2.3724493119559495,
+      "pitch": 0.14587106687722187,
+      "landing": {
+        "x": -33.71695662089481,
+        "y": 0.11375079293180268,
+        "z": -54.79695694976544
+      },
+      "flightSeconds": 1.640625,
+      "collisionSha256": "1d945f864047ac7be62df297bdf1f09c2d1b69f7904625803890ad8c3ab82079",
+      "tolerance": 0.35
+    },
+    {
+      "id": "dust2-b-doors:7:molotov",
+      "map": "dust2",
+      "chunk": "dust2-b-doors",
+      "course": "b-doors",
+      "name": "B site / box cover: molotov toward CT mid to B retake",
+      "kind": "molotov",
+      "feet": {
+        "x": -34.69719375,
+        "y": 0.11693400066559823,
+        "z": -65.17560625
+      },
+      "eye": {
+        "x": -34.69719375,
+        "y": 1.7425340006655983,
+        "z": -65.17560625
+      },
+      "target": {
+        "x": -35.559999999999995,
+        "y": 0.09272934532163579,
+        "z": -55.626
+      },
+      "yaw": 3.0514873725617617,
+      "pitch": -0.20219858894289036,
+      "landing": {
+        "x": -35.573908906342155,
+        "y": 0.059506304709296666,
+        "z": -55.471892231790655
+      },
+      "flightSeconds": 0.546875,
+      "collisionSha256": "1d945f864047ac7be62df297bdf1f09c2d1b69f7904625803890ad8c3ab82079",
+      "tolerance": 0.35
+    },
+    {
+      "id": "dust2-b-doors:8:molotov",
+      "map": "dust2",
+      "chunk": "dust2-b-doors",
+      "course": "b-doors",
+      "name": "B tunnel exit / close cover: molotov toward CT mid to B retake",
+      "kind": "molotov",
+      "feet": {
+        "x": -46.1746358192,
+        "y": 3.3590970039367676,
+        "z": -46.076356538999995
+      },
+      "eye": {
+        "x": -46.1746358192,
+        "y": 4.984697003936768,
+        "z": -46.076356538999995
+      },
+      "target": {
+        "x": -29.809799995777645,
+        "y": 0.1978170564722579,
+        "z": -58.04045128183483
+      },
+      "yaw": -0.9395107782654918,
+      "pitch": -0.1271093931162858,
+      "landing": {
+        "x": -29.677184538547962,
+        "y": 0.15925587172202565,
+        "z": -58.13237923683617
+      },
+      "flightSeconds": 1.171875,
+      "collisionSha256": "1d945f864047ac7be62df297bdf1f09c2d1b69f7904625803890ad8c3ab82079",
+      "tolerance": 0.35
+    },
+    {
+      "id": "dust2-b-doors:9:smoke",
+      "map": "dust2",
+      "chunk": "dust2-b-doors",
+      "course": "b-doors",
+      "name": "B back platform / window cover: smoke toward CT mid to B retake",
+      "kind": "smoke",
+      "feet": {
+        "x": -37.29028034082202,
+        "y": 0.2152029806002411,
+        "z": -71.58000222257007
+      },
+      "eye": {
+        "x": -37.29028034082202,
+        "y": 1.840802980600241,
+        "z": -71.58000222257007
+      },
+      "target": {
+        "x": -35.559999999999995,
+        "y": 0.09272934532163579,
+        "z": -55.626
+      },
+      "yaw": -3.03356059062563,
+      "pitch": 1.3218206295023702,
+      "landing": {
+        "x": -35.47040642144472,
+        "y": 0.0666240158303004,
+        "z": -54.489736526766
+      },
+      "flightSeconds": 5.984375,
+      "collisionSha256": "1d945f864047ac7be62df297bdf1f09c2d1b69f7904625803890ad8c3ab82079",
+      "tolerance": 0.35
+    },
+    {
+      "id": "dust2-b-doors:10:he",
+      "map": "dust2",
+      "chunk": "dust2-b-doors",
+      "course": "b-doors",
+      "name": "B doors / window approach: he toward CT mid to B retake",
+      "kind": "he",
+      "feet": {
+        "x": -27.1791875262,
+        "y": 3.5358564318563768,
+        "z": -68.4372490282
+      },
+      "eye": {
+        "x": -27.1791875262,
+        "y": 5.161456431856377,
+        "z": -68.4372490282
+      },
+      "target": {
+        "x": -24.837933331925882,
+        "y": -1.2356588595299656,
+        "z": -57.785483760611676
+      },
+      "yaw": -2.925233464841915,
+      "pitch": -0.5157392930131875,
+      "landing": {
+        "x": -26.407793408952003,
+        "y": -0.6353393794618273,
+        "z": -58.407090437175555
+      },
+      "flightSeconds": 1.625,
+      "collisionSha256": "1d945f864047ac7be62df297bdf1f09c2d1b69f7904625803890ad8c3ab82079",
+      "tolerance": 0.35
+    },
+    {
+      "id": "dust2-b-doors:11:smoke",
+      "map": "dust2",
+      "chunk": "dust2-b-doors",
+      "course": "b-doors",
+      "name": "B doors / window approach: smoke toward CT mid to B retake",
+      "kind": "smoke",
+      "feet": {
+        "x": -27.1791875262,
+        "y": 3.5358564318563768,
+        "z": -68.4372490282
+      },
+      "eye": {
+        "x": -27.1791875262,
+        "y": 5.161456431856377,
+        "z": -68.4372490282
+      },
+      "target": {
+        "x": -24.837933331925882,
+        "y": -1.2356588595299656,
+        "z": -57.785483760611676
+      },
+      "yaw": -2.925233464841915,
+      "pitch": -0.5157392930131875,
+      "landing": {
+        "x": -25.34189816191665,
+        "y": -1.2374266062733317,
+        "z": -57.34661011262121
+      },
+      "flightSeconds": 2.2890625,
+      "collisionSha256": "1d945f864047ac7be62df297bdf1f09c2d1b69f7904625803890ad8c3ab82079",
+      "tolerance": 0.35
+    },
+    {
+      "id": "dust2-b-doors:12:he",
+      "map": "dust2",
+      "chunk": "dust2-b-doors",
+      "course": "b-doors",
+      "name": "B car / back-site cover: he toward CT mid to B retake",
+      "kind": "he",
+      "feet": {
+        "x": -50.595159794999994,
+        "y": 0.8381999731063843,
+        "z": -45.2172368958
+      },
+      "eye": {
+        "x": -50.595159794999994,
+        "y": 2.463799973106384,
+        "z": -45.2172368958
+      },
+      "target": {
+        "x": -29.809799995777645,
+        "y": 0.1978170564722579,
+        "z": -58.04045128183483
+      },
+      "yaw": -1.018017648918154,
+      "pitch": 0.08495171423194009,
+      "landing": {
+        "x": -28.537295853896804,
+        "y": 0.5428056493566243,
+        "z": -58.71033719235816
+      },
+      "flightSeconds": 1.625,
+      "collisionSha256": "1d945f864047ac7be62df297bdf1f09c2d1b69f7904625803890ad8c3ab82079",
+      "tolerance": 0.35
+    },
+    {
+      "id": "dust2-b-doors:13:molotov",
+      "map": "dust2",
+      "chunk": "dust2-b-doors",
+      "course": "b-doors",
+      "name": "B car / back-site cover: molotov toward CT mid to B retake",
+      "kind": "molotov",
+      "feet": {
+        "x": -50.595159794999994,
+        "y": 0.8381999731063843,
+        "z": -45.2172368958
+      },
+      "eye": {
+        "x": -50.595159794999994,
+        "y": 2.463799973106384,
+        "z": -45.2172368958
+      },
+      "target": {
+        "x": -29.809799995777645,
+        "y": 0.1978170564722579,
+        "z": -58.04045128183483
+      },
+      "yaw": -1.018017648918154,
+      "pitch": 0.08495171423194009,
+      "landing": {
+        "x": -29.651958611913354,
+        "y": 0.15572431633927492,
+        "z": -58.133541812457274
+      },
+      "flightSeconds": 1.4609375,
+      "collisionSha256": "1d945f864047ac7be62df297bdf1f09c2d1b69f7904625803890ad8c3ab82079",
+      "tolerance": 0.35
+    },
+    {
+      "id": "dust2-b-doors:14:molotov",
+      "map": "dust2",
+      "chunk": "dust2-b-doors",
+      "course": "b-doors",
+      "name": "B tunnel exit / close cover: molotov toward CT mid to B retake",
+      "kind": "molotov",
+      "feet": {
+        "x": -47.70199684879999,
+        "y": 2.0065999031066895,
+        "z": -46.07639375
+      },
+      "eye": {
+        "x": -47.70199684879999,
+        "y": 3.6321999031066894,
+        "z": -46.07639375
+      },
+      "target": {
+        "x": -29.809799995777645,
+        "y": 0.1978170564722579,
+        "z": -58.04045128183483
+      },
+      "yaw": -0.9814049051428121,
+      "pitch": -0.03899344328963645,
+      "landing": {
+        "x": -29.649453694017552,
+        "y": 0.16133553547686033,
+        "z": -58.1421232767949
+      },
+      "flightSeconds": 1.2578125,
+      "collisionSha256": "1d945f864047ac7be62df297bdf1f09c2d1b69f7904625803890ad8c3ab82079",
+      "tolerance": 0.35
+    },
+    {
+      "id": "dust2-b-doors:15:he",
+      "map": "dust2",
+      "chunk": "dust2-b-doors",
+      "course": "b-doors",
+      "name": "B site / box cover: he toward CT mid to B retake",
+      "kind": "he",
+      "feet": {
+        "x": -47.9980408084,
+        "y": 0.04123173870125134,
+        "z": -59.0942100054
+      },
+      "eye": {
+        "x": -47.9980408084,
+        "y": 1.6668317387012512,
+        "z": -59.0942100054
+      },
+      "target": {
+        "x": -33.782,
+        "y": 0.14742496403528893,
+        "z": -54.864
+      },
+      "yaw": -1.8600185750951874,
+      "pitch": -0.07337779896114047,
+      "landing": {
+        "x": -34.55907987263644,
+        "y": 0.0861396860393572,
+        "z": -55.79065730215854
+      },
+      "flightSeconds": 1.625,
+      "collisionSha256": "1d945f864047ac7be62df297bdf1f09c2d1b69f7904625803890ad8c3ab82079",
+      "tolerance": 0.35
+    },
+    {
+      "id": "dust2-b-doors:16:smoke",
+      "map": "dust2",
+      "chunk": "dust2-b-doors",
+      "course": "b-doors",
+      "name": "B site / box cover: smoke toward CT mid to B retake",
+      "kind": "smoke",
+      "feet": {
+        "x": -47.9980408084,
+        "y": 0.04123173870125134,
+        "z": -59.0942100054
+      },
+      "eye": {
+        "x": -47.9980408084,
+        "y": 1.6668317387012512,
+        "z": -59.0942100054
+      },
+      "target": {
+        "x": -33.782,
+        "y": 0.14742496403528893,
+        "z": -54.864
+      },
+      "yaw": -1.8600185750951874,
+      "pitch": -0.07337779896114047,
+      "landing": {
+        "x": -34.5693426796844,
+        "y": 0.07779659934588384,
+        "z": -55.800935149578386
+      },
+      "flightSeconds": 1.6484375,
+      "collisionSha256": "1d945f864047ac7be62df297bdf1f09c2d1b69f7904625803890ad8c3ab82079",
+      "tolerance": 0.35
+    },
+    {
+      "id": "dust2-b-doors:17:molotov",
+      "map": "dust2",
+      "chunk": "dust2-b-doors",
+      "course": "b-doors",
+      "name": "B site / box cover: molotov toward CT mid to B retake",
+      "kind": "molotov",
+      "feet": {
+        "x": -47.9980408084,
+        "y": 0.04123173870125134,
+        "z": -59.0942100054
+      },
+      "eye": {
+        "x": -47.9980408084,
+        "y": 1.6668317387012512,
+        "z": -59.0942100054
+      },
+      "target": {
+        "x": -33.782,
+        "y": 0.14742496403528893,
+        "z": -54.864
+      },
+      "yaw": -1.8600185750951874,
+      "pitch": -0.07337779896114047,
+      "landing": {
+        "x": -33.60979569562557,
+        "y": 0.12633099295958905,
+        "z": -54.813659065452924
+      },
+      "flightSeconds": 0.859375,
+      "collisionSha256": "1d945f864047ac7be62df297bdf1f09c2d1b69f7904625803890ad8c3ab82079",
+      "tolerance": 0.35
+    },
+    {
+      "id": "dust2-tunnels:0:flash",
+      "map": "dust2",
+      "chunk": "dust2-tunnels",
+      "course": "lower-tunnels",
+      "name": "Upper deep right: flash toward Mid doors through lower tunnels",
+      "kind": "flash",
+      "feet": {
+        "x": -55.09180625,
+        "y": 1.0198687614324327,
+        "z": -26.467596848799996
+      },
+      "eye": {
+        "x": -55.09180625,
+        "y": 2.645468761432433,
+        "z": -26.467596848799996
+      },
+      "target": {
+        "x": -29.1693311190513,
+        "y": 0.5961792702707363,
+        "z": -29.06062116304924
+      },
+      "yaw": -1.4710980047691777,
+      "pitch": 0.1345404494589134,
+      "landing": {
+        "x": -28.173011384825536,
+        "y": 0.10863597250448047,
+        "z": -29.16028325244245
+      },
+      "flightSeconds": 1.625,
+      "collisionSha256": "f67c6e8c98443009823febc623aba69f10ccb073ab7be92345ca8fa612f11dcc",
+      "tolerance": 0.35
+    },
+    {
+      "id": "dust2-tunnels:1:he",
+      "map": "dust2",
+      "chunk": "dust2-tunnels",
+      "course": "lower-tunnels",
+      "name": "Lower entrance wall: he toward Mid doors through lower tunnels",
+      "kind": "he",
+      "feet": {
+        "x": -19.40480625,
+        "y": -2.8374350973643576,
+        "z": -33.8843658354
+      },
+      "eye": {
+        "x": -19.40480625,
+        "y": -1.2118350973643577,
+        "z": -33.8843658354
+      },
+      "target": {
+        "x": -10.033,
+        "y": -3.1363593946133204,
+        "z": -37.083999999999996
+      },
+      "yaw": -1.241793916127976,
+      "pitch": -0.21803130832337614,
+      "landing": {
+        "x": -10.688378125258284,
+        "y": -3.1618534842794945,
+        "z": -38.04860806349526
+      },
+      "flightSeconds": 1.625,
+      "collisionSha256": "f67c6e8c98443009823febc623aba69f10ccb073ab7be92345ca8fa612f11dcc",
+      "tolerance": 0.35
+    },
+    {
+      "id": "dust2-tunnels:2:smoke",
+      "map": "dust2",
+      "chunk": "dust2-tunnels",
+      "course": "lower-tunnels",
+      "name": "Lower entrance wall: smoke toward Mid doors through lower tunnels",
+      "kind": "smoke",
+      "feet": {
+        "x": -19.40480625,
+        "y": -2.8374350973643576,
+        "z": -33.8843658354
+      },
+      "eye": {
+        "x": -19.40480625,
+        "y": -1.2118350973643577,
+        "z": -33.8843658354
+      },
+      "target": {
+        "x": -10.033,
+        "y": -3.1363593946133204,
+        "z": -37.083999999999996
+      },
+      "yaw": -1.241793916127976,
+      "pitch": -0.21803130832337614,
+      "landing": {
+        "x": -10.688378125258284,
+        "y": -3.1618534842794945,
+        "z": -38.04860806349526
+      },
+      "flightSeconds": 1.4453125,
+      "collisionSha256": "f67c6e8c98443009823febc623aba69f10ccb073ab7be92345ca8fa612f11dcc",
+      "tolerance": 0.35
+    },
+    {
+      "id": "dust2-tunnels:3:molotov",
+      "map": "dust2",
+      "chunk": "dust2-tunnels",
+      "course": "lower-tunnels",
+      "name": "Lower entrance wall: molotov toward Mid doors through lower tunnels",
+      "kind": "molotov",
+      "feet": {
+        "x": -19.40480625,
+        "y": -2.8374350973643576,
+        "z": -33.8843658354
+      },
+      "eye": {
+        "x": -19.40480625,
+        "y": -1.2118350973643577,
+        "z": -33.8843658354
+      },
+      "target": {
+        "x": -10.033,
+        "y": -3.1363593946133204,
+        "z": -37.083999999999996
+      },
+      "yaw": -1.241793916127976,
+      "pitch": -0.21803130832337614,
+      "landing": {
+        "x": -9.935532117101243,
+        "y": -3.158513358873484,
+        "z": -37.117269742037415
+      },
+      "flightSeconds": 0.5625,
+      "collisionSha256": "f67c6e8c98443009823febc623aba69f10ccb073ab7be92345ca8fa612f11dcc",
+      "tolerance": 0.35
+    },
+    {
+      "id": "dust2-tunnels:4:he",
+      "map": "dust2",
+      "chunk": "dust2-tunnels",
+      "course": "lower-tunnels",
+      "name": "CT spawn / mid cover: he toward Mid doors through lower tunnels",
+      "kind": "he",
+      "feet": {
+        "x": -15.3916016018,
+        "y": -2.9918267037241066,
+        "z": -46.0022587446
+      },
+      "eye": {
+        "x": -15.3916016018,
+        "y": -1.3662267037241067,
+        "z": -46.0022587446
+      },
+      "target": {
+        "x": -10.033,
+        "y": -3.1264213834901797,
+        "z": -45.8216
+      },
+      "yaw": -1.6044973476806292,
+      "pitch": -0.38627397879730135,
+      "landing": {
+        "x": -10.666199640918057,
+        "y": -3.114409876499135,
+        "z": -45.781245696626065
+      },
+      "flightSeconds": 1.625,
+      "collisionSha256": "f67c6e8c98443009823febc623aba69f10ccb073ab7be92345ca8fa612f11dcc",
+      "tolerance": 0.35
+    },
+    {
+      "id": "dust2-tunnels:5:smoke",
+      "map": "dust2",
+      "chunk": "dust2-tunnels",
+      "course": "lower-tunnels",
+      "name": "CT spawn / mid cover: smoke toward Mid doors through lower tunnels",
+      "kind": "smoke",
+      "feet": {
+        "x": -15.3916016018,
+        "y": -2.9918267037241066,
+        "z": -46.0022587446
+      },
+      "eye": {
+        "x": -15.3916016018,
+        "y": -1.3662267037241067,
+        "z": -46.0022587446
+      },
+      "target": {
+        "x": -10.033,
+        "y": -3.1264213834901797,
+        "z": -45.8216
+      },
+      "yaw": -1.6044973476806292,
+      "pitch": -0.38627397879730135,
+      "landing": {
+        "x": -10.834872765815993,
+        "y": -3.178934059589393,
+        "z": -45.793711589823715
+      },
+      "flightSeconds": 1.8828125,
+      "collisionSha256": "f67c6e8c98443009823febc623aba69f10ccb073ab7be92345ca8fa612f11dcc",
+      "tolerance": 0.35
+    },
+    {
+      "id": "dust2-tunnels:6:molotov",
+      "map": "dust2",
+      "chunk": "dust2-tunnels",
+      "course": "lower-tunnels",
+      "name": "CT spawn / mid cover: molotov toward Mid doors through lower tunnels",
+      "kind": "molotov",
+      "feet": {
+        "x": -15.3916016018,
+        "y": -2.9918267037241066,
+        "z": -46.0022587446
+      },
+      "eye": {
+        "x": -15.3916016018,
+        "y": -1.3662267037241067,
+        "z": -46.0022587446
+      },
+      "target": {
+        "x": -10.033,
+        "y": -3.1264213834901797,
+        "z": -45.8216
+      },
+      "yaw": -1.6044973476806292,
+      "pitch": -0.38627397879730135,
+      "landing": {
+        "x": -9.870677496839916,
+        "y": -3.152815690585997,
+        "z": -45.81668385304252
+      },
+      "flightSeconds": 0.3125,
+      "collisionSha256": "f67c6e8c98443009823febc623aba69f10ccb073ab7be92345ca8fa612f11dcc",
+      "tolerance": 0.35
+    },
+    {
+      "id": "dust2-tunnels:7:molotov",
+      "map": "dust2",
+      "chunk": "dust2-tunnels",
+      "course": "lower-tunnels",
+      "name": "Mid doors / Xbox cover: molotov toward Mid doors through lower tunnels",
+      "kind": "molotov",
+      "feet": {
+        "x": -14.4772310658,
+        "y": -2.9303909398965553,
+        "z": -43.073442174
+      },
+      "eye": {
+        "x": -14.4772310658,
+        "y": -1.3047909398965554,
+        "z": -43.073442174
+      },
+      "target": {
+        "x": -10.033,
+        "y": -3.1264213834901797,
+        "z": -45.8216
+      },
+      "yaw": -1.0169823376372191,
+      "pitch": -0.4043355818988484,
+      "landing": {
+        "x": -9.9024972194626,
+        "y": -3.1631963328748824,
+        "z": -45.904687030903915
+      },
+      "flightSeconds": 0.3046875,
+      "collisionSha256": "f67c6e8c98443009823febc623aba69f10ccb073ab7be92345ca8fa612f11dcc",
+      "tolerance": 0.35
+    },
+    {
+      "id": "dust2-tunnels:8:he",
+      "map": "dust2",
+      "chunk": "dust2-tunnels",
+      "course": "lower-tunnels",
+      "name": "Lower / upper tunnel cover: he toward Mid doors through lower tunnels",
+      "kind": "he",
+      "feet": {
+        "x": -21.9734370538,
+        "y": -2.7802973907384243,
+        "z": -38.1500124476
+      },
+      "eye": {
+        "x": -21.9734370538,
+        "y": -1.1546973907384244,
+        "z": -38.1500124476
+      },
+      "target": {
+        "x": -10.033,
+        "y": -3.1363593946133204,
+        "z": -37.083999999999996
+      },
+      "yaw": -1.6598377666283828,
+      "pitch": -0.16661486277088364,
+      "landing": {
+        "x": -10.863268848759311,
+        "y": -3.173939241204008,
+        "z": -36.87318675291865
+      },
+      "flightSeconds": 1.625,
+      "collisionSha256": "f67c6e8c98443009823febc623aba69f10ccb073ab7be92345ca8fa612f11dcc",
+      "tolerance": 0.35
+    },
+    {
+      "id": "dust2-tunnels:9:smoke",
+      "map": "dust2",
+      "chunk": "dust2-tunnels",
+      "course": "lower-tunnels",
+      "name": "Lower / upper tunnel cover: smoke toward Mid doors through lower tunnels",
+      "kind": "smoke",
+      "feet": {
+        "x": -21.9734370538,
+        "y": -2.7802973907384243,
+        "z": -38.1500124476
+      },
+      "eye": {
+        "x": -21.9734370538,
+        "y": -1.1546973907384244,
+        "z": -38.1500124476
+      },
+      "target": {
+        "x": -10.033,
+        "y": -3.1363593946133204,
+        "z": -37.083999999999996
+      },
+      "yaw": -1.6598377666283828,
+      "pitch": -0.16661486277088364,
+      "landing": {
+        "x": -10.863268848759311,
+        "y": -3.173939241204008,
+        "z": -36.87318675291865
+      },
+      "flightSeconds": 1.578125,
+      "collisionSha256": "f67c6e8c98443009823febc623aba69f10ccb073ab7be92345ca8fa612f11dcc",
+      "tolerance": 0.35
+    },
+    {
+      "id": "dust2-tunnels:10:molotov",
+      "map": "dust2",
+      "chunk": "dust2-tunnels",
+      "course": "lower-tunnels",
+      "name": "Lower / upper tunnel cover: molotov toward Mid doors through lower tunnels",
+      "kind": "molotov",
+      "feet": {
+        "x": -21.9734370538,
+        "y": -2.7802973907384243,
+        "z": -38.1500124476
+      },
+      "eye": {
+        "x": -21.9734370538,
+        "y": -1.1546973907384244,
+        "z": -38.1500124476
+      },
+      "target": {
+        "x": -10.033,
+        "y": -3.1363593946133204,
+        "z": -37.083999999999996
+      },
+      "yaw": -1.6598377666283828,
+      "pitch": -0.16661486277088364,
+      "landing": {
+        "x": -9.894270160691857,
+        "y": -3.1458713912582157,
+        "z": -37.07145607429513
+      },
+      "flightSeconds": 0.6875,
+      "collisionSha256": "f67c6e8c98443009823febc623aba69f10ccb073ab7be92345ca8fa612f11dcc",
+      "tolerance": 0.35
+    },
+    {
+      "id": "dust2-tunnels:11:flash",
+      "map": "dust2",
+      "chunk": "dust2-tunnels",
+      "course": "lower-tunnels",
+      "name": "Lower / upper tunnel cover: flash toward Mid doors through lower tunnels",
+      "kind": "flash",
+      "feet": {
+        "x": -30.479206249999997,
+        "y": -1.930400013923645,
+        "z": -38.30240625
+      },
+      "eye": {
+        "x": -30.479206249999997,
+        "y": -0.3048000139236451,
+        "z": -38.30240625
+      },
+      "target": {
+        "x": -10.033,
+        "y": -1.98635939461332,
+        "z": -37.083999999999996
+      },
+      "yaw": -1.63031676234456,
+      "pitch": 0.027011067560954914,
+      "landing": {
+        "x": -11.162514508504799,
+        "y": -2.9394549544606354,
+        "z": -36.95910116771339
+      },
+      "flightSeconds": 1.625,
+      "collisionSha256": "f67c6e8c98443009823febc623aba69f10ccb073ab7be92345ca8fa612f11dcc",
+      "tolerance": 0.35
+    },
+    {
+      "id": "dust2-tunnels:12:he",
+      "map": "dust2",
+      "chunk": "dust2-tunnels",
+      "course": "lower-tunnels",
+      "name": "Lower / upper tunnel cover: he toward Mid doors through lower tunnels",
+      "kind": "he",
+      "feet": {
+        "x": -30.479206249999997,
+        "y": -1.930400013923645,
+        "z": -38.30240625
+      },
+      "eye": {
+        "x": -30.479206249999997,
+        "y": -0.3048000139236451,
+        "z": -38.30240625
+      },
+      "target": {
+        "x": -10.033,
+        "y": -3.1363593946133204,
+        "z": -37.083999999999996
+      },
+      "yaw": -1.63031676234456,
+      "pitch": -0.03261007497866693,
+      "landing": {
+        "x": -10.119581356930587,
+        "y": -2.863030730753531,
+        "z": -36.99232960982044
+      },
+      "flightSeconds": 1.625,
+      "collisionSha256": "f67c6e8c98443009823febc623aba69f10ccb073ab7be92345ca8fa612f11dcc",
+      "tolerance": 0.35
+    },
+    {
+      "id": "dust2-tunnels:13:smoke",
+      "map": "dust2",
+      "chunk": "dust2-tunnels",
+      "course": "lower-tunnels",
+      "name": "Lower / upper tunnel cover: smoke toward Mid doors through lower tunnels",
+      "kind": "smoke",
+      "feet": {
+        "x": -30.479206249999997,
+        "y": -1.930400013923645,
+        "z": -38.30240625
+      },
+      "eye": {
+        "x": -30.479206249999997,
+        "y": -0.3048000139236451,
+        "z": -38.30240625
+      },
+      "target": {
+        "x": -10.033,
+        "y": -3.1363593946133204,
+        "z": -37.083999999999996
+      },
+      "yaw": -1.63031676234456,
+      "pitch": -0.03261007497866693,
+      "landing": {
+        "x": -11.211535116007047,
+        "y": -3.166968337364566,
+        "z": -36.93833578077932
+      },
+      "flightSeconds": 2.2421875,
+      "collisionSha256": "f67c6e8c98443009823febc623aba69f10ccb073ab7be92345ca8fa612f11dcc",
+      "tolerance": 0.35
+    },
+    {
+      "id": "dust2-tunnels:14:molotov",
+      "map": "dust2",
+      "chunk": "dust2-tunnels",
+      "course": "lower-tunnels",
+      "name": "Lower / upper tunnel cover: molotov toward Mid doors through lower tunnels",
+      "kind": "molotov",
+      "feet": {
+        "x": -30.479206249999997,
+        "y": -1.930400013923645,
+        "z": -38.30240625
+      },
+      "eye": {
+        "x": -30.479206249999997,
+        "y": -0.3048000139236451,
+        "z": -38.30240625
+      },
+      "target": {
+        "x": -10.033,
+        "y": -3.1363593946133204,
+        "z": -37.083999999999996
+      },
+      "yaw": -1.63031676234456,
+      "pitch": -0.03261007497866693,
+      "landing": {
+        "x": -9.95788735174087,
+        "y": -3.161234815451055,
+        "z": -37.07949451791065
+      },
+      "flightSeconds": 1.1875,
+      "collisionSha256": "f67c6e8c98443009823febc623aba69f10ccb073ab7be92345ca8fa612f11dcc",
+      "tolerance": 0.35
+    },
+    {
+      "id": "dust2-tunnels:15:he",
+      "map": "dust2",
+      "chunk": "dust2-tunnels",
+      "course": "lower-tunnels",
+      "name": "Mid doors / Xbox cover: he toward Mid doors through lower tunnels",
+      "kind": "he",
+      "feet": {
+        "x": -14.2640084036,
+        "y": -2.747603796936354,
+        "z": -33.8843007352
+      },
+      "eye": {
+        "x": -14.2640084036,
+        "y": -1.122003796936354,
+        "z": -33.8843007352
+      },
+      "target": {
+        "x": -10.033,
+        "y": -3.140634115090723,
+        "z": -40.9448
+      },
+      "yaw": -0.5398682868891146,
+      "pitch": -0.2825056525183402,
+      "landing": {
+        "x": -10.169267209293388,
+        "y": -3.1656581415526235,
+        "z": -40.18672750346321
+      },
+      "flightSeconds": 1.625,
+      "collisionSha256": "f67c6e8c98443009823febc623aba69f10ccb073ab7be92345ca8fa612f11dcc",
+      "tolerance": 0.35
+    },
+    {
+      "id": "dust2-tunnels:16:smoke",
+      "map": "dust2",
+      "chunk": "dust2-tunnels",
+      "course": "lower-tunnels",
+      "name": "Mid doors / Xbox cover: smoke toward Mid doors through lower tunnels",
+      "kind": "smoke",
+      "feet": {
+        "x": -14.2640084036,
+        "y": -2.747603796936354,
+        "z": -33.8843007352
+      },
+      "eye": {
+        "x": -14.2640084036,
+        "y": -1.122003796936354,
+        "z": -33.8843007352
+      },
+      "target": {
+        "x": -10.033,
+        "y": -3.140634115090723,
+        "z": -40.9448
+      },
+      "yaw": -0.5398682868891146,
+      "pitch": -0.2825056525183402,
+      "landing": {
+        "x": -10.169267209293388,
+        "y": -3.1656581415526235,
+        "z": -40.18672750346321
+      },
+      "flightSeconds": 1.2734375,
+      "collisionSha256": "f67c6e8c98443009823febc623aba69f10ccb073ab7be92345ca8fa612f11dcc",
+      "tolerance": 0.35
+    },
+    {
+      "id": "dust2-tunnels:17:molotov",
+      "map": "dust2",
+      "chunk": "dust2-tunnels",
+      "course": "lower-tunnels",
+      "name": "Mid doors / Xbox cover: molotov toward Mid doors through lower tunnels",
+      "kind": "molotov",
+      "feet": {
+        "x": -14.2640084036,
+        "y": -2.747603796936354,
+        "z": -33.8843007352
+      },
+      "eye": {
+        "x": -14.2640084036,
+        "y": -1.122003796936354,
+        "z": -33.8843007352
+      },
+      "target": {
+        "x": -10.033,
+        "y": -3.140634115090723,
+        "z": -40.9448
+      },
+      "yaw": -0.5398682868891146,
+      "pitch": -0.2825056525183402,
+      "landing": {
+        "x": -9.973294198856491,
+        "y": -3.174397453748621,
+        "z": -41.04422457772694
+      },
+      "flightSeconds": 0.46875,
+      "collisionSha256": "f67c6e8c98443009823febc623aba69f10ccb073ab7be92345ca8fa612f11dcc",
+      "tolerance": 0.35
+    },
+    {
+      "id": "dust2-top-mid:0:molotov",
+      "map": "dust2",
+      "chunk": "dust2-top-mid",
+      "course": "ct-mid-push",
+      "name": "Top mid close alternative: molotov toward CT push / mid to top mid",
+      "kind": "molotov",
+      "feet": {
+        "x": -4.5855929624,
+        "y": -0.019256852450893487,
+        "z": -12.5356286498
+      },
+      "eye": {
+        "x": -4.5855929624,
+        "y": 1.6063431475491063,
+        "z": -12.5356286498
+      },
+      "target": {
+        "x": -10.668,
+        "y": -3.1215899124331052,
+        "z": -41.452799999999996
+      },
+      "yaw": 0.2073167917867726,
+      "pitch": 0.09599191107704269,
+      "landing": {
+        "x": -10.683496301016879,
+        "y": -3.147861237989473,
+        "z": -41.528169475191554
+      },
+      "flightSeconds": 1.765625,
+      "collisionSha256": "c0fe31dccbfc5220196b5f34cdee24fbf3e12b1361085646e9b51ed005ea29b7",
+      "tolerance": 0.35
+    },
+    {
+      "id": "dust2-top-mid:1:he",
+      "map": "dust2",
+      "chunk": "dust2-top-mid",
+      "course": "ct-mid-push",
+      "name": "Lower entrance wall: he toward CT push / mid to top mid",
+      "kind": "he",
+      "feet": {
+        "x": -19.40480625,
+        "y": -2.8374350973643576,
+        "z": -33.8843658354
+      },
+      "eye": {
+        "x": -19.40480625,
+        "y": -1.2118350973643577,
+        "z": -33.8843658354
+      },
+      "target": {
+        "x": -10.033,
+        "y": -3.1363593946133204,
+        "z": -37.083999999999996
+      },
+      "yaw": -1.241793916127976,
+      "pitch": -0.21803130832337614,
+      "landing": {
+        "x": -10.688378125258284,
+        "y": -3.1618534842794945,
+        "z": -38.04860806349526
+      },
+      "flightSeconds": 1.625,
+      "collisionSha256": "c0fe31dccbfc5220196b5f34cdee24fbf3e12b1361085646e9b51ed005ea29b7",
+      "tolerance": 0.35
+    },
+    {
+      "id": "dust2-top-mid:2:smoke",
+      "map": "dust2",
+      "chunk": "dust2-top-mid",
+      "course": "ct-mid-push",
+      "name": "Lower entrance wall: smoke toward CT push / mid to top mid",
+      "kind": "smoke",
+      "feet": {
+        "x": -19.40480625,
+        "y": -2.8374350973643576,
+        "z": -33.8843658354
+      },
+      "eye": {
+        "x": -19.40480625,
+        "y": -1.2118350973643577,
+        "z": -33.8843658354
+      },
+      "target": {
+        "x": -10.033,
+        "y": -3.1363593946133204,
+        "z": -37.083999999999996
+      },
+      "yaw": -1.241793916127976,
+      "pitch": -0.21803130832337614,
+      "landing": {
+        "x": -10.688378125258284,
+        "y": -3.1618534842794945,
+        "z": -38.04860806349526
+      },
+      "flightSeconds": 1.4453125,
+      "collisionSha256": "c0fe31dccbfc5220196b5f34cdee24fbf3e12b1361085646e9b51ed005ea29b7",
+      "tolerance": 0.35
+    },
+    {
+      "id": "dust2-top-mid:3:molotov",
+      "map": "dust2",
+      "chunk": "dust2-top-mid",
+      "course": "ct-mid-push",
+      "name": "Lower entrance wall: molotov toward CT push / mid to top mid",
+      "kind": "molotov",
+      "feet": {
+        "x": -19.40480625,
+        "y": -2.8374350973643576,
+        "z": -33.8843658354
+      },
+      "eye": {
+        "x": -19.40480625,
+        "y": -1.2118350973643577,
+        "z": -33.8843658354
+      },
+      "target": {
+        "x": -10.033,
+        "y": -3.1363593946133204,
+        "z": -37.083999999999996
+      },
+      "yaw": -1.241793916127976,
+      "pitch": -0.21803130832337614,
+      "landing": {
+        "x": -9.935532117101243,
+        "y": -3.158513358873484,
+        "z": -37.117269742037415
+      },
+      "flightSeconds": 0.5625,
+      "collisionSha256": "c0fe31dccbfc5220196b5f34cdee24fbf3e12b1361085646e9b51ed005ea29b7",
+      "tolerance": 0.35
+    },
+    {
+      "id": "dust2-top-mid:4:flash",
+      "map": "dust2",
+      "chunk": "dust2-top-mid",
+      "course": "ct-mid-push",
+      "name": "CT spawn / mid cover: flash toward CT push / mid to top mid",
+      "kind": "flash",
+      "feet": {
+        "x": -15.3916016018,
+        "y": -2.9918267037241066,
+        "z": -46.0022587446
+      },
+      "eye": {
+        "x": -15.3916016018,
+        "y": -1.3662267037241067,
+        "z": -46.0022587446
+      },
+      "target": {
+        "x": -10.22058498912218,
+        "y": -1.9829061734968012,
+        "z": -39.39450616266697
+      },
+      "yaw": -2.4775716456987102,
+      "pitch": -0.12860137092560103,
+      "landing": {
+        "x": -9.463055002331362,
+        "y": -3.173886291255495,
+        "z": -40.479535737409584
+      },
+      "flightSeconds": 1.625,
+      "collisionSha256": "c0fe31dccbfc5220196b5f34cdee24fbf3e12b1361085646e9b51ed005ea29b7",
+      "tolerance": 0.35
+    },
+    {
+      "id": "dust2-top-mid:5:molotov",
+      "map": "dust2",
+      "chunk": "dust2-top-mid",
+      "course": "ct-mid-push",
+      "name": "CT spawn / mid cover: molotov toward CT push / mid to top mid",
+      "kind": "molotov",
+      "feet": {
+        "x": -15.3916016018,
+        "y": -2.9918267037241066,
+        "z": -46.0022587446
+      },
+      "eye": {
+        "x": -15.3916016018,
+        "y": -1.3662267037241067,
+        "z": -46.0022587446
+      },
+      "target": {
+        "x": -10.22058498912218,
+        "y": -3.132906173496801,
+        "z": -39.39450616266697
+      },
+      "yaw": -2.4775716456987102,
+      "pitch": -0.2506237652002214,
+      "landing": {
+        "x": -9.811664729052621,
+        "y": -3.1702139575384,
+        "z": -40.5188112564381
+      },
+      "flightSeconds": 0.5546875,
+      "collisionSha256": "c0fe31dccbfc5220196b5f34cdee24fbf3e12b1361085646e9b51ed005ea29b7",
+      "tolerance": 0.35
+    },
+    {
+      "id": "dust2-top-mid:6:he",
+      "map": "dust2",
+      "chunk": "dust2-top-mid",
+      "course": "ct-mid-push",
+      "name": "Lower / upper tunnel cover: he toward CT push / mid to top mid",
+      "kind": "he",
+      "feet": {
+        "x": -21.9734370538,
+        "y": -2.7802973907384243,
+        "z": -38.1500124476
+      },
+      "eye": {
+        "x": -21.9734370538,
+        "y": -1.1546973907384244,
+        "z": -38.1500124476
+      },
+      "target": {
+        "x": -10.033,
+        "y": -3.1363593946133204,
+        "z": -37.083999999999996
+      },
+      "yaw": -1.6598377666283828,
+      "pitch": -0.16661486277088364,
+      "landing": {
+        "x": -10.863268848759311,
+        "y": -3.173939241204008,
+        "z": -36.87318675291865
+      },
+      "flightSeconds": 1.625,
+      "collisionSha256": "c0fe31dccbfc5220196b5f34cdee24fbf3e12b1361085646e9b51ed005ea29b7",
+      "tolerance": 0.35
+    },
+    {
+      "id": "dust2-top-mid:7:smoke",
+      "map": "dust2",
+      "chunk": "dust2-top-mid",
+      "course": "ct-mid-push",
+      "name": "Lower / upper tunnel cover: smoke toward CT push / mid to top mid",
+      "kind": "smoke",
+      "feet": {
+        "x": -21.9734370538,
+        "y": -2.7802973907384243,
+        "z": -38.1500124476
+      },
+      "eye": {
+        "x": -21.9734370538,
+        "y": -1.1546973907384244,
+        "z": -38.1500124476
+      },
+      "target": {
+        "x": -10.033,
+        "y": -3.1363593946133204,
+        "z": -37.083999999999996
+      },
+      "yaw": -1.6598377666283828,
+      "pitch": -0.16661486277088364,
+      "landing": {
+        "x": -10.863268848759311,
+        "y": -3.173939241204008,
+        "z": -36.87318675291865
+      },
+      "flightSeconds": 1.578125,
+      "collisionSha256": "c0fe31dccbfc5220196b5f34cdee24fbf3e12b1361085646e9b51ed005ea29b7",
+      "tolerance": 0.35
+    },
+    {
+      "id": "dust2-top-mid:8:molotov",
+      "map": "dust2",
+      "chunk": "dust2-top-mid",
+      "course": "ct-mid-push",
+      "name": "Lower / upper tunnel cover: molotov toward CT push / mid to top mid",
+      "kind": "molotov",
+      "feet": {
+        "x": -21.9734370538,
+        "y": -2.7802973907384243,
+        "z": -38.1500124476
+      },
+      "eye": {
+        "x": -21.9734370538,
+        "y": -1.1546973907384244,
+        "z": -38.1500124476
+      },
+      "target": {
+        "x": -10.033,
+        "y": -3.1363593946133204,
+        "z": -37.083999999999996
+      },
+      "yaw": -1.6598377666283828,
+      "pitch": -0.16661486277088364,
+      "landing": {
+        "x": -9.894270160691857,
+        "y": -3.1458713912582157,
+        "z": -37.07145607429513
+      },
+      "flightSeconds": 0.6875,
+      "collisionSha256": "c0fe31dccbfc5220196b5f34cdee24fbf3e12b1361085646e9b51ed005ea29b7",
+      "tolerance": 0.35
+    },
+    {
+      "id": "dust2-top-mid:9:flash",
+      "map": "dust2",
+      "chunk": "dust2-top-mid",
+      "course": "ct-mid-push",
+      "name": "Top mid close: flash toward CT push / mid to top mid",
+      "kind": "flash",
+      "feet": {
+        "x": -5.5549508662000004,
+        "y": -0.015042936114376225,
+        "z": -13.468808876399999
+      },
+      "eye": {
+        "x": -5.5549508662000004,
+        "y": 1.6105570638856237,
+        "z": -13.468808876399999
+      },
+      "target": {
+        "x": -10.668,
+        "y": -1.9715899124331049,
+        "z": -41.452799999999996
+      },
+      "yaw": 0.18071989864519827,
+      "pitch": 0.11962341556887168,
+      "landing": {
+        "x": -10.436523677427148,
+        "y": -1.2856986736259537,
+        "z": -40.185916958443364
+      },
+      "flightSeconds": 1.625,
+      "collisionSha256": "c0fe31dccbfc5220196b5f34cdee24fbf3e12b1361085646e9b51ed005ea29b7",
+      "tolerance": 0.35
+    },
+    {
+      "id": "dust2-top-mid:10:he",
+      "map": "dust2",
+      "chunk": "dust2-top-mid",
+      "course": "ct-mid-push",
+      "name": "Top mid close: he toward CT push / mid to top mid",
+      "kind": "he",
+      "feet": {
+        "x": -5.5549508662000004,
+        "y": -0.015042936114376225,
+        "z": -13.468808876399999
+      },
+      "eye": {
+        "x": -5.5549508662000004,
+        "y": 1.6105570638856237,
+        "z": -13.468808876399999
+      },
+      "target": {
+        "x": -10.668,
+        "y": -3.1215899124331052,
+        "z": -41.452799999999996
+      },
+      "yaw": 0.18071989864519827,
+      "pitch": 0.0661898160437624,
+      "landing": {
+        "x": -10.497882066361448,
+        "y": -2.584028542825894,
+        "z": -40.52173611902595
+      },
+      "flightSeconds": 1.625,
+      "collisionSha256": "c0fe31dccbfc5220196b5f34cdee24fbf3e12b1361085646e9b51ed005ea29b7",
+      "tolerance": 0.35
+    },
+    {
+      "id": "dust2-top-mid:11:molotov",
+      "map": "dust2",
+      "chunk": "dust2-top-mid",
+      "course": "ct-mid-push",
+      "name": "Top mid close: molotov toward CT push / mid to top mid",
+      "kind": "molotov",
+      "feet": {
+        "x": -5.5549508662000004,
+        "y": -0.015042936114376225,
+        "z": -13.468808876399999
+      },
+      "eye": {
+        "x": -5.5549508662000004,
+        "y": 1.6105570638856237,
+        "z": -13.468808876399999
+      },
+      "target": {
+        "x": -10.668,
+        "y": -3.1215899124331052,
+        "z": -41.452799999999996
+      },
+      "yaw": 0.18071989864519827,
+      "pitch": 0.0661898160437624,
+      "landing": {
+        "x": -10.681553576846367,
+        "y": -3.149027663739173,
+        "z": -41.52875649758517
+      },
+      "flightSeconds": 1.6875,
+      "collisionSha256": "c0fe31dccbfc5220196b5f34cdee24fbf3e12b1361085646e9b51ed005ea29b7",
+      "tolerance": 0.35
+    },
+    {
+      "id": "dust2-top-mid:12:smoke",
+      "map": "dust2",
+      "chunk": "dust2-top-mid",
+      "course": "ct-mid-push",
+      "name": "Catwalk close: smoke toward CT push / mid to top mid",
+      "kind": "smoke",
+      "feet": {
+        "x": 0.29501470143803965,
+        "y": 0.018769259166590647,
+        "z": -38.93132644145835
+      },
+      "eye": {
+        "x": 0.29501470143803965,
+        "y": 1.6443692591665906,
+        "z": -38.93132644145835
+      },
+      "target": {
+        "x": -8.878474277124354,
+        "y": 0.06119725652380992,
+        "z": -16.34296922007005
+      },
+      "yaw": 2.7558251706852888,
+      "pitch": 1.1722425954776972,
+      "landing": {
+        "x": -9.196871573286872,
+        "y": -0.03209465775679118,
+        "z": -14.390720426947205
+      },
+      "flightSeconds": 5.8828125,
+      "collisionSha256": "c0fe31dccbfc5220196b5f34cdee24fbf3e12b1361085646e9b51ed005ea29b7",
+      "tolerance": 0.35
+    },
+    {
+      "id": "dust2-top-mid:13:smoke",
+      "map": "dust2",
+      "chunk": "dust2-top-mid",
+      "course": "ct-mid-push",
+      "name": "Outside long corner: smoke toward CT push / mid to top mid",
+      "kind": "smoke",
+      "feet": {
+        "x": 11.6832031512,
+        "y": 0.0566104056541996,
+        "z": -11.5290598476
+      },
+      "eye": {
+        "x": 11.6832031512,
+        "y": 1.6822104056541995,
+        "z": -11.5290598476
+      },
+      "target": {
+        "x": -6.6293999999999995,
+        "y": 0.012682089801275387,
+        "z": -11.811
+      },
+      "yaw": 1.555401580531007,
+      "pitch": 1.283322032658953,
+      "landing": {
+        "x": -8.320191705023635,
+        "y": -0.06094389075961492,
+        "z": -11.705819247022218
+      },
+      "flightSeconds": 5.9609375,
+      "collisionSha256": "c0fe31dccbfc5220196b5f34cdee24fbf3e12b1361085646e9b51ed005ea29b7",
+      "tolerance": 0.35
+    },
+    {
+      "id": "dust2-top-mid:14:molotov",
+      "map": "dust2",
+      "chunk": "dust2-top-mid",
+      "course": "ct-mid-push",
+      "name": "Outside long corner: molotov toward CT push / mid to top mid",
+      "kind": "molotov",
+      "feet": {
+        "x": 11.6832031512,
+        "y": 0.0566104056541996,
+        "z": -11.5290598476
+      },
+      "eye": {
+        "x": 11.6832031512,
+        "y": 1.6822104056541995,
+        "z": -11.5290598476
+      },
+      "target": {
+        "x": -6.6293999999999995,
+        "y": 0.012682089801275387,
+        "z": -11.811
+      },
+      "yaw": 1.555401580531007,
+      "pitch": -0.016882507927908144,
+      "landing": {
+        "x": -6.786917764711993,
+        "y": -0.010742409437578473,
+        "z": -11.813063853163623
+      },
+      "flightSeconds": 1.0703125,
+      "collisionSha256": "c0fe31dccbfc5220196b5f34cdee24fbf3e12b1361085646e9b51ed005ea29b7",
+      "tolerance": 0.35
+    },
+    {
+      "id": "dust2-top-mid:15:molotov",
+      "map": "dust2",
+      "chunk": "dust2-top-mid",
+      "course": "ct-mid-push",
+      "name": "Top mid close crouched: molotov toward CT push / mid to top mid",
+      "kind": "molotov",
+      "feet": {
+        "x": 3.7598983984000003,
+        "y": 0.20320002018508115,
+        "z": -0.91360625
+      },
+      "eye": {
+        "x": 3.7598983984000003,
+        "y": 1.8288000201850811,
+        "z": -0.91360625
+      },
+      "target": {
+        "x": 3.81,
+        "y": 0.25339998988509227,
+        "z": -6.096
+      },
+      "yaw": -0.009667355128287907,
+      "pitch": -0.36848735690260126,
+      "landing": {
+        "x": 3.8139922868004708,
+        "y": 0.10555673479524363,
+        "z": -6.503272422100816
+      },
+      "flightSeconds": 0.3125,
+      "collisionSha256": "c0fe31dccbfc5220196b5f34cdee24fbf3e12b1361085646e9b51ed005ea29b7",
+      "tolerance": 0.35
+    }
+  ]
+}

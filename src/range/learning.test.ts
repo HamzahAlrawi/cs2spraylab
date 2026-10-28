@@ -21,8 +21,8 @@ describe('interactive movement lessons', () => {
   it('rejects stationary, moving and covered shots with distinct advice', () => {
     const model = new MovementLesson(2);
     model.shoot(); expect(model.message).toContain('wall');
-    model.x = 0; model.shoot(); expect(model.message).toContain('no counter-strafe');
-    model.velocity = model.cap; model.shoot(); expect(model.message).toContain('still moving');
+    model.x = 0; model.shoot(); expect(model.message).toContain('needs a counter-strafe');
+    model.velocity = model.cap; model.shoot(); expect(model.message).toContain('Moving shot');
     expect(model.complete).toBe(false);
   });
 });

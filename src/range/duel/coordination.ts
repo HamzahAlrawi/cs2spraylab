@@ -3,6 +3,8 @@ import {gameData, sniperIds, type Weapon} from '../config';
 import type {BotBehavior, SkillLevel} from './config';
 import type {CoverLane} from './geometry';
 import type {ActorCommand, DuelActorSnapshot} from './types';
+import {coordinationTiming} from './skill';
+import type {NarrowPassage} from './narrow-passage';
 
 export type TacticalPeer = {
   actor: DuelActorSnapshot;
@@ -37,11 +39,90 @@ const experienced = (level: SkillLevel, minimum = 6) => level === '10+' || level
 const MAX_BOOST_LIFT = 54 * UNIT + JUMP_SPEED * JUMP_SPEED / (2 * GRAVITY) - .08;
 const firearm = (actor: DuelActorSnapshot) => actor.equipment !== 'knife' && !!gameData.weapons[actor.equipment];
 const available = (peer: TacticalPeer) => peer.actor.alive && !peer.busy && !peer.actor.reloading &&
-  peer.actor.ammo > 0 && firearm(peer.actor) && experienced(peer.level);
+  peer.actor.ammo > 0 && firearm(peer.actor);
 const copyLane = (lane: CoverLane): CoverLane => ({...lane, anchor: {...lane.anchor}, edge: {...lane.edge},
-  retreat: {...lane.retreat}, axis: lane.axis ? {...lane.axis} : undefined});
+  retreat: {...lane.retreat}, watch: lane.watch ? {...lane.watch} : undefined, axis: lane.axis ? {...lane.axis} : undefined});
 export const copyTeamAssignment = (assignment: TeamAssignment): TeamAssignment => ({...assignment,
   lane: copyLane(assignment.lane), point: {...assignment.point}});
+
+type PassageClaim = {actorId: number; generation: number; requestedAt: number; seenAt: number;
+  direction: {x: number; z: number}};
+type PassageLease = {passage: NarrowPassage; side: DuelActorSnapshot['side']; claims: PassageClaim[];
+  owner?: PassageClaim; expiresAt: number; origin: Vec; advance: number; direction: {x: number; z: number}};
+export type PassageDecision = {ownerId: number; generation: number; expiresAt: number; waiting: boolean};
+const overlappingPassage = (a: NarrowPassage, b: NarrowPassage) => {
+  const dx = b.center.x - a.center.x, dz = b.center.z - a.center.z;
+  return Math.abs(a.center.y - b.center.y) < .75 && Math.abs(a.axis.x * b.axis.x + a.axis.z * b.axis.z) > .7 &&
+    Math.abs(dx * a.axis.z - dz * a.axis.x) < .75 && Math.abs(dx * a.axis.x + dz * a.axis.z) < 2.6;
+};
+
+// One short lease per local throat, shared by allied brains. Only active
+// requests enter the FIFO; an idle angle holder cannot reserve a corridor.
+export class PassageReservations {
+  private leases: PassageLease[] = [];
+  private lastTime = -Infinity;
+
+  release(actorId: number, generation: number, side: DuelActorSnapshot['side']) {
+    for (const lease of this.leases) {
+      if (lease.side !== side) continue;
+      lease.claims = lease.claims.filter(claim => claim.actorId !== actorId || claim.generation !== generation);
+      if (lease.owner?.actorId === actorId && lease.owner.generation === generation) lease.owner = undefined;
+    }
+  }
+
+  request(time: number, self: DuelActorSnapshot, passage: NarrowPassage,
+    allies: readonly DuelActorSnapshot[]): PassageDecision {
+    if (time < this.lastTime) this.leases = [];
+    this.lastTime = time;
+    const roster = [self, ...allies];
+    for (const lease of this.leases) {
+      lease.claims = lease.claims.filter(claim => time - claim.seenAt <= .3 && roster.some(actor =>
+        actor.id === claim.actorId && actor.generation === claim.generation && actor.side === lease.side && actor.alive));
+      if (lease.owner && (!lease.claims.includes(lease.owner) || time >= lease.expiresAt)) {
+        // A stalled owner goes behind already waiting peers even if it polls first.
+        lease.owner.requestedAt = time;
+        lease.owner = undefined;
+      }
+    }
+    this.leases = this.leases.filter(lease => lease.claims.length > 0);
+    let lease = this.leases.find(candidate => candidate.side === self.side && overlappingPassage(candidate.passage, passage));
+    // Changing route/floor releases the old throat immediately.
+    for (const other of this.leases) if (other !== lease && other.side === self.side) {
+      other.claims = other.claims.filter(claim => claim.actorId !== self.id);
+      if (other.owner?.actorId === self.id) other.owner = undefined;
+    }
+    if (!lease) {
+      lease = {passage: {center: {...passage.center}, axis: {...passage.axis}}, side: self.side,
+        claims: [], expiresAt: time, origin: {...self.position}, advance: 0, direction: {...passage.axis}};
+      this.leases.push(lease);
+    }
+    let claim = lease.claims.find(candidate => candidate.actorId === self.id && candidate.generation === self.generation);
+    if (!claim) {claim = {actorId: self.id, generation: self.generation, requestedAt: time, seenAt: time,
+      direction: {...passage.axis}}; lease.claims.push(claim);}
+    claim.seenAt = time;
+    claim.direction = {...passage.axis};
+    if (!lease.owner) {
+      lease.owner = [...lease.claims].sort((a, b) => a.requestedAt - b.requestedAt || a.actorId - b.actorId)[0];
+      const owner = roster.find(actor => actor.id === lease!.owner!.actorId && actor.side === self.side)!;
+      lease.origin = {...owner.position}; lease.advance = 0;
+      lease.direction = {...lease.owner.direction};
+      lease.expiresAt = time + .65;
+    } else if (lease.owner === claim) {
+      const advance = (self.position.x - lease.origin.x) * lease.direction.x +
+        (self.position.z - lease.origin.z) * lease.direction.z;
+      if (advance - lease.advance >= .12) {lease.advance = advance; lease.expiresAt = time + .65;}
+    }
+    return {ownerId: lease.owner.actorId, generation: lease.owner.generation,
+      expiresAt: lease.expiresAt, waiting: lease.owner !== claim};
+  }
+}
+
+const passageBoards = new WeakMap<object, PassageReservations>();
+export function passageReservations(arena: object) {
+  let board = passageBoards.get(arena);
+  if (!board) {board = new PassageReservations(); passageBoards.set(arena, board);}
+  return board;
+}
 
 // Inputs contain allied state and reports of evidence only, never enemy actors.
 // One planner per side/round; output can be polled at motor frequency.
@@ -50,8 +131,11 @@ export class TeamTacticsPlanner {
   private assignments: TeamAssignment[] = [];
   private leaderId?: number;
   private contactAt = -Infinity;
+  private stagingUntil = -Infinity;
 
-  plan(time: number, peers: readonly TacticalPeer[], lanes: readonly CoverLane[], contacts: readonly TeamContact[]) {
+  plan(time: number, peers: readonly TacticalPeer[], lanes: readonly CoverLane[], contacts: readonly TeamContact[], trading = true) {
+    if (!trading) this.assignments = this.assignments.filter(assignment => assignment.role !== 'trade')
+      .map(assignment => ({...assignment, waitForPartner: false}));
     const fresh = contacts.filter(contact => time >= contact.observedAt && time - contact.observedAt < 2 &&
       [contact.point.x, contact.point.y, contact.point.z].every(Number.isFinite) &&
       peers.some(peer => peer.actor.id === contact.reporterId))
@@ -60,16 +144,28 @@ export class TeamTacticsPlanner {
     const reporter = peers.find(peer => peer.actor.id === fresh.reporterId)!;
     const allies = peers.filter(peer => peer.actor.side === reporter.actor.side && available(peer));
     const leader = peers.find(peer => peer.actor.id === this.leaderId);
-    // A teammate's shot/down cue accelerates an already planned trade, but
-    // cannot supply a new enemy position or bypass personal sight recognition.
-    const release = leader && ((leader.lastShotAt ?? -Infinity) >= this.contactAt &&
+    // A recognized report plus the reporter's current local sight releases
+    // support while that teammate is alive, without waiting for a shot/death.
+    const liveContact = fresh.source === 'sight' && reporter.actor.alive && time - fresh.observedAt < .25 &&
+      time >= (reporter.contactAt ?? Infinity) && time - (reporter.contactAt ?? -Infinity) < .12;
+    const release = trading && (liveContact || leader && ((leader.lastShotAt ?? -Infinity) >= this.contactAt &&
       time >= (leader.lastShotAt ?? Infinity) && time - (leader.lastShotAt ?? -Infinity) < .35 ||
-      !leader.actor.alive && time >= (leader.lastDownAt ?? Infinity) && time - (leader.lastDownAt ?? -Infinity) < .6);
-    if (release && leader && !leader.actor.alive) {
+      !leader.actor.alive && time >= (leader.lastDownAt ?? Infinity) && time - (leader.lastDownAt ?? -Infinity) < .6));
+    const releaseTrades = (assignments: TeamAssignment[]) => {
+      for (const assignment of assignments) {
+        if (liveContact) assignment.waitForPartner = false;
+        if (assignment.role !== 'trade') continue;
+        const peer = allies.find(peer => peer.actor.id === assignment.actorId)!;
+        const delay = coordinationTiming(peer.level, peer.actor.id, peer.actor.generation).followupDelay;
+        assignment.peekAt = Math.min(assignment.peekAt, time + delay); assignment.waitForPartner = false;
+      }
+    };
+    if (trading && leader && !leader.actor.alive && time >= (leader.lastDownAt ?? Infinity) &&
+      (leader.lastDownAt ?? -Infinity) >= this.contactAt) {
       const trades = this.assignments.filter(assignment => assignment.role === 'trade' && time < assignment.expiresAt &&
         allies.some(peer => peer.actor.id === assignment.actorId && peer.actor.generation === assignment.generation));
       if (trades.length) {
-        for (const trade of trades) {trade.peekAt = Math.min(trade.peekAt, time + .04); trade.waitForPartner = false;}
+        releaseTrades(trades);
         this.assignments = trades;
         return trades.map(copyTeamAssignment);
       }
@@ -78,8 +174,7 @@ export class TeamTacticsPlanner {
     if (time < this.nextPlanAt && this.assignments.length) {
       const valid = this.assignments.filter(assignment => time < assignment.expiresAt && allies.some(peer =>
         peer.actor.id === assignment.actorId && peer.actor.generation === assignment.generation));
-      if (release) for (const assignment of valid) if (assignment.role === 'trade')
-        {assignment.peekAt = Math.min(assignment.peekAt, time + .04); assignment.waitForPartner = false;}
+      if (release) releaseTrades(valid);
       this.assignments = valid;
       return valid.map(copyTeamAssignment);
     }
@@ -95,45 +190,55 @@ export class TeamTacticsPlanner {
     const oldLead = order.find(peer => peer.actor.id === this.leaderId);
     const entry = oldLead && score(oldLead) >= score(order[0]) - 20 ? oldLead : order[0];
     const others = order.filter(peer => peer !== entry);
-    const trader = [...others].filter(peer => gap(peer.actor.position, entry.actor.position) <= 8 &&
-      !sniperIds.includes(peer.actor.equipment as Weapon)).sort((a, b) =>
-      gap(a.actor.position, entry.actor.position) - gap(b.actor.position, entry.actor.position) || a.actor.id - b.actor.id)[0];
+    const candidates = trading ? [...others].filter(peer => gap(peer.actor.position, entry.actor.position) <= 8 &&
+      peer.actor.health >= 35 && !sniperIds.includes(peer.actor.equipment as Weapon) && peer.actor.equipment !== 'zeus').sort((a, b) =>
+      gap(a.actor.position, entry.actor.position) - gap(b.actor.position, entry.actor.position) || a.actor.id - b.actor.id) : [];
+    const trader = candidates[0];
     const nearLane = (peer: TacticalPeer, role: TeamAssignment['role'], opposite = false) => {
       const ranked = [...lanes].sort((a, b) => {
         const cost = (lane: CoverLane) => gap(peer.actor.position, lane.anchor) + gap(lane.edge, fresh.point) * .25 +
           (opposite && lane.side === entryLane.side ? 8 : 0) +
           (role === 'anchor' && lane.role !== 'camp' && lane.role !== 'offAngle' ? 5 : 0) +
-          (role === 'entry' && lane.role !== 'entry' ? 4 : 0);
+          (role === 'entry' && (peer.behavior === 'holder' || peer.behavior === 'patient' || peer.behavior === 'mixed')
+            ? lane.role === 'camp' || lane.role === 'offAngle' ? 0 : 4 : role === 'entry' && lane.role !== 'entry' ? 4 : 0);
         return cost(a) - cost(b);
       });
       return copyLane(ranked[0]);
     };
     const entryLane = nearLane(entry, 'entry');
+    // Staging points must remain authored/certified. Never shift an anchor
+    // behind an opening: on native maps that can place it inside a wall.
+    const traderLane = trader && [...lanes].filter(lane => gap(lane.edge, entryLane.edge) >= 1.15 &&
+      gap(lane.edge, entryLane.edge) <= 8 && gap(trader.actor.position, lane.anchor) <= 5)
+      .sort((a, b) => gap(trader.actor.position, a.anchor) - gap(trader.actor.position, b.anchor))[0];
+    // A second support uses a separate opening, never another slot in the same
+    // stack. Preserve ordinary crossfires if no suitable local opening exists.
+    const support = candidates.slice(1).map(peer => ({peer, lane: nearLane(peer, 'crossfire', true)}))
+      .find(({peer, lane}) => gap(lane.edge, entryLane.edge) >= 2 &&
+        (!traderLane || gap(lane.edge, traderLane.edge) >= 1.15) &&
+        gap(peer.actor.position, lane.anchor) <= 5 && gap(peer.actor.position, trader.actor.position) >= 1.15);
+    if (this.leaderId !== entry.actor.id || !previous.length || gap(previous[0].point, fresh.point) >= 2) this.stagingUntil = time + 1.1;
     this.leaderId = entry.actor.id;
     if (!previous.length || gap(previous[0].point, fresh.point) >= 2) this.contactAt = fresh.observedAt;
     const synchronized = fresh.source === 'sight' || fresh.source === 'callout';
     this.assignments = order.map(peer => {
-      const role: TeamAssignment['role'] = peer === entry ? 'entry' : peer === trader ? 'trade'
+      const role: TeamAssignment['role'] = peer === entry ? 'entry' : peer === trader || peer === support?.peer ? 'trade'
         : sniperIds.includes(peer.actor.equipment as Weapon) || peer.actor.health < 40 ? 'anchor' : 'crossfire';
-      const lane = role === 'trade' ? copyLane(entryLane) : peer === entry ? entryLane : nearLane(peer, role, role === 'crossfire');
-      if (role === 'trade') {
-        const axis = lane.axis ?? {x: lane.side, z: 0};
-        lane.anchor.x -= axis.x * 1.15; lane.anchor.z -= axis.z * 1.15;
-      }
+      const lane = peer === support?.peer ? copyLane(support.lane) : role === 'trade' ? copyLane(traderLane ?? entryLane)
+        : peer === entry ? entryLane : nearLane(peer, role, role === 'crossfire');
       const old = previous.find(assignment => assignment.actorId === peer.actor.id && assignment.role === role &&
         gap(assignment.point, fresh.point) < 2 && time < assignment.expiresAt);
-      const traderAnchor = {x: entryLane.anchor.x - (entryLane.axis?.x ?? entryLane.side) * 1.15,
-        y: entryLane.anchor.y, z: entryLane.anchor.z - (entryLane.axis?.z ?? 0) * 1.15};
-      const waitForPartner = !!trader && synchronized && (role === 'entry' || role === 'trade') && !release &&
-        (gap(entry.actor.position, entryLane.anchor) > .7 || gap(trader.actor.position, traderAnchor) > .7);
+      const waitForPartner = !!trader && synchronized && (role === 'entry' || peer === trader) && !release && time < this.stagingUntil &&
+        (gap(entry.actor.position, entryLane.anchor) > .7 || gap(trader.actor.position, (traderLane ?? entryLane).anchor) > .7);
+      const timing = coordinationTiming(peer.level, peer.actor.id, peer.actor.generation);
       return {actorId: peer.actor.id, generation: peer.actor.generation, role,
         partnerId: role === 'trade' ? entry.actor.id : role === 'entry' ? trader?.actor.id : undefined,
         lane, point: {...fresh.point}, contactAt: fresh.observedAt,
-        peekAt: old && !old.waitForPartner ? old.peekAt : time + (synchronized ? .22 : .45) + (role === 'trade' ? .1 : 0),
+        peekAt: old ? old.peekAt : time + timing.contactDelay + (synchronized ? 0 : .23) +
+          (role === 'trade' ? timing.tradeGap + (peer === support?.peer ? .12 : 0) : 0),
         expiresAt: fresh.observedAt + 2, waitForPartner};
     });
-    if (release) for (const assignment of this.assignments) if (assignment.role === 'trade')
-      {assignment.peekAt = Math.min(assignment.peekAt, time + .04); assignment.waitForPartner = false;}
+    if (release) releaseTrades(this.assignments);
     return this.assignments.map(copyTeamAssignment);
   }
 }

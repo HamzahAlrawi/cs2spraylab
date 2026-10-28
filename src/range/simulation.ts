@@ -1,12 +1,17 @@
 import { Angle, clamp, gameData, loadoutWeapon, MeasuredProfile, recoilPattern, Settings } from './config';
 import {equipmentForSlot, equipmentStats, isPumpShotgun, knifeModel, ZEUS_RECHARGE_SECONDS, type Equipment, type Slot} from './equipment';
 import {createScenario, DrillCoach, isDrillMode, RANGE_WALLS, REPOSITION_SHOTS, type CoachSample, type DrillMetrics} from './drills';
-import {WeaponRecovery} from './ballistics';
+import {WeaponRecovery, type AccuracyParameters} from './ballistics';
 import {advanceActor, DEG, GRAVITY, JUMP_SPEED, STEP, UNIT, airVelocity, groundVelocity, idleInput, type ActorEnvironment, type ActorKinematics, type MoveInput, type Vec} from './actor-physics';
-import {direction, shotDirections} from './shot-model';
+import {accuracySpeedUnits, direction, shotDirections} from './shot-model';
 import {TERRAIN_RULES} from './terrain';
 import {resolveDamage} from './duel/damage';
 import {NativeReloadState, WeaponActions, type ReloadActionEvent} from './weapon-actions';
+import {shouldAutoReloadEmptyMagazine} from './empty-magazine';
+import {coachRangeAttempt, type RangePractice, type RangeShotSkill} from './range-coaching';
+import type {CoachingSummary} from './coaching-types';
+import {sampleShotState,type ShotSampleState} from './duel/shot-time';
+import {audibleLanding} from './sound-model';
 
 export {DEG, GRAVITY, JUMP_SPEED, STEP, UNIT, airVelocity, groundVelocity, idleInput, direction};
 export const VERTICAL_FOV = 2 * Math.atan(.75) / DEG;
@@ -15,10 +20,11 @@ export const SPAWN_Z = TARGET_Z + 12;
 export type {Vec};
 export type Shot = {index: number; at: number; origin: Vec; direction: Vec; recoil: Angle; equipment?: Equipment; melee?: boolean;
   ordinal: number; kind: 'bullet' | 'pellets' | 'melee' | 'zeus'; attack: 'primary' | 'secondary';
-  maxDistance: number; pelletDirections?: Vec[]; firstSlash?: boolean};
+  maxDistance: number; pelletDirections?: Vec[]; firstSlash?: boolean;
+  accuracy?: {stats: AccuracyParameters; walking: boolean; grounded: boolean}; targetX?:number};
 export type RangeWeaponActionEvent = (ReloadActionEvent | {kind: 'zeus-discharge' | 'zeus-ready'; at: number}) & {equipment: Equipment};
-export type ImpactSample = { x: number; y: number; hit: boolean; head: boolean; bullet: number };
-export type Result = { id: string; weapon: Equipment; mode: Settings['mode'] | 'tracking'; shots: number; hits: number; heads: number; seconds: number; tracking: number; date: string; samples: ImpactSample[]; drill?: DrillMetrics };
+export type ImpactSample = { x: number; y: number; hit: boolean; head: boolean; bullet: number } & Partial<RangeShotSkill>;
+export type Result = { id: string; weapon: Equipment; mode: Settings['mode'] | 'tracking'; shots: number; hits: number; heads: number; seconds: number; tracking: number; date: string; samples: ImpactSample[]; drill?: DrillMetrics; practice?: RangePractice; coaching?: CoachingSummary };
 export type Input = MoveInput;
 
 export function mouseAngle(count: number, sensitivity: number) { return count * .022 * sensitivity * DEG; }
@@ -49,6 +55,7 @@ export class Simulation {
   private stepDistance = 0;
   input = idleInput(); active = false; firing = false; automatic = false;
   readyAt = 0; nextShot = 0; startedAt = 0; shots = 0; hits = 0; heads = 0;
+  private fireInterval?:{start:number;dt:number;recovery:WeaponRecovery;before:ShotSampleState;targetX:number;targetVelocity:number};
   recoil: Angle = { yaw: 0, pitch: 0 };
   pattern: Angle[]; latest?: Result; measured?: MeasuredProfile;
   samples: ImpactSample[] = []; attempts = 0;
@@ -68,6 +75,8 @@ export class Simulation {
   private burstLeft = 0;
   private burstEnd = 0;
   private releasedBurst = false;
+  // A completed training burst is not a physical trigger release.
+  private attackHeld = false;
   get actions() {
     let state = this.actionStates.get(this.equipped);
     if (!state) {state = new WeaponActions(this.equipped); this.actionStates.set(this.equipped, state);}
@@ -113,15 +122,18 @@ export class Simulation {
   resetRecovery(){this.recoveryStates.clear();this.recoil={yaw:0,pitch:0};}
   predictedRecoil(next=false){
     if (this.equipped === 'knife' || this.equipped === 'zeus') return {yaw: 0, pitch: 0};
-    const due=this.firing?this.nextShot:Math.max(this.time,this.shotReady.get(this.equipped) ?? 0,this.burstEnd);
-    const scheduledDelay=(at:number)=>Math.max(0,Math.ceil((at-this.time)/STEP-1e-8))*STEP;
-    const delay=scheduledDelay(due);
-    if(!next)return this.recovery.predict(delay);
-    const state=Object.assign(Object.create(WeaponRecovery.prototype),this.recovery) as WeaponRecovery;
-    state.advance(delay);
+    const due=Math.max(this.time,this.firing?this.nextShot:Math.max(this.shotReady.get(this.equipped)??0,this.burstEnd),
+      this.reloadState.fireReadyAt,this.equipReadyAt,this.actions.readyAt);
+    const state=this.recovery.fork();
+    const advance=(from:number,to:number)=>{
+      while(to-from>1e-9){const boundary=(Math.floor(from/STEP+1e-8)+1)*STEP;
+        const end=Math.min(to,boundary);state.advance(end-from,this.duckAmount>=.95,!this.grounded);from=end;}
+    };
+    advance(this.time,due);
+    if(!next)return state.recoil;
     const cadence = this.actions.burst && this.burstLeft !== 1 ? this.actions.burstInterval : this.stats.cycle;
     const following = this.actions.burst && this.burstLeft === 1 ? this.burstEnd : due + cadence;
-    return state.predict(scheduledDelay(following)-delay,true);
+    state.fire();advance(due,following);return state.recoil;
   }
   get burstSize() {
     if (this.slot === 3 || this.settings.mode === 'precision') return 1;
@@ -139,10 +151,10 @@ export class Simulation {
       ? Math.max(0, healthDamageOverride) : resolveDamage(this.equipped, head ? 'head' : 'chest', distance, 0, false).healthDamage;
     this.targetHealth[index] = Math.max(0, this.targetHealth[index] - healthDamage);
   }
-  targetPosition(index: number): Vec {
+  targetPosition(index: number, targetX=this.targetX): Vec {
     if (this.drill) return {...this.drill.scenario.target};
     const transfer = this.settings.mode === 'transfer';
-    return { x: this.targetX + (transfer ? index === 0 ? -2 : 2 : 0), y: 0, z: TARGET_Z };
+    return { x: targetX + (transfer ? index === 0 ? -2 : 2 : 0), y: 0, z: TARGET_Z };
   }
   onShot: (shot: Shot) => void = () => {};
   onSound: (landing: boolean) => void = () => {};
@@ -171,6 +183,7 @@ export class Simulation {
   equip(slot: Slot) {
     if (slot === 1 && !this.settings.primaryEnabled) return false;
     if (slot === this.slot) return false;
+    this.attackHeld = false;
     this.burstLeft = 0; this.burstEnd = 0; this.finish(); this.actions.holster(); this.reloadState.cancel();
     this.previousSlot = this.slot; this.slot = slot;
     if (this.equipped !== 'knife') this.pattern = recoilPattern(this.equipped, this.slot === 1 ? this.measured : undefined);
@@ -186,6 +199,7 @@ export class Simulation {
     this.ammoStates.clear(); this.shotReady.clear(); this.shotOrdinals.clear(); this.rechargeTimes.clear(); this.actionEvents = [];
     this.lastShotAt = this.meleeAt = -Infinity; this.firstSlashAfter = -Infinity; this.lastMelee = undefined;
     this.burstLeft = 0; this.burstEnd = 0; this.reloadHeld = false;
+    this.attackHeld = false;
   }
   private resetMovementHistory() {
     this.velocityModifier = 1; this.movementTime = this.time;
@@ -203,8 +217,9 @@ export class Simulation {
     this.firstSlashAfter = attack.at + cycle + knifeModel.firstSlashGrace;
     if (this.equipped === 'knife') this.nextShot = attack.at + cycle;
   }
-  coachSample(): CoachSample {
-    return {time:this.time,position:this.position,yaw:this.yaw,pitch:this.pitch,velocity:this.velocity,speedCap:this.stats.speed*UNIT,input:this.input,feet:this.feet,grounded:this.grounded};
+  coachSample(accuracyStats = this.stats): CoachSample {
+    return {time:this.time,position:this.position,yaw:this.yaw,pitch:this.pitch,velocity:this.velocity,speedCap:accuracyStats.speed*UNIT,input:this.input,feet:this.feet,grounded:this.grounded,
+      equipment: this.equipped, accuracyStats, walking: this.input.walk, crouching: this.duckAmount >= .95};
   }
   newDrill(resetPosition = false) {
     this.previousPosition = undefined;
@@ -233,9 +248,16 @@ export class Simulation {
     this.publishResult(this.drillResult);
   }
   publishResult(drill?: DrillMetrics) {
+    const distances = this.samples.map(s => s.distance).filter((n): n is number => typeof n === 'number' && Number.isFinite(n));
     this.latest = {id:`${Date.now()}-${Math.random().toString(36).slice(2)}`,weapon:this.equipped,mode:this.settings.mode,
       shots:drill?.shots ?? this.shots,hits:drill?.hits ?? this.hits,heads:drill?.heads ?? this.heads,
-      seconds:this.time-(this.drill?.beganAt ?? this.startedAt),tracking:0,date:new Date().toISOString(),samples:[...this.samples],...(drill ? {drill} : {})};
+      seconds:this.time-(this.drill?.beganAt ?? this.startedAt),tracking:0,date:new Date().toISOString(),samples:[...this.samples],...(drill ? {drill} : {}),
+      practice: {spread: this.settings.spread, moving: this.settings.moving, burst: this.burstSize,
+        distance: distances.length ? distances.reduce((a, b) => a + b, 0) / distances.length : Math.hypot(this.position.x - this.targetX, this.position.z - TARGET_Z),
+        transferRule: this.settings.transferRule, transferAfter: this.settings.transferAfter,
+        ...(drill ? {pace: this.settings.drillPace, peekDuration: this.settings.peekDuration} : {})}};
+    if (drill?.coaching) this.latest.coaching = drill.coaching;
+    else if (['guided', 'spray', 'transfer'].includes(this.settings.mode)) this.latest.coaching = coachRangeAttempt(this.latest);
     this.attempts++; this.onResult(this.latest);
   }
   aim(dx: number, dy: number, touch = false) {
@@ -245,19 +267,20 @@ export class Simulation {
     this.pitch = clamp(this.pitch - dy * scale * (this.settings.invertY ? -1 : 1), -89 * DEG, 89 * DEG);
   }
   start(automatic = false, alternate = false) {
+    this.attackHeld = true;
     if (this.firing || this.time < Math.max(this.equipReadyAt, this.actions.readyAt) || this.drill?.finished) return false;
     if(this.equipped==='knife'&&this.time<(this.shotReady.get('knife')??0))return false;
     if (this.reloadState.active) {
       if (!this.reloadState.stats.reloadsSingleShells) return false;
       this.reloadState.interrupt();
     }
-    if (!this.reloadState.active && this.equipped !== 'knife' && this.loadedAmmo === 0) { this.reload(); return false; }
+    if (!this.reloadState.active && this.equipped !== 'knife' && this.loadedAmmo === 0) { this.active = true; return false; }
     this.meleeSecondary = this.equipped === 'knife' && alternate;
     this.actions.alternateFire = this.actions.isRevolver && alternate;
     this.active = true; this.firing = true; this.automatic = automatic;
     this.shots = this.hits = this.heads = 0;
     this.startedAt = this.time; this.nextShot = Math.max(this.time, this.shotReady.get(this.equipped) ?? 0,
-      this.burstEnd, this.reloadState.until, this.actions.chargeTrigger(this.time, true));
+      this.burstEnd, this.reloadState.fireReadyAt, this.actions.chargeTrigger(this.time, true));
     this.releasedBurst = false;
     this.targetHealth = [100, 100];
     this.latest = undefined;
@@ -266,10 +289,12 @@ export class Simulation {
     return true;
   }
   release(pointerType: string) {
+    this.attackHeld = false;
     if (this.automatic || pointerType === 'touch') return;
     if (this.burstLeft) this.releasedBurst = true; else this.finish();
   }
   cancel() {
+    this.attackHeld = false;
     this.burstLeft = 0;
     this.previousPosition = undefined;
     if (this.firing) this.finish();
@@ -299,6 +324,9 @@ export class Simulation {
   }
   step(dt: number) {
     this.previousPosition = {...this.position};
+    const shotBefore:ShotSampleState|undefined=this.firing?{position:{...this.position},velocity:{...this.velocity},
+      yaw:this.yaw,pitch:this.pitch,feet:this.feet,duckAmount:this.duckAmount,grounded:this.grounded,
+      verticalVelocity:this.verticalVelocity,landedAt:this.landedAt}:undefined;
     this.time += dt;
     this.actions.advance(this.time);
     const weapon = this.stats;
@@ -312,7 +340,7 @@ export class Simulation {
       {...this.environment, time: this.time - dt});
     this.input.jumpPressed = false; this.input.jumpPressOffset = 0;
     const traveled = Math.hypot(next.position.x - this.position.x, next.position.z - this.position.z);
-    if (next.grounded && !this.grounded) this.onSound(true);
+    if (audibleLanding(this,next)) {this.stepDistance=0;this.onSound(true);}
     const audible = Math.hypot(next.velocity.x, next.velocity.z) > weapon.speed * UNIT * .54;
     if (next.grounded && audible && traveled > 0) {
       this.stepDistance += traveled;
@@ -333,6 +361,8 @@ export class Simulation {
     const crouch = this.duckAmount >= .95;
     const recovery=this.recovery;
     if (!this.measured || this.slot !== 1) recovery.setParameters(weapon);
+    this.fireInterval=shotBefore?{start:this.time-dt,dt,recovery:recovery.fork(),before:shotBefore,
+      targetX:this.targetX,targetVelocity:this.settings.moving&&!this.drill?this.targetSign*targetSpeed(this.settings):0}:undefined;
     for (const [id, state] of this.recoveryStates) {
       if (id === 'zeus') {
         const stats = equipmentStats(id);
@@ -362,10 +392,18 @@ export class Simulation {
     }
     if (this.firing && this.actions.isRevolver && !this.actions.alternateFire) this.nextShot = Math.max(this.nextShot, this.actions.chargeTrigger(this.time, true));
     if (this.firing && !this.reloadState.active && this.time + 1e-9 >= this.nextShot) this.fire();
+    this.fireInterval=undefined;
+    if (this.loadedAmmo === 0 && shouldAutoReloadEmptyMagazine(this.time, {
+      equipment: this.equipped, ammo: this.loadedAmmo, reserve: this.reserveAmmo,
+      active: this.active && !this.drill?.finished, reloading: this.reloadState.active,
+      attackHeld: this.attackHeld || this.firing, burstPending: this.burstLeft > 0,
+      readyAt: Math.max(this.equipReadyAt, this.shotReady.get(this.equipped) ?? 0,
+        this.burstEnd, this.actions.readyAt, this.reloadState.fireReadyAt),
+    })) this.reload();
   }
   fire() {
     const weapon = this.stats;
-    if (this.reloadState.active || this.time + 1e-9 < (this.shotReady.get(this.equipped) ?? 0)) return;
+    if (this.reloadState.active || this.time + 1e-9 < Math.max(this.shotReady.get(this.equipped) ?? 0, this.reloadState.fireReadyAt)) return;
     if (this.equipped === 'knife') {
       const secondary = this.meleeSecondary, ordinal = this.shotOrdinals.get('knife') ?? 0;
       const firstSlash = !secondary && this.time + 1e-9 >= this.firstSlashAfter;
@@ -382,12 +420,18 @@ export class Simulation {
     if (!this.measured || this.slot !== 1) this.recovery.setParameters(weapon);
     if (this.shots >= this.burstSize || this.loadedAmmo <= 0) {this.burstLeft = 0; this.finish(); return;}
     if (this.actions.burst && !this.burstLeft) {this.burstLeft = 3; this.burstEnd = this.nextShot + this.actions.burstCycle;}
+    const interval=this.fireInterval;
+    const shotAt=interval?Math.max(interval.start,Math.min(this.time,Math.max(this.nextShot,this.actions.readyAt,this.reloadState.fireReadyAt,this.equipReadyAt))):this.time;
+    const after=interval?this.time-shotAt:0;
+    const sampled=interval?sampleShotState(interval.before,this,shotAt,this.time,interval.dt):this;
+    if(after>1e-9&&interval){this.recovery.restore(interval.recovery);this.recovery.advance(Math.max(0,interval.dt-after),(sampled.duckAmount??0)>=.95,!sampled.grounded);}
     this.recoil = this.equipped === 'zeus' ? {yaw: 0, pitch: 0} : this.recovery.recoil;
-    if (this.equipped === 'zeus') this.recovery.penalty = !this.grounded ? weapon.stand + weapon.jump : this.duckAmount >= .95 ? weapon.crouch : weapon.stand;
+    if (this.equipped === 'zeus') this.recovery.penalty = !sampled.grounded ? weapon.stand + weapon.jump : (sampled.duckAmount??0) >= .95 ? weapon.crouch : weapon.stand;
     const ordinal = this.shotOrdinals.get(this.equipped) ?? 0;
-    const directions = shotDirections({yaw:this.yaw,pitch:this.pitch,recoil:this.recoil,weapon,recovery:this.recovery,
-      speedRatio:Math.hypot(this.velocity.x,this.velocity.z)/(weapon.speed*UNIT),walking:this.input.walk,
-      airborne:!this.grounded,verticalSpeedUnits:this.verticalVelocity/UNIT,spread:this.settings.spread,
+    const directions = shotDirections({yaw:sampled.yaw,pitch:sampled.pitch,recoil:this.recoil,weapon,recovery:this.recovery,
+      speedRatio:Math.hypot(sampled.velocity.x,sampled.velocity.z)/(weapon.speed*UNIT),walking:this.input.walk,
+      speedUnits:accuracySpeedUnits(sampled.velocity),
+      airborne:!sampled.grounded,verticalSpeedUnits:(sampled.verticalVelocity??0)/UNIT,spread:this.settings.spread,
       weaponId:this.equipped,alternateFire:this.actions.alternateFire,recoilIndex:this.recovery.index,seed:ordinal+1}, weapon.pellets, this.random);
     const index = this.shots++;
     this.reloadState.ammo--; this.shotOrdinals.set(this.equipped, ordinal + 1);
@@ -396,19 +440,25 @@ export class Simulation {
       this.rechargeTimes.set('zeus', this.time + ZEUS_RECHARGE_SECONDS);
       this.actionEvents.push({kind: 'zeus-discharge', at: this.time, equipment: 'zeus'});
     }
-    this.lastShotAt = this.time;
-    this.actions.afterShot(this.time);
-    this.onShot({index, ordinal, at:this.time, origin:{...this.position}, direction:directions[0], recoil:this.recoil, equipment:this.equipped,
+    this.lastShotAt = shotAt;
+    this.actions.afterShot(shotAt);
+    let targetX=interval?interval.targetX+interval.targetVelocity*(shotAt-interval.start):this.targetX;
+    const extent=this.settings.mode==='transfer'?1.25:3;
+    if(Math.abs(targetX)>extent)targetX=Math.sign(targetX)*(2*extent-Math.abs(targetX));
+    this.onShot({index, ordinal, at:shotAt, origin:{...sampled.position}, direction:directions[0], recoil:this.recoil, equipment:this.equipped,targetX,
       kind:this.equipped==='zeus'?'zeus':directions.length>1?'pellets':'bullet', attack:this.actions.alternateFire?'secondary':'primary',
-      maxDistance:weapon.range*UNIT, ...(directions.length>1?{pelletDirections:directions}:{})});
+      maxDistance:weapon.range*UNIT, accuracy: {stats: weapon, walking: this.input.walk, grounded: !!sampled.grounded},
+      ...(directions.length>1?{pelletDirections:directions}:{})});
+    if(after>1e-9)this.recovery.advance(after,this.duckAmount>=.95,!this.grounded);
     if (this.drill && !this.drill.finished) {
       const sample = this.samples[this.samples.length-1];
-      this.drill.record(this.coachSample(),!!sample?.hit,!!sample?.head);
+      this.drill.record(this.coachSample(weapon),!!sample?.hit,!!sample?.head);
       if (this.settings.mode==='precision' || this.settings.mode==='burst' && this.drill.shots>=REPOSITION_SHOTS) this.completeDrill();
     }
     if (this.burstLeft) {this.burstLeft--; this.nextShot = this.burstLeft ? this.nextShot + this.actions.burstInterval : this.burstEnd;}
     else this.nextShot += weapon.cycle;
     this.shotReady.set(this.equipped, this.nextShot);
+    if (!this.loadedAmmo) this.burstLeft = 0;
     if (this.shots >= this.burstSize || !this.loadedAmmo || !this.burstLeft && (!weapon.fullAuto || this.releasedBurst)) this.finish();
   }
 }
