@@ -176,7 +176,8 @@ describe('cover-based duel arena', () => {
     let sawReload = false;
     let resumedWithAmmo = false;
     let firedAfterReload = false;
-    for (let tick = 0; tick < 9 / STEP; tick++) {
+    // Beginner acquisition now takes longer after the covered reload/search route.
+    for (let tick = 0; tick < 12 / STEP && !firedAfterReload; tick++) {
       sim.step();
       const bot=sim.snapshot()[1];
       sawReload ||= bot.reloading;

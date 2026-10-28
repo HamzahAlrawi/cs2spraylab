@@ -170,7 +170,7 @@ export function createBotTraits(level: SkillLevel, seed: number, actorId: number
   const noviceAim = typeof level === 'number' && level <= 4 ? easing : 0;
   const stopBase = interpolate(level, [.45, .72, .93, .96]) - midrank * .025 - easing * .015;
   const logit = Math.log(stopBase / (1 - stopBase));
-  return {
+  const traits: BotTraits = {
     recognitionMedianMs: interpolate(level, [360, 260, 190, 165]) * (1 + midrank * .08 + easing * .08) * Math.exp(-.12 * recognitionStrength),
     motorSettlingMs: interpolate(level, [300, 220, 150, 125]) * (1 + midrank * .08 + easing * .08) * Math.exp(-.12 * aimStrength),
     endpointErrorDegrees: interpolate(level, [1.8, 1, .45, .3]) * (1 + midrank * .16 + noviceAim * .12) * Math.exp(-.18 * aimStrength),
@@ -178,5 +178,17 @@ export function createBotTraits(level: SkillLevel, seed: number, actorId: number
     brakeErrorMs: interpolate(level, [110, 65, 20, 16]) * (1 + midrank * .12 + noviceAim * .08) * Math.exp(-.15 * movementStrength),
     lowAimTendency: interpolate(level, [.8, .4, .1, .08]) + midrank * .04 + easing * .025,
     stopTendency: 1 / (1 + Math.exp(-(logit + .4 * movementStrength))),
+  };
+  if (level === '10+' || level >= 7) return traits;
+  // Taper assistance out before high ranks without changing identity RNG or weapon physics.
+  const assistance = (7 - level) / 6;
+  return {
+    recognitionMedianMs: traits.recognitionMedianMs * (1 + .28 * assistance),
+    motorSettlingMs: traits.motorSettlingMs * (1 + .2 * assistance),
+    endpointErrorDegrees: traits.endpointErrorDegrees * (1 + .45 * assistance),
+    preaimErrorDegrees: traits.preaimErrorDegrees * (1 + .25 * assistance),
+    brakeErrorMs: traits.brakeErrorMs * (1 + .2 * assistance),
+    lowAimTendency: traits.lowAimTendency + .05 * assistance,
+    stopTendency: Math.max(.05, traits.stopTendency - .06 * assistance),
   };
 }

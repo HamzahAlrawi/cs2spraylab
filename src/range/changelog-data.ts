@@ -361,7 +361,7 @@ const october28GrenadeChanges = {
   ],
 } as const satisfies ChangelogRelease;
 
-export const latestChanges = {
+const october28ProgressRecoveryChanges = {
   id:'update-2026-10-28-progress-recovery',title:'Progress recovery & gifts (October 28)',
   baselineCommit:'af175145e581bd4cc853440af1a529856f0a5057',
   sections:[
@@ -379,7 +379,19 @@ export const latestChanges = {
   ],
 } as const satisfies ChangelogRelease;
 
+export const latestChanges = {
+  id:'update-2026-10-29-bot-difficulty',title:'More forgiving beginner bots (October 29)',
+  baselineCommit:'fbeefb2',
+  sections:[
+    {id:'beginner-bot-assistance',title:'Easier lower ranks',items:[
+      'Levels 1-6 react and settle their aim more slowly, with less precise aim and less consistent stopping. Assistance is strongest at levels 1-3 and tapers out before level 7.',
+      'Levels 7-10+ retain their existing skill parameters. Weapon damage, spread, recoil, health, movement physics and XP rules are unchanged.',
+    ]},
+  ],
+} as const satisfies ChangelogRelease;
+
 export const changelogHistory = [
+  october28ProgressRecoveryChanges,
   october28GrenadeChanges,
   october26Changes,
   october23PreloadingChanges,

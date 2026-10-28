@@ -1,14 +1,16 @@
 import {createServer} from 'vite';
 import fs from 'node:fs/promises';
 
-const vite = await createServer({server: {middlewareMode: true}, appType: 'custom', logLevel: 'error'});
+const vite = await createServer({server: {middlewareMode: true, hmr: false}, appType: 'custom', logLevel: 'error'});
 try {
   const {DuelSimulation} = await vite.ssrLoadModule('/src/range/duel/simulation.ts');
   const {sanitizeDuelConfig} = await vite.ssrLoadModule('/src/range/duel/config.ts');
   const {testArena} = await vite.ssrLoadModule('/src/range/duel/geometry.ts');
   const results = [];
   const median = values => {values.sort((a, b) => a - b); return values.length ? Math.round(values[Math.floor(values.length / 2)] * 1000) / 1000 : null;};
-  for (const skill of [1, 5, 10, '10+']) for (const moving of [false, true]) {
+  const levels = process.argv[3]?.split(',').map(value => value === '10+' ? value : Number(value)) ?? [1, 5, 10, '10+'];
+  if (levels.some(level => level !== '10+' && (!Number.isInteger(level) || level < 1 || level > 10))) throw new Error('Levels must be 1-10 or 10+');
+  for (const skill of levels) for (const moving of [false, true]) {
     let shots = 0, hits = 0, heads = 0, misses = 0;
     const firstShots = [], firstHits = [], lethalTimes = [];
     for (let seed = 1; seed <= 32; seed++) {

@@ -1,7 +1,7 @@
 import {describe, expect, it} from 'vitest';
 import {pistolIds,weaponIds} from '../config';
 import {combatStyle, createBotTraits, peekDistribution, peekPrior, peekTypes, samplePeek, skilledFamilyWeights,
-  weaponFamily,type PeekType} from './skill';
+  weaponFamily,type BotTraits,type PeekType} from './skill';
 import type {SkillLevel} from './config';
 import {randomStream} from './rng';
 
@@ -113,7 +113,7 @@ describe('heuristic difficulty rebalance', () => {
     }
   });
 
-  it.each([5, 6, 7, 8] as const)('moderately weakens level %s identity without touching recoil', level => {
+  it.each([5, 6, 7, 8] as const)('retains the earlier level %s curve underneath low-rank assistance without touching recoil', level => {
     const index = level - 5;
     const before = {
       recognitionMedianMs: [319.24692254498706, 302.05670363871855, 284.86648473245, 267.67626582618146][index],
@@ -123,9 +123,12 @@ describe('heuristic difficulty rebalance', () => {
       brakeErrorMs: [69.03920537643032, 59.47993078584766, 49.920656195264996, 40.361381604682336][index],
     };
     const actual = createBotTraits(level, 17, 1), elite = createBotTraits(10, 17, 1);
+    const assistance = Math.max(0, (7 - level) / 6);
+    const extra = {recognitionMedianMs: 1 + .28 * assistance, motorSettlingMs: 1 + .2 * assistance,
+      endpointErrorDegrees: 1 + .45 * assistance, preaimErrorDegrees: 1 + .25 * assistance, brakeErrorMs: 1 + .2 * assistance};
     for (const key of Object.keys(before) as (keyof typeof before)[]) {
-      expect(actual[key] / before[key]).toBeGreaterThanOrEqual(1.079999);
-      expect(actual[key] / before[key]).toBeLessThanOrEqual(1.160001);
+      expect(actual[key] / extra[key] / before[key]).toBeGreaterThanOrEqual(1.079999);
+      expect(actual[key] / extra[key] / before[key]).toBeLessThanOrEqual(1.160001);
       expect(actual[key]).toBeGreaterThan(elite[key]);
     }
     expect(actual.stopTendency).toBeLessThan(elite.stopTendency);
@@ -152,17 +155,48 @@ describe('heuristic difficulty rebalance', () => {
     const identity = {recognition: 319.24692254498706 / 260, motor: 212.20678219385204 / 220,
       endpoint: .947337804719999, preaim: 2.652545853215997 / 2.8};
     const before = createBotTraits(3, 17, 1);
-    expect(before.recognitionMedianMs / (310 * identity.recognition)).toBeCloseTo(1.08, 12);
-    expect(before.motorSettlingMs / (260 * identity.motor)).toBeCloseTo(1.08, 12);
-    expect(before.endpointErrorDegrees / (1.4 * identity.endpoint)).toBeCloseTo(1.12, 12);
-    expect(before.preaimErrorDegrees / (4.3 * identity.preaim)).toBeCloseTo(1.1, 12);
-    expect(createBotTraits(5, 17, 1).recognitionMedianMs / (319.24692254498706 * 1.08)).toBeCloseTo(1.12 / 1.08, 12);
+    expect(before.recognitionMedianMs / (310 * identity.recognition)).toBeCloseTo(1.08 * (1 + .28 * 4 / 6), 12);
+    expect(before.motorSettlingMs / (260 * identity.motor)).toBeCloseTo(1.08 * (1 + .2 * 4 / 6), 12);
+    expect(before.endpointErrorDegrees / (1.4 * identity.endpoint)).toBeCloseTo(1.12 * (1 + .45 * 4 / 6), 12);
+    expect(before.preaimErrorDegrees / (4.3 * identity.preaim)).toBeCloseTo(1.1 * (1 + .25 * 4 / 6), 12);
+    expect(createBotTraits(5, 17, 1).recognitionMedianMs / (319.24692254498706 * 1.08)).toBeCloseTo(1.12 / 1.08 * (1 + .28 * 2 / 6), 12);
     for (const level of [7, 8, 9] as const) {
       expect(createBotTraits(level, 17, 1).recognitionMedianMs).toBeLessThan(createBotTraits(5, 17, 1).recognitionMedianMs);
     }
     for (const level of [1, 2, 3] as const) {
       const distribution = peekDistribution(level, 'ak47', {}, {shoulder: 100, prefire: 100, slice: 100});
       expect(advanced.reduce((mass, type) => mass + distribution[type], 0)).toBe(0);
+    }
+  });
+});
+
+describe('beginner assistance without high-rank changes', () => {
+  it.each([
+    {level: 7 as const, recognitionMedianMs: 307.65580351104603, motorSettlingMs: 200.01453798053257,
+      endpointErrorDegrees: .857151245710655, preaimErrorDegrees: 2.222454489873117,
+      brakeErrorMs: 55.911134938696804, lowAimTendency: .32, stopTendency: .7500881164844313},
+    {level: 8 as const, recognitionMedianMs: 289.09036709227604, motorSettlingMs: 185.43014458611873,
+      endpointErrorDegrees: .736270941828383, preaimErrorDegrees: 1.8084678692104779,
+      brakeErrorMs: 45.20474739724422, lowAimTendency: .26, stopTendency: .7961448189538193},
+    {level: 9 as const, recognitionMedianMs: 250.48604691991298, motorSettlingMs: 158.1905103626897,
+      endpointErrorDegrees: .5305091706431994, preaimErrorDegrees: 1.2125923900415985,
+      brakeErrorMs: 30.80210701409968, lowAimTendency: .15999999999999998, stopTendency: .8709862076793352},
+  ])('preserves every pre-change level $level identity field', ({level, ...expected}) => {
+    const actual = createBotTraits(level, 17, 1);
+    for (const key of Object.keys(expected) as (keyof BotTraits)[]) expect(actual[key]).toBeCloseTo(expected[key], 12);
+  });
+
+  it('keeps low-rank probabilities bounded and reaction/aim curves ordered over varied identities', () => {
+    for (let seed = 1; seed <= 32; seed++) for (let actor = 1; actor <= 5; actor++) {
+      const cohort = levels.map(level => createBotTraits(level, seed, actor));
+      for (let index = 0; index < cohort.length; index++) {
+        const traits = cohort[index];
+        expect(traits.stopTendency).toBeGreaterThan(0); expect(traits.stopTendency).toBeLessThan(1);
+        expect(traits.lowAimTendency).toBeGreaterThan(0); expect(traits.lowAimTendency).toBeLessThan(1);
+        if (!index) continue;
+        for (const key of ['recognitionMedianMs', 'motorSettlingMs', 'endpointErrorDegrees', 'preaimErrorDegrees', 'brakeErrorMs'] as const)
+          expect(traits[key]).toBeLessThan(cohort[index - 1][key]);
+      }
     }
   });
 });
