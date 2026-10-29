@@ -14,6 +14,7 @@ import {nativeFlashArguments,NATIVE_GRENADE_FLASH} from './grenade-native-flash'
 import {nativeFlashVisibility} from './grenade-flash-visibility';
 import {InfernoSpread,nativeInfernoDamage} from './inferno-native';
 import {pointInSmokeHole, SMOKE_EXTINCTION, HE_SMOKE_DISPLACEMENT} from './smoke-density';
+import {HE_EXPLOSION_SECONDS} from './he-explosion';
 
 export type {UtilityKind} from './utility-loadout';
 export const UTILITY_KERNEL_VERSION='native-launch-contact-think-inferno-2000935-v4';
@@ -403,7 +404,7 @@ export class UtilitySimulation {
     if (p.kind === 'he') {
       this.sound(p, time, 'he', 60, emit);
       this.radial(p, time, UTILITY_RULES.heRadius, UTILITY_RULES.heDamage, 'he', arena, actors, armor, emit);
-      this.effect(p, time, 'burst', UTILITY_RULES.heRadius, .25);
+      this.effect(p, time, 'burst', UTILITY_RULES.heRadius, HE_EXPLOSION_SECONDS);
       for (const smoke of this.active) if (smoke.type === 'smoke' &&
         distance(p.position, smoke.position) < smoke.radius + HE_SMOKE_DISPLACEMENT.radius && clear(p.position, smoke.position, arena)) {
         this.hole(smoke, {from: {...p.position}, to: {...p.position}, radius: HE_SMOKE_DISPLACEMENT.radius,

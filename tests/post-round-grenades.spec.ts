@@ -37,5 +37,6 @@ test('live result view advances airborne grenades instead of freezing their rend
   expect(moving.position).toBeDefined(); expect(moving.position).not.toEqual(before.position);
   expect(moving.rendered).toBe(1); expect(moving.at).toBe(before.at); expect(moving.outcome).toBe('lost');
   await expect.poll(() => page.evaluate(() => (window as any).postRoundEngine.sim.utilities.projectiles.length), {timeout: 5000}).toBe(0);
+  await expect.poll(() => page.evaluate(() => (window as any).postRoundEngine.utilityRenderer.heExplosion.mesh.count)).toBeGreaterThan(0);
   expect(errors).toEqual([]);
 });

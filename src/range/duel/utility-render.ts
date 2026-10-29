@@ -11,6 +11,7 @@ import {applyGloves, type ActorCosmeticProfile} from '../actor-cosmetics';
 import particles from './utility-particles-native.json';
 import {SmokeRenderer} from './smoke-render';
 import {InfernoRenderer} from './inferno-render';
+import {HeExplosionRenderer} from './he-explosion-render';
 
 export const UTILITY_PRESENTATION_BOUNDS = Object.freeze({drops: 64, effects: 64});
 export type UtilityDropPresentation = Readonly<{id: number; utility: UtilityKind; position: Readonly<Vec>; picked?: boolean;
@@ -93,6 +94,7 @@ export class UtilityRenderer {
   private currentView?: UtilityKind;
   readonly smoke = new SmokeRenderer();
   readonly inferno = new InfernoRenderer();
+  readonly heExplosion = new HeExplosionRenderer();
   private readonly flash = billboards(UTILITY_RULES.maxEffects, 'flash');
   private readonly he = billboards(UTILITY_RULES.maxEffects, 'he');
   private readonly burstPools = [this.flash, this.he];
@@ -105,7 +107,7 @@ export class UtilityRenderer {
     this.burst.name = 'utility-burst'; this.burst.count = 0; this.burst.frustumCulled = false;
     this.he.mesh.name = 'utility-he-burst';
     this.burst.instanceMatrix.setUsage(THREE.DynamicDrawUsage); this.burst.raycast = () => {};
-    this.group.add(this.inferno.group, this.burst, this.he.mesh);
+    this.group.add(this.inferno.group, this.burst, this.he.mesh, this.heExplosion.mesh);
     this.held.position.set(VIEWMODEL_OFFSET.x, VIEWMODEL_OFFSET.y, 0); this.held.visible = false;
     parent.add(this.group); view.add(this.held);
   }
@@ -145,11 +147,12 @@ export class UtilityRenderer {
       this.particleTextures.add(texture);
       const pool = kind === 'flash' ? this.flash : this.he;
       pool.mesh.material.uniforms.atlas.value = texture;
-    })]).then(() => {});
+    }), this.heExplosion.prepare()]).then(() => {});
     await this.particleJob;
   }
   warmParticleTextures(renderer: Pick<THREE.WebGLRenderer, 'initTexture'>) {
     this.inferno.warmTextures(renderer);
+    this.heExplosion.warmTextures(renderer);
     for (const texture of this.particleTextures) renderer.initTexture(texture);
   }
 
@@ -260,6 +263,7 @@ export class UtilityRenderer {
     }
     this.smoke.update(effects, time);
     this.inferno.update(effects, time, camera);
+    this.heExplosion.update(effects, time, camera);
     this.burst.count = this.he.mesh.count = 0; this.interiorSmokeOpacity = 0;
     for (let effectIndex = 0; effectIndex < Math.min(effects.length, UTILITY_PRESENTATION_BOUNDS.effects); effectIndex++) {
       const effect = effects[effectIndex];
@@ -300,7 +304,7 @@ export class UtilityRenderer {
     this.dropSnapshot = []; this.dropSeen.clear();
     for (const item of this.drops.values()) item.model.removeFromParent(); this.drops.clear();
     for (const parts of this.projectiles.values()) for (const mesh of parts) mesh.count = 0;
-    this.smoke.clear(); this.inferno.clear(); this.burst.count = this.he.mesh.count = 0; this.cancelHeld();
+    this.smoke.clear(); this.inferno.clear(); this.heExplosion.clear(); this.burst.count = this.he.mesh.count = 0; this.cancelHeld();
     this.interiorSmokeOpacity = 0;
   }
 
@@ -315,6 +319,7 @@ export class UtilityRenderer {
     this.projectiles.clear();
     this.smoke.dispose();
     this.inferno.dispose();
+    this.heExplosion.dispose();
     for (const pool of [this.flash, this.he]) pool.fallback.dispose();
     for (const texture of this.particleTextures) texture.dispose(); this.particleTextures.clear();
     for (const mesh of [this.burst, this.he.mesh]) {mesh.geometry.dispose(); mesh.material.dispose(); mesh.dispose();}

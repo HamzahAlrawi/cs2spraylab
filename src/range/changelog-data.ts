@@ -409,7 +409,7 @@ const october29GrenadePresentationChanges = {
   ],
 } as const satisfies ChangelogRelease;
 
-export const latestChanges = {
+const october29RadarReviewChanges = {
   id: 'update-2026-10-29-radar-utility-review', title: 'Clearer radar, grenades & round review (October 29)',
   baselineCommit: '0a1ff64', sections: [
     {id: 'readable-native-radar', title: 'A useful radar', items: [
@@ -428,7 +428,17 @@ export const latestChanges = {
   ],
 } as const satisfies ChangelogRelease;
 
+export const latestChanges = {
+  id: 'update-2026-10-29-he-smoke', title: 'HE explosion smoke (October 29)', baselineCommit: 'abb9652',
+  sections: [{id: 'he-explosion-after-effect', title: 'A complete-looking HE burst', items: [
+    'HE detonations now leave expanding native-texture smoke billows and spreading dust after the central flash, with fitted frame animation and gradual dissipation.',
+    'The cosmetic after-effect stays in live play and fight review, including post-death explosions. Instant blast damage and smoke-grenade clearing are unchanged.',
+    'One pooled draw, a compressed shared atlas and prepared texture uploads keep the effect bounded. Native field ranges inform the browser adaptation; it is not the full Source 2 particle renderer.',
+  ]}],
+} as const satisfies ChangelogRelease;
+
 export const changelogHistory = [
+  october29RadarReviewChanges,
   october29GrenadePresentationChanges,
   october29BotChanges,
   october28ProgressRecoveryChanges,

@@ -5,6 +5,7 @@ import {UTILITY_RULES, type UtilityEffect, type UtilityProjectile} from './utili
 import {utilityKinds} from './utility-loadout';
 import particles from './utility-particles-native.json';
 import inferno from './inferno-presentation-native.json';
+import heExplosion from './he-explosion-native.json';
 import audit from '../../../docs/utility-active-resource-audit-2026-10-26.json';
 import {createHash} from 'node:crypto';
 import {readFileSync} from 'node:fs';
@@ -181,23 +182,23 @@ describe('bounded utility presentation', () => {
     expect(burst.geometry.getAttribute('instanceOpacity').getX(0)).toBeLessThan(alpha);
   });
   it('loads each native atlas once and disposes completed and late textures exactly once', async () => {
-    const textures = Array.from({length: 7}, () => new THREE.Texture()), disposals = textures.map(texture => {
+    const textures = Array.from({length: 8}, () => new THREE.Texture()), disposals = textures.map(texture => {
       const dispose = vi.fn(); texture.addEventListener('dispose', dispose); return dispose;
     });
     const loader = vi.spyOn(THREE.TextureLoader.prototype, 'loadAsync');
     try {
       textures.forEach(texture => loader.mockResolvedValueOnce(texture));
       const {renderer} = setup(); await renderer.prepareParticles(); await renderer.prepareParticles();
-      expect(loader).toHaveBeenCalledTimes(7);
+      expect(loader).toHaveBeenCalledTimes(8);
       const initTexture = vi.fn(); renderer.warmParticleTextures({initTexture});
-      expect(initTexture).toHaveBeenCalledTimes(7);
-      const names = ['utility-fire', 'utility-fire-edge', 'utility-fire-ground', 'utility-fire-incendiary', 'utility-fire-embers', 'utility-burst', 'utility-he-burst'];
-      [...Object.values(inferno.assets), particles.assets.flash, particles.assets.he].forEach((asset, index) => {
+      expect(initTexture).toHaveBeenCalledTimes(8);
+      const names = ['utility-fire', 'utility-fire-edge', 'utility-fire-ground', 'utility-fire-incendiary', 'utility-fire-embers', 'utility-burst', 'utility-he-burst', 'utility-he-smoke'];
+      [...Object.values(inferno.assets), particles.assets.flash, particles.assets.he, heExplosion.asset].forEach((asset, index) => {
         // In particular the embedded HE URI must reach TextureLoader without a public-path prefix.
         expect(loader).toHaveBeenNthCalledWith(index + 1, asset.url);
         const material = instance(renderer.group, names[index]).material as THREE.ShaderMaterial;
         expect(material.uniforms.atlas.value).toBe(textures[index]);
-        expect(textures[index].colorSpace).toBe(index < 5 ? THREE.SRGBColorSpace : THREE.NoColorSpace);
+        expect(textures[index].colorSpace).toBe(index < 5 || index === 7 ? THREE.SRGBColorSpace : THREE.NoColorSpace);
         expect(textures[index].generateMipmaps).toBe(false);
       });
       expect(particles.assets.he.url).toMatch(/^data:image\/webp;base64,/);
@@ -211,7 +212,7 @@ describe('bounded utility presentation', () => {
       const lateTextures = resolves.map(() => new THREE.Texture()), disposed = vi.fn();
       lateTextures.forEach(texture => texture.addEventListener('dispose', disposed));
       resolves.forEach((resolve, i) => resolve(lateTextures[i])); await job;
-      expect(disposed).toHaveBeenCalledTimes(7);
+      expect(disposed).toHaveBeenCalledTimes(8);
     } finally {loader.mockRestore();}
   });
   it('keeps failed atlases transparent without preventing the embedded HE core from loading', async () => {
