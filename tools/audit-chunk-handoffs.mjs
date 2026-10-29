@@ -44,12 +44,14 @@ try{
       e.sim.phase='result';e.sim.outcome='won';e.roundFlow.finish();
     });
     await page.waitForFunction(id=>{const e=window.handoffAudit.engine;return e.scenario.chunk.id===id&&!e.loadingMap&&e.sim.phase==='fighting';},id,{timeout:90000});
-    await page.waitForTimeout(450);
-    const row=await page.evaluate(()=>{
+    await page.waitForTimeout(3000);
+    const row=await page.evaluate(id=>{
       const a=window.handoffAudit;a.collect=false;const start=a.started,frames=a.frames.filter(frame=>frame.at>=start);
-      return {map:a.engine.scenario.chunk.id,handoffMs:frames.find(frame=>!frame.loading)?.at-start,
-        firstFrames:frames.slice(0,20),parts:a.parts,maxFrameMs:Math.max(...frames.map(frame=>frame.ms))};
-    });
+      const ready=frames.find(frame=>!frame.loading&&frame.map===id);
+      const live=frames.filter(frame=>!frame.loading&&frame.map===id&&frame.at>=ready.at&&frame.at<ready.at+3000);
+      return {map:a.engine.scenario.chunk.id,handoffMs:ready.at-start,
+        firstFrames:frames.slice(0,20),parts:a.parts,maxFrameMs:Math.max(...live.map(frame=>frame.ms)),sampleSeconds:3};
+    },id);
     results.push(row);console.log(JSON.stringify(row));
     assert.ok(row.handoffMs<500,`Prepared ${id} handoff exceeded 500 ms: ${row.handoffMs}`);
     await page.screenshot({path:`research/handoff-${id}.png`});

@@ -58,6 +58,7 @@ import {PlaybackScene, type ReplayVisual} from './playback-scene';
 import {surfaceFootstepMaterial} from '../prefire/native-surfaces';
 import {setupKey} from '../setup-key';
 import {prewarmShaders, compileRetainedShaders, warmRetainedFirstUse, disposeWarmRenderer} from '../shader-warmup';
+import {waitForGpu} from './gpu-readiness';
 import {WeaponPreloader} from '../weapon-preloader';
 import {prepareSceneGpu} from './scene-preparation';
 import {backgroundFrame} from '../prefire/background-work';
@@ -137,6 +138,8 @@ export class DuelEngine {
   private pendingMapSelection=false;
   private pendingSetupRestart=false;
   private prefetchAt=-Infinity;
+  private prefetchResumeAt=0;
+  private readonly gpuPreparationAbort=new AbortController();
   private viewAnimation?: ViewAnimation;
   private loadedViewEquipment?: Equipment;
   private pendingInspect?: Equipment;
@@ -332,19 +335,30 @@ export class DuelEngine {
     this.bindInput();
     this.observer = new ResizeObserver(() => this.resize()); this.observer.observe(host);
     this.resize();
+    this.loadingMap=!!scenario;
     void Promise.all([this.loadTarget(),this.loadViewModel(loadoutWeapon(settings)),prepareRapier(),
       this.config.utilitiesEnabled ? this.prepareUtilities() : Promise.resolve()]).then(async()=>{
       if(this.disposed)return;
       if(!this.targetScene||!this.loadedViewEquipment)return;
       this.audio.prepare();
       if (this.config.utilitiesEnabled && this.settings.volume > 0) void this.audio.preloadUtilities().catch(() => {});
+      if(scenario){
+        await prepareSceneGpu(this.renderer,scenario.scene,this.scene,this.camera,this.gpuPreparationAbort.signal,this.settings.quality);
+        this.mapLighting?.dispose();
+        this.mapLighting=takePreparedLighting(this.scene,scenario.scene)??new PrefireLighting(this.scene,scenario.scene);
+        this.mapLighting.configure(this.renderer,this.settings.quality);
+      }
       await Promise.all([scenario?compileRetainedShaders(this.renderer,this.scene,this.camera):prewarmShaders(this.renderer,this.scene,this.camera),prewarmShaders(this.renderer,this.viewScene,this.viewCamera)]);
       if(!this.disposed) {
         warmRetainedFirstUse(this.renderer,this.scene,this.camera,[this.actors]);
         warmRetainedFirstUse(this.renderer,this.viewScene,this.viewCamera,[this.viewRoot,this.utilityRenderer.held]);
       }
+      await waitForGpu(this.renderer,this.gpuPreparationAbort.signal);
       if(this.disposed)return;
-      this.criticalReady=true;this.preloadViewModels();this.report();
+      this.prefetchResumeAt=performance.now()+1800;
+      this.loadingMap=false;this.criticalReady=true;this.preloadViewModels();this.report();
+      if(this.pendingMapSelection){this.pendingMapSelection=false;this.pendingSetupRestart=false;this.restart(false,true);}
+      else if(this.pendingSetupRestart){this.pendingSetupRestart=false;this.restart(false,false);}
     }).catch(()=>{if(!this.disposed)this.onError('The range could not finish preparing. Reload to retry.');});
     this.report();
     this.frame = requestAnimationFrame(time => this.tick(time));
@@ -776,7 +790,7 @@ export class DuelEngine {
   }
 
   private activateRound(continuous:boolean,changeMap:boolean) {
-    this.seamlessHandoff=continuous&&this.sim.postWinPlayable;
+    this.seamlessHandoff=continuous;
     this.nextRoundError=undefined;
     this.closeReplay();
     this.mapAbort = new AbortController();this.loadingMap=true;
@@ -788,7 +802,7 @@ export class DuelEngine {
       if(changed) {
         if(this.mapLighting) {
           this.scene.remove(this.mapLighting.sky,this.mapLighting.fill,this.mapLighting.sun,this.mapLighting.sun.target);
-          this.mapLighting.dispose();
+          if(!this.scenario?.retainPreviousLighting?.(this.mapLighting))this.mapLighting.dispose();
         }
         this.mapLighting=takePreparedLighting(this.scene,this.scenario!.scene)??new PrefireLighting(this.scene,this.scenario!.scene);
         this.mapLighting.configure(this.renderer,this.settings.quality);
@@ -805,6 +819,9 @@ export class DuelEngine {
       if(this.disposed)return;
       this.mapLighting?.beginFrame(this.renderer,this.camera.position);
       warmRetainedFirstUse(this.renderer,this.scene,this.camera,[this.actors,this.scenario?.scene.getObjectByName('duel-route-arrows')].filter((root):root is THREE.Object3D=>!!root));
+      await waitForGpu(this.renderer,this.mapAbort!.signal);
+      if(this.disposed)return;
+      this.prefetchResumeAt=performance.now()+1800;
       this.loadingMap=false;this.seamlessHandoff=false;
       if(continuous){this.sim.start();this.beginProgression();this.updateMovement();}
       this.last=0;this.report();
@@ -1571,7 +1588,7 @@ export class DuelEngine {
     if (this.disposed) return;
     this.frame = requestAnimationFrame(time => this.tick(time));
     const active = this.sim.phase !== 'ready' && !this.paused;
-    if(this.criticalReady&&!this.loadingMap&&!this.replayView&&!this.nextRoundError&&(this.prefetchedSeed!==this.seed||timestamp-this.prefetchAt>5000)) {
+    if(this.criticalReady&&timestamp>=this.prefetchResumeAt&&!this.loadingMap&&!this.replayView&&!this.nextRoundError&&(this.prefetchedSeed!==this.seed||timestamp-this.prefetchAt>5000)) {
       this.prefetchedSeed=this.seed;this.prefetchAt=timestamp;this.scenario?.prefetchRound?.(this.seed,
         (scene,signal)=>prepareSceneGpu(this.renderer,scene,this.scene,this.camera,signal,this.settings.quality));
     }
@@ -1707,6 +1724,7 @@ export class DuelEngine {
 
   dispose() {
     this.clearPlayerCorpse();
+    this.gpuPreparationAbort.abort();
     this.mapAbort?.abort();
     this.nextRoundAbort?.abort();
     if (this.xpAttempt) this.progression?.cancelAttempt(this.xpAttempt);

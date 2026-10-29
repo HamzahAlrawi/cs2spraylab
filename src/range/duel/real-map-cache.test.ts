@@ -19,6 +19,7 @@ const navigation=(chunk:typeof realMapChunks[number])=>JSON.stringify({version:1
 const maps=new Map<string,{scene:Group;collision:{collisionSha256:string};dispose:ReturnType<typeof vi.fn>;updateVisibility:ReturnType<typeof vi.fn>}>();
 
 beforeEach(()=>{
+  vi.stubGlobal('navigator',{deviceMemory:4,hardwareConcurrency:4});
   maps.clear();vi.mocked(loadDust2).mockReset();
   vi.mocked(loadDust2).mockImplementation(async(_signal,options)=>{
     const id=options!.base.split('/').filter(Boolean).pop()!;
@@ -34,6 +35,18 @@ beforeEach(()=>{
 afterEach(()=>vi.unstubAllGlobals());
 
 describe('bounded real-map reuse',()=>{
+  it('keeps a bounded older chunk on capable devices without replacing the previous replay map',async()=>{
+    vi.stubGlobal('navigator',{deviceMemory:8,hardwareConcurrency:16});
+    const [a,b,c]=realMapChunks,signal=new AbortController().signal;
+    const session=await RealMapSession.load(sanitizeDuelConfig({realMapChunk:a.id}),1,signal);
+    for(const [seed,chunk] of [[2,b],[3,c],[4,a]] as const){
+      session.configureDuel(sanitizeDuelConfig({realMapChunk:chunk.id}));await session.prepareRound(seed,signal);
+    }
+    expect(loadDust2).toHaveBeenCalledTimes(3);expect(maps.get(a.id)!.dispose).not.toHaveBeenCalled();
+    session.replayMap(digest(c.id));session.updateView({x:1,y:2,z:3});
+    expect(maps.get(c.id)!.updateVisibility).toHaveBeenCalledOnce();
+    session.dispose();for(const chunk of [a,b,c])expect(maps.get(chunk.id)!.dispose).toHaveBeenCalledOnce();
+  });
   it('reuses the previous loaded chunk without fetching or decoding it again',async()=>{
     const [a,b,c]=realMapChunks,signal=new AbortController().signal;
     const session=await RealMapSession.load(sanitizeDuelConfig({realMapChunk:a.id}),1,signal);

@@ -17,6 +17,7 @@ export type DuelScenario = {
   report?(sim: DuelSimulation): PrefireStats;
   configureDuel?(config: DuelConfig): void;
   prepareRound?(seed: number, signal: AbortSignal): Promise<boolean>;
+  retainPreviousLighting?(light:import('../prefire/lighting').PrefireLighting):boolean;
   stageRound?(seed:number,signal:AbortSignal,warm:(scene:Group,signal:AbortSignal)=>Promise<void>):Promise<void>;
   prefetchRound?(seed:number, warm?: (scene: Group, signal: AbortSignal) => Promise<void>):void;
   replayMap?(geometrySha256?:string):void;

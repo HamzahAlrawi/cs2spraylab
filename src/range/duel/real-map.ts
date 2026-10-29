@@ -22,6 +22,8 @@ import {backgroundTurn} from '../prefire/background-work';
 import {loadMapContext} from './map-context';
 import {localChunkManifest} from './map-manifests';
 import {loadNativeRadar} from './native-radar-cache';
+import {ResidentChunks} from './resident-chunks';
+import {retainPreparedLighting,type PrefireLighting} from '../prefire/lighting';
 
 const overviews=new WeakMap<PrefireMap,{image:ImageBitmap;bounds:RadarOverview['bounds'];
   layers:({feet:number}&NonNullable<RadarOverview['source']>)[]}>();
@@ -213,6 +215,7 @@ export class RealMapSession implements DuelScenario {
   private prefetchAbort?:AbortController;
   private prefetchId?:string;
   private readonly prepared=new PreparedRound<PrefireMap>();
+  private readonly resident:ResidentChunks<PrefireMap>;
   get name(){return this.chunk.name;}
   spawnContext():SpawnContext {return {chunkId:this.chunk.id,collisionSha256:this.map.collision.collisionSha256};}
   validateLineup(lineup:unknown){return validateManualLineup(lineup,this.spawnContext(),this.map.collision);}
@@ -221,6 +224,8 @@ export class RealMapSession implements DuelScenario {
     return manualLineupFromArena(this.spawnContext(),arena,key);
   }
   private constructor(private map:PrefireMap,public chunk:RealMapChunk,private config:DuelConfig) {
+    const capable=typeof navigator!=='undefined'&&decodedPreloadAllowed(navigator);
+    this.resident=new ResidentChunks(capable?2:0,384*1024*1024);
     this.arrows=new THREE.Group();this.arrows.name='duel-route-arrows';this.arrows.visible=config.routeGuide;
     this.scene.add(map.scene,this.arrows);
   }
@@ -240,7 +245,7 @@ export class RealMapSession implements DuelScenario {
       this.prefetchAbort?.abort();this.prepared.cancel();this.prefetchId=undefined;return;
     }
     const chunk=chooseRealMapChunk(this.config.realMapChunk,seed,this.chunk.id);
-    if(chunk.id===this.chunk.id||chunk.id===this.previousChunk?.id||chunk.id===this.prefetchId)return;
+    if(chunk.id===this.chunk.id||chunk.id===this.previousChunk?.id||this.resident.has(chunk.id)||chunk.id===this.prefetchId)return;
     this.prefetchAbort?.abort();const controller=new AbortController();this.prefetchAbort=controller;this.prefetchId=chunk.id;
     if(decodedPreloadAllowed(device)) {
       const pending=this.prepared.start(chunk.id,async signal=>{
@@ -270,7 +275,7 @@ export class RealMapSession implements DuelScenario {
   async stageRound(seed:number,signal:AbortSignal,warm:(scene:THREE.Group,signal:AbortSignal)=>Promise<void>) {
     signal.throwIfAborted();
     const chunk=chooseRealMapChunk(this.config.realMapChunk,seed,this.chunk.id);
-    if(chunk.id===this.chunk.id||chunk.id===this.previousChunk?.id)return;
+    if(chunk.id===this.chunk.id||chunk.id===this.previousChunk?.id||this.resident.has(chunk.id))return;
     this.prefetchId=chunk.id;
     this.prepared.start(chunk.id,async preparation=>{
       const map=await loadRealMapChunk(chunk,preparation,true);
@@ -287,8 +292,13 @@ export class RealMapSession implements DuelScenario {
     if(this.previous && this.previousChunk?.id===chunk.id) {
       map=this.previous;this.previous=undefined;this.previousChunk=undefined;
     }else {
-      this.previous?.dispose();this.previous=undefined;this.previousChunk=undefined;
-      try {map=await this.prepared.take(chunk.id,signal)??await loadRealMapChunk(chunk,signal);}
+      const resident=this.resident.take(chunk.id);
+      if(this.previous&&this.previousChunk){
+        this.previous.scene.removeFromParent();
+        this.resident.retire(this.previousChunk.id,this.previous,this.previous.residentBytes??256*1024*1024);
+      }
+      this.previous=undefined;this.previousChunk=undefined;
+      try {map=resident??await this.prepared.take(chunk.id,signal)??await loadRealMapChunk(chunk,signal);}
       catch(error){signal.throwIfAborted();if(this.disposed)throw error;map=await loadRealMapChunk(chunk,signal);}
     }
     try {
@@ -302,6 +312,10 @@ export class RealMapSession implements DuelScenario {
     }catch(error){map.dispose();throw error;}
   }
   loadingReport(){return this.map.loadStats;}
+  retainPreviousLighting(light:PrefireLighting){
+    if(!this.previous)return false;
+    retainPreparedLighting(this.previous.scene,light);return true;
+  }
   updateView(position:Vec){(this.viewedMap??this.map).updateVisibility?.(position);}
   radarOverview(feet:number):RadarOverview|undefined {
     const native = nativeOverviews.get(this.map); if (native) return native;
@@ -315,5 +329,5 @@ export class RealMapSession implements DuelScenario {
     this.viewedMap=shown;
     this.scene.add(shown.scene);this.arrows.visible=!hash && this.config.routeGuide;
   }
-  dispose(){if(this.disposed)return;this.disposed=true;this.prefetchAbort?.abort();this.prepared.cancel();disposeResources([this.arrows]);this.map.dispose();this.previous?.dispose();this.scene.clear();}
+  dispose(){if(this.disposed)return;this.disposed=true;this.prefetchAbort?.abort();this.prepared.cancel();this.resident.clear();disposeResources([this.arrows]);this.map.dispose();this.previous?.dispose();this.scene.clear();}
 }

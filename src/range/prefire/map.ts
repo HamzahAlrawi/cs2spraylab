@@ -11,13 +11,13 @@ import {createLoadScope, createTaskLimiter, loadBounded, validateMapResources, v
 import {SharedBitmapCache} from './bitmap-cache';
 import {fetchDeliveredAsset,type MapDelivery} from './asset-delivery';
 import {prepareCollision} from './collision-preparation';
-import {backgroundTurn} from './background-work';
+import {backgroundTurn,backgroundBudget} from './background-work';
 import {releasePreparedLighting} from './lighting';
 type DecodedTexture={width:number;height:number;texture:THREE.Texture;close():void};
 const sharedBitmaps = new SharedBitmapCache<DecodedTexture>();
 
 export type PrefireMap = {scene: THREE.Group; collision: NativeMapCollision; settle(point: SourcePoint): Vec; updateVisibility?(point: Vec): void;
-  loadStats?: {decodedFresh: number; decodedReused: number; milliseconds: number; warmBudgetBytes: number}; dispose(): void};
+  residentBytes?:number;loadStats?: {decodedFresh: number; decodedReused: number; milliseconds: number; warmBudgetBytes: number}; dispose(): void};
 export function settleNativePosition(collision: NativeMapCollision, point: SourcePoint): Vec {
   return placePrefireTarget(collision, point);
 }
@@ -32,7 +32,8 @@ export async function loadDust2(signal?: AbortSignal, options?: {base: string; v
   const started = performance.now();
   let decodedFresh = 0, decodedReused = 0;
   const base = options?.base ?? '/maps/dust2/';
-  const scope = createLoadScope(signal), network = createTaskLimiter(4), decode = createTaskLimiter(4);
+  const scope = createLoadScope(signal), network = createTaskLimiter(4), decode = createTaskLimiter(options?.background?1:4);
+  const resourceWork=createTaskLimiter(1),resourceTurn=backgroundBudget(scope.signal);
   const fetchChecked = async (name: string) => {
     scope.signal.throwIfAborted();
     const delivered=options?.delivery?.files[name];
@@ -180,7 +181,10 @@ export async function loadDust2(signal?: AbortSignal, options?: {base: string; v
         const bytes=await read();
         if (bytes.byteLength !== resource.bytes) throw new Error('Map resource size mismatch');
         await verifyMapDigest(bytes,resource.sha256); scope.signal.throwIfAborted();
-        const url = URL.createObjectURL(new Blob([bytes],{type:name.endsWith('.webp') ? 'image/webp' : 'application/octet-stream'}));
+        const url = await resourceWork(async()=>{
+          if(options?.background)await resourceTurn();
+          return URL.createObjectURL(new Blob([bytes],{type:name.endsWith('.webp') ? 'image/webp' : 'application/octet-stream'}));
+        },scope.signal);
         resourceHashes.set(url,resource.sha256);
         urls.add(url); return url;
       })();
@@ -231,7 +235,7 @@ export async function loadDust2(signal?: AbortSignal, options?: {base: string; v
           material.polygonOffset = true; material.polygonOffsetFactor = -1; material.polygonOffsetUnits = -1;
           material.depthWrite = false; node.renderOrder = 1;
         }
-        node.geometry.computeBoundingSphere();
+        if(!node.geometry.boundingSphere)node.geometry.computeBoundingSphere();
         const clusters: number[] = node.userData.nativeClusters ?? node.parent?.userData.nativeClusters ?? [0];
         visibleMeshes.push({mesh: node, clusters});
       });
@@ -249,7 +253,7 @@ export async function loadDust2(signal?: AbortSignal, options?: {base: string; v
     const retainedImages = new Set([...textures.values()].map(texture => texture.image));
     for (const image of decodedImages) if (!retainedImages.has(image)) {releaseImage(image); decodedImages.delete(image);}
     scene.updateMatrixWorld(true);
-    scene.traverse(node => {node.updateMatrix(); node.matrixAutoUpdate = false;});
+    scene.traverse(node => {node.updateMatrix(); node.matrixAutoUpdate = false;node.matrixWorldAutoUpdate=false;});
     const retainedGeometry = new Set<THREE.BufferGeometry>(), retainedMaterials = new Set<THREE.Material>(), retainedTextures = new Set<THREE.Texture>();
     scene.traverse(node=>{
       if (!(node instanceof THREE.Mesh)) return;
@@ -264,8 +268,17 @@ export async function loadDust2(signal?: AbortSignal, options?: {base: string; v
     for (const geometry of orphanGeometry) if (!retainedGeometry.has(geometry)) geometry.dispose();
     orphanTextures.clear(); orphanMaterials.clear(); orphanGeometry.clear();
     const loadedCollision = collision!;
+    const buffers=new Set<ArrayBufferLike>();
+    for(const geometry of retainedGeometry){
+      if(geometry.index)buffers.add(geometry.index.array.buffer);
+      for(const attribute of Object.values(geometry.attributes))buffers.add('data' in attribute?attribute.data.array.buffer:attribute.array.buffer);
+    }
+    const images=new Set([...retainedTextures].map(texture=>texture.image as {width:number;height:number}));
+    const residentBytes=[...buffers].reduce((sum,buffer)=>sum+buffer.byteLength*2,0)+
+      [...images].reduce((sum,image)=>sum+(image.width||1)*(image.height||1)*4*4/3,0)+
+      (await pendingFiles.get('collision.bin') as ArrayBuffer).byteLength*6;
     let lastKey = 'unset';
-    return {scene, collision:loadedCollision, settle: point => settleNativePosition(loadedCollision, point),
+    return {scene, collision:loadedCollision,residentBytes, settle: point => settleNativePosition(loadedCollision, point),
       loadStats: {decodedFresh, decodedReused, milliseconds: performance.now() - started, warmBudgetBytes: 32 * 1024 * 1024},
       updateVisibility(point) {
         if (!visibility) return;

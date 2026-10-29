@@ -23,6 +23,9 @@ describe('shared visual-only native context',()=>{
     expect((x.material as MeshBasicMaterial).map).toBeNull();expect((x.material as MeshBasicMaterial).vertexColors).toBe(true);
     expect(x.geometry.attributes.color).toBe(f.geometry.attributes.color);
     expect(x.position.toArray()).toEqual([-48,6,-62]);expect(a.root.scale.toArray()).toEqual([1,1,1]);
+    expect(x.matrixAutoUpdate).toBe(false);expect(x.matrixWorldAutoUpdate).toBe(false);
+    const world=x.matrixWorld.clone();a.root.updateMatrixWorld(true);
+    expect(x.matrixWorld).toEqual(world);
     expect(x.userData.nativeContext).toBe(true);expect(a.root.userData.nativeContext).toBe(true);
     expect(x.castShadow).toBe(false);expect(x.receiveShadow).toBe(false);
     const hits:unknown[]=[];x.raycast({} as never,hits as never);expect(hits).toEqual([]);

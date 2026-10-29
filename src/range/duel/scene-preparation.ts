@@ -3,10 +3,12 @@ import {backgroundFrame} from '../prefire/background-work';
 import {compileRetainedShaders} from '../shader-warmup';
 import {PrefireLighting,retainPreparedLighting} from '../prefire/lighting';
 import type {Settings} from '../config';
+import {waitForGpu,textureUploadBytes} from './gpu-readiness';
 
 /** Upload in small turns; compile the retained materials rather than disposable clones. */
 export async function prepareSceneGpu(renderer: THREE.WebGLRenderer, root: THREE.Group,
   lighting: THREE.Scene, camera: THREE.Camera, signal: AbortSignal, quality?: Settings['quality']) {
+  const parent=root.parent,parentIndex=parent?.children.indexOf(root)??-1;
   const scene = new THREE.Scene(), textures = new Set<THREE.Texture>(),meshes:THREE.Mesh[]=[];
   const shadowState={enabled:renderer.shadowMap.enabled,type:renderer.shadowMap.type,
     autoUpdate:renderer.shadowMap.autoUpdate,needsUpdate:renderer.shadowMap.needsUpdate};
@@ -28,8 +30,11 @@ export async function prepareSceneGpu(renderer: THREE.WebGLRenderer, root: THREE
   try {
     const list = [...textures]; let index = 0;
     while (index < list.length) {
-      await backgroundFrame(signal); const start = performance.now();
-      do {signal.throwIfAborted(); renderer.initTexture(list[index++]);} while (index < list.length && performance.now() - start < 2);
+      await backgroundFrame(signal); const start = performance.now();let uploaded=0;
+      do {
+        signal.throwIfAborted();const texture=list[index++];renderer.initTexture(texture);uploaded+=textureUploadBytes(texture);
+      } while (index < list.length && uploaded<4*1024*1024 && performance.now() - start < 2);
+      await waitForGpu(renderer,signal);
     }
     await backgroundFrame(signal);
     await compileRetainedShaders(renderer, scene, camera);
@@ -67,8 +72,10 @@ export async function prepareSceneGpu(renderer: THREE.WebGLRenderer, root: THREE
       preparedLight.beginFrame(renderer,camera.position);signal.throwIfAborted();
       retainPreparedLighting(root,preparedLight);retained=true;
     }
+    await waitForGpu(renderer,signal);
   } finally {
     if(!retained)preparedLight?.dispose();root.removeFromParent(); scene.clear();
     if(preparedLight)Object.assign(renderer.shadowMap,shadowState);
+    if(parent){parent.add(root);parent.children.splice(parent.children.indexOf(root),1);parent.children.splice(parentIndex,0,root);}
   }
 }

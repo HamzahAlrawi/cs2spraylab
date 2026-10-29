@@ -4,19 +4,103 @@ export type DeliveredAsset={url:string;bytes:number;sha256:string;decodedBytes:n
 export type MapDelivery={version:1;files:Record<string,DeliveredAsset>;
   textures?:{bundles:DeliveredAsset[];images:{name:string;bundle:number;offset:number;length:number}[]}};
 const CACHE='spraylab-map-bytes-v1',BUDGET=80*1024*1024;
+const METADATA_CACHE='spraylab-map-bytes-metadata-v1',INDEX='/__spraylab-map-bytes-index-v1__';
+const ASSET_URL=/^\/(?:maps\/[a-z0-9][a-z0-9-]*\/duel|models)\/objects\/[a-f0-9]{64}\.(gz|bin)$/;
 const MiB=1024*1024;
 export function persistentAssetBudget(estimate?:{quota?:number;usage?:number}) {
-  const quota=estimate?.quota,usage=estimate?.usage??0;
-  return quota&&Number.isFinite(quota)&&quota>0
+  const quota=estimate?.quota,usage=Number.isFinite(estimate?.usage)?Math.max(0,estimate!.usage!):0;
+  return quota!==undefined&&Number.isFinite(quota)&&quota>=0
     ? Math.max(0,Math.floor(Math.min(512*MiB,quota*.15,Math.max(0,quota-usage)*.5))):512*MiB;
 }
 const retained=new Map<string,{bytes:ArrayBuffer;used:number}>();
 const downloads=new Map<string,{promise:Promise<ArrayBuffer>;controller:AbortController;refs:number}>();
 let retainedBytes=0,maintenance:Promise<void>=Promise.resolve(),diskBudget:Promise<number>|undefined;
-export async function settleAssetCache(){await maintenance;}
+type DiskEntry={size:number;used:number};
+type DiskIndex={cache:Cache;metadata?:Cache;entries:Map<string,DiskEntry>;total:number;dirty:boolean};
+let diskCache:Promise<Cache|undefined>|undefined,diskIndex:Promise<DiskIndex|undefined>|undefined;
+let metadataTimer:ReturnType<typeof setTimeout>|undefined;
+const origin=()=>globalThis.location?.origin??'https://spraylab.local';
+const absolute=(url:string)=>new URL(url,origin()).href;
+function enqueue(task:()=>Promise<void>) {maintenance=maintenance.then(task).catch(()=>{});return maintenance;}
+function openDiskCache() {
+  return diskCache??=Promise.resolve().then(async()=>{try{return await globalThis.caches?.open(CACHE);}catch{return undefined;}});
+}
+function dirty(state:DiskIndex) {
+  state.dirty=true;
+  if(metadataTimer===undefined)metadataTimer=setTimeout(()=>{metadataTimer=undefined;void enqueue(flushMetadata);},1000);
+}
+function setEntry(state:DiskIndex,url:string,entry?:DiskEntry) {
+  state.total-=state.entries.get(url)?.size??0;
+  if(entry){state.entries.set(url,entry);state.total+=entry.size;}else state.entries.delete(url);
+  dirty(state);
+}
+function inventory() {
+  return diskIndex??=Promise.resolve().then(async()=>{
+    const cache=await openDiskCache();if(!cache)return;
+    let metadata:Cache|undefined;
+    const saved=new Map<string,DiskEntry>();
+    try {
+      metadata=await caches.open(METADATA_CACHE);
+      const response=await metadata.match(INDEX),raw=await response?.json();
+      if(raw?.version===1&&Array.isArray(raw.entries))for(const row of raw.entries) {
+        if(Array.isArray(row)&&row.length===3&&typeof row[0]==='string'&&
+          Number.isSafeInteger(row[1])&&row[1]>0&&row[1]<=25*MiB&&Number.isFinite(row[2])&&row[2]>=0)
+          saved.set(row[0],{size:row[1],used:row[2]});
+      }
+    }catch{/* Metadata is optional; recover legacy entries from their headers. */}
+    const state:DiskIndex={cache,metadata,entries:new Map(),total:0,dirty:false};
+    // Reconcile keys once per page, including writes from older deployments/tabs.
+    // Only legacy/unindexed entries need a match; normal reloads read metadata only.
+    for(const request of await cache.keys()) {
+      const url=new URL(request.url);
+      if(url.origin!==origin()||url.search||!ASSET_URL.test(url.pathname))continue;
+      let entry=saved.get(url.href);
+      if(!entry) {
+        const response=await cache.match(request);if(!response)continue;
+        let size=Number(response.headers.get('x-spraylab-size'));
+        if(!Number.isSafeInteger(size)||size<=0||size>25*MiB)size=(await response.blob()).size;
+        const used=Number(response.headers.get('x-spraylab-used'));
+        entry={size,used:Number.isFinite(used)&&used>=0?used:0};
+      }
+      state.entries.set(url.href,entry);state.total+=entry.size;
+    }
+    if(saved.size!==state.entries.size||[...state.entries.keys()].some(url=>!saved.has(url)))dirty(state);
+    return state;
+  }).catch(()=>undefined);
+}
+async function flushMetadata() {
+  if(metadataTimer!==undefined){clearTimeout(metadataTimer);metadataTimer=undefined;}
+  const state=await diskIndex;if(!state?.dirty)return;
+  state.dirty=false;
+  if(state.metadata)try {
+    await state.metadata.put(INDEX,new Response(JSON.stringify({version:1,
+      entries:[...state.entries].map(([url,e])=>[url,e.size,e.used])})));
+  }catch{state.metadata=undefined;/* Never evict asset bodies just to save recency. */}
+}
+export async function settleAssetCache(){
+  let pending:Promise<void>;
+  do {pending=enqueue(flushMetadata);await pending;}while(pending!==maintenance||metadataTimer!==undefined);
+}
+function storageBudget(state:DiskIndex) {
+  return diskBudget??=Promise.resolve().then(async()=>{
+    try {
+      const estimate=await globalThis.navigator?.storage?.estimate?.();
+      // Usage includes our existing bodies. Do not count that space twice on reload.
+      return persistentAssetBudget(estimate&&{...estimate,usage:Math.max(0,(estimate.usage??0)-state.total)});
+    }catch{return persistentAssetBudget();}
+  });
+}
+// Compressed asset bodies only; metadata, RAM, and decoded/GPU resources are excluded.
+export async function assetCacheStats():Promise<{storedBytes:number;count:number;budget:number}> {
+  await maintenance;
+  const state=await inventory();
+  if(!state)return {storedBytes:0,count:0,budget:0};
+  const budget=await storageBudget(state);
+  return {storedBytes:state.total,count:state.entries.size,budget};
+}
 export function validDeliveredAsset(value:unknown):value is DeliveredAsset {
   const a=value as DeliveredAsset;
-  return !!a && /^\/(?:maps\/dust2\/duel|models)\/objects\/[a-f0-9]{64}\.(gz|bin)$/.test(a.url) &&
+  return !!a && ASSET_URL.test(a.url) &&
     /^[a-f0-9]{64}$/.test(a.sha256) && /^[a-f0-9]{64}$/.test(a.decodedSha256) &&
     Number.isSafeInteger(a.bytes)&&a.bytes>0&&a.bytes<=25*1024*1024&&
     Number.isSafeInteger(a.decodedBytes)&&a.decodedBytes>0&&a.decodedBytes<=64*1024*1024&&
@@ -43,53 +127,69 @@ function remember(key:string,bytes:ArrayBuffer) {
   while(retainedBytes>BUDGET&&retained.size){const first=retained.keys().next().value!;
     retainedBytes-=retained.get(first)!.bytes.byteLength;retained.delete(first);}
 }
-async function persist(asset:DeliveredAsset,bytes:ArrayBuffer) {
-  if(!globalThis.caches)return;
-  // Disk and RAM are separate budgets: all eight chunks should fit on disk
-  // without keeping their decoded scenes or compressed bytes alive in RAM.
-  maintenance=maintenance.then(async()=>{try {
-    const cache=await caches.open(CACHE);
-    const budget=await (diskBudget??=Promise.resolve().then(async()=>{
-      try{return persistentAssetBudget(await navigator.storage?.estimate?.());}catch{return persistentAssetBudget();}
-    }));
+function touch(asset:DeliveredAsset) {
+  void enqueue(async()=>{
+    const state=await inventory();if(!state)return;
+    const url=absolute(asset.url),entry=state.entries.get(url),used=Date.now();
+    if(entry&&(used-entry.used>60000||entry.size!==asset.bytes))setEntry(state,url,{size:asset.bytes,used});
+  });
+}
+function discard(asset:DeliveredAsset) {
+  void enqueue(async()=>{
+    const state=await inventory();if(!state)return;
+    const url=absolute(asset.url);await state.cache.delete(url);setEntry(state,url);
+  });
+}
+function persist(asset:DeliveredAsset,bytes:ArrayBuffer) {
+  return enqueue(async()=>{
+    const state=await inventory();if(!state)return;
+    const budget=await storageBudget(state);
     if(bytes.byteLength>budget)return;
-    const entries=await Promise.all((await cache.keys()).map(async request=>{
-        const response=await cache.match(request);return {request,size:Number(response?.headers.get('x-spraylab-size'))||0,
-          used:Number(response?.headers.get('x-spraylab-used'))||0};}));
-    const absolute=new URL(asset.url,globalThis.location?.origin??'https://spraylab.local').href;
-    let total=entries.reduce((sum,e)=>sum+(e.request.url===absolute?0:e.size),0)+bytes.byteLength;
-    const oldest=entries.filter(entry=>entry.request.url!==absolute).sort((a,b)=>a.used-b.used);
-    while(total>budget&&oldest.length){const entry=oldest.shift()!;await cache.delete(entry.request);total-=entry.size;}
+    const url=absolute(asset.url);
+    let oldest:[string,DiskEntry][]|undefined,nextOldest=0;
+    const evict=async(needed:number)=>{
+      oldest??=[...state.entries].filter(([key])=>key!==url).sort((a,b)=>a[1].used-b[1].used);
+      let reclaimed=0;
+      while(reclaimed<needed&&nextOldest<oldest.length) {
+        const [key,entry]=oldest[nextOldest++];await state.cache.delete(key);
+        setEntry(state,key);reclaimed+=entry.size;
+      }
+      return reclaimed;
+    };
     const response=()=>new Response(bytes,{headers:{'x-spraylab-size':String(bytes.byteLength),'x-spraylab-used':String(Date.now())}});
-    try{await cache.put(asset.url,response());}
+    try{await state.cache.put(asset.url,response());}
     catch(error){
-      if(!(error instanceof DOMException)||error.name!=='QuotaExceededError'||!oldest.length)throw error;
-      // A quota estimate can race other tabs. Reclaim only our oldest assets.
-      for(const entry of oldest.slice(0,Math.max(1,Math.ceil(oldest.length/4))))await cache.delete(entry.request);
-      await cache.put(asset.url,response());
+      if((error as {name?:string})?.name!=='QuotaExceededError')throw error;
+      // Estimates race other storage users. Retry once after bounded, asset-only eviction.
+      const excess=state.total-(state.entries.get(url)?.size??0)+bytes.byteLength-budget;
+      if(!await evict(Math.max(excess,bytes.byteLength)))return;
+      await state.cache.put(asset.url,response());
     }
-  }catch{/* Storage may be unavailable or full; verified network bytes remain usable. */}}).catch(()=>{});
-  await maintenance;
+    setEntry(state,url,{size:bytes.byteLength,used:Date.now()});
+    // Do not discard played chunks for a new write that fails with a permission error.
+    if(state.total>budget)await evict(state.total-budget);
+  });
 }
 async function readCompressed(asset:DeliveredAsset,signal:AbortSignal,priority:'auto'|'low') {
   let bytes:ArrayBuffer|undefined;
-  if(globalThis.caches)try {
-    const cache=await caches.open(CACHE),response=await cache.match(asset.url);
+  try {
+    const cache=await openDiskCache(),response=await cache?.match(asset.url);
     if(response) {
       const cached=await response.arrayBuffer();
       if(cached.byteLength===asset.bytes)try{
         await verifyMapDigest(cached,asset.sha256);bytes=cached;
-        if(Date.now()-(Number(response.headers.get('x-spraylab-used'))||0)>60000)void persist(asset,cached);
-      }catch{await cache.delete(asset.url);}
-      else await cache.delete(asset.url);
+        touch(asset);
+      }catch{discard(asset);}
+      else discard(asset);
     }
   }catch{/* Fall back to the network when browser storage is disabled. */}
   if(!bytes) {
+    signal.throwIfAborted();
     const response=await fetch(asset.url,{signal,cache:'force-cache',priority} as RequestInit);
     if(!response.ok)throw new Error('Map download unavailable');
     bytes=await response.arrayBuffer();if(bytes.byteLength!==asset.bytes)throw new Error('Map download size mismatch');
     await verifyMapDigest(bytes,asset.sha256);signal?.throwIfAborted();
-    void persist(asset,bytes.slice(0));
+    void persist(asset,bytes);
   }
   signal?.throwIfAborted();remember(asset.sha256,bytes);return bytes;
 }
@@ -98,7 +198,8 @@ async function compressedBytes(asset:DeliveredAsset,signal?:AbortSignal,priority
   const warm=retained.get(asset.sha256);
   if(warm){
     retained.delete(asset.sha256);retained.set(asset.sha256,warm);
-    if(Date.now()-warm.used>60000){warm.used=Date.now();void persist(asset,warm.bytes);}
+    if(warm.bytes.byteLength!==asset.bytes)throw new Error('Map download size mismatch');
+    if(Date.now()-warm.used>60000){warm.used=Date.now();touch(asset);}
     return warm.bytes;
   }
   let entry=downloads.get(asset.sha256);
@@ -112,7 +213,8 @@ async function compressedBytes(asset:DeliveredAsset,signal?:AbortSignal,priority
   let abort:()=>void=()=>{};
   const cancelled=new Promise<never>((_resolve,reject)=>{abort=()=>reject(signal?.reason??new DOMException('Map download cancelled','AbortError'));
     signal?.addEventListener('abort',abort,{once:true});});
-  try{return await Promise.race([owner.promise,cancelled]);}
+  try{const bytes=await Promise.race([owner.promise,cancelled]);
+    if(bytes.byteLength!==asset.bytes)throw new Error('Map download size mismatch');return bytes;}
   finally{signal?.removeEventListener('abort',abort);owner.refs--;if(owner.refs===0)owner.controller.abort();}
 }
 export async function fetchDeliveredAsset(asset:DeliveredAsset,signal?:AbortSignal) {

@@ -120,6 +120,7 @@ export class MapContextCache {
       if(!node.geometry.boundingBox)node.geometry.computeBoundingBox();
       meshBounds.set(node,node.geometry.boundingBox!.clone().applyMatrix4(node.matrixWorld));
     }});
+    root.traverse(node=>{node.updateMatrix();node.matrixAutoUpdate=false;node.matrixWorldAutoUpdate=false;});
     this.leases++;
     return {root,attach(parent,bounds) {
       if(disposed)throw Error('Context lease disposed');validateBounds(bounds);

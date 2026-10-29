@@ -269,6 +269,34 @@ test('setup edits during initial chunk loading reach the first round',async({pag
   })).toEqual({bots:5,skill:6});
 });
 
+for(const outcome of ['won','lost'] as const)test(`continuous ${outcome} handoff retains the viewport without a loading overlay`,async({page},info)=>{
+  test.skip(info.project.name!=='chromium');test.setTimeout(90000);
+  await page.addInitScript(()=>{
+    localStorage.setItem('spraylab.range.v2',JSON.stringify({mode:'duel',volume:0,quality:'performance'}));
+    localStorage.setItem('spraylab.duel.v1',JSON.stringify({realMapChunk:'dust2-mid-ct',botCount:1,playerHealth:10000,shortcutProtection:false}));
+  });
+  await page.goto('/');await engine(page);
+  await page.getByRole('button',{name:'Enter duel',exact:true}).click();
+  await page.waitForFunction(()=>!!document.pointerLockElement);
+  const bounds=await page.locator('canvas[data-duel]').boundingBox();
+  await page.evaluate(outcome=>{
+    const e=(window as any).realMapDuelEngine,original=e.rebuildActorsPrepared.bind(e);
+    e.rebuildActorsPrepared=async(signal:AbortSignal)=>{
+      await new Promise<void>(resolve=>{(window as any).releasePreparedActors=resolve;});await original(signal);
+    };
+    e.sim.phase='result';e.sim.outcome=outcome;e.restart(true);
+  },outcome);
+  await page.waitForFunction(()=>(window as any).realMapDuelEngine.loadingMap&&!!(window as any).releasePreparedActors);
+  await expect(page.locator('.duel-entry .workflow-loading')).toHaveCount(0);
+  expect(await page.locator('canvas[data-duel]').boundingBox()).toEqual(bounds);
+  expect(await page.evaluate(()=>!!document.pointerLockElement)).toBe(true);
+  await page.evaluate(()=>(window as any).releasePreparedActors());
+  await page.waitForFunction(()=>{
+    const e=(window as any).realMapDuelEngine;return !e.loadingMap&&e.sim.phase==='fighting';
+  });
+  expect(await page.evaluate(()=>!!document.pointerLockElement)).toBe(true);
+});
+
 test('opponent edits keep the map and returning to the previous chunk does not reload assets',async({page},info)=>{
   test.skip(info.project.name!=='chromium');test.setTimeout(180000);
   const errors:string[]=[],requests:string[]=[];page.on('pageerror',error=>errors.push(error.message));
@@ -284,6 +312,7 @@ test('opponent edits keep the map and returning to the previous chunk does not r
   const count=requests.length;
   await page.getByLabel('Bot skill level').selectOption('6');
   await expect.poll(()=>page.evaluate(()=>(window as any).realMapDuelEngine.sim.config.skill)).toBe(6);
+  await expect.poll(()=>page.evaluate(()=>(window as any).realMapDuelEngine.loadingMap)).toBe(false);
   expect(await page.evaluate(()=>(window as any).realMapDuelEngine.scenario.map===(window as any).initialActiveMap)).toBe(true);
   expect(requests.slice(count).filter(url=>url.includes(`/${initial.id}/`)||initialObjectUrls.has(url))).toEqual([]);
   expect(await page.evaluate(()=>(window as any).realMapDuelEngine.sim.arena.native.collisionSha256)).toBe(initial.hash);

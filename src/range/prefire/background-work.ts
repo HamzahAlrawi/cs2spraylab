@@ -29,3 +29,13 @@ export function backgroundFrame(signal:AbortSignal):Promise<void> {
     signal.addEventListener('abort',abort,{once:true});
   });
 }
+
+/** Call from a serial CPU queue; even fast cached resources must yield to play. */
+export function backgroundBudget(signal:AbortSignal, milliseconds=2, maxItems=8) {
+  let started=performance.now(),items=0;
+  return async()=>{
+    signal.throwIfAborted();
+    if(++items<maxItems&&performance.now()-started<milliseconds)return;
+    await backgroundFrame(signal);started=performance.now();items=0;
+  };
+}

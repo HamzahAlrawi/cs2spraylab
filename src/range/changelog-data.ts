@@ -437,7 +437,7 @@ const october29HeSmokeChanges = {
   ]}],
 } as const satisfies ChangelogRelease;
 
-export const latestChanges = {
+const october29BleedingEdgeChanges = {
   id: 'update-2026-10-29-bleeding-edge', title: 'USP-S finish repair (October 29)', baselineCommit: '4c0f4db',
   sections: [{id: 'usp-bleeding-edge-repair', title: 'Bleeding Edge renders again', items: [
     'Replaced the broken magenta USP-S Bleeding Edge material with its installed-game UV paint mask and valid authored colors, retaining weapon surface detail and unchanged gloves.',
@@ -445,7 +445,23 @@ export const latestChanges = {
   ]}],
 } as const satisfies ChangelogRelease;
 
+export const latestChanges = {
+  id:'update-2026-10-29-local-rounds',title:'Reusable chunks & smoother round starts (October 29)',baselineCommit:'7e6274f',
+  sections:[
+    {id:'persistent-content-cache',title:'Keep unchanged maps locally',items:[
+      'Verified map downloads survive page reloads and code deployments. Only new or changed content hashes need downloading; quota eviction, cleared site data or blocked storage can still require a download.',
+      'One indexed inventory and batched recency updates replace repeated full-cache scans and asset-body rewrites. Safe namespaced keys support future maps without deleting progress or old compatible assets.',
+    ]},
+    {id:'ready-before-fighting',title:'Prepare before the next fight',items:[
+      'Initial and prefetched chunks prepare textures, retained geometry, shaders and static shadows before play. GPU completion is checked asynchronously; preparation uploads are paced by decoded size as well as CPU time.',
+      'Capable devices retain a bounded recent-chunk cache and reuse prepared shadows, while constrained devices keep the lighter policy. Static map transforms and existing geometry bounds avoid repeated CPU work without changing collision or aiming.',
+      'Continuous wins and losses retain the range view during handoff instead of showing the full loading overlay. The next preload gives newly started rounds a short settling interval.',
+    ]},
+  ],
+} as const satisfies ChangelogRelease;
+
 export const changelogHistory = [
+  october29BleedingEdgeChanges,
   october29HeSmokeChanges,
   october29RadarReviewChanges,
   october29GrenadePresentationChanges,

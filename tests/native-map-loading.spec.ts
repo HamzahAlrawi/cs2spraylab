@@ -37,8 +37,10 @@ test('warm decoded images retain identical rendered pixels across map disposal a
   await page.route('**/warm-map-smoke', route => route.fulfill({contentType:'text/html',body:'<!doctype html><title>Warm map</title>'}));
   await page.goto('/warm-map-smoke');
   const result = await page.evaluate(async () => {
-    const mapPath = '/src/range/prefire/map.ts', threePath = '/node_modules/.vite/deps/three.js';
-    const {loadDust2} = await import(mapPath), THREE = await import(threePath);
+    const mapPath = '/src/range/prefire/map.ts';
+    const {loadDust2} = await import(mapPath);
+    const threePath=performance.getEntriesByType('resource').find(entry=>new URL(entry.name).pathname.endsWith('/deps/three.js'))!.name;
+    const THREE = await import(threePath);
     const renderer = new THREE.WebGLRenderer({antialias: false, preserveDrawingBuffer: true}); renderer.setSize(640,360);
     const scene = new THREE.Scene(); scene.background = new THREE.Color('#bbc9d1');
     scene.add(new THREE.HemisphereLight('#ffffff','#4c5a48',2), new THREE.AmbientLight('#ffffff',1));
