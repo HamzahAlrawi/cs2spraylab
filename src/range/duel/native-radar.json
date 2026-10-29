@@ -1,0 +1,24 @@
+{
+  "version": 1,
+  "map": "dust2",
+  "build": "2000938",
+  "archiveDirectorySha256": "b32a45c66eff785aa4b9b4e5564e36ac0639942074a9c27b765eab74e5066cdb",
+  "viewerSha256": "ef9f6fb3943c30b73f0991bce6654128727b0807968f7997a6bb014efbec8830",
+  "description": "resource/overviews/de_dust2.txt",
+  "descriptionSha256": "97947e99bc7930fc06dc15af3dcf942dbca5ca1c6f36119a089615fd4b383620",
+  "texture": "panorama/images/overheadmaps/de_dust2_radar_psd.vtex_c",
+  "textureSha256": "86c0669d0081aa5ba44954dcbde5e414dc33d2555ffebb6f538458343695e9fc",
+  "metadata": {
+    "pos_x": -2476,
+    "pos_y": 3239,
+    "scale": 4.4
+  },
+  "delivery": {
+    "url": "/maps/dust2/duel/objects/fec37be8b57898e461458590c73be0773bd3087e02e3547b651b6bf625512ca7.bin",
+    "bytes": 105760,
+    "sha256": "fec37be8b57898e461458590c73be0773bd3087e02e3547b651b6bf625512ca7",
+    "decodedBytes": 105760,
+    "decodedSha256": "fec37be8b57898e461458590c73be0773bd3087e02e3547b651b6bf625512ca7",
+    "encoding": "identity"
+  }
+}

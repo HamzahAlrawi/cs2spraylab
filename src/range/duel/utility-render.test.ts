@@ -74,8 +74,8 @@ describe('bounded utility presentation', () => {
     const fire = effect({type: 'fire', kind: 'molotov', cells: [{x: 4, y: 2, z: -5}, {x: 6, y: 2, z: -5}]});
     renderer.update([], [fire, effect({type: 'decoy', kind: 'decoy'})], 2, camera);
     const mesh = instance(renderer.group, 'utility-fire'), matrix = new THREE.Matrix4(), position = new THREE.Vector3();
-    expect(mesh.count).toBe(2); mesh.getMatrixAt(0, matrix); position.setFromMatrixPosition(matrix);
-    expect(position.x).toBe(4); expect(position.z).toBe(-5); expect(position.y).toBeGreaterThan(2);
+    expect(mesh.count).toBe(4); mesh.getMatrixAt(0, matrix); position.setFromMatrixPosition(matrix);
+    expect(Math.abs(position.x - 4)).toBeLessThan(.2); expect(Math.abs(position.z + 5)).toBeLessThan(.2); expect(position.y).toBeGreaterThan(2);
     expect(instance(renderer.group, 'utility-projectiles-decoy').count).toBe(1);
   });
 
@@ -189,6 +189,8 @@ describe('bounded utility presentation', () => {
       textures.forEach(texture => loader.mockResolvedValueOnce(texture));
       const {renderer} = setup(); await renderer.prepareParticles(); await renderer.prepareParticles();
       expect(loader).toHaveBeenCalledTimes(7);
+      const initTexture = vi.fn(); renderer.warmParticleTextures({initTexture});
+      expect(initTexture).toHaveBeenCalledTimes(7);
       const names = ['utility-fire', 'utility-fire-edge', 'utility-fire-ground', 'utility-fire-incendiary', 'utility-fire-embers', 'utility-burst', 'utility-he-burst'];
       [...Object.values(inferno.assets), particles.assets.flash, particles.assets.he].forEach((asset, index) => {
         // In particular the embedded HE URI must reach TextureLoader without a public-path prefix.

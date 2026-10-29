@@ -17,7 +17,9 @@ describe('installed inferno layers', () => {
       expect(asset.particleSha256).toMatch(/^[a-f0-9]{64}$/);
       const bytes = readFileSync(`public/revamp${asset.url}`);
       expect(bytes.length).toBe(asset.bytes); expect(createHash('sha256').update(bytes).digest('hex')).toBe(asset.sha256);
-      expect(asset.frames).toBeLessThanOrEqual(24);
+      expect(asset.sequences.length).toBeGreaterThan(1);
+      for (const sequence of asset.sequences) expect(sequence.count).toBeLessThanOrEqual(24);
+      expect(asset.url).toMatch(/-[a-f0-9]{12}\.webp$/);
     }
   });
   it('uses distinct incendiary flames, anchored ground, bounded pools and retained GPU arrays', () => {
@@ -25,13 +27,14 @@ describe('installed inferno layers', () => {
     const mesh = (name: string) => renderer.group.getObjectByName(name) as THREE.InstancedMesh;
     const buffer = mesh('utility-fire').instanceMatrix.array;
     renderer.update([fire('molotov')], 2, camera);
-    expect(mesh('utility-fire').count).toBe(2); expect(mesh('utility-fire-ground').count).toBe(2);
+    expect(mesh('utility-fire').count).toBe(4); expect(mesh('utility-fire-ground').count).toBe(2);
+    expect((mesh('utility-fire').material as THREE.ShaderMaterial).blending).toBe(THREE.AdditiveBlending);
     const matrix = new THREE.Matrix4(); mesh('utility-fire-ground').getMatrixAt(0, matrix);
     expect(new THREE.Vector3().setFromMatrixPosition(matrix).y).toBeCloseTo(2.012);
     renderer.update([fire('incendiary')], 3, camera);
-    expect(mesh('utility-fire').count).toBe(0); expect(mesh('utility-fire-incendiary').count).toBe(2);
+    expect(mesh('utility-fire').count).toBe(0); expect(mesh('utility-fire-incendiary').count).toBe(4);
     const huge = {...fire('molotov'), cells: Array.from({length: 500}, (_, x) => ({x, y: 0, z: 0}))};
-    renderer.update([huge], 3, camera); expect(mesh('utility-fire').count).toBe(INFERNO_RENDER_CELLS);
+    renderer.update([huge], 3, camera); expect(mesh('utility-fire').count).toBe(INFERNO_RENDER_CELLS * 2);
     expect(mesh('utility-fire').instanceMatrix.array).toBe(buffer);
     renderer.update([huge], 7, camera); expect(mesh('utility-fire').count).toBe(0);
     renderer.dispose(); renderer.dispose();

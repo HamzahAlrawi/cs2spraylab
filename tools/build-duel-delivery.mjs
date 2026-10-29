@@ -87,6 +87,16 @@ await fs.writeFile('public/revamp/_headers',headers);
 // Delete stale generations only after every referencing manifest was written.
 const resolvedObjects=path.resolve(objects);
 if(resolvedObjects!==path.resolve(root,'objects'))throw new Error('Invalid delivery output root');
+// The native HUD overview is shared by every chunk, not a per-chunk file.
+try {
+  const radar=JSON.parse(await fs.readFile('src/range/duel/native-radar.json','utf8'));
+  const asset=radar.delivery;
+  if(asset?.url===`/maps/dust2/duel/objects/${asset.sha256}.bin` && /^[a-f0-9]{64}$/.test(asset.sha256)) {
+    const bytes=await fs.readFile(path.join(resolvedObjects,path.basename(asset.url)));
+    if(bytes.length!==asset.bytes||hash(bytes)!==asset.sha256)throw Error('Stale shared native radar');
+    referencedObjects.add(path.basename(asset.url));
+  }
+}catch(error){if(error.code!=='ENOENT')throw error;}
 try {
   const context=JSON.parse(await fs.readFile(path.join(root,'context/context.json'),'utf8'));
   const asset=context.delivery;

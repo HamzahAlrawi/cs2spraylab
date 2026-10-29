@@ -50,15 +50,21 @@ describe('Persistent Duel skill review', () => {
     expect(html).toContain('Current round'); expect(html).toContain('Current measured opening');
   });
 
-  it('renders a real measured review with one verdict, one action and collapsed advanced metrics', () => {
+  it('renders a quiet overview with collapsed advanced metrics and profile', () => {
     const review = measuredReview(), html = render(review);
-    expect(html).toContain(`<h3>${review.coaching!.focus}</h3>`);
+    expect(html).toContain('<h3>Duel overview</h3>');
     expect(html.split(review.coaching!.action)).toHaveLength(2);
     expect(html).toContain('1 / 1');
     expect(html).toContain('40 / 0');
     expect(html).toContain('200 ms');
     expect(html).toContain('100/100');
-    expect(html).toMatch(/<details[^>]*><summary>Skill breakdown<\/summary>/);
+    expect(html).toMatch(/<details[^>]*><summary>Advanced details<\/summary>/);
+    const firstView = html.split('<details')[0];
+    expect(firstView).toContain('Measured skills');
+    expect(firstView).toContain('Round headline stats');
+    expect(firstView).not.toContain('Aim skill profile');
+    expect(firstView).not.toContain('100/100');
+    expect(firstView).not.toContain('35% weight');
     expect(html).not.toContain('class="coaching-metrics"');
     expect(html).not.toMatch(/NaN|undefined|Infinity|\[object Object\]/);
   });
@@ -103,7 +109,7 @@ describe('Persistent Duel skill review', () => {
       coaching: {focus: 'NaN', action: null, metrics: []}});
     const html = render(review, [{date: 'not-a-date', outcome: 'undefined', review},
       {date: '2026-10-10T10:00:00Z', outcome: 'won', review: measuredReview()}]);
-    expect(html).toContain('Review this round');
+    expect(html).toContain('Duel overview');
     expect(html).toContain('Round recorded');
     expect(html).toContain('Time unavailable');
     expect(html).toContain('Won');
@@ -136,5 +142,58 @@ describe('Persistent Duel skill review', () => {
   it('handles an empty review and a missing review in legacy history', () => {
     expect(render()).toContain('Complete a duel');
     expect(() => render(undefined, [{date: '2026-10-10', outcome: 'won', review: undefined as unknown as DuelReview}])).not.toThrow();
+  });
+
+  it('keeps practice and lesson actions outside the advanced disclosure', () => {
+    const review = measuredReview();
+    const html = renderToStaticMarkup(createElement(CoachingActions.Provider,
+      {value: {practice: () => {}, lesson: () => {}}}, createElement(DuelScorecard,
+        {review, completedReview: review, history: []})));
+    const firstView = html.split('<details')[0];
+    expect(firstView).toContain('Practice this');
+    expect(firstView).toContain('Review lesson');
+    expect(firstView).toContain('aria-label="Export duel history"');
+  });
+
+  it('shows sample counts and a provisional state without inventing weaknesses', () => {
+    const html = render(measuredReview()).split('<details')[0];
+    expect(html).toContain('1 measured opening / 1 visible-target shots');
+    expect(html).toContain('Provisional');
+    expect(html).toContain('n=1 damaged contacts');
+    expect(html).toContain('n=0 lethal contacts');
+    expect(html).toContain('Not enough openings to judge consistency.');
+    expect(html).not.toContain('Work on next');
+    expect(html).not.toContain('Rifle stop accuracy');
+  });
+
+  it('keeps a measured zero distinct from unknown times and empty ratios', () => {
+    const review = new DuelCoach().review(), html = render(review).split('<details')[0];
+    expect(html).toContain('0 measured openings');
+    expect(html).toContain('Not measured');
+    expect(html).not.toContain('>0%<');
+    expect(html).not.toContain('>0 ms<');
+  });
+
+  it('front-loads at most two different evidenced issues, each with a concrete action', () => {
+    const review = measuredReview();
+    review.debrief = {...review.debrief!, findings: ['movement', 'air', 'exposure'].map(key => ({key,
+      title: `${key} issue`, evidence: `${key} measured in this round.`, action: `Original ${key} detailed action.`, goal: 'Compare five more openings.'}))};
+    const firstView = render(review).split('<details')[0];
+    expect(firstView.match(/class="duel-scorecard-weakness"/g)).toHaveLength(2);
+    expect(firstView).toContain('movement measured in this round.');
+    expect(firstView).toContain('exposure measured in this round.');
+    expect(firstView).not.toContain('air issue');
+    expect(firstView).toContain('Original movement detailed action.');
+    expect(firstView).toContain('Original exposure detailed action.');
+  });
+
+  it('handles non-array history and malformed rows even when aim metrics are present', () => {
+    const review = measuredReview();
+    expect(() => render(review, null as unknown as [])).not.toThrow();
+    const history = [null, [], {review: 'bad'}, {review, date: {}, outcome: {}}] as unknown as Parameters<typeof DuelScorecard>[0]['history'];
+    const html = render(review, history);
+    expect(html).toContain('Recent rounds (1)');
+    expect(html).toContain('Time unavailable');
+    expect(html).not.toMatch(/\[object Object\]|Invalid Date/);
   });
 });

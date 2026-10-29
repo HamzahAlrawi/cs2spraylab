@@ -2,10 +2,10 @@ import {expect, test} from '@playwright/test';
 
 test('scorecard keeps measured, legacy and incomplete feedback readable at panel widths', async ({page}, info) => {
   await page.addInitScript(() => localStorage.setItem('spraylab.range.v2', JSON.stringify({mode: 'duel', volume: 0, quality: 'performance'})));
-  await page.goto('/');
+  await page.goto(process.env.SCORECARD_AUDIT_URL ?? '/');
   await expect(page.locator('canvas[data-duel]')).toBeVisible();
   await page.evaluate(async () => {
-    const reactPath = '/node_modules/.vite/deps/react.js', rootPath = '/node_modules/.vite/deps/react-dom_client.js';
+    const reactPath = '/node_modules/.vite-dev/deps/react.js', rootPath = '/node_modules/.vite-dev/deps/react-dom_client.js';
     const cardPath = '/src/range/duel/DuelScorecard.tsx', coachPath = '/src/range/duel/coaching.ts';
     const simPath = '/src/range/duel/simulation.ts';
     const react = await import(/* @vite-ignore */ reactPath), roots = await import(/* @vite-ignore */ rootPath);
@@ -38,7 +38,9 @@ test('scorecard keeps measured, legacy and incomplete feedback readable at panel
           if (i < 3) c.hit({kind: 'hit', tick: 1, shotId: i + 1, shooter: 0, victim: 1, group: 'chest', point,
             healthDamage: 20, armorDamage: 0, lethal: false}, 1 + i * .1);
         }
-        root.render(createElement(DuelScorecard, {review: c.review(), history: []}));
+        const mistakes = c.review();
+        (window as any).scorecardAudit.expectedActions = mistakes.debrief!.findings.map(finding => finding.action);
+        root.render(createElement(DuelScorecard, {review: mistakes, history: []}));
       },
       profile: () => {
         const key = `setup-v2:${'a'.repeat(32)}`, other = `setup-v2:${'b'.repeat(32)}`;
@@ -64,24 +66,41 @@ test('scorecard keeps measured, legacy and incomplete feedback readable at panel
     (window as any).scorecardAudit.current();
   });
   const card = page.getByRole('region', {name: 'Duel scorecard'});
-  await expect(card).toContainText('100/100');
+  const advanced = card.locator(':scope > details').filter({has: page.locator(':scope > summary', {hasText: 'Advanced details'})});
+  const history = card.locator(':scope > details').filter({has: page.locator(':scope > summary', {hasText: 'Recent rounds'})});
+  const focus = card.getByRole('region', {name: 'Next practice focus'});
+  const headline = card.getByLabel('Round headline stats');
+  await expect(card.getByRole('heading', {level: 3})).toHaveText('Duel overview');
+  await expect(card.locator(':scope > details')).toHaveCount(2);
+  await expect(advanced).not.toHaveAttribute('open');
+  await expect(history).not.toHaveAttribute('open');
+  await expect(card.getByLabel('Measured skills')).toContainText('Aim');
+  await expect(card.getByLabel('Measured skills')).toContainText('Movement');
+  await expect(card.getByLabel('Measured skills')).toContainText('Positioning');
+  await expect(headline.locator(':scope > div')).toHaveCount(6);
+  await expect(headline).toContainText('Opening accuracy');
+  await expect(headline).toContainText('n=1 damaged contacts');
+  await expect(headline).toContainText('n=0 lethal contacts');
+  await expect(card.locator(':scope > .duel-scorecard-confidence')).toContainText('1 measured opening / 1 visible-target shots');
+  await expect(card.locator(':scope > .duel-scorecard-confidence')).toContainText('Provisional');
   await expect(card.getByText('Next rep', {exact: true})).toBeVisible();
-  await expect(card.getByLabel('Measured round evidence')).toBeVisible();
-  await expect(card).toContainText('Opening shots hit');
-  await expect(card).toContainText('Contact to first shot');
+  await expect(focus).toContainText('Not enough openings to judge consistency.');
+  await expect(card.getByText('Local technique score: 100/100', {exact: true})).toBeHidden();
   const aim = card.getByRole('region', {name: 'Aim skill profile'});
+  await expect(aim).toBeHidden();
+  await expect(card.getByText('35% weight.', {exact: false})).toBeHidden();
+  await card.screenshot({path: info.outputPath('current-collapsed.png')});
+  await advanced.locator(':scope > summary').focus();
+  await page.keyboard.press('Enter');
+  await expect(advanced).toHaveAttribute('open');
   await expect(aim).toBeVisible();
   await expect(aim.getByText('Reaction (input estimate)', {exact: true})).toBeVisible();
   await expect(aim.getByText('Time to kill', {exact: true})).toBeVisible();
   await expect(aim).toContainText('not a Leetify rating');
-  await card.getByText('Fight by fight', {exact: true}).click();
+  await expect(advanced.getByText('Contact to first shot', {exact: true}).last()).toBeVisible();
   await expect(card.locator('.duel-scorecard-fights')).toContainText('1/1 hits');
   await expect(card.locator('.duel-scorecard-fights')).toContainText('opening hit');
-  await expect(card.getByText('35% weight.', {exact: false})).toBeHidden();
-  await card.screenshot({path: info.outputPath('current-collapsed.png')});
-  await card.getByText('Skill breakdown', {exact: true}).click();
-  await card.getByText('Combat totals and timing', {exact: true}).click();
-  await card.getByText('Recent rounds', {exact: true}).click();
+  await history.locator(':scope > summary').click();
   await expect(card.getByText('Shot timing', {exact: true})).toBeVisible();
   expect(await card.locator('.duel-scorecard-skills>div').first().evaluate(row => getComputedStyle(row).display)).toBe('block');
   expect(await card.locator('.duel-scorecard-skills dd').first().evaluate(row => getComputedStyle(row).whiteSpace)).toBe('normal');
@@ -116,7 +135,8 @@ test('scorecard keeps measured, legacy and incomplete feedback readable at panel
   expect((await download).suggestedFilename()).toBe('spraylab-duels.json');
 
   await card.evaluate(element => element.parentElement!.setAttribute('data-coaching-tips', 'false'));
-  await expect(card.locator('h3')).toBeHidden();
+  await expect(card.getByRole('heading', {level: 3})).toBeVisible();
+  await expect(focus.locator('h4')).toBeHidden();
   await expect(card.locator('.duel-scorecard-action')).toBeHidden();
   await expect(card.locator('.duel-scorecard-skills dd>p').first()).toBeHidden();
   await expect(card.locator('.duel-scorecard-stats').first()).toBeVisible();
@@ -124,9 +144,14 @@ test('scorecard keeps measured, legacy and incomplete feedback readable at panel
   await card.evaluate(element => element.parentElement!.removeAttribute('data-coaching-tips'));
 
   await page.evaluate(() => (window as any).scorecardAudit.mistakes());
-  await expect(card.getByRole('heading', {level: 3})).toHaveText('Counter-strafe before the first bullet');
-  await expect(card.getByLabel('Measured round evidence')).toContainText('200 u/s');
-  await expect(card.getByLabel('Other fight findings')).toContainText('6/6 later rifle bullets');
+  await expect(focus.getByRole('heading', {name: 'Counter-strafe before the first bullet'})).toBeVisible();
+  await expect(focus.locator('.duel-scorecard-weakness')).toHaveCount(2);
+  await expect(focus).toContainText('200 u/s');
+  await expect(focus).toContainText('6/6 later rifle bullets');
+  const expectedActions = await page.evaluate(() => (window as any).scorecardAudit.expectedActions as string[]);
+  for (const [i, action] of expectedActions.slice(0, 2).entries()) {
+    await expect(focus.locator('.duel-scorecard-action').nth(i)).toHaveText(`Try: ${action}`);
+  }
   await expect(card).toContainText('Misses: aim / recoil line');
   await checkTextBounds();
   await card.screenshot({path: info.outputPath('specific-fight-evidence.png')});
@@ -147,17 +172,28 @@ test('scorecard keeps measured, legacy and incomplete feedback readable at panel
   await expect(aim.locator('.duel-aim-measurement').first()).toBeVisible();
   await card.evaluate(element => element.parentElement!.removeAttribute('data-coaching-tips'));
 
+  await advanced.locator(':scope > summary').click();
+  await history.locator(':scope > summary').click();
+  await expect(aim).toBeHidden();
+  await checkTextBounds();
+
   await page.evaluate(() => (window as any).scorecardAudit.legacy());
   await expect(card).toContainText('Last completed round');
-  await expect(card).toContainText('Stop before shooting');
+  await expect(card.getByText('Stop before shooting', {exact: true})).toBeHidden();
+  await expect(headline).toContainText('40 / 0');
+  await advanced.locator(':scope > summary').click();
+  await expect(card.getByText('Stop before shooting', {exact: true})).toBeVisible();
+  await expect(card.getByText('Settle before the first shot.', {exact: true})).toBeVisible();
   await checkTextBounds();
   await card.screenshot({path: info.outputPath('legacy.png')});
 
   await page.evaluate(() => (window as any).scorecardAudit.incomplete());
-  await expect(card).toContainText('Review this round');
-  await card.getByText('Recent rounds', {exact: true}).click();
+  await expect(card.getByRole('heading', {level: 3})).toHaveText('Duel overview');
+  await expect(headline).toContainText('--');
+  await history.locator(':scope > summary').click();
   await expect(card).not.toContainText(/NaN|undefined|Infinity|Invalid Date|\[object Object\]/);
   await expect(card).toContainText('Time unavailable');
+  await expect(history).toContainText('Round recorded');
   await checkTextBounds();
   await card.screenshot({path: info.outputPath('incomplete.png')});
 });

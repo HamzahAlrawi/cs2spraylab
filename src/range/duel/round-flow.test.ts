@@ -27,7 +27,7 @@ describe('continuous duel sessions', () => {
     const sim=new DuelSimulation();sim.start();sim.phase='result';sim.outcome=outcome;
     sim.enablePostWinPlay();
     sim.command(0,{side:1,fireHeld:true});const before=sim.snapshot();sim.advance(.25);
-    expect(sim.playable).toBe(false);expect(sim.time).toBe(0);expect(sim.snapshot()).toEqual(before);
+    expect(sim.playable).toBe(false);expect(sim.time).toBe(.25);expect(sim.snapshot()).toEqual(before);
   });
   it('selects the fall from the shot direction in actor-local space', () => {
     const actor = {id: 1, yaw: Math.PI, deathDirection: {x: 0, y: 0, z: -1}};

@@ -3,6 +3,7 @@ import {existsSync,readFileSync} from 'node:fs';
 import sharp from 'sharp';
 import {BoxGeometry,BufferGeometry,Float32BufferAttribute,Group,Matrix4,Mesh,SkinnedMesh,Vector3} from 'three';
 import {drawNativeRadarMap,DuelRadar,RadarMemory,radarPoint,type RadarSettings} from './radar';
+import {RADAR_SIZE,radarPixelsPerMetre} from './radar-projection';
 import {testArena,type Arena} from './geometry';
 import type {DuelActorSnapshot} from './types';
 import catalog from './real-map-catalog.json';
@@ -130,18 +131,18 @@ describe('radar drawing and settings',()=>{
       radar.update(actor(x,z,yaw),[],1,{...arena},settings,overview);
     expect(canvases).toHaveLength(1);expect(contexts[0].drawImage).toHaveBeenCalledTimes(2);
     expect(contexts[0].drawImage).toHaveBeenLastCalledWith(overview.image,4260,-8390,80,100);
-    expect(contexts[0].rect).toHaveBeenCalledWith(4270,-8380,60,80);
+    expect(contexts[0].rect).not.toHaveBeenCalled();
     expect(contexts[0].translate).toHaveBeenCalledWith(-4328,8301);
-    expect(contexts[0].arc).not.toHaveBeenCalled();
+    expect(contexts[0].arc.mock.calls.filter(([, , radius])=>radius===4.5)).toHaveLength(0);
   });
   it.each([0,Math.PI/2,Math.PI,-Math.PI/2])('points the fixed player arrow along the same yaw as map markers (%s)',yaw=>{
     const {host,contexts}=documentHarness(),radar=new DuelRadar(host);
     radar.update(actor(0,0,yaw),[],0,testArena(),{...settings,radarRotate:false});
     const rotation=contexts[0].rotate.mock.lastCall![0];
     expect(rotation).toBe(-yaw);
-    const forward=radarPoint({x:-Math.sin(yaw),y:0,z:-Math.cos(yaw)},{x:0,y:0,z:0},yaw,false,1,testArena(),144);
-    expect(Math.sin(rotation)).toBeCloseTo((forward.x-72)/(144/32));
-    expect(-Math.cos(rotation)).toBeCloseTo((forward.y-72)/(144/32));
+    const forward=radarPoint({x:-Math.sin(yaw),y:0,z:-Math.cos(yaw)},{x:0,y:0,z:0},yaw,false,1,testArena(),RADAR_SIZE);
+    expect(Math.sin(rotation)).toBeCloseTo((forward.x-RADAR_SIZE/2)/radarPixelsPerMetre(1,RADAR_SIZE));
+    expect(-Math.cos(rotation)).toBeCloseTo((forward.y-RADAR_SIZE/2)/radarPixelsPerMetre(1,RADAR_SIZE));
     radar.update(actor(0,0,yaw),[],0,testArena(),settings);
     expect(contexts[0].rotate).toHaveBeenLastCalledWith(0);
   });
@@ -155,13 +156,15 @@ describe('radar drawing and settings',()=>{
   it('draws spotted last-known positions only and ignores expired or future contacts',()=>{
     const {host,contexts}=documentHarness(),radar=new DuelRadar(host),memory=new RadarMemory();
     radar.update(actor(),memory.snapshot(0),0,testArena(),settings);
-    expect(contexts[0].arc).not.toHaveBeenCalled();
+    const markers=()=>contexts[0].arc.mock.calls.filter(([, , radius])=>radius===4.5);
+    expect(markers()).toHaveLength(0);
     memory.observeVisible(0,[{id:1,position:{x:0,y:1.6256,z:-8},aimPoint:{x:0,y:1.6256,z:-8}}]);
     radar.update(actor(),memory.snapshot(1),1,testArena(),settings);
-    expect(contexts[0].arc).toHaveBeenLastCalledWith(72,46.8,3,0,Math.PI*2);
+    expect(markers()).toHaveLength(1);
+    expect(markers()[0][0]).toBe(RADAR_SIZE/2);expect(markers()[0][1]).toBeCloseTo(72);
     radar.update(actor(),[{id:2,position:{x:7,y:0,z:2},seenAt:2,dead:false},
       {id:3,position:{x:9,y:0,z:3},seenAt:-4,dead:false}],1,testArena(),settings);
-    expect(contexts[0].arc).toHaveBeenCalledOnce();
+    expect(markers()).toHaveLength(1);
   });
   it.each([0,.63,Math.PI/2,-Math.PI/2])('preserves offscreen contact bearings instead of pinning both axes (%s)',yaw=>{
     const {host,contexts}=documentHarness(),radar=new DuelRadar(host),player=actor(-48,-63,yaw);
@@ -169,16 +172,17 @@ describe('radar drawing and settings',()=>{
     // A long, oblique last-known direction exercises both-axis overflow.
     const position={x:player.position.x+180,y:player.position.y,z:player.position.z-90};
     radar.update(player,[{id:1,position,seenAt:0,dead:false}],0,arena,settings);
-    const [x,y]=contexts[0].arc.mock.lastCall!,projected=radarPoint(position,player.position,yaw,true,.7,arena,144);
-    expect((x-72)*(projected.y-72)).toBeCloseTo((y-72)*(projected.x-72),7);
-    expect(Math.max(Math.abs(x-72),Math.abs(y-72))).toBeCloseTo(66);
+    const [x,y]=contexts[0].translate.mock.calls.slice(-2)[0],center=RADAR_SIZE/2;
+    const projected=radarPoint(position,player.position,yaw,true,.7,arena,RADAR_SIZE);
+    expect((x-center)*(projected.y-center)).toBeCloseTo((y-center)*(projected.x-center),7);
+    expect(Math.hypot(x-center,y-center)).toBeCloseTo(center-14);
   });
   it('keeps the elevated contact chevron inside the viewport at its top edge',()=>{
     const {host,contexts}=documentHarness(),radar=new DuelRadar(host),player=actor();
     radar.update(player,[{id:1,position:{x:0,y:5,z:-100},seenAt:0,dead:false}],0,nativeArena(),settings);
-    const [x,y]=contexts[0].arc.mock.lastCall!;
-    expect(x).toBe(72);expect(y-10).toBeGreaterThan(1);
-    expect(contexts[0].lineTo).toHaveBeenCalledWith(x,y-10);
+    const [x,y]=contexts[0].translate.mock.calls.slice(-2)[0];
+    expect(x).toBe(RADAR_SIZE/2);expect(y-11).toBeGreaterThan(4);
+    expect(contexts[0].lineTo).toHaveBeenCalledWith(x,y-11);
   });
 });
 
@@ -193,7 +197,8 @@ function trackTransform(ctx:ReturnType<typeof context>) {
   ctx.rotate.mockImplementation(angle=>matrix.multiply(new Matrix4().makeRotationZ(angle)));
   ctx.scale.mockImplementation((x,y)=>matrix.multiply(new Matrix4().makeScale(x,y,1)));
   ctx.drawImage.mockImplementation((_image,...args:number[])=>images.push({matrix:matrix.clone(),args}));
-  ctx.arc.mockImplementation((x,y)=>markers.push(new Vector3(x,y,0).applyMatrix4(matrix)));
+  ctx.arc.mockImplementation((x,y,radius)=>{if(radius===4.5)markers.push(new Vector3(x,y,0).applyMatrix4(matrix));});
+  ctx.moveTo.mockImplementation((x,y)=>{if(x===5&&y===0)markers.push(new Vector3(0,0,0).applyMatrix4(matrix));});
   return {images,markers};
 }
 
@@ -236,18 +241,20 @@ describe.each(catalog.chunks)('$id delivered native overview',chunk=>{
         expect(draw.args.slice(0,4)).toEqual([source.x,source.y,source.width,source.height]);
         const [,,sw,sh,dx,dy,dw,dh]=draw.args;
         const atlasPoint=(x:number,z:number)=>new Vector3(dx+x/sw*dw,dy+z/sh*dh,0).applyMatrix4(draw.matrix);
-        const expected=radarPoint(position,player.position,yaw,rotate,scale,arena,144);
+        const expected=radarPoint(position,player.position,yaw,rotate,scale,arena,RADAR_SIZE);
         const painted=atlasPoint((position.x-b.minX)/(b.maxX-b.minX)*source.width,
           (position.z-b.minZ)/(b.maxZ-b.minZ)*source.height);
         expect(painted.x/2).toBeCloseTo(expected.x,7);expect(painted.y/2).toBeCloseTo(expected.y,7);
         // With player centering, the atlas start texel stays at the marker origin.
         const start=atlasPoint(u*source.width,v*source.height);
-        expect(start.x/2).toBeCloseTo(72,7);expect(start.y/2).toBeCloseTo(72,7);
+        const center=RADAR_SIZE/2;
+        expect(start.x/2).toBeCloseTo(center,7);expect(start.y/2).toBeCloseTo(center,7);
         const marker=tracked.markers[tracked.markers.length-1];
-        if(Math.max(Math.abs(expected.x-72),Math.abs(expected.y-72))<=66) {
+        if(Math.hypot(expected.x-center,expected.y-center)<=center-14) {
           expect(marker.x).toBeCloseTo(painted.x,7);expect(marker.y).toBeCloseTo(painted.y,7);
         } else {
-          expect((marker.x-144)*(painted.y-144)).toBeCloseTo((marker.y-144)*(painted.x-144),7);
+          expect((marker.x-RADAR_SIZE)*(painted.y-RADAR_SIZE)).toBeCloseTo((marker.y-RADAR_SIZE)*(painted.x-RADAR_SIZE),7);
+          expect(Math.hypot(marker.x-RADAR_SIZE,marker.y-RADAR_SIZE)/2).toBeCloseTo(center-14,7);
         }
       }
     }

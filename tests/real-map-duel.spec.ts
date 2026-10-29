@@ -11,6 +11,26 @@ async function engine(page:Page) {
   await page.waitForFunction(()=>!!(window as any).realMapDuelEngine,{},{timeout:90000});
 }
 
+test('real-map Duel uses the shared native HUD artwork in its production radar', async ({page}, info) => {
+  test.skip(info.project.name !== 'chromium'); test.setTimeout(120000);
+  const errors: string[] = []; page.on('pageerror', error => errors.push(error.message));
+  await page.addInitScript(() => {
+    localStorage.setItem('spraylab.duel.v1', JSON.stringify({botCount: 1, realMapChunk: 'dust2-long-doors', radarEnabled: true}));
+    localStorage.setItem('spraylab.range.v2', JSON.stringify({mode: 'duel', volume: 0, quality: 'performance'}));
+  });
+  await page.goto('/'); await engine(page);
+  await page.waitForFunction(() => (window as any).realMapDuelEngine.criticalReady);
+  const result = await page.evaluate(() => {
+    const e = (window as any).realMapDuelEngine, view = e.scenario.radarOverview(e.sim.actors[0].feet);
+    return {width: view?.image.width, height: view?.image.height, bounds: view?.bounds, source: view?.source};
+  });
+  expect(result.width).toBe(1024); expect(result.height).toBe(1024); expect(result.source).toBeUndefined();
+  expect(result.bounds.minX).toBeCloseTo(-2476 * .0254);
+  await expect(page.locator('.duel-radar')).toBeVisible();
+  await page.locator('.duel-radar').screenshot({path: 'research/native-radar-production.png'});
+  expect(errors).toEqual([]);
+});
+
 for(const fails of [false,true])test(`a winner can keep playing while the next chunk waits, with failure=${fails}`,async({page},info)=>{
   test.skip(info.project.name!=='chromium');test.setTimeout(120000);
   const errors:string[]=[];page.on('pageerror',error=>errors.push(error.message));

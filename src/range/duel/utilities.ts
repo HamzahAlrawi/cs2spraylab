@@ -13,7 +13,7 @@ import {NATIVE_GRENADE_FLIGHT,nativeGrenadeContact,nativeGrenadeThinkTick,native
 import {nativeFlashArguments,NATIVE_GRENADE_FLASH} from './grenade-native-flash';
 import {nativeFlashVisibility} from './grenade-flash-visibility';
 import {InfernoSpread,nativeInfernoDamage} from './inferno-native';
-import {pointInSmokeHole, SMOKE_EXTINCTION} from './smoke-density';
+import {pointInSmokeHole, SMOKE_EXTINCTION, HE_SMOKE_DISPLACEMENT} from './smoke-density';
 
 export type {UtilityKind} from './utility-loadout';
 export const UTILITY_KERNEL_VERSION='native-launch-contact-think-inferno-2000935-v4';
@@ -405,8 +405,9 @@ export class UtilitySimulation {
       this.radial(p, time, UTILITY_RULES.heRadius, UTILITY_RULES.heDamage, 'he', arena, actors, armor, emit);
       this.effect(p, time, 'burst', UTILITY_RULES.heRadius, .25);
       for (const smoke of this.active) if (smoke.type === 'smoke' &&
-        distance(p.position, smoke.position) < smoke.radius + 3 && clear(p.position, smoke.position, arena)) {
-        this.hole(smoke, {from: {...p.position}, to: {...p.position}, radius: 3, startedAt: time, expiresAt: time + 1});
+        distance(p.position, smoke.position) < smoke.radius + HE_SMOKE_DISPLACEMENT.radius && clear(p.position, smoke.position, arena)) {
+        this.hole(smoke, {from: {...p.position}, to: {...p.position}, radius: HE_SMOKE_DISPLACEMENT.radius,
+          startedAt: time, expiresAt: time + HE_SMOKE_DISPLACEMENT.lifetime});
       }
     } else if (p.kind === 'flash') {
       this.sound(p, time, 'flash', 35, emit); this.effect(p, time, 'burst', .3, .25);
@@ -444,7 +445,13 @@ export class UtilitySimulation {
   }
   private hole(effect: LiveEffect, hole: SmokeHole) {
     effect.holes = effect.holes.filter(h => h.expiresAt > hole.startedAt);
-    if (effect.holes.length >= UTILITY_RULES.maxHoles) effect.holes.shift();
+    if (effect.holes.length >= UTILITY_RULES.maxHoles) {
+      // Sustained fire must not evict a still-active explosion window.
+      let smallest = 0;
+      for (let i = 1; i < effect.holes.length; i++) if (effect.holes[i].radius < effect.holes[smallest].radius) smallest = i;
+      if (hole.radius < effect.holes[smallest].radius) return;
+      effect.holes.splice(smallest, 1);
+    }
     effect.holes.push(hole);
   }
   private extinguish(time: number, arena: Arena, emit: (e: UtilityEvent) => void) {

@@ -655,6 +655,7 @@ export class DuelEngine {
         this.utilityGestures = nativeGestureClips(asset);
         for (const animator of this.animators.values()) animator.addGestureClips(this.utilityGestures);
         await this.utilityRenderer.setGloves(this.progression?.getSnapshot().profile);
+        this.utilityRenderer.warmParticleTextures(this.renderer);
         await this.utilityRenderer.smoke.prepare(this.renderer);
       }).catch(error => {this.utilityPreparing = undefined; throw error;});
   }
@@ -756,7 +757,7 @@ export class DuelEngine {
 
   restart(continuous = false, changeMap = true) {
     if (this.loadingMap) return;
-    if(continuous && this.sim.postWinPlayable && this.scenario?.stageRound) {
+    if(continuous && this.sim.phase === 'result' && this.scenario?.stageRound) {
       if(this.nextRoundAbort)return;
       const controller=new AbortController();this.nextRoundAbort=controller;this.nextRoundError=undefined;this.report();
       void this.scenario.stageRound(this.seed,controller.signal,

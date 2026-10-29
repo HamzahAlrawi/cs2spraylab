@@ -229,8 +229,19 @@ describe('smoke visibility, holes and fire suppression', () => {
     drop(sim, 'he', p(0, .08), 2); run(sim, 1.75, testArena(), [], 2);
     const effect = sim.effects.find(e => e.type === 'smoke')!;
     expect(effect.holes).toHaveLength(1);
-    expect(sim.smokeExposure(p(-2, .5), p(2, .5), 3.75)).toBe(0);
-    expect(sim.smokeExposure(p(-2, .5), p(2, .5), 4.75)).toBeGreaterThan(.9);
+    // Both endpoints are outside the full cloud, at standing-eye height.
+    expect(sim.smokeExposure(p(-8, 1.6), p(8, 1.6), 3.75)).toBe(0);
+    for (let i = 0; i < 40; i++) sim.clearSmokeSegment(p(-8, 2), p(8, 2), 3.75);
+    expect(sim.smokeExposure(p(-8, 1.6), p(8, 1.6), 3.75)).toBe(0);
+    expect(sim.smokeExposure(p(-8, 1.6), p(8, 1.6), 4.75)).toBeGreaterThan(.9);
+  });
+  it('does not clear a cloud through a solid wall even within the HE displacement radius', () => {
+    const sim = new UtilitySimulation(); drop(sim, 'smoke'); run(sim, 2);
+    const arena = {...testArena(), solids: [{center: p(2, 2), size: p(.2, 4, 20)}]};
+    drop(sim, 'he', p(4, .08), 2); run(sim, 2, arena, [], 2);
+    const effect = sim.effects.find(effect => effect.type === 'smoke')!;
+    expect(effect.holes).toHaveLength(0);
+    expect(sim.smokeExposure(p(-8, 1.6), p(8, 1.6), 3.75)).toBeGreaterThan(.99);
   });
   it('does not turn the trainer smoke sight envelope into an invented solid flash wall', () => {
     const sim = new UtilitySimulation(); drop(sim, 'smoke'); run(sim, 2);

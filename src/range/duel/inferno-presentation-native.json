@@ -9,32 +9,118 @@
       "particleSha256": "ec6536c2ddf2e890daab9e916ee1b4327c1312bdb017bad317733bd03a4667bb",
       "texture": "materials/particle/fire_small_sim/fire_small_sim_a.vtex_c",
       "textureSha256": "d182da787442ab688a9a1edc4ba2ca7e6f7b8019e701b1cc1eba051d654cdf31",
-      "url": "/utility-presentation/inferno-center.webp",
-      "sha256": "35a578d331db690b67fcd9d6db813e556addf0737db7e01602017a8602a6f034",
-      "bytes": 516828,
-      "nativeFrames": 17,
-      "frameIndices": [
-        0,
-        1,
-        2,
-        3,
-        4,
-        5,
-        6,
-        7,
-        8,
-        9,
-        10,
-        11,
-        12,
-        13,
-        14,
-        15,
-        16
+      "url": "/utility-presentation/inferno-center-8dac58883fc6.webp",
+      "sha256": "8dac58883fc6d9f2f120a1ebffe2ff4f5fd39c9a6f7fd0c2ed8b3b8f59f080d4",
+      "bytes": 969692,
+      "sequences": [
+        {
+          "nativeSequence": 0,
+          "start": 0,
+          "count": 17,
+          "nativeFrames": 17,
+          "frameIndices": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16
+          ]
+        },
+        {
+          "nativeSequence": 1,
+          "start": 17,
+          "count": 18,
+          "nativeFrames": 18,
+          "frameIndices": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16,
+            17
+          ]
+        },
+        {
+          "nativeSequence": 2,
+          "start": 35,
+          "count": 19,
+          "nativeFrames": 19,
+          "frameIndices": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16,
+            17,
+            18
+          ]
+        },
+        {
+          "nativeSequence": 3,
+          "start": 54,
+          "count": 18,
+          "nativeFrames": 18,
+          "frameIndices": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16,
+            17
+          ]
+        }
       ],
-      "columns": 4,
-      "rows": 5,
-      "frames": 17,
+      "columns": 8,
+      "rows": 9,
+      "frames": 72,
       "gradient": [
         {
           "m_flPosition": 0,
@@ -101,46 +187,183 @@
           ]
         }
       ],
-      "size": 160
+      "gradientBlend": 0.5,
+      "size": 160,
+      "compression": {
+        "format": "webp",
+        "quality": 90,
+        "alphaQuality": 100
+      },
+      "presentation": {
+        "blend": "PARTICLE_OUTPUT_BLEND_MODE_ADD",
+        "overbright": 4,
+        "alphaScale": 1,
+        "orientation": "screen-aligned",
+        "lifetime": [
+          1,
+          2
+        ],
+        "operators": [
+          {
+            "_class": "C_OP_FadeIn",
+            "m_flFadeInTimeMin": 0.1,
+            "m_flFadeInTimeMax": 0.15
+          },
+          {
+            "_class": "C_OP_FadeOut",
+            "m_flFadeOutTimeMin": 0.5,
+            "m_flFadeOutTimeMax": 0.5
+          },
+          {
+            "_class": "C_OP_InterpolateRadius",
+            "m_bEaseInAndOut": true,
+            "m_flStartScale": 0.6,
+            "m_flEndScale": 1.2
+          }
+        ]
+      }
     },
     "edge": {
       "particle": "particles/inferno_fx/molotov_groundfire_main_fancy.vpcf_c",
       "particleSha256": "ab404e62d60dc4273155c88eb413ef3b8236c9446c88757b06c3754064ba29ba",
       "texture": "materials/particle/fire_small_sim/fire_small_sim_b.vtex_c",
       "textureSha256": "97e0f72314154f93e8cc8f850b0879e56b08510145e2ddb58a1c16040211b67b",
-      "url": "/utility-presentation/inferno-edge.webp",
-      "sha256": "63fcea841887a7d1aae179eabaaaec03a0740240cd81671de5518b7e517e9732",
-      "bytes": 646724,
-      "nativeFrames": 32,
-      "frameIndices": [
-        0,
-        1,
-        2,
-        4,
-        5,
-        6,
-        8,
-        9,
-        10,
-        12,
-        13,
-        14,
-        16,
-        17,
-        18,
-        20,
-        21,
-        22,
-        24,
-        25,
-        26,
-        28,
-        29,
-        30
+      "url": "/utility-presentation/inferno-edge-b71e845930a5.webp",
+      "sha256": "b71e845930a54b540e871ef447aea42c3cb67bc84fa271ab5777de826a55cb7d",
+      "bytes": 1236454,
+      "sequences": [
+        {
+          "nativeSequence": 0,
+          "start": 0,
+          "count": 24,
+          "nativeFrames": 32,
+          "frameIndices": [
+            0,
+            1,
+            2,
+            4,
+            5,
+            6,
+            8,
+            9,
+            10,
+            12,
+            13,
+            14,
+            16,
+            17,
+            18,
+            20,
+            21,
+            22,
+            24,
+            25,
+            26,
+            28,
+            29,
+            30
+          ]
+        },
+        {
+          "nativeSequence": 1,
+          "start": 24,
+          "count": 24,
+          "nativeFrames": 33,
+          "frameIndices": [
+            0,
+            1,
+            2,
+            4,
+            5,
+            6,
+            8,
+            9,
+            11,
+            12,
+            13,
+            15,
+            16,
+            17,
+            19,
+            20,
+            22,
+            23,
+            24,
+            26,
+            27,
+            28,
+            30,
+            31
+          ]
+        },
+        {
+          "nativeSequence": 2,
+          "start": 48,
+          "count": 24,
+          "nativeFrames": 33,
+          "frameIndices": [
+            0,
+            1,
+            2,
+            4,
+            5,
+            6,
+            8,
+            9,
+            11,
+            12,
+            13,
+            15,
+            16,
+            17,
+            19,
+            20,
+            22,
+            23,
+            24,
+            26,
+            27,
+            28,
+            30,
+            31
+          ]
+        },
+        {
+          "nativeSequence": 3,
+          "start": 72,
+          "count": 24,
+          "nativeFrames": 33,
+          "frameIndices": [
+            0,
+            1,
+            2,
+            4,
+            5,
+            6,
+            8,
+            9,
+            11,
+            12,
+            13,
+            15,
+            16,
+            17,
+            19,
+            20,
+            22,
+            23,
+            24,
+            26,
+            27,
+            28,
+            30,
+            31
+          ]
+        }
       ],
-      "columns": 4,
-      "rows": 6,
-      "frames": 24,
+      "columns": 8,
+      "rows": 12,
+      "frames": 96,
       "gradient": [
         {
           "m_flPosition": 0,
@@ -207,46 +430,145 @@
           ]
         }
       ],
-      "size": 160
+      "gradientBlend": 0.5,
+      "size": 160,
+      "compression": {
+        "format": "webp",
+        "quality": 90,
+        "alphaQuality": 100
+      },
+      "presentation": {
+        "blend": "PARTICLE_OUTPUT_BLEND_MODE_ADD",
+        "overbright": 2,
+        "alphaScale": 1,
+        "orientation": "screen-aligned",
+        "lifetime": [
+          1,
+          1.1
+        ],
+        "operators": [
+          {
+            "_class": "C_OP_InterpolateRadius",
+            "m_flBias": 0.75,
+            "m_flStartScale": 0.5
+          },
+          {
+            "_class": "C_OP_FadeAndKill",
+            "m_flEndFadeInTime": 0.1,
+            "m_flStartFadeOutTime": 0.85
+          }
+        ]
+      }
     },
     "ground": {
       "particle": "particles/inferno_fx/molotov_groundfire_snapshot_child_base.vpcf_c",
       "particleSha256": "2babf22c41b7a673bf6d498e580a8667122e05ca423a427365daf239f7670d5b",
       "texture": "materials/particle/fire_onsurface/fire_onsurface.vtex_c",
       "textureSha256": "b1f7a920e1973145318c4b28e1332b6db51c09d5a57b8acde8ddb97f25620991",
-      "url": "/utility-presentation/inferno-ground.webp",
-      "sha256": "c8de54b7edf60d012c414380702ed720d27fec246f8af319ec90f2b3c849077f",
-      "bytes": 327280,
-      "nativeFrames": 30,
-      "frameIndices": [
-        0,
-        1,
-        2,
-        3,
-        5,
-        6,
-        7,
-        8,
-        10,
-        11,
-        12,
-        13,
-        15,
-        16,
-        17,
-        18,
-        20,
-        21,
-        22,
-        23,
-        25,
-        26,
-        27,
-        28
+      "url": "/utility-presentation/inferno-ground-81a5a799e544.webp",
+      "sha256": "81a5a799e544f334a882a38fb50d491255f0175be7457dd3f1d02a33aafa8d3d",
+      "bytes": 372380,
+      "sequences": [
+        {
+          "nativeSequence": 0,
+          "start": 0,
+          "count": 24,
+          "nativeFrames": 30,
+          "frameIndices": [
+            0,
+            1,
+            2,
+            3,
+            5,
+            6,
+            7,
+            8,
+            10,
+            11,
+            12,
+            13,
+            15,
+            16,
+            17,
+            18,
+            20,
+            21,
+            22,
+            23,
+            25,
+            26,
+            27,
+            28
+          ]
+        },
+        {
+          "nativeSequence": 1,
+          "start": 24,
+          "count": 24,
+          "nativeFrames": 30,
+          "frameIndices": [
+            0,
+            1,
+            2,
+            3,
+            5,
+            6,
+            7,
+            8,
+            10,
+            11,
+            12,
+            13,
+            15,
+            16,
+            17,
+            18,
+            20,
+            21,
+            22,
+            23,
+            25,
+            26,
+            27,
+            28
+          ]
+        },
+        {
+          "nativeSequence": 2,
+          "start": 48,
+          "count": 24,
+          "nativeFrames": 30,
+          "frameIndices": [
+            0,
+            1,
+            2,
+            3,
+            5,
+            6,
+            7,
+            8,
+            10,
+            11,
+            12,
+            13,
+            15,
+            16,
+            17,
+            18,
+            20,
+            21,
+            22,
+            23,
+            25,
+            26,
+            27,
+            28
+          ]
+        }
       ],
-      "columns": 4,
-      "rows": 6,
-      "frames": 24,
+      "columns": 8,
+      "rows": 9,
+      "frames": 72,
       "gradient": [
         {
           "m_flPosition": 0,
@@ -313,38 +635,213 @@
           ]
         }
       ],
-      "size": 160
+      "gradientBlend": 1,
+      "size": 160,
+      "compression": {
+        "format": "webp",
+        "quality": 90,
+        "alphaQuality": 100
+      },
+      "presentation": {
+        "blend": "PARTICLE_OUTPUT_BLEND_MODE_ADD",
+        "overbright": 2,
+        "alphaScale": 0.85,
+        "orientation": "PARTICLE_ORIENTATION_ALIGN_TO_PARTICLE_NORMAL",
+        "lifetime": [
+          1,
+          2
+        ],
+        "operators": [
+          {
+            "_class": "C_OP_InterpolateRadius",
+            "m_flBias": 0.85
+          }
+        ]
+      }
     },
     "incendiary": {
       "particle": "particles/inferno_fx/incendiary_groundfire_main_center.vpcf_c",
       "particleSha256": "15b4e26d5448bd6bf8399378f0ca7b82c73b9e2b5d20b5e5993143d69474696e",
       "texture": "materials/particle/fire_small_sim/fire_small_sim_a_v02.vtex_c",
       "textureSha256": "cfbf3c6c161b5df735a12ad968cbeb062c1ae2600c1129b69cc7f5d5e258e7c7",
-      "url": "/utility-presentation/inferno-incendiary.webp",
-      "sha256": "c952c1bdcd27c9bc37d79c24102722a349f88cbad10da32a91c18be8281e63e9",
-      "bytes": 218570,
-      "nativeFrames": 16,
-      "frameIndices": [
-        0,
-        1,
-        2,
-        3,
-        4,
-        5,
-        6,
-        7,
-        8,
-        9,
-        10,
-        11,
-        12,
-        13,
-        14,
-        15
+      "url": "/utility-presentation/inferno-incendiary-a04bc149b467.webp",
+      "sha256": "a04bc149b467020f19084aee1b08eb289408f53505965e509a7f3d43d7265588",
+      "bytes": 330604,
+      "sequences": [
+        {
+          "nativeSequence": 0,
+          "start": 0,
+          "count": 16,
+          "nativeFrames": 16,
+          "frameIndices": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15
+          ]
+        },
+        {
+          "nativeSequence": 1,
+          "start": 16,
+          "count": 17,
+          "nativeFrames": 17,
+          "frameIndices": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16
+          ]
+        },
+        {
+          "nativeSequence": 2,
+          "start": 33,
+          "count": 16,
+          "nativeFrames": 16,
+          "frameIndices": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15
+          ]
+        },
+        {
+          "nativeSequence": 3,
+          "start": 49,
+          "count": 14,
+          "nativeFrames": 14,
+          "frameIndices": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13
+          ]
+        },
+        {
+          "nativeSequence": 4,
+          "start": 63,
+          "count": 17,
+          "nativeFrames": 17,
+          "frameIndices": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16
+          ]
+        },
+        {
+          "nativeSequence": 5,
+          "start": 80,
+          "count": 17,
+          "nativeFrames": 17,
+          "frameIndices": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16
+          ]
+        },
+        {
+          "nativeSequence": 6,
+          "start": 97,
+          "count": 17,
+          "nativeFrames": 17,
+          "frameIndices": [
+            0,
+            1,
+            2,
+            3,
+            4,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            11,
+            12,
+            13,
+            14,
+            15,
+            16
+          ]
+        }
       ],
-      "columns": 4,
-      "rows": 4,
-      "frames": 16,
+      "columns": 8,
+      "rows": 15,
+      "frames": 114,
       "gradient": [
         {
           "m_flPosition": 0,
@@ -379,30 +876,159 @@
           ]
         }
       ],
-      "size": 160
+      "gradientBlend": 0.5,
+      "size": 160,
+      "compression": {
+        "format": "webp",
+        "quality": 90,
+        "alphaQuality": 100
+      },
+      "presentation": {
+        "blend": "PARTICLE_OUTPUT_BLEND_MODE_ADD",
+        "overbright": 3,
+        "alphaScale": 1,
+        "orientation": "screen-aligned",
+        "lifetime": [
+          0.75,
+          1.5
+        ],
+        "operators": [
+          {
+            "_class": "C_OP_FadeIn",
+            "m_flFadeInTimeMin": 0.1,
+            "m_flFadeInTimeMax": 0.15
+          },
+          {
+            "_class": "C_OP_FadeOut"
+          },
+          {
+            "_class": "C_OP_InterpolateRadius",
+            "m_bEaseInAndOut": true,
+            "m_flStartScale": 0.6
+          }
+        ]
+      }
     },
     "embers": {
       "particle": "particles/inferno_fx/molotov_groundfire_outline_embers.vpcf_c",
       "particleSha256": "c30a1320af94eb098078f8adb19635e29c29dde264993b9476ba62a970f56712",
       "texture": "materials/particle/impact/fleks_glow.vtex_c",
       "textureSha256": "05536d360dbfa25bf152f62f5434d75ac151c40bc31c2786f476e447b8620a7d",
-      "url": "/utility-presentation/inferno-embers.webp",
-      "sha256": "6558a470868f268ae1f77b0524de6109f6b1d3b8c3eb50a73a9546188fa6df27",
-      "bytes": 5386,
-      "nativeFrames": 1,
-      "frameIndices": [
-        0
+      "url": "/utility-presentation/inferno-embers-c48a00df3c29.webp",
+      "sha256": "c48a00df3c298ed272ec756729caf967554cf06b874e97426ba850b70f7831c1",
+      "bytes": 15944,
+      "sequences": [
+        {
+          "nativeSequence": 0,
+          "start": 0,
+          "count": 1,
+          "nativeFrames": 1,
+          "frameIndices": [
+            0
+          ]
+        },
+        {
+          "nativeSequence": 1,
+          "start": 1,
+          "count": 1,
+          "nativeFrames": 1,
+          "frameIndices": [
+            0
+          ]
+        },
+        {
+          "nativeSequence": 2,
+          "start": 2,
+          "count": 1,
+          "nativeFrames": 1,
+          "frameIndices": [
+            0
+          ]
+        },
+        {
+          "nativeSequence": 3,
+          "start": 3,
+          "count": 1,
+          "nativeFrames": 1,
+          "frameIndices": [
+            0
+          ]
+        },
+        {
+          "nativeSequence": 4,
+          "start": 4,
+          "count": 1,
+          "nativeFrames": 1,
+          "frameIndices": [
+            0
+          ]
+        },
+        {
+          "nativeSequence": 5,
+          "start": 5,
+          "count": 1,
+          "nativeFrames": 1,
+          "frameIndices": [
+            0
+          ]
+        },
+        {
+          "nativeSequence": 6,
+          "start": 6,
+          "count": 1,
+          "nativeFrames": 1,
+          "frameIndices": [
+            0
+          ]
+        },
+        {
+          "nativeSequence": 7,
+          "start": 7,
+          "count": 1,
+          "nativeFrames": 1,
+          "frameIndices": [
+            0
+          ]
+        }
       ],
-      "columns": 4,
+      "columns": 8,
       "rows": 1,
-      "frames": 1,
+      "frames": 8,
       "gradient": null,
-      "size": 64
+      "gradientBlend": 1,
+      "size": 64,
+      "compression": {
+        "format": "webp",
+        "quality": 90,
+        "alphaQuality": 100
+      },
+      "presentation": {
+        "blend": "default",
+        "overbright": 2,
+        "alphaScale": 1,
+        "orientation": "screen-aligned",
+        "lifetime": [
+          0.25,
+          1
+        ],
+        "operators": [
+          {
+            "_class": "C_OP_FadeOut",
+            "m_flFadeOutTimeMin": 0.3,
+            "m_flFadeOutTimeMax": 0.5
+          },
+          {
+            "_class": "C_OP_InterpolateRadius",
+            "m_flStartScale": 0,
+            "m_flBias": 0.8
+          }
+        ]
+      }
     }
   },
   "limitations": [
-    "Bounded resampled sequence-zero atlases. Gradient is baked from heat with authored 0.5 mixing.",
+    "Up to eight native sequences per layer, at most 24 resampled frames per sequence. Luminance/multiply gradient bake follows the VRF spritecard interpretation, not a native shader replay.",
     "Source 2 motion-vector interpolation, snapshot emission, decals, volumetric lighting and water-silt selection are not ported.",
-    "Placement, dimensions and cycling are browser presentation adaptations, not measured gameplay constants."
+    "Snapshot emission density, placement, dimensions and lifetime scaling remain browser adaptations, not measured gameplay constants."
   ]
 }

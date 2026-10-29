@@ -6,6 +6,9 @@ import type {SmokeHole, UtilityEffect} from './utilities';
 export const SMOKE_GRID_SIZE = 48;
 export const SMOKE_EXTINCTION = 2.8;
 export const SMOKE_RENDER_STEPS = 64;
+// Browser displacement envelope, not a recovered Source 2 explosion solver.
+// A 3m core left an opaque shell in the trainer's 4.2m cloud.
+export const HE_SMOKE_DISPLACEMENT = Object.freeze({radius: 5, lifetime: 1});
 export type SmokeDensityGrid = {data: Uint8Array; min: Vec; size: Vec};
 
 /** Static density occupancy. Rebuilt on cell changes, never on camera movement. */

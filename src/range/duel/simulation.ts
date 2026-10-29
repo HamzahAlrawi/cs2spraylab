@@ -477,15 +477,15 @@ export class DuelSimulation {
   }
 
   advance(elapsed: number) {
-    if (!this.playable || this.paused) return;
+    if (this.phase === 'ready' || this.paused) return;
     this.accumulator += Math.min(Math.max(elapsed, 0), .25);
-    while (this.accumulator + 1e-10 >= STEP && this.playable) {
+    while (this.accumulator + 1e-10 >= STEP) {
       this.step(); this.accumulator -= STEP;
     }
   }
 
   step() {
-    if (!this.playable || this.paused) return;
+    if (this.phase === 'ready' || this.paused) return;
     const competitive=this.phase==='fighting' && !this.spawnAuthoring;
     this.tick++;
     this.time = this.tick * STEP;
@@ -591,7 +591,7 @@ export class DuelSimulation {
         ...this.boostPlan?.commands.find(command=>command.actorId===actor.id)?.command}, recognized ?? null, !!contact));
     }
     const shots: {actor: CombatActor; fired: FiredRound; shotId: number}[] = [];
-    const movementActors=!competitive?[this.actors[0]]:this.boostPlan?[this.actors[0],...this.actors.slice(1).sort((a,b)=>
+    const movementActors=!competitive?(this.playable?[this.actors[0]]:[]):this.boostPlan?[this.actors[0],...this.actors.slice(1).sort((a,b)=>
       Number(b.id===this.boostPlan!.assignments[0].actorId)-Number(a.id===this.boostPlan!.assignments[0].actorId))]:this.actors;
     for (const actor of movementActors) {
       if (!actor.alive) continue;

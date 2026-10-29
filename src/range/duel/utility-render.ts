@@ -148,6 +148,10 @@ export class UtilityRenderer {
     })]).then(() => {});
     await this.particleJob;
   }
+  warmParticleTextures(renderer: Pick<THREE.WebGLRenderer, 'initTexture'>) {
+    this.inferno.warmTextures(renderer);
+    for (const texture of this.particleTextures) renderer.initTexture(texture);
+  }
 
   /** Asset ownership transfers here. Static world geometry is shared by all bot grips. */
   installWorld(kind: UtilityKind, scene: THREE.Group, projectile: THREE.Group) {

@@ -21,9 +21,11 @@ import {PreparedRound, decodedPreloadAllowed} from './prepared-round';
 import {backgroundTurn} from '../prefire/background-work';
 import {loadMapContext} from './map-context';
 import {localChunkManifest} from './map-manifests';
+import {loadNativeRadar} from './native-radar-cache';
 
 const overviews=new WeakMap<PrefireMap,{image:ImageBitmap;bounds:RadarOverview['bounds'];
   layers:({feet:number}&NonNullable<RadarOverview['source']>)[]}>();
+const nativeOverviews = new WeakMap<PrefireMap, RadarOverview>();
 type BakedChunk=RoundCatalog['chunks'][string];
 const chunkRounds=new WeakMap<PrefireMap,BakedChunk>();
 
@@ -161,9 +163,16 @@ export async function loadRealMapChunk(chunk:RealMapChunk,signal:AbortSignal,bac
   // Distant context is one shared, visual-only decode, never another collision
   // world. Own its lease even if the precise chunk fails or is cancelled.
   const contextTask=loadMapContext(signal).catch(()=>undefined);
+  const nativeRadarTask=loadNativeRadar(signal).catch(()=>undefined);
   const map=await loadDust2(signal,{base,visibility:!!delivery?.files['visibility.bin'],delivery,background,hashes:{'collision.json':manifest.collisionManifestSha256,'visual.json':manifest.visualManifestSha256}})
-    .catch(async error=>{(await contextTask)?.dispose();throw error;});
+    .catch(async error=>{(await contextTask)?.dispose();(await nativeRadarTask)?.dispose();throw error;});
   try {
+    const nativeRadar = await nativeRadarTask;
+    if (nativeRadar) {
+      nativeOverviews.set(map, nativeRadar.overview);
+      const dispose = map.dispose.bind(map);
+      map.dispose = () => {nativeOverviews.delete(map); nativeRadar.dispose(); dispose();};
+    }
     const context=await contextTask;
     if(context) {
       const dispose=map.dispose.bind(map);map.dispose=()=>{context.dispose();dispose();};
@@ -295,6 +304,7 @@ export class RealMapSession implements DuelScenario {
   loadingReport(){return this.map.loadStats;}
   updateView(position:Vec){(this.viewedMap??this.map).updateVisibility?.(position);}
   radarOverview(feet:number):RadarOverview|undefined {
+    const native = nativeOverviews.get(this.map); if (native) return native;
     const overview=overviews.get(this.map);if(!overview)return;
     const source=overview.layers.reduce((best,layer)=>Math.abs(layer.feet-feet)<Math.abs(best.feet-feet)?layer:best);
     return {image:overview.image,bounds:overview.bounds,source};

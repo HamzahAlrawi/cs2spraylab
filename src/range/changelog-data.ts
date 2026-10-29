@@ -390,7 +390,7 @@ const october29BotChanges = {
   ],
 } as const satisfies ChangelogRelease;
 
-export const latestChanges = {
+const october29GrenadePresentationChanges = {
   id: 'update-2026-10-29-grenade-presentation', title: 'Grenades & authored Duel lineups (October 29)',
   baselineCommit: '1867d2d', sections: [
     {id: 'grenade-input-audio', title: 'Throws & native sound', items: [
@@ -409,7 +409,27 @@ export const latestChanges = {
   ],
 } as const satisfies ChangelogRelease;
 
+export const latestChanges = {
+  id: 'update-2026-10-29-radar-utility-review', title: 'Clearer radar, grenades & round review (October 29)',
+  baselineCommit: '0a1ff64', sections: [
+    {id: 'readable-native-radar', title: 'A useful radar', items: [
+      'Larger circular radar with a consistent world-space zoom, heading cone, height cues, edge bearings and fading last-known contacts. Hidden enemies are not revealed.',
+      'Dust 2 uses the installed native overview artwork and coordinates, shared between chunks through verified local caching. The collision-derived floor atlas remains a fallback.',
+    ]},
+    {id: 'post-round-grenades', title: 'Grenades keep moving', items: [
+      'Dying no longer stops the world clock: airborne grenades and primed grenades dropped by dying players continue falling, bouncing and detonating after the result. Scored outcomes stay fixed.',
+      'HE opens a visible temporary window through the full smoke cloud; sustained bullet fire no longer evicts the explosion opening. The shared visual/AI envelope remains a documented browser approximation.',
+      'Fire uses more native sequence variants, corrected luminance/multiply color composition, additive blending, separate particle lifetimes, overlapping emission and clamped sequence ends rather than looping flat cards.',
+    ]},
+    {id: 'compact-duel-review', title: 'Focus on your next improvement', items: [
+      'The Duel scorecard puts measured aim, movement and positioning first, with at most two evidenced weaknesses and specific actions. Six headline stats include time to damage, time to kill and opening accuracy.',
+      'Detailed findings, aim breakdown and history remain available in expandable sections. Missing measurements are not displayed as zero, and small samples are marked provisional.',
+    ]},
+  ],
+} as const satisfies ChangelogRelease;
+
 export const changelogHistory = [
+  october29GrenadePresentationChanges,
   october29BotChanges,
   october28ProgressRecoveryChanges,
   october28GrenadeChanges,
