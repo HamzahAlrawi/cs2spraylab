@@ -6,6 +6,7 @@ import sharp from 'sharp';
 import {parseKeyValues} from './cosmetic-keyvalues.mjs';
 import {parseKv3} from './kv3.mjs';
 import {importKnifeCosmetics} from './import-knife-cosmetics.mjs';
+import {nativePaintInputs, isMissingTexturePixels} from './cosmetic-paint.mjs';
 
 const game = process.env.CS2_PATH || 'C:/Program Files (x86)/Steam/steamapps/common/Counter-Strike Global Offensive';
 const cli = path.resolve('.local-tools/vrf/Source2Viewer-CLI.exe');
@@ -33,6 +34,8 @@ const hash = file => crypto.createHash('sha256').update(fs.readFileSync(file)).d
 const convert = async (resource,id,size) => {
   const file = `research/cosmetics/${id}.png`;
   if (refresh || !fs.existsSync(file)) run(['-f',resource.endsWith('_c')?resource:`${resource}_c`,'-d','-o',file]);
+  if (isMissingTexturePixels(await sharp(file).resize(32,32).ensureAlpha().raw().toBuffer()))
+    throw new Error(`Missing-texture sentinel: ${resource}`);
   if (refresh || !fs.existsSync(`${output}/${id}.webp`)) await sharp(file).resize(size,size,{fit:'inside',withoutEnlargement:true}).webp({quality:88}).toFile(`${output}/${id}.webp`);
   return `/textures/cosmetics/${id}.webp`;
 };
@@ -54,19 +57,8 @@ const nativePaint = kit => {
       fs.writeFileSync(file,text.slice(text.indexOf('<!-- kv3')));
     }
   }
-  const variables = [];
-  const walk = value => {if (!value || typeof value !== 'object') return; if(value.m_strName)variables.push(value);for(const child of Object.values(value))walk(child);};
   const material = parseKv3(fs.readFileSync(file,'utf8'));
-  walk(material);
-  const texture = variables.find(v=>v.m_strName==='g_tPattern'&&v.m_strTextureRuntimeResourcePath)?.m_strTextureRuntimeResourcePath ??
-    material.m_textureParams?.find(v=>v.m_name==='g_tPattern')?.m_pValue;
-  const colors = material.m_vectorParams?.filter(v=>/^g_vColor\d$/.test(v.m_name)).map(v=>v.m_value) ??
-    variables.filter(v=>/^g_vColor\d$/.test(v.m_strName)).map(v=>Array.isArray(v.m_cValueColor4)
-      ? v.m_cValueColor4.slice(0,3).map(component=>component/255)
-      : [v.m_flValueFloatX,v.m_flValueFloatY,v.m_flValueFloatZ]);
-  if (colors.some(color=>color.length<3 || !color.slice(0,3).every(Number.isFinite))) throw new Error('Invalid native paint palette');
-  const scale = variables.find(v=>v.m_strName==='g_flPatternTexCoordScale')?.m_flValueFloatX ?? 1;
-  return {file,resource,texture,colors,scale};
+  return {file,resource,...nativePaintInputs(material)};
 };
 for (const equipment of weaponIds) {
   if (only && !only.includes(equipment)) continue;
@@ -83,13 +75,14 @@ for (const equipment of weaponIds) {
     if (count===target) break;
     try {
       const paint = nativePaint(kit), id = `${equipment}-${kit.name}`;
-      const map = paint.texture ? await convert(paint.texture,`kit-${kit.kitId}-albedo`,1024) : null;
-      if (!map && !paint.colors.length) throw new Error('No native pattern or palette');
+      const paintByNumberMap = paint.paintByNumberTexture ? await convert(paint.paintByNumberTexture,`kit-${kit.kitId}-paint-mask`,1024) : null;
+      const map = !paintByNumberMap && paint.texture ? await convert(paint.texture,`kit-${kit.kitId}-albedo`,1024) : null;
+      if (!map && !paintByNumberMap && !paint.colors.length) throw new Error('No native pattern or palette');
       const imageUrl = await convert(`${prefix}${kit.name}_light_png.vtex`,`${id}-preview`,384);
       const legacy = kit.use_legacy_model==='1' || !kit.composite_material_path;
       const row = {id,equipment,category:'weapon',label:tokens[kit.description_tag.replace(/^#/,'').toLowerCase()]??kit.name,
         unlockLevel:levels[count],price:prices[count],imageUrl,assetKey:equipment+(legacy?'-legacy':''),
-        map,colors:paint.colors,patternScale:paint.scale,style:Number(kit.style),legacy,kitId:kit.kitId,
+        map,paintByNumberMap,colors:paint.colors,patternScale:paint.scale,style:Number(kit.style),legacy,kitId:kit.kitId,
         source:paint.resource,texture:paint.texture??null,sourceSha256:hash(paint.file),
         rendering:['7','9'].includes(kit.style)?'native albedo, matching native mesh UVs; simplified factory-new PBR':'native pattern/palette; approximate procedural finish, fixed seed'};
       const existing = rows.findIndex(item=>item.id===id);

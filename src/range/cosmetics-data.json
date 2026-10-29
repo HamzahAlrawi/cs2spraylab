@@ -6413,27 +6413,27 @@
       "price": 7500,
       "imageUrl": "/textures/cosmetics/usp-ht_red_edges-preview.webp",
       "assetKey": "usp",
-      "map": "/textures/cosmetics/kit-1323-albedo.webp",
+      "map": null,
       "colors": [
         [
-          null,
-          null,
-          null
+          0.8274509803921568,
+          0.27058823529411763,
+          0.2627450980392157
         ],
         [
-          null,
-          null,
-          null
+          0.32941176470588235,
+          0.14901960784313725,
+          0.14901960784313725
         ],
         [
-          null,
-          null,
-          null
+          0.3686274509803922,
+          0.3686274509803922,
+          0.3686274509803922
         ],
         [
-          null,
-          null,
-          null
+          0.25098039215686274,
+          0.17254901960784313,
+          0.17254901960784313
         ]
       ],
       "patternScale": 3,
@@ -6443,7 +6443,9 @@
       "source": "weapons/paints/timed_drops/ht_red_edges.vcompmat",
       "texture": "items/assets/paintkits/timed_drops/paint_wear_edges_psd_a5b66bfe.vtex",
       "sourceSha256": "b918bb19bca0f80aa950622a018dc3b49dd2ca468f95c587ad4d3b25bd255cca",
-      "rendering": "native pattern/palette; approximate procedural finish, fixed seed"
+      "rendering": "native UV paint-by-number mask and four-color palette; stock normal/detail retained, simplified compositor",
+      "paintByNumberMap": "/finish-repairs/usp-bleeding-edge-mask-fb0f55c5a6fd.webp",
+      "sourceBuild": "2000938"
     },
     {
       "id": "usp-soe_tropical",

@@ -7,9 +7,9 @@ import {changelogHistory, changelogReleases, latestChanges} from './changelog-da
 
 describe('append-only changelog', () => {
   it('identifies the requested baseline without claiming a deployment', () => {
-    expect(latestChanges.id).toBe('update-2026-10-29-he-smoke');
-    expect(latestChanges.title).toBe('HE explosion smoke (October 29)');
-    expect(latestChanges.baselineCommit).toBe('abb9652');
+    expect(latestChanges.id).toBe('update-2026-10-29-bleeding-edge');
+    expect(latestChanges.title).toBe('USP-S finish repair (October 29)');
+    expect(latestChanges.baselineCommit).toBe('4c0f4db');
     const html = renderToStaticMarkup(createElement(Changelog));
     expect(html).toContain('Ready rounds &amp; more Dust 2 angles (October 23)');
     expect(html).toContain('Combat feedback &amp; map delivery (October 23)');
@@ -18,7 +18,7 @@ describe('append-only changelog', () => {
     expect(html).toContain('Dust 2 angle coverage (October 18)');
     expect(html).toContain('CS2 coaching update (October 17)');
     expect(html).toContain('Training quality update (October 16)');
-    expect(html).toContain('Since baseline <code>abb9652</code>');
+    expect(html).toContain('Since baseline <code>4c0f4db</code>');
     expect(html).not.toMatch(/<time|deployed on|released on/i);
   });
 
@@ -39,14 +39,15 @@ describe('append-only changelog', () => {
   });
 
   it('keeps all releases in newest-first order with no duplicate IDs', () => {
-    expect(changelogReleases.map(release => release.id)).toEqual(['update-2026-10-29-he-smoke','update-2026-10-29-radar-utility-review','update-2026-10-29-grenade-presentation','update-2026-10-29-bot-difficulty','update-2026-10-28-progress-recovery','update-2026-10-28-grenade-fidelity','update-2026-10-26-utilities','update-2026-10-23-preloading','update-2026-10-23','update-2026-10-20', 'update-2026-10-19', 'update-2026-10-18', 'update-2026-10-17', 'update-2026-10-16', 'update-2026-10-08', 'update-2026-10-05', 'update-49d8ea6']);
+    expect(changelogReleases.map(release => release.id)).toEqual(['update-2026-10-29-bleeding-edge','update-2026-10-29-he-smoke','update-2026-10-29-radar-utility-review','update-2026-10-29-grenade-presentation','update-2026-10-29-bot-difficulty','update-2026-10-28-progress-recovery','update-2026-10-28-grenade-fidelity','update-2026-10-26-utilities','update-2026-10-23-preloading','update-2026-10-23','update-2026-10-20', 'update-2026-10-19', 'update-2026-10-18', 'update-2026-10-17', 'update-2026-10-16', 'update-2026-10-08', 'update-2026-10-05', 'update-49d8ea6']);
     expect(changelogReleases).toEqual([latestChanges, ...changelogHistory]);
     expect(new Set(changelogReleases.map(release => release.id)).size).toBe(changelogReleases.length);
-    expect(changelogReleases.flatMap(release => release.sections)).toHaveLength(74);
+    expect(changelogReleases.flatMap(release => release.sections)).toHaveLength(75);
   });
 
   it('covers Prefire, native-map limits and expanded Duel arenas', () => {
-    expect(latestChanges.sections.map(section=>section.id)).toEqual(['he-explosion-after-effect']);
+    expect(latestChanges.sections.map(section=>section.id)).toEqual(['usp-bleeding-edge-repair']);
+    expect(changelogHistory.find(release=>release.id==='update-2026-10-29-he-smoke')!.sections.map(section=>section.id)).toEqual(['he-explosion-after-effect']);
     expect(changelogHistory.find(release=>release.id==='update-2026-10-29-radar-utility-review')!.sections.map(section=>section.id)).toEqual(['readable-native-radar','post-round-grenades','compact-duel-review']);
     expect(changelogHistory.find(release=>release.id==='update-2026-10-29-grenade-presentation')!.sections.map(section=>section.id)).toEqual(['grenade-input-audio','smoke-fire-flash','authored-duel-lineups']);
     expect(changelogHistory.find(release=>release.id==='update-2026-10-29-bot-difficulty')!.sections.map(section=>section.id)).toEqual(['beginner-bot-assistance']);

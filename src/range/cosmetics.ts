@@ -5,7 +5,7 @@ import {equippedCosmetic, type CosmeticDefinition, type ProgressionProfile} from
 import {actorCosmetics, applyGloves} from './actor-cosmetics';
 
 type NativeFinish = CosmeticDefinition & {map?: string | null; colors?: number[][]; style?: number; patternScale?: number; kitId?: string;
-  paintMaskMap?: string; patternRotation?: number; patternOffset?: number[]; paintRoughness?: number; stockOnly?: boolean};
+  paintMaskMap?: string; paintByNumberMap?: string; patternRotation?: number; patternOffset?: number[]; paintRoughness?: number; stockOnly?: boolean};
 const finishes = data.cosmetics as readonly NativeFinish[];
 let finishDetails:Promise<readonly NativeFinish[]>|undefined;
 export const DEFAULT_GLOVE_PREVIEW = '/textures/cosmetics/gloves-standard-preview.webp';
@@ -78,6 +78,28 @@ diffuseColor.rgb = mix(diffuseColor.rgb, ${sample}, knifeCoverage);`);
   return clone;
 }
 
+export function nativeWeaponPaletteMaterial(material: THREE.MeshStandardMaterial, finish: NativeFinish, mask: THREE.Texture) {
+  const colors = finish.colors;
+  if (!colors || colors.length !== 4 || colors.some(c => c.length < 3 || !c.slice(0, 3).every(Number.isFinite)))
+    throw new Error(`Invalid paint-by-number palette: ${finish.id}`);
+  const clone = material.clone();
+  Object.assign(clone, {cosmeticPaintByNumberMask: mask});
+  clone.onBeforeCompile = shader => {
+    shader.vertexShader = 'varying vec2 vFinishUv;\n' + shader.vertexShader.replace('#include <begin_vertex>', '#include <begin_vertex>\nvFinishUv = uv;');
+    shader.uniforms.finishMask = {value: mask};
+    colors.forEach((c, i) => {shader.uniforms[`finishColor${i}`] = {value: new THREE.Color().setRGB(c[0], c[1], c[2], THREE.SRGBColorSpace)};});
+    shader.fragmentShader = `varying vec2 vFinishUv;uniform sampler2D finishMask;
+uniform vec3 finishColor0;uniform vec3 finishColor1;uniform vec3 finishColor2;uniform vec3 finishColor3;\n` + shader.fragmentShader;
+    shader.fragmentShader = shader.fragmentShader.replace('#include <map_fragment>', `#include <map_fragment>
+vec3 finishChannels = texture2D(finishMask, vFinishUv).rgb;
+vec3 finishPaint = mix(mix(mix(finishColor0, finishColor1, finishChannels.r), finishColor2, finishChannels.g), finishColor3, finishChannels.b);
+float finishDetail = clamp(dot(diffuseColor.rgb, vec3(.2126,.7152,.0722)) * 3.0, .35, 1.2);
+diffuseColor.rgb = finishPaint * finishDetail;`);
+  };
+  clone.customProgramCacheKey = () => 'spraylab-native-weapon-paint-by-number-v1';
+  return clone;
+}
+
 /** Applies only to an exclusively owned model. Its normal disposal owns the new textures/materials. */
 export async function applyCosmetic(root: THREE.Object3D, profile: ProgressionProfile, equipment: Equipment) {
   await applyGloves(root, profile);
@@ -87,8 +109,9 @@ export async function applyCosmetic(root: THREE.Object3D, profile: ProgressionPr
   const finish = (await finishDetails).find(item => item.id === choice.id);
   if (!finish || finish.stockOnly) return;
   const knife = equipment === 'knife';
-  const paint = finish.map ? await new THREE.TextureLoader().loadAsync(finish.map) : undefined;
-  if (paint) {paint.flipY = false; paint.colorSpace = knife && finish.colors?.length && ![7,9].includes(finish.style ?? 0) ? THREE.NoColorSpace : THREE.SRGBColorSpace;}
+  const paint = finish.paintByNumberMap ? await new THREE.TextureLoader().loadAsync(finish.paintByNumberMap)
+    : finish.map ? await new THREE.TextureLoader().loadAsync(finish.map) : undefined;
+  if (paint) {paint.flipY = false; paint.colorSpace = finish.paintByNumberMap || knife && finish.colors?.length && ![7,9].includes(finish.style ?? 0) ? THREE.NoColorSpace : THREE.SRGBColorSpace;}
   let mask: THREE.Texture | undefined;
   if (knife) {
     try {
@@ -105,6 +128,7 @@ export async function applyCosmetic(root: THREE.Object3D, profile: ProgressionPr
     const painted = original.map(material => {
       if (!(material instanceof THREE.MeshStandardMaterial)) return material;
       if (knife && mask) return nativeKnifeMaterial(material, finish, paint, mask);
+      if (finish.paintByNumberMap && paint) return nativeWeaponPaletteMaterial(material, finish, paint);
       const clone = material.clone();
       const colors = finish.colors?.filter(color => color.length >= 3 && color.slice(0, 3).every(Number.isFinite)) ?? [];
       const procedural = finish.style !== undefined && ![7, 9].includes(finish.style);

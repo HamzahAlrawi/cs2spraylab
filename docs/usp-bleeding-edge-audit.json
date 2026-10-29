@@ -1,0 +1,49 @@
+{
+  "id": "usp-ht_red_edges",
+  "build": "2000938",
+  "archiveDirectorySha256": "b32a45c66eff785aa4b9b4e5564e36ac0639942074a9c27b765eab74e5066cdb",
+  "viewerSha256": "ef9f6fb3943c30b73f0991bce6654128727b0807968f7997a6bb014efbec8830",
+  "materialSource": "weapons/paints/timed_drops/ht_red_edges.vcompmat_c",
+  "materialCompiledSha256": "248f7126eaf25088f3646e489cd0e90f7d02786843e00d225b6efa4034f538e1",
+  "materialSha256": "b918bb19bca0f80aa950622a018dc3b49dd2ca468f95c587ad4d3b25bd255cca",
+  "selectedBy": [
+    "g_bUsePaintByNumberMasks=true",
+    "g_bOverrideDefaultMasks=true",
+    "g_tPaintByNumberMasks -> g_tMasks"
+  ],
+  "maskSource": "items/assets/paintkits/set_realism_camo/gsch_bright_camo_usp_material_mask_psd_af274685.vtex_c",
+  "maskCompiledSha256": "7d5b5daf067ef77f8d50aadf9bf5543762ef18698dd955f6fc33b97f29c2085a",
+  "url": "/finish-repairs/usp-bleeding-edge-mask-fb0f55c5a6fd.webp",
+  "sha256": "fb0f55c5a6fd184c57cd96310b9baee285309945f408045c6f47083982d45f46",
+  "bytes": 35518,
+  "colors": [
+    [
+      0.8274509803921568,
+      0.27058823529411763,
+      0.2627450980392157
+    ],
+    [
+      0.32941176470588235,
+      0.14901960784313725,
+      0.14901960784313725
+    ],
+    [
+      0.3686274509803922,
+      0.3686274509803922,
+      0.3686274509803922
+    ],
+    [
+      0.25098039215686274,
+      0.17254901960784313,
+      0.17254901960784313
+    ]
+  ],
+  "preserved": {
+    "id": "usp-ht_red_edges",
+    "price": 7500,
+    "unlockLevel": 52,
+    "assetKey": "usp",
+    "imageUrl": "/textures/cosmetics/usp-ht_red_edges-preview.webp"
+  },
+  "limitation": "Native inputs, not the full CS2 halftone/wear/seed material compositor. Other catalog rows retain their original source build."
+}

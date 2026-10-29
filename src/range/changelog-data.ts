@@ -428,7 +428,7 @@ const october29RadarReviewChanges = {
   ],
 } as const satisfies ChangelogRelease;
 
-export const latestChanges = {
+const october29HeSmokeChanges = {
   id: 'update-2026-10-29-he-smoke', title: 'HE explosion smoke (October 29)', baselineCommit: 'abb9652',
   sections: [{id: 'he-explosion-after-effect', title: 'A complete-looking HE burst', items: [
     'HE detonations now leave expanding native-texture smoke billows and spreading dust after the central flash, with fitted frame animation and gradual dissipation.',
@@ -437,7 +437,16 @@ export const latestChanges = {
   ]}],
 } as const satisfies ChangelogRelease;
 
+export const latestChanges = {
+  id: 'update-2026-10-29-bleeding-edge', title: 'USP-S finish repair (October 29)', baselineCommit: '4c0f4db',
+  sections: [{id: 'usp-bleeding-edge-repair', title: 'Bleeding Edge renders again', items: [
+    'Replaced the broken magenta USP-S Bleeding Edge material with its installed-game UV paint mask and valid authored colors, retaining weapon surface detail and unchanged gloves.',
+    'Existing purchases and equipped skins are preserved. A versioned repair asset bypasses the old cached texture; import checks reject missing-texture placeholders and corrupt palettes.',
+  ]}],
+} as const satisfies ChangelogRelease;
+
 export const changelogHistory = [
+  october29HeSmokeChanges,
   october29RadarReviewChanges,
   october29GrenadePresentationChanges,
   october29BotChanges,

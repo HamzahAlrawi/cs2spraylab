@@ -1,6 +1,6 @@
 import {afterEach,describe,expect,it,vi} from 'vitest';
 import * as THREE from 'three';
-import {cosmeticCatalog,cosmeticAsset,cosmeticPreview,cosmeticLabel,applyCosmetic,nativeKnifeMaterial,knifeTypes} from './cosmetics';
+import {cosmeticCatalog,cosmeticAsset,cosmeticPreview,cosmeticLabel,applyCosmetic,nativeKnifeMaterial,nativeWeaponPaletteMaterial,knifeTypes} from './cosmetics';
 import data from './cosmetics-data.json';
 import knifeAssets from '../../docs/knife-asset-inventory.json';
 import knifeAudit from '../../docs/knife-cosmetics-inventory.json';
@@ -10,6 +10,53 @@ import {createHash} from 'node:crypto';
 import {disposeResources} from './duel/render-resources';
 import {equipmentIds} from './equipment';
 import {prepareCosmeticCatalog,sanitizeProgression,xpForLevel,createProgressionController} from './progression';
+import bleedingEdgeAudit from '../../docs/usp-bleeding-edge-audit.json';
+
+describe('USP-S Bleeding Edge missing-material repair',()=>{
+  afterEach(()=>vi.restoreAllMocks());
+  const id='usp-ht_red_edges';
+  const finish=data.cosmetics.find(item=>item.id===id)! as Parameters<typeof nativeWeaponPaletteMaterial>[1];
+  it('preserves the purchased identity, price, level and native preview',()=>{
+    expect(finish).toMatchObject({id,equipment:'usp',kitId:'1323',assetKey:'usp',price:7500,unlockLevel:52,
+      imageUrl:'/textures/cosmetics/usp-ht_red_edges-preview.webp',map:null});
+    expect(finish.colors).toEqual(bleedingEdgeAudit.colors);
+    expect(finish.colors?.flat().every(Number.isFinite)).toBe(true);
+    const profile=sanitizeProgression({version:2,xp:357885,balance:2877,owned:[id],equipped:{usp:id}},cosmeticCatalog);
+    expect(profile.owned).toContain(id);expect(profile.equipped.usp).toBe(id);expect(profile.balance).toBe(2877);
+    expect(cosmeticAsset(profile,'usp')).toBe('usp');expect(cosmeticLabel(profile,'usp')).toBe('USP-S | Bleeding Edge');
+  });
+  it('ships the content-addressed native UV mask recorded by the static-file audit',()=>{
+    const bytes=readFileSync(`public/revamp${bleedingEdgeAudit.url}`);
+    expect(createHash('sha256').update(bytes).digest('hex')).toBe(bleedingEdgeAudit.sha256);
+    expect(bytes.length).toBe(bleedingEdgeAudit.bytes);
+    expect(finish).toMatchObject({paintByNumberMap:bleedingEdgeAudit.url,sourceBuild:bleedingEdgeAudit.build});
+  });
+  it('loads the UV mask rather than the old pink pattern, retaining stock detail and untouched hands',async()=>{
+    const root=new THREE.Group(),baseMap=new THREE.Texture(),normal=new THREE.Texture(),roughness=new THREE.Texture();
+    const base=new THREE.MeshStandardMaterial({map:baseMap,normalMap:normal,roughnessMap:roughness});
+    const gun=new THREE.Mesh(new THREE.BoxGeometry(),base);gun.name='weapon_usp.body_hd';root.add(gun);
+    const hands=new THREE.Mesh(new THREE.BoxGeometry(),base);hands.name='firstperson_gloves';root.add(hands);
+    const mask=new THREE.Texture(),load=vi.spyOn(THREE.TextureLoader.prototype,'loadAsync').mockResolvedValue(mask);
+    const profile=sanitizeProgression({version:2,owned:[id],equipped:{usp:id}},cosmeticCatalog);
+    await applyCosmetic(root,profile,'usp');
+    expect(load).toHaveBeenCalledExactlyOnceWith(bleedingEdgeAudit.url);
+    expect(mask.colorSpace).toBe(THREE.NoColorSpace);expect(mask.flipY).toBe(false);
+    const painted=gun.material as THREE.MeshStandardMaterial;
+    expect(painted.map).toBe(baseMap);expect(painted.normalMap).toBe(normal);expect(painted.roughnessMap).toBe(roughness);
+    expect(hands.material).toBe(base);expect(root.userData.cosmeticFinish).toBe(id);
+    const shader={uniforms:{},vertexShader:'#include <begin_vertex>',fragmentShader:'#include <map_fragment>'} as Parameters<typeof painted.onBeforeCompile>[0];
+    painted.onBeforeCompile(shader,{} as THREE.WebGLRenderer);
+    expect(shader.vertexShader).toContain('vFinishUv = uv');
+    expect(shader.fragmentShader).toContain('texture2D(finishMask, vFinishUv)');
+    expect(shader.fragmentShader).not.toContain('cosmeticScale');
+    expect(shader.uniforms.finishColor0.value.toArray().every(Number.isFinite)).toBe(true);
+    const dispose=vi.spyOn(mask,'dispose');disposeResources([root]);expect(dispose).toHaveBeenCalledOnce();
+  });
+  it('rejects corrupt palettes before constructing a shader',()=>{
+    expect(()=>nativeWeaponPaletteMaterial(new THREE.MeshStandardMaterial(),{...finish,colors:[[NaN,0,0]]},new THREE.Texture()))
+      .toThrow('Invalid paint-by-number palette');
+  });
+});
 
 describe('native finish catalog and migration',()=>{
   const catalog=prepareCosmeticCatalog(cosmeticCatalog);
