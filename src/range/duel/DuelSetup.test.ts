@@ -16,7 +16,7 @@ function renderSetup(patch: Partial<DuelConfig> = {}) {
 
 const globalLabels = [
   'Number of bots', 'Bot skill level', 'Bot behavior', 'Add bot weapon', 'Add weapon to bot pool',
-  'Use generated arenas', 'Real map chunk', 'Duel route arrows', 'Bot health', 'Player health', 'Bot armor', 'Bot helmet',
+  'Use generated arenas', 'Real map chunk', 'Duel approach course', 'Duel route arrows', 'Bot health', 'Player health', 'Bot armor', 'Bot helmet',
   'Bot armor points', 'Player armor', 'Player helmet', 'Player armor points',
   'Bot aim accuracy', 'Bot trading', 'Round restart delay', 'Protect Ctrl+W',
   'Show radar', 'Rotate radar', 'Radar zoom',

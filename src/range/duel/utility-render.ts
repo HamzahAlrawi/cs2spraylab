@@ -9,10 +9,10 @@ import {VIEWMODEL_OFFSET} from '../viewmodel';
 import {UtilityView, type UtilityPresentation} from './utility-view';
 import {applyGloves, type ActorCosmeticProfile} from '../actor-cosmetics';
 import particles from './utility-particles-native.json';
-import {MAX_SMOKE_CELLS, SMOKE_CELL_SIZE, smokeContains} from './smoke-volume';
+import {SmokeRenderer} from './smoke-render';
+import {InfernoRenderer} from './inferno-render';
 
-export const UTILITY_PRESENTATION_BOUNDS = Object.freeze({smokeParts: MAX_SMOKE_CELLS, smokePuffs: 2048, fireParts: 24, drops: 64, effects: 64});
-const SMOKE_PARTS = UTILITY_PRESENTATION_BOUNDS.smokeParts, FIRE_PARTS = UTILITY_PRESENTATION_BOUNDS.fireParts;
+export const UTILITY_PRESENTATION_BOUNDS = Object.freeze({drops: 64, effects: 64});
 export type UtilityDropPresentation = Readonly<{id: number; utility: UtilityKind; position: Readonly<Vec>; picked?: boolean;
   droppedAt?: number; owner?: unknown}>;
 const vertexShader = `
@@ -44,14 +44,13 @@ void main() {
   vec4 texel = mix(frame(floor(vFrame)), frame(floor(vFrame) + 1.0), fract(vFrame));
   float alpha = texel.a * vOpacity;
   vec3 color = texel.rgb;
-  if (mode == 0) color = mix(vec3(0.32,0.34,0.35), vec3(0.60,0.62,0.62), texel.a) * (0.82 + vUv.y * 0.18);
   if (mode == 2) {alpha *= max(texel.r, max(texel.g, texel.b)); color = vec3(0.89,0.96,1.0);}
   if (mode == 3) color = vec3(texel.a) * tint * overbright;
   if (alpha < 0.01) discard;
   gl_FragColor = vec4(color,alpha);
 }`;
 
-function billboards(capacity: number, kind: 'smoke' | 'fire' | 'flash' | 'he') {
+function billboards(capacity: number, kind: 'flash' | 'he') {
   const asset = particles.assets[kind];
   const geometry = new THREE.PlaneGeometry(1, 1);
   const opacity = new THREE.InstancedBufferAttribute(new Float32Array(capacity), 1);
@@ -61,32 +60,19 @@ function billboards(capacity: number, kind: 'smoke' | 'fire' | 'flash' | 'he') {
   // A transparent one-pixel fallback avoids a bright rectangle before the native atlas arrives.
   const fallback = new THREE.DataTexture(new Uint8Array([0, 0, 0, 0]), 1, 1); fallback.needsUpdate = true;
   const material = new THREE.ShaderMaterial({uniforms: {atlas: {value: fallback}, grid: {value: new THREE.Vector2(asset.columns, asset.rows)},
-    frames: {value: asset.frames}, mode: {value: kind === 'smoke' ? 0 : kind === 'fire' ? 1 : kind === 'flash' ? 2 : 3},
+    frames: {value: asset.frames}, mode: {value: kind === 'flash' ? 2 : 3},
     tint: {value: new THREE.Vector3(...particles.nativeParameters.he.color as [number, number, number]).divideScalar(255)},
     overbright: {value: kind === 'he' ? particles.nativeParameters.he.overbright : 1}}, vertexShader, fragmentShader,
     transparent: true, depthWrite: false, depthTest: true, toneMapped: false,
     blending: kind === 'flash' ? THREE.AdditiveBlending : THREE.NormalBlending});
   const mesh = new THREE.InstancedMesh(geometry, material, capacity);
   mesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage); mesh.frustumCulled = false; mesh.count = 0;
-  mesh.raycast = () => {}; mesh.renderOrder = kind === 'flash' ? 4 : kind === 'fire' ? 3 : 2;
+  mesh.raycast = () => {}; mesh.renderOrder = kind === 'flash' ? 4 : 2;
   return {mesh, opacity, frame, fallback};
 }
 
 export function utilityFlashOpacity(amount: number) {
   return Number.isFinite(amount) ? Math.max(0, Math.min(1, amount)) : 0;
-}
-
-function insideHole(point: Vec, effect: UtilityEffect, time: number) {
-  for (let index = 0; index < Math.min(effect.holes.length, UTILITY_RULES.maxHoles); index++) {
-    const hole = effect.holes[index];
-    if (time < hole.startedAt || time >= hole.expiresAt) continue;
-    const dx = hole.to.x - hole.from.x, dy = hole.to.y - hole.from.y, dz = hole.to.z - hole.from.z;
-    const length = dx * dx + dy * dy + dz * dz;
-    const along = length > 1e-9 ? Math.max(0, Math.min(1,
-      ((point.x - hole.from.x) * dx + (point.y - hole.from.y) * dy + (point.z - hole.from.z) * dz) / length)) : 0;
-    if (Math.hypot(point.x - hole.from.x - dx * along, point.y - hole.from.y - dy * along, point.z - hole.from.z - dz * along) < hole.radius) return true;
-  }
-  return false;
 }
 
 /** Cosmetic world-space snapshots only. All GPU buffers and scratch transforms are retained. */
@@ -105,26 +91,21 @@ export class UtilityRenderer {
   private particleJob?: Promise<void>;
   private readonly particleTextures = new Set<THREE.Texture>();
   private currentView?: UtilityKind;
-  private readonly smoke = billboards(UTILITY_PRESENTATION_BOUNDS.smokePuffs, 'smoke');
-  private readonly fire = billboards(UTILITY_RULES.maxEffects * FIRE_PARTS, 'fire');
+  readonly smoke = new SmokeRenderer();
+  readonly inferno = new InfernoRenderer();
   private readonly flash = billboards(UTILITY_RULES.maxEffects, 'flash');
   private readonly he = billboards(UTILITY_RULES.maxEffects, 'he');
   private readonly burstPools = [this.flash, this.he];
   private readonly burst = this.flash.mesh;
   private readonly dummy = new THREE.Object3D();
-  private smokeCount = 0;
-  private fireCount = 0;
   private disposed = false;
 
   constructor(parent: THREE.Object3D, view: THREE.Object3D) {
     this.group.name = 'utility-effects'; this.held.name = 'held-utility';
-    this.smoke.mesh.name = 'utility-smoke'; this.fire.mesh.name = 'utility-fire';
     this.burst.name = 'utility-burst'; this.burst.count = 0; this.burst.frustumCulled = false;
     this.he.mesh.name = 'utility-he-burst';
-    this.smoke.mesh.userData.sourceRole = particles.assets.smoke.sourceRole;
-    this.fire.mesh.userData.sourceRole = particles.assets.fire.sourceRole;
     this.burst.instanceMatrix.setUsage(THREE.DynamicDrawUsage); this.burst.raycast = () => {};
-    this.group.add(this.smoke.mesh, this.fire.mesh, this.burst, this.he.mesh);
+    this.group.add(this.inferno.group, this.burst, this.he.mesh);
     this.held.position.set(VIEWMODEL_OFFSET.x, VIEWMODEL_OFFSET.y, 0); this.held.visible = false;
     parent.add(this.group); view.add(this.held);
   }
@@ -155,16 +136,16 @@ export class UtilityRenderer {
   /** Preparation only; the HE core is embedded and failed atlases remain transparent. */
   async prepareParticles() {
     if (this.disposed) return;
-    this.particleJob ??= Promise.all((['smoke', 'fire', 'flash', 'he'] as const).map(async kind => {
+    this.particleJob ??= Promise.all([this.inferno.prepare(), ...(['flash', 'he'] as const).map(async kind => {
       let texture: THREE.Texture;
       try {texture = await new THREE.TextureLoader().loadAsync(particles.assets[kind].url);} catch {return;}
       if (this.disposed) {texture.dispose(); return;}
       texture.colorSpace = THREE.NoColorSpace; texture.generateMipmaps = false;
       texture.minFilter = texture.magFilter = THREE.LinearFilter;
       this.particleTextures.add(texture);
-      const pool = kind === 'smoke' ? this.smoke : kind === 'fire' ? this.fire : kind === 'flash' ? this.flash : this.he;
+      const pool = kind === 'flash' ? this.flash : this.he;
       pool.mesh.material.uniforms.atlas.value = texture;
-    })).then(() => {});
+    })]).then(() => {});
     await this.particleJob;
   }
 
@@ -273,14 +254,14 @@ export class UtilityRenderer {
       this.dummy.rotation.set(projectile.resting ? Math.PI / 2 : time * 7 + projectile.id, projectile.resting ? projectile.id : time * 4, 0); this.dummy.updateMatrix();
       for (const mesh of parts) mesh.setMatrixAt(mesh.count++, this.dummy.matrix);
     }
-    this.smokeCount = this.fireCount = 0; this.burst.count = this.he.mesh.count = 0; this.interiorSmokeOpacity = 0;
+    this.smoke.update(effects, time);
+    this.inferno.update(effects, time, camera);
+    this.burst.count = this.he.mesh.count = 0; this.interiorSmokeOpacity = 0;
     for (let effectIndex = 0; effectIndex < Math.min(effects.length, UTILITY_PRESENTATION_BOUNDS.effects); effectIndex++) {
       const effect = effects[effectIndex];
       const age = time - effect.startedAt, remaining = effect.expiresAt - time;
       if (age < 0 || remaining <= 0) continue;
-      if (effect.type === 'smoke') this.drawSmoke(effect, time, camera);
-      else if (effect.type === 'fire') this.drawFire(effect, time, camera);
-      else if (effect.type === 'decoy') {
+      if (effect.type === 'decoy') {
         const parts = this.projectiles.get('decoy');
         if (parts?.length && parts[0].count < UTILITY_RULES.maxProjectiles) {
           this.dummy.position.set(effect.position.x, effect.position.y + .03, effect.position.z);
@@ -302,62 +283,20 @@ export class UtilityRenderer {
       }
     }
     for (const parts of this.projectiles.values()) for (const mesh of parts) if (mesh.count) mesh.instanceMatrix.needsUpdate = true;
-    this.smoke.mesh.count = this.smokeCount; this.fire.mesh.count = this.fireCount;
-    if (this.smokeCount) {this.smoke.mesh.instanceMatrix.needsUpdate = true; this.smoke.opacity.needsUpdate = this.smoke.frame.needsUpdate = true;}
-    if (this.fireCount) {this.fire.mesh.instanceMatrix.needsUpdate = true; this.fire.opacity.needsUpdate = this.fire.frame.needsUpdate = true;}
     for (const pool of this.burstPools) if (pool.mesh.count) {
       pool.mesh.instanceMatrix.needsUpdate = true; pool.opacity.needsUpdate = pool.frame.needsUpdate = true;
     }
   }
 
-  private drawSmoke(effect: UtilityEffect, time: number, camera: THREE.Camera) {
-    const bloom = Math.min(1, Math.max(0, (time - effect.startedAt) / UTILITY_RULES.smokeBloom));
-    const fade = Math.min(1, (effect.expiresAt - time) / 1.5);
-    const count = Math.min(SMOKE_PARTS, effect.cells.length);
-    const cameraCleared = insideHole(camera.position, effect, time);
-    const radius = effect.radius * bloom * fade;
-    if (count && radius > 0 && !cameraCleared && smokeContains(camera.position, effect)) {
-      const interior = Math.max(0, 1 - camera.position.distanceTo(effect.position) / (radius * .8));
-      this.interiorSmokeOpacity = Math.max(this.interiorSmokeOpacity, Math.min(.985, interior * 3));
-    }
-    for (let part = 0; part < count; part++) {
-      const cell = effect.cells[part];
-      // Only the kernel knows reachability. Never re-inflate these into an unconditional sphere.
-      if (this.smokeCount >= this.smoke.opacity.count) break;
-      const age = Math.max(0, time - effect.startedAt);
-      this.dummy.position.copy(cell);
-      if (this.dummy.position.distanceTo(effect.position) > radius + SMOKE_CELL_SIZE / 2) continue;
-      if (insideHole(this.dummy.position, effect, time)) continue;
-      this.dummy.quaternion.copy(camera.quaternion); this.dummy.rotateZ(part * 1.73 + age * .015);
-      this.dummy.scale.setScalar(SMOKE_CELL_SIZE * 1.35);
-      this.dummy.updateMatrix(); this.smoke.mesh.setMatrixAt(this.smokeCount, this.dummy.matrix);
-      this.smoke.frame.setX(this.smokeCount, (age * 2 + part * 1.71) % particles.assets.smoke.frames);
-      this.smoke.opacity.setX(this.smokeCount++, .96 * bloom * fade);
-    }
-  }
-
-  private drawFire(effect: UtilityEffect, time: number, camera: THREE.Camera) {
-    const fade = Math.min(1, (effect.expiresAt - time) / .5, (time - effect.startedAt) * 8);
-    const count = Math.min(FIRE_PARTS, effect.cells.length);
-    for (let part = 0; part < count && this.fireCount < this.fire.opacity.count; part++) {
-      const cell = effect.cells[Math.floor(part * effect.cells.length / count)];
-      const flicker = .9 + Math.sin(time * 9 + part * 4 + effect.id) * .1;
-      const height = (.8 + (Math.sin(part * 7 + effect.id) + 1) * .24) * flicker;
-      this.dummy.position.set(cell.x, cell.y + height / 2, cell.z);
-      // Cylindrical billboarding anchors each flame to the supplied ground cell, including overhead views.
-      const dx = camera.position.x - cell.x, dz = camera.position.z - cell.z;
-      this.dummy.rotation.set(0, Math.atan2(dx, dz), 0); this.dummy.scale.set(.72 * flicker, height, 1);
-      this.dummy.updateMatrix(); this.fire.mesh.setMatrixAt(this.fireCount, this.dummy.matrix);
-      this.fire.frame.setX(this.fireCount, ((time - effect.startedAt) * 14 + part * 2.31 + effect.id) % particles.assets.fire.frames);
-      this.fire.opacity.setX(this.fireCount++, .95 * fade);
-    }
+  renderWorld(renderer: THREE.WebGLRenderer, scene: THREE.Scene, camera: THREE.PerspectiveCamera) {
+    this.smoke.render(renderer, scene, camera);
   }
 
   clear() {
     this.dropSnapshot = []; this.dropSeen.clear();
     for (const item of this.drops.values()) item.model.removeFromParent(); this.drops.clear();
     for (const parts of this.projectiles.values()) for (const mesh of parts) mesh.count = 0;
-    this.smoke.mesh.count = this.fire.mesh.count = this.burst.count = this.he.mesh.count = 0; this.cancelHeld();
+    this.smoke.clear(); this.inferno.clear(); this.burst.count = this.he.mesh.count = 0; this.cancelHeld();
     this.interiorSmokeOpacity = 0;
   }
 
@@ -370,9 +309,11 @@ export class UtilityRenderer {
     this.views.clear(); this.worlds.clear(); this.pending.clear();
     for (const parts of this.projectiles.values()) for (const mesh of parts) {mesh.geometry.dispose(); mesh.dispose();}
     this.projectiles.clear();
-    for (const pool of [this.smoke, this.fire, this.flash, this.he]) pool.fallback.dispose();
+    this.smoke.dispose();
+    this.inferno.dispose();
+    for (const pool of [this.flash, this.he]) pool.fallback.dispose();
     for (const texture of this.particleTextures) texture.dispose(); this.particleTextures.clear();
-    for (const mesh of [this.smoke.mesh, this.fire.mesh, this.burst, this.he.mesh]) {mesh.geometry.dispose(); mesh.material.dispose(); mesh.dispose();}
+    for (const mesh of [this.burst, this.he.mesh]) {mesh.geometry.dispose(); mesh.material.dispose(); mesh.dispose();}
     this.group.clear(); this.held.clear();
   }
 }

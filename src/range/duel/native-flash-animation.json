@@ -1,0 +1,19 @@
+{
+  "build": "2000938",
+  "archiveDirectorySha256": "b32a45c66eff785aa4b9b4e5564e36ac0639942074a9c27b765eab74e5066cdb",
+  "sources": [
+    {
+      "resource": "animation/anims/world/shared/flashed.vnmclip_c",
+      "sha256": "0f8ea6ddee5a9ed575268785ba6323b5a6c2ff3a2cdfb6fa99c81a2f5807108e",
+      "decodedSha256": "c8a2c835bbab4331383d7ab269a18034c15e331cb0acdef197053e762fe432ac"
+    },
+    {
+      "resource": "animation/anims/world/shared/flashed_crouch.vnmclip_c",
+      "sha256": "f3e981eb08c21530f67b42c706c7fc683c0d638778533f35cf5ef1ded2251fc7",
+      "decodedSha256": "d8c6ca0bb413bcec47072cd274b58fe0819eba179f7e64b93044d95fc75d6f55"
+    }
+  ],
+  "animation": "/models/utility-gestures.glb",
+  "animationSha256": "a383bc4e7d3d40550db564859496a7d35908ce44e3f78c31fbe771b2a5f3da88",
+  "limitations": "Native upper-body channels, trainer blending. Exact Source 2 animation graph visibility blend is not ported."
+}

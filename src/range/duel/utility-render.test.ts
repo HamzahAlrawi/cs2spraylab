@@ -4,6 +4,7 @@ import {UtilityRenderer, utilityFlashOpacity, UTILITY_PRESENTATION_BOUNDS} from 
 import {UTILITY_RULES, type UtilityEffect, type UtilityProjectile} from './utilities';
 import {utilityKinds} from './utility-loadout';
 import particles from './utility-particles-native.json';
+import inferno from './inferno-presentation-native.json';
 import audit from '../../../docs/utility-active-resource-audit-2026-10-26.json';
 import {createHash} from 'node:crypto';
 import {readFileSync} from 'node:fs';
@@ -45,28 +46,26 @@ describe('bounded utility presentation', () => {
     expect(shot.position).toEqual({x: 1, y: 2, z: -3});
   });
 
-  it('uses retained instanced billboards and clears expired clouds without spawning meshes', () => {
+  it('retains bounded density volumes and clears expired clouds without spawning world meshes', () => {
     const {renderer, camera} = setup(), cloud = effect();
-    const smoke = instance(renderer.group, 'utility-smoke'), children = renderer.group.children.length;
-    const opacity = smoke.geometry.getAttribute('instanceOpacity');
+    const children = renderer.group.children.length;
     renderer.update([], [cloud], .5, camera);
-    expect(smoke.count).toBeGreaterThan(0);
-    const partial = opacity.getX(0);
+    expect(renderer.smoke.count).toBe(1);
+    expect(renderer.smoke.retainedVolumes).toBe(1);
     renderer.update([], [cloud], 1.5, camera);
-    expect(opacity.getX(0)).toBeGreaterThan(partial);
-    expect(smoke.geometry.getAttribute('instanceOpacity')).toBe(opacity);
+    expect(renderer.smoke.retainedVolumes).toBe(1);
     expect(renderer.group.children).toHaveLength(children);
     renderer.update([], [cloud], 20, camera);
-    expect(smoke.count).toBe(0);
+    expect(renderer.smoke.count).toBe(0); expect(renderer.smoke.retainedVolumes).toBe(0);
   });
 
-  it('occludes the interior, respects cleared holes, and does not white-flash from smoke', () => {
+  it('uses the volume pass inside smoke, without an opaque DOM blanket hiding bullet channels', () => {
     const {renderer, camera} = setup(), cloud = effect(); camera.position.copy(cloud.position);
     renderer.update([], [cloud], 2, camera);
-    expect(renderer.interiorSmokeOpacity).toBeCloseTo(.985);
+    expect(renderer.interiorSmokeOpacity).toBe(0); expect(renderer.smoke.count).toBe(1);
     const cleared = {...cloud, holes: [{from: {x: 2, y: 1, z: -8}, to: {x: 2, y: 1, z: 0}, radius: 1, startedAt: 1, expiresAt: 3}]};
     renderer.update([], [cleared], 2, camera);
-    expect(renderer.interiorSmokeOpacity).toBe(0);
+    expect(renderer.interiorSmokeOpacity).toBe(0); expect(renderer.smoke.count).toBe(1);
     expect(instance(renderer.group, 'utility-burst').count).toBe(0);
   });
 
@@ -143,18 +142,16 @@ describe('bounded utility presentation', () => {
     const cloud = effect({position: {x: 0, y: 0, z: 0}, cells: [{x: 0, y: 0, z: 0}, {x: .8, y: 0, z: 0}]});
     camera.position.set(-.8, 0, 0); renderer.update([], [cloud], 2, camera);
     expect(renderer.interiorSmokeOpacity).toBe(0);
-    const mesh = instance(renderer.group, 'utility-smoke'), matrix = new THREE.Matrix4();
-    expect(mesh.count).toBe(2); mesh.getMatrixAt(1, matrix);
-    expect(new THREE.Vector3().setFromMatrixPosition(matrix).x).toBeCloseTo(.8);
-    camera.position.set(0, 0, 0); renderer.update([], [cloud], 2, camera); expect(renderer.interiorSmokeOpacity).toBe(.985);
+    expect(renderer.smoke.count).toBe(1);
+    camera.position.set(0, 0, 0); renderer.update([], [cloud], 2, camera); expect(renderer.interiorSmokeOpacity).toBe(0);
     renderer.update([], [{...cloud, cells: []}], 2, camera);
-    expect(mesh.count).toBe(0); expect(renderer.interiorSmokeOpacity).toBe(0);
+    expect(renderer.smoke.count).toBe(0); expect(renderer.interiorSmokeOpacity).toBe(0);
     const cells = Array.from({length: 729}, (_, i) => ({x: (i % 9 - 4) * .8,
       y: (Math.floor(i / 9) % 9 - 4) * .8, z: (Math.floor(i / 81) - 4) * .8}))
       .filter(cell => Math.hypot(cell.x, cell.y, cell.z) <= 4)
       .map(cell => ({x: cell.x + 2, y: cell.y + 1, z: cell.z - 4}));
     renderer.update([], Array.from({length: 64}, (_, id) => effect({id, cells})), 2, camera);
-    expect(mesh.count).toBe(UTILITY_PRESENTATION_BOUNDS.smokePuffs);
+    expect(renderer.smoke.count).toBe(UTILITY_PRESENTATION_BOUNDS.effects);
   });
   it('reconciles bounded native loot clones without mutating positions or disposing shared GPU resources', () => {
     const {renderer} = setup();
@@ -184,21 +181,21 @@ describe('bounded utility presentation', () => {
     expect(burst.geometry.getAttribute('instanceOpacity').getX(0)).toBeLessThan(alpha);
   });
   it('loads each native atlas once and disposes completed and late textures exactly once', async () => {
-    const textures = Array.from({length: 4}, () => new THREE.Texture()), disposals = textures.map(texture => {
+    const textures = Array.from({length: 7}, () => new THREE.Texture()), disposals = textures.map(texture => {
       const dispose = vi.fn(); texture.addEventListener('dispose', dispose); return dispose;
     });
     const loader = vi.spyOn(THREE.TextureLoader.prototype, 'loadAsync');
     try {
       textures.forEach(texture => loader.mockResolvedValueOnce(texture));
       const {renderer} = setup(); await renderer.prepareParticles(); await renderer.prepareParticles();
-      expect(loader).toHaveBeenCalledTimes(4);
-      const names = ['utility-smoke', 'utility-fire', 'utility-burst', 'utility-he-burst'];
-      Object.values(particles.assets).forEach((asset, index) => {
+      expect(loader).toHaveBeenCalledTimes(7);
+      const names = ['utility-fire', 'utility-fire-edge', 'utility-fire-ground', 'utility-fire-incendiary', 'utility-fire-embers', 'utility-burst', 'utility-he-burst'];
+      [...Object.values(inferno.assets), particles.assets.flash, particles.assets.he].forEach((asset, index) => {
         // In particular the embedded HE URI must reach TextureLoader without a public-path prefix.
         expect(loader).toHaveBeenNthCalledWith(index + 1, asset.url);
         const material = instance(renderer.group, names[index]).material as THREE.ShaderMaterial;
         expect(material.uniforms.atlas.value).toBe(textures[index]);
-        expect(textures[index].colorSpace).toBe(THREE.NoColorSpace);
+        expect(textures[index].colorSpace).toBe(index < 5 ? THREE.SRGBColorSpace : THREE.NoColorSpace);
         expect(textures[index].generateMipmaps).toBe(false);
       });
       expect(particles.assets.he.url).toMatch(/^data:image\/webp;base64,/);
@@ -212,7 +209,7 @@ describe('bounded utility presentation', () => {
       const lateTextures = resolves.map(() => new THREE.Texture()), disposed = vi.fn();
       lateTextures.forEach(texture => texture.addEventListener('dispose', disposed));
       resolves.forEach((resolve, i) => resolve(lateTextures[i])); await job;
-      expect(disposed).toHaveBeenCalledTimes(4);
+      expect(disposed).toHaveBeenCalledTimes(7);
     } finally {loader.mockRestore();}
   });
   it('keeps failed atlases transparent without preventing the embedded HE core from loading', async () => {
@@ -223,7 +220,7 @@ describe('bounded utility presentation', () => {
     });
     try {
       await renderer.prepareParticles();
-      for (const name of ['utility-smoke', 'utility-fire', 'utility-burst']) {
+      for (const name of ['utility-fire', 'utility-burst']) {
         const material = instance(renderer.group, name).material as THREE.ShaderMaterial;
         expect(Array.from((material.uniforms.atlas.value as THREE.DataTexture).image.data)).toEqual([0, 0, 0, 0]);
       }

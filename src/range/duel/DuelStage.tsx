@@ -23,6 +23,8 @@ import {KillFeed} from './KillFeed';
 import {setupKey} from '../setup-key';
 import {equipmentKeyLabel} from '../controls';
 import {emptyUtilityInventory, UtilityHud, UtilityLoadout, utilityLabels} from './utility-ui';
+import {ManualSpawnEditor} from './ManualSpawnEditor';
+import type {SpawnAuthoringEngine, SpawnContext} from './manual-spawns';
 const PrefireSetup = lazy(() => import('../prefire/PrefireSetup').then(module => ({default: module.PrefireSetup})));
 
 const initialStatus: DuelStatus = {phase: 'ready', paused: false, health: 100, armor: 100,
@@ -54,6 +56,10 @@ export function DuelStage({settings, openSettings, onEnter, suspended, progressi
   const canvasHost = useRef<HTMLDivElement>(null);
   const crosshair = useRef<HTMLDivElement>(null);
   const engine = useRef<DuelEngine>();
+  const nativeSession = useRef<RealMapSession>();
+  const [spawnContext, setSpawnContext] = useState<SpawnContext>();
+  const [authoring, setAuthoring] = useState(false);
+  const authoringEngine = () => engine.current as (DuelEngine & Partial<SpawnAuthoringEngine>) | undefined;
   const latest = useRef({settings,config});latest.current={settings,config};
   const {record: recordRound} = useContext(CoachingActions);
   useEffect(() => {
@@ -70,7 +76,7 @@ export function DuelStage({settings, openSettings, onEnter, suspended, progressi
     const abort=new AbortController();let instance:DuelEngine|undefined,session:RealMapSession|undefined;
     void prefetchCombatModels(['/models/target.glb','/models/duel-motion.glb','/models/duel-flinches.glb',
       `/models/view-${loadoutWeapon(latest.current.settings)}.glb`],abort.signal).catch(()=>{});
-    setError('');setLoadingMap(!prefire && !config.generatedMaps);setStatus(initialStatus);
+    setError('');setLoadingMap(!prefire && !config.generatedMaps);setStatus(initialStatus);setAuthoring(false);setSpawnContext(undefined);
     void (async()=>{
       try {
         if(!prefire && !config.generatedMaps) {
@@ -79,7 +85,13 @@ export function DuelStage({settings, openSettings, onEnter, suspended, progressi
         }
         abort.signal.throwIfAborted();
         session?.configureDuel(latest.current.config);
-        instance=new DuelEngine(canvasHost.current!,crosshair.current!,setStatus,setError,latest.current.settings,latest.current.config,progression,prefire?.session??session);
+        nativeSession.current=session;
+        const report=(next:DuelStatus)=>{
+          setStatus(next);
+          const context=session?.spawnContext();
+          setSpawnContext(previous=>previous?.chunkId===context?.chunkId && previous?.collisionSha256===context?.collisionSha256?previous:context);
+        };
+        instance=new DuelEngine(canvasHost.current!,crosshair.current!,report,setError,latest.current.settings,latest.current.config,progression,prefire?.session??session);
         engine.current=instance;setLoadingMap(false);
       }catch(error) {
         if(abort.signal.aborted)return;
@@ -87,7 +99,7 @@ export function DuelStage({settings, openSettings, onEnter, suspended, progressi
         setError(error instanceof Error ? error.message : 'WebGL could not start. Enable hardware acceleration and reload.');
       }
     })();
-    return () => {abort.abort();instance?.dispose();session?.dispose();if(engine.current===instance)engine.current=undefined;};
+    return () => {abort.abort();instance?.dispose();session?.dispose();if(engine.current===instance)engine.current=undefined;if(nativeSession.current===session)nativeSession.current=undefined;};
   }, [prefire?.session,config.generatedMaps]);
   useEffect(() => {if (prefire) {closeReplay(); prefire.session.configure(prefire.config); engine.current?.restart();}}, [prefire?.config, closeReplay]);
   useEffect(() => {engine.current?.setSettings(settings);}, [settings]);
@@ -166,7 +178,7 @@ export function DuelStage({settings, openSettings, onEnter, suspended, progressi
       {busy && !status.preparingNextRound && !error && <div className="duel-entry" role="status"><span className="workflow-loading">Loading map chunk…</span></div>}
       {(status.phase === 'ready' || status.paused) && !busy && !error && !recording && <div className="duel-entry">
         <button className="enter-range" onClick={() => {dismissHint(); onEnter(); void engine.current?.enter();}}><Play size={17} fill="currentColor"/>
-          {prefire ? status.paused ? 'Resume prefire' : 'Enter prefire' : status.paused ? 'Resume duel' : 'Enter duel'}
+          {authoring ? 'Walk map' : prefire ? status.paused ? 'Resume prefire' : 'Enter prefire' : status.paused ? 'Resume duel' : 'Enter duel'}
         </button>
       </div>}
       {error && <div className="range-error" role="alert"><Shield size={24}/><p>{error}</p><button onClick={() => location.reload()}><RotateCcw size={16}/>Reload</button></div>}
@@ -186,7 +198,16 @@ export function DuelStage({settings, openSettings, onEnter, suspended, progressi
         onNext={() => prefire.update({routeId: prefire.session.routes[(prefire.session.routeIndex + 1) % prefire.session.routes.length].id, lineupId: undefined})}
         onRepeat={() => engine.current?.restart()}/></Suspense>
         : panel === 'review' ? <div className="duel-controls-body"><TipsDisplay showTips={showTips}><DuelScorecard review={status.review} completedReview={status.completedRound?.review} history={status.history ?? []}
-          setupKey={profileSetupKey} completedSetupKey={status.completedRound?.setupKey}/></TipsDisplay></div> : <DuelSetup config={config} arenaDesign={status.arenaDesign} weaponToAdd={weaponToAdd} setWeaponToAdd={setWeaponToAdd} update={update} updateBot={updateBot} customizeBot={customizeBot}/>}
+          setupKey={profileSetupKey} completedSetupKey={status.completedRound?.setupKey}/></TipsDisplay></div> : <DuelSetup config={config} arenaDesign={status.arenaDesign} weaponToAdd={weaponToAdd} setWeaponToAdd={setWeaponToAdd} update={update} updateBot={updateBot} customizeBot={customizeBot}
+            lineupEditor={<ManualSpawnEditor key={`${spawnContext?.chunkId}:${spawnContext?.collisionSha256}`} context={spawnContext} disabled={!!busy || !!recording}
+              canCapture={typeof authoringEngine()?.captureSpawnPose==='function' && typeof authoringEngine()?.setSpawnAuthoring==='function'}
+              authoring={authoring} activeId={config.manualLineup?.id}
+              onAuthoring={enabled=>{closeReplay();engine.current?.pause();if(authoringEngine()?.setSpawnAuthoring?.(enabled))setAuthoring(enabled);}}
+              capture={()=>{engine.current?.pause();return authoringEngine()?.captureSpawnPose?.();}}
+              curated={id=>nativeSession.current?.curatedLineup(id)}
+              validate={lineup=>nativeSession.current?.validateLineup(lineup)??{errors:['Native map is not ready.'],warnings:[]}}
+              apply={lineup=>{authoringEngine()?.setSpawnAuthoring?.(false);setAuthoring(false);update({realMapChunk:lineup.chunkId,manualLineup:lineup,botCount:lineup.bots.length});}}
+              restore={()=>{authoringEngine()?.setSpawnAuthoring?.(false);setAuthoring(false);update({manualLineup:null,realMapCourse:'standard'});}}/>}/>}
       {prefire && <UtilityLoadout config={config} update={update}/>}
       <button className="combat-review-launch" disabled={!!busy || !status.replayAvailable} onClick={() => setRecording(engine.current?.openReplay())}><Film size={15}/>Review fight</button>
       <div className="duel-controls-foot"><button onClick={openSettings}><Settings2 size={15}/>Mouse & crosshair</button>{showTips && <span><Target size={13}/>Changes start a new round</span>}</div>

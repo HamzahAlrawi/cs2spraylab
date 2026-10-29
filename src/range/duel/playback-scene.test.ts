@@ -79,16 +79,16 @@ it('renders all six native projectile assemblies, smoke, fire, holes, bursts and
   scene.show(source, undefined, .1); scene.camera(camera, undefined, false);
   expect(scene.diagnostics.group.visible).toBe(false);
   for (const kind of utilityKinds) expect(instance(scene, `utility-projectiles-${kind}`).count).toBe(kind === 'decoy' ? 2 : 1);
-  expect(instance(scene, 'utility-smoke').count).toBeGreaterThan(0);
+  expect(scene.utilityRenderer.smoke.count).toBeGreaterThan(0);
   expect(instance(scene, 'utility-fire').count).toBe(1); expect(instance(scene, 'utility-burst').count).toBe(0);
   expect(instance(scene, 'utility-he-burst').count).toBe(1);
   const projectile = instance(scene, 'utility-projectiles-he'), matrix = new Matrix4(); projectile.getMatrixAt(0, matrix);
   expect(new Vector3().setFromMatrixPosition(matrix).toArray()).toEqual([1, 2, -3]);
-  const retained = instance(scene, 'utility-smoke').instanceMatrix.array;
+  const retained = scene.utilityRenderer.smoke;
   scene.show(source, undefined, 1); scene.camera(camera, undefined, false);
-  expect(instance(scene, 'utility-smoke').count).toBe(0); expect(instance(scene, 'utility-he-burst').count).toBe(0);
+  expect(scene.utilityRenderer.smoke.count).toBe(0); expect(instance(scene, 'utility-he-burst').count).toBe(0);
   scene.show(source, undefined, .1); scene.camera(camera, undefined, false);
-  expect(instance(scene, 'utility-he-burst').count).toBe(1); expect(instance(scene, 'utility-smoke').instanceMatrix.array).toBe(retained);
+  expect(instance(scene, 'utility-he-burst').count).toBe(1); expect(scene.utilityRenderer.smoke).toBe(retained);
   const pausedMatrix = [...projectile.instanceMatrix.array];
   scene.show(source, undefined, .1); scene.camera(camera, undefined, false);
   expect([...projectile.instanceMatrix.array]).toEqual(pausedMatrix); expect(source).toEqual(before);
@@ -104,11 +104,12 @@ it('samples flash and smoke overlays, suppresses them in overview/diagnostics, a
   replay.utility(64, .5, [], [{...smoke, holes: [{from: {...player.position}, to: {...source.frames[1].actors[0].position}, radius: 10, startedAt: .5, expiresAt: .8}]}]);
   source.utilities = replay.export().utilities;
   scene.show(source, undefined, .25); scene.camera(camera, undefined, false);
-  const overlay = scene.group.getObjectByName('replay-utility-overlay') as Mesh;
+  const overlay = (scene as unknown as {overlay: Mesh}).overlay;
   const uniforms = (overlay.material as ShaderMaterial).uniforms;
-  expect(uniforms.flash.value).toBeCloseTo(.65); expect(uniforms.smoke.value).toBeGreaterThan(.5);
+  expect(uniforms.flash.value).toBeCloseTo(.65); expect(uniforms.smoke.value).toBe(0);
+  expect(scene.utilityRenderer.smoke.count).toBe(1);
   scene.show(source, undefined, .6); scene.camera(camera, undefined, false); expect(uniforms.smoke.value).toBe(0);
-  scene.show(source, undefined, .25); scene.camera(camera, undefined, false); expect(uniforms.smoke.value).toBeGreaterThan(.5);
+  scene.show(source, undefined, .25); scene.camera(camera, undefined, false); expect(scene.utilityRenderer.smoke.count).toBe(1);
   scene.camera(camera, undefined, true); expect(overlay.visible).toBe(false); expect(scene.utilityRenderer.held.visible).toBe(false);
   scene.camera(camera, undefined, false, true); expect(overlay.visible).toBe(false);
   scene.clear(); expect(uniforms.flash.value).toBe(0); expect(uniforms.smoke.value).toBe(0);
@@ -161,7 +162,7 @@ it('renders a separate native arm pass and full-viewport overlay, restores rende
   scene.renderUtilityView(renderer, 390, 844);
   expect(renderer.render).toHaveBeenCalledTimes(2); expect(renderer.setViewport).toHaveBeenCalledWith(0, 0, 390, 844);
   expect(renderer.setViewport).toHaveBeenLastCalledWith(viewport); expect(renderer.autoClear).toBe(true);
-  const geometry = instance(scene, 'utility-smoke').geometry, dispose = vi.fn(); geometry.addEventListener('dispose', dispose);
+  const geometry = instance(scene, 'utility-fire').geometry, dispose = vi.fn(); geometry.addEventListener('dispose', dispose);
   scene.dispose(); scene.dispose(); expect(dispose).toHaveBeenCalledTimes(1);
 });
 

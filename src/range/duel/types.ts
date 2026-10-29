@@ -54,6 +54,7 @@ export type DuelActorSnapshot = {
   supportingActor?: number;
   scopeFov?: number;
   utility?: UtilityKind;
+  flashAmount?: number;
 };
 export type DuelEvent =
   | {kind: 'utility-pickup'; tick: number; actorId: ActorId; dropId: number; utility: UtilityKind}

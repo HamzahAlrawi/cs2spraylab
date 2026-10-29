@@ -66,7 +66,9 @@ import {CharacterHitEffects} from './character-hit-effects';
 import {type UtilityKind, type UtilityInventory, utilityNames} from './utility-loadout';
 import {nextUtility} from './utility-ui';
 import {UtilityRenderer, utilityFlashOpacity} from './utility-render';
-import {nativeUtilityPresentation, utilityNativeTiming, UtilitySoundTimeline, type UtilityViewAction} from './utility-presentation';
+import {nativeUtilityPresentation, utilityNativeTiming, utilityThrowAction, UtilitySoundTimeline, type UtilityViewAction} from './utility-presentation';
+import {GrenadePointerInput} from './grenade-pointer-input';
+import type {SpawnPose} from './manual-spawns';
 
 export type DuelStatus = {
   phase: 'ready' | 'fighting' | 'result'; paused: boolean; outcome?: 'won' | 'lost' | 'draw';
@@ -159,6 +161,9 @@ export class DuelEngine {
   private utilityActorActions = new Map<number, {selectedAt: number; primedAt?: number}>();
   private utilityThrownAt = new Map<number, number>();
   private utilitySounds = new Map<number,{key:string;kind:UtilityKind;action:UtilityViewAction;started:number;timeline:UtilitySoundTimeline}>();
+  private utilityEffectSounds = new Map<number, {type: string; position: Vec; expiresAt: number}>();
+  private readonly mouseButtons = new GrenadePointerInput();
+  private spawnAuthoring = false;
   private animators = new Map<number, DuelAnimator>();
   private hitboxes = new Map<number, NativeActorHitboxes>();
   private poseTimes = new Map<number, number>();
@@ -643,12 +648,14 @@ export class DuelEngine {
   }
 
   private prepareUtilities() {
+    if (this.settings.volume > 0) void this.audio.preloadUtilities().catch(() => {});
     return this.utilityPreparing ??= Promise.all([this.utilityRenderer.prepare(), loadCombatModel('/models/utility-gestures.glb')])
       .then(async ([, asset]) => {
         disposeResources([asset.scene]); if (this.disposed) return;
         this.utilityGestures = nativeGestureClips(asset);
         for (const animator of this.animators.values()) animator.addGestureClips(this.utilityGestures);
         await this.utilityRenderer.setGloves(this.progression?.getSnapshot().profile);
+        await this.utilityRenderer.smoke.prepare(this.renderer);
       }).catch(error => {this.utilityPreparing = undefined; throw error;});
   }
 
@@ -820,7 +827,7 @@ export class DuelEngine {
     this.scenario?.beforeRestart?.(this.sim.outcome, continuous);
     if (this.xpAttempt) this.progression?.cancelAttempt(this.xpAttempt);
     this.xpAttempt = null; this.xpRevision++;
-    this.paused = false; this.pointer = null; this.pickupDrawing = false; this.viewAnimation?.cancel();
+    this.paused = false; this.pointer = null; this.mouseButtons.reset(); this.pickupDrawing = false; this.viewAnimation?.cancel();
     for (const object of this.dropModels.values()) this.scene.remove(object);
     this.dropModels.clear();
     if (!continuous) {
@@ -829,7 +836,8 @@ export class DuelEngine {
       this.releaseShortcuts();
       if (document.pointerLockElement === this.renderer.domElement) document.exitPointerLock();
     }
-    this.sim = this.createSimulation(); this.kills = this.damage = 0; this.lastShot = undefined;
+    this.sim = this.createSimulation(); this.sim.setSpawnAuthoring(this.spawnAuthoring);
+    this.kills = this.damage = 0; this.lastShot = undefined;
     this.stepView.reset();
     this.shell.scale.set(this.config.arenaScale, 1, this.config.arenaScale);
     this.damageFeedback.clear(); this.wasReloading = false;
@@ -849,7 +857,7 @@ export class DuelEngine {
     this.closeReplay();
     const revision = ++this.enterRevision; this.entering = true;
     this.last=0;
-    if (this.sim.phase === 'ready') {this.sim.start(); this.beginProgression();} else this.sim.resume();
+    if (this.sim.phase === 'ready') {this.sim.start(); if (!this.spawnAuthoring) this.beginProgression();} else this.sim.resume();
     this.sessionStarted = true;
     this.paused = false;
     this.renderer.domElement.focus({preventScroll: true});
@@ -884,7 +892,7 @@ export class DuelEngine {
 
   pause() {
     if (this.sim.phase === 'ready'&&!this.loadingMap) return;
-    this.paused = true; this.sim.pause(); this.keys.clear(); this.updateMovement();
+    this.paused = true; this.sim.pause(); this.mouseButtons.reset(); this.keys.clear(); this.updateMovement();
     this.caption = ''; this.captionUntil = 0;
     for(const action of this.utilitySounds.values())action.timeline.cancel();this.utilitySounds.clear();this.audio.cancelUtilityCues();
     this.damageFeedback.clear();
@@ -900,6 +908,16 @@ export class DuelEngine {
 
   private bindInput() {
     const canvas = this.renderer.domElement;
+    const mouseSample = (event: MouseEvent | PointerEvent) => {
+      if (!this.sim.playable || this.paused || this.entering || this.replayView ||
+        document.pointerLockElement !== canvas && event.target !== canvas && this.pointer === null) return;
+      const command = this.mouseButtons.update(event);
+      if (command) this.sim.command(0, command);
+    };
+    // A second mouse button changes pointermove.buttons, not pointerdown;
+    // mousedown/up also report chord edges when the mouse never moves.
+    this.listen(canvas, 'mousedown', mouseSample as EventListener);
+    this.listen(document, 'mouseup', mouseSample as EventListener);
     const weaponSlot = (): Slot => {
       const id = this.sim.actors[0].weapon.id;
       return id === 'knife' ? 3 : id === 'zeus' ? 4 : id === this.sim.loadout.sidearm ? 2 : 1;
@@ -919,19 +937,18 @@ export class DuelEngine {
         if (actions.includes('lastWeapon')) this.equip(this.sim.selectedUtility ? currentSlot : previousSlot);
       }));
     this.listen(canvas, 'pointerdown', ((event: PointerEvent) => {
-      if (event.button === 2 && this.sim.playable && !this.paused) {
-        event.preventDefault(); this.sim.command(0, {secondaryPressed: true, secondaryHeld: true}); return;
-      }
+      if (event.pointerType === 'mouse' && event.button === 2) {event.preventDefault(); mouseSample(event); return;}
       if (event.button !== 0) return;
       if (this.sim.phase === 'ready' || this.paused) { void this.enter(); return; }
       if (!this.sim.playable) return;
       this.pointer = event.pointerId; this.pointerX = event.clientX; this.pointerY = event.clientY;
       if (event.pointerType !== 'mouse') this.sim.command(0, {firePressed: true});
-      else this.sim.command(0, {fireHeld: true, firePressed: true});
+      else mouseSample(event);
       if (!document.pointerLockElement) canvas.setPointerCapture(event.pointerId);
     }) as EventListener);
     this.listen(document, 'pointermove', ((event: PointerEvent) => {
       if (!this.sim.playable || this.paused) return;
+      if (event.pointerType === 'mouse') mouseSample(event);
       let dx = 0, dy = 0;
       if (document.pointerLockElement === canvas && event.pointerType === 'mouse') {
         dx = event.movementX; dy = event.movementY;
@@ -948,9 +965,10 @@ export class DuelEngine {
       }
     }) as EventListener);
     this.listen(document, 'pointerup', ((event: PointerEvent) => {
-      if (event.button === 2) {this.sim.command(0, {secondaryHeld: false}); return;}
+      if (event.pointerType === 'mouse') mouseSample(event);
+      if (event.button === 2) return;
       if (this.pointer !== event.pointerId) return;
-      this.pointer = null; this.sim.command(0, {fireHeld: false});
+      this.pointer = null; if (event.pointerType !== 'mouse') this.sim.command(0, {fireHeld: false});
     }) as EventListener);
     this.listen(canvas, 'pointercancel', (() => this.pause()) as EventListener);
     this.listen(canvas, 'contextmenu', (event => event.preventDefault()) as EventListener);
@@ -992,6 +1010,22 @@ export class DuelEngine {
 
   private updateMovement() {
     this.sim.command(0, movementControls(this.settings.controls, this.keys));
+  }
+
+  captureSpawnPose(): SpawnPose | undefined {
+    const actor = this.sim.actors[0], native = this.sim.arena.native;
+    if (!this.spawnAuthoring || !actor.alive || !actor.grounded || (actor.duckAmount ?? 0) > .01 || !native ||
+      !native.fits(actor.position, actor.feet, 72 * UNIT)) return;
+    return {feet: {x: actor.position.x, y: actor.feet, z: actor.position.z}, yaw: actor.yaw, pitch: actor.pitch};
+  }
+
+  setSpawnAuthoring(enabled: boolean): boolean {
+    if (this.scenario?.kind !== 'duel-map' || this.loadingMap) return false;
+    if (enabled === this.spawnAuthoring) return true;
+    this.pause(); this.spawnAuthoring = enabled;
+    if (this.xpAttempt) this.progression?.cancelAttempt(this.xpAttempt);
+    this.xpAttempt = null; this.restart(false, false);
+    return true;
   }
 
   openReplay() {
@@ -1124,9 +1158,9 @@ export class DuelEngine {
       if (event.kind === 'utility') {
         if (event.action === 'throw' && event.actorId === 0) this.utilityRenderer.throw(event.utility, event.tick * STEP, event.strength,event.throwStartedAt);
         if (event.action === 'throw'&&event.throwStartedAt!==undefined)
-          this.startUtilitySound(event.actorId,event.utility,(event.strength??1)<.25?'throw-low':'throw-high',event.throwStartedAt);
+          this.startUtilitySound(event.actorId,event.utility,utilityThrowAction(event.strength??1),event.throwStartedAt);
         if (event.action === 'throw' && event.actorId > 0) this.animators.get(event.actorId)?.playAction(
-          event.utility === 'molotov' ? 'utility-molotov' : 'utility', (event.strength ?? 1) < .25 ? 'throw-low' : 'throw-high',
+          event.utility === 'molotov' ? 'utility-molotov' : 'utility', utilityThrowAction(event.strength ?? 1),
           {crouched: (this.sim.actors[event.actorId].duckAmount ?? 0) > .5, startedAt: event.tick * STEP});
         if (event.action === 'throw' && event.actorId > 0) this.utilityThrownAt.set(event.actorId, event.tick * STEP);
         if (event.action === 'decoy' && event.equipment) this.audio.play(event.equipment,
@@ -1289,7 +1323,7 @@ export class DuelEngine {
 
   private clearEffects() {
     for(const action of this.utilitySounds.values())action.timeline.cancel();this.utilitySounds.clear();this.audio.cancelUtilityCues();
-    this.audio.setFlashExposure(0);
+    this.utilityEffectSounds.clear(); this.audio.setFlashExposure(0);
     this.shotEffects.clear(); this.viewFlashes.clear(); this.shotCounts.clear();
     this.characterHits.clear();this.killFeed.clear();
     this.utilityRenderer.clear(); this.utilityFlash.style.opacity = '0';
@@ -1320,12 +1354,31 @@ export class DuelEngine {
   }
   private updateUtilitySounds() {
     if(this.paused||this.replayView||this.sim.phase==='ready')return;
+    const seen = new Set<number>();
+    for (const effect of this.sim.utilities.effects) {
+      if ((effect.type !== 'fire' && effect.type !== 'smoke') || this.sim.time < effect.startedAt || this.sim.time >= effect.expiresAt) continue;
+      seen.add(effect.id);
+      const owner = `effect:${effect.id}`, previous = this.utilityEffectSounds.get(effect.id);
+      if (this.settings.volume > 0 && effect.type === 'fire') {
+        if (!previous) this.audio.playUtilityCue('utility-fire-ignite', this.settings.volume * .65, this.soundLocation(effect.position), undefined, undefined, {loop: false});
+        this.audio.playUtilityCue('utility-fire-loop', this.settings.volume * .65, this.soundLocation(effect.position), owner,
+          Math.max(.01, effect.expiresAt - this.sim.time));
+      } else this.audio.stopUtilityLoops(owner);
+      this.utilityEffectSounds.set(effect.id, {type: effect.type, position: effect.position, expiresAt: effect.expiresAt});
+    }
+    for (const [id, effect] of this.utilityEffectSounds) if (!seen.has(id)) {
+      this.audio.stopUtilityLoops(`effect:${id}`);
+      if (this.settings.volume > 0 && this.sim.time >= effect.expiresAt - .05)
+        this.audio.playUtilityCue(effect.type === 'fire' ? 'utility-fire-end' : 'utility-smoke-clear', this.settings.volume * .65,
+          this.soundLocation(effect.position), undefined, undefined, {loop: false});
+      this.utilityEffectSounds.delete(id);
+    }
     for(const actor of this.sim.actors) {
       const state=this.sim.utilityPresentation(actor.id),previous=this.utilitySounds.get(actor.id);
       if(!actor.alive){previous?.timeline.cancel();this.utilitySounds.delete(actor.id);this.audio.cancelUtilityCues(actor.id);continue;}
       if(state) {
         if(state.throwStartedAt!==undefined&&this.sim.time>=state.throwStartedAt)
-          this.startUtilitySound(actor.id,state.kind,(state.strength??1)<.25?'throw-low':'throw-high',state.throwStartedAt);
+          this.startUtilitySound(actor.id,state.kind,utilityThrowAction(state.strength??1),state.throwStartedAt);
         else if(state.primedAt!==undefined&&this.sim.time>=state.primedAt)
           this.startUtilitySound(actor.id,state.kind,'pullpin',state.primedAt);
         else if(this.sim.time<state.selectedAt+utilityNativeTiming(state.kind).draw)
@@ -1379,7 +1432,7 @@ export class DuelEngine {
       } else this.utilityActorActions.delete(actor.id);
       this.actorBounds.center.set(actor.position.x, actor.feet + 1, actor.position.z);
       if (!actor.alive) this.animators.get(actor.id)?.corpseCenter(this.actorBounds.center);
-      model.visible = this.frustum.intersectsSphere(this.actorBounds) &&
+      model.visible = !this.spawnAuthoring && this.frustum.intersectsSphere(this.actorBounds) &&
         (!actor.alive || !this.covers.visible || !fullyOccluded(this.camera.position, actor, this.sim.arena));
       if (!actor.alive && !this.deaths.has(actor.id)) {
         this.deaths.set(actor.id, this.animationClock); this.animationTimes.delete(actor.id);
@@ -1540,7 +1593,7 @@ export class DuelEngine {
       this.renderer.setViewport(0, 0, this.width, this.height); this.renderer.autoClear = true;
       this.scenario?.updateView?.(this.camera.position);
       this.mapLighting?.beginFrame(this.renderer, this.camera.position);
-      this.renderer.render(this.scene, this.camera);
+      this.replayScene.utilityRenderer.renderWorld(this.renderer, this.scene, this.camera);
       this.replayScene.renderUtilityView(this.renderer,this.width,this.height);
       return;
     }
@@ -1629,13 +1682,14 @@ export class DuelEngine {
     this.crosshair.style.setProperty('--motion-gap', this.settings.crosshair.dynamic ? `${speed * 1.2 + this.kick * 4}px` : '0px');
     this.shotEffects.update(this.animationClock); this.viewFlashes.update(this.animationClock);
     this.characterHits.update(this.paused?0:dt);
+    this.utilityRenderer.smoke.setQuality(this.settings.quality);
     this.utilityRenderer.update(this.sim.utilities.projectiles, this.sim.utilities.effects, this.sim.time, this.camera);
     this.utilityFlash.style.opacity = String(utilityFlashOpacity(player.alive ? this.sim.flashAmount(0) : 0));
     this.utilitySmoke.style.opacity = String(player.alive ? this.utilityRenderer.interiorSmokeOpacity : 0);
     this.renderer.setViewport(0, 0, this.width, this.height);
     this.scenario?.updateView?.(this.camera.position);
     this.mapLighting?.beginFrame(this.renderer, this.camera.position);
-    this.renderer.autoClear = true; this.renderer.render(this.scene, this.camera);
+    this.renderer.autoClear = true; this.utilityRenderer.renderWorld(this.renderer, this.scene, this.camera);
     this.renderer.autoClear = false; this.renderer.clearDepth();
     const viewport = viewmodelViewport(this.width, this.height);
     this.renderer.setViewport(viewport.x, viewport.y, viewport.width, viewport.height);

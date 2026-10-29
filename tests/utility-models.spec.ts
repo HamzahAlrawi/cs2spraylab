@@ -97,7 +97,7 @@ test('native grenade models have textured hands, correct framing and retained th
       return {fingers, gripError, hand: point.toArray(), wpn: root.getObjectByName('wpn').getWorldPosition(vertex).toArray(),
         native: !!root.getObjectByName('held-native-he'), clips: engine.utilityGestures.length};
     });
-    expect(world.native).toBe(true); expect(world.clips).toBe(20);
+    expect(world.native).toBe(true); expect(world.clips).toBe(24);
     expect(world.gripError, JSON.stringify(world)).toBeLessThan(.075);
     await page.locator('canvas[data-duel]').screenshot({path: 'research/native-grenade-bot-chromium.png'});
   }

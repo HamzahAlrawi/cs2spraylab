@@ -4,6 +4,8 @@ import {randomStream} from './rng';
 import {arenaDesigns} from './arena-layout';
 import realMaps from './real-map-catalog.json';
 import {sanitizeUtilityLoadout, type UtilityKind} from './utility-loadout';
+import {parseManualLineup, type ManualLineup} from './manual-spawns';
+import {realMapApproaches} from './real-map-rounds';
 
 export type SkillLevel = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | '10+';
 export type BotBehavior = 'mixed' | 'holder' | 'patient' | 'aggressive';
@@ -44,6 +46,8 @@ export type DuelConfig = {
   mapDesign: 'random' | typeof arenaDesigns[number];
   generatedMaps: boolean;
   realMapChunk: string;
+  realMapCourse: string;
+  manualLineup: ManualLineup | null;
   routeGuide: boolean;
   shortcutProtection: boolean;
   overrides: BotOverride[];
@@ -58,6 +62,7 @@ export const duelDefaults: DuelConfig = {
   arenaScale: 1,
   mapDesign: 'random',
   generatedMaps: false, realMapChunk: 'random', routeGuide: true,
+  realMapCourse: 'standard', manualLineup: null,
   utilitiesEnabled: true, botUtilities: true, utilityLoadout: ['he', 'flash', 'smoke', 'molotov'],
 };
 
@@ -74,6 +79,8 @@ const behavior = (value: unknown): BotBehavior => behaviors.find(item => item ==
 
 export function sanitizeDuelConfig(raw: unknown): DuelConfig {
   const input = record(raw);
+  const chunk = realMaps.chunks.find(chunk => chunk.id === input.realMapChunk);
+  const custom = parseManualLineup(input.manualLineup);
   const count = integer(input.botCount, duelDefaults.botCount, 1, 5);
   const weapons = Array.isArray(input.weapons) ? [...new Set(input.weapons.filter(weapon))] : [];
   const overrides = Array.isArray(input.overrides) ? input.overrides.slice(0, count).map(rawOverride => {
@@ -108,6 +115,9 @@ export function sanitizeDuelConfig(raw: unknown): DuelConfig {
     mapDesign: arenaDesigns.find(name => name === input.mapDesign) ?? 'random',
     generatedMaps: input.generatedMaps === true,
     realMapChunk: realMaps.chunks.some(chunk => chunk.id === input.realMapChunk) ? input.realMapChunk as string : 'random',
+    realMapCourse: input.realMapCourse === 'shuffle' ? 'shuffle' :
+      chunk && realMapApproaches(chunk).some(course => course.id === input.realMapCourse) ? input.realMapCourse as string : 'standard',
+    manualLineup: input.generatedMaps !== true && custom?.chunkId === chunk?.id ? custom ?? null : null,
     routeGuide: input.routeGuide !== false,
     shortcutProtection: input.shortcutProtection !== false, overrides,
   };

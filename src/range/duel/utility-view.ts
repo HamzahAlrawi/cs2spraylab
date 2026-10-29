@@ -8,6 +8,10 @@ export type {UtilityViewAction} from './utility-presentation';
 // Native release delay, independent of the authored sound/animation completion.
 export const UTILITY_THROW_PRESENTATION_DELAY = NATIVE_GRENADE_INPUT.releaseDelay;
 
+// Fresh 2000938 viewmodel_grenade variations: Underhand entry is <= 0.33,
+// Overhand is its inverse; both ClipNodes have speed multiplier 1.0.
+export const grenadeViewThrowAction = utilityThrowAction;
+
 export type UtilityPresentation = Readonly<{kind: UtilityKind; selectedAt: number; readyAt: number;
   primedAt?: number; strength?: number; releaseAt?: number; throwStartedAt?: number; drawPlaybackRate?: number}>;
 
@@ -42,7 +46,13 @@ export class UtilityView {
     });
     this.sample('idle', 0);
   }
-  duration(name: UtilityViewAction) {return this.actions.get(name)?.getClip().duration ?? 0;}
+  duration(name: UtilityViewAction) {
+    const exported = this.actions.get(name)?.getClip().duration ?? 0;
+    if (!this.actions.has(name) || (name !== 'throw-low' && name !== 'throw-high')) return exported;
+    // GLTF optimization can omit a constant tail. Retain native elapsed seconds,
+    // holding the final exported pose, never stretching motion to fit the clock.
+    return Math.max(exported, utilityNativeTiming(this.kind, name === 'throw-low' ? 0 : 1).throwDuration);
+  }
   inspect(time: number) {if (!this.actions.has('inspect')) return false; this.inspectAt = time; return true;}
   throw(time: number, strength = 1, startedAt = time - UTILITY_THROW_PRESENTATION_DELAY) {
     this.inspectAt = undefined; this.thrown = {at: time, strength, startedAt};
@@ -55,7 +65,7 @@ export class UtilityView {
     if (state) this.kind = state.kind;
     if (state) this.thrown = undefined;
     if (this.thrown) {
-      const age = Math.max(0, time - this.thrown.startedAt), name = utilityThrowAction(this.thrown.strength);
+      const age = Math.max(0, time - this.thrown.startedAt), name = grenadeViewThrowAction(this.thrown.strength);
       // The kernel has already released the grenade. Keep only the arm follow-through,
       // never a second grenade stuck to the palm while its projectile is in flight.
       for (const mesh of this.weaponMeshes) mesh.visible = false;
@@ -78,7 +88,7 @@ export class UtilityView {
       const readyStart = Math.max(0, this.duration('pullpin') - (timing.pullpin - (timing.pinReadyAt ?? timing.pullpin)));
       const throwAt = state.throwStartedAt ?? (state.releaseAt === undefined ? undefined : state.releaseAt - UTILITY_THROW_PRESENTATION_DELAY);
       if (throwAt !== undefined && time >= throwAt) {
-        this.sample(utilityThrowAction(strength), Math.max(0, time - throwAt));
+        this.sample(grenadeViewThrowAction(strength), Math.max(0, time - throwAt));
       } else if (age < readyStart) this.sample('pullpin', age);
       else {
         // The native graph samples these as poses even when the resource has a duration.

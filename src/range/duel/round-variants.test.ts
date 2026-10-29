@@ -30,7 +30,7 @@ describe('offline real-map round variety', () => {
     const map = {collision, scene: new Group()} as unknown as PrefireMap;
     const starts = new Set<string>(), occupied = new Set<string>();
     for (let seed = 0; seed < 16; seed++) {
-      const arena = createRealMapArena(map, chunk, sanitizeDuelConfig({botCount: 5}), seed,catalog.chunks[chunk.id]);
+      const arena = createRealMapArena(map, chunk, sanitizeDuelConfig({botCount: 5,realMapCourse:'shuffle'}), seed,catalog.chunks[chunk.id]);
       const course = baked.courses.find(course => course.id === arena.roundSetup!.course)!;
       const start = course.starts.find(start => start.viewIndex === arena.roundSetup!.start)!;
       starts.add(`${course.id}:${start.viewIndex}`);
@@ -43,7 +43,7 @@ describe('offline real-map round variety', () => {
       });
       for (let i = 0; i < angles.length; i++) for (let j = i + 1; j < angles.length; j++)
         expect(prefireAnglesIncompatible(angles[i], angles[j])).toBe(false);
-      expect(createRealMapArena(map, chunk, sanitizeDuelConfig({botCount: 5}), seed,catalog.chunks[chunk.id]).roundSetup).toEqual(arena.roundSetup);
+      expect(createRealMapArena(map, chunk, sanitizeDuelConfig({botCount: 5,realMapCourse:'shuffle'}), seed,catalog.chunks[chunk.id]).roundSetup).toEqual(arena.roundSetup);
     }
     expect(starts.size).toBeGreaterThan(3);
     expect(occupied.size).toBeGreaterThan(8);

@@ -389,7 +389,7 @@ export class DuelAnimator {
       if (!name.startsWith('gesture_') || this.actions.has(name)) continue;
       let base: THREE.AnimationClip | undefined;
       if (clip.blendMode !== THREE.AdditiveAnimationBlendMode) {
-        const family = name.endsWith('_elite') || /_(usp|glock|hkp2000|p250|deagle|fiveseven|tec9|cz75a|revolver)$/.test(name) ? 'pistol' : 'rifle';
+        const family = name.endsWith('_pistol') || name.endsWith('_elite') || /_(usp|glock|hkp2000|p250|deagle|fiveseven|tec9|cz75a|revolver)$/.test(name) ? 'pistol' : 'rifle';
         base = this.actions.get(`idle_${name.includes('_crouch_') ? 'crouch_' : ''}${family}`)?.getClip();
         if (!base) continue;
       }
@@ -593,6 +593,18 @@ export class DuelAnimator {
     if(nativeFlinch) {
       const action=this.actions.get(nativeFlinch.name)!;
       action.enabled=true;action.time=nativeFlinch.elapsed;action.setEffectiveWeight(nativeFlinch.weight);
+    }
+    // The installed flashed clips are single native poses, not timed gestures.
+    // Valve's visibility cue covers the eyes only during complete whiteout.
+    if ((actor.flashAmount ?? 0) >= .999) {
+      const duck = stanceCurve(actor.duckAmount);
+      const standing = this.actions.get(`gesture_flashed_${family}`), crouching = this.actions.get(`gesture_flashed_crouch_${family}`);
+      if (standing || crouching) {
+        for (const [name, action] of this.actions) if (name.startsWith('gesture_') ||
+          /^idle_(?:crouch_)?(usp|glock|hkp|p250|deagle|elite|fiveseven|tec9|cz75a|revolver)$/.test(name)) action.enabled = false;
+        if (standing) {standing.enabled = true; standing.time = 0; standing.setEffectiveWeight(crouching ? 1 - duck : 1);}
+        if (crouching) {crouching.enabled = true; crouching.time = 0; crouching.setEffectiveWeight(standing ? duck : 1);}
+      }
     }
     this.evaluatePose();
     if (contactTargets) this.footContact.apply(contactTargets, transition!.contact!.weight, actor.feet);

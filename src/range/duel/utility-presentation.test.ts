@@ -73,7 +73,7 @@ describe('installed native grenade presentation evidence', () => {
     for (const kind of utilityKinds) for (const action of Object.values(nativeUtilityPresentation.utilities[kind].actions))
       for (const event of action.events.filter(e => e.type.endsWith('_Sound')))
         expect(sounds.events[event.name!]?.source).toBe(event.name);
-    expect(sounds.provenance.bytes).toBeLessThan(32e6);
+    expect(sounds.provenance.outputBytes).toBeLessThan(32e6);
   });
   it('decodes the external and embedded WebP atlases at their declared grid dimensions', async () => {
     for (const [kind, asset] of Object.entries(particles.assets)) {

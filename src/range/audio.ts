@@ -2,9 +2,10 @@ import type {Equipment} from './equipment';
 import type {Vec} from './actor-physics';
 import {AcousticScene, AcousticReverb, positionListener, retainSoundOcclusion, spatialChain, type SpatialSound, type SpatialAudioProfile} from './spatial-audio';
 import {ActionSoundTimeline, curveGain, footstepEventKey, inverseDistanceGain, sampleIndex, type ActorSoundState, type SoundAction, type SoundTimelines} from './sound-model';
+import {utilityAudioKey, utilitySampleLoop, type UtilityAudioOwner, type UtilitySamplePlayback} from './utility-audio-model';
 
 export type NativeEvent = {samples: string[]; volume: number; pitch: number; distanceCurve?: number[][];
-  impactSpeedCurve?:number[][];delay?: number; source?: string; tracks?: {samples:string[]}[]; dependencies?: NativeEvent[]};
+  impactSpeedCurve?:number[][];delay?: number; source?: string; tracks?: {samples:string[]; samplePlayback?:UtilitySamplePlayback[]}[]; dependencies?: NativeEvent[]};
 function eventSamples(event:NativeEvent,depth=0):string[] {
   if(depth>4)return [];
   return [...(event.tracks?.flatMap(track=>track.samples)??event.samples),
@@ -33,8 +34,11 @@ export class RangeAudio {
   private flashFilter?: BiquadFilterNode;
   private lastFlashExposure = -1;
   private voiceCleanup = new Map<AudioBufferSourceNode, () => void>();
-  private utilityVoices = new Map<AudioBufferSourceNode, number>();
-  private utilityCue?: {owner:number;duration?:number};
+  private utilityVoices = new Map<AudioBufferSourceNode, UtilityAudioOwner>();
+  private utilityLoops = new Map<AudioBufferSourceNode, string>();
+  private utilityLoopGains = new Map<AudioBufferSourceNode, () => void>();
+  private utilityKeys = new Map<string, string>();
+  private utilityCue?: {owner?:UtilityAudioOwner;duration?:number;key:string;loop:boolean};
   private timelines: SoundTimelines = {};
   private actionSounds = new ActionSoundTimeline();
   private actorSounds = new Map<string | number, {volume: number; spatial?: SpatialSound}>();
@@ -66,6 +70,14 @@ export class RangeAudio {
     this.createContext();
     await this.context!.resume();
   }
+  private async loadManifest() {
+    this.manifest ??= (async () => {
+      const response = await fetch('/audio/events.json');
+      if (!response.ok) throw new Error('Native audio manifest unavailable');
+      this.readManifest(await response.json());
+    })();
+    try {await this.manifest;} catch (error) {this.manifest = undefined; throw error;}
+  }
 
   /** Strict, opt-in loading for drills that must not silently play missing samples. */
   async unlockEvents(keys: string[]) {
@@ -91,10 +103,7 @@ export class RangeAudio {
     try {
       if (this.disposed || !(window.AudioContext || (window as unknown as {webkitAudioContext?: typeof AudioContext}).webkitAudioContext)) return;
       await this.unlockContext();
-      this.manifest ??= fetch('/audio/events.json').then(async response => {
-        if (response.ok) this.readManifest(await response.json());
-      }).catch(() => {});
-      await this.manifest;
+      await this.loadManifest();
       this.common ??= this.preload(Object.keys(this.events).filter(key =>
         /^(combat-|hit-|hurt-|impact-|death$)/.test(key) || /^(step|land)-(concrete|wood|metal)$/.test(key)));
       if (!this.pending.has(weapon)) this.pending.set(weapon, this.load(weapon));
@@ -104,19 +113,26 @@ export class RangeAudio {
   }
   private readManifest(data: {events: Record<string, NativeEvent>; timelines?: SoundTimelines}) {
     this.events = data.events; this.timelines = data.timelines ?? {};
+    this.utilityKeys.clear();
+    for (const [key, event] of Object.entries(this.events)) if (key.toLowerCase().startsWith('utility-')) {
+      this.utilityKeys.set(utilityAudioKey(key), key);
+      if (event.source) {
+        const sourceKey = utilityAudioKey(event.source);
+        if (!this.utilityKeys.has(sourceKey) || key.startsWith('utility-cue-')) this.utilityKeys.set(sourceKey, key);
+      }
+    }
     this.actionSounds.setTimelines(this.timelines);
   }
   /** Utilities are optional; gun-only drills must not fetch/decode the grenade bank. */
   async preloadUtilities() {
     if (this.disposed) return;
     this.createContext();
-    this.manifest ??= fetch('/audio/events.json').then(async response => {
-      if (response.ok) this.readManifest(await response.json());
-    }).catch(() => {});
-    await this.manifest;
+    await this.loadManifest();
     if (this.disposed) return;
-    this.utilityBank ??= this.preload(Object.keys(this.events).filter(key => key.startsWith('utility-')));
+    const keys = Object.keys(this.events).filter(key => key.toLowerCase().startsWith('utility-'));
+    this.utilityBank ??= this.preload(keys);
     await this.utilityBank;
+    if (keys.some(key => eventSamples(this.events[key]).some(url => !this.samples.has(url)))) this.utilityBank = undefined;
   }
   private async decode(url: string) {
     if (this.samples.has(url)) return;
@@ -145,6 +161,7 @@ export class RangeAudio {
   updateListener(position: Vec, yaw: number, pitch: number) {
     this.listenerPosition = {...position};
     if (!this.context || this.disposed) return;
+    for (const refresh of this.utilityLoopGains.values()) refresh();
     const pose = `${position.x.toFixed(3)},${position.y.toFixed(3)},${position.z.toFixed(3)},${yaw.toFixed(4)},${pitch.toFixed(4)}`;
     if (pose === this.listenerPose) return;
     this.listenerPose = pose; positionListener(this.context, position, yaw, pitch);
@@ -163,12 +180,13 @@ export class RangeAudio {
     }
     return mono;
   }
-  private emit(buffer: AudioBuffer, volume: number, pitch: number, spatial?: SpatialSound, pan = 0, delay = 0) {
+  private emit(buffer: AudioBuffer, volume: number, pitch: number, spatial?: SpatialSound, pan = 0, delay = 0,
+    playback?: UtilitySamplePlayback, refreshVolume?: () => number) {
     if (!this.context || this.context.state !== 'running' || !Number.isFinite(volume) || volume <= 0 || this.disposed) return false;
     if (this.voices.size >= 24) {const oldest = this.voices.values().next().value!; oldest.stop(); this.voiceCleanup.get(oldest)?.();}
     const voice = this.context.createBufferSource(), gain = this.context.createGain();
     voice.buffer = spatial ? this.monoBuffer(buffer) : buffer; voice.playbackRate.value = pitch;
-    gain.gain.value = Math.max(0, Math.min(1, volume)); voice.connect(gain);
+    gain.gain.value = Math.max(0, Math.min(this.utilityCue ? 4 : 1, volume)); voice.connect(gain);
     const chain = spatial ? spatialChain(this.context, spatial, this.profile) : undefined;
     const stereo = !spatial && pan ? this.context.createStereoPanner() : undefined;
     if (chain) {gain.connect(chain.input); chain.output.connect(this.master!);}
@@ -178,12 +196,20 @@ export class RangeAudio {
       (chain?.output ?? gain).connect(this.reverb!.input(spatial?.path?.reverb ?? spatial!.reverb!));
     }
     this.voices.add(voice);
-    const cleanup = () => {voice.disconnect(); gain.disconnect(); stereo?.disconnect(); chain?.dispose(); this.voices.delete(voice); this.voiceCleanup.delete(voice);this.utilityVoices.delete(voice);};
+    const cleanup = () => {voice.onended=null; voice.disconnect(); gain.disconnect(); stereo?.disconnect(); chain?.dispose(); this.voices.delete(voice); this.voiceCleanup.delete(voice);this.utilityVoices.delete(voice);this.utilityLoops.delete(voice);this.utilityLoopGains.delete(voice);};
     this.voiceCleanup.set(voice, cleanup); voice.onended = cleanup;
     const startsAt=this.context.currentTime + delay + (this.profile.propagationDelay === false ? 0 : spatial?.path?.delay ?? 0);
+    const loop = this.utilityCue?.loop && this.utilityCue.owner !== undefined ? utilitySampleLoop(playback, buffer.duration) : undefined;
+    if (loop) {
+      voice.loop=true; voice.loopStart=loop.start; voice.loopEnd=loop.end;
+      this.utilityLoops.set(voice,this.utilityCue!.key);
+      if (refreshVolume) this.utilityLoopGains.set(voice,()=>{gain.gain.value=Math.max(0,Math.min(4,refreshVolume()));});
+    }
     voice.start(startsAt);
-    if(this.utilityCue){this.utilityVoices.set(voice,this.utilityCue.owner);
-      if(this.utilityCue.duration!==undefined)voice.stop(startsAt+this.utilityCue.duration);}
+    if(this.utilityCue){
+      if(this.utilityCue.owner!==undefined)this.utilityVoices.set(voice,this.utilityCue.owner);
+      if(this.utilityCue.duration!==undefined)voice.stop(startsAt+this.utilityCue.duration);
+    }
     return true;
   }
   playEvent(key: string, volume: number, spatial?: SpatialSound, pan = 0) {
@@ -199,7 +225,7 @@ export class RangeAudio {
     let played=false;
     const distance = spatial?.path?.distance ?? (spatial ? Math.hypot(spatial.position.x - this.listenerPosition.x,
       spatial.position.y - this.listenerPosition.y, spatial.position.z - this.listenerPosition.z) : 0);
-    const mapped = spatial && event.distanceCurve && this.profile.nativeDistanceCurves !== false;
+    const mapped = spatial && event.distanceCurve?.length && this.profile.nativeDistanceCurves !== false;
     const pathMapped = !!spatial?.path && !mapped;
     const attenuation = mapped ? curveGain(distance / .0254, event.distanceCurve!) : pathMapped ? inverseDistanceGain(distance) : 1;
     for(const [track,samples] of (event.tracks?.map(t=>t.samples)??[event.samples]).entries()) {
@@ -211,7 +237,12 @@ export class RangeAudio {
       this.previous.set(trackKey,index);
       played=this.emit(this.samples.get(samples[index])!,volume*event.volume*attenuation,event.pitch,
         (mapped||pathMapped)&&spatial?{...spatial,distanceMapped:true}:spatial,pan,
-        Math.max(0,Math.min(1,event.delay??0)))||played;
+        Math.max(0,Math.min(1,event.delay??0)),event.tracks?.[track]?.samplePlayback?.[index],
+        spatial ? () => {
+          const updatedDistance = Math.hypot(spatial.position.x-this.listenerPosition.x,
+            spatial.position.y-this.listenerPosition.y,spatial.position.z-this.listenerPosition.z);
+          return volume*event.volume*(mapped?curveGain(updatedDistance/.0254,event.distanceCurve!):pathMapped?inverseDistanceGain(updatedDistance):1);
+        } : undefined)||played;
     }
     // Child sound events have independent gain/pitch/delay. A silent primary
     // (notably lethal helmet feedback) must not mute its flesh and dink layers.
@@ -307,11 +338,13 @@ export class RangeAudio {
   playUtility(kind: 'he' | 'flash' | 'smoke' | 'molotov' | 'incendiary' | 'decoy',
     action: 'throw' | 'bounce' | 'detonate' | 'decoy' | 'extinguish', volume: number, spatial?: SpatialSound, sound?: string) {
     if (this.disposed || this.context?.state !== 'running' || !Number.isFinite(volume) || volume <= 0 || sound === 'silent') return false;
-    const cue = sound ?? action;
-    const key = cue.startsWith('utility-') ? cue : cue === 'extinguish' ? 'utility-extinguish' :
+    const cue = (sound ?? action).trim().toLowerCase();
+    const selected = cue.startsWith('utility-') ? cue : cue.includes('.') ? utilityAudioKey(cue) : cue === 'extinguish' ? 'utility-extinguish' :
       cue === 'decoy-end' ? 'utility-decoy-end' : cue === 'decoy' ? 'utility-decoy-decoy' :
       cue === 'ignite' ? `utility-${kind}-detonate` : /^(he|flash|smoke)$/.test(cue) ? `utility-${cue}-detonate` :
-      `utility-${kind}-${cue}`;
+      cue === 'deploy' ? `utility-${kind}-draw` : /^throw-(high|low)$/.test(cue) ? `utility-${kind}-throw` :
+      cue === 'pinpull' || cue === 'pullpin' ? `utility-${kind}-pin` : `utility-${kind}-${cue}`;
+    const key = this.utilityKeys.get(utilityAudioKey(selected)) ?? selected;
     const event = this.events[key];
     const audibleSamples = (native: NativeEvent, depth = 0): string[] => depth > 4 ? [] : [
       ...(native.volume > 0 ? native.tracks?.flatMap(track => track.samples) ?? native.samples : []),
@@ -320,20 +353,38 @@ export class RangeAudio {
     const urls = event ? audibleSamples(event) : [];
     // Preserve authored silence/attenuation. Missing banks get an on-time quiet
     // impact only; never queue a delayed utility cue after a replay/mute change.
-    if (event && (!urls.length || urls.some(url => this.samples.has(url)))) return this.playEvent(key, volume, spatial);
+    if (event && (!urls.length || urls.some(url => this.samples.has(url)))) {
+      this.utilityCue={key,loop:false};
+      try {return this.playEvent(key, volume, spatial);} finally {this.utilityCue=undefined;}
+    }
     return this.playImpact('concrete', volume * .12, spatial);
   }
   async preloadUtilityCues(names: readonly string[]) {
     if(this.disposed)return;
-    const wanted=new Set(names);
-    await this.preload(Object.keys(this.events).filter(key=>key.startsWith('utility-cue-')&&wanted.has(this.events[key].source??'')));
+    this.createContext(); await this.loadManifest();
+    if (this.disposed) return;
+    await this.preload([...new Set(names.flatMap(name=>{
+      const key=this.utilityKeys.get(utilityAudioKey(name));return key?[key]:[];
+    }))]);
   }
-  playUtilityCue(name: string, volume: number, spatial?: SpatialSound, owner?:number, duration?:number) {
-    this.utilityCue=owner===undefined?undefined:{owner,duration:duration!==undefined&&Number.isFinite(duration)?Math.max(.001,duration):undefined};
-    try{return this.playEvent(`utility-cue-${name.toLowerCase().replace(/[^a-z0-9]+/g,'-')}`,volume,spatial);}
+  playUtilityCue(name: string, volume: number, spatial?: SpatialSound, owner?:UtilityAudioOwner, duration?:number,
+    options: {loop?:boolean} = {}) {
+    if (this.disposed || this.context?.state !== 'running' || !Number.isFinite(volume) || volume <= 0 ||
+      duration !== undefined && (!Number.isFinite(duration) || duration <= 0)) return false;
+    const key=this.utilityKeys.get(utilityAudioKey(name))??utilityAudioKey(name);
+    // Repeated per-frame sustain requests must not stack identical loop voices.
+    if (owner !== undefined && [...this.utilityLoops].some(([voice,playing])=>playing===key&&this.utilityVoices.get(voice)===owner)) return true;
+    this.utilityCue={owner,key,loop:options.loop!==false,duration};
+    try{return this.playEvent(key,volume,spatial);}
     finally{this.utilityCue=undefined;}
   }
-  cancelUtilityCues(owner?:number) {
+  /** Stop a world-effect/held loop without cutting the owner's independent one-shot layers. */
+  stopUtilityLoops(owner?:UtilityAudioOwner) {
+    for (const voice of this.utilityLoops.keys()) if (owner===undefined||this.utilityVoices.get(voice)===owner) {
+      try {voice.stop();} catch {} this.voiceCleanup.get(voice)?.();
+    }
+  }
+  cancelUtilityCues(owner?:UtilityAudioOwner) {
     for(const [voice,id]of this.utilityVoices)if(owner===undefined||id===owner){
       try{voice.stop();}catch{}this.voiceCleanup.get(voice)?.();
     }

@@ -16,6 +16,7 @@ for (const args of [
   ['tools/audit-utility-presentation.mjs'],
   ['tools/audit-utility-active-resources.mjs', '--reuse-extracted'],
   ['tools/import-utility-particles.mjs'],
+  ['tools/import-inferno-presentation.mjs'],
   ['tools/import-utility-presentation-sounds.mjs'],
   ['tools/import-utility-audio.mjs'],
   ['tools/optimize-assets.mjs', '--world-only'],

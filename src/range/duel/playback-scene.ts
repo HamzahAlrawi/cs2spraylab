@@ -68,7 +68,7 @@ export class PlaybackScene {
     this.viewScene.add(new THREE.HemisphereLight('#ffffff', '#66675b', 1.4));
     const light = new THREE.DirectionalLight('#fff2dd', 2); light.position.set(-2, 4, 2); this.viewScene.add(light);
     this.group.add(this.world, this.actors, this.traces, this.diagnostics.group);
-    this.group.add(this.overlay);
+    this.overlayScene.add(this.overlay);
   }
   get hasWorld() {return !!this.worldSource && !this.worldSource.native;}
   setActorFactory(factory: ActorFactory) {this.factory = factory; this.clearActors();}
@@ -235,18 +235,19 @@ export class PlaybackScene {
     this.overlayMaterial.uniforms.flash.value = alive ? utilityFlashOpacity(player?.flashAmount ?? 0) : 0;
     this.overlayMaterial.uniforms.smoke.value = alive ? this.utilityRenderer.interiorSmokeOpacity : 0;
     this.overlay.visible = this.overlayMaterial.uniforms.flash.value > 0 || this.overlayMaterial.uniforms.smoke.value > 0;
-    (this.utilityRenderer.held.visible ? this.overlayScene : this.group).add(this.overlay);
   }
   /** Call after the world render. Composites native first-person arms beneath flash/smoke. */
   renderUtilityView(renderer: THREE.WebGLRenderer, width: number, height: number) {
-    if (this.disposed || !this.firstPerson || !this.utilityRenderer.held.visible) return;
+    if (this.disposed || !this.firstPerson) return;
     const viewport = viewmodelViewport(width, height), autoClear = renderer.autoClear;
     const oldViewport = renderer.getViewport(new THREE.Vector4());
     this.viewCamera.aspect = viewport.aspect; this.viewCamera.updateProjectionMatrix();
     try {
-      renderer.autoClear = false; renderer.clearDepth();
-      renderer.setViewport(viewport.x, viewport.y, viewport.width, viewport.height);
-      renderer.render(this.viewScene, this.viewCamera);
+      renderer.autoClear = false;
+      if (this.utilityRenderer.held.visible) {
+        renderer.clearDepth(); renderer.setViewport(viewport.x, viewport.y, viewport.width, viewport.height);
+        renderer.render(this.viewScene, this.viewCamera);
+      }
       if (this.overlay.visible) {renderer.setViewport(0, 0, width, height); renderer.render(this.overlayScene, this.viewCamera);}
     } finally {
       renderer.autoClear = autoClear; renderer.setViewport(oldViewport);

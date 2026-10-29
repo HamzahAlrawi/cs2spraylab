@@ -13,6 +13,7 @@ import {NATIVE_GRENADE_FLIGHT,nativeGrenadeContact,nativeGrenadeThinkTick,native
 import {nativeFlashArguments,NATIVE_GRENADE_FLASH} from './grenade-native-flash';
 import {nativeFlashVisibility} from './grenade-flash-visibility';
 import {InfernoSpread,nativeInfernoDamage} from './inferno-native';
+import {pointInSmokeHole, SMOKE_EXTINCTION} from './smoke-density';
 
 export type {UtilityKind} from './utility-loadout';
 export const UTILITY_KERNEL_VERSION='native-launch-contact-think-inferno-2000935-v4';
@@ -118,16 +119,11 @@ export function smokeSegmentExposure(from: Vec, to: Vec, effects: readonly Utili
     for (let i = 0; i < count; i++) {
       const point = add(from, scale(direction, interval[0] + (i + .5) * stride));
       if (!smokeContains(point, effect)) continue;
-      const inHole = effect.holes.some(h => {
-        if (time < h.startedAt || time >= h.expiresAt) return false;
-        const axis = subtract(h.to, h.from), n = dot(axis, axis);
-        const t = n > 1e-12 ? clamp(dot(subtract(point, h.from), axis) / n) : 0;
-        return distance(point, add(h.from, scale(axis, t))) < h.radius;
-      });
+      const inHole = effect.holes.some(h => pointInSmokeHole(point, h, time));
       if (!inHole) opticalDepth += stride;
     }
   }
-  return 1 - Math.exp(-opticalDepth * 2);
+  return 1 - Math.exp(-opticalDepth * SMOKE_EXTINCTION);
 }
 
 /** Seeded, bounded browser-only kernel. advance time is the interval END. */

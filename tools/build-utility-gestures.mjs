@@ -1,5 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
+import crypto from 'node:crypto';
 import {execFileSync} from 'node:child_process';
 import {NodeIO} from '@gltf-transform/core';
 import {prune, resample, dedup} from '@gltf-transform/functions';
@@ -8,6 +9,8 @@ import {convertMotion} from './native-motion-conversion.mjs';
 const game = process.env.CS2_PATH || 'C:/Program Files (x86)/Steam/steamapps/common/Counter-Strike Global Offensive';
 const source = 'research/raw-models/utility-world-actions.glb';
 const requests = [];
+for (const family of ['rifle', 'pistol']) requests.push({family, label: 'flashed', clip: 'flashed'},
+  {family, label: 'flashed_crouch', clip: 'flashed_crouch'});
 for (const [family, suffix] of [['utility', 'grenade'], ['utility-molotov', 'molotov']]) {
   for (const [label, stem] of [['idle', 'idle'], ['idle_crouch', 'idle_crouch'], ['draw', 'draw'], ['draw_crouch', 'draw_crouch'],
     ['pullpin', 'pullpin'], ['pullpin_crouch', 'pullpin_crouch']]) requests.push({family, label, clip: `${stem}_${suffix}`});
@@ -15,7 +18,7 @@ for (const [family, suffix] of [['utility', 'grenade'], ['utility-molotov', 'mol
   for (const [label, clip] of [['throw-high', 'throw_overhand_grenade'], ['throw-low', 'throw_underhand_grenade'],
     ['throw-high_crouch', 'crouch_throw_far_grenade'], ['throw-low_crouch', 'crouch_throw_near_grenade']]) requests.push({family, label, clip});
 }
-if (!process.argv.includes('--reuse-source') || !fs.existsSync(source)) execFileSync(path.resolve('.local-tools/vrf/Source2Viewer-CLI.exe'),
+if (!process.argv.includes('--reuse-source') || !fs.existsSync(source)) execFileSync(path.resolve('.local-tools/vrf-20.1/Source2Viewer-CLI.exe'),
   ['-i', `${game}/game/csgo/pak01_dir.vpk`, '-f', 'agents/models/ctm_sas/ctm_sas.vmdl_c', '-o', source, '-d',
     '--gltf_export_format', 'glb', '--gltf_export_animations', '--gltf_compose_additive',
     '--gltf_animation_list', [...new Set(requests.map(r => r.clip))].join(',')], {windowsHide: true, stdio: 'pipe', maxBuffer: 40e6});
@@ -28,7 +31,7 @@ const resources = [...new Set(requests.map(request => {
 }))];
 const audit = 'research/utility-world-audit';
 fs.mkdirSync(audit, {recursive: true});
-execFileSync(path.resolve('.local-tools/vrf/Source2Viewer-CLI.exe'),
+execFileSync(path.resolve('.local-tools/vrf-20.1/Source2Viewer-CLI.exe'),
   ['-i', `${game}/game/csgo/pak01_dir.vpk`, '-f', resources.join(','), '-o', audit, '-d'],
   {windowsHide: true, stdio: 'pipe', maxBuffer: 40e6});
 const nodes = new Map(root.listNodes().map(node => [node.getName(), node]));
@@ -59,3 +62,18 @@ for (const resource of [...root.listMeshes(), ...root.listTextures(), ...root.li
 await doc.transform(resample({tolerance: .0001}), dedup(), prune());
 await io.write('public/revamp/models/utility-gestures.glb', doc);
 console.log(`EXPORTED ${root.listAnimations().length} native grenade world gestures`);
+const sha = bytes => crypto.createHash('sha256').update(bytes).digest('hex');
+const flashResources = resources.filter(resource => /\/flashed(?:_crouch)?\.vnmclip_c$/.test(resource));
+// Record original compiled bytes separately from the decoded animation channels.
+const flashSources = flashResources.map(resource => {
+  const file = `${audit}/${path.basename(resource)}`;
+  execFileSync(path.resolve('.local-tools/vrf-20.1/Source2Viewer-CLI.exe'),
+    ['-i', `${game}/game/csgo/pak01_dir.vpk`, '-f', resource, '-o', file], {windowsHide: true, stdio: 'pipe'});
+  return {resource, sha256: sha(fs.readFileSync(file)), decodedSha256: sha(fs.readFileSync(`${audit}/${resource.replace(/\.vnmclip_c$/, '.dmx')}`))};
+});
+fs.writeFileSync('src/range/duel/native-flash-animation.json', JSON.stringify({
+  build: fs.readFileSync(`${game}/game/csgo/steam.inf`, 'utf8').match(/ClientVersion=(\d+)/)?.[1],
+  archiveDirectorySha256: sha(fs.readFileSync(`${game}/game/csgo/pak01_dir.vpk`)),
+  sources: flashSources, animation: '/models/utility-gestures.glb',
+  animationSha256: sha(fs.readFileSync('public/revamp/models/utility-gestures.glb')),
+  limitations: 'Native upper-body channels, trainer blending. Exact Source 2 animation graph visibility blend is not ported.'}, null, 2) + '\n');

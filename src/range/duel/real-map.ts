@@ -13,7 +13,8 @@ import {DuelSimulation} from './simulation';
 import {sanitizeDuelConfig, type DuelConfig} from './config';
 import type {DuelScenario} from './scenario';
 import {disposeResources} from './render-resources';
-import type {RoundCatalog, RoundCourse, RoundStart} from './real-map-rounds';
+import {chooseRealMapCourse, chooseRealMapStart, type RoundCatalog, type RoundCourse, type RoundStart} from './real-map-rounds';
+import {applyManualLineup, manualLineupFromArena, validateManualLineup, type SpawnContext, type ManualLineup} from './manual-spawns';
 import type {RadarOverview} from './radar';
 import {fetchDeliveredAsset,prefetchDeliveredAssets,validateDelivery,type MapDelivery} from '../prefire/asset-delivery';
 import {PreparedRound, decodedPreloadAllowed} from './prepared-round';
@@ -53,9 +54,9 @@ export function createRealMapArena(map:PrefireMap, chunk:RealMapChunk, config:Du
   const baked=rounds??chunkRounds.get(map);
   if(!baked || baked.collisionSha256!==map.collision.collisionSha256 || !baked.courses.length)
     throw new Error('Duel round catalog does not match the map. Run node tools/build-duel-rounds.mjs.');
-  const course=baked.courses[Math.floor(randomStream(seed,'duel-approach')()*baked.courses.length)];
+  const course=chooseRealMapCourse(baked.courses,chunk.routeId,config.realMapCourse,seed);
   const source=dust2Catalog.routes.find(route=>route.id===course.id)!;
-  const start=course.starts[Math.floor(randomStream(seed,'duel-covered-start')()*course.starts.length)];
+  const start=chooseRealMapStart(course,config.realMapCourse,seed);
   const candidates=course.holds.filter(hold=>start.holds.includes(angleIdentity(hold.angle)));
   const route:PrefireRoute={...source,angles:candidates.map(hold=>hold.angle),alternatives:[]};
   const active=candidates.filter(hold=>Math.hypot(hold.lane.edge.x-hold.lane.anchor.x,hold.lane.edge.z-hold.lane.anchor.z)>.15);
@@ -99,6 +100,12 @@ export function createRealMapArena(map:PrefireMap, chunk:RealMapChunk, config:Du
       searchPoints:views.slice(start.viewIndex).map(p=>({...p,y:p.y-64*UNIT})).reverse()}};
   prepareNativeNavigation(arena,baked.courses.flatMap(course=>[...course.starts.map(start=>start.feet),
     ...course.holds.flatMap(hold=>[hold.source,hold.sheltered,hold.lane.edge]),...course.walk]),baked.courses.map(course=>course.walk));
+  if(config.manualLineup) {
+    const result=validateManualLineup(config.manualLineup,{chunkId:chunk.id,collisionSha256:map.collision.collisionSha256},map.collision);
+    if(result.errors.length)throw new Error(result.errors.join(' '));
+    if(config.botCount!==config.manualLineup.bots.length)throw new Error('Bot count must match the saved lineup.');
+    return applyManualLineup(arena,config.manualLineup);
+  }
   return arena;
 }
 
@@ -198,6 +205,12 @@ export class RealMapSession implements DuelScenario {
   private prefetchId?:string;
   private readonly prepared=new PreparedRound<PrefireMap>();
   get name(){return this.chunk.name;}
+  spawnContext():SpawnContext {return {chunkId:this.chunk.id,collisionSha256:this.map.collision.collisionSha256};}
+  validateLineup(lineup:unknown){return validateManualLineup(lineup,this.spawnContext(),this.map.collision);}
+  curatedLineup(key:string):ManualLineup {
+    const arena=createRealMapArena(this.map,this.chunk,{...this.config,manualLineup:null,realMapCourse:'standard'},0);
+    return manualLineupFromArena(this.spawnContext(),arena,key);
+  }
   private constructor(private map:PrefireMap,public chunk:RealMapChunk,private config:DuelConfig) {
     this.arrows=new THREE.Group();this.arrows.name='duel-route-arrows';this.arrows.visible=config.routeGuide;
     this.scene.add(map.scene,this.arrows);
@@ -239,9 +252,9 @@ export class RealMapSession implements DuelScenario {
   create(settings:Settings,seed:number) {
     const config=sanitizeDuelConfig({...this.config,arenaScale:1,shortcutProtection:settings.protectShortcuts});
     const arena=createRealMapArena(this.map,this.chunk,config,seed),baked=chunkRounds.get(this.map)!;
-    const course=baked.courses.find(course=>course.id===arena.roundSetup!.course)!;
-    const start=course.starts.find(start=>start.viewIndex===arena.roundSetup!.start)!;
-    const arrows=routeArrows(course,start);arrows.visible=this.config.routeGuide;
+    const course=baked.courses.find(course=>course.id===arena.roundSetup!.course);
+    const start=course?.starts.find(start=>start.viewIndex===arena.roundSetup!.start);
+    const arrows=course&&start?routeArrows(course,start):new THREE.Group();arrows.name='duel-route-arrows';arrows.visible=this.config.routeGuide;
     this.scene.remove(this.arrows);disposeResources([this.arrows]);this.arrows=arrows;this.scene.add(arrows);
     return new DuelSimulation(config,seed,arena,settings.weapon,settings.sidearm,settings.primaryEnabled);
   }

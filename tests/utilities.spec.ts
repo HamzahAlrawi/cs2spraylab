@@ -23,6 +23,104 @@ test.beforeEach(async ({page}) => {
   });
 });
 
+test('real browser mouse chords produce overhand, underhand and combined throws without pointer motion', async ({page}, info) => {
+  test.skip(info.project.name !== 'chromium'); test.setTimeout(120000);
+  await page.goto('/'); await captureEngine(page);
+  const canvas = page.locator('canvas[data-duel]');
+  const bounds = (await canvas.boundingBox())!;
+  for (const [buttons, strength] of [[['left'], 1], [['right'], 0], [['left', 'right'], .5], [['right', 'left'], .5]] as const) {
+    await page.evaluate(() => (window as any).compactArenaEngine.restart(false, false));
+    await page.waitForFunction(() => !(window as any).compactArenaEngine.loadingMap);
+    await page.evaluate(() => {
+      const engine = (window as any).compactArenaEngine;
+      engine.sim.configureUtilities({utilitiesEnabled: true, botUtilities: false, utilityLoadout: ['he']});
+      engine.sim.selectUtility('he');
+      engine.sim.command(1, {}); engine.sim.start(); engine.sim.resume(); engine.sessionStarted = true;
+      engine.paused = false; engine.inputName = 'Drag aim (browser test)';
+      engine.report();
+    });
+    await page.waitForFunction(() => {const sim = (window as any).compactArenaEngine.sim; return sim.utilityPresentation()?.readyAt <= sim.time;});
+    await expect(page.getByRole('button', {name: 'Enter duel', exact: true})).not.toBeVisible();
+    await page.mouse.move(bounds.x + bounds.width * .4, bounds.y + bounds.height * .7);
+    for (const button of buttons) await page.mouse.down({button});
+    try {await page.waitForFunction(() => {const sim = (window as any).compactArenaEngine.sim, held = sim.utilityPresentation();
+      return held?.primedAt !== undefined && sim.time - held.primedAt > 1;}, undefined, {timeout: 8000});}
+    catch (error) {
+      const state = await page.evaluate(() => {const e = (window as any).compactArenaEngine;
+        return {phase:e.sim.phase, paused:e.paused, entering:e.entering, command:e.sim.actors[0].command,
+          held:e.sim.utilityPresentation(), time:e.sim.time, loading:e.loadingMap};});
+      throw new Error(`${buttons.join('+')}: ${JSON.stringify(state)}; ${error}`);
+    }
+    expect(await page.evaluate(() => (window as any).compactArenaEngine.sim.utilityPresentation().strength)).toBeCloseTo(strength, 2);
+    if (buttons.length === 2) {
+      await page.mouse.up({button: buttons[0]});
+      expect(await page.evaluate(() => (window as any).compactArenaEngine.sim.utilityPresentation()?.releaseAt)).toBeUndefined();
+    }
+    await page.mouse.up({button: buttons[buttons.length - 1]});
+    await page.waitForFunction(() => !(window as any).compactArenaEngine.sim.selectedUtility);
+    const thrown = await page.evaluate(() => (window as any).compactArenaEngine.sim.replay.export().utilities.events
+      .filter((event: any) => event.action === 'throw' && event.actorId === 0).at(-1));
+    expect(thrown.strength).toBeCloseTo(strength, 2);
+  }
+});
+
+test('native utility WAVs decode in real Web Audio and held/world voices play and cancel independently', async ({page}, info) => {
+  test.skip(info.project.name !== 'chromium'); test.setTimeout(120000);
+  await page.goto('/'); await captureEngine(page);
+  await page.getByRole('button', {name: 'Enter duel', exact: true}).click();
+  await page.waitForFunction(() => (window as any).compactArenaEngine.audio.context?.state === 'running');
+  const result = await page.evaluate(async () => {
+    const engine = (window as any).compactArenaEngine; engine.pause();
+    const audio = engine.audio; await audio.preloadUtilities();
+    const decoded = [...audio.samples.keys()].filter((url: string) => url.includes('/utility-')).length;
+    const pin = audio.playUtilityCue('hegrenade.pullpin', .001, undefined, 0);
+    const fire = audio.playUtilityCue('Inferno.Loop', .001, undefined, 'test-fire', 5);
+    const loops = audio.utilityLoops.size;
+    audio.playUtilityCue('Inferno.Loop', .001, undefined, 'test-fire', 5);
+    const deduplicated = audio.utilityLoops.size;
+    audio.cancelUtilityCues(0); const sustained = audio.utilityLoops.size;
+    audio.stopUtilityLoops('test-fire'); const stopped = audio.utilityLoops.size; audio.stopVoices();
+    return {decoded, pin, fire, loops, deduplicated, sustained, stopped, voices: audio.voices.size};
+  });
+  expect(result).toEqual({decoded: 118, pin: true, fire: true, loops: 1, deduplicated: 1, sustained: 1, stopped: 0, voices: 0});
+});
+
+test('manual lineup walk mode captures and validates native entries and holds, then restores them on use', async ({page}, info) => {
+  test.skip(info.project.name !== 'chromium'); test.setTimeout(150000);
+  await page.addInitScript(() => localStorage.setItem('spraylab.duel.v1', JSON.stringify({generatedMaps: false,
+    realMapChunk: 'dust2-long-doors', botCount: 1, skill: 1, botUtilities: false, shortcutProtection: false})));
+  await page.goto('/'); await captureEngine(page);
+  const show = page.getByRole('button', {name: 'Show drill panel', exact: true});
+  if (await show.isVisible()) await show.click();
+  await page.locator('.manual-spawn-editor > summary').click();
+  await page.getByRole('checkbox', {name: 'Manual spawn walk mode'}).check();
+  await page.waitForFunction(() => (window as any).compactArenaEngine.spawnAuthoring && !(window as any).compactArenaEngine.loadingMap);
+  await page.evaluate(() => {
+    const engine = (window as any).compactArenaEngine; engine.sim.start(); engine.sim.resume(); engine.sessionStarted = true;
+    for (let i = 0; i < 16; i++) engine.sim.step(); engine.pause();
+  });
+  await page.getByRole('button', {name: 'Capture entry', exact: true}).click();
+  await expect(page.getByRole('textbox', {name: 'Player entry name'})).toBeVisible();
+  const hold = await page.evaluate(() => {
+    const engine = (window as any).compactArenaEngine, pose = engine.scenario.curatedLineup('test').bots[0], actor = engine.sim.actors[0];
+    actor.position = {...pose.feet, y: pose.feet.y + 64 * .0254}; actor.feet = pose.feet.y;
+    actor.yaw = pose.yaw; actor.pitch = pose.pitch; actor.grounded = true; actor.duckAmount = 0;
+    return pose;
+  });
+  await page.getByRole('button', {name: 'Add hold', exact: true}).click();
+  await page.getByRole('button', {name: 'Save', exact: true}).click();
+  await expect(page.getByRole('status').filter({hasText: 'Lineup saved on this device.'})).toBeVisible();
+  await page.getByRole('button', {name: 'Use lineup', exact: true}).click();
+  await page.waitForFunction(() => (window as any).compactArenaEngine.sim.arena.roundSetup?.course.startsWith('manual:'));
+  const applied = await page.evaluate(() => {
+    const engine = (window as any).compactArenaEngine;
+    return {walk: engine.spawnAuthoring, saved: JSON.parse(localStorage.getItem('spraylab.duel.manual-spawns.v1')!).lineups.length,
+      bot: engine.sim.actors[1] && {feet: engine.sim.actors[1].feet, x: engine.sim.actors[1].position.x, z: engine.sim.actors[1].position.z}};
+  });
+  expect(applied.walk).toBe(false); expect(applied.saved).toBe(1);
+  expect(applied.bot.x).toBeCloseTo(hold.feet.x, 4); expect(applied.bot.z).toBeCloseTo(hold.feet.z, 4);
+});
+
 test('grenade HUD, legal loadouts, release input and visible smoke work in the real renderer', async ({page}, info) => {
   test.skip(!['chromium', 'mobile-chromium'].includes(info.project.name)); test.setTimeout(120000);
   const errors: string[] = []; page.on('pageerror', error => errors.push(error.message));
@@ -49,7 +147,7 @@ test('grenade HUD, legal loadouts, release input and visible smoke work in the r
   });
   expect(result).toEqual({thrown: 1, ammo: 30, count: 0});
   await page.waitForFunction(() => (window as any).compactArenaEngine.sim.utilities.effects.some((effect: any) => effect.type === 'smoke'), undefined, {timeout: 10000});
-  await expect.poll(() => page.evaluate(() => (window as any).compactArenaEngine.scene.getObjectByName('utility-smoke')?.count ?? 0)).toBeGreaterThan(0);
+  await expect.poll(() => page.evaluate(() => (window as any).compactArenaEngine.utilityRenderer.smoke.count)).toBeGreaterThan(0);
   expect(await canvasColors(page, 'canvas[data-duel]')).toBeGreaterThan(3);
   const bounds = await page.locator('.duel-utility-hud').boundingBox();
   expect(bounds).not.toBeNull(); expect(bounds!.x).toBeGreaterThanOrEqual(0);
@@ -129,7 +227,7 @@ test('grenade loot and recorded flight, smoke and backwards seeks work end to en
     const engine=(window as any).compactArenaEngine;
     engine.showReplay((window as any).utilityReviewRecording,undefined,time,true);
     engine.replayScene.camera(engine.camera,undefined,true);
-    return {smoke:engine.replayScene.group.getObjectByName('utility-smoke')?.count??0,
+    return {smoke:engine.replayScene.utilityRenderer.smoke.count,
       flight:engine.replayScene.group.getObjectsByProperty('isInstancedMesh',true)
         .filter((mesh:any)=>mesh.name.startsWith('utility-projectiles-')).reduce((sum:number,mesh:any)=>sum+mesh.count,0),
       inventory:engine.sim.utilityInventory().smoke};

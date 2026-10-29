@@ -9,12 +9,28 @@ import type {PrefireAngle} from '../prefire/schema';
 import type {CoverLane} from './geometry';
 import {nativeClearSegment} from './native-navigation';
 import {nativeLaneRole} from './tactical-geometry';
+import {randomStream} from './rng';
 
 type Chunk = {id: string; routeId: string; sourceMin: readonly number[]; sourceMax: readonly number[]};
 export type RoundHold = {angle: PrefireAngle; source: Vec; sheltered: Vec; lane: CoverLane};
 export type RoundStart = {feet: Vec; viewIndex: number; holds: string[]};
 export type RoundCourse = {id: string; name: string; views: Vec[]; walk: Vec[]; holds: RoundHold[]; starts: RoundStart[]};
 export type RoundCatalog = {version: number; chunks: Record<string, {collisionSha256: string; courses: RoundCourse[]}>};
+export function chooseRealMapCourse(courses: readonly RoundCourse[], standard: string, choice: string, seed: number): RoundCourse {
+  if (!courses.length) throw new Error('No authored courses available for this chunk.');
+  if (choice === 'shuffle') return courses[Math.floor(randomStream(seed, 'duel-approach')() * courses.length)];
+  const course = courses.find(course => course.id === (choice === 'standard' ? standard : choice));
+  if (course) return course;
+  if (choice === 'standard') return courses[0];
+  throw new Error('The selected course is not available in this chunk.');
+}
+export function chooseRealMapStart(course: RoundCourse, choice: string, seed: number): RoundStart {
+  if (!course.starts.length) throw new Error('No supported covered entry for this course.');
+  if (choice === 'shuffle') return course.starts[Math.floor(randomStream(seed, 'duel-covered-start')() * course.starts.length)];
+  // Standard practice begins at the course's first validated covered entry,
+  // rather than jumping into a random middle segment of the clear every round.
+  return course.starts.reduce((first, entry) => entry.viewIndex < first.viewIndex ? entry : first);
+}
 const inside = (chunk: Chunk, point: readonly number[]) => point[0] > chunk.sourceMin[0] + 17 &&
   point[0] < chunk.sourceMax[0] - 17 && point[1] > chunk.sourceMin[1] + 17 &&
   point[1] < chunk.sourceMax[1] - 17 && point[2] >= chunk.sourceMin[2] && point[2] <= chunk.sourceMax[2];

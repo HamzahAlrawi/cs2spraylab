@@ -3,7 +3,7 @@ import {RangeAudio, type NativeEvent} from './audio';
 
 const event = (url: string, volume = 1): NativeEvent => ({samples: [url], volume, pitch: 1});
 function fixture(events: Record<string, NativeEvent> = {}, missing: string[] = []) {
-  const sources: {start: ReturnType<typeof vi.fn>;stop:ReturnType<typeof vi.fn>; playbackRate: {value: number}}[] = [];
+  const sources: {start: ReturnType<typeof vi.fn>;stop:ReturnType<typeof vi.fn>; playbackRate: {value: number}; loop?:boolean;loopStart?:number;loopEnd?:number}[] = [];
   const gains: {gain: {value: number}}[] = [], requests: string[] = [];
   const param = () => ({value: 1, setValueAtTime() {}});
   const node = () => ({connect: vi.fn(), disconnect: vi.fn()});
@@ -11,7 +11,7 @@ function fixture(events: Record<string, NativeEvent> = {}, missing: string[] = [
     state = 'running'; currentTime = 0; destination = node();
     resume = async () => {}; close = async () => {};
     createDynamicsCompressor = () => ({...node(), threshold: param(), knee: param(), ratio: param(), attack: param(), release: param()});
-    decodeAudioData = async () => ({numberOfChannels: 1});
+    decodeAudioData = async () => ({numberOfChannels: 1, duration: 2});
     createGain = () => {const gain = {...node(), gain: param()}; gains.push(gain); return gain;};
     createBiquadFilter = () => ({...node(), frequency: param(), Q: param()});
     createPanner = () => ({...node(), positionX: param(), positionY: param(), positionZ: param()});
@@ -30,6 +30,61 @@ function fixture(events: Record<string, NativeEvent> = {}, missing: string[] = [
 afterEach(() => vi.unstubAllGlobals());
 
 describe('utility audio', () => {
+  it('loads raw, mixed-case and prefixed cues before any gun unlock, sharing one manifest', async () => {
+    const {audio, requests, sources} = fixture({'utility-cue-hegrenade-pullpin': {...event('/pin.wav'), source:'HEGrenade.PullPin'},
+      'utility-fire-loop': {...event('/burn.wav'), source:'Inferno.Loop'}});
+    await Promise.all([audio.preloadUtilityCues([' hegrenade.pullpin ', 'UTILITY-CUE-HEGRENADE-PULLPIN']),
+      audio.preloadUtilityCues(['inferno.loop'])]);
+    expect(requests.filter(url=>url==='/audio/events.json')).toHaveLength(1);
+    expect(requests.filter(url=>url==='/pin.wav')).toHaveLength(1);
+    expect(audio.playUtilityCue('UTILITY-CUE-HEGRENADE-PULLPIN',1)).toBe(true);
+    expect(audio.playUtilityCue('inferno.loop',1)).toBe(true);
+    expect(audio.playUtilityCue('WPN_ACTION_COMPLETE',1)).toBe(false);
+    expect(sources).toHaveLength(2);audio.dispose();
+  });
+  it('retries failed manifest/sample loads, without replaying stale cues',async()=>{
+    const missing=['/audio/events.json','/pin.wav'];
+    const {audio,sources,requests}=fixture({'utility-he-pin':event('/pin.wav')},missing);
+    await expect(audio.preloadUtilities()).rejects.toThrow(/manifest/);
+    missing.splice(0,1);await audio.preloadUtilities();
+    expect(audio.playUtilityCue('utility-he-pin',1)).toBe(false);
+    missing.length=0;await audio.preloadUtilities();
+    expect(sources).toHaveLength(0);
+    expect(requests.filter(url=>url==='/pin.wav')).toHaveLength(2);
+    expect(audio.playUtilityCue('utility-he-pin',1)).toBe(true);audio.dispose();
+  });
+  it('uses exported sample loops only for owned cues, deduplicates sustain and independently stops world/actor voices',async()=>{
+    const loop:NativeEvent={...event('/loop.wav'),tracks:[{samples:['/loop.wav'],samplePlayback:[{loop:{start:.1,end:1.8}}]}]};
+    const {audio,sources}=fixture({'utility-cue-molotov-idleloop':loop,'utility-fire-loop':loop,'utility-fire-end':event('/end.wav')});
+    await audio.preloadUtilities();
+    expect(audio.playUtilityCue('Molotov.IdleLoop',1,undefined,0)).toBe(true);
+    expect(sources[0].loop).toBe(true);expect(sources[0].loopStart).toBe(.1);expect(sources[0].loopEnd).toBe(1.8);
+    audio.playUtilityCue('Molotov.IdleLoop',1,undefined,0);expect(sources).toHaveLength(1);
+    audio.playUtilityCue('utility-fire-loop',1,undefined,'fire:1',6);
+    audio.playUtilityCue('utility-fire-end',1,undefined,'fire:1');
+    expect(sources[1].stop).toHaveBeenCalledWith(6);
+    audio.stopUtilityLoops('fire:1');expect(sources[1].stop).toHaveBeenCalledWith();
+    expect(sources[0].stop).not.toHaveBeenCalled();expect(sources[2].stop).not.toHaveBeenCalled();
+    audio.cancelUtilityCues(0);expect(sources[0].stop).toHaveBeenCalledWith();
+    audio.playUtilityCue('Molotov.IdleLoop',1);expect(sources[3].loop).not.toBe(true);
+    audio.playUtilityCue('Molotov.IdleLoop',1,undefined,2,undefined,{loop:false});expect(sources[4].loop).not.toBe(true);
+    audio.stopVoices();expect(audio.voices.size).toBe(0);audio.dispose();
+  });
+  it('rejects expired/nonfinite cues and invalid loop bounds, and does not infer looping from a name',async()=>{
+    const {audio,sources}=fixture({'utility-fire-loop':event('/one-shot.wav'),
+      'utility-molotov-idle':{...event('/invalid.wav'),tracks:[{samples:['/invalid.wav'],samplePlayback:[{loop:{start:0,end:10}}]}]}});
+    await audio.preloadUtilities();
+    for(const duration of [0,-1,NaN,Infinity])expect(audio.playUtilityCue('utility-fire-loop',1,undefined,0,duration)).toBe(false);
+    audio.playUtilityCue('utility-fire-loop',1,undefined,0);
+    audio.playUtilityCue('utility-molotov-idle',1,undefined,0);
+    expect(sources).toHaveLength(2);expect(sources.every(s=>!s.loop)).toBe(true);audio.dispose();
+  });
+  it('preserves utility native gain above unity and does not apply an empty distance curve as silence',async()=>{
+    const {audio,gains}=fixture({'utility-flash-throw':{...event('/throw.wav',1.4),distanceCurve:[]}});
+    await audio.preloadUtilities();
+    expect(audio.playUtility('flash','throw',1,{position:{x:0,y:0,z:0}})).toBe(true);
+    expect(gains[0].gain.value).toBe(1.4);audio.dispose();
+  });
   it('cancels only the interrupted actor presentation and bounds duration-event voices',async()=>{
     const {audio,sources}=fixture({'utility-cue-hegrenade-pullpin':event('/pin.wav')});
     await audio.unlock('ak47');await audio.preloadUtilities();

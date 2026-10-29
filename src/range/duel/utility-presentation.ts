@@ -12,7 +12,9 @@ type NativePresentation = Readonly<{actions: Readonly<Record<UtilityViewAction, 
 export const nativeUtilityPresentation = native as unknown as Readonly<{build: string;
   utilities: Readonly<Record<UtilityKind, NativePresentation>>}>;
 
-export const utilityThrowAction = (strength: number): 'throw-low' | 'throw-high' => strength < .25 ? 'throw-low' : 'throw-high';
+// Current viewmodel graph's Underhand condition (2000938), not a guessed midpoint.
+export const utilityThrowAction = (strength: number): 'throw-low' | 'throw-high' =>
+  Math.fround(strength) <= Math.fround(.33) ? 'throw-low' : 'throw-high';
 /** Native graph state event, not a sound cue. Undefined means no verified completion rule. */
 export function utilityActionCompleteAt(kind: UtilityKind, action: UtilityViewAction): number | undefined {
   for (const completion of nativeUtilityPresentation.utilities[kind].completions)

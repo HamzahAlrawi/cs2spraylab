@@ -1,11 +1,11 @@
 {
   "schema": 2,
-  "build": "2000935",
+  "build": "2000938",
   "audit": {
     "report": "docs/utility-active-resource-audit-2026-10-26.json",
     "viewer": "Version: 20.1.7467+9e2e6c7f67e3c4e5a5f443a60c3a5d841ba8f304",
     "viewerSha256": "ef9f6fb3943c30b73f0991bce6654128727b0807968f7997a6bb014efbec8830",
-    "archiveDirectorySha256": "562972293ed7a5d40e341c4df7d6b0ee06430452694177142f0c1239dd3f2c8b",
+    "archiveDirectorySha256": "b32a45c66eff785aa4b9b4e5564e36ac0639942074a9c27b765eab74e5066cdb",
     "runtimeSelection": "Not established by resource presence; native gameplay selection is outside this static resource audit."
   },
   "nativeParameters": {

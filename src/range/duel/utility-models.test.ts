@@ -46,7 +46,7 @@ describe.skipIf(!existsSync('public/revamp/models/view-utility-he.glb'))('built 
   });
   it('keeps explicit absolute native grenade idles, not neutral RelativeToFrame deltas', () => {
     const {document} = readGlb('/models/utility-gestures.glb');
-    expect(document.animations).toHaveLength(20);
+    expect(document.animations).toHaveLength(24);
     for (const clip of document.animations.filter((animation: {name: string}) => animation.name.startsWith('gesture_idle'))) {
       expect(clip.extras.nativeSource).toContain('.vnmclip+non_additive');
       expect(clip.extras.authoredAbsolutePose).toBe(true);

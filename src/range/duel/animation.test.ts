@@ -21,6 +21,19 @@ function fixture() {
 }
 
 describe('immutable leg probe metadata cache', () => {
+  it('selects native eye-cover poses only for complete whiteout and removes them after recovery', () => {
+    const {animator, spine} = fixture();
+    const clip = (name: string) => new THREE.AnimationClip(name, 0, [
+      new THREE.QuaternionKeyframeTrack('spine_2.quaternion', [0], [.4, 0, 0, Math.sqrt(.84)])]);
+    animator.addGestureClips([clip('gesture_flashed_rifle'), clip('gesture_flashed_crouch_rifle')]);
+    const actions = (animator as unknown as {actions: Map<string, THREE.AnimationAction>}).actions;
+    animator.update({...actor(), flashAmount: .13}, .1);
+    expect(actions.get('gesture_flashed_rifle')!.enabled).toBe(false);
+    animator.update({...actor(), flashAmount: 1}, .1);
+    expect(actions.get('gesture_flashed_rifle')!.enabled).toBe(true); expect(spine.quaternion.x).toBeGreaterThan(.2);
+    animator.update({...actor(), flashAmount: 0}, .1);
+    expect(actions.get('gesture_flashed_rifle')!.enabled).toBe(false); animator.dispose();
+  });
   it('avoids rescanning shared geometry without retaining or sharing actor pose state', () => {
     const geometry = new THREE.BufferGeometry();
     const joints = new THREE.Uint16BufferAttribute([0,1,0,0, 1,0,0,0, 0,0,0,0],4);

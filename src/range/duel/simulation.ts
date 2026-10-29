@@ -49,6 +49,7 @@ import {TeamUtilityCoordinator} from './team-utility';
 import {utilityNativeTiming} from './utility-presentation';
 import {approachGrenadeStrength,releasedGrenadeStrength,nativeGrenadeReleaseAt} from './grenade-native-input';
 import {applyNativeFlash,type NativeBlindState} from './grenade-native-flash';
+import {nativeFlashClient} from './grenade-flash-client';
 
 export type CombatActor = ActorKinematics & TaggingState & {
   id: number;
@@ -122,6 +123,9 @@ export class DuelSimulation {
   private events: DuelEvent[] = [];
   private brains = new Map<number, BotBrain | TacticalBrain>();
   private controlledBots = new Set<number>();
+  private spawnAuthoring = false;
+  /** Isolated walk-only editor. Never feeds scores, rewards or combat recordings. */
+  setSpawnAuthoring(enabled: boolean) {this.spawnAuthoring = enabled;}
   private lastCalloutAt = new Map<number, number>();
   private previous: DuelActorSnapshot[] = [];
   private combatActions = new Map<number,{action:DuelActorSnapshot['action'];at:number}>();
@@ -297,8 +301,7 @@ export class DuelSimulation {
   flashAmount(actorId: number) {
     const flash = this.flashes.get(actorId);
     if (!flash || this.time >= flash.blindStart+flash.duration) return 0;
-    // Network duration/stacking are native; client afterimage/compositing is still adapted.
-    return flash.alpha/255*Math.min(1,(flash.blindStart+flash.duration-this.time)/Math.max(.001,flash.duration*.5));
+    return nativeFlashClient(flash.blindStart, this.time, flash.duration, flash.alpha).overlayAlpha;
   }
   canSeeUtility(actorId: number, from: Vec, to: Vec) {
     return this.flashAmount(actorId) < .35 && !this.utilities.obscuresSegment(from, to, this.time);
@@ -483,7 +486,7 @@ export class DuelSimulation {
 
   step() {
     if (!this.playable || this.paused) return;
-    const competitive=this.phase==='fighting';
+    const competitive=this.phase==='fighting' && !this.spawnAuthoring;
     this.tick++;
     this.time = this.tick * STEP;
     this.applyEnvironment(advanceEnvironment(this.authoredArena,this.environment,STEP,this.actors.filter(actor=>actor.alive).map(actorBody)),0);
@@ -624,6 +627,7 @@ export class DuelSimulation {
       const next = advanceActor(actor, command, (this.heldUtilities.has(actor.id) ? 245 : actor.weapon.actions.stats.speed) * UNIT, STEP,
         (from, desired, feet, height) => {
           const staticPosition = moveInArena(from, desired, feet, height, this.arena);
+          if (this.spawnAuthoring) return staticPosition;
           const clear = (position: Vec) => this.actors.every(other => other === actor || !other.alive ||
             Math.hypot(position.x - other.position.x, position.z - other.position.z) >= 32 * UNIT);
           if (clear(staticPosition)) return staticPosition;
@@ -633,7 +637,7 @@ export class DuelSimulation {
           return clear(zOnly) ? zOnly : from;
         }, (position, feet, height) => canFitInArena(position, feet, height, this.arena),
         (position, from, to, height) => verticalContact(position, from, to, height, this.arena.solids),
-        arenaMovementEnvironment(this.arena,this.actors.map(other=>({...other,previous:this.previous[other.id]})),actor.id,this.time-STEP,actor.pitch));
+        arenaMovementEnvironment(this.arena,(this.spawnAuthoring?[actor]:this.actors).map(other=>({...other,previous:this.previous[other.id]})),actor.id,this.time-STEP,actor.pitch));
       const traveled = Math.hypot(next.position.x - actor.position.x, next.position.z - actor.position.z);
       const landed=audibleLanding(actor,next);
       Object.assign(actor,next);
@@ -658,7 +662,7 @@ export class DuelSimulation {
         this.advanceUtilityInput(actor);
       }
       const sightBlocked = actor.id !== 0 && this.flashAmount(actor.id) >= .35;
-      const fired = usingUtility ? undefined : actor.weapon.advance(this.time, STEP, this.time < actor.equipReadyAt || sightBlocked
+      const fired = usingUtility || this.spawnAuthoring ? undefined : actor.weapon.advance(this.time, STEP, this.time < actor.equipReadyAt || sightBlocked
         ? {...command, fireHeld: false, firePressed: false, secondaryHeld: false, secondaryPressed: false}
         : this.weaponCommand(actor, command), {...actor,sampleAt:at=>sampleShotState(actorView[actor.id],actor,at,this.time)});
       if(zoomBefore!==actor.weapon.actions.zoom)this.emit({kind:'action',tick:this.tick,actorId:actor.id,equipment:actor.weapon.id,
@@ -957,6 +961,7 @@ export class DuelSimulation {
       supportingActor:typeof actor.supportId==='number'?actor.supportId:undefined,
       scopeFov: actor.weapon.actions.horizontalFov,
       utility: this.heldUtilities.get(actor.id)?.kind,
+      flashAmount: this.flashAmount(actor.id),
     }));
   }
 

@@ -379,7 +379,7 @@ const october28ProgressRecoveryChanges = {
   ],
 } as const satisfies ChangelogRelease;
 
-export const latestChanges = {
+const october29BotChanges = {
   id:'update-2026-10-29-bot-difficulty',title:'More forgiving beginner bots (October 29)',
   baselineCommit:'fbeefb2',
   sections:[
@@ -390,7 +390,27 @@ export const latestChanges = {
   ],
 } as const satisfies ChangelogRelease;
 
+export const latestChanges = {
+  id: 'update-2026-10-29-grenade-presentation', title: 'Grenades & authored Duel lineups (October 29)',
+  baselineCommit: '1867d2d', sections: [
+    {id: 'grenade-input-audio', title: 'Throws & native sound', items: [
+      'Right-click lobs and combined left/right throws use reconciled browser button chords. Native underhand selection and elapsed clip timing replace stretched throw presentation.',
+      'Current game sound banks supply 75 utility events and 118 samples, with cue-name matching, sample-loop metadata, retryable loading and independent fire sustain/fade sounds.',
+    ]},
+    {id: 'smoke-fire-flash', title: 'Smoke, fire & flashes', items: [
+      'Depth-aware volume smoke replaces flat puffs. Narrow bullet channels and larger HE openings temporarily clear the density and refill, with shared AI visibility envelopes.',
+      'Ground fire uses native center, edge, surface, incendiary and ember textures. Fully blinded actors use native standing/crouched eye-cover poses.',
+      'The white flash curve matches 1,440 offline cases from the installed client, fixing opaque rear-flash plateaus. Fluid rendering, particle emission and full afterimage composition remain browser adaptations.',
+    ]},
+    {id: 'authored-duel-lineups', title: 'Common entries & your own holds', items: [
+      'Standard real-map Duels start at their authored covered entry. Shuffled approaches remain selectable, without inventing measured encounter probabilities.',
+      'Manual lineups capture a player entry and up to five named bot holds, check supported hulls and sightlines, save on this device and import/export JSON. Walk mode does not award combat scores or XP.',
+    ]},
+  ],
+} as const satisfies ChangelogRelease;
+
 export const changelogHistory = [
+  october29BotChanges,
   october28ProgressRecoveryChanges,
   october28GrenadeChanges,
   october26Changes,
