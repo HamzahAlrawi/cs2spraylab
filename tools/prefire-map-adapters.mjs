@@ -47,7 +47,7 @@ export const prefireAuthoringMaps = createPrefireAuthoringRegistry([{id: 'de_dus
   return {catalog: dust2Catalog, routes: prefireApproachRoutes, proposedPools: proposedPrefirePools, collision, manifest,
     build,
     poolOutputPath: 'src/range/prefire/data/dust2-weighted-pools.json',
-    dependencyFiles: ['routes.ts', 'spawn-audit.ts', 'placement.ts', 'native-collision.ts',
+    dependencyFiles: ['routes.ts', 'route-helpers.ts', 'spawn-audit.ts', 'placement.ts', 'native-collision.ts',
       'data/openprefire-dust2.json', 'data/retakes-dust2.json', 'data/authored-dust2.json', 'data/combat-dust2-leads.json', '../actor-collision.ts', '../actor-physics.ts'],
     dependencyRoot: 'src/range/prefire/', unit: manifest.unit,
     qualityDependencyFiles: ['public/revamp/maps/dust2/collision.json', 'src/range/prefire/data/dust2-weighted-pools.json'],

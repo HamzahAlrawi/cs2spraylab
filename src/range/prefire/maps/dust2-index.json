@@ -1,0 +1,492 @@
+{
+  "id": "de_dust2",
+  "revision": "2026-10-19-coverage-v7",
+  "routes": [
+    {
+      "id": "long-doors",
+      "name": "Outside Long to pit",
+      "lineups": [
+        {
+          "id": "long-doors",
+          "name": "Outside Long to pit"
+        },
+        {
+          "id": "long-close",
+          "name": "Long doors / close & blue"
+        },
+        {
+          "id": "pit-clear",
+          "name": "Long / pit clearing"
+        },
+        {
+          "id": "long-pit-floor",
+          "name": "Long / pit floor & platform"
+        }
+      ]
+    },
+    {
+      "id": "long-a",
+      "name": "Long corner to A",
+      "lineups": [
+        {
+          "id": "long-a",
+          "name": "Long corner to A"
+        },
+        {
+          "id": "long-cross",
+          "name": "Long / car & cross"
+        },
+        {
+          "id": "a-long-site",
+          "name": "A site / long entry"
+        },
+        {
+          "id": "long-car-variations",
+          "name": "Long / car, ramp & site"
+        },
+        {
+          "id": "long-a-boxes",
+          "name": "A site / boxes from Long"
+        }
+      ]
+    },
+    {
+      "id": "short-a",
+      "name": "Catwalk to A",
+      "lineups": [
+        {
+          "id": "short-a",
+          "name": "Catwalk to A"
+        },
+        {
+          "id": "short-detail",
+          "name": "Short / stairs & off-angles"
+        },
+        {
+          "id": "short-cross",
+          "name": "Short / ramp & car checks"
+        },
+        {
+          "id": "short-site-entry",
+          "name": "A Short / stairs to site"
+        },
+        {
+          "id": "catwalk-close",
+          "name": "Catwalk / close & stairs"
+        },
+        {
+          "id": "short-a-ninja-ramp",
+          "name": "A Short / Ninja, boxes & ramp"
+        },
+        {
+          "id": "short-a-boxes",
+          "name": "A site / boxes from Short"
+        }
+      ]
+    },
+    {
+      "id": "b-tunnels",
+      "name": "Upper tunnels to B",
+      "lineups": [
+        {
+          "id": "b-tunnels",
+          "name": "Upper tunnels to B"
+        },
+        {
+          "id": "b-backsite",
+          "name": "B / back site clearing"
+        },
+        {
+          "id": "b-tunnel-boxes",
+          "name": "B site / elevated & back-site boxes"
+        }
+      ]
+    },
+    {
+      "id": "b-doors",
+      "name": "CT mid to B retake",
+      "lineups": [
+        {
+          "id": "b-doors",
+          "name": "CT mid to B retake"
+        },
+        {
+          "id": "b-door-detail",
+          "name": "B doors / close corners"
+        },
+        {
+          "id": "b-site-retake",
+          "name": "B / platform & default retake"
+        },
+        {
+          "id": "b-retake-boxes",
+          "name": "B retake / post-plant holds"
+        }
+      ]
+    },
+    {
+      "id": "mid-doors",
+      "name": "Mid slope to CT",
+      "lineups": [
+        {
+          "id": "mid-doors",
+          "name": "Mid slope to CT"
+        },
+        {
+          "id": "mid-lower-check",
+          "name": "Mid doors / CT cross"
+        },
+        {
+          "id": "ct-spawn-boxes",
+          "name": "CT spawn / headglitch & under A"
+        }
+      ]
+    },
+    {
+      "id": "lower-tunnels",
+      "name": "Mid doors through lower tunnels",
+      "lineups": [
+        {
+          "id": "lower-tunnels",
+          "name": "Mid doors through lower tunnels"
+        },
+        {
+          "id": "lower-detail",
+          "name": "Lower / stairs clearing"
+        },
+        {
+          "id": "upper-detail",
+          "name": "Upper tunnels / pillar clearing"
+        }
+      ]
+    },
+    {
+      "id": "a-retake",
+      "name": "CT ramp to A retake",
+      "lineups": [
+        {
+          "id": "a-retake",
+          "name": "CT ramp to A retake"
+        },
+        {
+          "id": "a-retake-boxes",
+          "name": "A retake / site boxes"
+        }
+      ]
+    },
+    {
+      "id": "ct-mid-push",
+      "name": "CT push / mid to top mid",
+      "lineups": [
+        {
+          "id": "ct-mid-push",
+          "name": "CT push / mid to top mid"
+        }
+      ]
+    },
+    {
+      "id": "upper-tunnels",
+      "name": "Upper tunnels / B approach",
+      "lineups": [
+        {
+          "id": "upper-tunnels",
+          "name": "Upper tunnels / B approach"
+        }
+      ]
+    }
+  ],
+  "aliases": {
+    "long-doors": "long-doors",
+    "long-close": "long-doors",
+    "pit-clear": "long-doors",
+    "long-a": "long-a",
+    "long-cross": "long-a",
+    "a-long-site": "long-a",
+    "short-a": "short-a",
+    "short-detail": "short-a",
+    "short-cross": "short-a",
+    "b-tunnels": "b-tunnels",
+    "b-backsite": "b-tunnels",
+    "b-doors": "b-doors",
+    "b-door-detail": "b-doors",
+    "b-site-retake": "b-doors",
+    "b-retake-boxes": "b-doors",
+    "mid-doors": "mid-doors",
+    "mid-lower-check": "mid-doors",
+    "lower-tunnels": "lower-tunnels",
+    "lower-detail": "lower-tunnels",
+    "upper-detail": "lower-tunnels",
+    "a-retake": "a-retake",
+    "a-retake-boxes": "a-retake",
+    "ct-mid-push": "ct-mid-push",
+    "upper-tunnels": "upper-tunnels"
+  },
+  "approaches": {
+    "dust2-long-doors": [
+      {
+        "id": "long-doors",
+        "name": "Outside Long to pit",
+        "lineups": [
+          {
+            "id": "long-doors",
+            "name": "Outside Long to pit"
+          },
+          {
+            "id": "long-close",
+            "name": "Long doors / close & blue"
+          },
+          {
+            "id": "pit-clear",
+            "name": "Long / pit clearing"
+          },
+          {
+            "id": "long-pit-floor",
+            "name": "Long / pit floor & platform"
+          }
+        ]
+      }
+    ],
+    "dust2-b-entry": [
+      {
+        "id": "b-tunnels",
+        "name": "Upper tunnels to B",
+        "lineups": [
+          {
+            "id": "b-tunnels",
+            "name": "Upper tunnels to B"
+          },
+          {
+            "id": "b-backsite",
+            "name": "B / back site clearing"
+          },
+          {
+            "id": "b-tunnel-boxes",
+            "name": "B site / elevated & back-site boxes"
+          }
+        ]
+      }
+    ],
+    "dust2-mid-ct": [
+      {
+        "id": "mid-doors",
+        "name": "Mid slope to CT",
+        "lineups": [
+          {
+            "id": "mid-doors",
+            "name": "Mid slope to CT"
+          },
+          {
+            "id": "mid-lower-check",
+            "name": "Mid doors / CT cross"
+          },
+          {
+            "id": "ct-spawn-boxes",
+            "name": "CT spawn / headglitch & under A"
+          }
+        ]
+      }
+    ],
+    "dust2-a-long": [
+      {
+        "id": "long-a",
+        "name": "Long corner to A",
+        "lineups": [
+          {
+            "id": "long-a",
+            "name": "Long corner to A"
+          },
+          {
+            "id": "long-cross",
+            "name": "Long / car & cross"
+          },
+          {
+            "id": "a-long-site",
+            "name": "A site / long entry"
+          },
+          {
+            "id": "long-car-variations",
+            "name": "Long / car, ramp & site"
+          },
+          {
+            "id": "long-a-boxes",
+            "name": "A site / boxes from Long"
+          }
+        ]
+      },
+      {
+        "id": "a-retake",
+        "name": "CT ramp to A retake",
+        "lineups": [
+          {
+            "id": "a-retake",
+            "name": "CT ramp to A retake"
+          },
+          {
+            "id": "a-retake-boxes",
+            "name": "A retake / site boxes"
+          }
+        ]
+      }
+    ],
+    "dust2-a-short": [
+      {
+        "id": "long-a",
+        "name": "Long corner to A",
+        "lineups": [
+          {
+            "id": "long-a",
+            "name": "Long corner to A"
+          },
+          {
+            "id": "long-cross",
+            "name": "Long / car & cross"
+          },
+          {
+            "id": "a-long-site",
+            "name": "A site / long entry"
+          },
+          {
+            "id": "long-car-variations",
+            "name": "Long / car, ramp & site"
+          },
+          {
+            "id": "long-a-boxes",
+            "name": "A site / boxes from Long"
+          }
+        ]
+      },
+      {
+        "id": "short-a",
+        "name": "Catwalk to A",
+        "lineups": [
+          {
+            "id": "short-a",
+            "name": "Catwalk to A"
+          },
+          {
+            "id": "short-detail",
+            "name": "Short / stairs & off-angles"
+          },
+          {
+            "id": "short-cross",
+            "name": "Short / ramp & car checks"
+          },
+          {
+            "id": "short-site-entry",
+            "name": "A Short / stairs to site"
+          },
+          {
+            "id": "catwalk-close",
+            "name": "Catwalk / close & stairs"
+          },
+          {
+            "id": "short-a-ninja-ramp",
+            "name": "A Short / Ninja, boxes & ramp"
+          },
+          {
+            "id": "short-a-boxes",
+            "name": "A site / boxes from Short"
+          }
+        ]
+      },
+      {
+        "id": "mid-doors",
+        "name": "Mid slope to CT",
+        "lineups": [
+          {
+            "id": "mid-doors",
+            "name": "Mid slope to CT"
+          },
+          {
+            "id": "mid-lower-check",
+            "name": "Mid doors / CT cross"
+          },
+          {
+            "id": "ct-spawn-boxes",
+            "name": "CT spawn / headglitch & under A"
+          }
+        ]
+      },
+      {
+        "id": "a-retake",
+        "name": "CT ramp to A retake",
+        "lineups": [
+          {
+            "id": "a-retake",
+            "name": "CT ramp to A retake"
+          },
+          {
+            "id": "a-retake-boxes",
+            "name": "A retake / site boxes"
+          }
+        ]
+      }
+    ],
+    "dust2-b-doors": [
+      {
+        "id": "b-doors",
+        "name": "CT mid to B retake",
+        "lineups": [
+          {
+            "id": "b-doors",
+            "name": "CT mid to B retake"
+          },
+          {
+            "id": "b-door-detail",
+            "name": "B doors / close corners"
+          },
+          {
+            "id": "b-site-retake",
+            "name": "B / platform & default retake"
+          },
+          {
+            "id": "b-retake-boxes",
+            "name": "B retake / post-plant holds"
+          }
+        ]
+      }
+    ],
+    "dust2-tunnels": [
+      {
+        "id": "lower-tunnels",
+        "name": "Mid doors through lower tunnels",
+        "lineups": [
+          {
+            "id": "lower-tunnels",
+            "name": "Mid doors through lower tunnels"
+          },
+          {
+            "id": "lower-detail",
+            "name": "Lower / stairs clearing"
+          },
+          {
+            "id": "upper-detail",
+            "name": "Upper tunnels / pillar clearing"
+          }
+        ]
+      },
+      {
+        "id": "upper-tunnels",
+        "name": "Upper tunnels / B approach",
+        "lineups": [
+          {
+            "id": "upper-tunnels",
+            "name": "Upper tunnels / B approach"
+          }
+        ]
+      }
+    ],
+    "dust2-top-mid": [
+      {
+        "id": "ct-mid-push",
+        "name": "CT push / mid to top mid",
+        "lineups": [
+          {
+            "id": "ct-mid-push",
+            "name": "CT push / mid to top mid"
+          }
+        ]
+      }
+    ]
+  }
+}

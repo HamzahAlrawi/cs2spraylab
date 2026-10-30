@@ -5,7 +5,7 @@ export type MapDelivery={version:1;files:Record<string,DeliveredAsset>;
   textures?:{bundles:DeliveredAsset[];images:{name:string;bundle:number;offset:number;length:number}[]}};
 const CACHE='spraylab-map-bytes-v1',BUDGET=80*1024*1024;
 const METADATA_CACHE='spraylab-map-bytes-metadata-v1',INDEX='/__spraylab-map-bytes-index-v1__';
-const ASSET_URL=/^\/(?:maps\/[a-z0-9][a-z0-9-]*\/duel|models)\/objects\/[a-f0-9]{64}\.(gz|bin)$/;
+const ASSET_URL=/^\/(?:maps\/[a-z0-9][a-z0-9_-]*\/duel|models)\/objects\/[a-f0-9]{64}\.(gz|bin)$/;
 const MiB=1024*1024;
 export function persistentAssetBudget(estimate?:{quota?:number;usage?:number}) {
   const quota=estimate?.quota,usage=Number.isFinite(estimate?.usage)?Math.max(0,estimate!.usage!):0;

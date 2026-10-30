@@ -1,5 +1,5 @@
 import {UNIT} from '../actor-physics';
-import {sourcePoint} from './routes';
+import {sourcePoint} from './route-helpers';
 import type {SourcePoint} from './schema';
 import type {NativeMapCollision} from './native-collision';
 import {placePrefireTarget} from './placement';

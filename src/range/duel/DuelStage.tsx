@@ -25,6 +25,7 @@ import {equipmentKeyLabel} from '../controls';
 import {emptyUtilityInventory, UtilityHud, UtilityLoadout, utilityLabels} from './utility-ui';
 import {ManualSpawnEditor} from './ManualSpawnEditor';
 import type {SpawnAuthoringEngine, SpawnContext} from './manual-spawns';
+import {nativeMaps} from '../prefire/maps';
 const PrefireSetup = lazy(() => import('../prefire/PrefireSetup').then(module => ({default: module.PrefireSetup})));
 
 const initialStatus: DuelStatus = {phase: 'ready', paused: false, health: 100, armor: 100,
@@ -76,7 +77,7 @@ export function DuelStage({settings, openSettings, onEnter, suspended, progressi
     const abort=new AbortController();let instance:DuelEngine|undefined,session:RealMapSession|undefined;
     void prefetchCombatModels(['/models/target.glb','/models/duel-motion.glb','/models/duel-flinches.glb',
       `/models/view-${loadoutWeapon(latest.current.settings)}.glb`],abort.signal).catch(()=>{});
-    setError('');setLoadingMap(!prefire && !config.generatedMaps);setStatus(initialStatus);setAuthoring(false);setSpawnContext(undefined);
+    setError('');setLoadingMap(!prefire && !config.generatedMaps);setStatus(initialStatus);setAuthoring(false);setSpawnContext(undefined);setRecording(undefined);
     void (async()=>{
       try {
         if(!prefire && !config.generatedMaps) {
@@ -89,7 +90,7 @@ export function DuelStage({settings, openSettings, onEnter, suspended, progressi
         const report=(next:DuelStatus)=>{
           setStatus(next);
           const context=session?.spawnContext();
-          setSpawnContext(previous=>previous?.chunkId===context?.chunkId && previous?.collisionSha256===context?.collisionSha256?previous:context);
+          setSpawnContext(previous=>previous?.mapId===context?.mapId && previous?.chunkId===context?.chunkId && previous?.collisionSha256===context?.collisionSha256?previous:context);
         };
         instance=new DuelEngine(canvasHost.current!,crosshair.current!,report,setError,latest.current.settings,latest.current.config,progression,prefire?.session??session);
         engine.current=instance;setLoadingMap(false);
@@ -100,7 +101,7 @@ export function DuelStage({settings, openSettings, onEnter, suspended, progressi
       }
     })();
     return () => {abort.abort();instance?.dispose();session?.dispose();if(engine.current===instance)engine.current=undefined;if(nativeSession.current===session)nativeSession.current=undefined;};
-  }, [prefire?.session,config.generatedMaps]);
+  }, [prefire?.session,config.generatedMaps,config.mapId]);
   useEffect(() => {if (prefire) {closeReplay(); prefire.session.configure(prefire.config); engine.current?.restart();}}, [prefire?.config, closeReplay]);
   useEffect(() => {engine.current?.setSettings(settings);}, [settings]);
   useEffect(() => {closeReplay(); void engine.current?.refreshCosmetics();}, [cosmeticRevision, closeReplay]);
@@ -143,7 +144,7 @@ export function DuelStage({settings, openSettings, onEnter, suspended, progressi
   return <div className="duel-layout">
     <div className={`duel-view${recording ? ' replaying' : ''}`}>
       <div className="duel-canvas" ref={canvasHost} aria-busy={!!busy}/>
-      <div className="duel-topline"><span className="range-badge"><i />{prefire ? `DUST 2 / ${status.prefire?.routeName ?? 'PREFIRE'}` : !config.generatedMaps ? status.arenaDesign ?? 'DUST 2 / AI DUEL' : 'AI DUEL'}</span><span>{status.enemies} {status.enemies === 1 ? 'ENEMY' : 'ENEMIES'} LEFT</span></div>
+      <div className="duel-topline"><span className="range-badge"><i />{prefire ? `${prefire.session.catalog.name} / ${status.prefire?.routeName ?? 'PREFIRE'}` : !config.generatedMaps ? status.arenaDesign ?? `${nativeMaps.get(config.mapId).name} / AI DUEL` : 'AI DUEL'}</span><span>{status.enemies} {status.enemies === 1 ? 'ENEMY' : 'ENEMIES'} LEFT</span></div>
       <div className="duel-live-overlay"><div className="duel-tools"><div className="equipment-slots" role="group" aria-label="Duel equipment">
         {([1,2,3,4] as Slot[]).filter(slot=>(slot!==1||(status.loadout ? !!status.loadout.primary : settings.primaryEnabled))&&(slot!==2||!status.loadout||!!status.loadout.sidearm)).map(slot => {const id = slot === 1 ? status.loadout?.primary ?? settings.weapon : slot === 2 ? status.loadout?.sidearm ?? settings.sidearm : slot===4?'zeus':'knife';
           const keyLabel = equipmentKeyLabel(settings.controls, slot);
@@ -199,14 +200,14 @@ export function DuelStage({settings, openSettings, onEnter, suspended, progressi
         onRepeat={() => engine.current?.restart()}/></Suspense>
         : panel === 'review' ? <div className="duel-controls-body"><TipsDisplay showTips={showTips}><DuelScorecard review={status.review} completedReview={status.completedRound?.review} history={status.history ?? []}
           setupKey={profileSetupKey} completedSetupKey={status.completedRound?.setupKey}/></TipsDisplay></div> : <DuelSetup config={config} arenaDesign={status.arenaDesign} weaponToAdd={weaponToAdd} setWeaponToAdd={setWeaponToAdd} update={update} updateBot={updateBot} customizeBot={customizeBot}
-            lineupEditor={<ManualSpawnEditor key={`${spawnContext?.chunkId}:${spawnContext?.collisionSha256}`} context={spawnContext} disabled={!!busy || !!recording}
+            lineupEditor={<ManualSpawnEditor key={`${spawnContext?.mapId}:${spawnContext?.chunkId}:${spawnContext?.collisionSha256}`} context={spawnContext} disabled={!!busy || !!recording}
               canCapture={typeof authoringEngine()?.captureSpawnPose==='function' && typeof authoringEngine()?.setSpawnAuthoring==='function'}
               authoring={authoring} activeId={config.manualLineup?.id}
               onAuthoring={enabled=>{closeReplay();engine.current?.pause();if(authoringEngine()?.setSpawnAuthoring?.(enabled))setAuthoring(enabled);}}
               capture={()=>{engine.current?.pause();return authoringEngine()?.captureSpawnPose?.();}}
               curated={id=>nativeSession.current?.curatedLineup(id)}
               validate={lineup=>nativeSession.current?.validateLineup(lineup)??{errors:['Native map is not ready.'],warnings:[]}}
-              apply={lineup=>{authoringEngine()?.setSpawnAuthoring?.(false);setAuthoring(false);update({realMapChunk:lineup.chunkId,manualLineup:lineup,botCount:lineup.bots.length});}}
+              apply={lineup=>{authoringEngine()?.setSpawnAuthoring?.(false);setAuthoring(false);update({mapId:lineup.mapId??config.mapId,realMapChunk:lineup.chunkId,manualLineup:lineup,botCount:lineup.bots.length});}}
               restore={()=>{authoringEngine()?.setSpawnAuthoring?.(false);setAuthoring(false);update({manualLineup:null,realMapCourse:'standard'});}}/>}/>}
       {prefire && <UtilityLoadout config={config} update={update}/>}
       <button className="combat-review-launch" disabled={!!busy || !status.replayAvailable} onClick={() => setRecording(engine.current?.openReplay())}><Film size={15}/>Review fight</button>

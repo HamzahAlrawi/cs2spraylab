@@ -69,7 +69,13 @@ test('Dust 2 prefire loads native geometry, runs all courses and returns to Duel
   await openSetupSection(page, 'Possible holds');
   await expect(page.getByLabel('Prefire bots per run')).toHaveValue('4');
   await expect.poll(() => page.evaluate(() => (window as any).prefireEngine.sim.actors.length - 1)).toBe(4);
-  await expect(page.getByLabel('Route angles').locator('li')).toHaveCount(17);
+  const expectedHolds = await page.evaluate(async () => {
+    const registryPath='/src/range/prefire/maps/index.ts',occupancyPath='/src/range/prefire/occupancy.ts';
+    const {nativeMaps}=await import(registryPath),{prefireCandidates}=await import(occupancyPath);
+    const sim=(window as any).prefireEngine.sim,catalog=await nativeMaps.loadCatalog(sim.config.mapId);
+    return prefireCandidates(catalog.routes.find((route:{id:string})=>route.id===sim.route.id)).length;
+  });
+  await expect(page.getByLabel('Route angles').locator('li')).toHaveCount(expectedHolds);
   await expect(page.getByLabel('Route angles').locator('li small').first()).toHaveText(/^\d+\/\d+$/);
   await page.getByText('Position evidence', {exact: true}).click();
   await expect(page.getByText(/Repeated pauses count once/)).toBeVisible();

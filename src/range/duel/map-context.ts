@@ -2,11 +2,12 @@ import {Box3,Matrix4,Material,Mesh,Texture,Vector3,type Object3D} from 'three';
 import {GLTFLoader} from 'three/examples/jsm/loaders/GLTFLoader.js';
 import {MeshoptDecoder} from 'three/examples/jsm/libs/meshopt_decoder.module.js';
 import {fetchDeliveredAsset,validDeliveredAsset} from '../prefire/asset-delivery';
+import {defaultNativeMapId,nativeMaps} from '../prefire/maps';
+import type {NativeContextManifest,NativeMapDefinition} from '../prefire/native-map-schema';
 import {localMapContextManifest} from './map-manifests';
 
 export type ContextBounds={min:readonly number[];max:readonly number[]};
 export type MapContext={readonly root:Object3D;attach(parent:Object3D,renderBounds:ContextBounds):void;dispose():void};
-const base='/maps/dust2/duel/context/';
 const vertexMarker='#include <project_vertex>',fragmentMarker='#include <clipping_planes_fragment>';
 
 function validateBounds(bounds:ContextBounds) {
@@ -52,13 +53,12 @@ function clipMaterial(material:Material,min:Vector3,max:Vector3) {
   material.customProgramCacheKey=()=> atlas?'duel-distant-context-atlas-v2':'duel-distant-context-v1';
 }
 
-async function loadAsset(signal:AbortSignal):Promise<Object3D> {
+async function loadAsset(signal:AbortSignal,map=nativeMaps.get(defaultNativeMapId),metadata=localMapContextManifest(map)):Promise<Object3D> {
   signal.throwIfAborted();
-  const metadata=localMapContextManifest();
-  if(![1,2].includes(metadata.version)||metadata.map!=='dust2'||metadata.visualOnly!==true||!validDeliveredAsset(metadata.delivery)||
+  if(![1,2].includes(metadata.version)||metadata.map!==map.assetId||metadata.visualOnly!==true||!validDeliveredAsset(metadata.delivery)||
     metadata.delivery.decodedBytes>5_000_000||metadata.delivery.decodedSha256!==metadata.sha256)throw Error('Invalid native context delivery');
   const bytes=await fetchDeliveredAsset(metadata.delivery,signal);signal.throwIfAborted();
-  return (await new GLTFLoader().setMeshoptDecoder(MeshoptDecoder).parseAsync(bytes,base)).scene;
+  return (await new GLTFLoader().setMeshoptDecoder(MeshoptDecoder).parseAsync(bytes,map.base+'duel/context/')).scene;
 }
 
 function releaseAsset(root:Object3D) {
@@ -80,11 +80,12 @@ export class MapContextCache {
   private leases=0;
   private clearing=false;
   constructor(private readonly loader:(signal:AbortSignal)=>Promise<Object3D>=loadAsset) {}
+  get hasLeases(){return this.leases>0;}
   async load(signal?:AbortSignal):Promise<MapContext> {
     signal?.throwIfAborted();if(this.clearing)throw Error('Context cache is clearing');
     if(!this.entry) {
       const controller=new AbortController(),entry={controller,waiters:0,settled:false,promise:undefined as unknown as Promise<Object3D>};
-      entry.promise=Promise.resolve().then(()=>this.loader(controller.signal)).then(source=>{
+      entry.promise=Promise.resolve().then(()=>{controller.signal.throwIfAborted();return this.loader(controller.signal);}).then(source=>{
         if(controller.signal.aborted){releaseAsset(source);controller.signal.throwIfAborted();}
         entry.settled=true;return source;
       }).catch(error=>{if(this.entry===entry)this.entry=undefined;throw error;});
@@ -146,6 +147,50 @@ export class MapContextCache {
   }
 }
 
-const cache=new MapContextCache();
-export const loadMapContext=(signal?:AbortSignal)=>cache.load(signal);
-export const disposeMapContextCache=()=>cache.dispose();
+type ContextEntry={key:string;mapId:string;assetId:string;cache:MapContextCache;users:number};
+const caches=new Map<string,ContextEntry>();
+let idle:ContextEntry|undefined;
+
+function contextKey(map:NativeMapDefinition,metadata:NativeContextManifest) {
+  return JSON.stringify([map.id,map.assetId,map.revision,map.base,metadata]);
+}
+
+async function clearContext(entry:ContextEntry) {
+  if(caches.get(entry.key)!==entry)return;
+  if(entry.cache.hasLeases)throw Error('Dispose context leases before clearing cache');
+  caches.delete(entry.key);
+  if(idle===entry)idle=undefined;
+  await entry.cache.dispose();
+}
+
+function releaseContext(entry:ContextEntry,keep:boolean) {
+  if(--entry.users||caches.get(entry.key)!==entry)return;
+  if(keep) {
+    const previous=idle;idle=entry;
+    if(previous&&previous!==entry)void clearContext(previous);
+  }else void clearContext(entry);
+}
+
+/** Keep active maps plus at most one unused decode, never an unbounded map history. */
+export async function loadMapContext(signal?:AbortSignal,map=nativeMaps.get(defaultNativeMapId)):Promise<MapContext> {
+  signal?.throwIfAborted();
+  const metadata=localMapContextManifest(map),key=contextKey(map,metadata);
+  let entry=caches.get(key);
+  if(!entry) {
+    entry={key,mapId:map.id,assetId:map.assetId,users:0,cache:new MapContextCache(signal=>loadAsset(signal,map,metadata))};
+    caches.set(key,entry);
+  }
+  const owner=entry;owner.users++;
+  if(idle===owner)idle=undefined;
+  let lease:MapContext;
+  try {lease=await owner.cache.load(signal);}
+  catch(error){releaseContext(owner,false);throw error;}
+  let disposed=false;
+  return {root:lease.root,attach:(parent,bounds)=>lease.attach(parent,bounds),dispose:()=>{
+    if(disposed)return;disposed=true;lease.dispose();releaseContext(owner,true);
+  }};
+}
+
+export async function disposeMapContextCache(map=nativeMaps.get(defaultNativeMapId)) {
+  await Promise.all([...caches.values()].filter(entry=>entry.mapId===map.id&&entry.assetId===map.assetId).map(clearContext));
+}

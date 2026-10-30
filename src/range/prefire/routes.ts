@@ -1,4 +1,3 @@
-import type {Vec} from '../actor-physics';
 import dataset from './data/openprefire-dust2.json';
 import retakes from './data/retakes-dust2.json';
 import density from './data/dust2-hold-density.json';
@@ -8,7 +7,7 @@ import combatLeads from './data/combat-dust2-leads.json';
 import type {PrefireAngle, PrefireRoute, PrefireCatalog, SourcePoint} from './schema';
 export type {PrefireAngle, PrefireRoute, SourcePoint} from './schema';
 
-export const sourcePoint = ([x, y, z]: SourcePoint): Vec => ({x: x * .0254, y: z * .0254, z: -y * .0254});
+export {sourcePoint, prefireLineup} from './route-helpers';
 export const prefireAngleSource = {repository: dataset.source, commit: dataset.commit, license: dataset.license, notice: dataset.licenseNotice};
 
 // Indices are one-based bot lines in the pinned, MIT-licensed practice profiles.
@@ -379,22 +378,6 @@ export const prefireRoutes: readonly PrefireRoute[] = prefireApproachRoutes.map(
   return {...route, angles: route.angles.map(withFamily), lineups,
     alternatives: pool.filter(angle => !route.angles.some(original => original.id === angle.id))};
 });
-
-const lineupRoutes = new WeakMap<PrefireRoute, Map<string, PrefireRoute>>();
-export function prefireLineup(route: PrefireRoute, id?: string): PrefireRoute {
-  const lineup = route.lineups?.find(lineup => lineup.id === id);
-  if (!lineup || lineup.id === route.id) return route;
-  let variants = lineupRoutes.get(route);
-  if (!variants) {variants = new Map(); lineupRoutes.set(route, variants);}
-  let variant = variants.get(lineup.id);
-  if (!variant) {
-    const angles = new Set(lineup.angles.map(angle => angle.id));
-    variant = {...route, angles: lineup.angles,
-      alternatives: [...route.angles, ...route.alternatives ?? []].filter(angle => !angles.has(angle.id))};
-    variants.set(lineup.id, variant);
-  }
-  return variant;
-}
 
 export const dust2Catalog: PrefireCatalog = {id: 'de_dust2', name: 'Dust 2', revision: authored.revision, routes: prefireRoutes, density,
   sources: [

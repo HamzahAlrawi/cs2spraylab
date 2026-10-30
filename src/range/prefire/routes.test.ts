@@ -1,3 +1,4 @@
+import {dust2Catalog} from './routes';
 import {afterAll, beforeAll, describe, expect, it} from 'vitest';
 import {existsSync, readFileSync} from 'node:fs';
 import {createHash} from 'node:crypto';
@@ -332,7 +333,7 @@ describe.skipIf(!existsSync('public/revamp/maps/dust2/collision.bin'))('sourced 
     }, 15000);
     it(`${route.name}: every placed holder remains supported in the shared movement simulation`, () => {
       const map = {scene: new THREE.Group(), collision, settle: (point: any) => placePrefireTarget(collision, point), dispose() {}};
-      const sim = new PrefireSimulation(map, sanitizePrefireConfig({population: 'all', movingBots: false}), route, 42, defaults);
+      const sim = new PrefireSimulation(map, sanitizePrefireConfig({population: 'all', movingBots: false}), route, 42, defaults, undefined, dust2Catalog);
       const start = sim.snapshot().slice(1);
       sim.start();
       for (let tick = 0; tick < 256; tick++) sim.step();

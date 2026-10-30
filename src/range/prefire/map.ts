@@ -4,7 +4,7 @@ import {MeshoptDecoder} from 'three/examples/jsm/libs/meshopt_decoder.module.js'
 import {NativeMapCollision, type NativeCollisionManifest,type PreparedNativeQueries} from './native-collision';
 import {disposeResources} from '../duel/render-resources';
 import type {Vec} from '../actor-physics';
-import type {SourcePoint} from './routes';
+import type {SourcePoint} from './schema';
 import {NativeVisibility} from './native-visibility.mjs';
 import {placePrefireTarget} from './placement';
 import {createLoadScope, createTaskLimiter, loadBounded, validateMapResources, validateTexturePack, verifyMapDigest, type MapResource} from './map-loading';
@@ -13,6 +13,7 @@ import {fetchDeliveredAsset,type MapDelivery} from './asset-delivery';
 import {prepareCollision} from './collision-preparation';
 import {backgroundTurn,backgroundBudget} from './background-work';
 import {releasePreparedLighting} from './lighting';
+import {compileRetainedShaders} from '../shader-warmup';
 type DecodedTexture={width:number;height:number;texture:THREE.Texture;close():void};
 const sharedBitmaps = new SharedBitmapCache<DecodedTexture>();
 
@@ -25,13 +26,16 @@ export function settleNativePosition(collision: NativeMapCollision, point: Sourc
 export async function compileMapShaders(renderer: Pick<THREE.WebGLRenderer,'compileAsync'>, scene: THREE.Scene,
   camera: THREE.Camera, signal?: AbortSignal) {
   signal?.throwIfAborted();
-  await renderer.compileAsync(scene,camera);
+  await compileRetainedShaders(renderer,scene,camera);
   signal?.throwIfAborted();
 }
-export async function loadDust2(signal?: AbortSignal, options?: {base: string; visibility: boolean; hashes?: Record<string,string>;delivery?:MapDelivery;background?:boolean}): Promise<PrefireMap> {
+export type NativeMapLoadOptions = {base: string; visibility?: boolean; hashes?: Record<string,string>;
+  delivery?:MapDelivery;background?:boolean; sharedTextureBase?:string};
+export async function loadNativeMap(signal: AbortSignal | undefined, options: NativeMapLoadOptions): Promise<PrefireMap> {
   const started = performance.now();
   let decodedFresh = 0, decodedReused = 0;
-  const base = options?.base ?? '/maps/dust2/';
+  const base = options.base;
+  if(!/^\/maps\/[a-zA-Z0-9_\-/]+\/$/.test(base))throw Error('Invalid native map asset base.');
   const scope = createLoadScope(signal), network = createTaskLimiter(4), decode = createTaskLimiter(options?.background?1:4);
   const resourceWork=createTaskLimiter(1),resourceTurn=backgroundBudget(scope.signal);
   const fetchChecked = async (name: string) => {
@@ -39,7 +43,7 @@ export async function loadDust2(signal?: AbortSignal, options?: {base: string; v
     const delivered=options?.delivery?.files[name];
     if(delivered)return new Response(await fetchDeliveredAsset(delivered,scope.signal));
     const response = await fetch(base + name, {signal:scope.signal});
-    if (!response.ok) throw new Error('Dust 2 map assets are unavailable. Run node tools/import-dust2.mjs.');
+    if (!response.ok) throw new Error('Native map assets are unavailable. Rebuild the selected map package.');
     return response;
   };
   const scene = new THREE.Group();
@@ -146,7 +150,7 @@ export async function loadDust2(signal?: AbortSignal, options?: {base: string; v
     void visibilityTask?.catch(error=>scope.abort(error));
     const visibleMeshes: {mesh: THREE.Mesh; clusters: number[]}[] = [];
     if (visuals.version !== 2 || !Array.isArray(visuals.files) || !visuals.files.length || visuals.files.length > 64 ||
-      new Set(visuals.files).size !== visuals.files.length || visuals.files.some((file:string) => !/^visual-\d+\.gltf$/.test(file))) throw new Error('Dust 2 visuals need rebuilding. Run npm run assets:dust2.');
+      new Set(visuals.files).size !== visuals.files.length || visuals.files.some((file:string) => !/^visual-\d+\.gltf$/.test(file))) throw new Error('Native map visuals need rebuilding.');
     const inventory = validateMapResources(visuals.resources as MapResource[]);
     const texturePack=validateTexturePack(visuals.texturePack,inventory);
     const packedImages=new Map(texturePack?.images.map(image=>[image.name,image]));
@@ -158,7 +162,7 @@ export async function loadDust2(signal?: AbortSignal, options?: {base: string; v
       if(bytes.byteLength!==texturePack!.bytes)throw new Error('Texture pack size mismatch');
       await verifyMapDigest(bytes,texturePack!.sha256);scope.signal.throwIfAborted();return bytes;
     },scope.signal);
-    const textureBase=options?.visibility===false && visuals.textureBase==='/maps/dust2/duel/shared/' ? visuals.textureBase : undefined;
+    const textureBase=options?.visibility===false && options.sharedTextureBase && visuals.textureBase===options.sharedTextureBase ? visuals.textureBase : undefined;
     const resourceUrl = (name:string): Promise<string> => {
       const existing = resourceUrls.get(name); if (existing) return existing;
       const resource = inventory.get(name);
@@ -299,4 +303,10 @@ export async function loadDust2(signal?: AbortSignal, options?: {base: string; v
     for (const url of urls) URL.revokeObjectURL(url);
     urls.clear(); resourceUrls.clear(); decodedSources.clear(); scope.dispose();
   }
+}
+
+/** @deprecated Compatibility for old extraction/audit tools, never used by map selection. */
+export async function loadDust2(signal?:AbortSignal, options?:NativeMapLoadOptions):Promise<PrefireMap> {
+  const {dust2Map} = await import('./maps/dust2');
+  return loadNativeMap(signal,{base:dust2Map.base,sharedTextureBase:dust2Map.sharedTextureBase,...options});
 }

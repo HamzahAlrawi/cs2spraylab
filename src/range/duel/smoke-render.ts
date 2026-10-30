@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import type {UtilityEffect} from './utilities';
 import {UTILITY_RULES} from './utilities';
 import {buildSmokeDensity, sameSmokeCells, SMOKE_GRID_SIZE, SMOKE_RENDER_STEPS, SMOKE_EXTINCTION, smokeHoleRadius} from './smoke-density';
+import {compileRetainedShaders} from '../shader-warmup';
 
 const vertex = `varying vec2 screenUv;
 void main(){screenUv=position.xy*.5+.5;gl_Position=vec4(position.xy,0.,1.);}`;
@@ -122,11 +123,11 @@ export class SmokeRenderer {
   prepare(renderer: THREE.WebGLRenderer) {
     return this.preparation ??= (async () => {
       if (this.disposed) return;
-      this.mesh.material = this.material; await renderer.compileAsync(this.scene, this.camera);
+      this.mesh.material = this.material; await compileRetainedShaders(renderer, this.scene, this.camera);
       if (this.disposed) return;
       this.mesh.material = this.blit;
-      const pending = renderer.compileAsync(this.scene, this.camera); this.mesh.material = this.material;
-      await pending;
+      try {await compileRetainedShaders(renderer, this.scene, this.camera);}
+      finally {this.mesh.material = this.material;}
     })();
   }
   update(effects: readonly UtilityEffect[], time: number) {

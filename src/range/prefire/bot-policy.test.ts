@@ -1,3 +1,4 @@
+import {dust2Catalog} from './routes';
 import {describe, expect, it, vi} from 'vitest';
 import * as THREE from 'three';
 import {UNIT} from '../actor-physics';
@@ -113,7 +114,7 @@ describe('Prefire combat policy evidence and reload intent', () => {
 const route: PrefireRoute = {id: 'long-doors', name: 'Policy fixture', spawn: [0, 0, 0], look: [0, 200, 0],
   path: [[0, 100, 0]], angles: [{name: 'Holder', position: [0, 200, 0]}]};
 const flatMap = (): PrefireMap => ({scene: new THREE.Group(), dispose() {}, settle: sourcePoint,
-  collision: {...open, vertical: (_p: unknown, _from: number, to: number) =>
+  collision: {...open, bounds: {minX: -68, maxX: 55, minZ: -95, maxZ: 36}, vertical: (_p: unknown, _from: number, to: number) =>
     ({feet: Math.max(0, to), grounded: to <= 0, ceiling: false})} as unknown as NativeMapCollision});
 
 class RecordingSimulation extends PrefireSimulation {
@@ -128,7 +129,7 @@ class RecordingSimulation extends PrefireSimulation {
 describe('Prefire shared-policy handoff', () => {
   it('submits the authoritative policy result once and uses Prefire recognition, not the Duel brain', () => {
     const sim = new RecordingSimulation(flatMap(), sanitizePrefireConfig({...options, population: 'all', botBehavior: 'static'}),
-      route, 42, defaults);
+      route, 42, defaults, undefined, dust2Catalog);
     sim.start(); const yaw = sim.actors[1].yaw;
     sim.step(); expect(sim.actors[1].yaw).toBeCloseTo(yaw + .001);
     expect(sim.calls[0]).toMatchObject({visible: false, report: null, allowUtility: false, tradePending: false});
@@ -139,14 +140,14 @@ describe('Prefire shared-policy handoff', () => {
   });
 
   it('keeps combat-off targets out of loadout/utility opportunity planning', () => {
-    const sim = new RecordingSimulation(flatMap(), sanitizePrefireConfig({population: 'all', returnFire: false}), route, 42, defaults);
+    const sim = new RecordingSimulation(flatMap(), sanitizePrefireConfig({population: 'all', returnFire: false}), route, 42, defaults, undefined, dust2Catalog);
     sim.start(); sim.step(); expect(sim.calls).toHaveLength(0);
   });
 
   it('leaves delayed utility defense exclusively in the shared movement loop', () => {
     const defense = vi.spyOn(BotUtilityDefense.prototype, 'command');
     try {
-      const sim = new RecordingSimulation(flatMap(), sanitizePrefireConfig({...options, population: 'all'}), route, 42, defaults);
+      const sim = new RecordingSimulation(flatMap(), sanitizePrefireConfig({...options, population: 'all'}), route, 42, defaults, undefined, dust2Catalog);
       sim.start(); sim.step();
       expect(defense).toHaveBeenCalledTimes(1);
       expect(defense.mock.calls[0][1].id).toBe(1);
@@ -158,7 +159,7 @@ const simulation = (visible = true) => {
   const map = flatMap();
   if (!visible) map.collision.ray = blocked.ray;
   const sim = new PrefireSimulation(map, sanitizePrefireConfig({...options, population: 'all', botBehavior: 'static'}),
-    route, 42, defaults);
+    route, 42, defaults, undefined, dust2Catalog);
   sim.actors[0].health = 10000;
   return sim;
 };
@@ -228,7 +229,7 @@ describe('Prefire consumes the real shared combat policy', () => {
     try {
       const map = flatMap(); map.collision.ray = blocked.ray;
       const sim = new TradeSimulation(map, sanitizePrefireConfig({...options, population: 'all', botBehavior: 'static'}),
-        route, 42, defaults);
+        route, 42, defaults, undefined, dust2Catalog);
       sim.start(); sim.step(); expect(sim.utilityPresentation(1)?.kind).toBe('flash');
       sim.trade({point: {...target.position}, observedAt: sim.time, readyAt: sim.time + .5, expiresAt: sim.time + 3,
         source: 'sound', generation: sim.actors[1].generation, victimId: 2});
@@ -247,7 +248,7 @@ describe('Prefire consumes the real shared combat policy', () => {
     try {
       const map = flatMap(); map.collision.ray = blocked.ray;
       const sim = new TradeSimulation(map, sanitizePrefireConfig({...options, population: 'all', botBehavior: 'static'}),
-        route, 42, defaults);
+        route, 42, defaults, undefined, dust2Catalog);
       sim.start(); sim.step();
       expect(sim.utilityPresentation(1)?.releaseAt).toBeGreaterThan(sim.time);
       const yaw = sim.actors[1].yaw, releaseAt = sim.utilityPresentation(1)!.releaseAt!;

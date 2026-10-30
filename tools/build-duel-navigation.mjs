@@ -66,6 +66,8 @@ export async function buildDuelNavigation({root = defaultRoot, ids} = {}) {
     const {NativeMapCollision} = await vite.ssrLoadModule('/src/range/prefire/native-collision.ts');
     const {createRealMapArena, chunkBounds} = await vite.ssrLoadModule('/src/range/duel/real-map.ts');
     const {sanitizeDuelConfig} = await vite.ssrLoadModule('/src/range/duel/config.ts');
+    const {nativeMaps,defaultNativeMapId} = await vite.ssrLoadModule('/src/range/prefire/maps/index.ts');
+    const sourceCatalog = await nativeMaps.loadCatalog(defaultNativeMapId);
     const {exportNativeNavigation, installNativeNavigation} = await vite.ssrLoadModule('/src/range/duel/native-navigation.ts');
     const config = sanitizeDuelConfig({botCount: 5}), pending = [];
     for (const chunk of chunks) {
@@ -84,7 +86,8 @@ export async function buildDuelNavigation({root = defaultRoot, ids} = {}) {
       const started = performance.now();
       collision = await NativeMapCollision.create(manifest, binaryView(binary));
       const mapStub = () => ({scene: new Group(), collision, settle() {throw new Error('Navigation bake unexpectedly requested map.settle');}, dispose() {}});
-      const arena = createRealMapArena(mapStub(), chunk, config, 1,rounds.chunks[chunk.id]), data = exportNativeNavigation(arena);
+      const selectedChunk = {...chunk,mapId:defaultNativeMapId};
+      const arena = createRealMapArena(mapStub(), selectedChunk, config, 1,rounds.chunks[chunk.id],sourceCatalog), data = exportNativeNavigation(arena);
       const stats = validateNavigation(data, arena), bytes = Buffer.from(JSON.stringify(data));
       if (bytes.length > PAGES_LIMIT) throw new Error('Navigation exceeds Pages file limit');
       collision.dispose(); collision = await NativeMapCollision.create(manifest, binaryView(binary));
@@ -100,7 +103,7 @@ export async function buildDuelNavigation({root = defaultRoot, ids} = {}) {
       };
       try {
         for (const seed of [1, 19]) {
-          const reused = createRealMapArena(mapStub(), chunk, config, seed,rounds.chunks[chunk.id]);
+          const reused = createRealMapArena(mapStub(), selectedChunk, config, seed,rounds.chunks[chunk.id],sourceCatalog);
           assert.deepEqual(exportNativeNavigation(reused), decoded, 'Installed graph changed across arena/seed creation');
         }
       } finally {collision.vertical = nativeVertical;}

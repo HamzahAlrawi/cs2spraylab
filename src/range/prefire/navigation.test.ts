@@ -114,11 +114,11 @@ describe('ordered Prefire route navigation', () => {
       ]};
     const catalog: PrefireCatalog = {id:'fixture',name:'Fixture',revision:'1',routes:[route],sources:[]};
     const map: PrefireMap = {scene:new Group(),dispose(){},settle:sourcePoint,
-      collision:{fits:()=>true,ray:()=>undefined,
+      collision:{bounds:{minX:-68,maxX:55,minZ:-95,maxZ:36},fits:()=>true,ray:()=>undefined,
         sweep:(_from: unknown,to: unknown)=>({position:to,fraction:1,startSolid:false}),
         vertical:(_point: unknown,_from: number,to: number)=>({feet:Math.max(0,to),grounded:to<=0,ceiling:false}),
       } as unknown as NativeMapCollision};
-    const config = sanitizePrefireConfig({routeId:route.id,routeGuide:false,botBehavior:'static',population:'all'},[route.id]);
+    const config = sanitizePrefireConfig({mapId:catalog.id,routeId:route.id,routeGuide:false,botBehavior:'static',population:'all'},catalog);
     const fixedSession = new PrefireSession(map,config,catalog), fixed = fixedSession.create(defaults,7);
     const weightedSession = new PrefireSession(map,{...config,population:'random',botsPerRun:1},catalog);
     let weighted = weightedSession.create(defaults,1);

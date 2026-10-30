@@ -1,3 +1,4 @@
+import {dust2Catalog} from './routes';
 import {afterAll, beforeAll, describe, expect, it} from 'vitest';
 import {existsSync, readFileSync} from 'node:fs';
 import * as THREE from 'three';
@@ -264,7 +265,7 @@ describe.skipIf(!existsSync('public/revamp/maps/dust2/collision.bin'))('native L
       settle: (p: Parameters<typeof placePrefireTarget>[1]) => placePrefireTarget(native, p), dispose() {}};
     const sim = new PrefireSimulation(map,
       sanitizePrefireConfig({botBehavior: 'angle-specific', population: 'all', returnFire: true, reactionMs: 300}),
-      route, 20261010, defaults);
+      route, 20261010, defaults, undefined, dust2Catalog);
     const bot = sim.actors.slice(1).find(actor => sim.prefireBotDecision(actor.id)!.key === plan.key)!;
     const start = {...bot.position}; sim.actors[0].health = 1e8;
     sim.start();
@@ -286,7 +287,7 @@ describe.skipIf(!existsSync('public/revamp/maps/dust2/collision.bin'))('native L
   it('rejects a swing that exposes its back to an earlier Long approach and retains a useful hold', () => {
     const route = prefireRoutes.find(route => route.angles.some(angle => prefireBotKey(angle) === 'a_long/2'))!;
     const map = {scene: new THREE.Group(), collision: native, settle: (p: Parameters<typeof placePrefireTarget>[1]) => placePrefireTarget(native, p), dispose() {}};
-    const sim = new PrefireSimulation(map, sanitizePrefireConfig({botBehavior: 'angle-specific', population: 'all', returnFire: false}), route, 42, defaults);
+    const sim = new PrefireSimulation(map, sanitizePrefireConfig({botBehavior: 'angle-specific', population: 'all', returnFire: false}), route, 42, defaults, undefined, dust2Catalog);
     const moving = sim.actors.slice(1).filter(actor => ['move-out', 'periodic-peek'].includes(sim.prefireBotDecision(actor.id)!.kind));
     const committed = sim.actors.slice(1).find(actor => sim.prefireBotDecision(actor.id)!.key === 'a_long/2')!;
     expect(sim.prefireBotDecision(committed.id)!.kind).toBe('hold');
@@ -355,7 +356,7 @@ describe.skipIf(!existsSync('public/revamp/maps/dust2/collision.bin'))('native L
     const map = {scene: new THREE.Group(), collision: native,
       settle: (p: Parameters<typeof placePrefireTarget>[1]) => placePrefireTarget(native, p), dispose() {}};
     const sim = new PrefireSimulation(map,
-      sanitizePrefireConfig({botBehavior: 'angle-specific', population: 'all', returnFire: true, reactionMs: 300}), route, 42, defaults);
+      sanitizePrefireConfig({botBehavior: 'angle-specific', population: 'all', returnFire: true, reactionMs: 300}), route, 42, defaults, undefined, dust2Catalog);
     const player = sim.actors[0]; player.health = 1e9;
     const targets = route.path.map(point => placePrefireTarget(native, point));
     const movingIds = new Set(sim.actors.slice(1).filter(actor =>

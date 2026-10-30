@@ -11,6 +11,7 @@ export type PrefireStats = PrefireReview & {routeId: string; routeName: string; 
   navigation?: import('../prefire/navigation').RouteNavigation};
 export type DuelScenario = {
   kind?: 'prefire' | 'duel-map';
+  readonly mapId?: string;
   name: string; scene: Group;
   create(settings: Settings, seed: number): DuelSimulation;
   beforeRestart?(outcome: DuelSimulation['outcome'], continuous: boolean): void;

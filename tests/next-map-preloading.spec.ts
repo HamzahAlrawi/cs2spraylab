@@ -69,7 +69,12 @@ test('all visited chunks reload from app storage with every map request blocked 
     await (await import(url('/src/range/prefire/query-cache.ts'))).settleQueryCache();return rows;
   });
   const cdp=await context.newCDPSession(page);await cdp.send('Network.setCacheDisabled',{cacheDisabled:true});
-  await page.route('**/maps/**',route=>{requests.push(route.request().url());return route.abort('blockedbyclient');});
+  await page.route('**/maps/**',route=>{
+    // Development source modules may also live in a maps/ folder. Block every
+    // native asset request, not the JavaScript that selects the cached package.
+    if(!new URL(route.request().url()).pathname.startsWith('/maps/'))return route.continue();
+    requests.push(route.request().url());return route.abort('blockedbyclient');
+  });
   await page.reload();
   const replayed=await page.evaluate(async()=>{
     const path='/src/range/duel/real-map.ts',{loadRealMapChunk,realMapChunks}=await import(path),rows=[];

@@ -1,3 +1,4 @@
+import {dust2Catalog} from './routes';
 import {afterAll, beforeAll, describe, expect, it, vi} from 'vitest';
 import {existsSync, readFileSync} from 'node:fs';
 import * as THREE from 'three';
@@ -446,7 +447,7 @@ describe.skipIf(!existsSync('public/revamp/maps/dust2/collision.bin'))('joint na
     // Captured from the 180-second seed-42 audit, not a mocked collision edge.
     const point = {x: -34.9008239133053, y: .926062575059334, z: -27.744403126686674};
     const route = {...original, spawn: [point.x / UNIT, -point.z / UNIT, point.y / UNIT] as const, angles: [angle], alternatives: []};
-    const sim = new PrefireSimulation(map(), sanitizePrefireConfig({population: 'all', botBehavior: 'static', returnFire: true, reactionMs: 300}), route, 42, defaults);
+    const sim = new PrefireSimulation(map(), sanitizePrefireConfig({population: 'all', botBehavior: 'static', returnFire: true, reactionMs: 300}), route, 42, defaults, undefined, dust2Catalog);
     const player = sim.actors[0], bot = sim.actors[1]; player.health = 1e9;
     bot.yaw = Math.atan2(-(player.position.x - bot.position.x), -(player.position.z - bot.position.z));
     sim.start();
@@ -484,14 +485,14 @@ describe.skipIf(!existsSync('public/revamp/maps/dust2/collision.bin'))('joint na
     const practice = sanitizePrefireConfig({botBehavior: 'angle-specific', population: 'all'});
     const ray = vi.spyOn(collision, 'ray'), sweep = vi.spyOn(collision, 'sweep');
     try {
-      const first = new PrefireSimulation(map(), practice, route, 7, defaults);
+      const first = new PrefireSimulation(map(), practice, route, 7, defaults, undefined, dust2Catalog);
       expect(ray.mock.calls.length).toBeGreaterThan(0); expect(sweep.mock.calls.length).toBeGreaterThan(0);
       ray.mockClear(); sweep.mockClear();
-      const repeat = new PrefireSimulation(map(), practice, route, 42, defaults);
+      const repeat = new PrefireSimulation(map(), practice, route, 42, defaults, undefined, dust2Catalog);
       expect(ray).not.toHaveBeenCalled(); expect(sweep).not.toHaveBeenCalled();
-      const random = new PrefireSimulation(map(), {...practice, population: 'random'}, route, 2026, defaults);
+      const random = new PrefireSimulation(map(), {...practice, population: 'random'}, route, 2026, defaults, undefined, dust2Catalog);
       ray.mockClear(); sweep.mockClear();
-      new PrefireSimulation(map(), {...practice, population: 'random'}, route, 2026, defaults);
+      new PrefireSimulation(map(), {...practice, population: 'random'}, route, 2026, defaults, undefined, dust2Catalog);
       expect(ray).not.toHaveBeenCalled(); expect(sweep).not.toHaveBeenCalled();
       expect(repeat.actors).toHaveLength(first.actors.length); expect(random.actors.length).toBeGreaterThan(1);
       for (const actor of random.actors.slice(1)) {
@@ -500,25 +501,25 @@ describe.skipIf(!existsSync('public/revamp/maps/dust2/collision.bin'))('joint na
         expect(actor.position.x).toBe(feet.x); expect(actor.position.z).toBe(feet.z);
         expect(actor.duckAmount).toBe(Number(source.crouched));
       }
-      const staticSim = new PrefireSimulation(map(), {...practice, botBehavior: 'static'}, route, 42, defaults);
+      const staticSim = new PrefireSimulation(map(), {...practice, botBehavior: 'static'}, route, 42, defaults, undefined, dust2Catalog);
       expect(staticSim.actors.slice(1).every(actor => staticSim.prefireBotDecision(actor.id)?.kind === 'hold')).toBe(true);
       ray.mockClear(); sweep.mockClear();
-      new PrefireSimulation(map(), {...practice, botBehavior: 'static'}, route, 2026, defaults);
+      new PrefireSimulation(map(), {...practice, botBehavior: 'static'}, route, 2026, defaults, undefined, dust2Catalog);
       expect(ray).not.toHaveBeenCalled(); expect(sweep).not.toHaveBeenCalled();
-      new PrefireSimulation(map(), practice, {...route}, 42, defaults);
+      new PrefireSimulation(map(), practice, {...route}, 42, defaults, undefined, dust2Catalog);
       expect(ray.mock.calls.length).toBeGreaterThan(0); expect(sweep.mock.calls.length).toBeGreaterThan(0);
       const independent = new Proxy(collision, {get(target, key) {
         const value = Reflect.get(target, key, target);
         return typeof value === 'function' ? value.bind(target) : value;
       }});
       ray.mockClear(); sweep.mockClear();
-      new PrefireSimulation({...map(), collision: independent}, practice, route, 42, defaults);
+      new PrefireSimulation({...map(), collision: independent}, practice, route, 42, defaults, undefined, dust2Catalog);
       expect(ray.mock.calls.length).toBeGreaterThan(0); expect(sweep.mock.calls.length).toBeGreaterThan(0);
       expect(route.angles.map((_, i) => repeat.prefireBotDecision(i + 1)?.kind).some(kind => kind !== 'hold')).toBe(true);
     } finally {ray.mockRestore(); sweep.mockRestore();}
   }, 15000);
   for (const route of prefireRoutes) it.each([7, 42])(`${route.id}: jointly supported moving bots, seed %s`, seed => {
-    const sim = new PrefireSimulation(map(), sanitizePrefireConfig({botBehavior: 'angle-specific', population: 'all', returnFire: false}), route, seed, defaults);
+    const sim = new PrefireSimulation(map(), sanitizePrefireConfig({botBehavior: 'angle-specific', population: 'all', returnFire: false}), route, seed, defaults, undefined, dust2Catalog);
     const starts = sim.actors.slice(1).map(actor => ({x: actor.position.x, y: actor.feet, z: actor.position.z}));
     const excursion = sim.actors.slice(1).map(() => 0), views = prefireRouteViews([route.spawn, ...route.path], collision);
     const plans = route.angles.map(angle => createPrefireBotPlan(collision, angle, true, views, starts));

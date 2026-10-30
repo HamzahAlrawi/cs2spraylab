@@ -1,11 +1,12 @@
-import {fetchDeliveredAsset,type DeliveredAsset} from '../prefire/asset-delivery';
-import manifestData from './native-radar.json';
-import {sourceRadarOverview,type SourceRadarMetadata} from './radar-overview';
+import {fetchDeliveredAsset} from '../prefire/asset-delivery';
+import {defaultNativeMapId,nativeMaps} from '../prefire/maps';
+import type {NativeMapDefinition,NativeRadarManifest} from '../prefire/native-map-schema';
+import {sourceRadarOverview} from './radar-overview';
 import type {RadarOverview} from './radar';
 
 export type NativeRadarOverview=RadarOverview & {image:CanvasImageSource & {close():void}};
 export type NativeRadarLease<T extends NativeRadarOverview=NativeRadarOverview>={overview:T;dispose():void};
-export type NativeRadarManifest={build:string;map:'dust2';metadata:SourceRadarMetadata;delivery:DeliveredAsset};
+export type {NativeRadarManifest} from '../prefire/native-map-schema';
 type Entry<T>={controller:AbortController;users:number;overview?:T;closed:boolean;promise:Promise<T>};
 
 /** Signals cancel pending acquisitions; returned leases live until disposed. */
@@ -58,10 +59,8 @@ export class SharedNativeRadarCache<T extends NativeRadarOverview=NativeRadarOve
   }
 }
 
-async function loadOverview(signal:AbortSignal):Promise<NativeRadarOverview> {
+async function loadOverview(signal:AbortSignal,manifest:NativeRadarManifest):Promise<NativeRadarOverview> {
   signal.throwIfAborted();
-  const manifest=manifestData as NativeRadarManifest;
-  if(manifest.map!=='dust2')throw Error('Invalid native radar map');
   const bytes=await fetchDeliveredAsset(manifest.delivery,signal);signal.throwIfAborted();
   const image=await createImageBitmap(new Blob([bytes],{type:'image/webp'}));
   try {
@@ -70,6 +69,26 @@ async function loadOverview(signal:AbortSignal):Promise<NativeRadarOverview> {
   }catch(error){image.close();throw error;}
 }
 
-const cache=new SharedNativeRadarCache(loadOverview);
-export const loadNativeRadar=(signal?:AbortSignal)=>cache.acquire(signal);
+type RadarEntry={cache:SharedNativeRadarCache;users:number};
+const caches=new Map<string,RadarEntry>();
+
+/** Cache records live only while acquisitions or leases own their bitmap. */
+export async function loadNativeRadar(signal?:AbortSignal,map:NativeMapDefinition=nativeMaps.get(defaultNativeMapId)):Promise<NativeRadarLease> {
+  signal?.throwIfAborted();
+  const manifest=map.radar;
+  if(!manifest||manifest.map!==map.assetId)throw Error('Missing or invalid native radar map');
+  const key=JSON.stringify([map.id,map.assetId,map.revision,map.base,manifest]);
+  let entry=caches.get(key);
+  if(!entry){entry={cache:new SharedNativeRadarCache(signal=>loadOverview(signal,manifest)),users:0};caches.set(key,entry);}
+  const owner=entry;owner.users++;
+  let released=false;
+  const release=()=>{
+    if(released)return;released=true;
+    if(!--owner.users&&caches.get(key)===owner)caches.delete(key);
+  };
+  try {
+    const lease=await owner.cache.acquire(signal);
+    return {overview:lease.overview,dispose:()=>{if(released)return;lease.dispose();release();}};
+  }catch(error){release();throw error;}
+}
 export default loadNativeRadar;

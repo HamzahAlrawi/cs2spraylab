@@ -1,5 +1,6 @@
 import {UNIT, type Vec} from '../actor-physics';
-import {sourcePoint, type PrefireAngle, type SourcePoint} from './routes';
+import {sourcePoint} from './route-helpers';
+import type {PrefireAngle, SourcePoint} from './schema';
 import type {NativeMapCollision} from './native-collision';
 
 type Collision = Pick<NativeMapCollision, 'vertical' | 'fits'>;

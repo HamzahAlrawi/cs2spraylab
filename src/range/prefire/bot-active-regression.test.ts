@@ -1,3 +1,4 @@
+import {dust2Catalog} from './routes';
 import {afterAll, beforeAll, describe, expect, it} from 'vitest';
 import {existsSync, readFileSync} from 'node:fs';
 import * as THREE from 'three';
@@ -173,7 +174,7 @@ describe.skipIf(!existsSync('public/revamp/maps/dust2/collision.bin'))('native a
     expect(route, key).toBeDefined();
     const map = {scene: new THREE.Group(), collision: native,
       settle: (p: Parameters<typeof placePrefireTarget>[1]) => placePrefireTarget(native, p), dispose() {}};
-    const sim = new PrefireSimulation(map, sanitizePrefireConfig({population: 'all', botBehavior: 'angle-specific', ...options}), route, 42, defaults);
+    const sim = new PrefireSimulation(map, sanitizePrefireConfig({population: 'all', botBehavior: 'angle-specific', ...options}), route, 42, defaults, undefined, dust2Catalog);
     const bot = sim.actors.slice(1).find(actor => sim.prefireBotDecision(actor.id)!.key === key)!;
     const starts = sim.actors.map(actor => ({...actor.position}));
     const holds = sim.actors.slice(1).filter(actor => sim.prefireBotDecision(actor.id)?.kind === 'hold');

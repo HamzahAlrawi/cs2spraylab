@@ -4,7 +4,9 @@ import {prefirePreset, prefirePresets, type PrefireConfig} from './config';
 import type {PrefireStats} from '../duel/scenario';
 import './prefire.css';
 import './prefire-setup.css';
-import {dust2Catalog, prefireLineup} from './routes';
+import {prefireLineup} from './route-helpers';
+import {nativeMaps} from './maps';
+import {prefireRecordMatches} from './training-log';
 import type {PrefireCatalog, PrefireRoute} from './schema';
 import {holdingEvidence, prefireCandidates, HOLD_RADIUS_UNITS, HOLD_HEIGHT_UNITS, PREFIRE_WEIGHT_POLICY} from './occupancy';
 import {CoachingReview} from '../CoachingReview';
@@ -23,7 +25,7 @@ export type PrefireSetupProps = {
   config: PrefireConfig;
   update: (patch: Partial<PrefireConfig>) => void;
   routes: readonly PrefireRoute[];
-  catalog?: PrefireCatalog;
+  catalog: PrefireCatalog;
   routeId: string;
   stats?: PrefireStats;
   lastShot?: {weapon: Equipment; state: ShotState};
@@ -32,10 +34,10 @@ export type PrefireSetupProps = {
   onRepeat: () => void;
 };
 
-export const PrefireSetup = memo(function PrefireSetup({config, update, routes, catalog = dust2Catalog, routeId, stats, lastShot, showTips = true, onNext, onRepeat}: PrefireSetupProps) {
+export const PrefireSetup = memo(function PrefireSetup({config, update, routes, catalog, routeId, stats, lastShot, showTips = true, onNext, onRepeat}: PrefireSetupProps) {
   const populationId = useId();
   const workflow = useContext(PrefireWorkflow);
-  const diagnoses = workflow.diagnoses.filter(row => row.routeId === routeId);
+  const diagnoses = workflow.diagnoses.filter(row => row.routeId === routeId && prefireRecordMatches(row, {mapId: catalog.id, catalogRevision: catalog.revision}));
   const latest = diagnoses.filter((row, index, all) => all.findIndex(other => other.angleId === row.angleId) === index);
   const progressionId = useId();
   const route = routes.find(item => item.id === routeId);
@@ -50,6 +52,7 @@ export const PrefireSetup = memo(function PrefireSetup({config, update, routes, 
   const regions = [...new Set(routes.map(route => route.region ?? 'Other'))];
   const populationLabel = config.population === 'all' ? 'Fixed lineup' : config.population === 'random' ? 'Weighted' : 'Setups';
   const completedResult = stats?.progress.last;
+  const maps = nativeMaps.list();
   const completedId = completedResult ? JSON.stringify([completedResult.key, completedResult.date]) : undefined;
   const seenCompletion = useRef(completedId);
   const [reviewOpen, setReviewOpen] = useState(!!completedId);
@@ -74,6 +77,11 @@ export const PrefireSetup = memo(function PrefireSetup({config, update, routes, 
     <div className="prefire-controls-body">
       <section className="prefire-essentials" aria-label="Route and training essentials">
         <h3>Route &amp; course</h3>
+        {maps.length > 1 && <label className="prefire-field"><span>Map</span>
+          <select aria-label="Prefire map" value={config.mapId} onChange={event => update({mapId: event.target.value, routeId: undefined, lineupId: undefined})}>
+            {maps.map(map => <option key={map.id} value={map.id}>{map.name}</option>)}
+          </select>
+        </label>}
         <p className="prefire-course-context">{catalog.name}{route?.region && <> / {route.region}</>}</p>
         <label className="prefire-field"><span>Prefire route</span>
           <select aria-label="Prefire route" value={selectedRoute?.id ?? ''} disabled={!routes.length} onChange={event => update({routeId: event.target.value, lineupId: undefined})}>

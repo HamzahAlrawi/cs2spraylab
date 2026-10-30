@@ -45,7 +45,7 @@ describe('release-pinned native map metadata',()=>{
     const metadata=localChunkManifest(catalog.chunks[0].id);
     expect(Object.isFrozen(metadata.delivery)).toBe(true);expect(Object.isFrozen(metadata.sourceMin)).toBe(true);
     expect(()=>{metadata.delivery.sha256='0'.repeat(64);}).toThrow();
-    expect(()=>{metadata.sourceMin[0]=999;}).toThrow();
+    expect(()=>{(metadata.sourceMin as number[])[0]=999;}).toThrow();
   });
   it('rejects a supported course missing from the bundle without fallback',async()=>{
     const module=await altered(data=>{delete data.chunks[catalog.chunks[0].id];});
@@ -59,9 +59,7 @@ describe('release-pinned native map metadata',()=>{
     expect(()=>module.localChunkManifest(catalog.chunks[0].id)).toThrow('Missing or stale');
   });
   it('rejects unsupported catalog envelopes',async()=>{
-    const module=await altered(data=>{data.version=2;});
-    expect(()=>module.localChunkManifest(catalog.chunks[0].id)).toThrow('Unsupported bundled');
-    expect(()=>module.localMapContextManifest()).toThrow('Unsupported bundled');
+    await expect(altered(data=>{data.version=2;})).rejects.toThrow('Invalid/duplicate native map');
   });
   it.each(['missing','map','hash','budget'])('rejects %s context metadata',async fault=>{
     const module=await altered(data=>{

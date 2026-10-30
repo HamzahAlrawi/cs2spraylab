@@ -1,3 +1,4 @@
+import {dust2Catalog} from './routes';
 import {afterAll, beforeAll, describe, expect, it, vi} from 'vitest';
 import {existsSync, readFileSync} from 'node:fs';
 import * as THREE from 'three';
@@ -64,7 +65,7 @@ describe('Prefire training-quality state transitions', () => {
   }, 30000);
   afterAll(() => {open?.dispose(); cover?.dispose();});
   const simulation = (patch: Partial<PrefireConfig> = {}, seed = 42, collision = open, route = fixtureRoute) => {
-    const sim = new PrefireSimulation(makeMap(collision), sanitizePrefireConfig({population: 'all', botBehavior: 'static', ...patch}), route, seed, defaults);
+    const sim = new PrefireSimulation(makeMap(collision), sanitizePrefireConfig({population: 'all', botBehavior: 'static', ...patch}), route, seed, defaults, undefined, dust2Catalog);
     sim.actors.forEach(actor => {actor.health = 1e8;});
     return sim;
   };
@@ -296,7 +297,7 @@ describe.skipIf(!hasNativeAssets)('installed Dust2 training-quality regression',
   afterAll(() => native?.dispose());
 
   for (const route of prefireRoutes) it(`${route.id}: supported physical excursions preserve covered starts and never return-fire through the map`, () => {
-    const sim = new PrefireSimulation(makeMap(native), sanitizePrefireConfig({population: 'all', botBehavior: 'angle-specific', returnFire: true, reactionMs: 300}), route, 20261010, defaults);
+    const sim = new PrefireSimulation(makeMap(native), sanitizePrefireConfig({population: 'all', botBehavior: 'angle-specific', returnFire: true, reactionMs: 300}), route, 20261010, defaults, undefined, dust2Catalog);
     sim.actors[0].health = 1e8; sim.start();
     const player = sim.actors[0], feet = {...player.position, y: player.feet};
     const eyes = [46, 52, 58, 64].map(height => ({...feet, y: feet.y + height * UNIT}));
@@ -337,17 +338,17 @@ describe.skipIf(!hasNativeAssets)('installed Dust2 training-quality regression',
     for (const original of prefireRoutes) {
       const route = {...original};
       const start = performance.now();
-      const first = new PrefireSimulation(makeMap(native), practice, route, 42, defaults);
+      const first = new PrefireSimulation(makeMap(native), practice, route, 42, defaults, undefined, dust2Catalog);
       const coldMs = performance.now() - start;
       const ray = vi.spyOn(native, 'ray'), sweep = vi.spyOn(native, 'sweep');
       try {
         const repeatAt = performance.now();
-        const repeat = new PrefireSimulation(makeMap(native), practice, route, 7, defaults);
+        const repeat = new PrefireSimulation(makeMap(native), practice, route, 7, defaults, undefined, dust2Catalog);
         const cachedMs = performance.now() - repeatAt;
         expect(ray, route.id).not.toHaveBeenCalled(); expect(sweep, route.id).not.toHaveBeenCalled();
-        const random = new PrefireSimulation(makeMap(native), {...practice, population: 'random'}, route, 20261010, defaults);
+        const random = new PrefireSimulation(makeMap(native), {...practice, population: 'random'}, route, 20261010, defaults, undefined, dust2Catalog);
         ray.mockClear(); sweep.mockClear();
-        new PrefireSimulation(makeMap(native), {...practice, population: 'random'}, route, 20261010, defaults);
+        new PrefireSimulation(makeMap(native), {...practice, population: 'random'}, route, 20261010, defaults, undefined, dust2Catalog);
         expect(ray, route.id).not.toHaveBeenCalled(); expect(sweep, route.id).not.toHaveBeenCalled();
         expect(repeat.actors.length).toBe(first.actors.length);
         expect(random.actors.length).toBeGreaterThan(1);

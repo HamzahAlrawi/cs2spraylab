@@ -13,6 +13,7 @@ import rounds from './real-map-round-data.json';
 import type {RoundCatalog} from './real-map-rounds';
 import {angleIdentity} from '../prefire/occupancy';
 import {revealsPrefireStart} from '../prefire/bot-behavior';
+import {dust2Catalog} from '../prefire/routes';
 
 describe('real map Duel configuration',()=>{
   it('makes real chunks and arrows the new/legacy default, without losing procedural preferences',()=>{
@@ -46,7 +47,7 @@ describe.each(realMapChunks)('$id native combat integration',chunk=>{
       installNativeNavigation({...chunkBounds(chunk),solids:[],native:collision},JSON.parse(readFileSync(base+'navigation.json','utf8')));
       const catalog=(rounds as unknown as RoundCatalog).chunks[chunk.id];
       for(const seed of [1,7,23]) {
-        const arena=createRealMapArena(map,chunk,config,seed,(rounds as unknown as RoundCatalog).chunks[chunk.id]),sim=new DuelSimulation(config,seed,arena);
+        const arena=createRealMapArena(map,chunk,config,seed,(rounds as unknown as RoundCatalog).chunks[chunk.id],dust2Catalog),sim=new DuelSimulation(config,seed,arena);
         expect(arena.solids).toEqual([]);expect(arena.native).toBe(collision);
         const course=catalog.courses.find(course=>course.id===arena.roundSetup!.course)!;
         const start=course.starts.find(start=>start.viewIndex===arena.roundSetup!.start)!;

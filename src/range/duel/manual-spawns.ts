@@ -1,12 +1,13 @@
 import {UNIT, type Vec} from '../actor-physics';
 import type {NativeMapCollision} from '../prefire/native-collision';
 import {revealsPrefireStart} from '../prefire/bot-behavior';
-import catalog from './real-map-catalog.json';
+import {legacyNativeMapId, nativeMaps} from '../prefire/maps';
 import type {Arena, ArenaSpawn, CoverLane} from './geometry';
 
 export type SpawnPose = {feet: Vec; yaw: number; pitch: number};
 export type ManualSpawn = SpawnPose & {id: string; name: string};
-export type SpawnContext = {chunkId: string; collisionSha256: string};
+export type SpawnContext = {mapId?: string; chunkId: string; collisionSha256: string};
+export const lineupMapId = (value: Pick<SpawnContext, 'mapId'>) => value.mapId ?? legacyNativeMapId;
 export type ManualLineup = SpawnContext & {
   id: string; name: string; entry: ManualSpawn; bots: ManualSpawn[]; allowImmediateSight: boolean;
 };
@@ -37,13 +38,14 @@ function parseSpawn(raw: unknown): ManualSpawn | undefined {
 }
 export function parseManualLineup(raw: unknown): ManualLineup | undefined {
   const value = record(raw), key = id(value.id), name = text(value.name, MANUAL_SPAWN_LIMITS.name), entry = parseSpawn(value.entry);
-  if (!key || !name || !entry || !catalog.chunks.some(chunk => chunk.id === value.chunkId) ||
+  const mapId = value.mapId === undefined ? legacyNativeMapId : value.mapId;
+  if (!key || !name || !entry || !nativeMaps.has(mapId) || !nativeMaps.get(mapId).chunks.some(chunk => chunk.id === value.chunkId) ||
     typeof value.collisionSha256 !== 'string' || !/^[a-f0-9]{64}$/.test(value.collisionSha256) ||
     typeof value.allowImmediateSight !== 'boolean' || !Array.isArray(value.bots) ||
     value.bots.length < 1 || value.bots.length > MANUAL_SPAWN_LIMITS.bots) return;
   const bots = value.bots.map(parseSpawn);
   if (bots.some(bot => !bot) || new Set([entry.id, ...bots.map(bot => bot!.id)]).size !== bots.length + 1) return;
-  return {id: key, name, chunkId: value.chunkId as string, collisionSha256: value.collisionSha256,
+  return {id: key, name, mapId, chunkId: value.chunkId as string, collisionSha256: value.collisionSha256,
     entry, bots: bots as ManualSpawn[], allowImmediateSight: value.allowImmediateSight};
 }
 
@@ -55,8 +57,8 @@ export function importManualLineups(serialized: string): ManualLineup[] {
   const parsed = value.lineups.map(parseManualLineup);
   if (parsed.some(lineup => !lineup)) throw new Error('Invalid lineup or spawn coordinates.');
   const lineups = parsed as ManualLineup[];
-  if (new Set(lineups.map(lineup => `${lineup.chunkId}:${lineup.id}`)).size !== lineups.length ||
-    catalog.chunks.some(chunk => lineups.filter(lineup => lineup.chunkId === chunk.id).length > MANUAL_SPAWN_LIMITS.perChunk))
+  if (new Set(lineups.map(lineup => `${lineupMapId(lineup)}:${lineup.chunkId}:${lineup.id}`)).size !== lineups.length ||
+    lineups.some(lineup => lineups.filter(other => lineupMapId(other) === lineupMapId(lineup) && other.chunkId === lineup.chunkId).length > MANUAL_SPAWN_LIMITS.perChunk))
     throw new Error('Duplicate lineups or too many lineups for one chunk.');
   return lineups;
 }
@@ -66,7 +68,7 @@ export function exportManualLineups(lineups: readonly ManualLineup[]): string {
   return serialized;
 }
 export function mergeManualLineups(current: readonly ManualLineup[], incoming: readonly ManualLineup[]): ManualLineup[] {
-  const merged = current.filter(old => !incoming.some(next => old.id === next.id && old.chunkId === next.chunkId));
+  const merged = current.filter(old => !incoming.some(next => old.id === next.id && old.chunkId === next.chunkId && lineupMapId(old) === lineupMapId(next)));
   return importManualLineups(exportManualLineups([...merged, ...incoming]));
 }
 type Storage = Pick<globalThis.Storage, 'getItem' | 'setItem'>;
@@ -82,10 +84,10 @@ type Collision = Pick<NativeMapCollision, 'collisionSha256' | 'fits' | 'vertical
 export function validateManualLineup(raw: unknown, context: SpawnContext, collision: Collision): LineupValidation {
   const errors: string[] = [], warnings: string[] = [], lineup = parseManualLineup(raw);
   if (!lineup) return {errors: ['Name the lineup, capture a player entry and add one to five named holds.'], warnings};
-  if (lineup.chunkId !== context.chunkId || lineup.collisionSha256 !== context.collisionSha256 ||
+  if (lineupMapId(lineup) !== lineupMapId(context) || lineup.chunkId !== context.chunkId || lineup.collisionSha256 !== context.collisionSha256 ||
     collision.collisionSha256 !== context.collisionSha256)
     return {errors: ['This lineup belongs to a different chunk or collision revision. Recapture it on the loaded map.'], warnings};
-  const chunk = catalog.chunks.find(chunk => chunk.id === context.chunkId)!;
+  const chunk = nativeMaps.get(lineupMapId(context)).chunks.find(chunk => chunk.id === context.chunkId)!;
   const points = [lineup.entry, ...lineup.bots];
   for (const point of points) {
     const {feet} = point, source = [feet.x / UNIT, -feet.z / UNIT, feet.y / UNIT];

@@ -468,7 +468,7 @@ const october30SourceOnlyChanges = {
   ]}],
 } as const satisfies ChangelogRelease;
 
-export const latestChanges = {
+const october30ProgressSavingChanges = {
   id:'update-2026-10-30-progress-saving',title:'Reliable local progress (October 30)',baselineCommit:'38767d0',
   sections:[{id:'independent-progress-storage',title:'Save progress even when localStorage fails',items:[
     'XP, credits, purchased finishes and equipped cosmetics can save through the independent profile database when localStorage is full or inaccessible. A save is confirmed only after the storage operation succeeds.',
@@ -476,7 +476,22 @@ export const latestChanges = {
   ]}],
 } as const satisfies ChangelogRelease;
 
+export const latestChanges = {
+  id:'update-2026-10-30-map-packages',title:'Map-ready training & more deliberate bots (October 30)',baselineCommit:'b7aa225',
+  sections:[
+    {id:'map-package-isolation',title:'Map-specific training packages',items:[
+      'Duel and Prefire select routes, holds, geometry, radar and context through map-owned definitions. Lightweight settings indexes keep full route and evidence catalogs lazy; Dust 2 geometry and sourced positions are unchanged.',
+      'Chunk preparation, saved lineups, Prefire diagnoses and retention checks carry map identity. Synthetic second-map tests deliberately reuse route and chunk IDs to guard against cross-map fallbacks. No additional real map is included yet.',
+    ]},
+    {id:'evidence-aware-opponents',title:'More deliberate opponent decisions',items:[
+      'Bots choose exposed aiming points using their current weapon dispersion and compensated aim/recoil error, with revalidated transitions between head and body. Sight memory records a visible point instead of an unseen actor root.',
+      'Repeated damage makes experienced bots less likely to return to the same punished corner on a later reposition; that memory decays. Aim, movement, damage and FACEIT difficulty constants are unchanged; tactical choices remain trainer heuristics.',
+    ]},
+  ],
+} as const satisfies ChangelogRelease;
+
 export const changelogHistory = [
+  october30ProgressSavingChanges,
   october30SourceOnlyChanges,
   october29LocalRoundsChanges,
   october29BleedingEdgeChanges,

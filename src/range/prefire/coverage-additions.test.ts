@@ -1,3 +1,4 @@
+import {dust2Catalog} from './routes';
 import {afterAll, beforeAll, describe, expect, it} from 'vitest';
 import {createHash} from 'node:crypto';
 import {readFileSync} from 'node:fs';
@@ -64,7 +65,7 @@ describe('CT and site coverage in native Dust 2, including route-facing physical
     expect(plan.watchPoint, 'native route must supply a reachable pre-aim view').toBeDefined();
     const map = {scene: new THREE.Group(), collision, settle: (point: Parameters<typeof placePrefireTarget>[1]) => placePrefireTarget(collision, point), dispose() {}};
     const sim = new PrefireSimulation(map, sanitizePrefireConfig({population: 'all', botBehavior: 'static', returnFire: false}),
-      {...route, angles: [angle], alternatives: [], lineups: undefined}, 42, defaults);
+      {...route, angles: [angle], alternatives: [], lineups: undefined}, 42, defaults, undefined, dust2Catalog);
     const [player, bot] = sim.actors;
     const yaw = (a: typeof player.position, b: typeof player.position) => Math.atan2(-(b.x - a.x), -(b.z - a.z));
     expect(player.yaw).toBeCloseTo(yaw(player.position, sourcePoint(route.look)), 10);

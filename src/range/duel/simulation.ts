@@ -43,7 +43,7 @@ import {utilityInventory, canCarryUtility, type UtilityInventory, type UtilityKi
 import {BotUtilityPlanner} from './utility-tactics';
 import {BotUtilityDefense} from './utility-defense';
 import {botSensorView, pointInView} from './shadows';
-import {direction as aimDirection} from '../shot-model';
+import {accuracySpeedUnits, direction as aimDirection} from '../shot-model';
 import {utilityLaunchPose} from './utility-ballistics';
 import {TeamUtilityCoordinator} from './team-utility';
 import {utilityNativeTiming} from './utility-presentation';
@@ -529,9 +529,23 @@ export class DuelSimulation {
         });
         this.utilityDefenses.get(actor.id)?.perceive(this.time, actor, seenThrows);
         if (this.controlledBots.has(actor.id)) continue;
+        const own = this.actors[actor.id], stats = own.weapon.actions.stats;
+        // Read the same accuracy kernel as firing, on a copy: sensing must not
+        // advance recovery, change mode state or consume any shot randomness.
+        const recovery = own.weapon.recovery.fork();
+        recovery.setParameters(stats);
+        const airborne = !actor.grounded;
+        recovery.advance(0, actor.duckAmount >= .95, airborne);
+        const angularUncertainty = stats.spread + recovery.inaccuracy(
+          Math.hypot(actor.velocity.x, actor.velocity.z) / (stats.speed * UNIT), own.command.walk,
+          airborne, (actor.verticalVelocity ?? 0) / UNIT, accuracySpeedUnits(actor.velocity));
+        const recoil = recovery.recoil, punch = actor.aimPunch;
         const observation=observeBot(this.time, actor, actorView, this.arena, undefined, shadows, sensorPose,
           (from, to) => this.canSeeUtility(actor.id, from, to),
-          {horizontalFov: this.actors[actor.id].weapon.actions.horizontalFov, previousVisible: this.perceivedEnemies.get(actor.id)});
+          {horizontalFov: own.weapon.actions.horizontalFov, angularUncertainty,
+            shotAngles: {yaw: actor.yaw - (recoil.yaw + (punch?.yaw ?? 0)) * DEG,
+              pitch: actor.pitch + (recoil.pitch + (punch?.pitch ?? 0)) * DEG},
+            previousVisible: this.perceivedEnemies.get(actor.id)});
         this.perceivedEnemies.set(actor.id, observation.visible);
         this.brains.get(actor.id)?.perceive(observation);
         if(observation.visible)this.lastContactAt.set(actor.id,this.time);

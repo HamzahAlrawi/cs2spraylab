@@ -1,9 +1,10 @@
 import * as THREE from 'three';
-import catalog from './real-map-catalog.json';
 import {UNIT, type Vec} from '../actor-physics';
 import type {Settings} from '../config';
-import {loadDust2, type PrefireMap} from '../prefire/map';
-import {dust2Catalog, type PrefireRoute} from '../prefire/routes';
+import {loadNativeMap, type PrefireMap} from '../prefire/map';
+import type {PrefireCatalog, PrefireRoute} from '../prefire/schema';
+import {defaultNativeMapId, nativeMaps} from '../prefire/maps';
+import {nativeChunkKey, type NativeMapChunk} from '../prefire/native-map-schema';
 import {angleIdentity, choosePrefireAngles, prefireAnglesIncompatible} from '../prefire/occupancy';
 import {randomStream} from './rng';
 import type {Arena, CoverLane} from './geometry';
@@ -30,12 +31,16 @@ const overviews=new WeakMap<PrefireMap,{image:ImageBitmap;bounds:RadarOverview['
 const nativeOverviews = new WeakMap<PrefireMap, RadarOverview>();
 type BakedChunk=RoundCatalog['chunks'][string];
 const chunkRounds=new WeakMap<PrefireMap,BakedChunk>();
+const mapCatalogs=new WeakMap<PrefireMap,PrefireCatalog>();
 
-export type RealMapChunk = typeof catalog.chunks[number];
-export const realMapChunks: readonly RealMapChunk[] = catalog.chunks;
-export function chooseRealMapChunk(choice: string, seed: number, previous?: string): RealMapChunk {
-  const fixed=realMapChunks.find(chunk=>chunk.id===choice);if(fixed)return fixed;
-  const pool=realMapChunks.filter(chunk=>chunk.id!==previous);
+export type RealMapChunk = NativeMapChunk;
+/** Legacy default-map list for offline audits; runtime selection is map-scoped. */
+export const realMapChunks = nativeMaps.get(defaultNativeMapId).chunks;
+export function chooseRealMapChunk(choice: string, seed: number, previous?: string, mapId=defaultNativeMapId): RealMapChunk {
+  const chunks=nativeMaps.get(mapId).chunks;
+  const fixed=chunks.find(chunk=>chunk.id===choice);if(fixed)return fixed;
+  if(choice!=='random')throw new Error(`Unknown map chunk: ${mapId}/${choice}`);
+  const alternatives=chunks.filter(chunk=>chunk.id!==previous),pool=alternatives.length?alternatives:chunks;
   return pool[Math.floor(randomStream(seed,'duel-real-map')()*pool.length)];
 }
 export function chunkBounds(chunk: RealMapChunk) {
@@ -54,20 +59,24 @@ export function chunkContains(chunk:RealMapChunk, point: readonly number[], marg
 }
 const facing=(from:Vec,to:Vec)=>Math.atan2(-(to.x-from.x),-(to.z-from.z));
 
-export function createRealMapArena(map:PrefireMap, chunk:RealMapChunk, config:DuelConfig, seed:number,rounds?:BakedChunk): Arena {
+export function createRealMapArena(map:PrefireMap, chunk:RealMapChunk, config:DuelConfig, seed:number,rounds?:BakedChunk,
+  sourceCatalog:PrefireCatalog|undefined=mapCatalogs.get(map)): Arena {
+  if(!sourceCatalog || sourceCatalog.id!==chunk.mapId || config.mapId!==chunk.mapId)
+    throw new Error('Map, training catalog and Duel configuration do not match.');
   const baked=rounds??chunkRounds.get(map);
   if(!baked || baked.collisionSha256!==map.collision.collisionSha256 || !baked.courses.length)
     throw new Error('Duel round catalog does not match the map. Run node tools/build-duel-rounds.mjs.');
   const course=chooseRealMapCourse(baked.courses,chunk.routeId,config.realMapCourse,seed);
-  const source=dust2Catalog.routes.find(route=>route.id===course.id)!;
+  const source=sourceCatalog.routes.find(route=>route.id===course.id);
+  if(!source)throw new Error('The selected course is not in this map catalog.');
   const start=chooseRealMapStart(course,config.realMapCourse,seed);
   const candidates=course.holds.filter(hold=>start.holds.includes(angleIdentity(hold.angle)));
   const route:PrefireRoute={...source,angles:candidates.map(hold=>hold.angle),alternatives:[]};
   const active=candidates.filter(hold=>Math.hypot(hold.lane.edge.x-hold.lane.anchor.x,hold.lane.edge.z-hold.lane.anchor.z)>.15);
   const activeRound=active.length>=config.botCount && randomStream(seed,'duel-active-angles')()<.85;
   let selected=choosePrefireAngles({...route,angles:activeRound?active.map(hold=>hold.angle):route.angles},
-    'random',randomStream(seed,'duel-native-holds'),dust2Catalog.density,config.botCount);
-  if(selected.length!==config.botCount)selected=choosePrefireAngles(route,'random',randomStream(seed,'duel-native-holds'),dust2Catalog.density,config.botCount);
+    'random',randomStream(seed,'duel-native-holds'),sourceCatalog.density,config.botCount);
+  if(selected.length!==config.botCount)selected=choosePrefireAngles(route,'random',randomStream(seed,'duel-native-holds'),sourceCatalog.density,config.botCount);
   if(selected.length!==config.botCount)throw new Error(`Not enough compatible covered holds in ${chunk.name}`);
   // A round setup often pairs nearby defenders instead of scattering every
   // teammate across the entire chunk. This is an authored training policy.
@@ -77,7 +86,7 @@ export function createRealMapArena(map:PrefireMap, chunk:RealMapChunk, config:Du
     const buddies=(activeRound?active:candidates).filter(hold=>Math.hypot(hold.source.x-lead.source.x,hold.source.z-lead.source.z)<10 &&
       Math.abs(hold.source.y-lead.source.y)<1.8 && others.every(angle=>!prefireAnglesIncompatible(angle,hold.angle)));
     if(buddies.length)selected[selected.length-1]=choosePrefireAngles({...route,angles:buddies.map(hold=>hold.angle)},
-      'random',randomStream(seed,'duel-buddy-hold'),dust2Catalog.density,1)[0];
+      'random',randomStream(seed,'duel-buddy-hold'),sourceCatalog.density,1)[0];
   }
   const holds=selected.map(angle=>candidates.find(hold=>angleIdentity(hold.angle)===angleIdentity(angle))!);
   // Retain occupied lanes first, then a bounded rotating set of other useful
@@ -105,7 +114,7 @@ export function createRealMapArena(map:PrefireMap, chunk:RealMapChunk, config:Du
   prepareNativeNavigation(arena,baked.courses.flatMap(course=>[...course.starts.map(start=>start.feet),
     ...course.holds.flatMap(hold=>[hold.source,hold.sheltered,hold.lane.edge]),...course.walk]),baked.courses.map(course=>course.walk));
   if(config.manualLineup) {
-    const result=validateManualLineup(config.manualLineup,{chunkId:chunk.id,collisionSha256:map.collision.collisionSha256},map.collision);
+    const result=validateManualLineup(config.manualLineup,{mapId:chunk.mapId,chunkId:chunk.id,collisionSha256:map.collision.collisionSha256},map.collision);
     if(result.errors.length)throw new Error(result.errors.join(' '));
     if(config.botCount!==config.manualLineup.bots.length)throw new Error('Bot count must match the saved lineup.');
     return applyManualLineup(arena,config.manualLineup);
@@ -134,8 +143,9 @@ function routeArrows(course:RoundCourse,start:RoundStart):THREE.Group {
 
 async function chunkManifest(chunk:RealMapChunk,signal:AbortSignal) {
   signal.throwIfAborted();
-  const base=`/maps/dust2/duel/${chunk.id}/`,manifest=localChunkManifest(chunk.id);
-  if(manifest.version!==1 || manifest.id!==chunk.id || manifest.map!==catalog.map || manifest.routeId!==chunk.routeId ||
+  const definition=nativeMaps.get(chunk.mapId);
+  const base=`${definition.base}duel/${chunk.id}/`,manifest=localChunkManifest(chunk.id,definition);
+  if(manifest.version!==1 || manifest.id!==chunk.id || manifest.map!==definition.assetId || manifest.routeId!==chunk.routeId ||
     JSON.stringify(manifest.sourceMin)!==JSON.stringify(chunk.sourceMin) || JSON.stringify(manifest.sourceMax)!==JSON.stringify(chunk.sourceMax) ||
     !/^[a-f0-9]{64}$/.test(manifest.sourceCollisionSha256) ||
     !/^[a-f0-9]{64}$/.test(manifest.collisionManifestSha256) || !/^[a-f0-9]{64}$/.test(manifest.visualManifestSha256) ||
@@ -143,10 +153,11 @@ async function chunkManifest(chunk:RealMapChunk,signal:AbortSignal) {
     throw new Error('Map chunk metadata does not match the selected course.');
   const delivery:MapDelivery|undefined=manifest.delivery
     ? validateDelivery(JSON.parse(new TextDecoder().decode(await fetchDeliveredAsset(manifest.delivery,signal)))):undefined;
-  return {base,manifest,delivery};
+  return {base,manifest,delivery,definition};
 }
 export async function loadRealMapChunk(chunk:RealMapChunk,signal:AbortSignal,background=false) {
-  const {base,manifest,delivery}=await chunkManifest(chunk,signal);
+  const {base,manifest,delivery,definition}=await chunkManifest(chunk,signal);
+  const catalogTask=nativeMaps.loadCatalog(definition.id);void catalogTask.catch(()=>{});
   const read=async(name:string)=>{
     if(delivery?.files[name])return fetchDeliveredAsset(delivery.files[name],signal);
     const response=await fetch(base+name,{signal});if(!response.ok)throw new Error('Map resource unavailable');return response.arrayBuffer();
@@ -156,7 +167,7 @@ export async function loadRealMapChunk(chunk:RealMapChunk,signal:AbortSignal,bac
     await verifyMapDigest(bytes,manifest.navigationSha256);return JSON.parse(new TextDecoder().decode(bytes));
   })();
   const radarTask=manifest.radar?(async()=>{
-    const bytes=await read('radar.json');await verifyMapDigest(bytes,manifest.radar.sha256);
+    const bytes=await read('radar.json');await verifyMapDigest(bytes,manifest.radar!.sha256);
     const radar=JSON.parse(new TextDecoder().decode(bytes));
     const imageBytes=await read('radar.png');await verifyMapDigest(imageBytes,radar.imageSha256);return {radar,imageBytes};
   })():undefined;
@@ -164,9 +175,10 @@ export async function loadRealMapChunk(chunk:RealMapChunk,signal:AbortSignal,bac
   void navigationTask.catch(()=>{});void radarTask?.catch(()=>{});void roundTask?.catch(()=>{});
   // Distant context is one shared, visual-only decode, never another collision
   // world. Own its lease even if the precise chunk fails or is cancelled.
-  const contextTask=loadMapContext(signal).catch(()=>undefined);
-  const nativeRadarTask=loadNativeRadar(signal).catch(()=>undefined);
-  const map=await loadDust2(signal,{base,visibility:!!delivery?.files['visibility.bin'],delivery,background,hashes:{'collision.json':manifest.collisionManifestSha256,'visual.json':manifest.visualManifestSha256}})
+  const contextTask=definition.release.context?loadMapContext(signal,definition).catch(()=>undefined):Promise.resolve(undefined);
+  const nativeRadarTask=definition.radar?loadNativeRadar(signal,definition).catch(()=>undefined):Promise.resolve(undefined);
+  const map=await loadNativeMap(signal,{base,visibility:!!delivery?.files['visibility.bin'],delivery,background,
+    sharedTextureBase:definition.sharedTextureBase,hashes:{'collision.json':manifest.collisionManifestSha256,'visual.json':manifest.visualManifestSha256}})
     .catch(async error=>{(await contextTask)?.dispose();(await nativeRadarTask)?.dispose();throw error;});
   try {
     const nativeRadar = await nativeRadarTask;
@@ -180,6 +192,7 @@ export async function loadRealMapChunk(chunk:RealMapChunk,signal:AbortSignal,bac
       const dispose=map.dispose.bind(map);map.dispose=()=>{context.dispose();dispose();};
       context.attach(map.scene,chunkRenderBounds(chunk));
     }
+    mapCatalogs.set(map,await catalogTask);
     if(roundTask) {
       const rounds=await roundTask;
       if(rounds.collisionSha256!==map.collision.collisionSha256||!Array.isArray(rounds.courses)||!rounds.courses.length)
@@ -216,8 +229,10 @@ export class RealMapSession implements DuelScenario {
   private prefetchId?:string;
   private readonly prepared=new PreparedRound<PrefireMap>();
   private readonly resident:ResidentChunks<PrefireMap>;
+  get mapId(){return this.chunk.mapId;}
+  private key(chunk:RealMapChunk){return nativeChunkKey(nativeMaps.get(this.mapId),chunk);}
   get name(){return this.chunk.name;}
-  spawnContext():SpawnContext {return {chunkId:this.chunk.id,collisionSha256:this.map.collision.collisionSha256};}
+  spawnContext():SpawnContext {return {mapId:this.mapId,chunkId:this.chunk.id,collisionSha256:this.map.collision.collisionSha256};}
   validateLineup(lineup:unknown){return validateManualLineup(lineup,this.spawnContext(),this.map.collision);}
   curatedLineup(key:string):ManualLineup {
     const arena=createRealMapArena(this.map,this.chunk,{...this.config,manualLineup:null,realMapCourse:'standard'},0);
@@ -230,11 +245,12 @@ export class RealMapSession implements DuelScenario {
     this.scene.add(map.scene,this.arrows);
   }
   static async load(config:DuelConfig,seed:number,signal:AbortSignal) {
-    const chunk=chooseRealMapChunk(config.realMapChunk,seed);
+    const chunk=chooseRealMapChunk(config.realMapChunk,seed,undefined,config.mapId);
     const map=await loadRealMapChunk(chunk,signal);
     try {signal.throwIfAborted();return new RealMapSession(map,chunk,config);}catch(error){map.dispose();throw error;}
   }
   configureDuel(config:DuelConfig){
+    if(config.mapId!==this.mapId)throw new Error('Changing maps requires a new native-map session.');
     if(config.realMapChunk!==this.config.realMapChunk){this.prefetchAbort?.abort();this.prefetchId=undefined;this.prepared.cancel();}
     this.config=config;this.arrows.visible=config.routeGuide;
   }
@@ -244,17 +260,17 @@ export class RealMapSession implements DuelScenario {
     if(connection?.saveData||['slow-2g','2g'].includes(connection?.effectiveType??'')) {
       this.prefetchAbort?.abort();this.prepared.cancel();this.prefetchId=undefined;return;
     }
-    const chunk=chooseRealMapChunk(this.config.realMapChunk,seed,this.chunk.id);
-    if(chunk.id===this.chunk.id||chunk.id===this.previousChunk?.id||this.resident.has(chunk.id)||chunk.id===this.prefetchId)return;
-    this.prefetchAbort?.abort();const controller=new AbortController();this.prefetchAbort=controller;this.prefetchId=chunk.id;
+    const chunk=chooseRealMapChunk(this.config.realMapChunk,seed,this.chunk.id,this.mapId),key=this.key(chunk);
+    if(chunk.id===this.chunk.id||chunk.id===this.previousChunk?.id||this.resident.has(key)||key===this.prefetchId)return;
+    this.prefetchAbort?.abort();const controller=new AbortController();this.prefetchAbort=controller;this.prefetchId=key;
     if(decodedPreloadAllowed(device)) {
-      const pending=this.prepared.start(chunk.id,async signal=>{
+      const pending=this.prepared.start(key,async signal=>{
         await backgroundTurn(signal);
         const map=await loadRealMapChunk(chunk,signal,true);
         try {await warm?.(map.scene,signal);signal.throwIfAborted();return map;}
         catch(error){map.dispose();throw error;}
       });
-      void pending?.catch(()=>{if(this.prefetchId===chunk.id&&!controller.signal.aborted)this.prefetchId=undefined;});
+      void pending?.catch(()=>{if(this.prefetchId===key&&!controller.signal.aborted)this.prefetchId=undefined;});
       return;
     }
     // Low-memory devices retain only bounded compressed bytes, not a third scene.
@@ -274,31 +290,31 @@ export class RealMapSession implements DuelScenario {
   }
   async stageRound(seed:number,signal:AbortSignal,warm:(scene:THREE.Group,signal:AbortSignal)=>Promise<void>) {
     signal.throwIfAborted();
-    const chunk=chooseRealMapChunk(this.config.realMapChunk,seed,this.chunk.id);
-    if(chunk.id===this.chunk.id||chunk.id===this.previousChunk?.id||this.resident.has(chunk.id))return;
-    this.prefetchId=chunk.id;
-    this.prepared.start(chunk.id,async preparation=>{
+    const chunk=chooseRealMapChunk(this.config.realMapChunk,seed,this.chunk.id,this.mapId),key=this.key(chunk);
+    if(chunk.id===this.chunk.id||chunk.id===this.previousChunk?.id||this.resident.has(key))return;
+    this.prefetchId=key;
+    this.prepared.start(key,async preparation=>{
       const map=await loadRealMapChunk(chunk,preparation,true);
       try{await warm(map.scene,preparation);preparation.throwIfAborted();return map;}
       catch(error){map.dispose();throw error;}
     });
-    await this.prepared.wait(chunk.id,signal);
+    await this.prepared.wait(key,signal);
   }
   async prepareRound(seed:number,signal:AbortSignal) {
-    const chunk=chooseRealMapChunk(this.config.realMapChunk,seed,this.chunk.id);
+    const chunk=chooseRealMapChunk(this.config.realMapChunk,seed,this.chunk.id,this.mapId),key=this.key(chunk);
     if(chunk.id===this.chunk.id)return false;
-    if(this.prepared.key!==chunk.id)this.prepared.cancel();
+    if(this.prepared.key!==key)this.prepared.cancel();
     let map:PrefireMap;
     if(this.previous && this.previousChunk?.id===chunk.id) {
       map=this.previous;this.previous=undefined;this.previousChunk=undefined;
     }else {
-      const resident=this.resident.take(chunk.id);
+      const resident=this.resident.take(key);
       if(this.previous&&this.previousChunk){
         this.previous.scene.removeFromParent();
-        this.resident.retire(this.previousChunk.id,this.previous,this.previous.residentBytes??256*1024*1024);
+        this.resident.retire(this.key(this.previousChunk),this.previous,this.previous.residentBytes??256*1024*1024);
       }
       this.previous=undefined;this.previousChunk=undefined;
-      try {map=resident??await this.prepared.take(chunk.id,signal)??await loadRealMapChunk(chunk,signal);}
+      try {map=resident??await this.prepared.take(key,signal)??await loadRealMapChunk(chunk,signal);}
       catch(error){signal.throwIfAborted();if(this.disposed)throw error;map=await loadRealMapChunk(chunk,signal);}
     }
     try {

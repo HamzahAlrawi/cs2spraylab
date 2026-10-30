@@ -3,9 +3,10 @@
   "collisionSha256": "395a10802ed5a26dce1c48b754adc7c2f1418755edc4f62c401597d19f7e6396",
   "build": "2000932",
   "dependencySha256": {
-    "routes.ts": "69beab4b2acc8c4ffcfc0af119b95db5f13eb3897e0adf88d2652ab44c4eb7ce",
-    "spawn-audit.ts": "189a8dfcda73a765742924ea6a9a2e521e84cd55370b9203bc1c48f59649d73a",
-    "placement.ts": "be1a8c129c4c7b1863d63c996be61af87cbc19595a1dcb5999634a53302101f1",
+    "routes.ts": "ef881ca1b6e4fe3f9b70e031524b370ac2d57f565e958a4c1d66c373d79d69f7",
+    "route-helpers.ts": "7c9fed6c6d9126688f618bda6f501306dead030015c86bbddb6dc7c4a96ebeba",
+    "spawn-audit.ts": "08d5288582e0ec1dfdc408b4d67f60103847e2083ea223da46d85140b9ca7672",
+    "placement.ts": "b3465084e322501b3ae687d098b6c7f495c3784b840b4333406a168c6893a274",
     "native-collision.ts": "a76a20ab94b73287740ffb9f9cfde4f7697c20db778de2c231b20a4d6d1f1af5",
     "data/openprefire-dust2.json": "d27958364b642d52af0a31847d488556146fa04b5c309ec50f90368e96de39de",
     "data/retakes-dust2.json": "a7e620bbceb52599d651ad06227f4408a9b8681e834b4a2a43e7bb2a58e52e55",

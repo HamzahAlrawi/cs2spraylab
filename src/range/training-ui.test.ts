@@ -19,7 +19,7 @@ describe('training discovery', () => {
   it('renders an explicitly selected, accessible current mode', () => {
     const html = renderToStaticMarkup(createElement(DrillChooser, {mode: 'prefire', choose: () => {}}));
     expect(html).toContain('aria-label="Find a drill"');
-    expect(html).toContain('aria-label="Choose Map prefire / Dust 2" aria-pressed="true"');
+    expect(html).toContain('aria-label="Choose Map prefire" aria-pressed="true"');
     expect((html.match(/class="drill-choice current"/g) ?? []).length).toBe(1);
   });
 });

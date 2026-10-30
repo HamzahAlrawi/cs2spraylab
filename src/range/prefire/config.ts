@@ -1,6 +1,10 @@
-import {prefireRoutes, prefireRouteAliases} from './routes';
+import {defaultNativeMapId, legacyNativeMapId, nativeMaps} from './maps';
+import type {NativeMapIndex} from './native-map-schema';
+
+export type PrefireConfigIndex = Pick<NativeMapIndex, 'id' | 'routes'> & {aliases?: Readonly<Record<string, string>>};
 
 export type PrefireConfig = {
+  mapId: string;
   routeId: string;
   lineupId?: string;
   population: 'all' | 'random' | 'contextual';
@@ -18,7 +22,8 @@ export type PrefireConfig = {
 };
 
 export const prefireDefaults: PrefireConfig = {
-  routeId: 'long-doors',
+  mapId: defaultNativeMapId,
+  routeId: nativeMaps.get(defaultNativeMapId).index.routes[0].id,
   population: 'random',
   botsPerRun: 4,
   botBehavior: 'angle-specific',
@@ -32,23 +37,27 @@ export const prefireDefaults: PrefireConfig = {
   reviewSeconds: 5,
 };
 
-const routeIds = prefireRoutes.map(route => route.id);
 const storageKey = 'spraylab.prefire.v1';
 const boolean = (value: unknown, fallback: boolean) => typeof value === 'boolean' ? value : fallback;
 
-export function sanitizePrefireConfig(raw: unknown, availableRoutes: readonly string[] = routeIds): PrefireConfig {
+export function sanitizePrefireConfig(raw: unknown, index?: PrefireConfigIndex): PrefireConfig {
   const input: Record<string, unknown> = raw && typeof raw === 'object' && !Array.isArray(raw)
     ? raw as Record<string, unknown> : {};
   const botBehavior = input.botBehavior === 'static' || input.botBehavior === 'angle-specific'
     ? input.botBehavior : typeof input.movingBots === 'boolean'
       ? input.movingBots ? 'angle-specific' : 'static' : prefireDefaults.botBehavior;
+  // A missing map belongs to the legacy default, never to an injected second map.
+  const wantedMap = typeof input.mapId === 'string' ? input.mapId : legacyNativeMapId;
+  const selected = index?.id === wantedMap ? index : nativeMaps.get(nativeMaps.has(wantedMap) ? wantedMap : defaultNativeMapId).index;
   const oldId = typeof input.routeId === 'string' ? input.routeId : '';
-  const routeId = availableRoutes.find(id => id === oldId) ?? availableRoutes.find(id => id === prefireRouteAliases[oldId])
-    ?? availableRoutes[0] ?? prefireDefaults.routeId;
-  const route = prefireRoutes.find(route => route.id === routeId);
+  const alias = selected.aliases && Object.prototype.hasOwnProperty.call(selected.aliases, oldId) ? selected.aliases[oldId] : undefined;
+  const route = selected.routes.find(route => route.id === oldId) ?? selected.routes.find(route => route.id === alias) ?? selected.routes[0];
+  if (!route) throw new Error(`Prefire map ${selected.id} needs at least one course.`);
+  const routeId = route.id;
   const wantedLineup = input.lineupId ?? (oldId !== routeId ? oldId : undefined);
   const lineupId = route?.lineups?.find(lineup => lineup.id === wantedLineup && lineup.id !== routeId)?.id;
   return {
+    mapId: selected.id,
     routeId,
     ...(lineupId ? {lineupId} : {}),
     population: input.population === 'random' || input.population === 'all' || input.population === 'contextual' ? input.population : prefireDefaults.population,
@@ -66,6 +75,11 @@ export function sanitizePrefireConfig(raw: unknown, availableRoutes: readonly st
     reviewSeconds: typeof input.reviewSeconds === 'number' && Number.isFinite(input.reviewSeconds)
       ? Math.max(2, Math.min(10, input.reviewSeconds)) : prefireDefaults.reviewSeconds,
   };
+}
+
+export function updatePrefireConfig(config: PrefireConfig, patch: Partial<PrefireConfig>, index?: PrefireConfigIndex): PrefireConfig {
+  const changedMap = patch.mapId !== undefined && patch.mapId !== config.mapId;
+  return sanitizePrefireConfig({...config, ...patch, ...(changedMap ? {routeId: undefined, lineupId: undefined} : {})}, index);
 }
 
 export const prefirePresets = {

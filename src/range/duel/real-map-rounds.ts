@@ -1,5 +1,5 @@
 import {UNIT, type Vec} from '../actor-physics';
-import {dust2Catalog, type PrefireRoute} from '../prefire/routes';
+import type {PrefireCatalog, PrefireRoute} from '../prefire/schema';
 import {angleIdentity, prefireCandidates} from '../prefire/occupancy';
 import {placePrefireTarget} from '../prefire/placement';
 import {createPrefireBotPlan, densePrefireRouteViews, prefireRouteViews, revealsPrefireStart,
@@ -35,24 +35,24 @@ const inside = (chunk: Chunk, point: readonly number[]) => point[0] > chunk.sour
   point[0] < chunk.sourceMax[0] - 17 && point[1] > chunk.sourceMin[1] + 17 &&
   point[1] < chunk.sourceMax[1] - 17 && point[2] >= chunk.sourceMin[2] && point[2] <= chunk.sourceMax[2];
 
-export function realMapApproaches(chunk: Chunk): readonly PrefireRoute[] {
-  return dust2Catalog.routes.filter(route => [route.spawn, ...route.path].every(point => inside(chunk, point)));
+export function realMapApproaches(chunk: Chunk, catalog: PrefireCatalog): readonly PrefireRoute[] {
+  return catalog.routes.filter(route => [route.spawn, ...route.path].every(point => inside(chunk, point)));
 }
 
 // Shared sourced/native-validated positions, not guessed encounter probabilities.
-export function realMapHoldPool(chunk: Chunk): PrefireAngle[] {
-  return dust2Catalog.routes.flatMap(prefireCandidates).filter((angle, index, all) => inside(chunk, angle.position) &&
+export function realMapHoldPool(chunk: Chunk, catalog: PrefireCatalog): PrefireAngle[] {
+  return catalog.routes.flatMap(prefireCandidates).filter((angle, index, all) => inside(chunk, angle.position) &&
     all.findIndex(other => angleIdentity(other) === angleIdentity(angle)) === index);
 }
 
 // Offline authoring only. The browser consumes the pinned result and does no
 // excursion search, roster LOS scan or navigation bake when starting a round.
-export function buildRealMapCourses(map: PrefireMap, chunk: Chunk): RoundCourse[] {
+export function buildRealMapCourses(map: PrefireMap, chunk: Chunk, catalog: PrefireCatalog): RoundCourse[] {
   const arena={minX:chunk.sourceMin[0]*UNIT,maxX:chunk.sourceMax[0]*UNIT,
     minZ:-chunk.sourceMax[1]*UNIT,maxZ:-chunk.sourceMin[1]*UNIT,solids:[],native:map.collision};
-  const candidates = realMapHoldPool(chunk);
+  const candidates = realMapHoldPool(chunk,catalog);
   const courses: RoundCourse[] = [];
-  for (const route of realMapApproaches(chunk)) {
+  for (const route of realMapApproaches(chunk,catalog)) {
     const views = prefireRouteViews([route.spawn, ...route.path], map.collision);
     const holds: RoundHold[] = [];
     for (const angle of candidates) {

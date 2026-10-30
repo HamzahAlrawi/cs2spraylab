@@ -50,6 +50,7 @@ import {DuelRadar} from './radar';
 import {actorShadows,ActorShadowRenderer} from './shadow-scene';
 import type {DuelScenario, PrefireStats} from './scenario';
 import {PrefireLighting,takePreparedLighting} from '../prefire/lighting';
+import {nativeMaps} from '../prefire/maps';
 import {StepView} from './step-view';
 import type {ShotState} from '../shot-state';
 import {NativeActorHitboxes} from './actor-hitboxes';
@@ -320,7 +321,8 @@ export class DuelEngine {
       this.scene.fog = new THREE.Fog('#bbc9d1', 75, 150);
       this.camera.far = 180;
       this.camera.updateProjectionMatrix();
-      this.renderer.domElement.setAttribute('aria-label', scenario.kind === 'duel-map' ? 'Dust 2 Duel map chunk' : 'Dust 2 prefire map');
+      const mapName=nativeMaps.has(scenario.mapId)?nativeMaps.get(scenario.mapId).name:scenario.name;
+      this.renderer.domElement.setAttribute('aria-label', `${mapName} ${scenario.kind === 'duel-map' ? 'Duel map chunk' : 'prefire map'}`);
     }
     this.scene.add(this.actors, this.covers, this.dynamicCovers, this.effects,this.actorShadows.group, this.replayScene.group);
     this.audio.setAcoustics(this.acoustics);
@@ -770,7 +772,13 @@ export class DuelEngine {
   }
 
   restart(continuous = false, changeMap = true) {
-    if (this.loadingMap) return;
+    if (this.loadingMap) {
+      if (!continuous) {
+        if (changeMap) this.pendingMapSelection = true;
+        else this.pendingSetupRestart = true;
+      }
+      return;
+    }
     if(continuous && this.sim.phase === 'result' && this.scenario?.stageRound) {
       if(this.nextRoundAbort)return;
       const controller=new AbortController();this.nextRoundAbort=controller;this.nextRoundError=undefined;this.report();

@@ -2,10 +2,9 @@ import {weaponIds, type Weapon} from '../config';
 import type {Equipment} from '../equipment';
 import {randomStream} from './rng';
 import {arenaDesigns} from './arena-layout';
-import realMaps from './real-map-catalog.json';
+import {defaultNativeMapId, nativeMaps} from '../prefire/maps';
 import {sanitizeUtilityLoadout, type UtilityKind} from './utility-loadout';
 import {parseManualLineup, type ManualLineup} from './manual-spawns';
-import {realMapApproaches} from './real-map-rounds';
 
 export type SkillLevel = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | '10+';
 export type BotBehavior = 'mixed' | 'holder' | 'patient' | 'aggressive';
@@ -45,6 +44,7 @@ export type DuelConfig = {
   arenaScale: number;
   mapDesign: 'random' | typeof arenaDesigns[number];
   generatedMaps: boolean;
+  mapId: string;
   realMapChunk: string;
   realMapCourse: string;
   manualLineup: ManualLineup | null;
@@ -61,7 +61,7 @@ export const duelDefaults: DuelConfig = {
   radarEnabled: true, radarRotate: true, radarScale: .7,
   arenaScale: 1,
   mapDesign: 'random',
-  generatedMaps: false, realMapChunk: 'random', routeGuide: true,
+  generatedMaps: false, mapId: defaultNativeMapId, realMapChunk: 'random', routeGuide: true,
   realMapCourse: 'standard', manualLineup: null,
   utilitiesEnabled: true, botUtilities: true, utilityLoadout: ['he', 'flash', 'smoke', 'molotov'],
 };
@@ -79,7 +79,9 @@ const behavior = (value: unknown): BotBehavior => behaviors.find(item => item ==
 
 export function sanitizeDuelConfig(raw: unknown): DuelConfig {
   const input = record(raw);
-  const chunk = realMaps.chunks.find(chunk => chunk.id === input.realMapChunk);
+  const mapId = nativeMaps.has(input.mapId) ? input.mapId : defaultNativeMapId;
+  const map = nativeMaps.get(mapId);
+  const chunk = map.chunks.find(chunk => chunk.id === input.realMapChunk);
   const custom = parseManualLineup(input.manualLineup);
   const count = integer(input.botCount, duelDefaults.botCount, 1, 5);
   const weapons = Array.isArray(input.weapons) ? [...new Set(input.weapons.filter(weapon))] : [];
@@ -114,10 +116,11 @@ export function sanitizeDuelConfig(raw: unknown): DuelConfig {
     arenaScale: finite(input.arenaScale, 1, count <= 2 ? .65 : 1, 1.5),
     mapDesign: arenaDesigns.find(name => name === input.mapDesign) ?? 'random',
     generatedMaps: input.generatedMaps === true,
-    realMapChunk: realMaps.chunks.some(chunk => chunk.id === input.realMapChunk) ? input.realMapChunk as string : 'random',
+    mapId,
+    realMapChunk: chunk?.id ?? 'random',
     realMapCourse: input.realMapCourse === 'shuffle' ? 'shuffle' :
-      chunk && realMapApproaches(chunk).some(course => course.id === input.realMapCourse) ? input.realMapCourse as string : 'standard',
-    manualLineup: input.generatedMaps !== true && custom?.chunkId === chunk?.id ? custom ?? null : null,
+      chunk && map.index.approaches[chunk.id]?.some(course => course.id === input.realMapCourse) ? input.realMapCourse as string : 'standard',
+    manualLineup: input.generatedMaps !== true && custom && custom.chunkId === chunk?.id && (custom.mapId ?? defaultNativeMapId) === mapId ? custom : null,
     routeGuide: input.routeGuide !== false,
     shortcutProtection: input.shortcutProtection !== false, overrides,
   };

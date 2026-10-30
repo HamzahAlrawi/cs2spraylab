@@ -132,6 +132,7 @@ describe('verified compressed map delivery',()=>{
     mockStorage();vi.stubGlobal('fetch',vi.fn(async()=>new Response(f.bytes)));
     expect(validateDelivery({version:1,files:{'chunk.bin':asset}}).files['chunk.bin']).toEqual(asset);
     expect(validDeliveredAsset({...asset,url:asset.url.replace('/inferno/','/de-inferno-2/')})).toBe(true);
+    expect(validDeliveredAsset({...asset,url:asset.url.replace('/inferno/','/de_inferno/')})).toBe(true);
     expect(validDeliveredAsset({...asset,url:`/models/objects/${asset.sha256}.gz`})).toBe(true);
     let module=await import('./asset-delivery');await module.fetchDeliveredAsset(asset);await module.settleAssetCache();
     vi.resetModules();module=await import('./asset-delivery');
@@ -140,7 +141,7 @@ describe('verified compressed map delivery',()=>{
     expect(fetch).toHaveBeenCalledOnce();
   });
   it.each(['%69nferno','inferno%2fother','inferno%5cother','%2e%2e','..','inferno/..','inferno/../dust2',
-    'inferno\\..','Inferno','-inferno','inferno_extra'])('rejects unsafe map slug %s',slug=>{
+    'inferno\\..','Inferno','-inferno','inferno.extra'])('rejects unsafe map slug %s',slug=>{
     const f=fixture('unsafe slug'),url=f.asset.url.replace('/dust2/',`/${slug}/`);
     expect(validDeliveredAsset({...f.asset,url})).toBe(false);
   });

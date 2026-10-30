@@ -1,14 +1,57 @@
 import * as THREE from 'three';
 
-const warmups = new WeakMap<THREE.WebGLRenderer, {closing: boolean; jobs: Set<Promise<void>>}>();
+type CompileRenderer = Pick<THREE.WebGLRenderer,'compileAsync'>;
+const warmups = new WeakMap<CompileRenderer, {closing: boolean; jobs: Set<Promise<void>>}>();
+type MaterialHold = {refs: number; requested: boolean; original: THREE.Material['dispose']; descriptor?: PropertyDescriptor};
+const materialHolds = new WeakMap<THREE.Material, MaterialHold>();
 
-/** Prepared maps retain their materials; keep renderer shutdown behind their compiler jobs. */
-export function compileRetainedShaders(renderer: THREE.WebGLRenderer, scene: THREE.Scene, camera: THREE.Camera) {
+function holdMaterial(material: THREE.Material) {
+  let hold = materialHolds.get(material);
+  if (!hold) {
+    hold = {refs: 0, requested: false, original: material.dispose,
+      descriptor: Object.getOwnPropertyDescriptor(material,'dispose')};
+    const owner = hold;
+    material.dispose = () => {owner.requested = true;};
+    materialHolds.set(material,hold);
+  }
+  hold.refs++;
+}
+
+function releaseMaterial(material: THREE.Material) {
+  const hold = materialHolds.get(material)!;
+  if (--hold.refs) return;
+  materialHolds.delete(material);
+  if (hold.descriptor) Object.defineProperty(material,'dispose',hold.descriptor);
+  else delete (material as Partial<THREE.Material>).dispose;
+  if (hold.requested) hold.original.call(material);
+}
+
+function holdSceneMaterials(scene: THREE.Scene, held: Set<THREE.Material>) {
+  scene.traverse(node => {
+    if (!(node instanceof THREE.Mesh || node instanceof THREE.Line || node instanceof THREE.Points || node instanceof THREE.Sprite)) return;
+    for (const material of Array.isArray(node.material) ? node.material : [node.material]) {
+      if (!held.has(material)) {holdMaterial(material); held.add(material);}
+    }
+  });
+}
+
+/** Defer owner disposal while Three polls the actual retained shader programs. */
+export function compileRetainedShaders(renderer: CompileRenderer, scene: THREE.Scene, camera: THREE.Camera) {
   let state = warmups.get(renderer);
   if (!state) {state = {closing: false, jobs: new Set()}; warmups.set(renderer,state);}
   if (state.closing) return Promise.resolve();
+  const held = new Set<THREE.Material>();
+  holdSceneMaterials(scene,held);
   let job: Promise<void>;
-  job = Promise.resolve().then(() => renderer.compileAsync(scene,camera,scene)).then(() => {}).finally(() => state!.jobs.delete(job));
+  job = Promise.resolve().then(() => {
+    if (state!.closing) return;
+    // Include materials added between scheduling and the synchronous compile entry.
+    holdSceneMaterials(scene,held);
+    return renderer.compileAsync(scene,camera,scene);
+  }).then(() => {}).finally(() => {
+    try {for (const material of held) releaseMaterial(material);}
+    finally {held.clear(); state!.jobs.delete(job);}
+  });
   state.jobs.add(job); return job;
 }
 
@@ -56,7 +99,7 @@ export function prewarmShaders(renderer: THREE.WebGLRenderer, scene: THREE.Scene
     clone.matrixAutoUpdate = false; clone.matrix.copy(node.matrixWorld); snapshot.add(clone);
   });
   let job: Promise<void>;
-  job = Promise.resolve().then(() => renderer.compileAsync(snapshot,camera,scene)).then(() => {}, () => {}).finally(() => {
+  job = Promise.resolve().then(() => state!.closing ? undefined : renderer.compileAsync(snapshot,camera,scene)).then(() => {}, () => {}).finally(() => {
     for (const material of materials.values()) material.dispose(); snapshot.clear(); state!.jobs.delete(job);
   });
   state.jobs.add(job);
@@ -64,8 +107,9 @@ export function prewarmShaders(renderer: THREE.WebGLRenderer, scene: THREE.Scene
 }
 
 export function disposeWarmRenderer(renderer: THREE.WebGLRenderer) {
-  const state = warmups.get(renderer);
-  if (!state) {renderer.dispose(); return;}
+  let state = warmups.get(renderer);
+  if (!state) {state = {closing: false, jobs: new Set()}; warmups.set(renderer,state);}
+  if (state.closing) return;
   state.closing = true;
   if (!state.jobs.size) renderer.dispose();
   else void Promise.allSettled([...state.jobs]).then(() => renderer.dispose());

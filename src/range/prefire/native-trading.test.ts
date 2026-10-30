@@ -1,3 +1,4 @@
+import {dust2Catalog} from './routes';
 import {afterAll, beforeAll, describe, expect, it} from 'vitest';
 import {existsSync, readFileSync} from 'node:fs';
 import * as THREE from 'three';
@@ -24,7 +25,7 @@ describe.skipIf(!existsSync(collisionPath))('native holder trade excursions', ()
     const route = prefireRoutes.find(route => route.id === id)!;
     const practice = sanitizePrefireConfig({population: 'all', botBehavior: 'static', returnFire: true, tradeEnabled: true, reactionMs: 300});
     const map = {scene: new THREE.Group(), collision, dispose() {}, settle: (point: Parameters<typeof placePrefireTarget>[1]) => placePrefireTarget(collision, point)};
-    const sim = new PrefireSimulation(map, practice, route, 7, defaults);
+    const sim = new PrefireSimulation(map, practice, route, 7, defaults, undefined, dust2Catalog);
     // Inspect plans in offline QA; production does not expose a hidden-player query.
     type QAController = Pick<PrefireBotController, 'command' | 'orderTrade' | 'snapshot'> & {tradePlan?: PrefireBotPlan};
     const controllers = (sim as unknown as {controllers: QAController[]}).controllers;
@@ -55,7 +56,7 @@ describe.skipIf(!existsSync(collisionPath))('native holder trade excursions', ()
     const route = prefireRoutes.find(route => route.id === 'long-doors')!;
     const practice = sanitizePrefireConfig({population: 'all', botBehavior: 'static', returnFire: true, tradeEnabled: true, reactionMs: 300});
     const sim = new PrefireSimulation({scene: new THREE.Group(), collision, dispose() {}, settle: point => placePrefireTarget(collision, point)},
-      practice, route, 7, defaults);
+      practice, route, 7, defaults, undefined, dust2Catalog);
     type QAController = Pick<PrefireBotController, 'command' | 'orderTrade' | 'snapshot'> & {tradePlan?: PrefireBotPlan};
     const controllers = (sim as unknown as {controllers: QAController[]}).controllers;
     const index = controllers.findIndex(controller => controller.tradePlan?.exposure && controller.tradePlan.attackFromAnchor);

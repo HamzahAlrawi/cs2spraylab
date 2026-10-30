@@ -7,7 +7,7 @@ import {DuelSimulation} from './simulation';
 import {testArena} from './geometry';
 import {UNIT} from '../actor-physics';
 
-const context = {chunkId: 'dust2-long-doors', collisionSha256: 'a'.repeat(64)};
+const context = {mapId: 'de_dust2', chunkId: 'dust2-long-doors', collisionSha256: 'a'.repeat(64)};
 const lineup = (): ManualLineup => ({...context, id: 'my-entry', name: 'Long clear', allowImmediateSight: false,
   entry: {id: 'entry', name: 'Player', feet: {x: 10, y: 0, z: -10}, yaw: .4, pitch: -.1},
   bots: [{id: 'hold', name: 'Pit', feet: {x: 12, y: 0, z: -10}, yaw: -.8, pitch: .12}]});

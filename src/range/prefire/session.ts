@@ -5,8 +5,8 @@ import {idleCommand, type ActorCommand} from '../duel/types';
 import {randomStream} from '../duel/rng';
 import type {Settings} from '../config';
 import {DEG, UNIT, type Vec} from '../actor-physics';
-import {dust2Catalog, prefireLineup, sourcePoint, type PrefireRoute} from './routes';
-import type {HoldingDensity, PrefireAngle, PrefireCatalog} from './schema';
+import {prefireLineup, sourcePoint} from './route-helpers';
+import type {HoldingDensity, PrefireAngle, PrefireCatalog, PrefireRoute} from './schema';
 import {angleIdentity, choosePrefireAngles, PREFIRE_WEIGHT_POLICY} from './occupancy';
 import type {PrefireMap} from './map';
 import {sanitizePrefireConfig, type PrefireConfig} from './config';
@@ -15,7 +15,7 @@ import {placePrefireTarget} from './placement';
 import {createPrefireBotPlan, prefireRouteViews, type PrefireBotPlan} from './bot-behavior';
 import {PrefireBotController} from './bot-controller';
 import {PrefireCoach} from './coaching';
-import {angleDiagnosis, loadAngleDiagnoses, saveAngleDiagnoses, loadPrefireHistory, prefireAttempt, savePrefireHistory, summarizePrefireHistory, type AngleDiagnosis} from './training-log';
+import {angleDiagnosis, loadAngleDiagnoses, saveAngleDiagnoses, loadPrefireHistory, prefireAttempt, savePrefireHistory, summarizePrefireHistory, prefireTrainingIdentity, type AngleDiagnosis, type PrefireAttempt, type PrefireTrainingIdentity} from './training-log';
 import {coveredAngleRetry} from './angle-practice';
 import {practiceSettingsKey} from '../adaptive-practice';
 import {setupKey} from '../setup-key';
@@ -60,17 +60,24 @@ export class PrefireSimulation extends DuelSimulation {
   readonly encounter?: EncounterSelection;
   private readonly controllers: PrefireBotController[];
   private suspended = false;
-  constructor(readonly map: PrefireMap, readonly practice: PrefireConfig, route: PrefireRoute, seed: number, settings: Settings, density?: HoldingDensity, catalog: PrefireCatalog = dust2Catalog) {
+  constructor(readonly map: PrefireMap, readonly practice: PrefireConfig, route: PrefireRoute, seed: number, settings: Settings, density: HoldingDensity | undefined, catalog: PrefireCatalog) {
+    const bounds = map.collision.bounds;
+    if (!bounds || ![bounds.minX, bounds.maxX, bounds.minZ, bounds.maxZ].every(Number.isFinite) ||
+      bounds.minX >= bounds.maxX || bounds.minZ >= bounds.maxZ) {
+      throw new Error('Prefire requires finite native collision bounds with positive X and Z extents.');
+    }
     route = practice.population === 'all' ? prefireLineup(route, practice.lineupId) : route;
     const random = randomStream(seed, 'prefire-occupancy');
     const encounter = practice.population === 'contextual' ? choosePrefireEncounter(catalog, route, random, {build: {
       mapId: catalog.id, catalogRevision: catalog.revision, gameBuild: map.collision.build, geometrySha256: map.collision.collisionSha256}}) : undefined;
     const selected = encounter?.angles ?? choosePrefireAngles(route, practice.population === 'all' ? 'all' : 'random', random, density, practice.botsPerRun);
-    const config = sanitizeDuelConfig({botCount: selected.length, skill: 1, behavior: 'holder', accuracy: .5,
+    const config = sanitizeDuelConfig({mapId: catalog.id, botCount: selected.length, skill: 1, behavior: 'holder', accuracy: .5,
       weapons: ['m4a4'], tradeEnabled: practice.returnFire && practice.tradeEnabled, roundSeconds: 180, feedbackSeconds: practice.reviewSeconds,
       radarEnabled: false, shortcutProtection: settings.protectShortcuts});
-    super(config, seed, {...(map.collision.bounds ?? {minX: -68, maxX: 55, minZ: -95, maxZ: 36}), solids: [], native: map.collision, design: `Prefire / ${route.name}`},
+    super(config, seed, {...bounds, solids: [], native: map.collision, design: `Prefire / ${route.name}`},
       settings.weapon, settings.sidearm, settings.primaryEnabled);
+    // Duel normalizes registry IDs; this scenario supplies its native arena/catalog explicitly.
+    this.config.mapId = catalog.id;
     this.route = route;
     this.selectedAngles = selected; this.encounter = encounter;
     if (!selected.length) this.actors.splice(1);
@@ -150,6 +157,7 @@ export class PrefireSimulation extends DuelSimulation {
 }
 
 export class PrefireSession implements DuelScenario {
+  get mapId() {return this.catalog.id;}
   readonly name: string;
   get routes() {return this.catalog.routes;}
   get density() {return this.catalog.density?.mapId === this.catalog.id && this.catalog.density.schemaVersion === 1 ? this.catalog.density : undefined;}
@@ -164,7 +172,7 @@ export class PrefireSession implements DuelScenario {
   private guideSimulation?: DuelSimulation;
   config: PrefireConfig;
   routeIndex: number;
-  private history = loadPrefireHistory();
+  private history: PrefireAttempt[];
   private recorded = new WeakSet<DuelSimulation>();
   private keys = new WeakMap<DuelSimulation, string>();
   private rosters = new WeakMap<DuelSimulation, readonly PrefireAngle[]>();
@@ -172,22 +180,31 @@ export class PrefireSession implements DuelScenario {
   private isolated = new WeakSet<DuelSimulation>();
   private attempts = 0;
   private readonly instance = `${Date.now()}-${Math.random().toString(36).slice(2)}`;
-  diagnoses = loadAngleDiagnoses();
+  diagnoses: AngleDiagnosis[];
+  readonly identity: PrefireTrainingIdentity;
   retry?: {angleId: string; route: PrefireRoute};
   activeKey = '';
   onReview?: (rows: AngleDiagnosis[], isolated: boolean) => void;
-  constructor(readonly map: PrefireMap, config: PrefireConfig, readonly catalog: PrefireCatalog = dust2Catalog) {
+  constructor(readonly map: PrefireMap, config: PrefireConfig, readonly catalog: PrefireCatalog) {
     if (!catalog.routes.length) throw new Error('Prefire catalog needs at least one validated course.');
     this.name = `${catalog.name} Prefire`;
-    this.config = sanitizePrefireConfig(config, this.routes.map(route => route.id));
+    this.config = this.sanitize(config);
+    this.identity = prefireTrainingIdentity(catalog, map.collision);
+    this.history = loadPrefireHistory(this.identity);
+    this.diagnoses = loadAngleDiagnoses(this.identity);
     this.routeIndex = Math.max(0, this.routes.findIndex(route => route.id === this.config.routeId));
     this.scene.add(map.scene, this.guide);
   }
   updateView(position: Vec) {this.map.updateVisibility?.(position);}
   loadingReport() {return this.map.loadStats;}
   feedbackSeconds() {return this.config.reviewSeconds;}
+  private sanitize(config: PrefireConfig) {
+    if (config.mapId !== this.catalog.id) throw new Error('Prefire config/catalog map identity mismatch.');
+    return sanitizePrefireConfig(config, this.catalog);
+  }
+  practiceKey(settings: Settings, config = this.config) {return setupKey([this.identity, practiceSettingsKey(settings), config]);}
   configure(config: PrefireConfig) {
-    const next = sanitizePrefireConfig(config, this.routes.map(route => route.id));
+    const next = this.sanitize(config);
     if (next.routeId !== this.config.routeId) this.routeIndex = Math.max(0, this.routes.findIndex(route => route.id === next.routeId));
     this.config = next;
   }
@@ -251,7 +268,7 @@ export class PrefireSession implements DuelScenario {
     this.navigators.set(sim, new PrefireNavigator(sim.route.path.map(point => placePrefireTarget(this.map.collision, point)), sim.route.name));
     this.rosters.set(sim, sim.selectedAngles);
     if (this.retry) this.isolated.add(sim);
-    this.keys.set(sim, setupKey([this.catalog.id, this.catalog.revision,
+    this.keys.set(sim, setupKey([this.identity,
       this.density ? [this.density.source.revision, this.density.sample.matches, this.density.sample.rounds] : null,
         route.id, sim.loadout, sim.actors.length - 1, this.config.population,
         this.config.population === 'random' ? PREFIRE_WEIGHT_POLICY.id : null, this.config.botsPerRun, this.config.botBehavior,
@@ -273,13 +290,13 @@ export class PrefireSession implements DuelScenario {
       const rows = review.angles.flatMap(angle => {
         const source = roster[angle.id - 1];
         if (!source) return [];
-        return [angleDiagnosis(angle, {id: `${id}-${angleIdentity(source)}`, key, routeId: route.id, angleId: angleIdentity(source),
+        return [angleDiagnosis(angle, {...this.identity, id: `${id}-${angleIdentity(source)}`, key, routeId: route.id, angleId: angleIdentity(source),
           scope: isolated ? 'angle' : 'route', date: new Date().toISOString()})];
       });
-      this.diagnoses = [...rows, ...this.diagnoses].slice(0, 160); saveAngleDiagnoses(this.diagnoses);
+      this.diagnoses = [...rows, ...this.diagnoses].slice(0, 160); saveAngleDiagnoses(this.diagnoses, this.identity);
       if (!isolated && roster.length) {
-        this.history.unshift(prefireAttempt(review, key, route.name, sim.outcome, sim.completedAt??sim.time));
-        this.history = this.history.slice(0, 40); savePrefireHistory(this.history);
+        this.history.unshift(prefireAttempt(review, key, route.name, sim.outcome, sim.completedAt??sim.time, this.identity));
+        this.history = this.history.slice(0, 40); savePrefireHistory(this.history, this.identity);
       }
       this.onReview?.(rows, isolated);
     }
@@ -298,7 +315,7 @@ export class PrefireSession implements DuelScenario {
       }
     }
     return {...review, routeId: route.id, routeName: route.name, headshotPercent: review.headRate,
-      stoppedPercent: review.settled, seconds: sim.completedAt??sim.time, progress: summarizePrefireHistory(this.history, key),
+      stoppedPercent: review.settled, seconds: sim.completedAt??sim.time, progress: summarizePrefireHistory(this.history, key, this.identity),
       encounter: sim instanceof PrefireSimulation ? sim.encounter : undefined,
       navigation};
   }

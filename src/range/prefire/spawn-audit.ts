@@ -2,7 +2,7 @@ import {advanceActor, idleInput, STEP, UNIT, type ActorKinematics, type Vec} fro
 import {moveOnTerrain} from '../actor-collision';
 import type {NativeMapCollision} from './native-collision';
 import {placePrefireTarget} from './placement';
-import type {SourcePoint} from './routes';
+import type {SourcePoint} from './schema';
 
 type Collision = Pick<NativeMapCollision, 'ray' | 'vertical' | 'fits' | 'sweep'>;
 

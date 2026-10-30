@@ -1,11 +1,14 @@
 import {createElement} from 'react';
 import {renderToStaticMarkup} from 'react-dom/server';
-import {describe, expect, it, vi} from 'vitest';
+import {afterEach, describe, expect, it, vi} from 'vitest';
 import {PrefireSetup, type PrefireSetupProps} from './PrefireSetup';
 import {prefireDefaults, prefirePresets} from './config';
 import type {PrefireCatalog, PrefireRoute} from './schema';
 import {PrefireCoach} from './coaching';
 import {summarizePrefireHistory} from './training-log';
+import {nativeMaps} from './maps';
+
+afterEach(() => vi.restoreAllMocks());
 
 const route: PrefireRoute = {
   id: 'route-a', name: 'Outside Long to pit', region: 'Long', startLabel: 'Outside Long / T approach',
@@ -25,6 +28,15 @@ const props: PrefireSetupProps = {
 const render = (patch: Partial<PrefireSetupProps> = {}) => renderToStaticMarkup(createElement(PrefireSetup, {...props, ...patch}));
 
 describe('Prefire setup hierarchy', () => {
+  it('only offers a map selector when multiple map descriptors are registered', () => {
+    expect(render()).not.toContain('aria-label="Prefire map"');
+    const first = nativeMaps.list()[0];
+    vi.spyOn(nativeMaps, 'list').mockReturnValue([first, {...first, id: 'synthetic', name: 'Synthetic Map'}]);
+    const html = render({config: {...props.config, mapId: 'synthetic'}, catalog: {...catalog, id: 'synthetic', name: 'Synthetic Map'}});
+    expect(html).toContain('aria-label="Prefire map"');
+    expect(html).toContain('value="synthetic" selected=""');
+    expect(html).toContain('Synthetic Map Prefire');
+  });
   it('keeps route, preset and lineup mode before the first closed native disclosure', () => {
     const html = render();
     const essentials = html.slice(0, html.indexOf('<details'));

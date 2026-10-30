@@ -49,3 +49,106 @@ it('retains prepared-map material ownership until compilation settles and blocks
   finish();await job;await new Promise(resolve=>setTimeout(resolve,0));
   expect(dispose).toHaveBeenCalledOnce();expect(released).not.toHaveBeenCalled();material.dispose();geometry.dispose();
 });
+
+function deferredCompile() {
+  let resolve!:()=>void,reject!:(error:Error)=>void;
+  const pending=new Promise<void>((yes,no)=>{resolve=yes;reject=no;});
+  const renderer={compileAsync:vi.fn(()=>pending),dispose:vi.fn()} as unknown as WebGLRenderer;
+  return {renderer,pending,resolve,reject};
+}
+
+it('defers actual material disposal requested during retained compilation and restores the original method',async()=>{
+  const scene=new Scene(),material=new MeshStandardMaterial(),geometry=new BoxGeometry();scene.add(new Mesh(geometry,material));
+  const original=vi.spyOn(material,'dispose'),released=vi.fn();material.addEventListener('dispose',released);
+  const compile=deferredCompile(),job=compileRetainedShaders(compile.renderer,scene,new PerspectiveCamera());
+  material.dispose();material.dispose();expect(original).not.toHaveBeenCalled();expect(released).not.toHaveBeenCalled();
+  await Promise.resolve();expect(compile.renderer.compileAsync).toHaveBeenCalledWith(scene,expect.any(PerspectiveCamera),scene);
+  disposeWarmRenderer(compile.renderer);disposeWarmRenderer(compile.renderer);
+  expect(compile.renderer.dispose).not.toHaveBeenCalled();
+  compile.resolve();await job;await new Promise(resolve=>setTimeout(resolve,0));
+  expect(original).toHaveBeenCalledOnce();expect(released).toHaveBeenCalledOnce();expect(material.dispose).toBe(original);
+  expect(compile.renderer.dispose).toHaveBeenCalledOnce();geometry.dispose();
+});
+
+it('reference-counts duplicate materials across concurrent jobs and renderers until the last poll settles',async()=>{
+  const scene=new Scene(),material=new MeshStandardMaterial(),geometry=new BoxGeometry(),original=material.dispose;
+  scene.add(new Mesh(geometry,[material,material]),new Mesh(geometry,material));
+  const released=vi.fn();material.addEventListener('dispose',released);
+  const first=deferredCompile(),second=deferredCompile(),camera=new PerspectiveCamera();
+  const a=compileRetainedShaders(first.renderer,scene,camera),b=compileRetainedShaders(second.renderer,scene,camera);
+  await Promise.resolve();material.dispose();first.resolve();await a;
+  expect(released).not.toHaveBeenCalled();expect(material.dispose).not.toBe(original);
+  material.dispose();second.resolve();await b;
+  expect(released).toHaveBeenCalledOnce();expect(material.dispose).toBe(original);
+  expect(Object.prototype.hasOwnProperty.call(material,'dispose')).toBe(false);geometry.dispose();
+});
+
+it('keeps a shared material alive when one job fails while another job on the same renderer still polls',async()=>{
+  const scene=new Scene(),material=new MeshStandardMaterial(),geometry=new BoxGeometry(),released=vi.fn();
+  scene.add(new Mesh(geometry,material));material.addEventListener('dispose',released);
+  const first=deferredCompile(),second=deferredCompile(),failure=Error('first compile failed');
+  vi.mocked(first.renderer.compileAsync).mockImplementationOnce(()=>first.pending.then(()=>scene))
+    .mockImplementationOnce(()=>second.pending.then(()=>scene));
+  const a=compileRetainedShaders(first.renderer,scene,new PerspectiveCamera());
+  const b=compileRetainedShaders(first.renderer,scene,new PerspectiveCamera());
+  const rejection=expect(a).rejects.toBe(failure);await Promise.resolve();
+  material.dispose();disposeWarmRenderer(first.renderer);first.reject(failure);await rejection;
+  expect(released).not.toHaveBeenCalled();expect(first.renderer.dispose).not.toHaveBeenCalled();
+  second.resolve();await b;await new Promise(resolve=>setTimeout(resolve,0));
+  expect(released).toHaveBeenCalledOnce();expect(first.renderer.dispose).toHaveBeenCalledOnce();geometry.dispose();
+});
+
+it.each([false,true])('releases requested materials on compile failure, including synchronous throws (%s)',synchronous=>{
+  const scene=new Scene(),material=new MeshStandardMaterial(),geometry=new BoxGeometry();scene.add(new Mesh(geometry,material));
+  const released=vi.fn(),failure=Error('compile failed');material.addEventListener('dispose',released);
+  const compile=deferredCompile();
+  if(synchronous)vi.mocked(compile.renderer.compileAsync).mockImplementation(()=>{throw failure;});
+  const job=compileRetainedShaders(compile.renderer,scene,new PerspectiveCamera());
+  const rejection=expect(job).rejects.toBe(failure);material.dispose();
+  return Promise.resolve().then(async()=>{
+    disposeWarmRenderer(compile.renderer);if(!synchronous)compile.reject(failure);
+    await rejection;await new Promise(resolve=>setTimeout(resolve,0));
+    expect(released).toHaveBeenCalledOnce();expect(compile.renderer.dispose).toHaveBeenCalledOnce();geometry.dispose();
+  });
+});
+
+it('restores unrequested material disposal after compilation without disposing a live owner',async()=>{
+  const scene=new Scene(),material=new MeshStandardMaterial(),geometry=new BoxGeometry(),original=material.dispose;
+  scene.add(new Mesh(geometry,material));const released=vi.fn();material.addEventListener('dispose',released);
+  const compile=deferredCompile(),job=compileRetainedShaders(compile.renderer,scene,new PerspectiveCamera());
+  compile.resolve();await job;expect(released).not.toHaveBeenCalled();expect(material.dispose).toBe(original);
+  material.dispose();expect(released).toHaveBeenCalledOnce();geometry.dispose();
+});
+
+it.each(['retained','snapshot'] as const)('skips queued and future %s compilation after renderer closing',async mode=>{
+  const scene=new Scene(),material=new MeshStandardMaterial(),geometry=new BoxGeometry(),released=vi.fn();
+  scene.add(new Mesh(geometry,material));material.addEventListener('dispose',released);
+  const renderer={compileAsync:vi.fn(),dispose:vi.fn()} as unknown as WebGLRenderer;
+  const compile=mode==='retained'?compileRetainedShaders:prewarmShaders;
+  const job=compile(renderer,scene,new PerspectiveCamera());material.dispose();disposeWarmRenderer(renderer);
+  await job;await new Promise(resolve=>setTimeout(resolve,0));
+  await compileRetainedShaders(renderer,scene,new PerspectiveCamera());await prewarmShaders(renderer,scene,new PerspectiveCamera());
+  disposeWarmRenderer(renderer);expect(renderer.compileAsync).not.toHaveBeenCalled();
+  expect(renderer.dispose).toHaveBeenCalledOnce();expect(released).toHaveBeenCalledOnce();geometry.dispose();
+});
+
+it('blocks late compilation even when shutdown precedes any warmup',async()=>{
+  const renderer={compileAsync:vi.fn(),dispose:vi.fn()} as unknown as WebGLRenderer;
+  disposeWarmRenderer(renderer);disposeWarmRenderer(renderer);
+  await compileRetainedShaders(renderer,new Scene(),new PerspectiveCamera());
+  await prewarmShaders(renderer,new Scene(),new PerspectiveCamera());
+  expect(renderer.compileAsync).not.toHaveBeenCalled();expect(renderer.dispose).toHaveBeenCalledOnce();
+});
+
+it('routes the public map compiler through material ownership and preserves cancellation after compilation',async()=>{
+  const {compileMapShaders}=await import('./prefire/map');
+  const scene=new Scene(),material=new MeshStandardMaterial(),geometry=new BoxGeometry(),released=vi.fn();
+  scene.add(new Mesh(geometry,material));material.addEventListener('dispose',released);
+  const compile=deferredCompile(),controller=new AbortController();
+  const job=compileMapShaders(compile.renderer,scene,new PerspectiveCamera(),controller.signal);
+  const rejection=expect(job).rejects.toMatchObject({name:'AbortError'});await Promise.resolve();
+  material.dispose();controller.abort();disposeWarmRenderer(compile.renderer);
+  expect(released).not.toHaveBeenCalled();expect(compile.renderer.dispose).not.toHaveBeenCalled();
+  compile.resolve();await rejection;await new Promise(resolve=>setTimeout(resolve,0));
+  expect(released).toHaveBeenCalledOnce();expect(compile.renderer.dispose).toHaveBeenCalledOnce();geometry.dispose();
+});

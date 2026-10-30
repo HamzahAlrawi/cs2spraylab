@@ -5,6 +5,9 @@ try {
   const {NativeMapCollision}=await vite.ssrLoadModule('/src/range/prefire/native-collision.ts');
   const {createRealMapArena,realMapChunks}=await vite.ssrLoadModule('/src/range/duel/real-map.ts');
   const {sanitizeDuelConfig}=await vite.ssrLoadModule('/src/range/duel/config.ts');
+  const {nativeMaps,defaultNativeMapId}=await vite.ssrLoadModule('/src/range/prefire/maps/index.ts');
+  const sourceCatalog=await nativeMaps.loadCatalog(defaultNativeMapId);
+  const roundData=JSON.parse(fs.readFileSync('src/range/duel/real-map-round-data.json','utf8'));
   const {exportNativeNavigation,installNativeNavigation,nativeClearSegment,nativeRouteTo}=await vite.ssrLoadModule('/src/range/duel/native-navigation.ts');
   const {DuelSimulation}=await vite.ssrLoadModule('/src/range/duel/simulation.ts');
   const {Group}=await import('three');
@@ -17,7 +20,7 @@ try {
       const config=sanitizeDuelConfig({botCount:5,skill:8,health:500,playerHealth:500});
       const bounds={minX:chunk.sourceMin[0]*.0254,maxX:chunk.sourceMax[0]*.0254,minZ:-chunk.sourceMax[1]*.0254,maxZ:-chunk.sourceMin[1]*.0254};
       if(fs.existsSync(base+'navigation.json'))installNativeNavigation({...bounds,native:collision},JSON.parse(fs.readFileSync(base+'navigation.json')));
-      const arena=createRealMapArena({collision,scene:new Group()},chunk,config,1,roundData.chunks[chunk.id]),data=exportNativeNavigation(arena);
+      const arena=createRealMapArena({collision,scene:new Group()},chunk,config,1,roundData.chunks[chunk.id],sourceCatalog),data=exportNativeNavigation(arena);
       const start={...arena.spawns.player.feet,y:arena.spawns.player.feet.y+1.6256},goal=arena.tactical.searchPoints[0];
       const closest=p=>data.nodes.map((node,id)=>({id,p:node.point,links:node.links.length,d:Math.hypot(node.point.x-p.x,node.point.y-p.y,node.point.z-p.z)}))
         .sort((a,b)=>a.d-b.d).slice(0,12).map(row=>({...row,clear:nativeClearSegment(p,row.p,arena)}));

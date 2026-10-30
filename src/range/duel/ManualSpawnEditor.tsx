@@ -1,7 +1,7 @@
 import {useState, type ChangeEvent} from 'react';
 import {Camera, ChevronRight, Download, MapPin, Play, Plus, RotateCcw, Save, Trash2, Upload} from 'lucide-react';
 import {exportManualLineups, importManualLineups, loadManualLineups, MANUAL_SPAWN_LIMITS,
-  mergeManualLineups, parseManualLineup, parseSpawnPose, saveManualLineups,
+  mergeManualLineups, parseManualLineup, parseSpawnPose, saveManualLineups, lineupMapId,
   type LineupValidation, type ManualLineup, type ManualLineupDraft, type ManualSpawn, type SpawnContext, type SpawnPose} from './manual-spawns';
 import './manual-spawns.css';
 
@@ -35,7 +35,7 @@ export function ManualSpawnEditor(props: ManualSpawnEditorProps) {
   const [validation, setValidation] = useState<LineupValidation>({errors: [], warnings: []});
   const [selected, setSelected] = useState('');
   const unavailable = props.disabled || !props.context;
-  const local = library.filter(lineup => lineup.chunkId === props.context?.chunkId);
+  const local = library.filter(lineup => lineup.chunkId === props.context?.chunkId && lineupMapId(lineup) === lineupMapId(props.context ?? {}));
   const change = (next: ManualLineupDraft) => {setDraft(next); setValidation({errors: [], warnings: []}); setMessage('Unsaved changes');};
   const persist = (next: ManualLineup[], success: string) => {
     try {saveManualLineups(localStorage, next); setLibrary(next); setMessage(success); return true;}
@@ -107,7 +107,7 @@ export function ManualSpawnEditor(props: ManualSpawnEditorProps) {
           const lineup = props.curated(draft.id); if (lineup) change({...lineup, name: draft.name});
         }}><RotateCcw size={16}/></button>
         <button type="button" title="Delete saved lineup" aria-label="Delete saved lineup" disabled={!selected || unavailable} onClick={() => {
-          if (persist(library.filter(lineup => lineup.chunkId !== props.context?.chunkId || lineup.id !== selected), 'Saved lineup deleted.')) {
+          if (persist(library.filter(lineup => lineup.chunkId !== props.context?.chunkId || lineup.id !== selected || lineupMapId(lineup) !== lineupMapId(props.context ?? {})), 'Saved lineup deleted.')) {
             if (selected === props.activeId) props.restore(); setSelected(''); change(newDraft(props.context));
           }
         }}><Trash2 size={16}/></button>

@@ -13,7 +13,7 @@ import {loadAngleDiagnoses, loadPrefireHistory} from './training-log';
 
 const route: PrefireRoute = {id: 'test', name: 'Test entry', spawn: [0, 0, 0], look: [400, 0, 0], path: [[160, 0, 0]],
   angles: [{id: 'corner', name: 'Corner', position: [400, 0, 0]}]};
-const collision = (blocked: boolean | 'cover' = 'cover') => ({fits: () => true,
+const collision = (blocked: boolean | 'cover' = 'cover') => ({bounds: {minX: -68, maxX: 55, minZ: -95, maxZ: 36}, fits: () => true,
   sweep: (_from: unknown, to: unknown) => ({position: to, fraction: 1, startSolid: false}),
   vertical: (_p: unknown, _from: number, to: number) => ({feet: Math.max(0, to), grounded: to <= 0, ceiling: false}),
   ray: (from: {x: number}) => blocked === true || blocked === 'cover' && from.x < 2
@@ -41,7 +41,7 @@ describe('safe per-angle practice', () => {
     const values = new Map<string, string>();
     vi.stubGlobal('localStorage', {getItem: (key: string) => values.get(key), setItem: (key: string, value: string) => values.set(key, value)});
     const session = new PrefireSession({scene: new THREE.Group(), collision: collision(), settle: sourcePoint, dispose() {}},
-      sanitizePrefireConfig({routeId: 'test', routeGuide: false, population: 'all'}, ['test']),
+      {...sanitizePrefireConfig({routeGuide: false, population: 'all'}), mapId: 'test-map', routeId: 'test'},
       {id: 'test-map', name: 'Test', revision: '1', routes: [route, {...route, id: 'next'}], sources: []});
     expect(session.startAngleRetry(angleIdentity(route.angles[0]))).toBe(true);
     const sim = session.create(defaults, 4);

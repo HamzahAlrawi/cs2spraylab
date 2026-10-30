@@ -1,15 +1,37 @@
 import {afterEach, describe, expect, it, vi} from 'vitest';
-import {loadPrefireConfig, prefirePreset, prefirePresets, savePrefireConfig, sanitizePrefireConfig, type PrefireConfig} from './config';
+import {loadPrefireConfig, prefirePreset, prefirePresets, savePrefireConfig, sanitizePrefireConfig, updatePrefireConfig, type PrefireConfig} from './config';
 import {prefireRoutes} from './routes';
+import {legacyNativeMapId, nativeMaps} from './maps';
 
 const defaults: PrefireConfig = {
+  mapId: legacyNativeMapId,
   routeId: 'long-doors', population: 'random', botsPerRun: 4, botBehavior: 'angle-specific', movingBots: true, returnFire: false, tradeEnabled: true,
   reactionMs: 1000, autoAdvance: true, routeGuide: true, navigationHints: true, reviewSeconds: 5,
 };
 const storageKey = 'spraylab.prefire.v1';
-afterEach(() => vi.unstubAllGlobals());
+afterEach(() => {vi.unstubAllGlobals(); vi.restoreAllMocks();});
 
 describe('Prefire configuration', () => {
+  it('resets courses on map switches even when a caller supplies an overlapping stale course', () => {
+    const index = {id: 'synthetic', routes: [{id: 'new-entry', name: 'New entry'},
+      {id: 'long-doors', name: 'Other doors', lineups: [{id: 'pit-clear', name: 'Other pit'}]}]};
+    const config = {...defaults, lineupId: 'pit-clear'};
+    expect(updatePrefireConfig(config, {mapId: index.id, routeId: config.routeId, lineupId: config.lineupId}, index))
+      .toEqual({...defaults, mapId: index.id, routeId: 'new-entry'});
+    expect(updatePrefireConfig(config, {routeGuide: false}).lineupId).toBe('pit-clear');
+  });
+  it('validates overlapping route and lineup IDs only against the selected lightweight map index', () => {
+    const index = {id: 'synthetic', routes: [
+      {id: 'long-doors', name: 'Other doors', lineups: [{id: 'other-lineup', name: 'Other lineup'}]},
+      {id: 'new-route', name: 'New route'},
+    ], aliases: {'old-other': 'long-doors'}};
+    expect(sanitizePrefireConfig({mapId: index.id, routeId: 'old-other', lineupId: 'other-lineup'}, index))
+      .toMatchObject({mapId: index.id, routeId: 'long-doors', lineupId: 'other-lineup'});
+    expect(sanitizePrefireConfig({mapId: index.id, routeId: 'long-doors', lineupId: 'pit-clear'}, index).lineupId).toBeUndefined();
+    expect(sanitizePrefireConfig({mapId: index.id, routeId: 'short-a'}, index).routeId).toBe('long-doors');
+    expect(sanitizePrefireConfig({routeId: 'short-a'}, index)).toMatchObject({mapId: legacyNativeMapId, routeId: 'short-a'});
+    expect(sanitizePrefireConfig({mapId: 'unregistered', routeId: 'new-route'}, index).mapId).toBe(legacyNativeMapId);
+  });
   it.each([undefined, null, false, 42, 'long-a', [], ['long-a'], {}])('defaults malformed input %j', raw => {
     expect(sanitizePrefireConfig(raw)).toEqual(defaults);
   });
@@ -25,6 +47,7 @@ describe('Prefire configuration', () => {
 
   it('preserves valid settings, including disabled default-on toggles', () => {
     const config: PrefireConfig = {
+      mapId: legacyNativeMapId,
       routeId: 'b-tunnels', population: 'random', botsPerRun: 3, botBehavior: 'static', movingBots: false, returnFire: true, tradeEnabled: false,
       reactionMs: 725, autoAdvance: false, routeGuide: false, navigationHints: false, reviewSeconds: 7,
     };
@@ -74,7 +97,8 @@ describe('Prefire configuration', () => {
     expect(sanitizePrefireConfig({routeId: 'long-doors', lineupId: 'pit-clear'}).lineupId).toBe('pit-clear');
     expect(sanitizePrefireConfig({routeId: 'long-doors', lineupId: 'not-a-lineup'}).lineupId).toBeUndefined();
     expect(sanitizePrefireConfig({routeId: 'short-a', lineupId: 'pit-clear'}).lineupId).toBeUndefined();
-    expect(sanitizePrefireConfig({routeId: 'pit-clear'}, ['custom'])).toEqual({...defaults, routeId: 'custom'});
+    expect(sanitizePrefireConfig({mapId: 'custom-map', routeId: 'pit-clear'}, {id: 'custom-map', routes: [{id: 'custom', name: 'Custom'}]}))
+      .toEqual({...defaults, mapId: 'custom-map', routeId: 'custom'});
   });
 
   it('returns fresh configuration objects', () => {
@@ -130,6 +154,20 @@ describe('Prefire configuration', () => {
 });
 
 describe('Prefire storage', () => {
+  it('round-trips a registered second map with its own colliding route and lineup IDs', () => {
+    const get = nativeMaps.get, has = nativeMaps.has;
+    const index = {id: 'synthetic', revision: 'r1', routes: [{id: 'long-doors', name: 'Other doors',
+      lineups: [{id: 'other-lineup', name: 'Other lineup'}]}], aliases: {}, approaches: {}};
+    const descriptor = {...get(legacyNativeMapId), id: index.id, name: 'Synthetic Map', index};
+    vi.spyOn(nativeMaps, 'has').mockImplementation((id: unknown): id is string => id === index.id || has(id));
+    vi.spyOn(nativeMaps, 'get').mockImplementation(id => id === index.id ? descriptor : get(id));
+    const values = new Map<string, string>();
+    vi.stubGlobal('localStorage', {getItem: (key: string) => values.get(key), setItem: (key: string, value: string) => values.set(key, value)});
+    const config = sanitizePrefireConfig({mapId: index.id, routeId: 'long-doors', lineupId: 'other-lineup'});
+    expect(savePrefireConfig(config)).toBe(true);
+    expect(loadPrefireConfig()).toEqual(config);
+    expect(loadPrefireConfig().mapId).toBe(index.id);
+  });
   it.each(['entry', 'pressure'] as const)('restores arrows disabled by the legacy %s preset, then respects an explicit opt-out', name => {
     let saved = JSON.stringify({...defaults, ...prefirePresets[name], routeGuide: false});
     vi.stubGlobal('localStorage', {getItem: () => saved, setItem: (_key: string, value: string) => {saved = value;}});

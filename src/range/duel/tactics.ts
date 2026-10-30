@@ -90,12 +90,13 @@ export class TacticalBrain {
   private holdGeometryAt = -Infinity;
   private holdGeometryResult = false;
   private readonly visitedLanes = new Map<string, number>();
+  private readonly cornerPressure = new Map<string, {at: number; count: number}>();
   private lastDodgeSign = 0;
   private combatStrafes = 0;
   private microGoal: Vec | null = null;
   private forceReposition = false;
   private lastHurtAt = -Infinity;
-  private scanAim: Vec = {x: 0, y: 1.58, z: 7};
+  private scanAim: Vec;
   private readonly approachAim=new ApproachAim();
   private brakeFromMicro = false;
   private arrivedGoal = '';
@@ -166,7 +167,9 @@ export class TacticalBrain {
     this.lane = this.makeLane(authoredLane === undefined ? candidates[(actorId + laneOffset) % candidates.length] : lanes[authoredLane]);
     if (this.lane.role === 'flank') this.flankPlan.begin(this.laneKey(this.lane), 0, -Infinity, null);
     this.preaimHeight = this.random() < traits.lowAimTendency ? 1 : 1.58;
-    this.scanAim = this.lane.watch ?? arena.tactical?.watchPoints[0] ?? {x: this.lane.side * 4.8, y: this.preaimHeight, z: 4};
+    this.scanAim = this.lane.watch ?? arena.tactical?.watchPoints[0] ?? {
+      x: (arena.minX + arena.maxX) / 2 + this.lane.side * (arena.maxX - arena.minX) * .2,
+      y: this.lane.edge.y + this.preaimHeight, z: arena.minZ + (arena.maxZ - arena.minZ) * .75};
     this.scanPoints = arena.tactical?.watchPoints ?? arena.solids.flatMap(solid => [-1, 1].map(side => ({
       x: solid.center.x + side * (solid.size.x / 2 + .45), y: this.preaimHeight,
       z: solid.center.z - solid.size.z / 2 - .2,
@@ -194,6 +197,10 @@ export class TacticalBrain {
   private get staticLane() {return !!this.arena.native && distance(this.lane.anchor, this.lane.edge) < .15;}
 
   hurt(time: number, healthRemaining: number) {
+    if (!Number.isFinite(time) || !Number.isFinite(healthRemaining)) return;
+    const key = this.laneKey(this.lane), prior = this.cornerPressure.get(key);
+    if (this.cornerPressure.size >= 64 && !this.cornerPressure.has(key)) this.cornerPressure.delete(this.cornerPressure.keys().next().value!);
+    this.cornerPressure.set(key, {at: time, count: prior && time >= prior.at && time - prior.at < 6 ? Math.min(3, prior.count + 1) : 1});
     const repeatedDamage = time - this.lastHurtAt < .35;
     this.lastHurtAt = time;
     const experienced = this.level === '10+' || Number(this.level) >= 6;
@@ -467,6 +474,13 @@ export class TacticalBrain {
       if (distance(lane.anchor, this.lane.anchor) < 1.2) weight *= force ? .08 : .35;
       const visitedAt = this.visitedLanes.get(this.laneKey(lane)) ?? -Infinity;
       if (time - visitedAt < 6) weight *= .18 + Math.max(0, time - visitedAt) / 15;
+      const pressure = this.cornerPressure.get(this.laneKey(lane));
+      if (pressure && time >= pressure.at && time - pressure.at < 8) {
+        // Remember our own punishment, not the hidden opponent. This changes a
+        // later reposition choice, never interrupts a live firing commitment.
+        const strength = pressure.count / 3 * (1 - (time - pressure.at) / 8);
+        weight *= 1 - (.2 + .55 * proficiency(this.level)) * strength;
+      }
       if (recent) {
         const alignment = laneThreatAlignment(lane, recent, this.lanes);
         weight *= alignment > 0 ? 1.6 : alignment < 0 ? .65 : 1;
@@ -511,7 +525,9 @@ export class TacticalBrain {
       ? this.heardAim : null;
     const expected = (soundAim && this.heardAt > this.lastSeenAt && time - this.lastSeenAt > .18
       ? soundAim : memoryAim ?? soundAim) ??
-      this.lane.watch ?? this.arena.tactical?.watchPoints[0] ?? {x: 0, y: this.preaimHeight, z: 8};
+      this.lane.watch ?? this.arena.tactical?.watchPoints[0] ?? {
+        x: (this.arena.minX + this.arena.maxX) / 2, y: this.lane.edge.y + this.preaimHeight,
+        z: this.arena.minZ + (this.arena.maxZ - this.arena.minZ) * .875};
     const axis = this.lane.axis ?? {x: this.lane.side, z: 0};
     this.sightEdge = {...this.lane.edge};
     for (let offset = -.25; offset <= 2.5; offset += .25) {
@@ -877,7 +893,7 @@ export class TacticalBrain {
     }
     if (this.phase === 'push' && (!this.searchGoal || distance(self.position, this.searchGoal) < .5)) {
       this.searchGoal = this.searchPoints.length ? this.searchPoints[this.searchIndex++ % this.searchPoints.length]
-        : this.arena.tactical?.entry ?? {x: this.lane.side * 4, y: 0, z: 6};
+        : this.arena.tactical?.entry ?? {...this.scanAim, y: self.feet};
       this.scanAim = {...this.searchGoal, y: (this.arena.native ? this.searchGoal.y : 0) + this.preaimHeight};
     }
     const soundAim = sound ? this.heardAim : null;
@@ -964,9 +980,9 @@ export class TacticalBrain {
         : this.phase === 'microstrafe' && this.microGoal ? this.microGoal : this.phase === 'investigate' && sound ?
         (this.arena.native ? sound : {x: clamp(sound.x, this.arena.minX + 2, this.arena.maxX - 2), y: 0, z: clamp(sound.z, this.arena.minZ + 2, this.arena.maxZ - 2)}) : this.phase === 'push' ?
         this.arena.tactical ? this.searchGoal ?? this.arena.tactical.entry :
-        this.searchGoal ?? (this.heard && time - this.heardAt < 3 ? {x: clamp(this.heard.x, this.arena.minX + 2, this.arena.maxX - 2), y: 0, z: clamp(this.heard.z, 1, this.arena.maxZ - 2)}
+        this.searchGoal ?? (this.heard && time - this.heardAt < 3 ? {x: clamp(this.heard.x, this.arena.minX + 2, this.arena.maxX - 2), y: 0, z: clamp(this.heard.z, this.arena.minZ + 2, this.arena.maxZ - 2)}
           : this.lastSeen && memoryAge < 8 ? {x: clamp(this.lastSeen.position.x, this.arena.minX + 2, this.arena.maxX - 2), y: 0,
-            z: clamp(this.lastSeen.position.z, 1, this.arena.maxZ - 2)} : {x: this.lane.side * this.arena.maxX * .367, y: 0, z: this.arena.maxZ * .417})
+            z: clamp(this.lastSeen.position.z, this.arena.minZ + 2, this.arena.maxZ - 2)} : this.lane.edge)
         : self.position;
     const moving = lateBrake || ['approach', 'expose', 'return', 'push', 'investigate', 'microstrafe', 'reload', 'close'].includes(this.phase);
     const goalKey = `${this.phase}:${goal.x.toFixed(2)}:${goal.z.toFixed(2)}`;

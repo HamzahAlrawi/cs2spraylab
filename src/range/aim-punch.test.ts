@@ -1,3 +1,4 @@
+import {dust2Catalog} from './prefire/routes';
 import {describe, expect, it, vi} from 'vitest';
 import {Group} from 'three';
 import fixture from './aim-punch-native-fixture.json';
@@ -118,12 +119,12 @@ function combatFixture(mode: 'duel' | 'prefire') {
   if (mode === 'duel') sim = new DuelSimulation(sanitizeDuelConfig({health: 500, playerHealth: 500}), 42, testArena());
   else {
     const map: PrefireMap = {scene: new Group(), dispose() {}, settle: p => ({x: p[0] * UNIT, y: p[2] * UNIT, z: -p[1] * UNIT}),
-      collision: {fits: () => true, sweep: (_from: unknown, to: unknown) => ({position: to, fraction: 1, startSolid: false}),
+      collision: {bounds: {minX: -68, maxX: 55, minZ: -95, maxZ: 36}, fits: () => true, sweep: (_from: unknown, to: unknown) => ({position: to, fraction: 1, startSolid: false}),
         vertical: (_p: unknown, _from: number, to: number) => ({feet: Math.max(0, to), grounded: to <= 0, ceiling: false}),
         ray: () => undefined} as unknown as NativeMapCollision};
     sim = new PrefireSimulation(map, sanitizePrefireConfig({population: 'all', botBehavior: 'static'}),
       {id: 'long-doors', name: 'Punch fixture', spawn: [0, 0, 0], look: [0, 400, 0], path: [],
-        angles: [{name: 'Holder', position: [0, 400, 0]}]}, 42, defaults);
+        angles: [{name: 'Holder', position: [0, 400, 0]}]}, 42, defaults, undefined, dust2Catalog);
     // Isolate the inherited damage/weapon path from the separately owned bot motor.
     const controllers = (sim as unknown as {controllers: PrefireBotController[]}).controllers;
     vi.spyOn(controllers[0], 'command').mockImplementation((_time, actor) => (actor as typeof sim.actors[number]).command);

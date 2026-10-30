@@ -2,9 +2,11 @@ import {afterEach,beforeEach,describe,expect,it,vi} from 'vitest';
 import loadNativeRadar,{SharedNativeRadarCache,type NativeRadarOverview} from './native-radar-cache';
 import {fetchDeliveredAsset} from '../prefire/asset-delivery';
 import manifest from './native-radar.json';
+import {defaultNativeMapId,nativeMaps} from '../prefire/maps';
+import type {NativeMapDefinition} from '../prefire/native-map-schema';
 
 vi.mock('../prefire/asset-delivery',()=>({fetchDeliveredAsset:vi.fn()}));
-beforeEach(()=>vi.mocked(fetchDeliveredAsset).mockReset());
+beforeEach(()=>{vi.mocked(fetchDeliveredAsset).mockReset();});
 
 function deferred<T>() {
   let resolve!:(value:T)=>void,reject!:(reason:unknown)=>void;
@@ -14,6 +16,12 @@ function deferred<T>() {
 const overview=()=>({image:{close:vi.fn()} as unknown as NativeRadarOverview['image'],
   bounds:{minX:0,maxX:100,minZ:0,maxZ:100},detail:'preserved'});
 afterEach(()=>vi.unstubAllGlobals());
+
+function secondMap():NativeMapDefinition {
+  const original=nativeMaps.get(defaultNativeMapId),assetId='test-map';
+  return {...original,id:'de_test_map',assetId,base:'/maps/test-map/',radar:{...original.radar!,map:assetId,
+    metadata:{...original.radar!.metadata,pos_x:100,pos_y:200,scale:2},delivery:{...original.radar!.delivery}}};
+}
 
 describe('shared native radar ownership',()=>{
   it('coalesces fetch/decode and shares ready data until the last idempotent lease release',async()=>{
@@ -129,5 +137,92 @@ describe('manifest-backed default native radar loader',()=>{
     const next=overview().image;decode.mockResolvedValueOnce(next);
     const lease=await loadNativeRadar();lease.dispose();expect(next.close).toHaveBeenCalledOnce();
     expect(value.close).toHaveBeenCalledOnce();
+  });
+  it('isolates second-map bitmaps and projection metadata even with identical delivery URLs and hashes',async()=>{
+    const map=secondMap(),first=overview().image,second=overview().image;
+    const decode=vi.fn().mockResolvedValueOnce(first).mockResolvedValueOnce(second);vi.stubGlobal('createImageBitmap',decode);
+    vi.mocked(fetchDeliveredAsset).mockResolvedValue(new ArrayBuffer(0));
+    const [a,b,joined]=await Promise.all([loadNativeRadar(),loadNativeRadar(undefined,map),loadNativeRadar(undefined,map)]);
+    expect(fetchDeliveredAsset).toHaveBeenCalledTimes(2);expect(decode).toHaveBeenCalledTimes(2);
+    expect(a.overview.image).toBe(first);expect(b.overview.image).toBe(second);expect(joined.overview).toBe(b.overview);
+    expect(b.overview.bounds.minX).toBeCloseTo(100*.0254);expect(b.overview.bounds.minZ).toBeCloseTo(-200*.0254);
+    expect(b.overview.bounds.maxX-b.overview.bounds.minX).toBeCloseTo(2*1024*.0254);
+    a.dispose();expect(first.close).toHaveBeenCalledOnce();expect(second.close).not.toHaveBeenCalled();
+    b.dispose();joined.dispose();expect(second.close).toHaveBeenCalledOnce();
+  });
+  it.each(['identity','revision','base','URL','encoded hash','decoded hash','metadata'])(
+    'does not reuse an active radar after changing its %s',async change=>{
+      const map=secondMap(),updated=secondMap(),first=overview().image,second=overview().image;
+      if(change==='identity')updated.id+='-other';
+      if(change==='revision')updated.revision+='-other';
+      if(change==='base')updated.base='/maps/other/';
+      if(change==='URL')updated.radar!.delivery.url=map.radar!.delivery.url.replace(nativeMaps.get(defaultNativeMapId).base,map.base);
+      if(change==='encoded hash') {
+        updated.radar!.delivery.sha256='a'.repeat(64);
+        updated.radar!.delivery.url=map.radar!.delivery.url.replace(map.radar!.delivery.sha256,'a'.repeat(64));
+      }
+      if(change==='decoded hash')updated.radar!.delivery.decodedSha256='b'.repeat(64);
+      if(change==='metadata')updated.radar!.metadata.pos_x=300;
+      vi.stubGlobal('createImageBitmap',vi.fn().mockResolvedValueOnce(first).mockResolvedValueOnce(second));
+      vi.mocked(fetchDeliveredAsset).mockResolvedValue(new ArrayBuffer(0));
+      const a=await loadNativeRadar(undefined,map),b=await loadNativeRadar(undefined,updated);
+      expect(fetchDeliveredAsset).toHaveBeenCalledTimes(2);expect(a.overview.image).toBe(first);expect(b.overview.image).toBe(second);
+      expect(fetchDeliveredAsset).toHaveBeenLastCalledWith(updated.radar!.delivery,expect.any(AbortSignal));
+      a.dispose();expect(first.close).toHaveBeenCalledOnce();expect(second.close).not.toHaveBeenCalled();
+      b.dispose();expect(second.close).toHaveBeenCalledOnce();
+    });
+  it('cancels a second-map waiter without affecting its peer or the default map',async()=>{
+    const map=secondMap(),downloads:{signal:AbortSignal;resolve:(value:ArrayBuffer)=>void}[]=[];
+    vi.mocked(fetchDeliveredAsset).mockImplementation((_asset,signal)=>new Promise<ArrayBuffer>(resolve=>downloads.push({signal:signal!,resolve})));
+    const first=overview().image,second=overview().image;
+    vi.stubGlobal('createImageBitmap',vi.fn().mockResolvedValueOnce(first).mockResolvedValueOnce(second));
+    const controller=new AbortController(),pending=loadNativeRadar(controller.signal,map);
+    const rejection=expect(pending).rejects.toMatchObject({name:'AbortError'});
+    const survivor=loadNativeRadar(undefined,map),other=loadNativeRadar();
+    await vi.waitFor(()=>expect(downloads).toHaveLength(2));controller.abort();await rejection;
+    expect(downloads.every(download=>!download.signal.aborted)).toBe(true);
+    downloads.forEach(download=>download.resolve(new ArrayBuffer(0)));
+    const [a,b]=await Promise.all([survivor,other]);expect(a.overview.image).not.toBe(b.overview.image);
+    a.dispose();b.dispose();expect(first.close).toHaveBeenCalledOnce();expect(second.close).toHaveBeenCalledOnce();
+  });
+  it('closes an aborted map late decode without poisoning either map cache',async()=>{
+    const map=secondMap(),late=deferred<ImageBitmap>(),old=overview().image as ImageBitmap;
+    const first=overview().image,second=overview().image;
+    const decode=vi.fn().mockReturnValueOnce(late.promise).mockResolvedValueOnce(first).mockResolvedValueOnce(second);
+    vi.stubGlobal('createImageBitmap',decode);vi.mocked(fetchDeliveredAsset).mockResolvedValue(new ArrayBuffer(0));
+    const controller=new AbortController(),pending=loadNativeRadar(controller.signal,map);
+    const rejection=expect(pending).rejects.toMatchObject({name:'AbortError'});
+    await vi.waitFor(()=>expect(decode).toHaveBeenCalledOnce());
+    const a=await loadNativeRadar();controller.abort();await rejection;
+    const b=await loadNativeRadar(undefined,map);late.resolve(old);
+    await vi.waitFor(()=>expect(old.close).toHaveBeenCalledOnce());
+    const joined=await loadNativeRadar(undefined,map),other=await loadNativeRadar();
+    expect(decode).toHaveBeenCalledTimes(3);expect(joined.overview.image).toBe(second);expect(other.overview.image).toBe(first);
+    a.dispose();b.dispose();joined.dispose();other.dispose();
+    expect(first.close).toHaveBeenCalledOnce();expect(second.close).toHaveBeenCalledOnce();
+  });
+  it('drops released map history and reloads rather than keeping unused radar bitmaps',async()=>{
+    const values:NativeRadarOverview['image'][]=[];
+    const decode=vi.fn(async()=>{const value=overview().image;values.push(value);return value;});
+    vi.stubGlobal('createImageBitmap',decode);vi.mocked(fetchDeliveredAsset).mockResolvedValue(new ArrayBuffer(0));
+    for(let i=0;i<12;i++) {
+      const map={...secondMap(),id:`de_test_${i}`},lease=await loadNativeRadar(undefined,map);
+      lease.dispose();lease.dispose();expect(values[i].close).toHaveBeenCalledOnce();
+    }
+    const again=await loadNativeRadar(undefined,{...secondMap(),id:'de_test_0'});
+    expect(decode).toHaveBeenCalledTimes(13);again.dispose();values.forEach(value=>expect(value.close).toHaveBeenCalledOnce());
+  });
+  it('rejects missing or mismatched radar manifests without using a default map asset',async()=>{
+    const missing=secondMap();delete missing.radar;await expect(loadNativeRadar(undefined,missing)).rejects.toThrow('radar');
+    const invalid=secondMap();invalid.radar!.map='other';await expect(loadNativeRadar(undefined,invalid)).rejects.toThrow('radar');
+    expect(fetchDeliveredAsset).not.toHaveBeenCalled();
+  });
+  it('never decodes rejected delivery bytes and closes a bitmap with invalid projection metadata',async()=>{
+    const map=secondMap(),decode=vi.fn();vi.stubGlobal('createImageBitmap',decode);
+    vi.mocked(fetchDeliveredAsset).mockRejectedValueOnce(Error('Map download digest mismatch'));
+    await expect(loadNativeRadar(undefined,map)).rejects.toThrow('digest mismatch');expect(decode).not.toHaveBeenCalled();
+    const invalid=secondMap();invalid.radar!.metadata.scale=0;const image=overview().image;
+    vi.mocked(fetchDeliveredAsset).mockResolvedValue(new ArrayBuffer(0));decode.mockResolvedValue(image);
+    await expect(loadNativeRadar(undefined,invalid)).rejects.toThrow('metadata');expect(image.close).toHaveBeenCalledOnce();
   });
 });

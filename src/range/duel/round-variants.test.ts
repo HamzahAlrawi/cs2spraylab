@@ -7,15 +7,16 @@ import {sanitizeDuelConfig} from './config';
 import {realMapApproaches, realMapHoldPool, type RoundCatalog} from './real-map-rounds';
 import {angleIdentity, prefireAnglesIncompatible} from '../prefire/occupancy';
 import type {PrefireMap} from '../prefire/map';
+import {dust2Catalog} from '../prefire/routes';
 
 const catalog = data as unknown as RoundCatalog;
 
 describe('offline real-map round variety', () => {
   it('covers all ten Prefire approaches in eight small selectable chunks', () => {
     expect(realMapChunks).toHaveLength(8);
-    expect(new Set(realMapChunks.flatMap(chunk => realMapApproaches(chunk).map(route => route.id))).size).toBe(10);
+    expect(new Set(realMapChunks.flatMap(chunk => realMapApproaches(chunk,dust2Catalog).map(route => route.id))).size).toBe(10);
     for (const chunk of realMapChunks) {
-      expect(realMapHoldPool(chunk).length).toBeGreaterThan(10);
+      expect(realMapHoldPool(chunk,dust2Catalog).length).toBeGreaterThan(10);
       expect(catalog.chunks[chunk.id].collisionSha256).toMatch(/^[a-f0-9]{64}$/);
       expect(catalog.chunks[chunk.id].courses.length).toBeGreaterThan(0);
     }
@@ -30,7 +31,7 @@ describe('offline real-map round variety', () => {
     const map = {collision, scene: new Group()} as unknown as PrefireMap;
     const starts = new Set<string>(), occupied = new Set<string>();
     for (let seed = 0; seed < 16; seed++) {
-      const arena = createRealMapArena(map, chunk, sanitizeDuelConfig({botCount: 5,realMapCourse:'shuffle'}), seed,catalog.chunks[chunk.id]);
+      const arena = createRealMapArena(map, chunk, sanitizeDuelConfig({botCount: 5,realMapCourse:'shuffle'}), seed,catalog.chunks[chunk.id],dust2Catalog);
       const course = baked.courses.find(course => course.id === arena.roundSetup!.course)!;
       const start = course.starts.find(start => start.viewIndex === arena.roundSetup!.start)!;
       starts.add(`${course.id}:${start.viewIndex}`);
@@ -43,7 +44,7 @@ describe('offline real-map round variety', () => {
       });
       for (let i = 0; i < angles.length; i++) for (let j = i + 1; j < angles.length; j++)
         expect(prefireAnglesIncompatible(angles[i], angles[j])).toBe(false);
-      expect(createRealMapArena(map, chunk, sanitizeDuelConfig({botCount: 5,realMapCourse:'shuffle'}), seed,catalog.chunks[chunk.id]).roundSetup).toEqual(arena.roundSetup);
+      expect(createRealMapArena(map, chunk, sanitizeDuelConfig({botCount: 5,realMapCourse:'shuffle'}), seed,catalog.chunks[chunk.id],dust2Catalog).roundSetup).toEqual(arena.roundSetup);
     }
     expect(starts.size).toBeGreaterThan(3);
     expect(occupied.size).toBeGreaterThan(8);

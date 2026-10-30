@@ -2,7 +2,8 @@ import {DEG, UNIT, type Vec} from '../actor-physics';
 import {moveOnTerrain} from '../actor-collision';
 import type {NativeMapCollision} from './native-collision';
 import {placePrefireTarget} from './placement';
-import {sourcePoint, type PrefireAngle, type SourcePoint} from './routes';
+import {sourcePoint} from './route-helpers';
+import type {PrefireAngle, SourcePoint} from './schema';
 import {actorHeadPoint, traceActor} from '../duel/geometry';
 
 export type PrefireBotBehavior = 'hold' | 'crouch-hide' | 'periodic-peek' | 'move-out';
