@@ -1,5 +1,6 @@
 import { execFileSync } from 'node:child_process';
 for (const args of [
+  ['tools/build-brand-assets.mjs'],
   ['tools/import-game.mjs'],
   ['tools/import-equipment.mjs'],
   ['tools/import-audio.mjs'],
@@ -16,11 +17,13 @@ for (const args of [
   ['tools/audit-utility-presentation.mjs'],
   ['tools/audit-utility-active-resources.mjs', '--reuse-extracted'],
   ['tools/import-utility-particles.mjs'],
+  ['tools/import-he-explosion.mjs'],
   ['tools/import-inferno-presentation.mjs'],
   ['tools/import-utility-presentation-sounds.mjs'],
   ['tools/import-utility-audio.mjs'],
   ['tools/optimize-assets.mjs', '--world-only'],
   ['tools/import-cosmetics.mjs'],
+  ['tools/repair-usp-bleeding-edge.mjs'],
   ['tools/import-knives.mjs'],
   ['tools/build-knives.mjs'],
   ['tools/import-knife-cosmetics.mjs'],
@@ -29,6 +32,7 @@ for (const args of [
   ['tools/build-cosmetic-actors.mjs'],
   ['tools/verify-weapon-data.mjs', '--write-fixture'],
   ['tools/build-duel-motion.mjs', '--refresh'],
+  ['tools/build-duel-flinches.mjs'],
   ['tools/blender-command.mjs', 'art/verify_target_grips.py'],
   ['tools/blender-command.mjs', 'art/render_target_preview.py'],
   ['tools/build-combat-model-delivery.mjs'],

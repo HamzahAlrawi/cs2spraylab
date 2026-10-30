@@ -24,6 +24,7 @@
     "test:browser": "playwright test",
     "assets:import": "node tools/import-game.mjs",
     "assets:check": "node tools/check-assets.mjs",
+    "source:check": "node tools/asset-policy.mjs",
     "assets:build": "node tools/build-assets.mjs",
     "check": "npm run test:run && npm run build",
     "deploy:cloudflare": "npm run build && wrangler pages deploy dist",

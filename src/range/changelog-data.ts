@@ -445,7 +445,7 @@ const october29BleedingEdgeChanges = {
   ]}],
 } as const satisfies ChangelogRelease;
 
-export const latestChanges = {
+const october29LocalRoundsChanges = {
   id:'update-2026-10-29-local-rounds',title:'Reusable chunks & smoother round starts (October 29)',baselineCommit:'7e6274f',
   sections:[
     {id:'persistent-content-cache',title:'Keep unchanged maps locally',items:[
@@ -460,7 +460,16 @@ export const latestChanges = {
   ],
 } as const satisfies ChangelogRelease;
 
+export const latestChanges = {
+  id:'update-2026-10-30-source-only',title:'Source-only project (October 30)',baselineCommit:'a2f1b6e',
+  sections:[{id:'source-only-assets',title:'Local extraction, source-only Git',items:[
+    'Runtime media and generated public files are excluded from Git. Native textures are external local assets rather than embedded source payloads; the HE core retains identical pixels.',
+    'Source checks guard against accidental asset commits. Local build steps now include HE smoke, the USP-S repair and native flinches; source ZIPs exclude media by default.',
+  ]}],
+} as const satisfies ChangelogRelease;
+
 export const changelogHistory = [
+  october29LocalRoundsChanges,
   october29BleedingEdgeChanges,
   october29HeSmokeChanges,
   october29RadarReviewChanges,

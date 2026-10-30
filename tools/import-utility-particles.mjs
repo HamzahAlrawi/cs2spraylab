@@ -72,16 +72,15 @@ for (const [kind, [particle, texture, stem, columns, size]] of Object.entries(so
     }
     composites.push({input: await image.png().toBuffer(), left: i % columns * size, top: Math.floor(i / columns) * size});
   }
-  const target = `${out}/${kind}.webp`;
   const atlas = await sharp({create: {width: columns * size, height: rows * size, channels: 4, background: '#00000000'}})
     .composite(composites).webp({lossless: true}).toBuffer();
-  // The small HE core stays in the owned manifest; no model/delivery manifest or existing atlas changes.
-  if (kind !== 'he') fs.writeFileSync(target, atlas);
+  const filename=kind==='he'?`he-core-${hash(atlas).slice(0,12)}.webp`:`${kind}.webp`;
+  fs.writeFileSync(`${out}/${filename}`,atlas);
   const def = parseKv3(definition.toString());
   assets[kind] = {particle, ...identity, texture, textureArchive: core ? 'core' : 'csgo',
     textureSha256: hash(fs.readFileSync(`${root}/${kind}.vtex_c`)), sequence: 0, nativeFrames: files,
     columns, rows, frames: files.length, cellSize: size,
-    url: kind === 'he' ? `data:image/webp;base64,${atlas.toString('base64')}` : `/utility-presentation/${kind}.webp`,
+    url: `/utility-presentation/${filename}`,
     sha256: hash(atlas), bytes: atlas.length,
     renderers: def.m_Renderers, channel: kind === 'smoke' ? 'A' : kind === 'he' ? 'A_RGBALPHA' : 'RGBA'};
 }

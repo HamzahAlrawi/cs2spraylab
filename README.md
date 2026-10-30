@@ -14,7 +14,7 @@ npm run dev -- --host 0.0.0.0
 
 Open the URL printed by Vite. Phones on the same network can use the LAN address. Tap the range to fire a selected burst or one semi-automatic shot. Desktop controls: mouse firing, WASD, Shift walking, Ctrl/C crouching, Space jumping, 1/2/3/4 for primary/sidearm/knife/Zeus, Q for the previous slot, R to reload (hold for slower silent reload), F to inspect, E to use a door or pick up a dropped weapon, G to drop, right click for scope/burst/R8 alternate fire/knife stab, Esc exit. Distance is determined by your position.
 
-**A fresh clone needs assets.** Extracted Valve models, textures and audio are intentionally excluded from this source repository. See [REVAMP.md](REVAMP.md#local-asset-pipeline) for the reproducible local conversion. The development workspace already has these files. Do not deploy an asset-less build.
+**A fresh clone needs assets.** Runtime models, textures, audio, generated runtime manifests and icons are excluded from Git, including past published asset commits after the October 30 history cleanup. Your local workspace retains its copies. Follow [source-only setup and extraction](docs/source-only-assets.md); the original range and icon are generated from project source, while game media comes from your own CS2 installation. `npm run source:check` guards the source boundary. Do not deploy an asset-less build.
 
 ## Training
 
@@ -121,13 +121,13 @@ Native audio events are generated with `node tools/import-audio.mjs` (Source2Vie
 
 ## Verify And Build
 
-Commit each completed iteration after validation, including its code, tests and relevant documentation. Report the commit hash; pushing and deployment remain separate, explicitly requested actions.
+Commit and push each completed iteration after validation, including its code, tests and relevant documentation. Deploy only when explicitly requested.
 
 The October 23 fidelity update adds native flinch layers and separate hit/kill/helmet/body-contact audio, fractional shot/recovery sampling, per-pellet aim punch and map-relative tactical comparisons. A fresh VRF 20.1 export against installed build 2000935 corrected AUG's retained primary/alternate reload fields to 3.2 seconds; the 35-weapon static comparison then passed. Unique export directories now prevent silent parser failures from reusing stale files. Historical engine-function fixtures retain their original builds and are not all revalidated against the current DLL. Death physics, movement transitions and navigation-derived acoustic routing are still approximations.
 
 Duel delivery uses hash-checked gzip resources and shared image bundles. Compressed bytes persist in browser CacheStorage (up to 512 MiB, quota-aware) independently of the 80 MiB RAM budget. Worker-built collision snapshots are stored locally under a separate 128 MiB limit and engine/source hashes; they require no extra network download. Previously played chunks reuse checked local assets across page reloads. Browser eviction, private mode, storage denial or changed content may require a download again. CacheStorage is origin-specific, so localhost, 127.0.0.1 and production do not share it.
 
-Capable devices prepare one complete next chunk during the current round: scene, collision, navigation, radar, textures, buffers and shaders. Only the active map, previous replay map and one prepared next map survive. Constrained devices retain byte-only prefetch; data saver/2G disable it. Short rounds or slow connections can still finish before preparation. Native chunk visibility reduces render work without changing collision. Critical actor/weapon bytes prepare alongside the chunk; actor and selected viewmodel preparation finish before entry. After changing converted assets, regenerate delivery manifests so stale compressed copies cannot hide the update:
+Capable devices prepare one complete next chunk during the current round and retain bounded older chunks in addition to the active/previous/next owners. Initial and prefetched chunks finish GPU preparation before play. Constrained devices retain byte-only prefetch; data saver/2G disable it. Short rounds or slow connections can still finish before preparation. Native chunk visibility reduces render work without changing collision. See [current loading contracts and limits](docs/local-chunk-loading-2026-10-29.md). After changing converted assets, regenerate delivery manifests so stale compressed copies cannot hide the update:
 
 ```sh
 node tools/build-combat-model-delivery.mjs

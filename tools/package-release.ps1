@@ -12,24 +12,17 @@ if ($LASTEXITCODE -ne 0) { throw 'Could not list tracked source files' }
 foreach ($file in $tracked) { [void]$files.Add($file) }
 $data = Get-Content -LiteralPath (Join-Path $root 'src/range/game-data.json') -Raw | ConvertFrom-Json
 if ($IncludeGameAssets) {
-    [void]$files.Add('public/revamp/audio/events.json')
-    $events = Get-Content -LiteralPath (Join-Path $root 'public/revamp/audio/events.json') -Raw | ConvertFrom-Json
-    foreach ($event in $events.events.PSObject.Properties.Value) {
-        foreach ($sample in $event.samples) {
-            if (!$sample.StartsWith('/audio/native/') -or $sample.Contains('..')) { throw "Invalid audio path: $sample" }
-            [void]$files.Add("public/revamp$sample")
+    # Include complete local runtime packages, not an obsolete fixed weapon list.
+    foreach ($asset in Get-ChildItem -LiteralPath (Join-Path $root 'public/revamp') -Recurse -File) {
+        if ($asset.Extension -match '^\.(glb|gltf|bin|gz|json|png|webp|wav|svg|ktx2?)$') {
+            [void]$files.Add($asset.FullName.Substring($root.Length + 1).Replace('\', '/'))
         }
-    }
-    foreach ($id in @($data.weapons.PSObject.Properties.Name) + @('usp', 'knife')) {
-        foreach ($file in @("models/$id.glb", "models/view-$id.glb", "models/$id.png", "audio/$id.wav")) {
-            [void]$files.Add("public/revamp/$file")
-        }
-    }
-    foreach ($file in @('models/target.glb', 'models/target.png', 'models/duel-motion.glb', 'models/range-kit.glb', 'textures/wall.webp', 'textures/wall-normal.webp', 'textures/floor.webp', 'textures/floor-normal.webp')) {
-        [void]$files.Add("public/revamp/$file")
     }
 }
 foreach ($file in $files) {
+    if (!$IncludeGameAssets -and (($file.StartsWith('public/') -and $file -ne 'public/revamp/_headers') -or $file -match '\.(glb|gltf|bin|webp|png|jpe?g|wav|ogg|mp3|mp4|fbx|svg|ico)$')) {
+        throw "Runtime asset in source-only archive: $file"
+    }
     $full = [IO.Path]::GetFullPath((Join-Path $root $file))
     if (!$full.StartsWith($root + [IO.Path]::DirectorySeparatorChar, [StringComparison]::OrdinalIgnoreCase)) { throw "Unsafe archive path: $file" }
     if (!(Test-Path -LiteralPath $full -PathType Leaf)) { throw "Missing release file: $file" }

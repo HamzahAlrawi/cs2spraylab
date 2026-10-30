@@ -194,14 +194,14 @@ describe('bounded utility presentation', () => {
       expect(initTexture).toHaveBeenCalledTimes(8);
       const names = ['utility-fire', 'utility-fire-edge', 'utility-fire-ground', 'utility-fire-incendiary', 'utility-fire-embers', 'utility-burst', 'utility-he-burst', 'utility-he-smoke'];
       [...Object.values(inferno.assets), particles.assets.flash, particles.assets.he, heExplosion.asset].forEach((asset, index) => {
-        // In particular the embedded HE URI must reach TextureLoader without a public-path prefix.
+        // Atlas paths are local assets; no native media is embedded in source JSON.
         expect(loader).toHaveBeenNthCalledWith(index + 1, asset.url);
         const material = instance(renderer.group, names[index]).material as THREE.ShaderMaterial;
         expect(material.uniforms.atlas.value).toBe(textures[index]);
         expect(textures[index].colorSpace).toBe(index < 5 || index === 7 ? THREE.SRGBColorSpace : THREE.NoColorSpace);
         expect(textures[index].generateMipmaps).toBe(false);
       });
-      expect(particles.assets.he.url).toMatch(/^data:image\/webp;base64,/);
+      expect(particles.assets.he.url).toMatch(/^\/utility-presentation\/he-core-[a-f0-9]{12}\.webp$/);
       renderer.dispose(); renderer.dispose();
       disposals.forEach(disposed => expect(disposed).toHaveBeenCalledTimes(1));
       const late = new UtilityRenderer(new THREE.Group(), new THREE.Group()); renderers.push(late);

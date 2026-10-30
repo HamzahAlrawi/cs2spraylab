@@ -75,7 +75,7 @@ describe('installed native grenade presentation evidence', () => {
         expect(sounds.events[event.name!]?.source).toBe(event.name);
     expect(sounds.provenance.outputBytes).toBeLessThan(32e6);
   });
-  it('decodes the external and embedded WebP atlases at their declared grid dimensions', async () => {
+  it('decodes locally extracted WebP atlases at their declared grid dimensions', async () => {
     for (const [kind, asset] of Object.entries(particles.assets)) {
       const bytes = asset.url.startsWith('data:') ? Buffer.from(asset.url.split(',')[1], 'base64') : fs.readFileSync(`public/revamp${asset.url}`);
       const metadata = await sharp(bytes).metadata();
@@ -99,6 +99,8 @@ describe('installed native grenade presentation evidence', () => {
       ['import-utility-models', 'build-utility-gestures'],
       ['build-utility-gestures', 'audit-utility-presentation'],
       ['audit-utility-active-resources', 'import-utility-particles'],
+      ['import-utility-particles', 'import-he-explosion'],
+      ['import-cosmetics', 'repair-usp-bleeding-edge'],
       ['audit-utility-presentation', 'import-utility-presentation-sounds'],
       ['audit-utility-presentation', 'import-utility-audio'],
       ['import-utility-models', 'build-combat-model-delivery']
