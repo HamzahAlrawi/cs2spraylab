@@ -3,6 +3,8 @@
 .progression-save-content {display:grid;gap:12px;padding:0 0 14px;min-width:0}
 .progression-save-content p {margin:0;overflow-wrap:anywhere}
 .progression-save-note,.progression-save-persistence p {color:#b7c0ba;font-size:11px;line-height:1.6}
+.progression-save-health {display:grid;justify-items:start;gap:8px;line-height:1.6;color:#b9e1cb}
+.progression-save-health p:empty {display:none}
 .progression-gift-form {display:grid;gap:5px;min-width:0}
 .progression-gift-form label {color:#d7e1da;font-size:12px}
 .progression-gift-entry {display:flex;align-items:stretch;gap:8px;min-width:0}

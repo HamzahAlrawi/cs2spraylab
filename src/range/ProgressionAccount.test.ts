@@ -10,7 +10,7 @@ const account = () => ({
   ready: Promise.resolve(),
   redeemCode: vi.fn(async () => ({success: true, reason: 'redeemed' as const, xp: 100, credits: 50, level: 2})),
   exportBackup: vi.fn(() => '{"test":"backup"}'),
-  restoreBackup: vi.fn(() => ({success: true, reason: 'restored' as const, level: 2})),
+  restoreBackup: vi.fn(async () => ({success: true, reason: 'restored' as const, level: 2})),
 });
 
 afterEach(() => {vi.unstubAllGlobals(); vi.useRealTimers();});
@@ -19,7 +19,7 @@ describe('Save & gifts presentation', () => {
   it('is a collapsed, labelled section with accessible gift and backup inputs', () => {
     const controller = account();
     const html = renderToStaticMarkup(createElement(ProgressionAccount, {controller}));
-    expect(html).toContain('<details class="progression-save-gifts">');
+    expect(html).toContain('<details class="progression-save-gifts" open="">');
     expect(html).toContain('<summary>Save &amp; gifts</summary>');
     expect(html).toMatch(/<label for="([^"]+)-gift">Gift code<\/label>/);
     expect(html).toMatch(/<textarea[^>]+id="[^"]+-gift"/);
@@ -42,7 +42,8 @@ describe('Save & gifts presentation', () => {
     expect(html).toContain('Loading progress...');
     expect(html).toContain('Checking persistent storage...');
     expect(html).toContain('Request persistent storage</button>');
-    expect(html.match(/<button[^>]*disabled=""/g)).toHaveLength(4);
+    expect(html.match(/<button[^>]*disabled=""/g)).toHaveLength(5);
+    expect(html).toContain('Retry saving progress</button>');
     expect(html).toContain('Progress is local to this browser. Clearing site data removes local copies. Export a backup to keep them.');
     expect(html).not.toMatch(/guaranteed|cloud sync|map cache/i);
   });

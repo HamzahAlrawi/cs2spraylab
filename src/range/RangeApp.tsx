@@ -296,7 +296,7 @@ export default function RangeApp() {
         <button ref={settingsButton} className={`settings-button${showSetupHint ? ' settings-nudge' : ''}`} aria-describedby={showSetupHint ? 'settings-hint-text' : undefined} onClick={() => open('settings')}><Settings2 size={17} />Settings</button>
       </div>
     </header>
-    {progressionState.storageStatus !== 'saved' && <div className="progression-storage-banner" role="status">
+    {progressionState.storageStatus !== 'saved' && progressionState.storageStatus !== 'saving' && <div className="progression-storage-banner" role="status">
       <span>{progressionState.storageStatus === 'unsupported-version' ? 'A newer progress save was protected. This session will not be saved.' :
         progressionState.storageStatus === 'corrupt-save' ? 'A damaged progress save was preserved. Restore a backup or export this session.' :
           'Progress is not being saved to this browser. Export a backup before leaving.'}</span>

@@ -123,7 +123,7 @@ describe('durable profile recovery', () => {
     expect(data.get(PROGRESSION_KEY)).toBe(future);
     expect(controller.getSnapshot().storageStatus).toBe('unsupported-version'); expect(mirror.write).not.toHaveBeenCalled();
   });
-  it('keeps uncommitted quota-failed progress exportable without labelling it saved or replacing the last durable mirror', async () => {
+  it('commits quota-failed progress to the independent mirror before labelling it saved', async () => {
     const {storage} = memory(profile()); let copied: ProfileCopy | undefined;
     const mirror = {read: async () => undefined, write: vi.fn(async (copy: ProfileCopy) => {copied = copy; return true;})};
     const controller = createProgressionController({storage, mirror}); await controller.ready;
@@ -134,10 +134,11 @@ describe('durable profile recovery', () => {
       activeSeconds: 10, movementReps: 0, targetsHit: 1}, 'same');
     const xp = controller.getSnapshot().profile.xp;
     expect(xp).toBeGreaterThan(profile().xp);
-    expect(controller.getSnapshot().storageStatus).toBe('memory-only');
+    expect(controller.getSnapshot().storageStatus).toBe('saving');
     expect(JSON.parse(controller.exportBackup()).copy.profile.xp).toBe(xp);
-    expect(mirror.write).not.toHaveBeenCalled();
-    expect((copied?.profile as {xp: number}).xp).toBe(profile().xp);
+    await controller.retryStorage();
+    expect(controller.getSnapshot().storageStatus).toBe('saved');
+    expect((copied?.profile as {xp: number}).xp).toBe(xp);
   });
   it('protects future independent copies instead of writing an older schema over them', async () => {
     const {storage} = memory(profile());
@@ -145,6 +146,119 @@ describe('durable profile recovery', () => {
     const controller = createProgressionController({storage, mirror}); await controller.ready;
     controller.resetEquipment('knife');
     expect(controller.getSnapshot().storageStatus).toBe('unsupported-version'); expect(mirror.write).not.toHaveBeenCalled();
+  });
+  it('retries transient read errors without reloading or overwriting a legacy save', async () => {
+    const {storage, data} = memory(profile());
+    const get = storage.getItem; let blocked = true;
+    storage.getItem = name => {if (blocked) throw Error('Access denied'); return get(name);};
+    const controller = createProgressionController({storage}); await controller.ready;
+    expect(controller.getSnapshot().storageStatus).toBe('memory-only');
+    const original = data.get(PROGRESSION_KEY);
+    blocked = false;
+    expect(await controller.retryStorage()).toBe(true);
+    expect(controller.getSnapshot().profile).toEqual(profile());
+    expect(JSON.parse(data.get(PROGRESSION_KEY)!).owned).toEqual(JSON.parse(original!).owned);
+  });
+  it('saves gifts, purchases, equips and earned XP to IndexedDB when localStorage is full', async () => {
+    const {storage} = memory(); storage.setItem = () => {throw Error('quota');};
+    let durable: ProfileCopy | undefined;
+    const mirror: ProfileMirror = {read: async () => durable, write: async copy => {durable = copy; return true;}};
+    const first = createProgressionController({storage, mirror, catalog}); await first.ready;
+    expect((await first.redeemCode(token)).success).toBe(true);
+    expect(first.purchase('test-finish').success).toBe(true);
+    expect(first.equip('ak47', 'test-finish')).toBe(true);
+    const id = first.beginDrill('guided', 'same')!;
+    first.completeDrill(id, {completion: 'completed', objectiveCompleted: true, score: 80, shots: 10, hits: 5,
+      activeSeconds: 10, movementReps: 0, targetsHit: 1}, 'same');
+    const expected = first.getSnapshot().profile;
+    expect(expected.xp).toBeGreaterThan(xpForLevel(50));
+    expect(await first.retryStorage()).toBe(true);
+    const reloaded = createProgressionController({storage, mirror, catalog}); await reloaded.ready;
+    expect(reloaded.getSnapshot().profile).toEqual(expected);
+    expect((await reloaded.redeemCode(token)).reason).toBe('already-redeemed');
+  });
+  it('uses the independent mirror even when every localStorage read throws', async () => {
+    const {storage} = memory(); storage.getItem = () => {throw Error('SecurityError');};
+    let durable = profileCopy(profile(), 100);
+    const mirror: ProfileMirror = {read: async () => durable, write: async copy => {durable = copy; return true;}};
+    const first = createProgressionController({storage, mirror, catalog}); await first.ready;
+    first.purchase('test-finish'); first.equip('ak47', 'test-finish');
+    expect(await first.retryStorage()).toBe(true);
+    first.exportBackup();
+    expect(first.getSnapshot().storageStatus).toBe('saved');
+    const second = createProgressionController({storage, mirror, catalog}); await second.ready;
+    expect(second.getSnapshot().profile).toEqual(first.getSnapshot().profile);
+  });
+  it('keeps failed writes exportable and retries them without consuming an uncommitted gift', async () => {
+    const {storage} = memory(), set = storage.setItem; let blocked = true, durable: ProfileCopy | undefined;
+    storage.setItem = (key, value) => {if (blocked) throw Error('quota'); set(key, value);};
+    const mirror: ProfileMirror = {read: async () => durable, write: async copy => {if (blocked) return false; durable = copy; return true;}};
+    const first = createProgressionController({storage, mirror}); await first.ready;
+    expect(await first.retryStorage()).toBe(false);
+    expect((await first.redeemCode(token)).reason).toBe('storage-unavailable');
+    expect(first.getSnapshot().profile.redeemedGifts).toEqual([]);
+    const id = first.beginDrill('guided', 'same')!;
+    first.completeDrill(id, {completion: 'completed', objectiveCompleted: true, score: 80, shots: 10, hits: 5,
+      activeSeconds: 10, movementReps: 0, targetsHit: 1}, 'same');
+    const expected = first.getSnapshot().profile;
+    expect(await first.retryStorage()).toBe(false);
+    expect(first.getSnapshot().storageStatus).toBe('memory-only');
+    expect(JSON.parse(first.exportBackup()).copy.profile).toEqual(expected);
+    blocked = false;
+    expect(await first.retryStorage()).toBe(true);
+    const second = createProgressionController({storage, mirror}); await second.ready;
+    expect(second.getSnapshot().profile).toEqual(expected);
+    expect((await first.redeemCode(token)).success).toBe(true);
+  });
+  it('does not label a pending or failed database transaction as saved', async () => {
+    const {storage} = memory(); storage.setItem = () => {throw Error('quota');};
+    let finish!: (saved: boolean) => void;
+    const mirror: ProfileMirror = {read: async () => undefined, write: () => new Promise(resolve => {finish = resolve;})};
+    const controller = createProgressionController({storage, mirror}); await controller.ready;
+    await Promise.resolve();
+    expect(controller.getSnapshot().storageStatus).toBe('saving');
+    finish(false); await new Promise(resolve => setTimeout(resolve, 0));
+    expect(controller.getSnapshot().storageStatus).toBe('memory-only');
+  });
+  it('imports a complete backup through the independent database when local writes fail', async () => {
+    const source = createProgressionController({storage: memory().storage, catalog});
+    await source.redeemCode(token); source.purchase('test-finish'); source.equip('ak47', 'test-finish');
+    let durable: ProfileCopy | undefined;
+    const {storage} = memory(); storage.setItem = () => {throw Error('quota');};
+    const mirror: ProfileMirror = {read: async () => durable, write: async copy => {durable = copy; return true;}};
+    const restored = createProgressionController({storage, mirror, catalog}); await restored.ready;
+    expect((await restored.restoreBackup(source.exportBackup())).success).toBe(true);
+    const reloaded = createProgressionController({storage, mirror, catalog}); await reloaded.ready;
+    expect(reloaded.getSnapshot().profile).toEqual(source.getSnapshot().profile);
+  });
+  it('keeps corrupt local bytes intact while saving recovered progress to the independent database', async () => {
+    const {storage, data} = memory(); data.set(PROGRESSION_KEY, '{damaged');
+    storage.setItem = () => {throw Error('quota');};
+    let durable = profileCopy(profile(), 100);
+    const mirror: ProfileMirror = {read: async () => durable, write: async copy => {durable = copy; return true;}};
+    const controller = createProgressionController({storage, mirror, catalog}); await controller.ready;
+    controller.purchase('test-finish');
+    expect(await controller.retryStorage()).toBe(true);
+    expect(data.get(PROGRESSION_KEY)).toBe('{damaged');
+    expect((durable.profile as {owned: string[]}).owned).toContain('test-finish');
+  });
+  it('recognizes identical concurrent startup commits without a false storage failure', async () => {
+    vi.spyOn(Date, 'now').mockReturnValue(1000);
+    const {storage} = memory(); storage.getItem = () => {throw Error('SecurityError');};
+    let durable = profileCopy(profile(), 100);
+    const mirror: ProfileMirror = {
+      read: async () => durable,
+      write: async (copy, expected) => {
+        if (expected !== durable.revision || copy.revision < durable.revision) return false;
+        durable = copy; return true;
+      },
+    };
+    const first = createProgressionController({storage, mirror}), second = createProgressionController({storage, mirror});
+    await Promise.all([first.ready, second.ready]);
+    await new Promise(resolve => setTimeout(resolve, 0));
+    expect(first.getSnapshot().storageStatus).toBe('saved');
+    expect(second.getSnapshot().storageStatus).toBe('saved');
+    expect(first.getSnapshot().profile).toEqual(second.getSnapshot().profile);
   });
 });
 
@@ -192,24 +306,24 @@ describe('gifts and portable recovery', () => {
     const text = controller.exportBackup(), exported = JSON.parse(text);
     exported.copy.profile.balance++;
     const before = controller.getSnapshot();
-    expect(controller.restoreBackup(JSON.stringify(exported)).reason).toBe('invalid-backup');
+    expect((await controller.restoreBackup(JSON.stringify(exported))).reason).toBe('invalid-backup');
     expect(controller.getSnapshot()).toBe(before);
     const second = createProgressionController({storage: memory().storage, catalog});
-    expect(second.restoreBackup(text)).toMatchObject({success: true, level: 50});
+    expect(await second.restoreBackup(text)).toMatchObject({success: true, level: 50});
     expect(second.getSnapshot().profile).toEqual(controller.getSnapshot().profile);
     expect((await second.redeemCode(token)).reason).toBe('already-redeemed');
   });
   it('restoring an older backup cannot remove already claimed gift receipts', async () => {
     const controller = createProgressionController({storage: memory().storage});
     const old = controller.exportBackup(); await controller.redeemCode(token);
-    expect(controller.restoreBackup(old).success).toBe(true);
+    expect((await controller.restoreBackup(old)).success).toBe(true);
     expect((await controller.redeemCode(token)).reason).toBe('already-redeemed');
   });
   it('rejects malformed/oversize imports, unsupported versions, and session-only redemption', async () => {
     const controller = createProgressionController({storage: memory().storage});
-    for (const text of ['{', '{}', ' '.repeat(1_000_001)]) expect(controller.restoreBackup(text).reason).toBe('invalid-backup');
+    for (const text of ['{', '{}', ' '.repeat(1_000_001)]) expect((await controller.restoreBackup(text)).reason).toBe('invalid-backup');
     const unsupported = JSON.parse(controller.exportBackup()); unsupported.copy = profileCopy({version: 999} as never, 1);
-    expect(controller.restoreBackup(JSON.stringify(unsupported)).reason).toBe('unsupported-version');
+    expect((await controller.restoreBackup(JSON.stringify(unsupported))).reason).toBe('unsupported-version');
     const session = createProgressionController({storage: null});
     expect((await session.redeemCode(token)).reason).toBe('storage-unavailable');
   });

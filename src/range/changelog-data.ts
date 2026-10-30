@@ -460,7 +460,7 @@ const october29LocalRoundsChanges = {
   ],
 } as const satisfies ChangelogRelease;
 
-export const latestChanges = {
+const october30SourceOnlyChanges = {
   id:'update-2026-10-30-source-only',title:'Source-only project (October 30)',baselineCommit:'a2f1b6e',
   sections:[{id:'source-only-assets',title:'Local extraction, source-only Git',items:[
     'Runtime media and generated public files are excluded from Git. Native textures are external local assets rather than embedded source payloads; the HE core retains identical pixels.',
@@ -468,7 +468,16 @@ export const latestChanges = {
   ]}],
 } as const satisfies ChangelogRelease;
 
+export const latestChanges = {
+  id:'update-2026-10-30-progress-saving',title:'Reliable local progress (October 30)',baselineCommit:'38767d0',
+  sections:[{id:'independent-progress-storage',title:'Save progress even when localStorage fails',items:[
+    'XP, credits, purchased finishes and equipped cosmetics can save through the independent profile database when localStorage is full or inaccessible. A save is confirmed only after the storage operation succeeds.',
+    'Save & gifts includes a real retry action and visible results. Eviction protection is separate from saving permission; blocked saves stay exportable, and existing recovery copies and gift receipts remain protected.',
+  ]}],
+} as const satisfies ChangelogRelease;
+
 export const changelogHistory = [
+  october30SourceOnlyChanges,
   october29LocalRoundsChanges,
   october29BleedingEdgeChanges,
   october29HeSmokeChanges,

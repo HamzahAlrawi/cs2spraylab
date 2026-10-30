@@ -12,7 +12,9 @@ async function boot(page: Page) {
 }
 async function account(page: Page) {
   await page.getByRole('button', {name: /Open armory/}).click();
-  await page.locator('.progression-save-gifts > summary').click();
+  if (!await page.locator('.progression-save-gifts').evaluate(node => (node as HTMLDetailsElement).open)) {
+    await page.locator('.progression-save-gifts > summary').click();
+  }
   await expect(page.getByLabel('Gift code', {exact: true})).toBeEnabled();
 }
 async function redeem(page: Page, code = gift) {
@@ -119,11 +121,30 @@ test('profile database transactions protect unknown future formats even when the
   expect(results).toEqual([{accepted: false, unchanged: true}, {accepted: false, unchanged: true}]);
 });
 
-test('quota failure shows a visible warning and leaves the gift usable after storage is restored', async ({page}) => {
+test('profile database compare-and-swap refuses to overwrite a save missed by an earlier read', async ({page}) => {
+  await boot(page);
+  const result = await page.evaluate(async () => {
+    const path = '/src/range/progression-persistence.ts';
+    const {browserProfileMirror, profileCopy} = await import(/* @vite-ignore */ path);
+    const mirror = browserProfileMirror('profile-revision-witness')!;
+    const original = profileCopy({version: 2, xp: 91385}, 100);
+    const incoming = profileCopy({version: 2, xp: 0}, 200);
+    await mirror.write(original, 0);
+    const staleAccepted = await mirror.write(incoming, 0);
+    const unchanged = JSON.stringify(await mirror.read()) === JSON.stringify(original);
+    const matchedAccepted = await mirror.write(incoming, 100);
+    return {staleAccepted, unchanged, matchedAccepted};
+  });
+  expect(result).toEqual({staleAccepted: false, unchanged: true, matchedAccepted: true});
+});
+
+test('failure of both stores shows a warning and leaves the gift usable after storage is restored', async ({page}) => {
   await boot(page); await account(page);
   await page.evaluate(key => {
     const set = Storage.prototype.setItem;
     (window as any).progressionOriginalSetItem = set;
+    (window as any).progressionOriginalDbOpen = indexedDB.open;
+    indexedDB.open = () => {throw new DOMException('Test database blocked', 'SecurityError');};
     Storage.prototype.setItem = function(name, value) {
       if (name.startsWith(key)) throw new DOMException('Test storage full', 'QuotaExceededError');
       return set.call(this, name, value);
@@ -133,10 +154,122 @@ test('quota failure shows a visible warning and leaves the gift usable after sto
   await expect(page.locator('.progression-level-label')).toContainText('Level 1');
   await page.getByRole('button', {name: 'Close armory', exact: true}).click();
   await expect(page.locator('.progression-storage-banner')).toContainText('Progress is not being saved');
-  await page.evaluate(() => {Storage.prototype.setItem = (window as any).progressionOriginalSetItem;});
+  await page.evaluate(() => {
+    Storage.prototype.setItem = (window as any).progressionOriginalSetItem;
+    indexedDB.open = (window as any).progressionOriginalDbOpen;
+  });
   await account(page); await redeem(page);
   await expect(page.locator('.progression-save-status')).toContainText('Gift redeemed');
   expect((await saved(page)).balance).toBe(72761);
   await page.getByRole('button', {name: 'Close armory', exact: true}).click();
   await expect(page.locator('.progression-storage-banner')).toHaveCount(0);
+});
+
+async function savedMirror(page: Page) {
+  return page.evaluate(async key => {
+    const db = await new Promise<IDBDatabase>((resolve, reject) => {
+      const request = indexedDB.open('spraylab-profile-backups-v1', 1);
+      request.onsuccess = () => resolve(request.result); request.onerror = () => reject(request.error);
+    });
+    try {return await new Promise<any>((resolve, reject) => {
+      const tx = db.transaction('profiles'), get = tx.objectStore('profiles').get(key);
+      let value: any; get.onsuccess = () => {value = get.result;};
+      tx.oncomplete = () => resolve(value?.profile); tx.onerror = () => reject(tx.error);
+    });} finally {db.close();}
+  }, key);
+}
+
+test('full localStorage keeps level, wallet, bought skins and equips across reload through IndexedDB', async ({page}) => {
+  await page.addInitScript(key => {
+    const set = Storage.prototype.setItem;
+    Storage.prototype.setItem = function(name, value) {
+      if (name.startsWith(key)) throw new DOMException('Test storage full', 'QuotaExceededError');
+      return set.call(this, name, value);
+    };
+    Object.defineProperty(navigator.storage, 'persist', {value: async () => false});
+  }, key);
+  await boot(page); await account(page);
+  await page.getByRole('button', {name: 'Request persistent storage', exact: true}).click();
+  await expect(page.locator('.progression-save-persistence')).toContainText('not granted');
+  await expect(page.locator('.progression-save-health')).toContainText('Progress saved on this browser');
+  await redeem(page); await expect(page.locator('.progression-save-status')).toContainText('Gift redeemed');
+  await page.getByRole('button', {name: 'Unlocks', exact: true}).click();
+  await page.getByLabel('Availability', {exact: true}).selectOption('affordable');
+  await page.locator('.progression-choice').first().click();
+  const detail = page.locator('.armory-detail'), label = await detail.locator('h3').innerText();
+  await detail.getByRole('button', {name: /^Buy /}).click();
+  await detail.getByRole('button', {name: 'Confirm purchase', exact: true}).click();
+  await detail.getByRole('button', {name: `Equip ${label}`, exact: true}).click();
+  await expect(page.locator('.progression-save-health')).toContainText('Progress saved on this browser');
+  const expected = await savedMirror(page);
+  expect(expected.xp).toBe(91385); expect(expected.balance).toBeLessThan(72761);
+  expect(expected.owned.length).toBeGreaterThan(0); expect(Object.values(expected.equipped)).toContain(expected.owned.at(-1));
+  await page.reload(); await account(page);
+  await expect(page.locator('.progression-level-label')).toContainText('Level 50');
+  await expect.poll(() => savedMirror(page)).toEqual(expected);
+  await redeem(page); await expect(page.locator('.progression-save-status')).toContainText('already been redeemed');
+});
+
+test('blocked localStorage reads still recover a complete profile from the independent database', async ({page}) => {
+  await page.addInitScript(key => {
+    const get = Storage.prototype.getItem;
+    Storage.prototype.getItem = function(name) {
+      if (name.startsWith(key)) throw new DOMException('Test blocked read', 'SecurityError');
+      return get.call(this, name);
+    };
+  }, key);
+  await boot(page); await account(page); await redeem(page);
+  await expect(page.locator('.progression-save-status')).toContainText('Gift redeemed');
+  await page.reload(); await account(page);
+  await expect(page.locator('.progression-level-label')).toContainText('Level 50');
+  await expect(page.locator('.progression-save-health')).toContainText('Progress saved on this browser');
+  await redeem(page); await expect(page.locator('.progression-save-status')).toContainText('already been redeemed');
+});
+
+test('actual browser localStorage quota does not lose progress on refresh', async ({page}) => {
+  await boot(page);
+  await page.evaluate(() => {
+    let index = 0;
+    for (const size of [100000, 1000, 16]) {
+      for (;;) {
+        try {localStorage.setItem(`quota-fixture-${index++}`, 'x'.repeat(size));} catch {break;}
+      }
+    }
+    try {localStorage.setItem('quota-probe', 'x'.repeat(2048)); throw Error('Quota fixture did not fill storage');}
+    catch (error) {if (!(error instanceof DOMException) || error.name !== 'QuotaExceededError') throw error;}
+  });
+  await account(page); await redeem(page);
+  await expect(page.locator('.progression-save-status')).toContainText('Gift redeemed');
+  await page.reload(); await account(page);
+  await expect(page.locator('.progression-level-label')).toContainText('Level 50');
+  await expect.poll(async () => (await savedMirror(page)).balance).toBe(72761);
+  await expect(page.locator('.progression-save-health')).toContainText('Progress saved on this browser');
+});
+
+test('retry saving gives explicit failure guidance and recovers without clearing site data', async ({page}, info) => {
+  await boot(page); await account(page);
+  await page.evaluate(key => {
+    (window as any).progressionOriginalSetItem = Storage.prototype.setItem;
+    (window as any).progressionOriginalDbOpen = indexedDB.open;
+    const set = Storage.prototype.setItem;
+    Storage.prototype.setItem = function(name, value) {
+      if (name.startsWith(key)) throw new DOMException('Test full', 'QuotaExceededError');
+      return set.call(this, name, value);
+    };
+    indexedDB.open = () => {throw new DOMException('Test blocked', 'SecurityError');};
+  }, key);
+  await page.getByRole('button', {name: 'Retry saving progress', exact: true}).click();
+  await expect(page.locator('.progression-save-health')).toContainText('Saving is still blocked');
+  await expect(page.locator('.progression-save-health')).toContainText('Do not clear site data');
+  await page.screenshot({path: `research/progress-save-blocked-${info.project.name}.png`});
+  await page.evaluate(() => {
+    Storage.prototype.setItem = (window as any).progressionOriginalSetItem;
+    indexedDB.open = (window as any).progressionOriginalDbOpen;
+  });
+  await page.getByRole('button', {name: 'Retry saving progress', exact: true}).click();
+  await expect(page.locator('.progression-save-health')).toContainText('Progress saved on this browser');
+  await expect(page.locator('.progression-save-health')).not.toContainText('Saving is still blocked');
+  await redeem(page); await expect(page.locator('.progression-save-status')).toContainText('Gift redeemed');
+  await page.reload(); await account(page);
+  await expect(page.locator('.progression-level-label')).toContainText('Level 50');
 });

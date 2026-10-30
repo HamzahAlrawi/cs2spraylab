@@ -93,10 +93,10 @@ export function ProgressionPanel({controller, equipmentLabels = {}, activeEquipm
         <details className="progression-account-history"><summary>Account totals<span>{ownedCount} / {collection.length} finishes owned</span></summary>
           <dl className="progression-stats"><div><dt>Finishes owned</dt><dd>{ownedCount} / {collection.length}</dd></div><div><dt>Credits earned</dt><dd>{number(profile.creditsEarned)}</dd></div>
             <div><dt>Credits spent</dt><dd>{number(profile.creditsSpent)}</dd></div><div><dt>Completed attempts</dt><dd>{number(completed)}</dd></div></dl></details>
-        {snapshot.storageStatus !== 'saved' && <p className="progression-storage-warning" role="status">{snapshot.storageStatus === 'unsupported-version'
+        {snapshot.storageStatus !== 'saved' && snapshot.storageStatus !== 'saving' && <p className="progression-storage-warning" role="status">{snapshot.storageStatus === 'unsupported-version'
           ? 'A newer save was found and kept unchanged. This session will not be saved.' : snapshot.storageStatus === 'corrupt-save'
             ? 'The local save is damaged and was kept unchanged. Export this session or restore a valid backup in Save & gifts.'
-            : 'Browser storage is unavailable. Progress is kept for this session only.'}</p>}
+            : 'Progress is not saved yet. Open Save & gifts to retry saving or export a backup before leaving.'}</p>}
         <div className="progression-views" role="group" aria-label="Armory view"><button type="button" aria-pressed={view === 'collection'} onClick={() => setView('collection')}><Paintbrush size={16} aria-hidden="true"/>Collection</button>
           <button type="button" aria-pressed={view === 'unlocks'} onClick={() => setView('unlocks')}><ShoppingCart size={16} aria-hidden="true"/>Unlocks</button>
           <button type="button" aria-label="Milestones" title="Milestones" aria-pressed={view === 'milestones'} onClick={() => setView('milestones')}><Target size={16} aria-hidden="true"/><span className="progression-view-label">Milestones</span></button>

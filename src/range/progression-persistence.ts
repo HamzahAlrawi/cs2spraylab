@@ -2,7 +2,7 @@ import type {ProgressionProfile, ProgressionStorage} from './progression';
 
 export const MAX_PROFILE_BYTES = 1_000_000;
 export type ProfileCopy = {format: 'spraylab-profile-copy'; version: 1; revision: number; checksum: string; profile: unknown};
-export type ProfileMirror = {read(): Promise<unknown>; write(copy: ProfileCopy): Promise<boolean>};
+export type ProfileMirror = {read(): Promise<unknown>; write(copy: ProfileCopy, expectedRevision?: number): Promise<boolean>};
 export const progressionBackupKeys = (key: string) => [`${key}.backup.latest`, `${key}.backup.previous`] as const;
 export function profileChecksum(value: unknown): string {
   const text = JSON.stringify(value); let hash = 2166136261;
@@ -67,13 +67,15 @@ export function browserProfileMirror(key: string): ProfileMirror | null {
     });
   return {
     read: () => run<unknown>('readonly', (store, finish) => {const get = store.get(key); get.onsuccess = () => finish(get.result);}, undefined),
-    write: copy => run<boolean>('readwrite', (store, finish) => {
+    write: (copy, expectedRevision) => run<boolean>('readwrite', (store, finish) => {
       const get = store.get(key);
       get.onsuccess = () => {
         const current = get.result;
         if (current?.format === 'spraylab-profile-copy' && (current.version !== 1 ||
           ![1, 2].includes(current.profile?.version))) {finish(false); return;}
         const previous = decodeProfileCopy(get.result);
+        // Compare inside the same transaction: a failed startup read must not erase an unseen save.
+        if (expectedRevision !== undefined && (previous?.revision ?? 0) !== expectedRevision) {finish(false); return;}
         if (previous && previous.revision > copy.revision) {finish(false); return;}
         const put = store.put(copy, key); put.onsuccess = () => finish(true);
       };

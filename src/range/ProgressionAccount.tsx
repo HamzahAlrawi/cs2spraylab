@@ -1,10 +1,10 @@
-import {useEffect, useId, useRef, useState, type ChangeEvent, type FormEvent} from 'react';
+import {useEffect, useId, useRef, useState, useSyncExternalStore, type ChangeEvent, type FormEvent} from 'react';
 import {Download, Gift, RotateCcw, ShieldCheck, Upload, X} from 'lucide-react';
 import type {ProgressionController} from './progression';
 import './progression-account.css';
 
 type GiftResult = Awaited<ReturnType<ProgressionController['redeemCode']>>;
-type RestoreResult = ReturnType<ProgressionController['restoreBackup']>;
+type RestoreResult = Awaited<ReturnType<ProgressionController['restoreBackup']>>;
 type Persistence = 'checking' | 'available' | 'requesting' | 'granted' | 'denied' | 'unsupported' | 'unavailable';
 type Notice = {text: string; error?: boolean};
 const MAX_BACKUP_BYTES = 1024 * 1024;
@@ -63,25 +63,32 @@ export function downloadProgressionBackup(text: string, date = new Date()): void
 
 const persistenceText: Record<Persistence, string> = {
   checking: 'Checking persistent storage...',
-  available: 'Persistent storage has not been granted.',
+  available: 'Eviction protection is optional. Saving progress does not require this permission.',
   requesting: 'Requesting persistent storage...',
   granted: 'Persistent storage granted. Clearing site data can still remove progress.',
-  denied: 'Persistent storage was not granted. Keep an exported backup.',
+  denied: 'Eviction protection was not granted. This does not prevent normal saves. Keep an exported backup.',
   unsupported: 'Persistent storage requests are not supported in this browser.',
   unavailable: 'Persistent storage status is unavailable. Keep an exported backup.',
 };
 
 export function ProgressionAccount({controller}: {controller: ProgressionController}) {
+  const {storageStatus} = useSyncExternalStore(controller.subscribe, controller.getSnapshot, controller.getSnapshot);
   const id = useId();
   const [ready, setReady] = useState(false), [code, setCode] = useState('');
   const [busy, setBusy] = useState<'redeeming' | 'reading' | 'restoring' | null>(null);
   const [notice, setNotice] = useState<Notice>({text: ''});
   const [pendingBackup, setPendingBackup] = useState<string | null>(null);
   const [persistence, setPersistence] = useState<Persistence>('checking');
+  const [retrying, setRetrying] = useState(false), [saveNotice, setSaveNotice] = useState('');
+  const [saveOpen, setSaveOpen] = useState(storageStatus !== 'saved' && storageStatus !== 'saving');
   const mounted = useRef(false), locked = useRef(false), persistenceRevision = useRef(0);
   const giftInput = useRef<HTMLTextAreaElement>(null), fileInput = useRef<HTMLInputElement>(null);
   const confirmation = useRef<HTMLDivElement>(null), importButton = useRef<HTMLButtonElement>(null);
   const noticeNode = useRef<HTMLParagraphElement>(null), nextFocus = useRef<'gift' | 'import' | 'notice' | null>(null);
+
+  useEffect(() => {
+    if (storageStatus !== 'saved' && storageStatus !== 'saving') setSaveOpen(true);
+  }, [storageStatus]);
 
   useEffect(() => {
     mounted.current = true;
@@ -157,11 +164,12 @@ export function ProgressionAccount({controller}: {controller: ProgressionControl
     } finally {locked.current = false; if (mounted.current) setBusy(null);}
   }
 
-  function restoreBackup() {
+  async function restoreBackup() {
     if (!ready || locked.current || pendingBackup === null) return;
     locked.current = true; setBusy('restoring');
     try {
-      const result = controller.restoreBackup(pendingBackup);
+      const result = await controller.restoreBackup(pendingBackup);
+      if (!mounted.current) return;
       setNotice({text: backupRestoreFeedback(result), error: !result.success});
     } catch {setNotice({text: 'Backup could not be restored. Try again.', error: true});}
     finally {
@@ -170,23 +178,45 @@ export function ProgressionAccount({controller}: {controller: ProgressionControl
     }
   }
 
+  async function retrySave() {
+    if (retrying) return;
+    setRetrying(true); setSaveNotice('Checking and saving progress...');
+    try {
+      const saved = await controller.retryStorage();
+      if (mounted.current) setSaveNotice(saved ? 'Progress saved on this browser.' :
+        'Saving is still blocked. Export a backup now. Allow site data for spraylab.pages.dev in Chrome settings, then retry. Do not clear site data.');
+    } catch {if (mounted.current) setSaveNotice('Could not save progress. Export a backup before leaving, then retry.');}
+    finally {if (mounted.current) setRetrying(false);}
+  }
+
   async function requestPersistence() {
     if (persistence === 'requesting' || persistence === 'granted') return;
     ++persistenceRevision.current;
     setPersistence('requesting');
+    const saving = retrySave();
     try {
       const storage = navigator.storage;
-      if (typeof storage?.persist !== 'function') {setPersistence('unsupported'); return;}
-      const granted = await storage.persist();
-      if (mounted.current) setPersistence(granted ? 'granted' : 'denied');
+      if (typeof storage?.persist !== 'function') setPersistence('unsupported');
+      else {
+        const granted = await storage.persist();
+        if (mounted.current) setPersistence(granted ? 'granted' : 'denied');
+      }
     } catch {if (mounted.current) setPersistence('unavailable');}
+    await saving;
   }
 
   const disabled = !ready || busy !== null || pendingBackup !== null;
-  return <details className="progression-save-gifts">
+  return <details className="progression-save-gifts" open={saveOpen} onToggle={event => setSaveOpen(event.currentTarget.open)}>
     <summary>Save &amp; gifts</summary>
     <div className="progression-save-content">
       <p className="progression-save-note">Progress is local to this browser. Clearing site data removes local copies. Export a backup to keep them.</p>
+      <div className="progression-save-health">
+        <p role="status" aria-live="polite">{storageStatus === 'saved' ? 'Progress saved on this browser.' : storageStatus === 'saving' ? 'Saving progress...' :
+          storageStatus === 'unsupported-version' ? 'A newer save is protected. Update SprayLab before saving.' : storageStatus === 'corrupt-save' ?
+            'A damaged save is protected. Export this session or import a valid backup.' : 'Progress is not saved yet. Retry saving or export a backup before leaving.'}</p>
+        <button type="button" onClick={retrySave} disabled={!ready || retrying || busy !== null || storageStatus === 'unsupported-version'}><RotateCcw size={16} aria-hidden="true"/>{retrying ? 'Retrying...' : 'Retry saving progress'}</button>
+        <p role="status" aria-live="polite" aria-atomic="true">{saveNotice}</p>
+      </div>
       <form className="progression-gift-form" onSubmit={redeem} aria-busy={busy === 'redeeming'}>
         <label htmlFor={`${id}-gift`}>Gift code</label>
         <div className="progression-gift-entry"><textarea ref={giftInput} id={`${id}-gift`} rows={2} value={code} autoComplete="off" spellCheck={false} autoCapitalize="none"

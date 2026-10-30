@@ -17,18 +17,21 @@ has an independent IndexedDB copy in `spraylab-profile-backups-v1` / `profiles`.
 Unknown future schemas are protected, not migrated back to an older schema.
 
 Startup compares the local copies with IndexedDB before mounting a drill or
-issuing reward tokens. Normal writes remain synchronous and small; only the tiny
-independent mirror is queued asynchronously. No map downloads or scene data are
+issuing reward tokens. Normal writes use small synchronous local copies when
+available, with a tiny independent IndexedDB copy queued asynchronously. No map downloads or scene data are
 included. Storage events refresh other tabs, and mutations refresh the current
 saved revision before computing awards or purchases. Gift claims use a Web Lock
 where available. This is not a server-backed transactional account system, and
 ordinary simultaneous cross-tab writes cannot be guaranteed fully serializable.
 
-If every synchronous profile-copy write fails (for example, full localStorage),
-the new session remains explicitly memory-only and exportable. A failed commit
-is not promoted into the mirror or described as saved. This keeps another stale
-tab from promoting old localStorage over an independent mirror-only reward.
-Gift claims require a successful synchronous commit; a failed claim is retryable.
+As of the October 30 storage fix, IndexedDB also works independently when
+localStorage reads or writes fail. Ordinary changes are labelled `saving` until
+the database transaction commits; if both backends fail, they remain explicitly
+memory-only and exportable. Gifts and backup imports wait for a successful local
+copy or database transaction before reporting success. Failed gifts do not consume
+their receipt. Database writes compare the previously observed revision inside
+the transaction, protecting a save that was missed by a failed or stale read.
+Local-copy writes still have the cross-tab limitations described above.
 
 The Armory's **Save & gifts** section exports/imports a complete JSON backup,
 including wallet, cosmetics, milestones, achievements and gift receipts. Import
@@ -37,7 +40,10 @@ an older backup retains already-redeemed gift IDs from the current profile.
 Checksums detect accidental damage; they are not an anti-cheat signature.
 
 Persistent storage is requested only from an explicit button. A denial is not
-reported as protection. Browser storage is origin-specific: `localhost:5176`,
+reported as protection and does not prevent normal saving. **Retry saving progress**
+reacquires accessible storage, compares recovery copies, and retries real writes;
+the eviction-protection button also starts that retry without waiting for a
+permission prompt. Neither button can override browser policies. Browser storage is origin-specific: `localhost:5176`,
 `127.0.0.1:5176`, preview deployments and `spraylab.pages.dev` are separate saves.
 Use export/import to move between them. **Clearing all site data, changing browser
 profiles, private browsing or deleting the browser profile can remove every local

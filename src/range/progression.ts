@@ -58,7 +58,7 @@ export type ProgressionProfile = Readonly<{
   redeemedGifts: readonly string[];
 }>;
 export type ProgressionStorage = Pick<Storage, 'getItem' | 'setItem'>;
-export type StorageStatus = 'saved' | 'memory-only' | 'unsupported-version' | 'corrupt-save';
+export type StorageStatus = 'saved' | 'saving' | 'memory-only' | 'unsupported-version' | 'corrupt-save';
 export type XpNotice = Readonly<{
   id: string; xp: number; source: 'duel' | DrillMode | 'collection' | 'gift' | 'recovery';
   levelBefore: number; levelAfter: number; unlockedIds: readonly string[];
@@ -341,7 +341,9 @@ export type ProgressionController = {
   purchase(cosmeticId: string): PurchaseResult;
   redeemCode(code: string): Promise<GiftResult>;
   exportBackup(): string;
-  restoreBackup(text: string): RestoreResult;
+  restoreBackup(text: string): Promise<RestoreResult>;
+  /** Retry real profile writes, independently of the browser's eviction permission. */
+  retryStorage(): Promise<boolean>;
   dismissNotification(): void;
   dispose(): void;
 };
@@ -357,14 +359,19 @@ export function createProgressionController(options: {
   const catalog = prepareCosmeticCatalog(options.catalog);
   const key = options.storageKey ?? PROGRESSION_KEY;
   let storage = options.storage ?? null;
-  if (options.storage === undefined) try {storage = typeof localStorage === 'undefined' ? null : localStorage;} catch {storage = null;}
+  const acquireStorage = () => {
+    if (options.storage === undefined) try {storage = typeof localStorage === 'undefined' ? null : localStorage;} catch {storage = null;}
+  };
+  acquireStorage();
   let raw: unknown, storageStatus: StorageStatus = storage ? 'saved' : 'memory-only', revision = 0;
-  let lastCopy: ProfileCopy | undefined, writeBlocked = false;
+  let lastCopy: ProfileCopy | undefined, writeBlocked = false, localWriteBlocked = false, localReadable = false, mirrorSavedRevision = -1;
   const future = (value: unknown) => record(value).version !== undefined && ![1, PROGRESSION_VERSION].includes(record(value).version as number);
   const read = () => {
+    localReadable = false; localWriteBlocked = false;
     if (!storage) return;
     try {
       const copies = readProfileCopies(storage, key), main = copies[0];
+      localReadable = true;
       if (copies.some(copy => copy.unsupported || future(copy.raw))) {storageStatus = 'unsupported-version'; writeBlocked = true; return;}
       const valid = copies.filter(copy => usableSavedProfile(copy.raw)).sort((a, b) => b.revision - a.revision);
       const best = valid[0];
@@ -373,55 +380,81 @@ export function createProgressionController(options: {
         try {
           if (main.text.length > MAX_PROFILE_BYTES) throw Error('Oversize save');
           storage.setItem(`${key}.corrupt`, main.text);
-        } catch {writeBlocked = true;}
+        } catch {localWriteBlocked = true;}
         if (!best) storageStatus = 'corrupt-save';
       }
       return best;
-    } catch {storageStatus = 'memory-only'; storage = null;}
+    } catch {if (storageStatus !== 'saving' && mirrorSavedRevision !== revision) storageStatus = 'memory-only';}
   };
   const initial = read();
+  let loadedProfile = !!initial;
   if (initial) {raw = initial.raw; revision = initial.revision;}
   let snapshot: ProgressionSnapshot = Object.freeze({profile: sanitizeProgression(raw, catalog), storageStatus, notification: null});
   const recognized = unlockAchievements(snapshot.profile, catalog, levelProgress(snapshot.profile.xp).level, 0);
   if (recognized.ids.length) snapshot = Object.freeze({...snapshot, profile: sanitizeProgression({...snapshot.profile, achievements: recognized.state}, catalog)});
   const listeners = new Set<() => void>();
   let active: ActiveAttempt | null = null, disposed = false, serial = 0;
-  const mirror = options.mirror === undefined ? options.storage === undefined && storage ? browserProfileMirror(key) : null : options.mirror;
+  const mirror = options.mirror === undefined ? options.storage === undefined ? browserProfileMirror(key) : null : options.mirror;
   let restoring = !!mirror, hydrated = !mirror, redeeming = false, volatile = false;
   let mirrorWrites: Promise<unknown> = Promise.resolve();
   const session = typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function' ? crypto.randomUUID() : `${Date.now().toString(36)}-${Math.random().toString(36).slice(2)}`;
   const notify = () => {for (const listener of listeners) listener();};
-  const queueMirror = (copy: ProfileCopy) => {
+  const queueMirror = (copy: ProfileCopy, locallySaved = false) => {
     if (mirror && hydrated && !writeBlocked) mirrorWrites = mirrorWrites.then(async () => {
       if (writeBlocked || disposed) return false;
-      const saved = await mirror.write(copy);
+      let committed = copy;
+      let saved = await mirror.write(copy, Math.max(0, mirrorSavedRevision));
+      if (!saved) {
+        const current = decodeProfileCopy(await mirror.read());
+        if (current && usableSavedProfile(current.profile) && !future(current.profile)) {
+          if (current.checksum === copy.checksum && current.revision >= copy.revision) {
+            // Another startup/tab may already have committed the identical profile.
+            committed = current; saved = true;
+          } else if (current.revision < copy.revision && (locallySaved || current.checksum === copy.checksum)) {
+            saved = await mirror.write(copy, current.revision);
+          }
+        }
+      }
       if (writeBlocked || disposed) return false;
-      if (saved && !volatile && copy.revision === revision && profileChecksum(snapshot.profile) === copy.checksum && storageStatus !== 'unsupported-version') {
-        lastCopy = copy; storageStatus = 'saved'; volatile = false;
-        if (snapshot.storageStatus !== 'saved') {snapshot = Object.freeze({...snapshot, storageStatus}); notify();}
+      if (saved) mirrorSavedRevision = committed.revision;
+      if (copy.revision === revision && profileChecksum(snapshot.profile) === copy.checksum && storageStatus !== 'unsupported-version') {
+        if (saved) {lastCopy = committed; revision = Math.max(revision, committed.revision); storageStatus = 'saved'; volatile = false;}
+        else if (storageStatus === 'saving') storageStatus = 'memory-only';
+        if (snapshot.storageStatus !== storageStatus) {snapshot = Object.freeze({...snapshot, storageStatus}); notify();}
       }
       return saved;
-    }).catch(() => false);
+    }).catch(() => {
+      if (!disposed && copy.revision === revision && storageStatus === 'saving') {
+        storageStatus = 'memory-only'; snapshot = Object.freeze({...snapshot, storageStatus}); notify();
+      }
+      return false;
+    });
   };
-  const save = (profile: ProgressionProfile): boolean => {
-    if (storageStatus === 'unsupported-version' || writeBlocked || !storage) return false;
+  const save = (profile: ProgressionProfile, fallback = true): boolean => {
+    if (storageStatus === 'unsupported-version' || writeBlocked) return false;
+    acquireStorage();
     const current = read();
-    if (writeBlocked || !storage) return false;
+    if (writeBlocked) return false;
     // Do not overwrite a save that changed after the operation's synchronization.
     if (current && current.revision > revision) {writeBlocked = true; storageStatus = 'memory-only'; return false;}
     const next = profileCopy(profile, Math.max(Date.now(), revision + 1));
-    if (!writeProfileCopies(storage, key, next, lastCopy)) return false;
-    revision = next.revision; lastCopy = next; storageStatus = 'saved'; volatile = false; queueMirror(next); return true;
+    if (!storage || !localReadable || localWriteBlocked || !writeProfileCopies(storage, key, next, lastCopy)) {
+      if (fallback && mirror && hydrated) {
+        revision = next.revision; storageStatus = 'saving'; queueMirror(next);
+      }
+      return false;
+    }
+    revision = next.revision; lastCopy = next; loadedProfile = true; storageStatus = 'saved'; volatile = false; queueMirror(next, true); return true;
   };
   const synchronize = () => {
     if (disposed) return;
     const candidate = read();
-    if (candidate && candidate.revision > revision) {
+    if (candidate && (!loadedProfile || candidate.revision > revision)) {
       if (volatile) {
         writeBlocked = true; storageStatus = 'memory-only';
         snapshot = Object.freeze({...snapshot, storageStatus}); notify(); return;
       }
-      revision = candidate.revision;
+      revision = Math.max(revision, candidate.revision); loadedProfile = true;
       const profile = sanitizeProgression(candidate.raw, catalog);
       lastCopy = profileCopy(profile, revision);
       snapshot = Object.freeze({profile, storageStatus, notification: null}); notify();
@@ -433,8 +466,8 @@ export function createProgressionController(options: {
     if (!disposed && (!event.key || event.key === key || event.key.startsWith(`${key}.backup.`))) synchronize();
   };
   const publish = (profile: ProgressionProfile, notification = snapshot.notification, requireSaved = false) => {
-    const saved = save(profile);
-    if (!saved && storageStatus !== 'unsupported-version' && storageStatus !== 'corrupt-save') storageStatus = 'memory-only';
+    const saved = save(profile, !requireSaved);
+    if (!saved && storageStatus !== 'unsupported-version' && storageStatus !== 'corrupt-save' && storageStatus !== 'saving') storageStatus = 'memory-only';
     if (!saved && requireSaved) {
       snapshot = Object.freeze({...snapshot, storageStatus}); notify(); return false;
     }
@@ -447,26 +480,59 @@ export function createProgressionController(options: {
     if (!mirror && !save(snapshot.profile) && !writeBlocked) storageStatus = 'memory-only';
     snapshot = Object.freeze({...snapshot, storageStatus});
   }
-  const ready: Promise<void> = (mirror ? mirror.read().then(value => {
+  const acceptMirror = (value: unknown) => {
     synchronize();
     const copy = decodeProfileCopy(value);
+    if (copy && usableSavedProfile(copy.profile) && !future(copy.profile)) mirrorSavedRevision = copy.revision;
     if (record(value).format === 'spraylab-profile-copy' && record(value).version !== 1 || copy && future(copy.profile)) {
       writeBlocked = true; storageStatus = 'unsupported-version';
     }
     else if (copy && usableSavedProfile(copy.profile) && copy.revision > revision && !disposed && storageStatus !== 'unsupported-version') {
+      if (volatile && copy.checksum !== profileChecksum(snapshot.profile)) {
+        writeBlocked = true; storageStatus = 'memory-only'; return;
+      }
       revision = copy.revision; lastCopy = copy;
+      volatile = false; loadedProfile = true;
       const profile = sanitizeProgression(copy.profile, catalog);
       // Compare both stores before repairing either one; a second tab may have saved during startup.
       snapshot = Object.freeze({profile, storageStatus, notification: null});
     }
-  }).catch(() => {}) : Promise.resolve()).then(() => {
+  };
+  const ready: Promise<void> = (mirror ? mirror.read().then(acceptMirror).catch(() => {}) : Promise.resolve()).then(() => {
     restoring = false; hydrated = true;
     synchronize();
-    if (mirror && lastCopy && storageStatus !== 'unsupported-version' && !disposed && !save(snapshot.profile)) storageStatus = 'memory-only';
+    // Probe actual writes even for a new account. Permission status alone proves nothing.
+    if (!disposed && !save(snapshot.profile) && !writeBlocked && storageStatus !== 'saving' && storageStatus !== 'corrupt-save') storageStatus = 'memory-only';
     snapshot = Object.freeze({...snapshot, storageStatus});
-    if (lastCopy && storageStatus === 'saved' && !disposed) queueMirror(lastCopy);
     notify();
   });
+  const retryStorage = async () => {
+    await ready; await mirrorWrites;
+    if (disposed || restoring || redeeming) return false;
+    acquireStorage();
+    if (mirror) try {acceptMirror(await mirror.read());} catch { /* Try the independent local copies too. */ }
+    else synchronize();
+    if (!writeBlocked) {
+      if (!save(snapshot.profile) && storageStatus !== 'saving') storageStatus = 'memory-only';
+    }
+    snapshot = Object.freeze({...snapshot, storageStatus}); notify();
+    await mirrorWrites;
+    return snapshot.storageStatus === 'saved';
+  };
+  const retryOnFocus = () => {if (snapshot.storageStatus === 'memory-only') void retryStorage();};
+  const publishCommitted = async (profile: ProgressionProfile, notification: XpNotice | null) => {
+    if (publish(profile, notification, true)) return true;
+    if (!mirror || writeBlocked || disposed) return false;
+    const next = profileCopy(profile, Math.max(Date.now(), revision + 1));
+    const wasRestoring = restoring;
+    restoring = true;
+    try {
+      // Gifts/imports are accepted only after a transaction commits, never optimistically.
+      if (!await mirror.write(next, Math.max(0, mirrorSavedRevision)) || disposed) return false;
+      revision = next.revision; mirrorSavedRevision = next.revision; lastCopy = next; storageStatus = 'saved'; volatile = false;
+      snapshot = Object.freeze({profile, storageStatus, notification}); notify(); return true;
+    } catch {return false;} finally {restoring = wasRestoring;}
+  };
   // Fast consecutive rounds must not erase an achievement before its toast has been read.
   const pendingAchievements = (ids: readonly string[]) => Object.freeze([...new Set([...(snapshot.notification?.achievementIds ?? []), ...ids])]);
   const settle = (attempt: ActiveAttempt, evaluation: XpEvaluation, activeSeconds: number, achievements: AchievementState): AwardResult => {
@@ -495,7 +561,7 @@ export function createProgressionController(options: {
     return {awarded, xp, credits, reason: awarded ? 'earned' : 'below-reward-threshold'};
   };
   const takeAttempt = (id: string, kind: ActiveAttempt['kind']) => {
-    if (disposed || !active || active.id !== id || active.kind !== kind) return null;
+    if (disposed || restoring || !active || active.id !== id || active.kind !== kind) return null;
     const attempt = active;
     active = null;
     return attempt;
@@ -503,13 +569,17 @@ export function createProgressionController(options: {
   const denied = (reason: AwardResult['reason']): AwardResult => ({awarded: false, xp: 0, credits: 0, reason});
   const validRevision = (revision: string) => typeof revision === 'string' && revision.length > 0 && revision.length <= 512;
   return {
-    catalog, ready,
+    catalog, ready, retryStorage,
     getSnapshot: () => snapshot,
     subscribe(listener) {
       if (disposed) return () => {};
-      if (!listeners.size && typeof window !== 'undefined') window.addEventListener('storage', storageChanged);
+      if (!listeners.size && typeof window !== 'undefined') {
+        window.addEventListener('storage', storageChanged); window.addEventListener('focus', retryOnFocus);
+      }
       listeners.add(listener);
-      return () => {listeners.delete(listener); if (!listeners.size && typeof window !== 'undefined') window.removeEventListener('storage', storageChanged);};
+      return () => {listeners.delete(listener); if (!listeners.size && typeof window !== 'undefined') {
+        window.removeEventListener('storage', storageChanged); window.removeEventListener('focus', retryOnFocus);
+      }};
     },
     beginDuel(setup, revision) {
       active = null;
@@ -594,10 +664,13 @@ export function createProgressionController(options: {
         if (!verified.success) return fail(verified.reason);
         const apply = async (): Promise<GiftResult> => {
           if (disposed) return fail('disposed');
+          if (restoring) return fail('busy');
+          await mirrorWrites;
+          if (mirror) try {acceptMirror(await mirror.read());} catch { /* Local copies can still save. */ }
           synchronize();
           if (verified.payload.expiresAt !== undefined && Date.now() >= verified.payload.expiresAt) return fail('expired');
           if (storageStatus === 'unsupported-version') return fail('unsupported-version');
-          if (!storage || writeBlocked) return fail('storage-unavailable');
+          if (writeBlocked || (!storage && !mirror)) return fail('storage-unavailable');
           const {payload} = verified, previous = snapshot.profile;
           if (previous.redeemedGifts.includes(payload.id)) return fail('already-redeemed');
           if (previous.redeemedGifts.length >= 10_000) return fail('invalid-code');
@@ -619,7 +692,7 @@ export function createProgressionController(options: {
             levelBefore, levelAfter, unlockedIds: Object.freeze([]), milestoneCredits: Math.min(credits, milestoneCredits),
             milestoneIds: Object.freeze(milestones.map(item => item.id)), achievementIds: pendingAchievements(unlocked.ids)});
           // The redemption marker and rewards are committed in the same saved document.
-          if (!publish(profile, notification, true)) return fail('storage-unavailable');
+          if (!await publishCommitted(profile, notification)) return fail('storage-unavailable');
           await mirrorWrites;
           return {success: true, reason: 'redeemed', xp, credits, level: levelAfter};
         };
@@ -632,13 +705,17 @@ export function createProgressionController(options: {
       return JSON.stringify({format: 'spraylab-progress-backup', version: 1, exportedAt: new Date().toISOString(),
         origin: typeof location === 'undefined' ? null : location.origin, copy: profileCopy(snapshot.profile, revision)}, null, 2);
     },
-    restoreBackup(text) {
+    async restoreBackup(text) {
       const fail = (reason: RestoreResult['reason']): RestoreResult => ({success: false, reason, level: levelProgress(snapshot.profile.xp).level});
       if (disposed) return fail('disposed');
-      if (restoring) return fail('storage-unavailable');
-      synchronize();
-      if (storageStatus === 'unsupported-version') return fail('unsupported-version');
+      if (restoring || redeeming) return fail('storage-unavailable');
+      restoring = true;
       try {
+        await mirrorWrites;
+        if (mirror) try {acceptMirror(await mirror.read());} catch { /* Local copies can still save. */ }
+        synchronize();
+        if (disposed) return fail('disposed');
+        if (storageStatus === 'unsupported-version') return fail('unsupported-version');
         if (typeof text !== 'string' || text.length > MAX_PROFILE_BYTES) return fail('invalid-backup');
         const document = JSON.parse(text), copy = decodeProfileCopy(document.copy);
         if (document.format !== 'spraylab-progress-backup' || document.version !== 1 || !copy) return fail('invalid-backup');
@@ -646,16 +723,18 @@ export function createProgressionController(options: {
         if (!usableSavedProfile(copy.profile)) return fail('invalid-backup');
         const restored = sanitizeProgression(copy.profile, catalog);
         const profile = sanitizeProgression({...restored, redeemedGifts: [...new Set([...restored.redeemedGifts, ...snapshot.profile.redeemedGifts])]}, catalog);
-        if (!publish(profile, null, true)) return fail('storage-unavailable');
+        if (!await publishCommitted(profile, null)) return fail('storage-unavailable');
         active = null;
         return {success: true, reason: 'restored', level: levelProgress(profile.xp).level};
-      } catch {return fail('invalid-backup');}
+      } catch {return fail('invalid-backup');} finally {restoring = false;}
     },
     dismissNotification() {
       if (!snapshot.notification) return;
       snapshot = Object.freeze({...snapshot, notification: null});
       for (const listener of listeners) listener();
     },
-    dispose() {disposed = true; active = null; listeners.clear(); if (typeof window !== 'undefined') window.removeEventListener('storage', storageChanged);},
+    dispose() {disposed = true; active = null; listeners.clear(); if (typeof window !== 'undefined') {
+      window.removeEventListener('storage', storageChanged); window.removeEventListener('focus', retryOnFocus);
+    }},
   };
 }
