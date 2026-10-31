@@ -32,7 +32,7 @@ function encounter(weapon: Weapon, tactical: boolean) {
     bot.ammo = state.ammo; bot.reloading = !!state.reloadUntil;
     return {command, fired, time};
   };
-  return {brain, bot, step};
+  return {brain, bot, step, state};
 }
 
 describe('bot firearm commands', () => {
@@ -78,14 +78,19 @@ describe('bot firearm commands', () => {
   });
 
   it('does not advance the burst timer on a semi-auto trigger still waiting for cooldown', () => {
-    const {brain, step} = encounter('awp', true);
-    for (let tick = 0; tick < .8 / STEP; tick++) step(tick);
-    expect((brain as TacticalBrain).phase).toBe('attack');
+    const {brain, step, state} = encounter('awp', true);
+    let firstShot = -1;
+    for (let tick = 0; tick < .8 / STEP; tick++) {
+      const {fired, time} = step(tick); if (fired) firstShot = time;
+    }
+    expect(state.ordinal).toBe(1);
+    expect((brain as TacticalBrain).phase).toBe('microstrafe');
     let nextShot = -1;
     for (let tick = Math.ceil(.8 / STEP); tick < 2 / STEP; tick++) {
       const {fired, time} = step(tick);
       if (fired) {nextShot = time; break;}
-      expect((brain as TacticalBrain).phase).toBe('attack');
+      expect(state.ordinal).toBe(1);
+      expect((brain as TacticalBrain)['attackFiredAt']).toBeLessThanOrEqual(firstShot + STEP);
     }
     expect(nextShot).toBeGreaterThan(1.4);
   });

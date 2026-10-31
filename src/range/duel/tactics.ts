@@ -20,6 +20,7 @@ import {TravelProgress} from './travel-progress';
 import {tacticalPersonality} from './tactical-personality';
 import {narrowPassage, type NarrowPassage} from './narrow-passage';
 import {FlankPlan} from './flank-plan';
+import {combatMovement, type CombatMovement} from './combat-movement';
 
 type Phase = 'approach' | 'setup' | 'expose' | 'brake' | 'attack' | 'return' | 'push' | 'investigate' | 'microstrafe' | 'reload' | 'close';
 type FightIntent = 'seek' | 'contest' | 'hold-angle' | 'reset' | 'change-angle' | 'close';
@@ -94,6 +95,8 @@ export class TacticalBrain {
   private lastDodgeSign = 0;
   private combatStrafes = 0;
   private microGoal: Vec | null = null;
+  private combatMotion?: CombatMovement;
+  private motionRetryAt = -Infinity;
   private forceReposition = false;
   private lastHurtAt = -Infinity;
   private scanAim: Vec;
@@ -221,7 +224,7 @@ export class TacticalBrain {
       sensorAge: this.observation && time >= this.observation.time ? time - this.observation.time : null,
       routeProgress: this.travelProgress.snapshot(), personality: {...this.personality},
       passage: this.passageDecision && {...this.passageDecision}, flankPlan: this.flankPlan.snapshot(),
-      motorMode: this.motorMode, equipment: this.equipped};
+      motorMode: this.motorMode, equipment: this.equipped, combatMovement: this.combatMotion?.style ?? null};
   }
 
   coordinate(assignment: TeamAssignment | null) {
@@ -373,6 +376,7 @@ export class TacticalBrain {
         this.tapUntil = -Infinity;
         this.controlVariation = clamp(1 + normal(this.random) * style.recoilVariation, .5, 1.08);
         this.engagementAt = -Infinity; this.commitUntil = -Infinity; this.holdUntil = -Infinity;
+        this.combatMotion = undefined; this.motionRetryAt = -Infinity;
       }
     }
   }
@@ -403,9 +407,9 @@ export class TacticalBrain {
     const self = this.observation?.self;
     const range = this.lastSeen && self ? distance(this.lastSeen.position, self.position) : 16;
     const plan = sampleCombatPlan(this.level, this.weapon, range, self?.ammo ?? 30, this.crouchSpray, this.random);
-    this.attackRounds = plan.rounds; this.burstRecovery = plan.recovery;
+    this.attackRounds = Math.min(plan.rounds, this.combatMotion?.maxRounds ?? Infinity); this.burstRecovery = plan.recovery;
     this.attackWait = sniperIds.includes(this.weapon) && !gameData.weapons[this.weapon].fullAuto ? .18 + this.random() * .12
-      : (plan.rounds - .5) * gameData.weapons[this.weapon].cycle;
+      : (this.attackRounds - .5) * gameData.weapons[this.weapon].cycle;
     this.attackFiredAt = -1; this.attackShots = 0;
     if (time >= this.commitUntil) this.commitUntil = time + plan.commitment * this.personality.riskTolerance;
     if (this.engagementAt === -Infinity) {
@@ -651,20 +655,28 @@ export class TacticalBrain {
       ? this.recoveryGoal : self.position;
   }
 
-  private dodge(self: DuelActorSnapshot, target: VisibleEnemy, time: number) {
+  private dodge(self: DuelActorSnapshot, target: VisibleEnemy, time: number, teammates: readonly DuelActorSnapshot[] = []) {
     const dx = target.position.x - self.position.x, dz = target.position.z - self.position.z;
     const length = Math.hypot(dx, dz);
     if (length < .1) return false;
     const sign = this.lastDodgeSign && this.random() < .75 ? -this.lastDodgeSign : this.random() < .5 ? -1 : 1;
-    const width = .65 + this.random() * .65;
-    for (const direction of [sign, -sign]) {
+    const preferredWidth = (this.combatMotion?.stepWidth ?? 1) * (.8 + this.random() * .4);
+    for (const width of [preferredWidth, Math.min(.45, preferredWidth)]) for (const direction of [sign, -sign]) {
       const candidate = {x: self.position.x - dz / length * direction * width,
         y: self.position.y, z: self.position.z + dx / length * direction * width};
+      if (teammates.some(peer => {
+        if (peer.id === self.id || !peer.alive || Math.abs(peer.feet - self.feet) >= 1) return false;
+        const x = candidate.x - self.position.x, z = candidate.z - self.position.z;
+        const t = clamp(((peer.position.x - self.position.x) * x + (peer.position.z - self.position.z) * z) / (width * width), 0, 1);
+        return t > .1 && Math.hypot(self.position.x + x * t - peer.position.x, self.position.z + z * t - peer.position.z) < .85;
+      })) continue;
       if (!clearSegment(self.position, candidate, this.arena)) continue;
       this.lastDodgeSign = direction;
       this.microGoal = candidate;
       this.combatStrafes++;
       this.transition('microstrafe', time);
+      // Continuing a moving engagement starts a fresh leg, not an expired timer.
+      this.phaseAt = time; this.route = []; this.routeGoal = ''; this.arrivedGoal = '';
       return true;
     }
     return false;
@@ -700,7 +712,7 @@ export class TacticalBrain {
   }
 
   private finishBurst(self: DuelActorSnapshot, target: VisibleEnemy | null, time: number,
-    holdingUsefulAngle: boolean) {
+    holdingUsefulAngle: boolean, teammates: readonly DuelActorSnapshot[] = []) {
     this.nextBurstAt = time + this.burstRecovery;
     if (self.ammo === 0) {this.intent = 'reset'; this.transition('reload', time); return;}
     if (!target) {
@@ -712,8 +724,15 @@ export class TacticalBrain {
       }
       return;
     }
+    if (this.combatMotion && this.combatMotion.style !== 'commit' && !this.forceReposition &&
+      self.health >= 35 && this.combatStrafes < 4 && this.dodge(self, target, time, teammates)) {
+      this.intent = 'contest';
+      if (this.combatMotion.style === 'run') this.beginBurst(time);
+      return;
+    }
     const sniper = sniperIds.includes(this.weapon);
-    if (!sniper && (holdingUsefulAngle && this.defensive ? time < Math.min(this.commitUntil, this.holdUntil)
+    if (!sniper && (this.combatMotion?.style === 'commit' || this.combatStrafes < 4) &&
+      (holdingUsefulAngle && this.defensive ? time < Math.min(this.commitUntil, this.holdUntil)
       : time < this.commitUntil || holdingUsefulAngle && time < this.holdUntil)) {
       this.intent = holdingUsefulAngle ? 'hold-angle' : 'contest';
       this.beginBurst(time);
@@ -724,7 +743,7 @@ export class TacticalBrain {
     const pressured = time - this.lastHurtAt < 1.2 || self.health < 45;
     const reposition = pressured || holdingUsefulAngle || this.combatStrafes >= 2 ||
       sniper || distance(self.position, target.position) > 20 && this.behavior !== 'aggressive';
-    if (!reposition && this.dodge(self, target, time)) {
+    if (!reposition && this.dodge(self, target, time, teammates)) {
       this.intent = 'contest'; this.commitUntil = time + .9 + this.random() * .7;
       return;
     }
@@ -782,6 +801,7 @@ export class TacticalBrain {
     teammates: DuelActorSnapshot[] = [], readiness: TacticalReadiness = {}): Partial<ActorCommand> {
     if (this.equipped !== self.equipment) {
       this.equipped = self.equipment; this.previousAmmo = undefined;
+      this.combatMotion = undefined;
       this.attackShots = 0; this.attackFiredAt = -1;
       this.nextShotAt = time; this.nextBurstAt = Math.min(this.nextBurstAt, time);
       if (this.phase === 'attack') this.transition('brake', time);
@@ -817,6 +837,10 @@ export class TacticalBrain {
     const closeWeapon = this.weapon === 'zeus' || stats.pellets > 1;
     const closing = identified && !!visible && closeWeapon && distance(self.position, visible.position) >
       (this.weapon === 'zeus' ? stats.range * UNIT * .85 : 8);
+    if (identified && !this.combatMotion) {
+      this.combatMotion = combatMovement(this.level, this.weapon, distance(self.position, visible!.position), this.crouchSpray, this.random);
+    }
+    if (this.combatMotion?.style === 'stutter' && (this.level === '10+' || this.level >= 6)) this.stopThisPeek = true;
     const memoryAge = time - this.lastSeenAt;
     const memoryAim = this.memory.focus(time);
     const sound = this.heard && time >= this.heardAt && time >= this.heardReadyAt &&
@@ -881,7 +905,7 @@ export class TacticalBrain {
     if (identified && !closing && ['approach', 'setup', 'push', 'investigate', 'close'].includes(this.phase) && self.ammo > 0) {
       this.activePeek = 'hold';
       this.combatStrafes = 0;
-      this.transition(speed > .4 ? 'brake' : 'attack', time);
+      this.transition(speed > .4 && this.combatMotion?.style !== 'run' ? 'brake' : 'attack', time);
     }
     const blindFor = time - Math.max(this.lastSeenAt, this.heardAt);
     const searchDelay = (this.behavior === 'holder' ? 10 : this.behavior === 'patient' ? 7 : 4.5) *
@@ -915,8 +939,9 @@ export class TacticalBrain {
     }
     const exposure = this.exposurePoint();
     const informationPeek = this.activePeek === 'shoulder' || this.activePeek === 'jump';
-    const movingFire = !sniperIds.includes(this.weapon) &&
-      (this.activePeek === 'run' || this.activePeek === 'ferrari' && !this.stopThisPeek);
+    const movingFire = !sniperIds.includes(this.weapon) && (this.combatMotion?.style === 'run' ||
+      this.combatMotion?.style !== 'stutter' && !this.crouchSpray &&
+      (this.activePeek === 'run' || this.activePeek === 'ferrari' && !this.stopThisPeek));
     // Once contact is recognized, a combat swing needs a firing stop even when
     // its planned waypoint is farther away. Wide swings keep a short commitment.
     const swingDelay = this.activePeek === 'ferrari' ? .2
@@ -933,15 +958,25 @@ export class TacticalBrain {
     const brakeDelay = this.traits.brakeErrorMs / 1000;
     if (this.phase === 'brake' && time - this.phaseAt >= brakeDelay &&
       (speed < .3 || time - this.phaseAt > .28 + brakeDelay)) this.transition('attack', time);
+    const runningCombat = this.combatMotion?.style === 'run' && !informationPeek;
     const attackExpired = this.attackFiredAt >= 0 && this.attackShots > 0 ?
       time - this.attackFiredAt > this.attackWait || this.attackShots >= this.attackRounds &&
-        (!sniperIds.includes(this.weapon) || time - this.attackFiredAt > .18)
+        (!sniperIds.includes(this.weapon) || time - this.attackFiredAt > .18) ||
+        time - this.attackFiredAt >= (this.combatMotion?.stationarySeconds ?? Infinity)
       : !visible && time - this.phaseAt > .55;
-    if (this.phase === 'attack' && (attackExpired || self.ammo === 0)) {
-      this.finishBurst(self, visible, time, holdingUsefulAngle);
+    if ((this.phase === 'attack' || runningCombat && this.phase === 'microstrafe') && (attackExpired || self.ammo === 0)) {
+      this.finishBurst(self, visible, time, holdingUsefulAngle, teammates);
     }
     if (this.phase === 'microstrafe' && (this.microGoal && distance(self.position, this.microGoal) < .25 ||
-      time - this.phaseAt > .65)) this.transition('brake', time);
+      time - this.phaseAt > .65)) {
+      const cycling = this.combatMotion?.style === 'stutter' && time + .18 < Math.max(this.nextShotAt, this.nextBurstAt);
+      if (!((runningCombat || cycling) && identified && visible && this.combatStrafes < 4 && this.dodge(self, visible, time, teammates)))
+        this.transition('brake', time);
+    }
+    if (runningCombat && identified && visible && this.combatStrafes < 4 && this.phase === 'attack' && time >= this.motionRetryAt) {
+      this.motionRetryAt = time + .4;
+      this.dodge(self, visible, time, teammates);
+    }
     // A short reset can reach nearby cover. If still exposed, contest the duel
     // instead of silently following a distant retreat waypoint through open space.
     if (this.phase === 'return' || this.phase === 'reload') this.prepareReset(self, time);
@@ -1102,7 +1137,7 @@ export class TacticalBrain {
     // Gate the first shot against the visible target, not the leading motor setpoint.
     const aimError = Math.hypot(difference(directYaw, nextYaw - recoil.yaw * DEG - punchYaw),
       directPitch - (self.pitch + pitchDelta + recoil.pitch * DEG + punchPitch));
-    const firingPhase = this.phase === 'attack' || this.phase === 'expose' &&
+    const firingPhase = this.phase === 'attack' || runningCombat && this.phase === 'microstrafe' || this.phase === 'expose' &&
       (this.activePeek === 'prefire' || movingFire);
     const aimTolerance = Math.max((style.fireTolerance + this.traits.endpointErrorDegrees * .25) * DEG,
       Math.atan2(bodyAimPoint ? .2 : .12, distance(observedAim, self.position)));

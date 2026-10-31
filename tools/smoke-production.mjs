@@ -22,7 +22,12 @@ try {
         const view = mode === 'hearing' ? page.getByRole('region', {name: 'Hearing practice', exact: true})
           : page.locator(mode === 'duel' || mode === 'prefire' ? 'canvas[data-duel]' : 'canvas[data-range]');
         await view.waitFor({state: 'visible', timeout: 90000});
-        if (mode === 'guided') await expect(page.getByRole('button', {name: 'Enter range', exact: true})).toBeEnabled({timeout: 30000});
+        if (mode !== 'hearing') {
+          const label = mode === 'duel' ? 'Enter duel' : mode === 'prefire' ? 'Enter prefire' : 'Enter range';
+          const entry = page.getByRole('button', {name: label, exact: true});
+          await expect(entry).toBeVisible({timeout: 90000});
+          await expect(entry).toBeEnabled({timeout: 90000});
+        }
         if (mode === 'prefire') {
           const setup = page.getByRole('button', {name: 'Show drill panel', exact: true});
           if (await setup.isVisible()) await setup.click();

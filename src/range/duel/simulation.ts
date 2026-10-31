@@ -242,6 +242,7 @@ export class DuelSimulation {
     if (held?.releaseAt !== undefined) return {...command, forward: 0, side: 0, yawDelta: 0, pitchDelta: 0,
       fireHeld: false, firePressed: false, secondaryHeld: false, secondaryPressed: false, reloadPressed: false};
     if (!this.config.utilitiesEnabled || !this.config.botUtilities || this.flashAmount(actorId) >= .35 ||
+      this.time - (this.lastHurtAt.get(actorId) ?? -Infinity) < .8 ||
       context.allowUtility === false || context.tradePending) {
       this.utilityPlanners.get(actorId)?.cancel(this.time);this.utilityTeam.cancel(actorId);
       if (held) this.selectActorUtility(actorId,null);
@@ -250,7 +251,8 @@ export class DuelSimulation {
     const snapshot = this.previous.length ? this.previous : this.snapshot();
     const self = {...snapshot[actorId], equipment: actor.weapon.id, ammo: actor.weapon.ammo, reloading: actor.weapon.reload.active};
     const utility = this.utilityPlanners.get(actorId)?.command(this.time, self, this.utilityInventory(actorId), contact,
-      this.arena, {visible, lastShotAt: this.lastShotAt.get(actorId) ?? -Infinity, teammates: snapshot.slice(1)});
+      this.arena, {visible, lastShotAt: this.lastShotAt.get(actorId) ?? -Infinity, teammates: snapshot.slice(1),
+        readyToThrow: !!held && this.time >= held.readyAt});
     if (utility && this.selectActorUtility(actorId, utility.kind)) {
       if (contact&&!this.utilityTeam.claim(this.time,self,utility.kind,contact,snapshot.slice(1),id=>this.tradeSkill(id))) {
         this.utilityPlanners.get(actorId)?.cancel(this.time);this.selectActorUtility(actorId,null);return command;
@@ -610,7 +612,9 @@ export class DuelSimulation {
     for (const actor of movementActors) {
       if (!actor.alive) continue;
       if (competitive && actor.id !== 0) {
-        const defense = this.utilityDefenses.get(actor.id)?.command(this.time, actorView[actor.id], this.arena, this.utilities.effects);
+        const committedThrow = this.heldUtilities.get(actor.id)?.releaseAt !== undefined;
+        const defense = committedThrow ? undefined :
+          this.utilityDefenses.get(actor.id)?.command(this.time, actorView[actor.id], this.arena, this.utilities.effects);
         if (defense) {
           this.utilityPlanners.get(actor.id)?.cancel(this.time);
           if (this.heldUtilities.has(actor.id)) this.selectActorUtility(actor.id, null);

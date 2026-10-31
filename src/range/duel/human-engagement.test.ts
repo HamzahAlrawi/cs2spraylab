@@ -24,7 +24,7 @@ const map = (): Arena => ({...testArena(),
 function encounter(seed: number, covered = false, weapon: Weapon = 'ak47') {
   const arena = map();
   const sim = new DuelSimulation(sanitizeDuelConfig({skill: 10, behavior: covered ? 'holder' : 'aggressive',
-    botWeapon: weapon, roundSeconds: 20}), seed, arena);
+    weapons: [weapon], roundSeconds: 20}), seed, arena);
   sim.actors[0].health = 10000;
   sim.actors[0].position = {x: covered ? 3.8 : 6, y: 64 * UNIT, z: 8};
   sim.actors[1].position = {x: covered ? 3.8 : 6, y: 64 * UNIT, z: covered ? -8 : -5};
@@ -74,15 +74,17 @@ describe('weapon-appropriate committed combat plans', () => {
   it('fights through short burst recoveries instead of returning to a distant peek waypoint after each burst', () => {
     for (const seed of [1, 17, 42, 63]) {
       const {brain, step} = encounter(seed);
-      let shots = 0, attacking = 0;
+      let shots = 0, combatTicks = 0, stepping = 0;
       for (let tick = 0; tick < 1.15 / STEP; tick++) {
         const frame = step(); shots += frame.shots;
-        attacking += +(frame.decision.phase === 'attack');
+        combatTicks += +['attack', 'brake', 'microstrafe'].includes(frame.decision.phase);
+        stepping += +(frame.decision.phase === 'microstrafe');
         if (frame.time > .25) expect(frame.decision.intent).toBe('contest');
         expect(frame.decision.phase).not.toBe('return');
       }
       expect(shots, `seed ${seed}`).toBeGreaterThanOrEqual(5);
-      expect(attacking).toBeGreaterThan(100);
+      expect(combatTicks).toBeGreaterThan(100);
+      expect(stepping).toBeGreaterThan(0);
       expect(brain.decisionSnapshot().burstRounds).toBeLessThanOrEqual(7);
     }
   });
@@ -91,9 +93,10 @@ describe('weapon-appropriate committed combat plans', () => {
     for (const seed of [1, 17, 42, 63]) {
       const {step} = encounter(seed);
       let moved = false, braked = false, shotAfterMove = false;
-      let shots = 0;
+      let shots = 0, shotsBeforeMove = 0;
       for (let tick = 0; tick < 5 / STEP; tick++) {
         const frame = step(); shots += frame.shots;
+        if (!moved) shotsBeforeMove += frame.shots;
         moved ||= frame.decision.phase === 'microstrafe';
         braked ||= moved && frame.decision.phase === 'brake';
         shotAfterMove ||= braked && frame.shots > 0;
@@ -101,21 +104,24 @@ describe('weapon-appropriate committed combat plans', () => {
       }
       expect(moved, `seed ${seed}`).toBe(true);
       expect(braked).toBe(true); expect(shotAfterMove).toBe(true);
-      expect(shots).toBeGreaterThan(7);
+      expect(shotsBeforeMove).toBeGreaterThanOrEqual(2);
+      expect(shotsBeforeMove).toBeLessThanOrEqual(7);
+      expect(shots).toBeGreaterThan(shotsBeforeMove);
     }
   });
 
   it('fires a controlled exchange from useful cover then rechecks instead of sitting indefinitely', () => {
     for (const seed of [1, 17, 42]) {
       const {step} = encounter(seed, true);
-      let firstMovement = Infinity, shots = 0;
+      let firstMovement = Infinity, shots = 0, firstShot = Infinity;
       for (let tick = 0; tick < 8 / STEP; tick++) {
         const frame = step(); shots += frame.shots;
+        if (frame.shots) firstShot = Math.min(firstShot, frame.time);
         if (frame.time > .4 && Math.hypot(frame.command.forward ?? 0, frame.command.side ?? 0) > .2)
           firstMovement = Math.min(firstMovement, frame.time);
       }
-      expect(firstMovement, `seed ${seed}`).toBeGreaterThan(1.2);
-      expect(firstMovement).toBeLessThan(4);
+      expect(firstMovement, `seed ${seed}`).toBeGreaterThan(firstShot);
+      expect(firstMovement).toBeLessThan(1.2);
       expect(shots).toBeGreaterThan(15);
     }
   });

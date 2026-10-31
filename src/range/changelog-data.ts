@@ -476,7 +476,7 @@ const october30ProgressSavingChanges = {
   ]}],
 } as const satisfies ChangelogRelease;
 
-export const latestChanges = {
+const october30MapPackageChanges = {
   id:'update-2026-10-30-map-packages',title:'Map-ready training & more deliberate bots (October 30)',baselineCommit:'b7aa225',
   sections:[
     {id:'map-package-isolation',title:'Map-specific training packages',items:[
@@ -490,7 +490,22 @@ export const latestChanges = {
   ],
 } as const satisfies ChangelogRelease;
 
+export const latestChanges = {
+  id:'update-2026-10-31-combat-movement',title:'Active duels & safer utility (October 31)',baselineCommit:'b7d28b6',
+  sections:[
+    {id:'weapon-aware-combat-steps',title:'Move between firing windows',items:[
+      'Experienced rifle bots take shorter firing windows and use reachable lateral steps with physical counter-inputs. Pistols and snipers move between shots; suitable close-range SMGs can keep firing while moving, with their normal movement spread.',
+      'Weapon cooldowns, recoil, damage and movement physics are unchanged. Geometry and nearby teammates constrain combat steps; novice rifle commits, crouch-spray habits and authored static Prefire holds remain distinct.',
+    ]},
+    {id:'safer-bot-utility',title:'Purposeful grenade setups',items:[
+      'Grenade plans use fresh observed evidence, cover and bounded trajectory checks rather than treating an ideal aiming arc as a successful throw. Unsafe self/team flashes, damaging throws and friendly smoke obstruction are rejected.',
+      'Bots can put a grenade away during its draw if a fight appears or they take damage. Actual release still follows the shared grenade action timing; bot decisions remain training heuristics rather than native CS2 AI.',
+    ]},
+  ],
+} as const satisfies ChangelogRelease;
+
 export const changelogHistory = [
+  october30MapPackageChanges,
   october30ProgressSavingChanges,
   october30SourceOnlyChanges,
   october29LocalRoundsChanges,
