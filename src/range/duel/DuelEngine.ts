@@ -350,6 +350,7 @@ export class DuelEngine {
         this.mapLighting=takePreparedLighting(this.scene,scenario.scene)??new PrefireLighting(this.scene,scenario.scene);
         this.mapLighting.configure(this.renderer,this.settings.quality);
       }
+      await this.sim.prepareOpeningNavigation(this.gpuPreparationAbort.signal,()=>backgroundFrame(this.gpuPreparationAbort.signal));
       await Promise.all([scenario?compileRetainedShaders(this.renderer,this.scene,this.camera):prewarmShaders(this.renderer,this.scene,this.camera),prewarmShaders(this.renderer,this.viewScene,this.viewCamera)]);
       if(!this.disposed) {
         warmRetainedFirstUse(this.renderer,this.scene,this.camera,[this.actors]);
@@ -819,6 +820,9 @@ export class DuelEngine {
       const weaponsReady=this.finishRestart(continuous,true);
       await this.rebuildActorsPrepared(this.mapAbort!.signal);
       await weaponsReady;
+      if(this.disposed)return;
+      const signal=this.mapAbort!.signal;
+      await this.sim.prepareOpeningNavigation(signal,()=>backgroundFrame(signal));
       if(this.disposed)return;
       const player=this.sim.snapshot()[0];
       this.camera.position.copy(player.position);this.camera.rotation.set(player.pitch,player.yaw,0,'YXZ');this.camera.updateMatrixWorld();

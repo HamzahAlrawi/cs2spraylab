@@ -80,6 +80,55 @@ export function buildSolidTree<T extends Bounded>(items: T[]): Node<T> | undefin
   const half = Math.floor(items.length/2);
   return {min,max,left:buildSolidTree(items.slice(0,half)),right:buildSolidTree(items.slice(half))};
 }
+
+/** Same bounds, stable comparator ordering and median split as buildSolidTree.
+ * Checkpoints include sorting/copying: a native Array.sort on the root cannot yield. */
+export function* solidTreeSteps<T extends Bounded>(items: T[]): Generator<void, Node<T> | undefined> {
+  if (!items.length) return;
+  let work = 0;
+  const root: Node<T> = {min: {x: Infinity,y: Infinity,z: Infinity}, max: {x: -Infinity,y: -Infinity,z: -Infinity}};
+  const pending = [{node: root, items}];
+  while (pending.length) {
+    const {node, items: values} = pending.pop()!;
+    for (const item of values) {
+      for (const axis of axes) {node.min[axis] = Math.min(node.min[axis],item.min[axis]); node.max[axis] = Math.max(node.max[axis],item.max[axis]);}
+      if (++work === 256) {work = 0; yield;}
+    }
+    if (values.length <= 8) {node.items = values; continue;}
+    const axis = axes.reduce((a,b) => node.max[a]-node.min[a] >= node.max[b]-node.min[b] ? a : b);
+    // Bottom-up stable merge sort preserves Array.sort ties without an unbounded sort task.
+    let source = values, target = new Array<T>(values.length);
+    for (let width = 1; width < values.length; width *= 2) {
+      for (let start = 0; start < values.length; start += width * 2) {
+        const middle = Math.min(start + width, values.length), end = Math.min(start + width * 2, values.length);
+        let left = start, right = middle;
+        for (let out = start; out < end; out++) {
+          const a = source[left], b = source[right];
+          target[out] = left < middle && (right >= end || !(a.min[axis]+a.max[axis]-b.min[axis]-b.max[axis] > 0)) ? source[left++] : source[right++];
+          if (++work === 256) {work = 0; yield;}
+        }
+      }
+      const previous = source; source = target; target = previous;
+    }
+    const half = Math.floor(values.length / 2), left: T[] = [], right: T[] = [];
+    for (let i = 0; i < values.length; i++) {
+      values[i] = source[i];
+      (i < half ? left : right).push(source[i]);
+      if (++work === 256) {work = 0; yield;}
+    }
+    const child = (): Node<T> => ({min: {x: Infinity,y: Infinity,z: Infinity}, max: {x: -Infinity,y: -Infinity,z: -Infinity}});
+    node.left = child(); node.right = child();
+    pending.push({node: node.right, items: right}, {node: node.left, items: left});
+  }
+  return root;
+}
+
+export async function buildSolidTreeAsync<T extends Bounded>(items: T[], checkpoint: () => Promise<void>): Promise<Node<T> | undefined> {
+  const steps = solidTreeSteps(items);
+  let next = steps.next();
+  while (!next.done) {await checkpoint(); next = steps.next();}
+  return next.value;
+}
 export function querySolidTree<T extends Bounded>(node: Node<T> | undefined, origin: Vec, direction: Vec, range: number, result: T[] = []): T[] {
   if (!node) return result;
   let near = 0, far = range;

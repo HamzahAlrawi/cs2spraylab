@@ -48,7 +48,11 @@ describe('locally generated collision snapshots',()=>{
     let worker!:{onmessage:(event:unknown)=>void;terminate:ReturnType<typeof vi.fn>;postMessage:ReturnType<typeof vi.fn>};
     vi.stubGlobal('Worker',class{onmessage=()=>{};terminate=vi.fn();postMessage=vi.fn();constructor(){worker=this;}});
     const module=await import('./query-cache'),snapshot=new ArrayBuffer(32);
+    let resume:IdleRequestCallback|undefined;
+    vi.stubGlobal('requestIdleCallback',(callback:IdleRequestCallback)=>{resume=callback;return 1;});
     module.saveCachedQueries({metadata:data,snapshot});await Promise.resolve();
+    expect(worker,'cache cloning cannot share collision restoration work').toBeUndefined();
+    resume!({didTimeout:false,timeRemaining:()=>20});await Promise.resolve();
     const [message,transfer]=worker.postMessage.mock.calls[0];
     expect(message.metadata).not.toHaveProperty('columns');expect(message.metadata).not.toHaveProperty('solids');
     expect(message.snapshot).not.toBe(snapshot);expect(transfer).toEqual([message.snapshot]);

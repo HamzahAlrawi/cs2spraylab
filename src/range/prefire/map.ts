@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import {GLTFLoader, type GLTF, type GLTFParser} from 'three/examples/jsm/loaders/GLTFLoader.js';
-import {MeshoptDecoder} from 'three/examples/jsm/libs/meshopt_decoder.module.js';
+import {createMapDecoder} from './map-decoder';
 import {NativeMapCollision, type NativeCollisionManifest,type PreparedNativeQueries} from './native-collision';
 import {disposeResources} from '../duel/render-resources';
 import type {Vec} from '../actor-physics';
@@ -37,6 +37,7 @@ export async function loadNativeMap(signal: AbortSignal | undefined, options: Na
   const base = options.base;
   if(!/^\/maps\/[a-zA-Z0-9_\-/]+\/$/.test(base))throw Error('Invalid native map asset base.');
   const scope = createLoadScope(signal), network = createTaskLimiter(4), decode = createTaskLimiter(options?.background?1:4);
+  const geometryDecoder=createMapDecoder(scope.signal);
   const resourceWork=createTaskLimiter(1),resourceTurn=backgroundBudget(scope.signal);
   const fetchChecked = async (name: string) => {
     scope.signal.throwIfAborted();
@@ -206,7 +207,7 @@ export async function loadNativeMap(signal: AbortSignal | undefined, options: Na
       await Promise.all(references.map(async reference=>{reference.uri = await resourceUrl(reference.uri);}));
       workerSignal.throwIfAborted(); scope.signal.throwIfAborted();
       if(options?.background)await backgroundTurn(scope.signal);
-      const loader = new GLTFLoader().setMeshoptDecoder(MeshoptDecoder).register(trackParser);
+      const loader = new GLTFLoader().setMeshoptDecoder(geometryDecoder.decoder).register(trackParser);
       const asset = await loader.parseAsync(JSON.stringify(json),base);
       // Own the scene before validation/cancellation so late completion is freed.
       scene.add(asset.scene); workerSignal.throwIfAborted(); scope.signal.throwIfAborted();
@@ -299,6 +300,7 @@ export async function loadNativeMap(signal: AbortSignal | undefined, options: Na
     await Promise.allSettled([...resourceUrls.values()]);
     dispose(); throw error;
   } finally {
+    geometryDecoder.dispose();
     scope.signal.removeEventListener('abort',releaseLeases);
     for (const url of urls) URL.revokeObjectURL(url);
     urls.clear(); resourceUrls.clear(); decodedSources.clear(); scope.dispose();

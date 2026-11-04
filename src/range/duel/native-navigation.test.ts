@@ -27,6 +27,9 @@ describe('native-map navigation',()=>{
     expect(routeTo(a,b,copy)).toEqual(route);
     expect(()=>installNativeNavigation(copy,{version:1,nodes:[{point:{x:0,y:NaN,z:0},links:[]}]})).toThrow('Invalid native navigation');
     expect(()=>installNativeNavigation(copy,{version:1,nodes:[{point:{x:0,y:0,z:0},links:[2]}]})).toThrow('Invalid native navigation');
+    expect(routeTo(a,b,copy)).toEqual(route);
+    installNativeNavigation(copy,{version:1,nodes:[{point:{x:-3,y:0,z:0},links:[]}]});
+    expect(routeTo(a,b,copy),'endpoint caches belong to one installed graph, never a map history').toEqual([]);
   });
   it('does not invent floor links across unsupported gaps',()=>{
     const map=arena([{center:{x:-3,y:-.1,z:0},size:{x:3,y:.2,z:8}},

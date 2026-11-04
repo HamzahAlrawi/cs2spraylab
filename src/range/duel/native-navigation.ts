@@ -5,7 +5,7 @@ import type {Arena} from './geometry';
 const HEIGHT = 72 * UNIT, CELL = .8;
 const distance = (a: Vec, b: Vec) => Math.hypot(a.x-b.x, a.y-b.y, a.z-b.z);
 type Node = {point: Vec; links: number[]};
-type Graph = {nodes: Node[]; segments: Map<string, boolean>};
+type Graph = {nodes: Node[]; segments: Map<string, boolean>; connections:Map<string,number[]>};
 export type NativeNavigationData = {version:1; nodes:{point:Vec;links:number[]}[]};
 const graphs = new WeakMap<object, Graph>();
 const worldKey=(arena:Arena)=>arena.native ?? arena;
@@ -54,7 +54,7 @@ export function nativeClearSegment(a: Vec, b: Vec, arena: Arena): boolean {
 // actors. No diagonal corner cutting, imaginary flat floors or cliff links.
 export function prepareNativeNavigation(arena: Arena, seeds: readonly Vec[], paths:readonly (readonly Vec[])[]=[]): void {
   if (!arena.native || graphs.has(worldKey(arena))) return;
-  const graph: Graph={nodes:[],segments:new Map()}; graphs.set(worldKey(arena),graph);
+  const graph: Graph={nodes:[],segments:new Map(),connections:new Map()}; graphs.set(worldKey(arena),graph);
   const ids=new Map<string,number>();
   const key=(p:Vec)=>`${Math.round((p.x-arena.minX)/CELL)}:${Math.round((p.z-arena.minZ)/CELL)}:${Math.round(p.y/.12)}`;
   const add=(p:Vec)=>{
@@ -103,9 +103,19 @@ export function prepareNativeNavigation(arena: Arena, seeds: readonly Vec[], pat
 export function nativeRouteTo(start: Vec, goal: Vec, arena: Arena): Vec[] {
   if(nativeClearSegment(start,goal,arena))return [goal];
   const graph=graphs.get(worldKey(arena));if(!graph?.nodes.length)return [];
-  const connections=(p:Vec)=>graph.nodes.map((node,id)=>({id,d:distance(node.point,p)}))
-    .filter(row=>row.d<3).sort((a,b)=>a.d-b.d).slice(0,12)
-    .filter(row=>nativeClearSegment(p,graph.nodes[row.id].point,arena) && nativeClearSegment(graph.nodes[row.id].point,p,arena)).slice(0,4).map(row=>row.id);
+  const connections=(p:Vec)=>{
+    const key=`${p.x}:${p.y}:${p.z}`,cached=graph.connections.get(key);if(cached)return cached;
+    const nearest=graph.nodes.map((node,id)=>({id,d:distance(node.point,p)}))
+      .filter(row=>row.d<3).sort((a,b)=>a.d-b.d).slice(0,12),result:number[]=[];
+    // Only the first four reachable links are used. Walking the remaining
+    // candidates did no useful work and repeated for each bot/route to this goal.
+    for(const row of nearest){
+      if(nativeClearSegment(p,graph.nodes[row.id].point,arena)&&nativeClearSegment(graph.nodes[row.id].point,p,arena))result.push(row.id);
+      if(result.length===4)break;
+    }
+    if(graph.connections.size>=128)graph.connections.delete(graph.connections.keys().next().value!);
+    graph.connections.set(key,result);return result;
+  };
   const roots=connections(start), ends=new Set(connections(goal));if(!roots.length || !ends.size)return [];
   const queue=[...roots], parent=new Int32Array(graph.nodes.length).fill(-2);roots.forEach(id=>parent[id]=-1);
   let last=-1;
@@ -167,5 +177,5 @@ export function installNativeNavigation(arena:Arena,data:NativeNavigationData) {
     data.nodes.some(node=>!node || !node.point || ![node.point.x,node.point.y,node.point.z].every(Number.isFinite) ||
       !inside(node.point,arena) || !Array.isArray(node.links) || node.links.length>64 ||
       node.links.some(id=>!Number.isSafeInteger(id) || id<0 || id>=data.nodes.length)))throw new Error('Invalid native navigation graph');
-  graphs.set(worldKey(arena),{nodes:data.nodes,segments:new Map()});
+  graphs.set(worldKey(arena),{nodes:data.nodes,segments:new Map(),connections:new Map()});
 }

@@ -69,6 +69,8 @@ Settings > Game > Graphics includes a Performance preset for older PCs, frame ca
 
 The real-map Duel performance pass also budgets native bot path queries, removes temporary terrain-clipping allocations, reuses the previous chunk, and shares decoded textures. Rebuilt Duel chunks should pass through `node tools/optimize-duel-visuals.mjs --apply` before deployment; see [real-map rebuild steps](docs/real-map-duel.md) and [measured results and limitations](docs/real-map-performance.md).
 
+The November 4 pass moves large inflation and geometry decoding to workers, slices prepared collision/index work, and warms opening navigation without advancing combat. See the [startup performance audit](docs/chunk-startup-performance-2026-11-04.md) for measured handoffs, cache witnesses and remaining cold-entry costs. The [bot repository comparison and follow-up plan](docs/ai-repository-comparison-2026-11-04.md) compares four pinned implementations, records licensing boundaries, and prioritizes evidence-aware behavior improvements. Cancelled grenade setups now release their teammates' copied waits; other AI proposals remain follow-up work.
+
 ## Architecture
 
 For a data engineer: React is the view layer, TypeScript supplies static contracts, and Vite serves/builds static files. Three.js owns the 3D world and rendering loop. React updates the HUD separately rather than rebuilding the scene each frame.

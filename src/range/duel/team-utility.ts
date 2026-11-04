@@ -7,7 +7,8 @@ import type {ThreatReport} from './trading';
 import type {UtilityKind} from './utility-loadout';
 
 type Setup = {thrower: number; generation: number; kind: UtilityKind; point: Vec; startedAt: number; expiresAt: number;
-  peers: {id: number; generation: number; readyAt: number}[]; projectile?: number; poppedAt?: number};
+  peers: {id: number; generation: number; readyAt: number}[]; projectile?: number; poppedAt?: number;
+  assignmentState: {cancelled: boolean}};
 const gap = (a: Vec, b: Vec) => Math.hypot(a.x-b.x, a.z-b.z);
 const rank = (level: SkillLevel) => level === '10+' ? 10 : level;
 
@@ -30,10 +31,17 @@ export class TeamUtilityCoordinator {
       !peer.reloading&&peer.ammo>0&&peer.equipment!=='knife'&&gap(peer.position,actor.position)<14&&rank(skill(peer.id))>=4)
       .sort((a,b)=>gap(a.position,actor.position)-gap(b.position,actor.position)).slice(0,2)
       .map(peer=>({id:peer.id,generation:peer.generation,readyAt:time+.25+(10-rank(skill(peer.id)))*.055}));
-    this.setups.push({thrower:actor.id,generation:actor.generation,kind,point:{...report.point},startedAt:time,expiresAt:time+5,peers:partners});
+    this.setups.push({thrower:actor.id,generation:actor.generation,kind,point:{...report.point},startedAt:time,expiresAt:time+5,
+      peers:partners,assignmentState:{cancelled:false}});
     return true;
   }
-  cancel(actorId: number) {this.setups=this.setups.filter(setup=>setup.thrower!==actorId||setup.projectile!==undefined);}
+  cancel(actorId: number) {
+    this.setups=this.setups.filter(setup=>{
+      if(setup.thrower!==actorId||setup.projectile!==undefined)return true;
+      setup.assignmentState.cancelled=true;
+      return false;
+    });
+  }
   thrown(actorId: number, projectile: number, time: number) {
     const setup=this.setups.find(item=>item.thrower===actorId&&item.projectile===undefined);
     if(setup){setup.projectile=projectile;setup.expiresAt=time+6;}
@@ -51,7 +59,7 @@ export class TeamUtilityCoordinator {
     const offensive=setup.kind==='flash'||setup.kind==='he';
     return {actorId:actor.id,generation:actor.generation,role:offensive?'trade':'crossfire',partnerId:setup.thrower,
       lane,point:{...setup.point},contactAt:setup.startedAt,peekAt:setup.poppedAt===undefined?setup.expiresAt:setup.poppedAt+.12,
-      expiresAt:setup.expiresAt,waitForPartner:setup.poppedAt===undefined};
+      expiresAt:setup.expiresAt,waitForPartner:setup.poppedAt===undefined,utilitySetup:setup.assignmentState};
   }
   waiting(time: number, actor: DuelActorSnapshot) {
     return this.setups.some(setup=>time<setup.expiresAt&&setup.poppedAt===undefined&&setup.peers.some(peer=>

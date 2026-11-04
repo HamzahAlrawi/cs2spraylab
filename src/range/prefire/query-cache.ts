@@ -1,5 +1,6 @@
 import type {PreparedNativeQueries} from './native-collision';
 import {verifyMapDigest} from './map-loading';
+import {backgroundTurn} from './background-work';
 import {COLLISION_WASM_SHA256,QUERY_CACHE as CACHE,MAX_QUERY_RAW as MAX_RAW,queryCacheKey as key,
   writeCachedQueries,type CachedQueries} from './query-cache-writer';
 
@@ -38,6 +39,8 @@ export function saveCachedQueries(prepared:CachedQueries) {
   if(!globalThis.caches||typeof CompressionStream==='undefined'||pending>=2)return;
   pending++;
   writes=writes.then(async()=>{try {
+    // Snapshot cloning/posting must not share the restoration task's frame.
+    await backgroundTurn();
     if(typeof Worker==='undefined'){await writeCachedQueries(prepared);return;}
     const {schema,engine,collisionSha256,ids,open}=prepared.metadata;
     if(prepared.snapshot.byteLength>64*1024*1024)return;

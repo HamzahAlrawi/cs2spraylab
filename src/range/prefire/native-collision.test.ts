@@ -1,4 +1,5 @@
-import {afterAll, beforeAll, describe, expect, it} from 'vitest';
+import {afterAll, beforeAll, describe, expect, it, vi, type MockInstance} from 'vitest';
+import RAPIER from '@dimforge/rapier3d-compat';
 import {existsSync, readFileSync} from 'node:fs';
 import {NativeMapCollision} from './native-collision';
 import {settleNativePosition} from './map';
@@ -26,6 +27,87 @@ describe('native scene queries without installed game assets', () => {
     const manifest: NativeCollisionManifest = {version: 1, unit: .0254, build: 'fixture', collisionSha256: '', groups};
     return {manifest, binary};
   };
+  const preparedFixture = () => {
+    const fixture = build([new BoxGeometry(24,.2,24).translate(0,-.1,0),
+      ...Array.from({length:24},(_,i)=>new BoxGeometry(.25,2,.5).translate(i%6*2-5,1,Math.floor(i/6)*2-3))]);
+    fixture.manifest.version=2;
+    fixture.manifest.surfaces=[{id:1,hash:1,material:'concrete'}];
+    for(const group of fixture.manifest.groups) {
+      group.shots=true;
+      group.primitives=[{id:group.id,firstTriangle:0,triangleCount:group.indexCount/3,surfaceId:1,
+        kind:group.id===24?'mesh':'convex-hull'}];
+    }
+    return fixture;
+  };
+  it('yields around snapshot restore and preserves prepared/nonprepared solid, movement and grenade queries',async()=>{
+    const {manifest,binary}=preparedFixture(),original=await NativeMapCollision.create(manifest,binary);
+    const prepared=original.exportPrepared(),snapshot=prepared.snapshot.slice().buffer as ArrayBuffer;
+    const events:string[]=[],restore=RAPIER.World.restoreSnapshot;
+    const spy=vi.spyOn(RAPIER.World,'restoreSnapshot').mockImplementation(bytes=>{events.push('restore');return restore(bytes);});
+    const maps:NativeMapCollision[]=[];
+    try {
+      for(const value of [{metadata:structuredClone(prepared.metadata),snapshot},{metadata:structuredClone(prepared.metadata)}]) {
+        const yielded=vi.fn(async()=>{events.push('yield');});
+        const map=await NativeMapCollision.create(manifest,binary,value,{yield:yielded,budgetMilliseconds:0});maps.push(map);
+        expect(yielded.mock.calls.length).toBeGreaterThan(10);
+        expect(map.bounds).toEqual(original.bounds);expect(map.surfaceDiagnostics).toEqual(original.surfaceDiagnostics);
+        expect(map.exportPrepared().metadata).toEqual(prepared.metadata);
+        for(const x of [-5,-4,0,4,5])for(const z of [-3,0,3]) {
+          const p={x,y:0,z},from={...p,y:1},to={...from,x:x+8};
+          expect(map.vertical(p,1,-1,72*UNIT)).toEqual(original.vertical(p,1,-1,72*UNIT));
+          expect(map.fits(p,0,72*UNIT)).toEqual(original.fits(p,0,72*UNIT));
+          expect(map.sweep(p,{...p,x:x+8},72*UNIT)).toEqual(original.sweep(p,{...p,x:x+8},72*UNIT));
+          expect(map.sweepSphere(from,to,.05)).toEqual(original.sweepSphere(from,to,.05));
+          expect(map.sweepGrenade(from,to,.05)).toEqual(original.sweepGrenade(from,to,.05));
+          expect(map.floorSurfaceAt(x,z)).toEqual(original.floorSurfaceAt(x,z));
+          expect(map.ray(from,{x:1,y:0,z:0},20)).toEqual(original.ray(from,{x:1,y:0,z:0},20));
+          expect(map.traceSolid(from,{x:1,y:0,z:0},20)).toEqual(original.traceSolid(from,{x:1,y:0,z:0},20));
+        }
+      }
+      const index=events.indexOf('restore');expect(index).toBeGreaterThan(0);
+      expect(events.slice(index-1,index+2)).toEqual(['yield','restore','yield']);
+    }finally{spy.mockRestore();original.dispose();for(const map of maps)map.dispose();}
+  });
+  it.each(['after restore','during index preparation','inside tree'])('frees the restored world once when cancelled %s',async phase=>{
+    const {manifest,binary}=preparedFixture(),original=await NativeMapCollision.create(manifest,binary),prepared=original.exportPrepared();
+    const controller=new AbortController(),restore=RAPIER.World.restoreSnapshot;
+    let free:MockInstance<() => void>|undefined,afterRestore=0,treeStarted=false;
+    const solids=prepared.metadata.solids;
+    Object.defineProperty(prepared.metadata,'solids',{get:()=>{treeStarted=true;return solids;}});
+    const spy=vi.spyOn(RAPIER.World,'restoreSnapshot').mockImplementation(bytes=>{
+      const world=restore(bytes);free=vi.spyOn(world,'free');return world;
+    });
+    try {
+      await expect(NativeMapCollision.create(manifest,binary,{metadata:prepared.metadata,snapshot:prepared.snapshot.slice().buffer as ArrayBuffer},
+        {signal:controller.signal,budgetMilliseconds:0,yield:async()=>{
+          if(!free)return;
+          afterRestore++;
+          if(phase==='after restore'||(phase==='during index preparation'&&afterRestore===12)||(phase==='inside tree'&&treeStarted))controller.abort();
+        }})).rejects.toMatchObject({name:'AbortError'});
+      expect(free).toHaveBeenCalledOnce();
+      if(phase==='inside tree')expect(treeStarted).toBe(true);
+    }finally{spy.mockRestore();original.dispose();}
+  });
+  it('budgets large geometry validation and still rejects invalid late data before world restoration',async()=>{
+    const {manifest,binary}=build([new BoxGeometry(20,.2,20,32,32,32)]);
+    const original=await NativeMapCollision.create(manifest,binary),prepared=original.exportPrepared();original.dispose();
+    const positions=new Float32Array(binary,0,manifest.groups[0].vertexCount*3);positions[positions.length-1]=NaN;
+    const spy=vi.spyOn(RAPIER.World,'restoreSnapshot'),yielded=vi.fn(async()=>{});
+    try {
+      await expect(NativeMapCollision.create(manifest,binary,{metadata:prepared.metadata,snapshot:prepared.snapshot.slice().buffer as ArrayBuffer},
+        {yield:yielded,budgetMilliseconds:0})).rejects.toThrow('Invalid map collision geometry');
+      expect(yielded.mock.calls.length).toBeGreaterThan(2);expect(spy).not.toHaveBeenCalled();
+    }finally{spy.mockRestore();}
+  });
+  it('can cancel validation before allocating a world',async()=>{
+    const {manifest,binary}=preparedFixture(),controller=new AbortController();
+    const spy=vi.spyOn(RAPIER.World,'restoreSnapshot');
+    try {
+      await expect(NativeMapCollision.create(manifest,binary,undefined,{signal:controller.signal,budgetMilliseconds:0,
+        yield:async()=>{controller.abort();}})).rejects.toMatchObject({name:'AbortError'});
+      expect(spy).not.toHaveBeenCalled();
+    }finally{spy.mockRestore();}
+  });
   it('preserves shot/passbullet/player-clip masks and native-size actor clearance', async () => {
     const {manifest, binary} = build(), collision = await NativeMapCollision.create(manifest, binary);
     try {

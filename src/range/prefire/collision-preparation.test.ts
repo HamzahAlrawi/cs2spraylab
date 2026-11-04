@@ -1,7 +1,9 @@
 import {afterEach,beforeEach,describe,expect,it,vi} from 'vitest';
 import {NativeMapCollision,type NativeCollisionManifest,type PreparedNativeQueries} from './native-collision';
 import {prepareCollision} from './collision-preparation';
+import {backgroundFrame} from './background-work';
 vi.mock('./native-collision',()=>({NativeMapCollision:{create:vi.fn()}}));
+vi.mock('./background-work',()=>({backgroundFrame:vi.fn(async()=>{})}));
 const manifest={collisionSha256:'fixture'} as NativeCollisionManifest,metadata={schema:1,ids:[[1,2]],open:[],columns:[['0:0',[1,2]]]} as unknown as PreparedNativeQueries;
 let workers:FakeWorker[]=[];
 class FakeWorker {
@@ -19,14 +21,16 @@ describe('worker collision preparation',()=>{
     expect(workers[0].postMessage.mock.calls[0][0].binary).not.toBe(source);
     expect(workers[0].postMessage.mock.calls[0][0]).not.toHaveProperty('metadata');
     workers[0].onmessage!({data:{ownership:{ids:metadata.ids,open:metadata.open},snapshot}} as MessageEvent);await pending;
-    expect(NativeMapCollision.create).toHaveBeenCalledWith(manifest,source,{metadata,snapshot});expect(workers[0].terminate).toHaveBeenCalledOnce();
+    expect(NativeMapCollision.create).toHaveBeenCalledWith(manifest,source,{metadata,snapshot},expect.objectContaining({yield:expect.any(Function),signal:expect.any(AbortSignal)}));expect(workers[0].terminate).toHaveBeenCalledOnce();
     expect(vi.mocked(NativeMapCollision.create).mock.calls[0][2]?.metadata.columns).toBe(metadata.columns);
+    const schedule=vi.mocked(NativeMapCollision.create).mock.calls[0][3]!;
+    await schedule.yield();expect(backgroundFrame).toHaveBeenCalledWith(schedule.signal);
   });
   it('falls back for unsupported workers or incompatible snapshots',async()=>{
     vi.mocked(NativeMapCollision.create).mockRejectedValueOnce(new Error('incompatible')).mockResolvedValueOnce({dispose:vi.fn()} as unknown as NativeMapCollision);
     const source=new ArrayBuffer(16),pending=prepareCollision(manifest,source,metadata);
     workers[0].onmessage!({data:{ownership:{ids:metadata.ids,open:metadata.open},snapshot:new ArrayBuffer(32)}} as MessageEvent);await pending;
-    expect(NativeMapCollision.create).toHaveBeenLastCalledWith(manifest,source,{metadata});
+    expect(NativeMapCollision.create).toHaveBeenLastCalledWith(manifest,source,{metadata},expect.objectContaining({yield:expect.any(Function)}));
   });
   it('does not build on the main thread after abort',async()=>{
     const controller=new AbortController(),pending=prepareCollision(manifest,new ArrayBuffer(16),metadata,controller.signal);
@@ -36,5 +40,13 @@ describe('worker collision preparation',()=>{
   it('uses normal construction when workers are unavailable',async()=>{
     vi.stubGlobal('Worker',undefined);vi.mocked(NativeMapCollision.create).mockResolvedValue({dispose:vi.fn()} as unknown as NativeMapCollision);
     await prepareCollision(manifest,new ArrayBuffer(16));expect(NativeMapCollision.create).toHaveBeenCalledOnce();
+  });
+  it('does not retry a cancelled restore even when a worker snapshot exists',async()=>{
+    const controller=new AbortController();
+    vi.mocked(NativeMapCollision.create).mockImplementationOnce(async()=>{controller.abort();controller.signal.throwIfAborted();throw new Error('unreachable');});
+    const pending=prepareCollision(manifest,new ArrayBuffer(16),metadata,controller.signal);
+    workers[0].onmessage!({data:{ownership:{ids:metadata.ids,open:metadata.open},snapshot:new ArrayBuffer(32)}} as MessageEvent);
+    await expect(pending).rejects.toMatchObject({name:'AbortError'});
+    expect(NativeMapCollision.create).toHaveBeenCalledOnce();
   });
 });

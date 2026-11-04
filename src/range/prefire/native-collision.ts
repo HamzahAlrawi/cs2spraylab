@@ -4,7 +4,7 @@ import type {Vec, ResolveVertical} from '../actor-physics';
 import type {HullSweep} from '../actor-collision';
 import type {TerrainQueries} from '../terrain';
 import {validateNativeSurfaces, type NativeSurface, type NativePrimitive, type NativeSurfaceInterval, type NativeSurfaceHit} from './native-surfaces';
-import {validateConvexSolid, convexRayInterval, buildSolidTree, querySolidTree, type ConvexNativeSolid} from './native-solids';
+import {validateConvexSolid, convexRayInterval, buildSolidTree, solidTreeSteps, querySolidTree, type ConvexNativeSolid} from './native-solids';
 import grenadeClips from './native-grenade-clips.json';
 
 export type NativeCollisionManifest = {version: number; unit: number; build: string; collisionSha256: string; sourceCollisionSha256?:string;
@@ -24,6 +24,18 @@ type ShotSolid = ConvexNativeSolid & {primitive: NativePrimitive};
 const QUERY_SCHEMA=1;
 export type PreparedNativeQueries={schema:number;engine:string;collisionSha256:string;bounds:{minX:number;maxX:number;minZ:number;maxZ:number};
   ids:[number,number][];columns:[string,number[]][];solids:ShotSolid[];open:{handle:number;primitive:NativePrimitive}[]};
+export type CollisionPreparationSchedule = {yield: () => Promise<void>; signal?: AbortSignal; budgetMilliseconds?: number};
+
+function preparationCheckpoint(schedule: CollisionPreparationSchedule) {
+  let started = performance.now();
+  return async (force = false) => {
+    schedule.signal?.throwIfAborted();
+    if (!force && performance.now() - started < (schedule.budgetMilliseconds ?? 2)) return;
+    await schedule.yield();
+    schedule.signal?.throwIfAborted();
+    started = performance.now();
+  };
+}
 
 function clipTriangle(vertices: Float32Array, indices: Uint32Array, triangle: number, x: number, z: number,
   polygonBuffer: Float64Array, clippedBuffer: Float64Array): VerticalSurface | undefined {
@@ -96,12 +108,13 @@ export class NativeMapCollision implements TerrainQueries {
   private readonly clipB = new Float64Array(24);
   private queryVersion = 0;
   private disposed = false;
-  static async create(manifest: NativeCollisionManifest, binary: ArrayBuffer,prepared?:{metadata:PreparedNativeQueries;snapshot?:ArrayBuffer}) {
+  private static *validate(manifest: NativeCollisionManifest, binary: ArrayBuffer): Generator<void> {
     if (![1, 2].includes(manifest.version) || manifest.unit !== .0254) throw new Error('Unsupported map units or collision version');
     if (!Array.isArray(manifest.groups) || !manifest.groups.length || manifest.groups.length > 64) throw new Error('Invalid map collision groups');
     if (manifest.version === 2) {
       if (!Array.isArray(manifest.surfaces) || manifest.surfaces.length > 4096) throw new Error('Invalid native surface table');
       validateNativeSurfaces(manifest.surfaces);
+      yield;
     }
     const groupIds = new Set<number>(), primitiveIds = new Set<number>();
     for (const group of manifest.groups) {
@@ -112,67 +125,68 @@ export class NativeMapCollision implements TerrainQueries {
         typeof group.movement !== 'boolean' || typeof group.shots !== 'boolean') throw new Error('Invalid map collision buffer');
       const positions = new Float32Array(binary, group.offset, group.vertexCount * 3);
       const indices = new Uint32Array(binary, group.offset + group.vertexCount * 12, group.indexCount);
-      if (positions.some(value => !Number.isFinite(value)) || indices.some(index => index >= group.vertexCount)) throw new Error('Invalid map collision geometry');
+      for (let start = 0; start < positions.length; start += 4096) {
+        if (positions.subarray(start, start + 4096).some(value => !Number.isFinite(value))) throw new Error('Invalid map collision geometry');
+        yield;
+      }
+      for (let start = 0; start < indices.length; start += 4096) {
+        if (indices.subarray(start, start + 4096).some(index => index >= group.vertexCount)) throw new Error('Invalid map collision geometry');
+        yield;
+      }
       groupIds.add(group.id);
       if (manifest.version === 2) {
         if (!Array.isArray(group.primitives) || group.primitives.length > 100000) throw new Error('Invalid native solid table');
         let end = 0;
+        const surfaceIds = new Set(manifest.surfaces!.map(surface => surface.id));
+        let count = 0;
         for (const primitive of group.primitives) {
           if (![primitive.id, primitive.firstTriangle, primitive.triangleCount, primitive.surfaceId].every(Number.isSafeInteger) ||
             primitive.id < 0 || primitiveIds.has(primitive.id) || primitive.firstTriangle !== end || primitive.triangleCount < 1 ||
-            !manifest.surfaces!.some(s => s.id === primitive.surfaceId) || !['convex-hull', 'mesh'].includes(primitive.kind)) throw new Error('Invalid native solid metadata');
-          if (primitive.triangleSurfaces && (primitive.kind !== 'mesh' || primitive.triangleSurfaces.length !== primitive.triangleCount ||
-            primitive.triangleSurfaces.some(id=>!manifest.surfaces!.some(s=>s.id===id)))) throw new Error('Invalid native triangle surfaces');
+            !surfaceIds.has(primitive.surfaceId) || !['convex-hull', 'mesh'].includes(primitive.kind)) throw new Error('Invalid native solid metadata');
+          if (primitive.triangleSurfaces && (primitive.kind !== 'mesh' || primitive.triangleSurfaces.length !== primitive.triangleCount)) throw new Error('Invalid native triangle surfaces');
+          if (primitive.triangleSurfaces) for (let i = 0; i < primitive.triangleSurfaces.length; i++) {
+            if (!surfaceIds.has(primitive.triangleSurfaces[i])) throw new Error('Invalid native triangle surfaces');
+            if (++count === 256) {count = 0; yield;}
+          }
           primitiveIds.add(primitive.id); end += primitive.triangleCount;
+          if (++count === 256) {count = 0; yield;}
         }
         if (end !== group.indexCount / 3) throw new Error('Incomplete native solid metadata');
       }
     }
+  }
+  static async create(manifest: NativeCollisionManifest, binary: ArrayBuffer,prepared?:{metadata:PreparedNativeQueries;snapshot?:ArrayBuffer},
+    schedule?: CollisionPreparationSchedule) {
+    const checkpoint = schedule && preparationCheckpoint(schedule);
+    schedule?.signal?.throwIfAborted();
+    for (const _step of this.validate(manifest, binary)) {if (checkpoint) await checkpoint();}
     await prepareRapier();
+    schedule?.signal?.throwIfAborted();
     const valid=prepared?.metadata.schema===QUERY_SCHEMA && prepared.metadata.engine===RAPIER.version() &&
       prepared.metadata.collisionSha256===manifest.collisionSha256 && (!prepared.snapshot||prepared.snapshot.byteLength<=64*1024*1024);
-    return new NativeMapCollision(manifest,binary,valid?prepared:undefined);
+    if (!checkpoint || !valid || !prepared) return new NativeMapCollision(manifest,binary,valid?prepared:undefined);
+    // Rapier restoreSnapshot is indivisible (about 26 ms in the measured map).
+    // Give it its own frame; never combine validation, restore and JS indexes.
+    await checkpoint(true);
+    const result = new NativeMapCollision(manifest,binary,prepared,true);
+    try {
+      await checkpoint(true);
+      for (const _step of result.restorePrepared(manifest,binary,prepared,true)) await checkpoint();
+      await checkpoint(true);
+      return result;
+    } catch (error) {result.dispose(); throw error;}
   }
-  private constructor(manifest: NativeCollisionManifest, binary: ArrayBuffer,prepared?:{metadata:PreparedNativeQueries;snapshot?:ArrayBuffer}) {
+  private constructor(manifest: NativeCollisionManifest, binary: ArrayBuffer,prepared?:{metadata:PreparedNativeQueries;snapshot?:ArrayBuffer},deferPrepared=false) {
     this.build = manifest.build; this.collisionSha256 = manifest.collisionSha256;
     this.world = prepared?.snapshot?RAPIER.World.restoreSnapshot(new Uint8Array(prepared.snapshot)):new RAPIER.World({x: 0, y: 0, z: 0});
+    if (prepared) {
+      if (deferPrepared) return;
+      try {for (const _step of this.restorePrepared(manifest,binary,prepared)) { /* Synchronous callers retain their existing path. */ }}
+      catch (error) {this.world.free(); throw error;}
+      return;
+    }
     for (const surface of manifest.version === 2 ? manifest.surfaces! : []) this.sourceSurfaces.set(surface.id, Object.freeze({...surface}));
     this.surfaceDiagnostics.sourceSurfaces = this.sourceSurfaces.size;
-    if(prepared) {
-      try {
-        const data=prepared.metadata;
-        const openIds=new Set(data.open.map(item=>item.primitive.id));
-        Object.assign(this.bounds,data.bounds);
-        if(prepared.snapshot)for(const [handle,id] of data.ids)this.ids.set(handle,id);
-        for(const group of manifest.groups) {
-          const vertices=new Float32Array(binary,group.offset,group.vertexCount*3),indices=new Uint32Array(binary,group.offset+group.vertexCount*12,group.indexCount);
-          if(!prepared.snapshot) {
-            const bits=Number(group.movement)|Number(group.shots)*2;
-            const collider=this.world.createCollider(RAPIER.ColliderDesc.trimesh(vertices,indices).setCollisionGroups((bits<<16)|bits));
-            this.ids.set(collider.handle,group.id);
-            for(const primitive of group.primitives??[])if(openIds.has(primitive.id)) {
-              const remap=new Map<number,number>(),positions:number[]=[],local:number[]=[];
-              for(const index of indices.subarray(primitive.firstTriangle*3,(primitive.firstTriangle+primitive.triangleCount)*3)) {
-                if(!remap.has(index)){remap.set(index,remap.size);positions.push(...vertices.subarray(index*3,index*3+3));}local.push(remap.get(index)!);
-              }
-              const open=this.world.createCollider(RAPIER.ColliderDesc.trimesh(new Float32Array(positions),new Uint32Array(local)).setCollisionGroups(0));
-              this.openShots.push({collider:open,primitive});
-            }
-          }
-          if(manifest.version===2)this.primitiveGroups.set(group.id,group.primitives!.map(p=>({...p})));
-          if(group.movement)this.triangles.push({vertices:new Float32Array(binary,group.offset,group.vertexCount*3),
-            indices:new Uint32Array(binary,group.offset+group.vertexCount*12,group.indexCount),visited:new Uint32Array(group.indexCount/3)});
-        }
-        for(const [key,values] of data.columns)this.columns.set(key,new Uint32Array(values));
-        this.solidTree=buildSolidTree(data.solids);
-        if(prepared.snapshot)for(const open of data.open){const collider=this.world.getCollider(open.handle);if(!collider)throw new Error('Missing prepared collider');
-          this.openShots.push({collider,primitive:open.primitive});}
-        this.surfaceDiagnostics.validatedSolids=data.solids.length;this.surfaceDiagnostics.opaquePrimitives=data.open.length;
-        this.configureGrenadeQueries(manifest);
-        this.world.step();
-        return;
-      }catch(error){this.world.free();throw error;}
-    }
     const columns = new Map<string, number[]>();
     const shotSolids: ShotSolid[] = [];
     try {
@@ -237,6 +251,79 @@ export class NativeMapCollision implements TerrainQueries {
     this.surfaceDiagnostics.opaquePrimitives = this.openShots.length;
     this.configureGrenadeQueries(manifest);this.world.step();
     } catch (error) {this.world.free(); throw error;}
+  }
+  private *restorePrepared(manifest: NativeCollisionManifest, binary: ArrayBuffer,
+    prepared: {metadata: PreparedNativeQueries; snapshot?: ArrayBuffer}, cooperative = false): Generator<void> {
+    let work = 0;
+    for (const surface of manifest.version === 2 ? manifest.surfaces! : []) {
+      this.sourceSurfaces.set(surface.id, Object.freeze({...surface}));
+      if (++work === 256) {work = 0; yield;}
+    }
+    this.surfaceDiagnostics.sourceSurfaces = this.sourceSurfaces.size;
+    const data = prepared.metadata, openIds = new Set<number>();
+    for (const item of data.open) {
+      openIds.add(item.primitive.id);
+      if (++work === 256) {work = 0; yield;}
+    }
+    Object.assign(this.bounds,data.bounds);
+    if (prepared.snapshot) for (const [handle,id] of data.ids) {
+      this.ids.set(handle,id);
+      if (++work === 256) {work = 0; yield;}
+    }
+    for (const group of manifest.groups) {
+      const vertices = new Float32Array(binary,group.offset,group.vertexCount*3);
+      const indices = new Uint32Array(binary,group.offset+group.vertexCount*12,group.indexCount);
+      if (!prepared.snapshot) {
+        const bits = Number(group.movement)|Number(group.shots)*2;
+        const collider = this.world.createCollider(RAPIER.ColliderDesc.trimesh(vertices,indices).setCollisionGroups((bits<<16)|bits));
+        this.ids.set(collider.handle,group.id);
+        yield;
+        for (const primitive of group.primitives??[]) if (openIds.has(primitive.id)) {
+          const remap = new Map<number,number>(), positions: number[] = [], local: number[] = [];
+          for (const index of indices.subarray(primitive.firstTriangle*3,(primitive.firstTriangle+primitive.triangleCount)*3)) {
+            if (!remap.has(index)) {remap.set(index,remap.size); positions.push(...vertices.subarray(index*3,index*3+3));}
+            local.push(remap.get(index)!);
+            if (++work === 256) {work = 0; yield;}
+          }
+          const open = this.world.createCollider(RAPIER.ColliderDesc.trimesh(new Float32Array(positions),new Uint32Array(local)).setCollisionGroups(0));
+          this.openShots.push({collider:open,primitive});
+          yield;
+        }
+      }
+      if (manifest.version === 2) {
+        const primitives: NativePrimitive[] = [];
+        for (const primitive of group.primitives!) {
+          primitives.push({...primitive});
+          if (++work === 256) {work = 0; yield;}
+        }
+        this.primitiveGroups.set(group.id,primitives);
+      }
+      if (group.movement) this.triangles.push({vertices,indices,visited:new Uint32Array(group.indexCount/3)});
+      yield;
+    }
+    for (const [key,values] of data.columns) {
+      if (cooperative) {
+        const copy = new Uint32Array(values.length);
+        for (let i = 0; i < values.length; i++) {
+          copy[i] = values[i];
+          if (++work === 256) {work = 0; yield;}
+        }
+        this.columns.set(key,copy);
+      } else this.columns.set(key,new Uint32Array(values));
+      if (++work === 256) {work = 0; yield;}
+    }
+    this.solidTree = cooperative ? (yield* solidTreeSteps(data.solids)) : buildSolidTree(data.solids);
+    if (prepared.snapshot) for (const open of data.open) {
+      const collider = this.world.getCollider(open.handle);
+      if (!collider) throw new Error('Missing prepared collider');
+      this.openShots.push({collider,primitive:open.primitive});
+      if (++work === 256) {work = 0; yield;}
+    }
+    this.surfaceDiagnostics.validatedSolids = data.solids.length;
+    this.surfaceDiagnostics.opaquePrimitives = data.open.length;
+    this.configureGrenadeQueries(manifest);
+    yield;
+    this.world.step();
   }
   exportPrepared():{metadata:PreparedNativeQueries;snapshot:Uint8Array} {
     if(this.disposed)throw new Error('Cannot prepare a disposed collision world');

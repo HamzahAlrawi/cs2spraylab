@@ -33,6 +33,8 @@ export type TeamAssignment = {
   peekAt: number;
   expiresAt: number;
   waitForPartner?: boolean;
+  /** Shared across assignment copies so an abandoned utility setup can revoke them. */
+  utilitySetup?: Readonly<{cancelled: boolean}>;
 };
 const gap = (a: Vec, b: Vec) => Math.hypot(a.x - b.x, a.z - b.z);
 const experienced = (level: SkillLevel, minimum = 6) => level === '10+' || level >= minimum;

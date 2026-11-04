@@ -213,6 +213,14 @@ export class DuelSimulation {
     this.replay.frame(this.tick, this.time, this.replayActors(), undefined, true);
     this.replay.utility(this.tick,this.time,this.utilities.projectiles,this.utilities.effects,true,this.utilityDrops);
   } }
+  async prepareOpeningNavigation(signal:AbortSignal,yieldFrame:()=>Promise<void>) {
+    if(!this.arena.native)return;
+    for(const actor of this.snapshot().slice(1)) {
+      await yieldFrame();signal.throwIfAborted();
+      const brain=this.brains.get(actor.id);
+      if(brain instanceof TacticalBrain)brain.prepareOpeningNavigation(actor);
+    }
+  }
   protected weaponCommand(_actor: CombatActor, command: ActorCommand): ActorCommand {return command;}
   /** Shared by autonomous Duel and angle-authored Prefire controllers. */
   protected applyBotCombatPolicy(actorId: number, command: Partial<ActorCommand>, report: ThreatReport | null,
@@ -617,6 +625,7 @@ export class DuelSimulation {
           this.utilityDefenses.get(actor.id)?.command(this.time, actorView[actor.id], this.arena, this.utilities.effects);
         if (defense) {
           this.utilityPlanners.get(actor.id)?.cancel(this.time);
+          this.utilityTeam.cancel(actor.id);
           if (this.heldUtilities.has(actor.id)) this.selectActorUtility(actor.id, null);
           this.commandBot(actor, defense);
         }

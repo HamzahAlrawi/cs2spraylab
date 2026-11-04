@@ -490,7 +490,7 @@ const october30MapPackageChanges = {
   ],
 } as const satisfies ChangelogRelease;
 
-export const latestChanges = {
+const october31CombatMovementChanges = {
   id:'update-2026-10-31-combat-movement',title:'Active duels & safer utility (October 31)',baselineCommit:'b7d28b6',
   sections:[
     {id:'weapon-aware-combat-steps',title:'Move between firing windows',items:[
@@ -504,7 +504,21 @@ export const latestChanges = {
   ],
 } as const satisfies ChangelogRelease;
 
+export const latestChanges = {
+  id:'update-2026-11-04-chunk-preparation',title:'Smoother chunk preparation & team utility (November 4)',baselineCommit:'01c1376',
+  sections:[
+    {id:'background-map-cpu',title:'Less work during live rounds',items:[
+      'Large map inflation, integrity checks and compressed geometry decoding run in bounded workers. Collision validation and search-tree restoration yield between preparation turns, with deferred local-cache writes.',
+      'Opening navigation queries are prepared before entry without advancing the round or consuming bot randomness. Repeated native path endpoints reuse bounded connection caches; combat geometry and shot physics are unchanged.',
+    ]},
+    {id:'utility-partner-release',title:'Cancelled setups release teammates',items:[
+      'Abandoning an uncommitted grenade to escape danger also releases its team setup and copied partner waits. Grenades already released keep their flight and detonation coordination.',
+    ]},
+  ],
+} as const satisfies ChangelogRelease;
+
 export const changelogHistory = [
+  october31CombatMovementChanges,
   october30MapPackageChanges,
   october30ProgressSavingChanges,
   october30SourceOnlyChanges,

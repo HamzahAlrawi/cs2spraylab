@@ -11,7 +11,8 @@ if (qualityOutput && (filter || process.argv.includes('--diagnostic') || process
   throw new Error('Quality reports require a full strict audit of the already published pools, separate from --save.');
 
 // Generate selection pools offline; never run native placement searches in the render loop.
-const vite = await createServer({server: {middlewareMode: true, hmr: false, ws: false}, appType: 'custom', logLevel: 'error'});
+const vite = await createServer({cacheDir:'node_modules/.vite-prefire-authoring',
+  server: {middlewareMode: true, hmr: false, ws: false}, appType: 'custom', logLevel: 'error'});
 let collision;
 try {
   const adapter = await prefireAuthoringMaps.load(mapId, vite);

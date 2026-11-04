@@ -1,5 +1,6 @@
 import {NativeMapCollision, type NativeCollisionManifest, type PreparedNativeQueries} from './native-collision';
 import {readCachedQueries,saveCachedQueries} from './query-cache';
+import {backgroundFrame} from './background-work';
 
 type Prepared = {metadata: PreparedNativeQueries; snapshot: ArrayBuffer};
 type WorkerReply = {ownership?: Pick<PreparedNativeQueries,'ids'|'open'>; snapshot: ArrayBuffer; error?:string};
@@ -44,14 +45,17 @@ export async function prepareCollision(manifest: NativeCollisionManifest, binary
   }
   signal?.throwIfAborted();
   const restoreAt=performance.now();
+  const preparationSignal=signal??new AbortController().signal;
+  const schedule={yield:()=>backgroundFrame(preparationSignal),signal:preparationSignal};
   let result: NativeMapCollision;
-  try {result = await NativeMapCollision.create(manifest, binary, prepared ?? (metadata ? {metadata} : undefined));}
+  try {result = await NativeMapCollision.create(manifest, binary, prepared ?? (metadata ? {metadata} : undefined),schedule);}
   catch (error) {
+    signal?.throwIfAborted();
     if (!prepared) throw error;
     prepared=undefined;
     source='main';
     signal?.throwIfAborted();
-    result = await NativeMapCollision.create(manifest, binary, metadata ? {metadata} : undefined);
+    result = await NativeMapCollision.create(manifest, binary, metadata ? {metadata} : undefined,schedule);
   }
   if (signal?.aborted) {result.dispose(); signal.throwIfAborted();}
   if(prepared&&!cached)saveCachedQueries(prepared);

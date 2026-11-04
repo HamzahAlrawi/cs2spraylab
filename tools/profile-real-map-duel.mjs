@@ -11,7 +11,12 @@ try {
     performance.setResourceTimingBufferSize(10000);
     localStorage.setItem('spraylab.range.v2',JSON.stringify({mode:'duel',volume:0,quality,frameLimit:60}));
     localStorage.setItem('spraylab.duel.v1',JSON.stringify({botCount:count,skill:8,realMapChunk:'dust2-mid-ct',roundSeconds:180}));
-    window.mapProfile={frames:[],collecting:false,engine:null,longTasks:[],parts:{}};
+    window.mapProfile={frames:[],collecting:false,engine:null,longTasks:[],parts:{},resources:[]};
+    const NativeBlob=Blob,create=URL.createObjectURL.bind(URL);
+    globalThis.Blob=new Proxy(NativeBlob,{construct(target,args){const start=performance.now(),blob=Reflect.construct(target,args);
+      if(window.mapProfile.collecting)window.mapProfile.resources.push({kind:'blob',bytes:blob.size,ms:performance.now()-start,time:start});return blob;}});
+    URL.createObjectURL=blob=>{const start=performance.now(),url=create(blob);
+      if(window.mapProfile.collecting)window.mapProfile.resources.push({kind:'url',bytes:blob.size,ms:performance.now()-start,time:start});return url;};
     new PerformanceObserver(list=>window.mapProfile.longTasks.push(...list.getEntries().map(entry=>({start:entry.startTime,ms:entry.duration})))).observe({type:'longtask',buffered:true});
   },{quality,count});
   const cdp=await page.context().newCDPSession(page);
@@ -31,32 +36,48 @@ try {
     }
     DuelEngine.prototype.tick=function(time){
       const p=window.mapProfile;p.engine=this;this.renderer.info.autoReset=false;this.renderer.info.reset();
-      const start=performance.now();tick.call(this,time);
+      if(p.armHandoff&&!this.loadingMap){p.armHandoff=false;p.frames=[];p.parts={};p.collecting=true;p.sampleAt=performance.now();}
+      if(p.lastSim!==this.sim){p.lastSim=this.sim;const advance=this.sim.advance.bind(this.sim);
+        this.sim.advance=(...args)=>{const start=performance.now();try{return advance(...args);}
+          finally{if(p.collecting)p.parts.simulation=(p.parts.simulation??0)+performance.now()-start;}};}
+      const previous={...p.parts},stepBefore=this.sim.tick,start=performance.now();tick.call(this,time);
       if(p.collecting && this.renderer.info.render.calls)p.frames.push({cpu:performance.now()-start,
-        calls:this.renderer.info.render.calls,triangles:this.renderer.info.render.triangles,time});
+        calls:this.renderer.info.render.calls,triangles:this.renderer.info.render.triangles,time,at:start,steps:this.sim.tick-stepBefore,
+        loading:this.loadingMap,chunk:this.scenario?.chunk?.id,
+        parts:Object.fromEntries(Object.entries(p.parts).map(([key,value])=>[key,value-(previous[key]??0)]))});
     };
   });
   await page.getByRole('button',{name:'Enter duel',exact:true}).waitFor({timeout:120000});
   await page.waitForFunction(()=>!!window.mapProfile.engine);
   const readyMs=performance.now()-start;
   const assets=await page.evaluate(()=>performance.getEntriesByType('resource').filter(entry=>entry.name.includes('/maps/')).map(entry=>({url:new URL(entry.name).pathname,bytes:entry.decodedBodySize,ms:entry.duration})));
+  if(process.env.JS_PROFILE){await cdp.send('Profiler.enable');await cdp.send('Profiler.start');
+    await page.evaluate(()=>{window.mapProfile.profileAt=performance.now();});}
+  if(process.env.TRACE_TIMELINE)await cdp.send('Tracing.start',{
+    categories:'devtools.timeline,blink.user_timing,v8,disabled-by-default-devtools.timeline',transferMode:'ReturnAsStream'});
+  await page.evaluate(()=>{const p=window.mapProfile;p.collecting=true;p.sampleAt=performance.now();});
   await page.getByRole('button',{name:'Enter duel',exact:true}).click();
   await page.evaluate(()=>{
     const e=window.mapProfile.engine,actor=e.sim.actors[0],watch=e.sim.arena.lanes[0].watch;
     actor.position={...watch};actor.feet=watch.y-1.6256;actor.health=1e6;
-    const advance=e.sim.advance.bind(e.sim);
-    e.sim.advance=function(...args){const start=performance.now();try{return advance(...args);}
-      finally{if(window.mapProfile.collecting)window.mapProfile.parts.simulation=(window.mapProfile.parts.simulation??0)+performance.now()-start;}};
   });
-  await page.waitForTimeout(1500);
-  if(process.env.JS_PROFILE){await cdp.send('Profiler.enable');await cdp.send('Profiler.start');}
-  if(process.env.TRACE_TIMELINE)await cdp.send('Tracing.start',{
-    categories:'devtools.timeline,blink.user_timing,v8,disabled-by-default-devtools.timeline',transferMode:'ReturnAsStream'});
-  await page.evaluate(nextChunk=>{
-    const p=window.mapProfile;p.frames=[];p.parts={};p.collecting=true;p.sampleAt=performance.now();
+  const settleMs=Number(process.env.SETTLE_MS??1500);
+  if(settleMs)await page.waitForTimeout(settleMs);
+  if(process.env.HANDOFF_CHUNK){
+    await page.evaluate(async chunk=>{
+      const e=window.mapProfile.engine;e.config={...e.config,realMapChunk:chunk};e.scenario.configureDuel(e.config);
+      await e.scenario.stageRound(e.seed,new AbortController().signal,
+        (root,signal)=>import('/src/range/duel/scene-preparation.ts').then(({prepareSceneGpu})=>prepareSceneGpu(e.renderer,root,e.scene,e.camera,signal,e.settings.quality)));
+      const p=window.mapProfile;p.collecting=false;p.armHandoff=true;e.restart(true);p.handoffAt=performance.now();
+    },process.env.HANDOFF_CHUNK);
+    await page.waitForFunction(()=>!window.mapProfile.engine.loadingMap);
+  }
+  await page.evaluate(({nextChunk,reset})=>{
+    const p=window.mapProfile;if(reset){p.frames=[];p.parts={};p.sampleAt=performance.now();}
+    p.collecting=true;
     if(nextChunk){const e=p.engine;e.config={...e.config,realMapChunk:nextChunk};
       e.scenario.configureDuel(e.config);e.prefetchedSeed=undefined;e.prefetchAt=-Infinity;}
-  },process.env.PRELOAD_CHUNK);
+  },{nextChunk:process.env.PRELOAD_CHUNK,reset:!process.env.HANDOFF_CHUNK&&settleMs>0});
   await page.waitForTimeout(sampleMs);
   if(process.env.TRACE_TIMELINE){
     const complete=new Promise(resolve=>cdp.once('Tracing.tracingComplete',resolve));
@@ -72,7 +93,7 @@ try {
     const q=(name,quantile)=>{const values=p.frames.map(row=>row[name]).sort((a,b)=>a-b);return +(values[Math.floor((values.length-1)*quantile)]??0).toFixed(2);};
     const gl=e.renderer.getContext(),debug=gl.getExtension('WEBGL_debug_renderer_info');
     return {frames:p.frames.length,cpu50:q('cpu',.5),cpu95:q('cpu',.95),drawCalls:q('calls',.5),triangles:q('triangles',.5),
-      parts:p.parts,textures:e.renderer.info.memory.textures,longTasks:p.longTasks,
+      sampleAt:p.sampleAt,profileAt:p.profileAt,nextSeed:e.seed,parts:p.parts,frameSamples:p.frames,resourceSamples:p.resources,textures:e.renderer.info.memory.textures,longTasks:p.longTasks,
       combatLongTasks:p.longTasks.filter(task=>task.start>=p.sampleAt),
       nextMap:{key:e.scenario?.prepared?.key,ready:e.scenario?.prepared?.ready??false},
       graphics:debug?gl.getParameter(debug.UNMASKED_RENDERER_WEBGL):'unavailable',performance:e.performanceReport()};
@@ -83,5 +104,6 @@ try {
     note:'Automated local browser; competing workloads are not controlled. CPU throttling is not old-PC validation.',
     assets:{files:assets.length,bytes:assets.reduce((sum,asset)=>sum+asset.bytes,0)},report,errors};
   await fs.writeFile(path+'.json',JSON.stringify(result,null,2));
-  console.log(JSON.stringify(result,null,2));if(errors.length)process.exitCode=1;
+  const {frameSamples:_,resourceSamples:__,...summary}=report;
+  console.log(JSON.stringify({...result,report:{...summary,performance:undefined}},null,2));if(errors.length)process.exitCode=1;
 }finally{await browser.close();}

@@ -5,6 +5,10 @@ test.skip(!existsSync('public/revamp/maps/dust2/duel/dust2-mid-ct/chunk.json'),'
 test('prepares one next chunk and reuses verified local bytes after a fresh page',async({page,context},info)=>{
   test.skip(info.project.name!=='chromium');test.setTimeout(180000);
   const errors:string[]=[];page.on('pageerror',error=>errors.push(error.message));
+  const geometryWorkers:string[]=[],closedWorkers:string[]=[];
+  page.on('worker',worker=>{if(worker.url().includes('map-decoder.worker')){
+    geometryWorkers.push(worker.url());worker.on('close',()=>closedWorkers.push(worker.url()));
+  }});
   await page.route('**/next-map-test',route=>route.fulfill({contentType:'text/html',body:'<!doctype html><title>Next chunk preparation</title>'}));
   await page.addInitScript(()=>Object.defineProperty(navigator,'deviceMemory',{value:8,configurable:true}));
   await page.goto('/next-map-test');
@@ -40,6 +44,8 @@ test('prepares one next chunk and reuses verified local bytes after a fresh page
   expect(first.placeholderChildren,'do not physically walk a temporary route before selecting the actual round guide').toBe(0);
   expect(first.owned).toBe(3);expect(first.attached).toBe(1);expect(first.cancelled).toBe(true);
   expect(first.collision.map((entry:{source:string})=>entry.source)).toEqual(['worker','worker','worker']);
+  expect(geometryWorkers,'native sectors decode off the gameplay thread').toHaveLength(3);
+  await expect.poll(()=>closedWorkers.length,'map-load workers do not live across retained chunks').toBe(3);
   // Disable HTTP caching: this witness must pass via app-owned local storage.
   const cdp=await context.newCDPSession(page);await cdp.send('Network.setCacheDisabled',{cacheDisabled:true});
   await page.reload();const objects:string[]=[];

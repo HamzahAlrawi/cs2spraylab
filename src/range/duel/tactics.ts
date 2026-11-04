@@ -190,6 +190,14 @@ export class TacticalBrain {
   private get lastSeen() {return this.memory.seen;}
   private get lastSeenAt() {return this.memory.seenAt;}
 
+  /** Populate static navigation caches only; never sample randomness, perceive
+   * opponents, change the tactical phase or advance a reaction deadline. */
+  prepareOpeningNavigation(self:DuelActorSnapshot) {
+    if(!this.arena.native)return;
+    routeTo(self.position,this.lane.anchor,this.arena);
+    clearSegment(this.lane.anchor,this.lane.edge,this.arena);
+  }
+
   private makeLane(base: CoverLane): CoverLane {
     return {side: base.side, role: this.arena.native ? nativeLaneRole(base, this.arena.tactical?.watchPoints ?? []) : base.role,
       watch: base.watch && {...base.watch}, axis: {...base.axis ?? {x: base.side, z: 0}},
@@ -818,6 +826,7 @@ export class TacticalBrain {
       this.nextShotAt = Math.max(this.nextShotAt, time - STEP + gameData.weapons[this.weapon].cycle);
     }
     this.previousAmmo = self.ammo;
+    if (this.teamAssignment?.utilitySetup?.cancelled) this.coordinate(null);
     const assignment = this.teamAssignment;
     const team = assignment && assignment.actorId === self.id && assignment.generation === self.generation &&
       time >= assignment.contactAt && time < assignment.expiresAt ? assignment : null;
