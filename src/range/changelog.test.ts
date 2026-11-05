@@ -7,9 +7,9 @@ import {changelogHistory, changelogReleases, latestChanges} from './changelog-da
 
 describe('append-only changelog', () => {
   it('identifies the requested baseline without claiming a deployment', () => {
-    expect(latestChanges.id).toBe('update-2026-11-05-full-map-awareness');
-    expect(latestChanges.title).toBe('Full-map sound awareness (November 5)');
-    expect(latestChanges.baselineCommit).toBe('ea6fabb');
+    expect(latestChanges.id).toBe('update-2026-11-06-sound-density');
+    expect(latestChanges.title).toBe('Playable-space sound density (November 6)');
+    expect(latestChanges.baselineCommit).toBe('e67a8dc');
     const html = renderToStaticMarkup(createElement(Changelog));
     expect(html).toContain('Ready rounds &amp; more Dust 2 angles (October 23)');
     expect(html).toContain('Combat feedback &amp; map delivery (October 23)');
@@ -18,7 +18,7 @@ describe('append-only changelog', () => {
     expect(html).toContain('Dust 2 angle coverage (October 18)');
     expect(html).toContain('CS2 coaching update (October 17)');
     expect(html).toContain('Training quality update (October 16)');
-    expect(html).toContain('Since baseline <code>ea6fabb</code>');
+    expect(html).toContain('Since baseline <code>e67a8dc</code>');
     expect(html).not.toMatch(/<time|deployed on|released on/i);
   });
 
@@ -39,14 +39,15 @@ describe('append-only changelog', () => {
   });
 
   it('keeps all releases in newest-first order with no duplicate IDs', () => {
-    expect(changelogReleases.slice(1).map(release => release.id)).toEqual(['update-2026-11-05-sound-awareness','update-2026-11-05-rewards-cover','update-2026-11-05-contact-utility','update-2026-11-04-chunk-preparation','update-2026-10-31-combat-movement','update-2026-10-30-map-packages','update-2026-10-30-progress-saving','update-2026-10-30-source-only','update-2026-10-29-local-rounds','update-2026-10-29-bleeding-edge','update-2026-10-29-he-smoke','update-2026-10-29-radar-utility-review','update-2026-10-29-grenade-presentation','update-2026-10-29-bot-difficulty','update-2026-10-28-progress-recovery','update-2026-10-28-grenade-fidelity','update-2026-10-26-utilities','update-2026-10-23-preloading','update-2026-10-23', 'update-2026-10-20', 'update-2026-10-19', 'update-2026-10-18', 'update-2026-10-17', 'update-2026-10-16', 'update-2026-10-08', 'update-2026-10-05', 'update-49d8ea6']);
+    expect(changelogReleases.slice(1).map(release => release.id)).toEqual(['update-2026-11-05-full-map-awareness','update-2026-11-05-sound-awareness','update-2026-11-05-rewards-cover','update-2026-11-05-contact-utility','update-2026-11-04-chunk-preparation','update-2026-10-31-combat-movement','update-2026-10-30-map-packages','update-2026-10-30-progress-saving','update-2026-10-30-source-only','update-2026-10-29-local-rounds','update-2026-10-29-bleeding-edge','update-2026-10-29-he-smoke','update-2026-10-29-radar-utility-review','update-2026-10-29-grenade-presentation','update-2026-10-29-bot-difficulty','update-2026-10-28-progress-recovery','update-2026-10-28-grenade-fidelity','update-2026-10-26-utilities','update-2026-10-23-preloading','update-2026-10-23', 'update-2026-10-20', 'update-2026-10-19', 'update-2026-10-18', 'update-2026-10-17', 'update-2026-10-16', 'update-2026-10-08', 'update-2026-10-05', 'update-49d8ea6']);
     expect(changelogReleases).toEqual([latestChanges, ...changelogHistory]);
     expect(new Set(changelogReleases.map(release => release.id)).size).toBe(changelogReleases.length);
-    expect(changelogReleases.flatMap(release => release.sections)).toHaveLength(96);
+    expect(changelogReleases.flatMap(release => release.sections)).toHaveLength(97);
   });
 
   it('covers Prefire, native-map limits and expanded Duel arenas', () => {
-    expect(latestChanges.sections.map(section=>section.id)).toEqual(['whole-map-listening','listener-local-cues']);
+    expect(latestChanges.sections.map(section=>section.id)).toEqual(['continuous-sound-density']);
+    expect(changelogHistory.find(release=>release.id==='update-2026-11-05-full-map-awareness')!.sections.map(section=>section.id)).toEqual(['whole-map-listening','listener-local-cues']);
     expect(changelogHistory.find(release=>release.id==='update-2026-11-05-sound-awareness')!.sections.map(section=>section.id)).toEqual(['map-sound-awareness','sound-audit-2000942','multi-elevation-inferno']);
     expect(changelogHistory.find(release=>release.id==='update-2026-11-05-rewards-cover')!.sections.map(section=>section.id)).toEqual(['whole-body-cover','rewards-journey','unlimited-training-reserves']);
     expect(changelogHistory.find(release=>release.id==='update-2026-11-05-contact-utility')!.sections.map(section=>section.id)).toEqual(['observed-contact-decisions','verified-release-punch','prepared-smoke-route-coverage']);

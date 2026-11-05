@@ -116,7 +116,7 @@ it('runs a real reload rather than playing foley while the demonstrator holds a 
   expect(started).toBe(true);expect(session.statusReport().heard).toBe(true);
 });
 it.each([['rifle',0],['suppressed',.4],['sniper',.9]] as const)('%s demonstrations actually fire after native readiness gates',(_id,random)=>{
-  const {sim,session,frame}=fixture('reveal','shots');(session as any).random=()=>random;sim.start();let fired=0;
+  const {sim,session,frame}=fixture('reveal','shots');(session as any).random=()=>random||.1;sim.start();let fired=0;
   for(let i=0;i<4*128;i++){sim.step();const events=sim.drainEvents();fired+=events.filter(e=>e.kind==='fire'&&e.actorId===1).length;frame(sim.time,events);}
   expect((session as any).trial.cue.id).toBe(_id);expect(fired).toBeGreaterThan(0);expect(session.statusReport().heard).toBe(true);
 });

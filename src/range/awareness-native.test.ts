@@ -30,7 +30,14 @@ it.skipIf(!existsSync(`${base}collision.bin`))('finds audible nearby hidden cues
       const trial=(session as any).trial;
       if(!trial)missing.push(`${route.id}/${cues}`);
       if(cues==='utility'&&!session.statusReport().heard)missing.push(`${route.id}/silent-utility`);
-      if(trial)expect(Math.hypot(trial.feet.x-p.x,trial.feet.y-p.y,trial.feet.z-p.z)).toBeLessThanOrEqual(28);
+      if(trial){
+        expect(Math.hypot(trial.feet.x-p.x,trial.feet.y-p.y,trial.feet.z-p.z)).toBeLessThanOrEqual(28);
+        const height=(trial.crouched?54:72)*.0254;
+        expect(collision.fits(trial.feet,trial.feet.y,height)).toBe(true);
+        const support=collision.vertical(trial.feet,trial.feet.y+.015,trial.feet.y-.05,height);
+        expect(support.grounded).toBe(true);expect(Math.abs(support.feet-trial.feet.y)).toBeLessThan(.05);
+        expect(sources.some(s=>Math.hypot(s.feet.x-trial.feet.x,s.feet.z-trial.feet.z)<=2.01)).toBe(true);
+      }
     }
     expect(missing).toEqual([]);
   }finally{collision.dispose();}

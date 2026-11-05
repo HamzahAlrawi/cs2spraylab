@@ -1,5 +1,5 @@
 import {expect,it} from 'vitest';
-import {nearbyAwarenessSources,awarenessRunEdge,AWARENESS_SOURCE_RADIUS} from './awareness-sources';
+import {nearbyAwarenessSources,awarenessRunEdge,awarenessMixtureWeights,walkAwarenessOffset,AWARENESS_SOURCE_RADIUS} from './awareness-sources';
 import {testArena,type Arena} from './duel/geometry';
 import {randomStream} from './duel/rng';
 
@@ -13,14 +13,41 @@ it('chooses bounded sources around the current player, not the original spawn',(
     const listener={x,y:0,z:0},pool=nearbyAwarenessSources(listener,arena,sources,randomStream(1,'test'));
     expect(pool.length).toBeGreaterThan(15);expect(pool.length).toBeLessThanOrEqual(64);
     expect(pool.every(([,p])=>Math.hypot(p.feet.x-x,p.feet.y,p.feet.z)<=AWARENESS_SOURCE_RADIUS)).toBe(true);
-    expect(pool.some(([,p])=>p.feet.x===x&&p.feet.z===5)).toBe(true);
+    expect(pool.every(([,p])=>Math.hypot(p.feet.x-x,p.feet.z-5)<1.63)).toBe(true);
+    expect(pool.every(([,p])=>p.feet.x!==x||p.feet.z!==5)).toBe(true);
   }
 });
 it('does not place a local sound source in voids or inside a solid',()=>{
   const arena=plane();arena.native!.vertical=()=>({feet:-100,grounded:false,ceiling:false});
-  expect(nearbyAwarenessSources({x:0,y:0,z:0},arena,[],()=>.5)).toEqual([]);
+  const sources=[{feet:{x:0,y:0,z:5}}];
+  expect(nearbyAwarenessSources({x:0,y:0,z:0},arena,sources,()=>.5)).toEqual([]);
   arena.native!.vertical=()=>({feet:0,grounded:true,ceiling:false});arena.native!.fits=()=>false;
-  expect(nearbyAwarenessSources({x:0,y:0,z:0},arena,[],()=>.5)).toEqual([]);
+  expect(nearbyAwarenessSources({x:0,y:0,z:0},arena,sources,()=>.5)).toEqual([]);
+});
+it('uses a continuous weighted density instead of fixed points or 360-degree listener rings',()=>{
+  const arena=plane(),listener={x:0,y:0,z:0},random=randomStream(112,'density');
+  const sources=[{feet:{x:-6,y:0,z:5},weight:9},{feet:{x:6,y:0,z:5},weight:1}];
+  const samples=Array.from({length:60},()=>nearbyAwarenessSources(listener,arena,sources,random)).flat().map(([,p])=>p.feet);
+  const common=samples.filter(p=>p.x<0).length;
+  expect(common/samples.length).toBeGreaterThan(.85);expect(common/samples.length).toBeLessThan(.94);
+  expect(new Set(samples.map(p=>`${p.x}:${p.z}`)).size).toBe(samples.length);
+  expect(samples.every(p=>sources.some(s=>Math.hypot(p.x-s.feet.x,p.z-s.feet.z)<1.63))).toBe(true);
+  expect(nearbyAwarenessSources(listener,arena,[],random)).toEqual([]);
+});
+it('keeps route coverage from overwhelming hold likelihood because of more path samples',()=>{
+  const hold={feet:{x:0,y:0,z:5},kind:'hold' as const,weight:1};
+  const routes=Array.from({length:100},(_,i)=>({feet:{x:0,y:0,z:5+i/100},kind:'route' as const}));
+  const weights=awarenessMixtureWeights([hold,...routes]);expect(weights[0]).toBeCloseTo(.8);
+  expect(weights.slice(1).reduce((a,b)=>a+b,0)).toBeCloseTo(.2);
+});
+it('rejects supported scenery across a wall or gap instead of snapping onto its floor',()=>{
+  const arena=plane(),anchor={x:0,y:0,z:5};
+  arena.solids=[{center:{x:.65,y:1,z:5},size:{x:.2,y:2,z:8}}];
+  expect(walkAwarenessOffset(anchor,1.4,0,arena)).toBeUndefined();
+  arena.solids=[];arena.native!.vertical=(p)=>({feet:0,grounded:p.x<.3||p.x>.8,ceiling:false});
+  expect(walkAwarenessOffset(anchor,1.4,0,arena)).toBeUndefined();
+  arena.native!.vertical=p=>({feet:p.x>.3?5:0,grounded:true,ceiling:false});
+  expect(walkAwarenessOffset(anchor,1.4,0,arena)).toBeUndefined();
 });
 it('requires a supported, walkable local edge for running demonstrations',()=>{
   const arena=plane(),feet={x:0,y:0,z:0};

@@ -3,6 +3,9 @@
 Follow-up to `sound-awareness-audit-2026-11-05.md`. This changes map scope and
 source placement, not native sound constants or player movement mechanics.
 
+The radial source probes described below were subsequently replaced by
+[continuous playable-space density](sound-awareness-density-2026-11-06.md).
+
 ## Map ownership
 
 - Awareness loads the complete selected native map, including full collision,

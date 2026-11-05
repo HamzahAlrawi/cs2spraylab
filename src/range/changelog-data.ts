@@ -574,7 +574,7 @@ const november5SoundChanges = {
   ],
 } as const satisfies ChangelogRelease;
 
-export const latestChanges = {
+const november5FullMapAwareness = {
   id:'update-2026-11-05-full-map-awareness',title:'Full-map sound awareness (November 5)',baselineCommit:'ea6fabb',
   sections:[
     {id:'whole-map-listening',title:'Roam the whole map',items:[
@@ -588,7 +588,19 @@ export const latestChanges = {
   ],
 } as const satisfies ChangelogRelease;
 
+export const latestChanges = {
+  id:'update-2026-11-06-sound-density',title:'Playable-space sound density (November 6)',baselineCommit:'e67a8dc',
+  sections:[
+    {id:'continuous-sound-density',title:'Common positions, natural variation',items:[
+      'Sound sources now use a continuous density around common holds and clearing corridors, rather than random directions around the player or a fixed list of spawn dots. Existing regional hold evidence increases common-position priority while retaining coverage.',
+      'Every offset must stay supported and walkable from an admitted map position. Walls, unsupported gaps, different disconnected floors and blocked hulls reject the sample instead of snapping it onto nearby scenery.',
+      'Duplicate courses and dense path sampling cannot inflate hold probability. Weighting is an explicit training policy based on regional evidence, not a claim of exact match encounter odds.',
+    ]},
+  ],
+} as const satisfies ChangelogRelease;
+
 export const changelogHistory = [
+  november5FullMapAwareness,
   november5SoundChanges,
   november5RewardsChanges,
   november5CombatChanges,

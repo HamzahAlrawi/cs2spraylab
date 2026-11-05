@@ -9,8 +9,11 @@ import {loadNativeRadar,type NativeRadarLease} from './duel/native-radar-cache';
 import {installNativeNavigation,type NativeNavigationData} from './duel/native-navigation';
 import type {Arena} from './duel/geometry';
 import {fetchDeliveredAsset,validateDelivery} from './prefire/asset-delivery';
+import {holdingEvidence,selectionWeights} from './prefire/occupancy';
+import type {PrefireAngle} from './prefire/schema';
+import {walkAwarenessOffset} from './awareness-sources';
 
-export type AwarenessLocation={feet:Vec;edge?:Vec};
+export type AwarenessLocation={feet:Vec;edge?:Vec;kind?:'hold'|'route';weight?:number;spread?:number};
 export type AwarenessWorld={mapId:string;name:string;scene:Group;arena:Arena;sources:readonly AwarenessLocation[];
   updateView(position:Vec):void;radarOverview(feet:number):import('./duel/radar').RadarOverview|undefined;
   loadingReport():PrefireMap['loadStats'];dispose():void};
@@ -21,11 +24,13 @@ export async function buildAwarenessArena(map:PrefireMap,catalog:PrefireCatalog,
   if(!bounds||![bounds.minX,bounds.maxX,bounds.minZ,bounds.maxZ].every(Number.isFinite)||
     bounds.minX>=bounds.maxX||bounds.minZ>=bounds.maxZ)throw Error('Sound practice requires full native map bounds.');
   const arena:Arena={...bounds,solids:[],native:map.collision,design:`${catalog.name} / sound awareness`};
-  const sources:AwarenessLocation[]=[],nodes:NativeNavigationData['nodes']=[],ids=new Map<string,number>();
+  const nodes:NativeNavigationData['nodes']=[],ids=new Map<string,number>();
+  const holds=new Map<string,{angle:PrefireAngle;feet:Vec;evidence:ReturnType<typeof holdingEvidence>}>();
+  const routePoints=new Map<string,Vec>();
   const turn=backgroundBudget(signal),height=72*UNIT;
-  const supported=(p:Vec)=>{
-    const floor=map.collision.vertical(p,p.y+6*UNIT,p.y-6*UNIT,height);
-    return floor.grounded&&map.collision.fits(p,floor.feet,height)?{...p,y:floor.feet}:undefined;
+  const supported=(p:Vec,crouched=false)=>{
+    const hull=crouched?54*UNIT:height,floor=map.collision.vertical(p,p.y+6*UNIT,p.y-6*UNIT,hull);
+    return floor.grounded&&map.collision.fits(p,floor.feet,hull)?{...p,y:floor.feet}:undefined;
   };
   const clear=(a:Vec,b:Vec)=>{
     const x=b.x-a.x,y=b.y-a.y,z=b.z-a.z,d=Math.hypot(x,y,z);
@@ -35,7 +40,7 @@ export async function buildAwarenessArena(map:PrefireMap,catalog:PrefireCatalog,
     const key=[p.x,p.y,p.z].map(n=>Math.round(n*20)).join(':');
     let id=ids.get(key);if(id!==undefined)return id;
     if(nodes.length>=6000)return -1;
-    id=nodes.length;ids.set(key,id);nodes.push({point:p,links:[]});sources.push({feet:p});return id;
+    id=nodes.length;ids.set(key,id);nodes.push({point:p,links:[]});return id;
   };
   const link=(a:number,b:number)=>{
     if(a<0||b<0||a===b||nodes[a].links.length>=64||nodes[b].links.length>=64)return;
@@ -43,21 +48,32 @@ export async function buildAwarenessArena(map:PrefireMap,catalog:PrefireCatalog,
     if(!nodes[b].links.includes(a))nodes[b].links.push(a);
   };
   let spawn:Vec|undefined,look:Vec|undefined;
+  const density=catalog.density?.mapId===catalog.id?catalog.density:undefined;
   for(const route of catalog.routes){
     const start=supported(sourcePoint(route.spawn));if(!spawn&&start){spawn=start;look=sourcePoint(route.look);}
-    const path=[route.spawn,...route.path].map(sourcePoint);let previous=-1;
+    const path=[route.spawn,...route.path].map(sourcePoint);let previous=-1,playable:Vec|undefined;
     for(let i=0;i<path.length;i++){
       const a=path[Math.max(0,i-1)],b=path[i],steps=Math.max(1,Math.ceil(Math.hypot(b.x-a.x,b.y-a.y,b.z-a.z)/1.5));
       for(let j=i?1:0;j<=steps;j++){
         await turn();const t=j/steps,p=supported({x:a.x+(b.x-a.x)*t,y:a.y+(b.y-a.y)*t,z:a.z+(b.z-a.z)*t});
-        if(!p){previous=-1;continue;}
+        if(!p){previous=-1;playable=undefined;continue;}
         const id=add(p);
+        // Route density/duplicated course definitions must not add probability mass.
+        const walked=playable&&walkAwarenessOffset(playable,p.x-playable.x,p.z-playable.z,arena);
+        const admitted=j===steps||i===0||walked&&Math.abs(walked.y-p.y)<.05;
+        if(admitted){
+          const key=[p.x,p.y,p.z].map(n=>Math.round(n/.5)).join(':');if(!routePoints.has(key))routePoints.set(key,p);
+        }
+        playable=admitted?p:undefined;
         if(previous>=0&&id>=0&&clear(nodes[previous].point,p))link(previous,id);
         previous=id;
       }
     }
     for(const angle of [...route.angles,...route.alternatives??[]]){
-      await turn();const p=supported(sourcePoint(angle.position));if(p)add(p);
+      await turn();const p=supported(sourcePoint(angle.position),angle.crouched);if(!p)continue;add(p);
+      const key=[p.x,p.y,p.z].map(n=>Math.round(n/.2)).join(':'),evidence=holdingEvidence(angle,route,density);
+      const old=holds.get(key);
+      if(!old||evidence.trainingSupport>old.evidence.trainingSupport)holds.set(key,{angle,feet:p,evidence});
     }
   }
   if(!spawn||!nodes.length)throw Error('No supported starting position in this map.');
@@ -74,6 +90,12 @@ export async function buildAwarenessArena(map:PrefireMap,catalog:PrefireCatalog,
   installNativeNavigation(arena,{version:1,nodes});
   const bot=nodes.find(n=>Math.hypot(n.point.x-spawn!.x,n.point.z-spawn!.z)>5)?.point??nodes[0].point;
   arena.spawns={player:{feet:spawn,yaw:Math.atan2(-(look!.x-spawn.x),-(look!.z-spawn.z))},bots:[{feet:bot,yaw:0}]};
+  const holdFeet=new Map([...holds.values()].map(row=>[row.angle,row.feet]));
+  const weighted=selectionWeights([...holds.values()]);
+  const sources:AwarenessLocation[]=[
+    ...weighted.map(row=>({feet:holdFeet.get(row.angle)!,kind:'hold' as const,weight:row.weight,spread:.65})),
+    ...[...routePoints.values()].map(feet=>({feet,kind:'route' as const,weight:1,spread:.8})),
+  ];
   return {arena,sources};
 }
 

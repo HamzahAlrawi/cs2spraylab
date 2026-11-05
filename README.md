@@ -141,7 +141,9 @@ For source-audio maintenance, run `node tools/import-combat-feedback.mjs`. Nativ
 
 Map Sound Awareness uses the complete native map, not a Duel chunk. Its source
 selection follows the listener's current position, with reveal, hint and unaided
-stages. Full-map delivery uses compressed geometry, bundled textures and the same
+stages. Sources use [continuous common-position density](docs/sound-awareness-density-2026-11-06.md)
+constrained by native support and hull-walk checks, not random listener-centered bearings.
+Full-map delivery uses compressed geometry, bundled textures and the same
 checked persistent cache as Duel. See [whole-map sound training](docs/sound-awareness-full-map-2026-11-05.md)
 for placement, caching and verification details.
 

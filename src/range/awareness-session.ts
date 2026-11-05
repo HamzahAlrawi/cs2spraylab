@@ -119,7 +119,7 @@ export class AwarenessSession implements DuelScenario {
       if(!Number.isFinite(traceSolid(player.position,direction,arena,d-.03).distance))continue;
       for(let j=0;j<cues.length;j++) {
         const cue=cues[(j+cueOffset)%cues.length],low=cue.group==='steps'||cue.id==='land'||cue.origin==='grenade';
-        const point={...feet,y:feet.y+(low ? .08 : cue.id==='jump'?30*.0254:60*.0254)};
+        const point={...feet,y:feet.y+(low ? .08 : cue.id==='jump'?30*.0254:(crouched?46:60)*.0254)};
         const path=this.acoustics.resolve(player.position,point,sim.time);
         const floor=arena.native?.floorSurfaceAt?.(feet.x,feet.z,feet.y+.2,.5);
         const material=floor?surfaceFootstepMaterial(floor.surface):'concrete';
