@@ -133,10 +133,17 @@ Capable devices prepare one complete next chunk during the current round and ret
 
 ```sh
 node tools/build-combat-model-delivery.mjs
+node tools/build-full-map-delivery.mjs
 node tools/build-duel-delivery.mjs
 ```
 
 For source-audio maintenance, run `node tools/import-combat-feedback.mjs`. Native flinch export/verification uses `node tools/build-duel-flinches.mjs` / `--verify-only` and its build-pinned inventory. Detailed implementation evidence and remaining work are in [the fidelity checkpoint](docs/fidelity-implementation-checkpoint.md).
+
+Map Sound Awareness uses the complete native map, not a Duel chunk. Its source
+selection follows the listener's current position, with reveal, hint and unaided
+stages. Full-map delivery uses compressed geometry, bundled textures and the same
+checked persistent cache as Duel. See [whole-map sound training](docs/sound-awareness-full-map-2026-11-05.md)
+for placement, caching and verification details.
 
 After editing Prefire pools/routes, regenerate the native admission certificate as well as Duel rounds/navigation/delivery. A stale certificate intentionally blocks entry. The full commands, reviewed position sources and actual-package regression are in [the position-source follow-up](docs/position-source-followup-2026-10-23.md#package-maintenance).
 

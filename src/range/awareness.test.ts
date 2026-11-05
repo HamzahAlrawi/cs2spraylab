@@ -3,9 +3,8 @@ import {Group,PerspectiveCamera} from 'three';
 import {defaults} from './config';
 import {awarenessCues,awarenessEventKeys,awarenessGain,awarenessDefaults,sanitizeAwareness,scoreAwareness,parseAwarenessHistory} from './awareness';
 import {AwarenessSession,awarenessDuelConfig} from './awareness-session';
-import {DuelSimulation} from './duel/simulation';
 import {testArena,type Arena} from './duel/geometry';
-import type {RealMapSession} from './duel/real-map';
+import type {AwarenessWorld} from './awareness-map';
 import type {RangeAudio} from './audio';
 import type {DuelEvent} from './duel/types';
 import jump from './awareness-native-audio.json';
@@ -43,8 +42,8 @@ function fixture(stage:'reveal'|'hint'|'training'='reveal',cues:'utility'|'steps
   const anchor={x:0,y:0,z:-3};
   const arena:Arena={...testArena(),solids:[{center:{x:0,y:2,z:0},size:{x:3,y:4,z:.4}}],
     lanes:[{side:1,anchor,retreat:anchor,edge:{...anchor,x:2}}],spawns:{player:{feet:{x:0,y:0,z:4},yaw:0},bots:[{feet:anchor,yaw:Math.PI}]}};
-  const base={scene:new Group(),mapId:config.mapId,chunk:{id:'fixture'},name:'Fixture',
-    create:()=>new DuelSimulation(awarenessDuelConfig(config),1,arena),updateView:vi.fn(),radarOverview:()=>undefined,loadingReport:()=>undefined,dispose:vi.fn()} as unknown as RealMapSession;
+  const base:AwarenessWorld={scene:new Group(),mapId:config.mapId,name:'Fixture',arena,sources:[{feet:anchor,edge:{...anchor,x:2}}],
+    updateView:vi.fn(),radarOverview:()=>undefined,loadingReport:()=>undefined,dispose:vi.fn()};
   const session=new AwarenessSession(base,config),sim=session.create(defaults,1),onMarker=vi.fn();session.onMarker=onMarker;
   const camera=new PerspectiveCamera(74,1.6,.03,100);camera.position.set(0,1.6,4);camera.updateMatrixWorld();
   const audio={context:{state:'running'},canPlayEvent:()=>true,playEvent:vi.fn(()=>true),cancelAction:vi.fn(),stopVoices:vi.fn(),unlockEvents:vi.fn(async()=>true)} as unknown as RangeAudio;
@@ -104,6 +103,12 @@ it('preserves a heard trial across pause for a distance estimate, excludes it fr
   expect(session.takeAnswer()).toMatchObject({score:100,paused:true});
   session.replay(3);frame(3.3);frame(3.5);
   expect(session.statusReport()).toMatchObject({heard:true,replays:1});
+});
+it('discards an unanswered distant trial when the learner walks to another part of the map',()=>{
+  const {session,sim,frame,audio,onMarker}=fixture();frame(1);frame(1.6);frame(1.8);
+  expect(session.statusReport().heard).toBe(true);sim.actors[0].position.x+=9;frame(2);
+  expect(session.statusReport().heard).toBe(false);expect(session.takeAnswer()).toBeUndefined();
+  expect(audio.stopVoices).toHaveBeenCalled();expect(onMarker.mock.lastCall![0].visible).toBe(false);
 });
 it('runs a real reload rather than playing foley while the demonstrator holds a full magazine',()=>{
   const {sim,frame,session}=fixture('reveal','reload');sim.start();let started=false;

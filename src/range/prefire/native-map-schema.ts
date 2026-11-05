@@ -21,6 +21,7 @@ export type NativeMapDefinition = {
   chunks: readonly NativeMapChunk[]; index: NativeMapIndex;
   release: NativeMapRelease; radar?: NativeRadarManifest;
   sharedTextureBase?: string;
+  fullDelivery?: DeliveredAsset;
   loadCatalog(): Promise<PrefireCatalog>;
 };
 

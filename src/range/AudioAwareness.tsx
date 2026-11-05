@@ -3,7 +3,7 @@ import {ArrowRight,Ear,Eye,Headphones,Pause,Play,RotateCcw,Settings2,SkipForward
 import type {Settings} from './config';
 import type {ProgressionController} from './progression';
 import {DuelEngine,type DuelStatus} from './duel/DuelEngine';
-import {RealMapSession} from './duel/real-map';
+import {loadAwarenessWorld} from './awareness-map';
 import {nativeMaps} from './prefire/maps';
 import {AwarenessSession,awarenessDuelConfig,type AwarenessReport} from './awareness-session';
 import {awarenessCues,awarenessEventKeys,awarenessHistoryKey,awarenessKey,awarenessTip,parseAwarenessHistory,sanitizeAwareness,type AwarenessConfig} from './awareness';
@@ -11,7 +11,7 @@ import {readHearingStorage,saveHearingStorage} from './hearing-practice';
 import './duel/duel.css';
 import './audio-awareness.css';
 
-const empty:AwarenessReport={message:'Loading map area',heard:false,attempts:0,replays:0,unavailable:false};
+const empty:AwarenessReport={message:'Loading full map',heard:false,attempts:0,replays:0,unavailable:false};
 export default function AudioAwareness({settings,suspended,openSettings,onEnter,progression}: {
   settings:Settings;suspended:boolean;openSettings:()=>void;onEnter:()=>void;progression?:ProgressionController;
 }) {
@@ -28,7 +28,7 @@ export default function AudioAwareness({settings,suspended,openSettings,onEnter,
     setStatus(undefined);setReport(empty);setError('');
     void (async()=>{
       try {
-        const duel=awarenessDuelConfig(latest.current.config),base=await RealMapSession.load(duel,Math.floor(Math.random()*0x7fffffff),abort.signal);
+        const duel=awarenessDuelConfig(latest.current.config),base=await loadAwarenessWorld(latest.current.config.mapId,abort.signal);
         if(abort.signal.aborted){base.dispose();return;}
         practice=new AwarenessSession(base,latest.current.config);session.current=practice;
         practice.onMarker=value=>{
@@ -54,7 +54,7 @@ export default function AudioAwareness({settings,suspended,openSettings,onEnter,
       }catch(e){if(!abort.signal.aborted)setError(e instanceof Error?e.message:'Map audio practice could not start.');practice?.dispose();}
     })();
     return()=>{abort.abort();instance?.dispose();practice?.dispose();if(engine.current===instance)engine.current=undefined;if(session.current===practice)session.current=undefined;};
-  },[config.mapId,config.chunk,generation]);
+  },[config.mapId,generation]);
   useEffect(()=>{engine.current?.setSettings({...settings,volume:settings.volume*config.gain});},[settings,config.gain]);
   useEffect(()=>{if(suspended)engine.current?.pause();},[suspended]);
   useEffect(()=>{session.current?.configure(config);engine.current?.audio.configure({panningModel:config.panner,monoOutput:config.device==='mono'});},[config]);
@@ -62,7 +62,7 @@ export default function AudioAwareness({settings,suspended,openSettings,onEnter,
     const next=sanitizeAwareness({...old,...patch});setStorageFailed(!saveHearingStorage(awarenessKey,next));return next;
   });
   const busy=!status||!!status.loadingMap,playing=status?.phase==='fighting'&&!status.paused;
-  const comparable=history.filter(a=>a.mapId===config.mapId&&a.stage===config.stage&&a.device===config.device&&a.panner===config.panner&&a.replays===0&&!a.paused&&
+  const comparable=history.filter(a=>a.mapId===config.mapId&&a.chunk==='full-map'&&a.stage===config.stage&&a.device===config.device&&a.panner===config.panner&&a.replays===0&&!a.paused&&
     (a.distanceError!==null)===config.distanceEstimate&&Math.abs(a.volume-settings.volume*config.gain)<.001&&
     (config.cues==='mixed'||awarenessCues.find(c=>c.id===a.cue)?.group===config.cues));
   const mean=(key:'score'|'degrees'|'milliseconds')=>comparable.length?(comparable.reduce((sum,a)=>sum+a[key],0)/comparable.length).toFixed(key==='degrees'?1:0):'--';
@@ -90,9 +90,7 @@ export default function AudioAwareness({settings,suspended,openSettings,onEnter,
       <div className="awareness-ammo">{status?.ammo??'--'} <small>/ &infin;</small>{status?.reloading&&<span>Reloading</span>}</div>
     </div>
     <aside className="duel-controls awareness-settings" aria-label="Sound awareness setup"><header><h2>Sound Awareness</h2><button className="icon-button" title="Audio and mouse settings" aria-label="Audio and mouse settings" onClick={openSettings}><Settings2 size={17}/></button></header>
-      <label>Map<select aria-label="Awareness map" value={config.mapId} onChange={e=>update({mapId:e.target.value,chunk:'random'})}>{nativeMaps.list().map(map=><option key={map.id} value={map.id}>{map.name}</option>)}</select></label>
-      <label>Area<select aria-label="Awareness area" value={config.chunk} onChange={e=>update({chunk:e.target.value})}><option value="random">Random area</option>{nativeMaps.get(config.mapId).chunks.map(c=><option key={c.id} value={c.id}>{c.name}</option>)}</select></label>
-      <button className="secondary" onClick={()=>{if(config.chunk!=='random')update({chunk:'random'});else setGeneration(n=>n+1);}}><RotateCcw size={14}/>New random area</button>
+      <label>Map<select aria-label="Awareness map" value={config.mapId} onChange={e=>update({mapId:e.target.value})}>{nativeMaps.list().map(map=><option key={map.id} value={map.id}>{map.name}</option>)}</select></label>
       <fieldset className="awareness-stages"><legend>Assistance</legend>{(['reveal','hint','training'] as const).map(stage=><label key={stage}><input type="radio" name="awareness-stage" value={stage} checked={config.stage===stage} onChange={()=>update({stage})}/>{stage==='reveal'?<Eye size={16}/>:stage==='hint'?<Ear size={16}/>:<Headphones size={16}/>}<span>{stage==='reveal'?'Learn with reveal':stage==='hint'?'Direction hint':'Unaided training'}</span></label>)}</fieldset>
       {config.stage==='reveal'&&<label>Reveal on<select aria-label="Reveal location" value={config.display} onChange={e=>update({display:e.target.value as AwarenessConfig['display']})}><option value="both">Screen and radar</option><option value="screen">Screen only</option><option value="radar">Radar only</option></select></label>}
       <label>Sounds<select aria-label="Awareness cues" value={config.cues} onChange={e=>update({cues:e.target.value as AwarenessConfig['cues']})}>

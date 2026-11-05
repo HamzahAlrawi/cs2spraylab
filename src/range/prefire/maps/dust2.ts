@@ -2,6 +2,8 @@ import chunks from '../../duel/real-map-catalog.json';
 import release from '../../duel/map-manifests.json';
 import radar from '../../duel/native-radar.json';
 import index from './dust2-index.json';
+import fullDelivery from './dust2-full-delivery.json';
+import type {DeliveredAsset} from '../asset-delivery';
 import type {NativeMapDefinition, NativeMapRelease, NativeRadarManifest} from '../native-map-schema';
 
 /** The only runtime boundary that knows Dust 2's files and legacy asset IDs. */
@@ -10,5 +12,6 @@ export const dust2Map: NativeMapDefinition = {
   chunks: chunks.chunks.map(chunk => ({...chunk, mapId: 'de_dust2'})), index,
   release: release as NativeMapRelease, radar: radar as NativeRadarManifest,
   sharedTextureBase: '/maps/dust2/duel/shared/',
+  fullDelivery: fullDelivery as DeliveredAsset,
   loadCatalog: async () => (await import('../routes')).dust2Catalog,
 };

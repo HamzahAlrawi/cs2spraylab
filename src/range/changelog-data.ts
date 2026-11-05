@@ -554,7 +554,7 @@ const november5RewardsChanges = {
   ],
 } as const satisfies ChangelogRelease;
 
-export const latestChanges = {
+const november5SoundChanges = {
   id:'update-2026-11-05-sound-awareness',title:'Map sound awareness & multi-level fire (November 5)',baselineCommit:'250cb1e',
   sections:[
     {id:'map-sound-awareness',title:'Learn the sound of an angle',items:[
@@ -574,7 +574,22 @@ export const latestChanges = {
   ],
 } as const satisfies ChangelogRelease;
 
+export const latestChanges = {
+  id:'update-2026-11-05-full-map-awareness',title:'Full-map sound awareness (November 5)',baselineCommit:'ea6fabb',
+  sections:[
+    {id:'whole-map-listening',title:'Roam the whole map',items:[
+      'Sound Awareness now loads the entire selected map with full native collision, visibility and radar. There are no Duel-chunk boundaries or area switches.',
+      'Full-map geometry is compressed and textures are bundled into hash-addressed objects using the existing persistent map cache. Unchanged resources can be reused locally without a server request while the browser retains the cache.',
+    ]},
+    {id:'listener-local-cues',title:'Sounds follow your location',items:[
+      'Each new cue chooses a supported, audible hidden source around your current position, combining nearby training locations with local floor samples. Running needs a physically walkable short lane.',
+      'Moving away from an unanswered source resets the trial and selects another nearby source. Whole-map results stay separate from older chunk-based results; assistance, replay and audio-output rules are unchanged.',
+    ]},
+  ],
+} as const satisfies ChangelogRelease;
+
 export const changelogHistory = [
+  november5SoundChanges,
   november5RewardsChanges,
   november5CombatChanges,
   november4Changes,

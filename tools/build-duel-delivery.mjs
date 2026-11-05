@@ -1,7 +1,7 @@
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import {createHash} from 'node:crypto';
-import {gzipSync} from 'node:zlib';
+import {gzipSync,gunzipSync} from 'node:zlib';
 import {buildMapManifests} from './build-map-manifests.mjs';
 
 const root='public/revamp/maps/dust2/duel',objects=path.join(root,'objects');
@@ -103,6 +103,22 @@ try {
   if(asset&&new RegExp(`^/maps/dust2/duel/objects/[a-f0-9]{64}\\.bin$`).test(asset.url)&&
     path.basename(asset.url)===`${asset.sha256}.bin`)referencedObjects.add(path.basename(asset.url));
 }catch(error){if(error.code!=='ENOENT')throw error;}
+// Whole-map awareness owns delivery objects in the same content-addressed store.
+let fullMapPin;
+try {fullMapPin=JSON.parse(await fs.readFile('src/range/prefire/maps/dust2-full-delivery.json','utf8'));}
+catch(error){if(error.code!=='ENOENT')throw error;}
+if(fullMapPin) {
+  const pin=fullMapPin;
+  const bytes=await fs.readFile(path.join(resolvedObjects,path.basename(pin.url)));
+  if(hash(bytes)!==pin.sha256)throw Error('Stale full map delivery');
+  const decoded=pin.encoding==='gzip'?gunzipSync(bytes):bytes;
+  if(hash(decoded)!==pin.decodedSha256)throw Error('Stale full map delivery metadata');
+  const full=JSON.parse(decoded);
+  for(const asset of [pin,...Object.values(full.files),...full.textures.bundles]){
+    if(asset.url!==`/maps/dust2/duel/objects/${asset.sha256}.bin`)throw Error('Invalid full map delivery object');
+    referencedObjects.add(path.basename(asset.url));
+  }
+}
 for(const name of await fs.readdir(resolvedObjects))if(/^[a-f0-9]{64}\.(bin|gz)$/.test(name)&&!referencedObjects.has(name)) {
   const target=path.resolve(resolvedObjects,name);
   if(path.dirname(target)!==resolvedObjects)throw new Error('Invalid generated object path');

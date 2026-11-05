@@ -9,14 +9,14 @@ import type {AcousticPath} from './spatial-audio';
 
 export type AwarenessStage='reveal'|'hint'|'training';
 export type CueGroup='mixed'|'steps'|'jump'|'shots'|'reload'|'utility';
-export type AwarenessConfig={mapId:string;chunk:string;stage:AwarenessStage;display:'screen'|'radar'|'both';
+export type AwarenessConfig={mapId:string;stage:AwarenessStage;display:'screen'|'radar'|'both';
   cues:CueGroup;experience:boolean;autoNext:boolean;device:'headphones'|'stereo'|'mono';panner:'HRTF'|'equalpower';gain:number;distanceEstimate:boolean};
 export const awarenessKey='spraylab.awareness.v1',awarenessHistoryKey='spraylab.awareness.history.v1';
-export const awarenessDefaults:AwarenessConfig={mapId:defaultNativeMapId,chunk:'random',stage:'reveal',display:'both',cues:'mixed',experience:false,autoNext:true,device:'headphones',panner:'HRTF',gain:1,distanceEstimate:false};
+export const awarenessDefaults:AwarenessConfig={mapId:defaultNativeMapId,stage:'reveal',display:'both',cues:'mixed',experience:false,autoNext:true,device:'headphones',panner:'HRTF',gain:1,distanceEstimate:false};
 export function sanitizeAwareness(raw:unknown):AwarenessConfig {
   const o=(raw&&typeof raw==='object'?raw:{}) as Partial<AwarenessConfig>;
   const mapId=nativeMaps.has(o.mapId)?o.mapId:defaultNativeMapId;
-  return {...awarenessDefaults,mapId,chunk:nativeMaps.get(mapId).chunks.some(c=>c.id===o.chunk)?o.chunk!:'random',
+  return {...awarenessDefaults,mapId,
     stage:['reveal','hint','training'].includes(o.stage!)?o.stage!:'reveal',display:['screen','radar','both'].includes(o.display!)?o.display!:'both',
     cues:['mixed','steps','jump','shots','reload','utility'].includes(o.cues!)?o.cues!:'mixed',experience:o.experience===true,autoNext:o.autoNext!==false,
     device:['headphones','stereo','mono'].includes(o.device!)?o.device!:'headphones',panner:o.panner==='equalpower'?'equalpower':'HRTF',

@@ -120,3 +120,4 @@ const audit = {build, exporterVersion, mapSha256, physicsSha256: sha(fs.readFile
 fs.writeFileSync('docs/dust2-map-inventory.json', JSON.stringify(audit, null, 2) + '\n');
 fs.writeFileSync(cacheFile, JSON.stringify({mapSha256, exporterVersion}));
 }
+if(fs.existsSync(`${out}/visual.json`))execFileSync(process.execPath,['tools/build-full-map-delivery.mjs'],{stdio:'inherit',windowsHide:true});

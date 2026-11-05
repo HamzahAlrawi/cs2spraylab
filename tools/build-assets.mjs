@@ -38,5 +38,6 @@ for (const args of [
   ['tools/blender-command.mjs', 'art/verify_target_grips.py'],
   ['tools/blender-command.mjs', 'art/render_target_preview.py'],
   ['tools/build-combat-model-delivery.mjs'],
+  ['tools/build-full-map-delivery.mjs'],
   ['tools/check-assets.mjs']
 ]) execFileSync(process.execPath, args, { stdio: 'inherit' });

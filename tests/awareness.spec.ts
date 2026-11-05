@@ -19,6 +19,9 @@ test('map sound awareness reveals only heard sources, then scores an unaided phy
   await page.goto('/');await capture(page);
   const enter=page.getByRole('button',{name:'Start sound practice',exact:true});
   await expect(enter).toBeVisible({timeout:120000});await expect(enter).toBeEnabled();
+  await expect(page.getByLabel('Awareness area',{exact:true})).toHaveCount(0);
+  const loaded=await page.evaluate(()=>{const e=(window as any).awarenessEngine;return {geometry:e.sim.arena.native.collisionSha256};});
+  expect(loaded.geometry).toBe('395a10802ed5a26dce1c48b754adc7c2f1418755edc4f62c401597d19f7e6396');
   expect(await canvasColors(page,'canvas[data-duel]')).toBeGreaterThan(8);
   await expect(page.locator('.awareness-marker')).toBeHidden();await enter.click();
   await page.waitForFunction(()=>{const e=(window as any).awarenessEngine;return !!e.scenario.trial?.heardAt&&e.sim.time>=e.scenario.trial.heardAt;},undefined,{timeout:30000});
@@ -48,7 +51,8 @@ test('map sound awareness reveals only heard sources, then scores an unaided phy
   if(info.project.name==='mobile-chromium')await page.locator('canvas[data-duel]').tap();else{await page.mouse.down();await page.mouse.up();}
   await expect(page.locator('.awareness-feedback')).toContainText('Source revealed');
   const rows=await page.evaluate(()=>JSON.parse(localStorage.getItem('spraylab.awareness.history.v1')??'[]'));
-  expect(rows).toHaveLength(1);expect(rows[0]).toMatchObject({stage:'training',mapId:'de_dust2',chunk:'dust2-mid-ct'});expect(rows[0].score).toBeGreaterThan(85);
+  const unaided=rows.filter((row:any)=>row.stage==='training');
+  expect(unaided).toHaveLength(1);expect(unaided[0]).toMatchObject({mapId:'de_dust2',chunk:'full-map'});expect(unaided[0].score).toBeGreaterThan(85);
   await expect(page.locator('.awareness-marker')).toBeVisible();
   expect(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth)).toBe(false);
   await page.screenshot({path:info.outputPath('awareness-answer.png'),fullPage:true});
@@ -60,5 +64,10 @@ test('map sound awareness reveals only heard sources, then scores an unaided phy
   expect(await page.evaluate(()=>JSON.parse(localStorage.getItem('spraylab.awareness.v1')??'{}').device)).toBe('mono');
   expect(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth)).toBe(false);
   await page.locator('.awareness-settings').screenshot({path:info.outputPath('awareness-setup.png')});
+  await page.evaluate(async()=>{const {settleAssetCache}=await import(/* @vite-ignore */'/src/range/prefire/asset-delivery.ts');await settleAssetCache();});
+  const mapRequests:string[]=[];page.on('request',request=>{if(new URL(request.url()).pathname.startsWith('/maps/'))mapRequests.push(request.url());});
+  await page.reload();await capture(page);
+  await expect(page.getByRole('button',{name:'Start sound practice',exact:true})).toBeEnabled({timeout:120000});
+  expect(mapRequests).toEqual([]);
   expect(errors).toEqual([]);
 });
