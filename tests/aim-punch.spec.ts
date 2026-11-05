@@ -15,17 +15,18 @@ async function captureEngine(page: import('@playwright/test').Page) {
 async function enginePage(page: import('@playwright/test').Page, mode: 'duel' | 'prefire' = 'duel') {
   await page.addInitScript(() => {
     localStorage.setItem('spraylab.range.v2', JSON.stringify({mode: 'duel', volume: 0, quality: 'performance', follow: true}));
-    localStorage.setItem('spraylab.duel.v1', JSON.stringify({botCount: 1, health: 500, playerHealth: 500}));
+    localStorage.setItem('spraylab.duel.v1', JSON.stringify({generatedMaps: true, botCount: 1, health: 500, playerHealth: 500}));
   });
   await page.goto('/');
   await expect(page.locator('canvas[data-duel]')).toBeVisible();
   await captureEngine(page);
-  await page.waitForFunction(() => (window as any).punchEngine?.motionReady);
+  await page.waitForFunction(() => (window as any).punchEngine?.criticalReady && !(window as any).punchEngine.loadingMap);
   if (mode === 'prefire') {
     await page.getByLabel('Training mode').selectOption('prefire');
     await expect(page.locator('canvas[data-duel]')).toHaveAttribute('aria-label', 'Dust 2 prefire map', {timeout: 90000});
     await captureEngine(page);
-    await page.waitForFunction(() => (window as any).punchEngine?.scenario && (window as any).punchEngine.motionReady, null, {timeout: 90000});
+    await page.waitForFunction(() => (window as any).punchEngine?.scenario && (window as any).punchEngine.criticalReady &&
+      !(window as any).punchEngine.loadingMap, null, {timeout: 90000});
   }
 }
 
@@ -62,8 +63,7 @@ test(`${mode}: ${armor ? 'armored' : 'bare'} damage moves the camera and Follow 
     const punch = {...player.punch.shot}, aim = player.pitch, recoil = {...player.weapon.recovery.recoil};
     await new Promise(resolve => setTimeout(resolve, 180));
     const transform = new DOMMatrix(e.crosshair.style.transform);
-    const threePath = '/node_modules/.vite/deps/three.js';
-    const {Vector3} = await import(/* @vite-ignore */ threePath);
+    const Vector3 = e.camera.position.constructor;
     const yaw = player.yaw - punch.yaw * Math.PI / 180, pitch = player.pitch + punch.pitch * Math.PI / 180;
     const projected = new Vector3(-Math.sin(yaw) * Math.cos(pitch), Math.sin(pitch), -Math.cos(yaw) * Math.cos(pitch))
       .multiplyScalar(10).add(e.camera.position).project(e.camera);
@@ -94,10 +94,12 @@ test('bare-head punch rolls the camera and a new round clears actor punch', asyn
     await new Promise(resolve => setTimeout(resolve, 150));
     const roll = e.camera.rotation.z;
     e.restart(false);
-    return {punch, roll, fresh: e.sim.actors[0].punch.shot};
+    return {punch, roll};
   });
+  await page.waitForFunction(() => !(window as any).punchEngine.loadingMap);
+  const fresh = await page.evaluate(() => (window as any).punchEngine.sim.actors[0].punch.shot);
   expect(result.roll).toBeCloseTo(result.punch.roll * Math.PI / 180, 5);
-  expect(result.fresh).toEqual({pitch: 0, yaw: 0, roll: 0});
+  expect(fresh).toEqual({pitch: 0, yaw: 0, roll: 0});
   await page.locator('canvas[data-duel]').screenshot({path: info.outputPath('fresh-round.png')});
 });
 
@@ -106,7 +108,7 @@ test(`${mode}: punch and recoil share a presentation time through pause, follow 
   test.setTimeout(120000); await enginePage(page, mode);
   const result = await page.evaluate(async () => {
     const e = (window as any).punchEngine, p = e.sim.actors[0];
-    const {Vector3} = await import(/* @vite-ignore */ '/node_modules/.vite/deps/three.js');
+    const Vector3 = e.camera.position.constructor;
     const {direction} = await import(/* @vite-ignore */ '/src/range/shot-model.ts');
     e.sim.pause(); e.sim.phase = 'fighting'; e.paused = false;
     p.yaw = .7; p.pitch = -.15;
@@ -154,7 +156,7 @@ test('rendered target and held rifle face actor yaw, and hit-pose sampling prese
   await page.waitForFunction(() => (window as any).punchEngine?.worldWeapons.has('ak47') && (window as any).punchEngine.hitboxes.has(1));
   const samples = await page.evaluate(async () => {
     const e = (window as any).punchEngine;
-    const {Vector3, Matrix4} = await import(/* @vite-ignore */ '/node_modules/.vite/deps/three.js');
+    const Vector3 = e.camera.position.constructor, Matrix4 = e.camera.matrixWorld.constructor;
     e.sim.pause(); e.paused = true; e.covers.visible = false;
     e.sim.actors[0].position = {x: 0, y: 1.6256, z: 4}; e.sim.actors[0].yaw = 0; e.sim.actors[0].pitch = 0;
     const bot = e.sim.actors[1], root = e.models.get(1), held = e.heldWeapons.get(1), muzzle = e.botMuzzles.get(1);

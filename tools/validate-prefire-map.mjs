@@ -8,7 +8,7 @@ const qualityPath = get('quality'), artifactsPath = get('artifacts'), mapId = ge
 if (!qualityPath || !artifactsPath) throw new Error('Usage: node tools/validate-prefire-map.mjs --quality=quality.json --artifacts=quality.json.artifacts.json [--map=de_dust2] [--mode=coverage|contextual-evidence]');
 const mode = get('mode') ?? 'coverage';
 if (!['coverage', 'contextual-evidence'].includes(mode)) throw new Error('Unknown quality mode');
-const vite = await createServer({server: {middlewareMode: true, hmr: false, ws: false}, appType: 'custom', logLevel: 'error'});
+const vite = await createServer({cacheDir: 'node_modules/.vite-map-validation', server: {middlewareMode: true, hmr: false, ws: false}, appType: 'custom', logLevel: 'error'});
 let adapter;
 try {
   adapter = await prefireAuthoringMaps.load(mapId, vite);

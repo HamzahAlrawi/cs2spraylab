@@ -3,7 +3,7 @@ import {createServer} from 'vite';
 
 const [modulePath, chunkPath, output, exportName = 'mapCatalog'] = process.argv.slice(2);
 if (!modulePath || !chunkPath || !output) throw Error('Usage: node tools/build-map-index.mjs <catalog module> <chunk catalog JSON> <output JSON> [export name]');
-const server = await createServer({server: {middlewareMode: true}, appType: 'custom'});
+const server = await createServer({cacheDir: 'node_modules/.vite-map-index', server: {middlewareMode: true}, appType: 'custom'});
 try {
   const module = await server.ssrLoadModule(modulePath), catalog = module[exportName];
   if (!catalog?.routes?.length) throw Error('No map catalog exported.');

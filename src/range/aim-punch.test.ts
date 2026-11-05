@@ -67,17 +67,14 @@ describe('native damage punch', () => {
     expect(punch.angle.pitch).toBe(.02);
   });
 
-  it('recovers damage and recoil in one shared cache instead of subtracting linear decay twice', () => {
+  it('recovers the unpredictable damage cache independently of predictable weapon recoil', () => {
     const punch = new DamagePunch(), base = {pitch: 6, yaw: -4};
     punch.angle = {pitch: .54, yaw: 0, roll: .2};
-    const expected = recoverDamagePunch({pitch: Math.fround(6 + .54), yaw: -4, roll: .2}, STEP);
-    const withoutHit = recoverDamagePunch({...base, roll: 0}, STEP);
     const independent = recoverDamagePunch(punch.angle, STEP);
     punch.advance(STEP, base);
-    expect(punch.angle.pitch + withoutHit.pitch).toBeCloseTo(expected.pitch, 5);
-    expect(punch.angle.yaw + withoutHit.yaw).toBeCloseTo(expected.yaw, 5);
-    expect(punch.angle.roll).toBeCloseTo(expected.roll, 5);
-    expect(punch.angle.pitch).toBeGreaterThan(independent.pitch);
+    expect(punch.angle).toEqual(independent);
+    expect(punch.angle.yaw).toBe(0);
+    expect(base).toEqual({pitch: 6, yaw: -4});
   });
 
   it('preserves zero-damage recoil exactly and retains small punch during an active spray', () => {

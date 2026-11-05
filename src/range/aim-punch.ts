@@ -8,7 +8,7 @@ const f = Math.fround;
 const FLINCH_SCALE = 3;
 const NO_RECOIL = {pitch: 0, yaw: 0};
 
-// Build 2000922's hitgroup arithmetic, verified by offline native fixtures.
+// Build 2000940's hitgroup arithmetic, verified by offline native fixtures.
 // Damage is distance/hitgroup-scaled BEFORE armor absorption, not lost HP.
 export function damagePunch(hit: PunchHit, random: () => number): PunchAngle {
   const damage = Math.max(0, hit.rawDamage), scaled = f(f(damage) * FLINCH_SCALE);
@@ -47,15 +47,12 @@ export class DamagePunch {
     return this.relativePhysical({pitch: this.angle.pitch + (next.pitch - this.angle.pitch) * alpha,
       yaw: this.angle.yaw + (next.yaw - this.angle.yaw) * alpha, roll: this.angle.roll + (next.roll - this.angle.roll) * alpha}, recoil);
   }
-  private relativeRecovery(dt: number, recoil: RecoilAngle): PunchAngle {
+  private relativeRecovery(dt: number, _recoil: RecoilAngle): PunchAngle {
     if (this.angle.pitch === 0 && this.angle.yaw === 0 && this.angle.roll === 0) return this.angle;
-    if (recoil.pitch === 0 && recoil.yaw === 0) return recoverDamagePunch(this.angle, dt);
-    const base = {pitch: recoil.pitch, yaw: recoil.yaw, roll: 0};
-    const combined = recoverDamagePunch({pitch: f(base.pitch + this.angle.pitch), yaw: f(base.yaw + this.angle.yaw), roll: this.angle.roll}, dt);
-    const unchanged = recoverDamagePunch(base, dt);
-    // Recover the shared cache once. Keeping only its difference from the
-    // unhit cache preserves every existing no-damage spray/recoil sample.
-    return {pitch: f(combined.pitch - unchanged.pitch), yaw: f(combined.yaw - unchanged.yaw), roll: combined.roll};
+    // 2000940 AimPunchServices keeps damage in the unpredictable cache (+a0/
+    // +a4), separate from predictable weapon recoil (+48/+50/+5c). Combining
+    // their lengths invents lateral flinch and extends torso punch during sprays.
+    return recoverDamagePunch(this.angle, dt);
   }
   private relativePhysical(angle: PunchAngle, recoil: RecoilAngle): PunchAngle {
     if (angle.pitch === 0 && angle.yaw === 0 && angle.roll === 0) return {pitch: 0, yaw: 0, roll: 0};

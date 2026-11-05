@@ -1,16 +1,16 @@
 {
-  "build": "2000935",
-  "serverSha256": "2a229dd46c8af0b52c1f49a3e343b99d9ffe946c102c56102a45b00f6a52349c",
-  "clipRva": "0xe94610..0xe94699",
+  "build": "2000940",
+  "serverSha256": "7e88b23196b0a746d99c7c622f947b96c25de61cc4d921d8dda79e515c4b48a8",
+  "clipRva": "0xe95170..0xe951f9",
   "source": "Isolated native clipping arithmetic from static bytes; no DLL loading or process access.",
   "excluded": "Full contact dispatcher, support predicates, moving surfaces, breakables and engine first-think ordering. Think examples reproduce audited float32 arithmetic, not runtime measurements.",
   "constants": {
     "elasticity": {
-      "rva": "0x17cf12c",
+      "rva": "0x17cf11c",
       "value": 0.44999998807907104
     },
     "maximumElasticity": {
-      "rva": "0x1795d78",
+      "rva": "0x1795d58",
       "value": 0.8999999761581421
     },
     "normalBias": {
@@ -18,19 +18,19 @@
       "value": 0.03125
     },
     "stopSpeedSquared": {
-      "rva": "0x17b84c0",
+      "rva": "0x17b84b0",
       "value": 400.0
     },
     "highSpeedSquared": {
-      "rva": "0x18ef870",
+      "rva": "0x18ef860",
       "value": 96000.0
     },
     "smokeMinimumAge": {
-      "rva": "0x18ef818",
+      "rva": "0x18ef808",
       "value": 1.187999963760376
     },
     "smokeDetonateSpeed": {
-      "rva": "0x1795d58",
+      "rva": "0x1795d38",
       "value": 0.10000000149011612
     },
     "timerInterval": {

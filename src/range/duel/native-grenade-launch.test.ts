@@ -21,7 +21,8 @@ describe('installed CS2 grenade launch arithmetic',()=>{
       expect(launch.origin[axis]).toBeCloseTo(world(sample.origin)[axis],5);
       expect(velocity[axis]).toBeCloseTo(world(sample.velocity)[axis],5);
     }
-    expect(sweep.mock.calls[0][0]).toEqual(world(sample.traceSource));
+    for (const axis of ['x', 'y', 'z'] as const)
+      expect(sweep.mock.calls[0][0][axis]).toBeCloseTo(world(sample.traceSource)[axis], 12);
     expect((sweep.mock.calls[0]as unknown[])[2]).toBeCloseTo(2.02*UNIT,8);
   });
   it('uses the extracted per-grenade velocity rather than hardcoding weapon identity',()=>{

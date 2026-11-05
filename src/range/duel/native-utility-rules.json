@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "build": "2000935",
+  "build": "2000940",
   "extractor": {
     "version": "20.1.7467+9e2e6c7f67e3c4e5a5f443a60c3a5d841ba8f304",
     "sha256": "ef9f6fb3943c30b73f0991bce6654128727b0807968f7997a6bb014efbec8830",
@@ -9,17 +9,17 @@
   "sources": {
     "steam": {
       "path": "game/csgo/steam.inf",
-      "sha256": "67bb5f38cdcfb57331eea7dbcf2d337f46ea6ed998d3482e2637f830f7210a06",
+      "sha256": "221437bd0d9d4768e5cdeef8f4cb4af9e6ba4596a3ce644b4add7ee4b2098dfc",
       "bytes": 190
     },
     "archive": {
       "path": "game/csgo/pak01_dir.vpk",
-      "sha256": "562972293ed7a5d40e341c4df7d6b0ee06430452694177142f0c1239dd3f2c8b",
-      "bytes": 7708830
+      "sha256": "4441f84f7ea07cc04b8ab2f83ded550ee063e6b1a5ef57bc134bfab3ed60df99",
+      "bytes": 7713274
     },
     "weapons": {
       "path": "scripts/weapons.vdata_c",
-      "sha256": "879900e6af45204508b3c20a9d781b0e960684111b848b7ae5c26b438fc6ff19",
+      "sha256": "4542882b7e92295e183a9dbb1b4781222d349855173321886faa19b82d7f4b6e",
       "bytes": 26903,
       "archive": "archive",
       "extractedPath": "research/utility-presentation/native-rules/scripts/weapons.vdata_c",
@@ -28,7 +28,7 @@
     },
     "explosions": {
       "path": "scripts/explosion_types.vdata_c",
-      "sha256": "0ef413f617d7296c1a5c90905235361792ee5baad9de32a43fae046bdb108157",
+      "sha256": "1759a1bf963cf2154e8ef1d3e51167784cd084d7fed62c52792b08fdee4bf482",
       "bytes": 2411,
       "archive": "archive",
       "extractedPath": "research/utility-presentation/native-rules/scripts/explosion_types.vdata_c",
@@ -188,13 +188,13 @@
     },
     "server": {
       "path": "game/csgo/bin/win64/server.dll",
-      "sha256": "2a229dd46c8af0b52c1f49a3e343b99d9ffe946c102c56102a45b00f6a52349c",
-      "bytes": 34687128
+      "sha256": "7e88b23196b0a746d99c7c622f947b96c25de61cc4d921d8dda79e515c4b48a8",
+      "bytes": 34690200
     },
     "client": {
       "path": "game/csgo/bin/win64/client.dll",
-      "sha256": "ccaf4e4926babc052994502b19ec61198a11008a39dce712921b93dd993be9f5",
-      "bytes": 39215768
+      "sha256": "57ee728e15c50881070d847d7516d632d70456e0648d486a53f2528ec53f6ee0",
+      "bytes": 39224472
     },
     "gameinfo:core": {
       "path": "game/core/gameinfo.gi",
@@ -2214,12 +2214,12 @@
       "nameEvidence": [
         {
           "source": "server",
-          "fileOffset": "0x18b3860",
+          "fileOffset": "0x18b4450",
           "kind": "ascii-name-only"
         },
         {
           "source": "client",
-          "fileOffset": "0x1ba4098",
+          "fileOffset": "0x1ba5f08",
           "kind": "ascii-name-only"
         }
       ],
@@ -2231,12 +2231,12 @@
       "nameEvidence": [
         {
           "source": "server",
-          "fileOffset": "0x18b3880",
+          "fileOffset": "0x18b4470",
           "kind": "ascii-name-only"
         },
         {
           "source": "client",
-          "fileOffset": "0x1ba40d0",
+          "fileOffset": "0x1ba5f40",
           "kind": "ascii-name-only"
         }
       ],
@@ -2339,12 +2339,12 @@
       "nameEvidence": [
         {
           "source": "server",
-          "fileOffset": "0x18b38a0",
+          "fileOffset": "0x18b4490",
           "kind": "ascii-name-only"
         },
         {
           "source": "client",
-          "fileOffset": "0x1ba40f0",
+          "fileOffset": "0x1ba5f60",
           "kind": "ascii-name-only"
         }
       ],
@@ -2695,7 +2695,7 @@
       "nameEvidence": [
         {
           "source": "client",
-          "fileOffset": "0x1cac4f8",
+          "fileOffset": "0x1cae508",
           "kind": "ascii-name-only"
         }
       ],
@@ -2707,7 +2707,7 @@
       "nameEvidence": [
         {
           "source": "server",
-          "fileOffset": "0x17c0a50",
+          "fileOffset": "0x17c1738",
           "kind": "ascii-name-only"
         }
       ],
@@ -2719,7 +2719,7 @@
       "nameEvidence": [
         {
           "source": "server",
-          "fileOffset": "0x17c0e70",
+          "fileOffset": "0x17c1b60",
           "kind": "ascii-name-only"
         }
       ],
@@ -2731,7 +2731,7 @@
       "nameEvidence": [
         {
           "source": "client",
-          "fileOffset": "0x1cac468",
+          "fileOffset": "0x1cae478",
           "kind": "ascii-name-only"
         }
       ],
@@ -2743,12 +2743,12 @@
       "nameEvidence": [
         {
           "source": "server",
-          "fileOffset": "0x17c16f8",
+          "fileOffset": "0x17c1198",
           "kind": "ascii-name-only"
         },
         {
           "source": "client",
-          "fileOffset": "0x1caea80",
+          "fileOffset": "0x1cb0a90",
           "kind": "ascii-name-only"
         }
       ],
@@ -2760,7 +2760,7 @@
       "nameEvidence": [
         {
           "source": "server",
-          "fileOffset": "0x17c0cc0",
+          "fileOffset": "0x17c19a8",
           "kind": "ascii-name-only"
         }
       ],
@@ -2772,7 +2772,7 @@
       "nameEvidence": [
         {
           "source": "server",
-          "fileOffset": "0x17c0cf8",
+          "fileOffset": "0x17c19e0",
           "kind": "ascii-name-only"
         }
       ],
@@ -2784,12 +2784,12 @@
       "nameEvidence": [
         {
           "source": "server",
-          "fileOffset": "0x17c16c0",
+          "fileOffset": "0x17c1160",
           "kind": "ascii-name-only"
         },
         {
           "source": "client",
-          "fileOffset": "0x1caea48",
+          "fileOffset": "0x1cb0a58",
           "kind": "ascii-name-only"
         }
       ],
@@ -2801,7 +2801,7 @@
       "nameEvidence": [
         {
           "source": "server",
-          "fileOffset": "0x17c0c98",
+          "fileOffset": "0x17c1980",
           "kind": "ascii-name-only"
         }
       ],
@@ -2813,7 +2813,7 @@
       "nameEvidence": [
         {
           "source": "client",
-          "fileOffset": "0x1cac3f8",
+          "fileOffset": "0x1cae408",
           "kind": "ascii-name-only"
         }
       ],
@@ -2825,7 +2825,7 @@
       "nameEvidence": [
         {
           "source": "client",
-          "fileOffset": "0x1cac448",
+          "fileOffset": "0x1cae458",
           "kind": "ascii-name-only"
         }
       ],
@@ -2837,7 +2837,7 @@
       "nameEvidence": [
         {
           "source": "client",
-          "fileOffset": "0x1cac458",
+          "fileOffset": "0x1cae468",
           "kind": "ascii-name-only"
         }
       ],
@@ -2849,7 +2849,7 @@
       "nameEvidence": [
         {
           "source": "server",
-          "fileOffset": "0x17c0c28",
+          "fileOffset": "0x17c1910",
           "kind": "ascii-name-only"
         }
       ],
@@ -2861,7 +2861,7 @@
       "nameEvidence": [
         {
           "source": "server",
-          "fileOffset": "0x17c0bd0",
+          "fileOffset": "0x17c18b8",
           "kind": "ascii-name-only"
         }
       ],
@@ -2873,7 +2873,7 @@
       "nameEvidence": [
         {
           "source": "server",
-          "fileOffset": "0x17c0b80",
+          "fileOffset": "0x17c1868",
           "kind": "ascii-name-only"
         }
       ],
@@ -2885,7 +2885,7 @@
       "nameEvidence": [
         {
           "source": "server",
-          "fileOffset": "0x17c0fd0",
+          "fileOffset": "0x17c1cc0",
           "kind": "ascii-name-only"
         }
       ],
@@ -2897,7 +2897,7 @@
       "nameEvidence": [
         {
           "source": "server",
-          "fileOffset": "0x17c0c78",
+          "fileOffset": "0x17c1960",
           "kind": "ascii-name-only"
         }
       ],
@@ -2909,7 +2909,7 @@
       "nameEvidence": [
         {
           "source": "server",
-          "fileOffset": "0x17c0a00",
+          "fileOffset": "0x17c16e8",
           "kind": "ascii-name-only"
         }
       ],
@@ -2921,7 +2921,7 @@
       "nameEvidence": [
         {
           "source": "server",
-          "fileOffset": "0x17c0aa8",
+          "fileOffset": "0x17c1790",
           "kind": "ascii-name-only"
         }
       ],
@@ -2933,7 +2933,7 @@
       "nameEvidence": [
         {
           "source": "server",
-          "fileOffset": "0x17c0b38",
+          "fileOffset": "0x17c1820",
           "kind": "ascii-name-only"
         }
       ],
@@ -2945,7 +2945,7 @@
       "nameEvidence": [
         {
           "source": "server",
-          "fileOffset": "0x17c0d58",
+          "fileOffset": "0x17c1a48",
           "kind": "ascii-name-only"
         }
       ],
@@ -2957,7 +2957,7 @@
       "nameEvidence": [
         {
           "source": "server",
-          "fileOffset": "0x17c0dc8",
+          "fileOffset": "0x17c1ab8",
           "kind": "ascii-name-only"
         }
       ],
@@ -2969,7 +2969,7 @@
       "nameEvidence": [
         {
           "source": "server",
-          "fileOffset": "0x17c0fb0",
+          "fileOffset": "0x17c1ca0",
           "kind": "ascii-name-only"
         }
       ],
@@ -2981,7 +2981,7 @@
       "nameEvidence": [
         {
           "source": "server",
-          "fileOffset": "0x17c09a8",
+          "fileOffset": "0x17c1690",
           "kind": "ascii-name-only"
         }
       ],
@@ -2993,7 +2993,7 @@
       "nameEvidence": [
         {
           "source": "server",
-          "fileOffset": "0x17c0ff8",
+          "fileOffset": "0x17c1ce8",
           "kind": "ascii-name-only"
         }
       ],
@@ -3005,7 +3005,7 @@
       "nameEvidence": [
         {
           "source": "server",
-          "fileOffset": "0x17c0af0",
+          "fileOffset": "0x17c17d8",
           "kind": "ascii-name-only"
         }
       ],
@@ -3017,7 +3017,7 @@
       "nameEvidence": [
         {
           "source": "server",
-          "fileOffset": "0x17c0ef8",
+          "fileOffset": "0x17c1be8",
           "kind": "ascii-name-only"
         }
       ],
@@ -3029,7 +3029,7 @@
       "nameEvidence": [
         {
           "source": "server",
-          "fileOffset": "0x17c0f90",
+          "fileOffset": "0x17c1c80",
           "kind": "ascii-name-only"
         }
       ],
@@ -3041,7 +3041,7 @@
       "nameEvidence": [
         {
           "source": "server",
-          "fileOffset": "0x17c0e58",
+          "fileOffset": "0x17c1b48",
           "kind": "ascii-name-only"
         }
       ],
@@ -3053,7 +3053,7 @@
       "nameEvidence": [
         {
           "source": "server",
-          "fileOffset": "0x17c0e18",
+          "fileOffset": "0x17c1b08",
           "kind": "ascii-name-only"
         }
       ],
@@ -3065,7 +3065,7 @@
       "nameEvidence": [
         {
           "source": "server",
-          "fileOffset": "0x17c0de0",
+          "fileOffset": "0x17c1ad0",
           "kind": "ascii-name-only"
         }
       ],
@@ -3077,7 +3077,7 @@
       "nameEvidence": [
         {
           "source": "server",
-          "fileOffset": "0x17c0df8",
+          "fileOffset": "0x17c1ae8",
           "kind": "ascii-name-only"
         }
       ],
@@ -3089,7 +3089,7 @@
       "nameEvidence": [
         {
           "source": "server",
-          "fileOffset": "0x17c0e38",
+          "fileOffset": "0x17c1b28",
           "kind": "ascii-name-only"
         }
       ],
@@ -3101,12 +3101,12 @@
       "nameEvidence": [
         {
           "source": "server",
-          "fileOffset": "0x18e7aa0",
+          "fileOffset": "0x18e8778",
           "kind": "ascii-name-only"
         },
         {
           "source": "client",
-          "fileOffset": "0x1bce230",
+          "fileOffset": "0x1bd0110",
           "kind": "ascii-name-only"
         }
       ],
@@ -3118,7 +3118,7 @@
       "nameEvidence": [
         {
           "source": "server",
-          "fileOffset": "0x18e7b40",
+          "fileOffset": "0x18e8818",
           "kind": "ascii-name-only"
         }
       ],
@@ -3297,7 +3297,7 @@
       "nameEvidence": [
         {
           "source": "server",
-          "fileOffset": "0x18e8660",
+          "fileOffset": "0x18e9340",
           "kind": "ascii-name-only"
         }
       ],
@@ -3309,7 +3309,7 @@
       "nameEvidence": [
         {
           "source": "server",
-          "fileOffset": "0x18e8678",
+          "fileOffset": "0x18e9358",
           "kind": "ascii-name-only"
         }
       ],
@@ -3321,12 +3321,12 @@
       "nameEvidence": [
         {
           "source": "server",
-          "fileOffset": "0x18e8138",
+          "fileOffset": "0x18e8e18",
           "kind": "ascii-name-only"
         },
         {
           "source": "client",
-          "fileOffset": "0x1bce9c0",
+          "fileOffset": "0x1bd0890",
           "kind": "ascii-name-only"
         }
       ],
@@ -3338,12 +3338,12 @@
       "nameEvidence": [
         {
           "source": "server",
-          "fileOffset": "0x18e8148",
+          "fileOffset": "0x18e8e28",
           "kind": "ascii-name-only"
         },
         {
           "source": "client",
-          "fileOffset": "0x1bce9d0",
+          "fileOffset": "0x1bd08a0",
           "kind": "ascii-name-only"
         }
       ],
@@ -3355,12 +3355,12 @@
       "nameEvidence": [
         {
           "source": "server",
-          "fileOffset": "0x18e8158",
+          "fileOffset": "0x18e8e38",
           "kind": "ascii-name-only"
         },
         {
           "source": "client",
-          "fileOffset": "0x1bce9e0",
+          "fileOffset": "0x1bd08b0",
           "kind": "ascii-name-only"
         }
       ],
@@ -3372,12 +3372,12 @@
       "nameEvidence": [
         {
           "source": "server",
-          "fileOffset": "0x18e8168",
+          "fileOffset": "0x18e8e48",
           "kind": "ascii-name-only"
         },
         {
           "source": "client",
-          "fileOffset": "0x1bce9f0",
+          "fileOffset": "0x1bd08c0",
           "kind": "ascii-name-only"
         }
       ],
@@ -3389,12 +3389,12 @@
       "nameEvidence": [
         {
           "source": "server",
-          "fileOffset": "0x18e8178",
+          "fileOffset": "0x18e8e58",
           "kind": "ascii-name-only"
         },
         {
           "source": "client",
-          "fileOffset": "0x1bcea00",
+          "fileOffset": "0x1bd08d0",
           "kind": "ascii-name-only"
         }
       ],
@@ -3406,12 +3406,12 @@
       "nameEvidence": [
         {
           "source": "server",
-          "fileOffset": "0x18e8188",
+          "fileOffset": "0x18e8e68",
           "kind": "ascii-name-only"
         },
         {
           "source": "client",
-          "fileOffset": "0x1bcea10",
+          "fileOffset": "0x1bd08e0",
           "kind": "ascii-name-only"
         }
       ],
@@ -3423,12 +3423,12 @@
       "nameEvidence": [
         {
           "source": "server",
-          "fileOffset": "0x1809178",
+          "fileOffset": "0x1809f48",
           "kind": "ascii-name-only"
         },
         {
           "source": "client",
-          "fileOffset": "0x1b09208",
+          "fileOffset": "0x1b0b0c8",
           "kind": "ascii-name-only"
         }
       ],
@@ -3440,12 +3440,12 @@
       "nameEvidence": [
         {
           "source": "server",
-          "fileOffset": "0x18e7748",
+          "fileOffset": "0x18e8438",
           "kind": "ascii-name-only"
         },
         {
           "source": "client",
-          "fileOffset": "0x1bce960",
+          "fileOffset": "0x1bd0830",
           "kind": "ascii-name-only"
         }
       ],
@@ -3457,12 +3457,12 @@
       "nameEvidence": [
         {
           "source": "server",
-          "fileOffset": "0x18e7768",
+          "fileOffset": "0x18e8458",
           "kind": "ascii-name-only"
         },
         {
           "source": "client",
-          "fileOffset": "0x1bce980",
+          "fileOffset": "0x1bd0850",
           "kind": "ascii-name-only"
         }
       ],
@@ -3474,12 +3474,12 @@
       "nameEvidence": [
         {
           "source": "server",
-          "fileOffset": "0x18e7720",
+          "fileOffset": "0x18e8410",
           "kind": "ascii-name-only"
         },
         {
           "source": "client",
-          "fileOffset": "0x1bce938",
+          "fileOffset": "0x1bd0808",
           "kind": "ascii-name-only"
         }
       ],
@@ -3491,12 +3491,12 @@
       "nameEvidence": [
         {
           "source": "server",
-          "fileOffset": "0x18e8a60",
+          "fileOffset": "0x18e8390",
           "kind": "ascii-name-only"
         },
         {
           "source": "client",
-          "fileOffset": "0x1bce8d0",
+          "fileOffset": "0x1bd07a0",
           "kind": "ascii-name-only"
         }
       ],
@@ -3508,12 +3508,12 @@
       "nameEvidence": [
         {
           "source": "server",
-          "fileOffset": "0x18e89e8",
+          "fileOffset": "0x18e8318",
           "kind": "ascii-name-only"
         },
         {
           "source": "client",
-          "fileOffset": "0x1bce858",
+          "fileOffset": "0x1bd0728",
           "kind": "ascii-name-only"
         }
       ],
@@ -3544,12 +3544,12 @@
       "nameEvidence": [
         {
           "source": "server",
-          "fileOffset": "0x17cb5f0",
+          "fileOffset": "0x17cc1e0",
           "kind": "ascii-name-only"
         },
         {
           "source": "client",
-          "fileOffset": "0x1d09878",
+          "fileOffset": "0x1d0bcd8",
           "kind": "ascii-name-only"
         }
       ],
@@ -3561,12 +3561,12 @@
       "nameEvidence": [
         {
           "source": "server",
-          "fileOffset": "0x17cb610",
+          "fileOffset": "0x17cc200",
           "kind": "ascii-name-only"
         },
         {
           "source": "client",
-          "fileOffset": "0x1d09898",
+          "fileOffset": "0x1d0bcf8",
           "kind": "ascii-name-only"
         }
       ],
@@ -3684,7 +3684,7 @@
       "nameEvidence": [
         {
           "source": "client",
-          "fileOffset": "0x1c85280",
+          "fileOffset": "0x1c87330",
           "kind": "ascii-name-only"
         }
       ],
@@ -3696,12 +3696,12 @@
       "nameEvidence": [
         {
           "source": "server",
-          "fileOffset": "0x18e7b00",
+          "fileOffset": "0x18e87d8",
           "kind": "ascii-name-only"
         },
         {
           "source": "client",
-          "fileOffset": "0x1bce290",
+          "fileOffset": "0x1bd0170",
           "kind": "ascii-name-only"
         }
       ],

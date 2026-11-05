@@ -11,16 +11,19 @@ async function openPrefire(page: Page) {
   });
   await page.getByLabel('Training mode').selectOption('prefire');
   await expect(page.getByLabel('Prefire route')).toBeVisible({timeout: 90000});
-  await page.waitForFunction(() => (window as any).aimQA?.hitboxes.get(1)?.pose.capsules.length === 19);
+  await page.waitForFunction(() => {
+    const e = (window as any).aimQA;
+    return e?.criticalReady && !e.loadingMap && e.hitboxes.get(1)?.pose.capsules.length === 19;
+  });
 }
 
 test('Dust 2 crosshair and recoil-follow ray remain aligned through aspect and frame-remainder changes', async ({page}) => {
   test.setTimeout(150000); await openPrefire(page);
   const errors = await page.evaluate(async () => {
     const e = (window as any).aimQA;
-    const threePath = '/node_modules/.vite/deps/three.js', ballisticsPath = '/src/range/ballistics.ts';
+    const ballisticsPath = '/src/range/ballistics.ts';
     const equipmentPath = '/src/range/equipment.ts', shotPath = '/src/range/shot-model.ts';
-    const {Vector3} = await import(/* @vite-ignore */ threePath);
+    const Vector3 = e.camera.position.constructor;
     const {WeaponRecovery} = await import(/* @vite-ignore */ ballisticsPath);
     const {equipmentStats} = await import(/* @vite-ignore */ equipmentPath);
     const {direction} = await import(/* @vite-ignore */ shotPath);

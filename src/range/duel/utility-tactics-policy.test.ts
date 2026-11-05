@@ -209,6 +209,43 @@ describe('bounded observed-contact utility policy (authored, not native bot pari
     const state = start('smoke', world(), {...bot(), health: 30});
     expect(advance(state, 5, 3.8)?.throw).toBe(true);
   });
+  it('does not turn defensive smoke into an unrelated long movement plan', () => {
+    const state = start('smoke', world(), {...bot(), health: 30});
+    const planner = new BotUtilityPlanner(state.seed, state.self.id, 10);
+    const command = planner.command(3, state.self, state.inventory, evidence(), state.arena,
+      {...context(), movementGoal: {x: 35, y: 0, z: 10}, readyToThrow: false});
+    expect(command).toBeDefined();
+    const final = {...state, planner, command: command!};
+    expect(advance(final, 5, 3.8)?.throw).toBe(true);
+    planner.thrown(17, 'smoke', final.time);
+    expect(planner.smokeMovement(final.time + .2, final.self, [], false)).toBeUndefined();
+  });
+  it('uses healthy smoke for an observed threatened crossing and waits for actual bloom before moving', () => {
+    const self = bot(), arena = world(), inventory = utilityInventory(['smoke']);
+    const goal = {x: 4.7, y: 0, z: 9.1};
+    let planner: BotUtilityPlanner | undefined, command;
+    for (let seed = 1; seed <= 64 && !command; seed++) {
+      planner = new BotUtilityPlanner(seed, 1, 10);
+      command = planner.command(3, self, inventory, evidence(), arena, {...context(), movementGoal: goal});
+    }
+    expect(command).toBeDefined();
+    // Preparing/abandoning a throw cannot create a phantom movement wait.
+    expect(planner!.smokeMovement(3, self, [], false)).toBeUndefined();
+    let time = 3;
+    while (command && !command.throw && time < 5) {
+      self.yaw += command.yawDelta; self.pitch += command.pitchDelta; time += STEP;
+      command = planner!.command(time, self, inventory, evidence(time), arena,
+        {...context(), movementGoal: goal, readyToThrow: true});
+    }
+    expect(command?.throw).toBe(true);
+    planner!.thrown(17, 'smoke', time);
+    expect(planner!.smokeMovement(time + .2, self, [], false)).toEqual({goal, wait: true});
+    const effect = {id: 17, actorId: 1, side: 'enemy' as const, kind: 'smoke' as const, type: 'smoke' as const,
+      position: {x: 0, y: 0, z: 3}, radius: 4.2, startedAt: time + 1, expiresAt: time + 21, cells: [], holes: []};
+    expect(planner!.smokeMovement(time + 1.2, self, [effect], false)?.wait).toBe(true);
+    expect(planner!.smokeMovement(time + 2.1, self, [effect], false)).toEqual({goal, wait: false});
+    expect(planner!.smokeMovement(time + 2.2, self, [effect], true)).toBeUndefined();
+  });
 
   it.each(['he', 'molotov', 'incendiary', 'flash'] as const)('rejects %s endangering a teammate at the outcome', kind => {
     const self = kind === 'flash' ? {...bot(), position: {...bot().position, z: 11}} : bot();
@@ -261,7 +298,7 @@ describe('bounded observed-contact utility policy (authored, not native bot pari
     expect(events.some(event => event.type === 'damage')).toBe(false);
   });
 
-  it('validates the exact tick-quantized release pose handed to the live projectile kernel', () => {
+  it('validates the fractional release clock handed to the live projectile kernel', () => {
     const state = start();
     const throws = vi.spyOn(UtilitySimulation.prototype, 'throw');
     const events: UtilityEvent[] = [];
@@ -272,9 +309,9 @@ describe('bounded observed-contact utility policy (authored, not native bot pari
     expect(advance(state, 5, 3.8)?.throw).toBe(true);
     expect(throws).toHaveBeenCalledTimes(1);
     const input = throws.mock.calls[0][0];
-    const releaseAt = Math.ceil(nativeGrenadeReleaseAt(state.time) / STEP) * STEP;
+    const releaseAt = nativeGrenadeReleaseAt(state.time);
     expect(input.time).toBe(releaseAt);
-    expect(input.time).toBeGreaterThan(nativeGrenadeReleaseAt(state.time));
+    expect(input.time).toBe(nativeGrenadeReleaseAt(state.time));
     expect(state.command.yawDelta).toBe(0);
     expect(state.command.pitchDelta).toBe(0);
     expect(input.origin).toEqual(ballistics.utilityLaunchPose(state.self.position, state.self.yaw, state.self.pitch,
@@ -284,7 +321,7 @@ describe('bounded observed-contact utility policy (authored, not native bot pari
     live.throw(input);
     let actual: UtilityEvent | undefined;
     for (let tick = 1; tick <= 1024 && !actual; tick++) {
-      actual = live.advance(STEP, releaseAt + tick * STEP, state.arena, [state.self])
+      actual = live.advance(STEP, Math.floor(releaseAt / STEP) * STEP + tick * STEP, state.arena, [state.self])
         .find(event => event.type === 'detonate');
     }
     expect(actual?.time).toBe(expected.time);

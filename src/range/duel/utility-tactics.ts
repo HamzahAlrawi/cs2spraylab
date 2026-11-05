@@ -12,6 +12,7 @@ import {authoredUtilityOpportunity} from './utility-opportunities';
 import {nativeFlashVisibility} from './grenade-flash-visibility';
 import {nativeFlashArguments} from './grenade-native-flash';
 import {nativeGrenadeReleaseAt} from './grenade-native-input';
+import {clearSegment} from './navigation';
 
 const gap = (a: Vec, b: Vec) => Math.hypot(a.x - b.x, a.z - b.z);
 const angleDelta = (a: number, b: number) => Math.atan2(Math.sin(a - b), Math.cos(a - b));
@@ -28,11 +29,13 @@ const POLICY = {sightAge: 1.5, soundAge: .8, setupSightAge: 3, setupSoundAge: 2,
   checks: .35, candidates: 4, flightSeconds: UTILITY_RULES.projectileLifetime,
   positionTolerance: .08, allyTolerance: .2, contactTolerance: 1.5, flashSeconds: .15};
 type Context = {visible: boolean; lastShotAt: number; teammates: readonly DuelActorSnapshot[];
+  movementGoal?: Vec;
   /** Live held-utility readiness; undefined preserves standalone caller compatibility. */
   readyToThrow?: boolean};
 type Shot = {yaw: number; pitch: number};
 type Outcome = {position: Vec; effect?: UtilityEffect};
 type Plan = {kind: UtilityKind; target: Vec; started: number; expires: number; shot: Shot;
+  smokeGoal?: Vec;
   eye: Vec; evidence: ThreatReport; allies: DuelActorSnapshot[]; arena: Arena};
 const finite = (point: Vec) => [point.x, point.y, point.z].every(Number.isFinite);
 const distance = (a: Vec, b: Vec) => Math.hypot(a.x - b.x, a.y - b.y, a.z - b.z);
@@ -51,11 +54,21 @@ const protectedFrom = (self: DuelActorSnapshot, report: ThreatReport, arena: Are
   !clear({...self.position, y: self.feet + .9}, report.point, arena);
 const settled = (self: DuelActorSnapshot) => self.grounded !== false &&
   Math.abs(self.verticalVelocity ?? 0) < .1 && Math.hypot(self.velocity.x, self.velocity.z) < .3;
-// The live caller releases on its first simulation tick at/after the native deadline.
-const releaseTick = (time: number) => Math.ceil(nativeGrenadeReleaseAt(time) / STEP) * STEP;
+const releaseTick = nativeGrenadeReleaseAt;
 const alliesOf = (self: DuelActorSnapshot, peers: readonly DuelActorSnapshot[]) => peers
   .filter(peer => peer.id !== self.id && peer.side === self.side && peer.alive)
   .slice(0, UTILITY_RULES.maxActors - 1);
+
+/** Project only below sensed evidence, within a plausible body-height interval.
+ * A lower floor several stories away is not evidence of the target's platform. */
+export function utilityGround(point: Vec, arena: Arena): Vec | undefined {
+  if (!finite(point)) return;
+  const from = {...point, y: point.y + .05}, range = 80 * UNIT;
+  const hit = traceSolid(from, {x: 0, y: -1, z: 0}, arena, range);
+  if (Number.isFinite(hit.distance)) return hit.normal && hit.normal.y >= .7
+    ? {...point, y: from.y - hit.distance + .06} : undefined;
+  if (!arena.native && point.y >= 0 && point.y <= range) return {...point, y: .06};
+}
 
 /** Reuse the live projectile kernel, including launch correction, contacts and think ticks.
  * No opponent actor is synthesized from a report. Work is capped even for unsettled smoke. */
@@ -67,8 +80,9 @@ function predict(kind: UtilityKind, shot: Shot, self: DuelActorSnapshot, allies:
   simulation.throw({actorId: self.id, side: self.side, kind, ...launch, strength: 1, time: releaseAt,
     velocity: {x: self.velocity.x, y: self.verticalVelocity ?? 0, z: self.velocity.z}});
   const dt = 1 / 8;
+  const start = Math.floor(releaseAt / STEP) * STEP;
   for (let tick = 1; tick <= POLICY.flightSeconds / dt; tick++) {
-    const events = simulation.advance(dt, releaseAt + tick * dt, arena, actors);
+    const events = simulation.advance(dt, start + tick * dt, arena, actors);
     if (events.some(event => event.type === 'damage' && event.damage > 0)) return;
     const detonation = events.find(event => event.type === 'detonate');
     if (detonation) return {position: {...detonation.position},
@@ -117,14 +131,31 @@ export class BotUtilityPlanner {
   private candidateCursor = 0;
   private plan?: Plan;
   private reason = 'holding-utility';
+  private smokeAction?: {goal: Vec; id?: number; expires: number};
+  private pendingSmokeGoal?: Vec;
   constructor(seed: number, actor: number, private readonly level: SkillLevel) {
     this.random = randomStream(seed, `utility-policy:${actor}`);
     this.nextCheck = 1.5 + actor * .15;
   }
   decision() {return this.plan ? `${this.plan.kind}:prepare` : this.reason;}
   target() {return this.plan && {...this.plan.target};}
+  thrown(id: number, kind: UtilityKind, time: number) {
+    if (kind === 'smoke' && this.pendingSmokeGoal)
+      this.smokeAction = {goal: this.pendingSmokeGoal, id, expires: time + 10};
+    this.pendingSmokeGoal = undefined;
+  }
+  smokeMovement(time: number, self: DuelActorSnapshot, effects: readonly UtilityEffect[], visible: boolean) {
+    const action = this.smokeAction;
+    if (!action) return;
+    if (visible || !self.alive || time >= action.expires || gap(self.position, action.goal) < .3) {
+      this.smokeAction = undefined; return;
+    }
+    const effect = effects.find(effect => effect.id === action.id && effect.type === 'smoke');
+    return {goal: {...action.goal}, wait: !effect || time < effect.startedAt + UTILITY_RULES.smokeBloom};
+  }
   cancel(time: number) {
     this.plan = undefined; this.nextThrow = time + 3;
+    this.pendingSmokeGoal = undefined;
     this.motor.yawRate = this.motor.pitchRate = 0;
     this.reason = 'utility-cancelled';
   }
@@ -164,15 +195,25 @@ export class BotUtilityPlanner {
       const range = gap(self.position, report.point);
       if (range < 7 || range > 25 || this.random() > .12 + skill * .43) return;
       const opportunity = authoredUtilityOpportunity(self, arena, inventory, report, time);
+      const goal = context.movementGoal;
+      const crossing = !!goal && finite(goal) && gap(self.position, goal) >= 1 && gap(self.position, goal) <= 8 &&
+        clearSegment(self.position, goal, arena) && clear({...goal, y: goal.y + 64 * UNIT}, report.point, arena);
       // Sound is an uncertain area cue, not a precision flash/damage target.
       const permitted = (kind: UtilityKind) => inventory[kind] > 0 &&
         (report.source === 'sight' || kind === 'smoke' || kind === 'decoy') &&
-        (kind !== 'smoke' || self.health < 40);
+        (kind !== 'smoke' || self.health < 40 || crossing);
       const preferred: UtilityKind[] = ['molotov', 'incendiary', 'he', 'flash', 'decoy'];
       const available = preferred.filter(permitted);
       const cursor = this.candidateCursor++ % Math.max(1, available.length);
       const kinds = [...new Set([...(opportunity ? [opportunity.kind as UtilityKind] : []),
         ...(permitted('smoke') ? ['smoke' as const] : []), ...available.slice(cursor), ...available.slice(0, cursor)])];
+      // At most two support rays per planning attempt; no hidden actor feet or
+      // per-tick floor searches. Authored lineups keep their validated heights.
+      const contactGround = utilityGround(report.point, arena);
+      const smokePoint = {x: self.position.x + (report.point.x - self.position.x) * Math.min(.55, 7 / range),
+        y: crossing ? goal!.y + 64 * UNIT : self.position.y,
+        z: self.position.z + (report.point.z - self.position.z) * Math.min(.55, 7 / range)};
+      const smokeGround = permitted('smoke') ? utilityGround(smokePoint, arena) : undefined;
       let checks = 0;
       // First pass: one shot per kind. Rotate the shortlist on later attempts so a
       // four-candidate budget cannot permanently starve HE/flash behind two fire types.
@@ -180,19 +221,19 @@ export class BotUtilityPlanner {
         if (checks >= POLICY.candidates || this.plan) break;
         const authored = opportunity?.kind === kind ? opportunity : undefined;
         if (high && authored) continue;
-        const factor = kind === 'smoke' ? Math.min(.55, 7 / range) : 1;
-        // Unauthored target height is a body-point offset approximation, not a
-        // resolved platform/ramp floor. The outcome height tolerance is policy,
-        // not floor certainty; fire additionally requires a real kernel fire effect.
-        const target = authored?.target ?? {x: self.position.x + (report.point.x - self.position.x) * factor,
-          y: kind === 'smoke' ? self.feet + .1 : report.point.y - (kind === 'flash' ? .1 : 1.2),
-          z: self.position.z + (report.point.z - self.position.z) * factor};
+        const target = authored?.target ?? (kind === 'flash' ? {...report.point, y: report.point.y - .1}
+          : kind === 'smoke' ? smokeGround : contactGround);
+        if (!target) continue;
         checks++;
         const shot = authored ?? solveUtilityThrow(self.position, target, arena, high);
         if (!shot) continue;
         const outcome = predict(kind, shot, self, allies, arena, releaseTick(time));
         if (!outcome || !safeOutcome(kind, target, outcome, self, allies, report, arena)) continue;
+        if (kind === 'smoke' && crossing && (!outcome.effect || smokeSegmentExposure(
+          report.point, {...goal!, y: goal!.y + 64 * UNIT}, [outcome.effect],
+          outcome.effect.startedAt + UTILITY_RULES.smokeBloom) < .35)) continue;
         this.plan = {kind, target: {...target}, started: time, expires: time + 3.5, shot: {yaw: shot.yaw, pitch: shot.pitch},
+          ...(kind === 'smoke' && crossing ? {smokeGoal: {...goal!}} : {}),
           eye: {...self.position}, evidence: {...report, point: {...report.point}},
           allies: allies.map(peer => ({...peer, position: {...peer.position}, velocity: {...peer.velocity}})), arena};
         this.reason = authored ? `validated-lineup:${authored.id}` : 'validated-sensed-contact';
@@ -216,6 +257,8 @@ export class BotUtilityPlanner {
     if (ready) {
       // The caller queues native pin/release timing and must hold this validated pose.
       command.yawDelta = command.pitchDelta = 0;
+      if (this.plan.kind === 'smoke' && this.plan.smokeGoal)
+        this.pendingSmokeGoal = {...this.plan.smokeGoal};
       this.plan = undefined; this.nextThrow = time + 6 + this.random() * 4;
       this.motor.yawRate = this.motor.pitchRate = 0;
       this.reason = 'utility-commitment';

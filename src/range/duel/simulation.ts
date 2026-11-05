@@ -258,8 +258,19 @@ export class DuelSimulation {
     }
     const snapshot = this.previous.length ? this.previous : this.snapshot();
     const self = {...snapshot[actorId], equipment: actor.weapon.id, ammo: actor.weapon.ammo, reloading: actor.weapon.reload.active};
+    const planner = this.utilityPlanners.get(actorId), brain = this.brains.get(actorId);
+    const smokeMove = planner?.smokeMovement(this.time, self, this.utilities.effects, visible);
+    if (smokeMove) {
+      if (smokeMove.wait) return {...command, forward: 0, side: 0};
+      // The planner admitted only a clear, short crossing segment. Ordinary
+      // actor physics/collision remains authoritative; no per-tick nav search.
+      const dx = smokeMove.goal.x - self.position.x, dz = smokeMove.goal.z - self.position.z, length = Math.hypot(dx, dz);
+      if (length > .1) return {...command, forward: (-dx * Math.sin(self.yaw) - dz * Math.cos(self.yaw)) / length,
+        side: (dx * Math.cos(self.yaw) - dz * Math.sin(self.yaw)) / length, walk: false};
+    }
     const utility = this.utilityPlanners.get(actorId)?.command(this.time, self, this.utilityInventory(actorId), contact,
       this.arena, {visible, lastShotAt: this.lastShotAt.get(actorId) ?? -Infinity, teammates: snapshot.slice(1),
+        movementGoal: brain instanceof TacticalBrain ? brain.utilityMovementGoal() : undefined,
         readyToThrow: !!held && this.time >= held.readyAt});
     if (utility && this.selectActorUtility(actorId, utility.kind)) {
       if (contact&&!this.utilityTeam.claim(this.time,self,utility.kind,contact,snapshot.slice(1),id=>this.tradeSkill(id))) {
@@ -320,12 +331,17 @@ export class DuelSimulation {
     const actor = this.actors[actorId], held = this.heldUtilities.get(actorId), stock = this.utilityStocks.get(actorId);
     if (!this.playable || !actor?.alive || !held || held.kind !== kind || this.time < held.readyAt || !stock?.[kind]) return false;
     strength=releasedGrenadeStrength(strength);
-    const {origin, direction} = utilityLaunchPose(actor.position, actor.yaw, actor.pitch, this.arena,strength);
+    const releasedAt = Math.max(this.time - STEP, Math.min(this.time, held.releaseAt ?? this.time));
+    const before = this.previous[actorId];
+    const release = before && releasedAt < this.time
+      ? sampleShotState(before, actor, releasedAt, this.time) : actor;
+    const {origin, direction} = utilityLaunchPose(release.position, release.yaw, release.pitch, this.arena,strength);
     const id = this.utilities.throw({actorId, side: actor.side, kind, origin, direction,
-      velocity: {x: actor.velocity.x, y: actor.verticalVelocity, z: actor.velocity.z}, strength, time: this.time});
+      velocity: {x: release.velocity.x, y: release.verticalVelocity ?? 0, z: release.velocity.z}, strength, time: releasedAt});
     if (id === undefined) return false;
     this.utilityWeapons.set(id, actor.weapon.id === 'knife' || actor.weapon.id === 'zeus' ? 'usp' : actor.weapon.id);
     this.utilityTeam.thrown(actorId,id,this.time);
+    this.utilityPlanners.get(actorId)?.thrown(id,kind,this.time);
     stock[kind]--; this.heldUtilities.delete(actorId);
     actor.weapon.cancelInput(); actor.equipReadyAt = Math.max(this.time, (held.throwStartedAt??this.time)+
       utilityNativeTiming(kind,strength).throwDuration) + equipmentStats(actor.weapon.id).deploy;

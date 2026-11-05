@@ -21,6 +21,21 @@ const MAX_KNOWN_SPEED = 250 * UNIT;
 const CORNER_MARGIN = .52;
 const finitePoint = (point: Vec) => [point.x, point.y, point.z].every(Number.isFinite);
 const bearingError = (a: number, b: number) => Math.abs(Math.atan2(Math.sin(a - b), Math.cos(a - b)));
+function correspondingPoints(previous: VisibleEnemy, current: VisibleEnemy): [Vec, Vec] | null {
+  if (previous.candidates || current.candidates) {
+    for (const candidate of current.candidates ?? []) {
+      if (!candidate.sampleId) continue;
+      const old = previous.candidates?.find(value => value.sampleId === candidate.sampleId && value.group === candidate.group);
+      if (old) return [old.point, candidate.point];
+    }
+    return null;
+  }
+  // Legacy/manual observations have no probe identities. Never compare a head
+  // with a newly exposed torso, even in this compatibility path.
+  if (previous.headPoint && current.headPoint) return [previous.headPoint, current.headPoint];
+  if (!!previous.headPoint !== !!current.headPoint) return null;
+  return [previous.position, current.position];
+}
 const attended = ({self, view}: BotObservation, point: Vec) => {
   const dx = point.x - self.position.x, dy = point.y - self.position.y, dz = point.z - self.position.z;
   return pointInView(self, point, view) && bearingError(Math.atan2(-dx, -dz), self.yaw) < .09 &&
@@ -119,10 +134,12 @@ export class SightingMemory {
     this.evidence = this.evidence.filter(cue => time - cue.observedAt < (cue.lifetime ?? 2));
     if (visible) {
       const dt = time - this.seenAt;
-      if (this.wasVisible && this.seen?.id === visible.id && dt > 0 && dt < .12) {
+      const pair = this.seen && this.seen.id === visible.id && this.seen.generation === visible.generation
+        ? correspondingPoints(this.seen, visible) : null;
+      if (this.wasVisible && pair && dt > 0 && dt < .12) {
         const response = 1 - Math.exp(-dt / .07);
-        const vx = (visible.position.x - this.seen.position.x) / dt;
-        const vz = (visible.position.z - this.seen.position.z) / dt;
+        const vx = (pair[1].x - pair[0].x) / dt;
+        const vz = (pair[1].z - pair[0].z) / dt;
         const scale = Math.min(1, MAX_KNOWN_SPEED / Math.max(1e-6, Math.hypot(vx, vz)));
         this.velocity.x += (vx * scale - this.velocity.x) * response;
         this.velocity.z += (vz * scale - this.velocity.z) * response;

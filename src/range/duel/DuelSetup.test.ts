@@ -98,9 +98,10 @@ describe('Duel setup disclosures', () => {
       expect(tag).toContain(`max="${max}"`);
       expect(tag).toContain(`step="${step}"`);
     }
-    for (const label of ['Bot health', 'Player health', 'Bot 1 health']) {
+    for (const label of ['Bot health', 'Bot 1 health']) {
       expect(controlTag(html, label)).toContain('min="1" max="500"');
     }
+    expect(controlTag(html, 'Player health')).toContain('min="1" max="10000"');
   });
 
   it('preserves armor dependencies and the last-weapon removal guard', () => {

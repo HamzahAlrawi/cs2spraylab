@@ -8,7 +8,7 @@ const volumes = new WeakMap<readonly Vec[], {origin: Vec; occupied: Set<string>}
 const key = (x: number, y: number, z: number) => `${x}:${y}:${z}`;
 
 /** One-time bounded six-connected fill; smoke can travel through an opening, never a wall. */
-export function buildSmokeVolume(position: Vec, radius: number, arena: Arena): Vec[] {
+export function* smokeVolumeSteps(position: Vec, radius: number, arena: Arena): Generator<void, Vec[]> {
   const seed = {...position, y: position.y + .15}, cells = [seed], seen = new Set([key(0, 0, 0)]);
   const queue = [{x: 0, y: 0, z: 0}];
   for (let at = 0; at < queue.length && cells.length < MAX_SMOKE_CELLS; at++) {
@@ -20,11 +20,20 @@ export function buildSmokeVolume(position: Vec, radius: number, arena: Arena): V
       const to = {x: seed.x + x * SMOKE_CELL_SIZE, y: seed.y + y * SMOKE_CELL_SIZE, z: seed.z + z * SMOKE_CELL_SIZE};
       if (to.x <= arena.minX || to.x >= arena.maxX || to.z <= arena.minZ || to.z >= arena.maxZ || !arena.native && to.y < 0) continue;
       const direction = {x: offset[0], y: offset[1], z: offset[2]};
-      if (traceSolid(from, direction, arena, SMOKE_CELL_SIZE + .02).distance < SMOKE_CELL_SIZE + .01) continue;
+      const blocked = traceSolid(from, direction, arena, SMOKE_CELL_SIZE + .02).distance < SMOKE_CELL_SIZE + .01;
+      yield;
+      if (blocked) continue;
       seen.add(id); cells.push(to); queue.push({x, y, z});
     }
   }
   return cells;
+}
+
+export function buildSmokeVolume(position: Vec, radius: number, arena: Arena): Vec[] {
+  const steps = smokeVolumeSteps(position, radius, arena);
+  let next = steps.next();
+  while (!next.done) next = steps.next();
+  return next.value;
 }
 
 /** Static cell index shared by sight, interior overlay and fire interactions. */

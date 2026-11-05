@@ -206,7 +206,8 @@ export class PrefireBotController {
       (time < this.areaUntil ? this.knownApproach ?? this.plan.watchPoint : this.plan.watchPoint);
     const laneYaw = lane && Math.hypot(lane.x - actor.position.x, lane.z - actor.position.z) > .1
       ? heading(actor.position, lane) : this.homeYaw;
-    const inLane = (point: Vec) => Math.abs(angleDelta(laneYaw, heading(actor.position, point))) <= (traveling ? .5 : .55) * Math.PI;
+    const inLane = (point: Vec) => Math.abs(angleDelta(laneYaw, heading(actor.position, point))) <=
+      (evidenceSector ? .18 : traveling ? .5 : .55) * Math.PI;
     const fallback = inLane(desired) ? desired : lane;
     if (!fallback) return;
     // Plans contain static course views, not live actor positions. Keep only a

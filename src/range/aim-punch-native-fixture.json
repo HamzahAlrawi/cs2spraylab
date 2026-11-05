@@ -1,9 +1,9 @@
 {
-  "build": "2000922",
-  "serverSha256": "3541e46a3193fcf1151e97ce19cd4daf86c5fdb2889033c2bab1d4cc7f555b9c",
-  "damageRva": "0xa82860",
-  "angleServiceRva": "0xa386a0",
-  "recoveryRva": "0xa38bc0",
+  "build": "2000940",
+  "serverSha256": "7e88b23196b0a746d99c7c622f947b96c25de61cc4d921d8dda79e515c4b48a8",
+  "damageRva": "0xa8f6a0",
+  "angleServiceRva": "0xa454b0",
+  "recoveryRva": "0xa459d0",
   "scale": 3,
   "note": "Offline native hitgroup arithmetic and 128 Hz angle recovery, pre-armor damage and standard team scales. RNG and angle-service calls stubbed. Angles use trainer up-positive pitch; not live game parity.",
   "cases": [

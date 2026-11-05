@@ -1,5 +1,6 @@
 import type {DuelReview} from './duel/coaching';
 import type {SkillLevel} from './duel/config';
+import {MAX_PLAYER_HEALTH} from './combat-limits';
 import {recordDrillAchievements, recordDuelAchievements, sanitizeAchievements, unlockAchievements, type AchievementState} from './achievements';
 import {verifyGiftCode} from './gift-codes';
 import {browserProfileMirror, decodeProfileCopy, MAX_PROFILE_BYTES, profileChecksum, profileCopy, readProfileCopies, writeProfileCopies, type ProfileCopy, type ProfileMirror} from './progression-persistence';
@@ -259,7 +260,7 @@ export function equippedCosmetic(profile: ProgressionProfile, catalog: readonly 
 }
 
 function validSetup(setup: DuelXpSetup): boolean {
-  return !!setup && finite(setup.playerHealth, 1, 500) && typeof setup.playerArmor === 'boolean' &&
+  return !!setup && finite(setup.playerHealth, 1, MAX_PLAYER_HEALTH) && typeof setup.playerArmor === 'boolean' &&
     Array.isArray(setup.bots) && setup.bots.length >= 1 && setup.bots.length <= 5 &&
     new Set(setup.bots.map(bot => bot?.id)).size === setup.bots.length && setup.bots.every(bot => bot && identifier(bot.id) &&
       (bot.skill === '10+' || integer(bot.skill, 1, 10)) && finite(bot.health, 1, 500) && typeof bot.armor === 'boolean' &&

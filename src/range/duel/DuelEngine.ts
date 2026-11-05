@@ -355,6 +355,7 @@ export class DuelEngine {
       if(!this.disposed) {
         warmRetainedFirstUse(this.renderer,this.scene,this.camera,[this.actors]);
         warmRetainedFirstUse(this.renderer,this.viewScene,this.viewCamera,[this.viewRoot,this.utilityRenderer.held]);
+        if (this.config.utilitiesEnabled) this.utilityRenderer.smoke.prepareWorld(this.renderer,this.scene,this.camera);
       }
       await waitForGpu(this.renderer,this.gpuPreparationAbort.signal);
       if(this.disposed)return;
@@ -665,8 +666,8 @@ export class DuelEngine {
   }
 
   private prepareUtilities() {
-    if (this.settings.volume > 0) void this.audio.preloadUtilities().catch(() => {});
-    return this.utilityPreparing ??= Promise.all([this.utilityRenderer.prepare(), loadCombatModel('/models/utility-gestures.glb')])
+    const audio = this.settings.volume > 0 ? this.audio.preloadUtilities().catch(() => {}) : Promise.resolve();
+    return this.utilityPreparing ??= Promise.all([this.utilityRenderer.prepare(), loadCombatModel('/models/utility-gestures.glb'), audio])
       .then(async ([, asset]) => {
         disposeResources([asset.scene]); if (this.disposed) return;
         this.utilityGestures = nativeGestureClips(asset);
@@ -831,6 +832,7 @@ export class DuelEngine {
       if(this.disposed)return;
       this.mapLighting?.beginFrame(this.renderer,this.camera.position);
       warmRetainedFirstUse(this.renderer,this.scene,this.camera,[this.actors,this.scenario?.scene.getObjectByName('duel-route-arrows')].filter((root):root is THREE.Object3D=>!!root));
+      if (this.config.utilitiesEnabled) this.utilityRenderer.smoke.prepareWorld(this.renderer,this.scene,this.camera);
       await waitForGpu(this.renderer,this.mapAbort!.signal);
       if(this.disposed)return;
       this.prefetchResumeAt=performance.now()+1800;
@@ -1309,18 +1311,23 @@ export class DuelEngine {
     for (const [id, shot] of shots) {
       const count = this.shotCounts.get(shot.actorId) ?? 0;
       this.shotCounts.set(shot.actorId, count + 1);
+      const shotAge = Number.isFinite(shot.tick) ? Math.max(0, this.sim.time - shot.tick * STEP) : 0;
+      // A catch-up frame may contain several old pistol shots. Do not create
+      // them all at the current muzzle/time: that looks like a shotgun volley.
+      if (shotAge >= .065) continue;
+      const effectAt = this.animationClock - shotAge;
       const trail = Math.min(shot.actorId === 0 ? 10 : 5,equipmentStats(shot.equipment).range*UNIT);
       let start: THREE.Vector3 | undefined;
       if (shot.actorId === 0 && this.viewMuzzle) {
         const ammo = this.sim.actors[0].weapon.ammo;
         const barrel = shot.equipment === 'elite' ? this.viewRoot.getObjectByName(`spraylab-muzzle-${ammo % 2 ? 'right' : 'left'}`) ?? this.viewMuzzle : this.viewMuzzle;
-        this.viewFlashes.fire(barrel, shot.equipment, this.animationClock);
+        if (shotAge < .045) this.viewFlashes.fire(barrel, shot.equipment, effectAt);
         this.viewScene.updateMatrixWorld(true);
         start = viewMuzzleToWorld(barrel.getWorldPosition(new THREE.Vector3()), this.viewCamera,
           this.camera, this.width, this.height);
       } else if (shot.actorId > 0) {
         const muzzle = this.botMuzzles.get(shot.actorId);
-        this.shotEffects.flashes.fire(muzzle, shot.equipment, this.animationClock, true);
+        if (shotAge < .045) this.shotEffects.flashes.fire(muzzle, shot.equipment, effectAt, true);
         muzzle?.updateWorldMatrix(true, false);
         start = muzzle?.getWorldPosition(new THREE.Vector3());
       }
@@ -1337,7 +1344,7 @@ export class DuelEngine {
         const endpointAhead = v3(end).sub(this.camera.position).dot(this.camera.getWorldDirection(new THREE.Vector3())) > .1;
         const obstruction = traceSolid(start, delta.clone().normalize(), this.sim.arena, length);
         if (length > .15 && endpointAhead && obstruction.distance >= length - .08) {
-          this.shotEffects.trace(shot.equipment, count, start, v3(end), this.animationClock,
+          this.shotEffects.trace(shot.equipment, count, start, v3(end), effectAt,
             shot.actorId === 0 ? this.ownTraceColor : this.enemyTraceColor);
         }
       }

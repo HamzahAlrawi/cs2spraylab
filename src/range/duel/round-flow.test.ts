@@ -61,7 +61,8 @@ describe('continuous duel sessions', () => {
     const sim = new DuelSimulation(sanitizeDuelConfig({playerHealth: 275, health: 60}));
     expect(sim.snapshot().map(actor => actor.health)).toEqual([275, 60]);
     expect(sanitizeDuelConfig({playerHealth: NaN, feedbackSeconds: 10}).playerHealth).toBe(100);
-    expect(sanitizeDuelConfig({playerHealth: 600, feedbackSeconds: 10})).toMatchObject({playerHealth: 500, feedbackSeconds: 3});
+    expect(sanitizeDuelConfig({playerHealth: 600, feedbackSeconds: 10})).toMatchObject({playerHealth: 600, feedbackSeconds: 3});
+    expect(sanitizeDuelConfig({playerHealth: 100_000}).playerHealth).toBe(10_000);
   });
   it('drops the death camera with prompt accelerating weight and settles without a looping fall', () => {
     let height = 1.6256;

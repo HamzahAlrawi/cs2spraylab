@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import type {UtilityEffect} from './utilities';
 import {UTILITY_RULES} from './utilities';
 import {buildSmokeDensity, sameSmokeCells, SMOKE_GRID_SIZE, SMOKE_RENDER_STEPS, SMOKE_EXTINCTION, smokeHoleRadius} from './smoke-density';
-import {compileRetainedShaders} from '../shader-warmup';
+import {compileRetainedShaders, warmRetainedFirstUse} from '../shader-warmup';
 
 const vertex = `varying vec2 screenUv;
 void main(){screenUv=position.xy*.5+.5;gl_Position=vec4(position.xy,0.,1.);}`;
@@ -87,6 +87,7 @@ export class SmokeRenderer {
   private readonly clouds = new Map<number, Cloud>();
   private readonly active: Cloud[] = [];
   private readonly noise = noiseTexture();
+  private readonly emptyDensity = densityTexture(new Uint8Array(SMOKE_GRID_SIZE ** 3), SMOKE_GRID_SIZE);
   private readonly geometry = new THREE.PlaneGeometry(2, 2);
   private readonly scene = new THREE.Scene();
   private readonly camera = new THREE.Camera();
@@ -130,6 +131,42 @@ export class SmokeRenderer {
       finally {this.mesh.material = this.material;}
     })();
   }
+  /** Run at range/chunk preparation, not on the first smoke bloom. Zero-area
+   * draws initialize the actual HDR world variant without touching the frame. */
+  prepareWorld(renderer: THREE.WebGLRenderer, world: THREE.Scene, camera: THREE.PerspectiveCamera) {
+    if (this.disposed) return;
+    this.ensureTarget(renderer);
+    renderer.initTexture(this.noise); renderer.initTexture(this.emptyDensity);
+    renderer.initRenderTarget(this.target!);
+    const previous = renderer.getRenderTarget();
+    const viewport = renderer.getViewport(new THREE.Vector4()), scissor = renderer.getScissor(new THREE.Vector4());
+    const scissorTest = renderer.getScissorTest();
+    try {
+      renderer.setRenderTarget(this.target!);
+      renderer.compile(world, camera, world);
+      warmRetainedFirstUse(renderer, world, camera, []);
+      renderer.setRenderTarget(previous);
+      this.blit.uniforms.image.value = this.target!.texture;
+      this.mesh.material = this.blit;
+      warmRetainedFirstUse(renderer, this.scene, this.camera, []);
+      this.mesh.material = this.material;
+      this.material.uniforms.sceneDepth.value = this.target!.depthTexture;
+      this.material.uniforms.densityGrid.value = this.emptyDensity;
+      warmRetainedFirstUse(renderer, this.scene, this.camera, []);
+    } finally {
+      renderer.setRenderTarget(previous); renderer.setViewport(viewport); renderer.setScissor(scissor); renderer.setScissorTest(scissorTest);
+      this.mesh.material = this.material;
+    }
+  }
+
+  private ensureTarget(renderer: THREE.WebGLRenderer) {
+    renderer.getDrawingBufferSize(this.drawingSize);
+    const width = Math.max(1, this.drawingSize.x), height = Math.max(1, this.drawingSize.y);
+    if (!this.target) this.target = new THREE.WebGLRenderTarget(width, height, {depthTexture: new THREE.DepthTexture(width, height, THREE.UnsignedIntType),
+      type: renderer.extensions.has('EXT_color_buffer_float') ? THREE.HalfFloatType : THREE.UnsignedByteType,
+      minFilter: THREE.NearestFilter, magFilter: THREE.NearestFilter});
+    else if (this.target.width !== width || this.target.height !== height) this.target.setSize(width, height);
+  }
   update(effects: readonly UtilityEffect[], time: number) {
     if (this.disposed) return;
     this.time = time; this.active.length = 0; this.seen.clear();
@@ -155,23 +192,18 @@ export class SmokeRenderer {
 
   render(renderer: THREE.WebGLRenderer, world: THREE.Scene, camera: THREE.PerspectiveCamera) {
     if (!this.active.length || this.disposed) {renderer.render(world, camera); return;}
-    renderer.getDrawingBufferSize(this.drawingSize);
-    const width = this.drawingSize.x, height = this.drawingSize.y;
-    if (!this.target) this.target = new THREE.WebGLRenderTarget(width, height, {depthTexture: new THREE.DepthTexture(width, height, THREE.UnsignedIntType),
-      type: renderer.extensions.has('EXT_color_buffer_float') ? THREE.HalfFloatType : THREE.UnsignedByteType,
-      minFilter: THREE.NearestFilter, magFilter: THREE.NearestFilter});
-    else if (this.target.width !== width || this.target.height !== height) this.target.setSize(width, height);
+    this.ensureTarget(renderer);
     const previousTarget = renderer.getRenderTarget(), autoClear = renderer.autoClear, scissorTest = renderer.getScissorTest();
     renderer.getViewport(this.savedViewport); renderer.getScissor(this.savedScissor);
     try {
-      renderer.setScissorTest(false); renderer.setRenderTarget(this.target); renderer.autoClear = true;
+      renderer.setScissorTest(false); renderer.setRenderTarget(this.target!); renderer.autoClear = true;
       renderer.render(world, camera);
       renderer.setRenderTarget(previousTarget); renderer.setViewport(this.savedViewport);
-      this.blit.uniforms.image.value = this.target.texture; this.mesh.material = this.blit;
+      this.blit.uniforms.image.value = this.target!.texture; this.mesh.material = this.blit;
       renderer.render(this.scene, this.camera); renderer.autoClear = false;
       this.mesh.material = this.material;
       const uniforms = this.material.uniforms;
-      uniforms.sceneDepth.value = this.target.depthTexture;
+      uniforms.sceneDepth.value = this.target!.depthTexture;
       uniforms.inverseProjection.value.copy(camera.projectionMatrixInverse);
       uniforms.cameraWorld.value.copy(camera.matrixWorld); uniforms.eye.value.copy(camera.position);
       this.frustum.setFromProjectionMatrix(this.projection.multiplyMatrices(camera.projectionMatrix, camera.matrixWorldInverse));
@@ -219,6 +251,6 @@ export class SmokeRenderer {
   clear() {this.active.length = 0; for (const cloud of this.clouds.values()) cloud.texture.dispose(); this.clouds.clear();}
   dispose() {
     if (this.disposed) return; this.disposed = true; this.clear(); this.target?.dispose();
-    this.material.dispose(); this.blit.dispose(); this.geometry.dispose(); this.noise.dispose();
+    this.material.dispose(); this.blit.dispose(); this.geometry.dispose(); this.noise.dispose(); this.emptyDensity.dispose();
   }
 }

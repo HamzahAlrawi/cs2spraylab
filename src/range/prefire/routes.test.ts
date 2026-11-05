@@ -69,7 +69,7 @@ describe('licensed common-angle samples', () => {
   });
   it('uses distinct landmark approaches and retains the original sets as lineups', () => {
     expect(new Set(prefireRoutes.map(route => JSON.stringify([route.spawn, route.path]))).size).toBe(10);
-    expect(prefireRoutes.flatMap(route => route.lineups ?? [])).toHaveLength(33);
+    expect(prefireRoutes.flatMap(route => route.lineups ?? [])).toHaveLength(35);
     for (const route of prefireRoutes) {
       expect(route.startLabel).toBeTruthy();
       for (const lineup of route.lineups ?? []) {

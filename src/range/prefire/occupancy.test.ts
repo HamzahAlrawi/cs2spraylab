@@ -14,6 +14,18 @@ const density: HoldingDensity = {schemaVersion: 1, mapId: 'fixture',
     episodeAnchors: 81, seconds: 150, rounds: 20, matches: 8, roundKeys: Array.from({length: 20}, (_, i) => `match/${i}`)}]};
 
 describe('regional evidence and coverage-first training selection', () => {
+  it('keeps explicitly prioritized route regions populated without inventing encounter weights', () => {
+    const covered = {...route, coverageGroups: [{id: 'near-stairs', angleIds: ['angle-3']},
+      {id: 'window', angleIds: ['angle-4']}]};
+    for (let seed = 0; seed < 100; seed++) {
+      const selected = choosePrefireAngles(covered, 'random', randomStream(seed, 'coverage'), density, 4);
+      expect(selected).toHaveLength(4);
+      expect(selected.some(angle => angle.id === 'angle-3')).toBe(true);
+      expect(selected.some(angle => angle.id === 'angle-4')).toBe(true);
+    }
+    expect(choosePrefireAngles({...covered, coverageGroups: [{id: 'unavailable', angleIds: ['missing']}]},
+      'random', () => .5, density, 4)).toHaveLength(4);
+  });
   it('uses Source-unit positions and the correct side/phase without promoting a kill heatmap to holding evidence', () => {
     expect(holdingEvidence(route.angles[0], route, density)).toMatchObject({episodes: 81, seconds: 150, rounds: 20, sampleRounds: 48, weight: 21});
     expect(holdingEvidence(route.angles[0], {...route, enemySide: 't'}, density).weight).toBe(1);

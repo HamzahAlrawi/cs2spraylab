@@ -10,6 +10,8 @@ test('volume smoke blocks sight, carves bullet/HE openings, refills and respects
   });
   const red = (pixel: number[]) => pixel[0] - Math.max(pixel[1], pixel[2]);
   expect(red(result.empty)).toBeGreaterThan(200);
+  expect(result.afterPreparation).toEqual(result.empty);
+  expect(result.firstSmokePrograms).toBe(result.warmPrograms);
   expect(red(result.dense)).toBeLessThan(15);
   expect(red(result.bullet)).toBeGreaterThan(180);
   expect(red(result.he)).toBeGreaterThan(180);

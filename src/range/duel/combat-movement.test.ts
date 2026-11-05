@@ -1,7 +1,7 @@
 import {describe, expect, it} from 'vitest';
 import {STEP, UNIT} from '../actor-physics';
 import {gameData, type Weapon} from '../config';
-import {combatMovement} from './combat-movement';
+import {combatMovement, combatRangeChanged} from './combat-movement';
 import {sanitizeDuelConfig} from './config';
 import {testArena, type Arena} from './geometry';
 import {DuelSimulation} from './simulation';
@@ -32,6 +32,12 @@ function fight(weapon: Weapon, seed = 19, range = 10, level: 1 | 10 = 10) {
 }
 
 describe('weapon-aware combat movement policy', () => {
+  it('uses range hysteresis rather than rerolling motion every observation', () => {
+    expect(combatRangeChanged(10, 10.2)).toBe(false);
+    expect(combatRangeChanged(10, 14)).toBe(true);
+    expect(combatRangeChanged(30, 24)).toBe(false);
+    expect(combatRangeChanged(30, 20)).toBe(true);
+  });
   it('prefers mobile SMGs nearby, but precise stops for heavy pistols and snipers', () => {
     expect(combatMovement(10, 'mp9', 8, false, () => .3).style).toBe('run');
     expect(combatMovement(10, 'usp', 8, false, () => .8).style).toBe('stutter');

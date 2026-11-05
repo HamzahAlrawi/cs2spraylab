@@ -5,6 +5,8 @@ import {arenaDesigns} from './arena-layout';
 import {defaultNativeMapId, nativeMaps} from '../prefire/maps';
 import {sanitizeUtilityLoadout, type UtilityKind} from './utility-loadout';
 import {parseManualLineup, type ManualLineup} from './manual-spawns';
+import {MAX_PLAYER_HEALTH} from '../combat-limits';
+export {MAX_PLAYER_HEALTH} from '../combat-limits';
 
 export type SkillLevel = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | '10+';
 export type BotBehavior = 'mixed' | 'holder' | 'patient' | 'aggressive';
@@ -105,7 +107,7 @@ export function sanitizeDuelConfig(raw: unknown): DuelConfig {
     playerArmorPoints: integer(input.playerArmorPoints, 100, 0, 100),
     radarEnabled: input.radarEnabled !== false, radarRotate: input.radarRotate !== false,
     radarScale: finite(input.radarScale, .7, .25, 1),
-    playerHealth: integer(input.playerHealth, duelDefaults.playerHealth, 1, 500),
+    playerHealth: integer(input.playerHealth, duelDefaults.playerHealth, 1, MAX_PLAYER_HEALTH),
     accuracy: finite(input.accuracy, duelDefaults.accuracy, .5, 1.5), behavior: behavior(input.behavior),
     tradeEnabled: input.tradeEnabled !== false,
     utilitiesEnabled: input.utilitiesEnabled !== false,

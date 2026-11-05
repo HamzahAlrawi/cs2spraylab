@@ -14,6 +14,22 @@ import {sampleShotState} from './shot-time';
 const actor = () => ({position: {x: 0, y: 64 * UNIT, z: 0}, velocity: {x: 0, z: 0}, yaw: 0,
   pitch: 0, feet: 0, verticalVelocity: 0, duckAmount: 0});
 
+describe('projectile cardinality across the complete weapon roster', () => {
+  it.each(weaponIds)('%s consumes one cartridge and emits the native projectile count', id => {
+    const weapon = new DuelWeaponState(id, () => .5), before = weapon.ammo;
+    let shot;
+    for (let tick = 0; tick <= 64 && !shot; tick++) shot = weapon.advance(tick * STEP, STEP,
+      {...idleCommand(), fireHeld: true, firePressed: tick === 0}, actor());
+    expect(shot).toBeDefined(); expect(weapon.ammo).toBe(before - 1);
+    const pellets = ({nova: 9, xm1014: 6, mag7: 8, sawedoff: 8} as Record<string, number>)[id];
+    expect(gameData.weapons[id].pellets).toBe(pellets ?? 1);
+    if (pellets) {expect(shot!.kind).toBe('pellets'); expect(shot!.pelletDirections).toHaveLength(pellets);}
+    else {expect(shot!.kind).toBe(id === 'zeus' ? 'zeus' : 'bullet'); expect(shot!.pelletDirections).toBeUndefined();}
+    for (const direction of shot!.pelletDirections ?? [shot!.direction])
+      expect(Math.hypot(direction.x, direction.y, direction.z)).toBeCloseTo(1, 6);
+  });
+});
+
 describe('duel AK reload slot/deploy integration', () => {
   type Fire = Extract<DuelEvent, {kind:'fire'}>;
   const tickAt = (time:number) => Math.ceil(time / STEP - 1e-8) * STEP;

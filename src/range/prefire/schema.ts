@@ -21,6 +21,8 @@ export type PrefireRoute = {
   path: readonly SourcePoint[]; angles: readonly PrefireAngle[];
   // Weighted practice can vary the holds without changing the learn-mode lineup.
   alternatives?: readonly PrefireAngle[];
+  /** Authored coverage priorities for weighted practice, not match probabilities. */
+  coverageGroups?: readonly {id: string; angleIds: readonly string[]}[];
   startLabel?: string;
   lineups?: readonly {id: string; name: string; angles: readonly PrefireAngle[]}[];
 };

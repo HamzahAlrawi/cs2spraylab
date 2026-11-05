@@ -3,7 +3,7 @@ import {ChevronRight, Plus, X} from 'lucide-react';
 import {weaponIds} from '../config';
 import {equipmentNames, type Equipment} from '../equipment';
 import {arenaDesigns} from './arena-layout';
-import {botConfig, type BotOverride, type DuelConfig, type SkillLevel} from './config';
+import {botConfig, MAX_PLAYER_HEALTH, type BotOverride, type DuelConfig, type SkillLevel} from './config';
 import './duel-setup.css';
 import {nativeMaps} from '../prefire/maps';
 import {UtilityLoadout} from './utility-ui';
@@ -75,7 +75,7 @@ export const DuelSetup = memo(function DuelSetup({config, arenaDesign, weaponToA
         <label className="duel-field"><span>Bot armor condition</span><input aria-label="Bot armor points" type="number" min="0" max="100" value={config.armorPoints} disabled={!config.armor} onChange={event => update({armorPoints: +event.target.value})}/></label>
         </div></fieldset>
         <fieldset className="duel-setup-fieldset"><legend>Player</legend><div className="duel-setup-fields">
-        <label className="duel-field"><span>Player health <output>{config.playerHealth}</output></span><input aria-label="Player health" type="number" min="1" max="500" value={config.playerHealth} onChange={event => update({playerHealth: +event.target.value})}/></label>
+        <label className="duel-field"><span>Player health <output>{config.playerHealth}</output></span><input aria-label="Player health" type="number" min="1" max={MAX_PLAYER_HEALTH} value={config.playerHealth} onChange={event => update({playerHealth: +event.target.value})}/></label>
         <label className="duel-check"><span>Player Kevlar</span><input aria-label="Player armor" type="checkbox" checked={config.playerArmor} onChange={event => update({playerArmor: event.target.checked})}/></label>
         <label className="duel-check"><span>Player helmet</span><input aria-label="Player helmet" type="checkbox" checked={config.playerHelmet} disabled={!config.playerArmor} onChange={event => update({playerHelmet: event.target.checked})}/></label>
         <label className="duel-field"><span>Player armor condition</span><input aria-label="Player armor points" type="number" min="0" max="100" value={config.playerArmorPoints} disabled={!config.playerArmor} onChange={event => update({playerArmorPoints: +event.target.value})}/></label>

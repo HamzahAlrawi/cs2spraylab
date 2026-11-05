@@ -1,4 +1,7 @@
-import {describe,expect,it} from 'vitest';
+import {describe,expect,it,vi} from 'vitest';
+import {STEP, UNIT} from '../actor-physics';
+import {sampleShotState} from './shot-time';
+import {utilityLaunchPose} from './utility-ballistics';
 import native from './native-grenade-input-fixture.json';
 import {approachGrenadeStrength,releasedGrenadeStrength,nativeGrenadeReleaseAt} from './grenade-native-input';
 import {DuelSimulation} from './simulation';
@@ -6,6 +9,25 @@ import {sanitizeDuelConfig} from './config';
 import {testArena} from './geometry';
 
 describe('installed native grenade input arithmetic',()=>{
+  it('samples a short crouch-jump throw at its fractional release deadline, not the later tick pose', () => {
+    const sim = new DuelSimulation(sanitizeDuelConfig({botUtilities: false, utilityLoadout: ['he']}), 24, testArena());
+    sim.command(1, {}); sim.selectUtility('he'); sim.start();
+    sim.command(0, {secondaryHeld: true}); sim.step();
+    sim.command(0, {secondaryHeld: false, crouch: true, jump: true}); sim.step();
+    const releaseAt = sim.utilityPresentation()!.releaseAt!;
+    const thrown = vi.spyOn(sim.utilities, 'throw');
+    let before = sim.snapshot()[0];
+    while (!thrown.mock.calls.length) {before = sim.snapshot()[0]; sim.step();}
+    const after = sim.snapshot()[0], input = thrown.mock.calls[0][0];
+    const sample = sampleShotState(before, after, releaseAt, sim.time);
+    expect(input.strength).toBe(0); expect(input.time).toBe(releaseAt);
+    expect(input.time).toBeLessThan(sim.time);
+    expect(input.origin).toEqual(utilityLaunchPose(sample.position, sample.yaw, sample.pitch, sim.arena, 0).origin);
+    expect(input.velocity?.y).toBeCloseTo(sample.verticalVelocity, 8);
+    expect(input.velocity?.y).not.toBe(after.verticalVelocity);
+    expect(input.origin.y).toBeGreaterThan(52 * UNIT);
+    expect(sim.time - releaseAt).toBeLessThan(STEP);
+  });
   it.each(native.approachCases)('matches native strength $current -> $target',sample=>{
     expect(approachGrenadeStrength(sample.current,sample.target,1/64)).toBe(sample.result);
   });

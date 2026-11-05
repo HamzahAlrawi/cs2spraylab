@@ -75,6 +75,10 @@
           "name": "Catwalk / close & stairs"
         },
         {
+          "id": "short-stairs-detail",
+          "name": "Short / beside stairs & raised corner"
+        },
+        {
           "id": "short-a-ninja-ramp",
           "name": "A Short / Ninja, boxes & ramp"
         },
@@ -121,6 +125,10 @@
         {
           "id": "b-retake-boxes",
           "name": "B retake / post-plant holds"
+        },
+        {
+          "id": "b-window-car",
+          "name": "B retake / window trap & car"
         }
       ]
     },
@@ -380,6 +388,10 @@
             "name": "Catwalk / close & stairs"
           },
           {
+            "id": "short-stairs-detail",
+            "name": "Short / beside stairs & raised corner"
+          },
+          {
             "id": "short-a-ninja-ramp",
             "name": "A Short / Ninja, boxes & ramp"
           },
@@ -442,6 +454,10 @@
           {
             "id": "b-retake-boxes",
             "name": "B retake / post-plant holds"
+          },
+          {
+            "id": "b-window-car",
+            "name": "B retake / window trap & car"
           }
         ]
       }

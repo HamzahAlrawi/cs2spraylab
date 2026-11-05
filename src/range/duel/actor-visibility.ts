@@ -10,6 +10,8 @@ export type VisibilityActor = Pick<DuelActorSnapshot, 'position' | 'feet' | 'duc
 export type SensorPoseProvider = (actor: DuelActorSnapshot) => ActorHitPose | undefined;
 export type VisibilitySample = {point: Vec; group: Hitgroup; radius?: number; interiorMargin?: number; primary?: boolean};
 export type VisibleHitgroupCandidate = {point: Vec; group: Hitgroup;
+  /** Stable authored probe identity, never a hidden actor origin. */
+  sampleId?: string;
   /** Confirmed visible probes / all possible group probes: a lower bound, not full-body exposure. */
   exposure: number; exposureMargin: number;
   /** Checked probes / all possible group probes; the remainder is unknown. */
@@ -152,7 +154,7 @@ export function visibleActorPoints(self: DuelActorSnapshot, actor: VisibilityAct
       for (const j of indices) if (state[j] === -1) margin = Math.min(margin,
         Math.hypot(sample.point.x - samples[j].point.x, sample.point.y - samples[j].point.y,
           sample.point.z - samples[j].point.z) / 2);
-      candidates.push({point: {...sample.point}, group, exposure: 1 / indices.length,
+      candidates.push({point: {...sample.point}, group, sampleId: `${pose ? 'pose' : 'analytic'}:${i}`, exposure: 1 / indices.length,
         sampleCoverage: groupChecked / indices.length, exposureMargin: margin});
     }
   }

@@ -504,7 +504,7 @@ const october31CombatMovementChanges = {
   ],
 } as const satisfies ChangelogRelease;
 
-export const latestChanges = {
+const november4Changes = {
   id:'update-2026-11-04-chunk-preparation',title:'Smoother chunk preparation & team utility (November 4)',baselineCommit:'01c1376',
   sections:[
     {id:'background-map-cpu',title:'Less work during live rounds',items:[
@@ -517,7 +517,27 @@ export const latestChanges = {
   ],
 } as const satisfies ChangelogRelease;
 
+export const latestChanges = {
+  id: 'update-2026-11-05-contact-utility', title: 'Clearer contact & smoother utilities (November 5)', baselineCommit: 'cd709d7',
+  sections: [
+    {id: 'observed-contact-decisions', title: 'More reliable contact decisions', items: [
+      'Bots estimate motion from matching visible body probes, never by subtracting a newly exposed torso from an old head position. Actor generations reset motion estimates; recognition uses sustained visible angular extent without extra sight rays.',
+      'Combat movement reconsiders meaningful distance changes at burst and strafe boundaries. Fresh audio keeps attention in the heard sector; Prefire opening selection no longer permits a nearly perpendicular check against a recent sound.',
+    ]},
+    {id: 'verified-release-punch', title: 'Verified release timing & damage punch', items: [
+      'Grenade releases sample the fractional deadline pose and inherited velocity, including short crouch-jump throws. Damage punch recovers independently of predictable weapon recoil, matching the separate native cache paths.',
+      'Fresh build 2000940 checks cover grenade launch/clipping arithmetic, damage-punch fixtures, all 35 weapon definitions and projectile counts. Catch-up frames no longer recreate old pistol tracers as simultaneous volleys. Player health can be set up to 10,000, with reduced XP for extra health.',
+    ]},
+    {id: 'prepared-smoke-route-coverage', title: 'Prepared smoke & useful route coverage', items: [
+      'Resting smokes prepare collision-aware cells in bounded turns before bloom. Smoke buffers, textures and world shader variants are prepared before entry; native utility audio finishes preloading before combat when enabled.',
+      'Bots resolve grenade target floors below sensed evidence and can smoke a threatened short crossing, waiting for the actual bloom before moving. Short-stairs/Catwalk and B-window/car coverage groups reduce empty early clears, with focused lineups for those holds.',
+      'Utility tactics, smoke simulation, collision integration and animation remain browser adaptations, not complete Source 2 parity.',
+    ]},
+  ],
+} as const satisfies ChangelogRelease;
+
 export const changelogHistory = [
+  november4Changes,
   october31CombatMovementChanges,
   october30MapPackageChanges,
   october30ProgressSavingChanges,

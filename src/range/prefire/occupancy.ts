@@ -124,7 +124,11 @@ export function choosePrefireAngles(route: PrefireRoute, population: 'all' | 'ra
     const available = pool.filter(entry => canFill(pool.filter(other => !incompatible(entry.angle, other.angle))
       .map(other => other.angle), targetCount - selected.length - 1));
     // Coverage is allocated per physical family, not per authored source record.
-    const viable = selectionWeights(available);
+    const coverage = selected.length < targetCount - 1 ? route.coverageGroups?.find(group =>
+      !selected.some(angle => group.angleIds.includes(angleIdentity(angle))) &&
+      available.some(entry => group.angleIds.includes(angleIdentity(entry.angle)))) : undefined;
+    const viable = selectionWeights(coverage
+      ? available.filter(entry => coverage.angleIds.includes(angleIdentity(entry.angle))) : available);
     let value = draw() * viable.reduce((sum, entry) => sum + entry.weight, 0), picked = viable[viable.length - 1];
     for (const entry of viable) {value -= entry.weight; if (value < 0) {picked = entry; break;}}
     selected.push(picked.angle);

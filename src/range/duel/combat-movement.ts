@@ -23,3 +23,6 @@ export function combatMovement(level: SkillLevel, weapon: Weapon, range: number,
     : family === 'pistol' ? 2 : family === 'smg' ? run ? 12 : 6 : range > 20 ? 3 : range > 11 ? 5 : 8,
     stationarySeconds: .55 + (1 - skill) * .55, stepWidth: run ? 1.2 + .4 * skill : .65 + .35 * skill};
 }
+export function combatRangeChanged(previous: number, current: number) {
+  return Math.abs(current - previous) >= Math.max(3, previous * .25);
+}

@@ -30,6 +30,20 @@ const yawTo = (self: DuelActorSnapshot, point: VisibleEnemy['aimPoint']) =>
 const angle = (a: number, b: number) => Math.atan2(Math.sin(a - b), Math.cos(a - b));
 const brain = (map = arena()) => new TacticalBrain(traits, 'aggressive', 1, () => .5, map, 10, 'ak47', 1);
 
+it('never derives target velocity from switching visible body parts or actor generations', () => {
+  const memory = new SightingMemory(10), self = actor();
+  const visible = (sampleId: string, x: number, generation = 0): VisibleEnemy => ({id: 0, generation,
+    position: {x, y: 1.6, z: 0}, aimPoint: {x, y: 1.6, z: 0}, candidates: [
+      {sampleId, group: 'head', observedAt: 0, point: {x, y: 1.6, z: 0}, exposure: .1, exposureMargin: .1}]});
+  memory.observe(observation(0, visible('pose:0', 0), self));
+  memory.observe(observation(.03, visible('pose:2', .2), self));
+  expect(memory.velocity).toEqual({x: 0, z: 0});
+  memory.observe(observation(.06, visible('pose:2', .26), self));
+  expect(memory.velocity.x).toBeGreaterThan(0);
+  memory.observe(observation(.09, visible('pose:2', .32, 1), self));
+  expect(memory.velocity).toEqual({x: 0, z: 0});
+});
+
 describe('recent sighting and geometry-limited re-peek expectations', () => {
   it('holds a brief sighting even before the firing recognition delay completes', () => {
     for (const make of [() => brain(), () => new BotBrain(traits, 'holder', 1, () => .5)]) {
@@ -181,6 +195,8 @@ describe('recent sighting and geometry-limited re-peek expectations', () => {
     const policy = new TacticalBrain({...traits, recognitionMedianMs: 0, motorSettlingMs: 1},
       'aggressive', 1, () => .5, arena(), 10, 'ak47', 1), bot = actor(), sight = target();
     bot.yaw = yawTo(bot, sight.aimPoint);
+    policy.perceive(observation(-.08, sight, bot));
+    policy.perceive(observation(-.04, sight, bot));
     policy.perceive(observation(0, sight, bot));
     policy.phase = 'attack'; policy.activePeek = 'prefire';
     expect(policy.command(bot, .04).fireHeld).toBe(true);

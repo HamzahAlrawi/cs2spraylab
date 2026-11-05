@@ -32,6 +32,10 @@ test('spatial footsteps and gunfire turn with the listener and attenuate behind 
 test('live player and enemy tracers begin at barrels and preserve physical endpoints', async ({page}, info) => {
   const errors: string[] = [];
   page.on('pageerror', error => errors.push(error.message));
+  await page.addInitScript(() => {
+    localStorage.setItem('spraylab.range.v2', JSON.stringify({mode: 'duel', volume: 0}));
+    localStorage.setItem('spraylab.duel.v1', JSON.stringify({botCount: 1, generatedMaps: true, botUtilities: false}));
+  });
   await page.goto('/');
   await expect(page.locator('canvas[data-duel]')).toBeVisible();
   await page.evaluate(async () => {
@@ -74,9 +78,15 @@ test('live player and enemy tracers begin at barrels and preserve physical endpo
       direction: new Vector3(-1.5,1.4-1.6256,4).normalize()}, {kind: 'surface', shooter: 1, shotId: 901, point: {x: -.5, y: 1.4, z: 7}}]);
     const enemyStart = Array.from(line.geometry.getAttribute('position').array).slice(6, 9) as number[];
     const enemyMuzzle = e.botMuzzles.get(1).getWorldPosition(new Vector3());
+    const previousCount = e.shotEffects.nextTrace;
+    const nowTick = e.sim.tick;
+    e.processEvents([0, 1].map(index => ({kind: 'fire', actorId: 0, shotId: 950 + index,
+      tick: index ? nowTick : nowTick - 32, equipment: 'hkp2000', origin: {x: 0, y: 1.6256, z: 8},
+      direction: new Vector3(endpoint.x, endpoint.y - 1.6256, endpoint.z - 8).normalize()})));
+    const freshPistolTraces = e.shotEffects.nextTrace - previousCount;
     return {positions, delta: [ndc.x - x, ndc.y - y],
       ahead: start.sub(e.camera.position).dot(e.camera.getWorldDirection(new Vector3())),
-      enemyStart, enemyMuzzle: enemyMuzzle.toArray(), muzzle: muzzle.toArray()};
+      enemyStart, enemyMuzzle: enemyMuzzle.toArray(), muzzle: muzzle.toArray(), freshPistolTraces};
   });
   expect(result.positions.slice(3)).toEqual([1, expect.closeTo(1.6), -10]);
   expect(Math.abs(result.delta[0]) + Math.abs(result.delta[1])).toBeLessThan(.00001);
@@ -84,6 +94,7 @@ test('live player and enemy tracers begin at barrels and preserve physical endpo
   for (let i = 0; i < 3; i++) expect(result.enemyStart[i]).toBeCloseTo(result.enemyMuzzle[i], 5);
   expect(result.enemyStart[1]).toBeGreaterThan(.8);
   expect(result.enemyStart[1]).toBeLessThan(1.7);
+  expect(result.freshPistolTraces).toBe(1);
   await page.locator('canvas[data-duel]').screenshot({path: `test-results/duel-tracers-${info.project.name}.png`});
   expect(errors).toEqual([]);
 });

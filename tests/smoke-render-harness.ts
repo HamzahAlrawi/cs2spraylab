@@ -3,7 +3,7 @@ import {SmokeRenderer} from '../src/range/duel/smoke-render';
 import type {UtilityEffect} from '../src/range/duel/utilities';
 import {HE_SMOKE_DISPLACEMENT} from '../src/range/duel/smoke-density';
 
-export function smokeRenderHarness() {
+export async function smokeRenderHarness() {
   const renderer = new THREE.WebGLRenderer({preserveDrawingBuffer: true}); renderer.setSize(320, 320);
   renderer.domElement.dataset.smokeTest = 'true'; document.body.replaceChildren(renderer.domElement);
   const scene = new THREE.Scene(); scene.background = new THREE.Color('#101010');
@@ -22,7 +22,10 @@ export function smokeRenderHarness() {
     return [...buffer];
   };
   const render = (time: number, active = true) => {smoke.update(active ? [cloud] : [], time); smoke.render(renderer, scene, camera); return pixel();};
-  const empty = render(2, false), dense = render(2);
+  const empty = render(2, false);
+  await smoke.prepare(renderer); smoke.prepareWorld(renderer, scene, camera);
+  const afterPreparation = pixel(), warmPrograms = renderer.info.programs?.length ?? 0;
+  const dense = render(2), firstSmokePrograms = renderer.info.programs?.length ?? 0;
   cloud.holes = [{from: {x: 0, y: 1.6, z: 4}, to: {x: 0, y: 1.6, z: -7}, radius: .12, startedAt: 2, expiresAt: 2.35}];
   const bullet = render(2.1), healed = render(2.4);
   cloud.holes = [{from: {...cloud.position}, to: {...cloud.position}, radius: HE_SMOKE_DISPLACEMENT.radius, startedAt: 3,
@@ -35,6 +38,6 @@ export function smokeRenderHarness() {
   const toneReference = render(6, false);
   cloud.position.x += 30; cloud.cells = cloud.cells.map(cell => ({...cell, x: cell.x + 30}));
   const toneVolume = render(6);
-  const result = {empty, dense, bullet, healed, he, wall, interior, toneReference, toneVolume, glError: renderer.getContext().getError()};
+  const result = {empty, afterPreparation, warmPrograms, firstSmokePrograms, dense, bullet, healed, he, wall, interior, toneReference, toneVolume, glError: renderer.getContext().getError()};
   renderer.domElement.dataset.result = JSON.stringify(result); return result;
 }

@@ -107,7 +107,7 @@ export function selectUtilityWeapons(vdata) {
 export function importNativeUtilityRules({game = process.env.CS2_PATH ||
   'C:/Program Files (x86)/Steam/steamapps/common/Counter-Strike Global Offensive',
   cli = process.env.SOURCE2VIEWER || path.join(root, '.local-tools/vrf-20.1/Source2Viewer-CLI.exe'),
-  check = false} = {}) {
+  check = false, expectedBuild = '2000935'} = {}) {
   const evidenceRoot = path.join(root, 'research/utility-presentation/native-rules');
   const output = path.join(root, 'src/range/duel/native-utility-rules.json');
   const read = resource => fs.readFileSync(path.join(game, resource));
@@ -121,7 +121,7 @@ export function importNativeUtilityRules({game = process.env.CS2_PATH ||
   if (!version?.startsWith('20.1.')) throw new Error('Use the audited Source2Viewer 20.1 release');
   const steam = source('steam', 'game/csgo/steam.inf', read('game/csgo/steam.inf')).toString();
   const build = steam.match(/^ClientVersion=(\d+)/m)?.[1];
-  if (build !== '2000935') throw new Error(`Expected build 2000935, found ${build}; audit a new build explicitly`);
+  if (build !== expectedBuild) throw new Error(`Expected build ${expectedBuild}, found ${build}; audit a new build explicitly`);
   const archive = 'game/csgo/pak01_dir.vpk';
   source('archive', archive, read(archive));
   fs.mkdirSync(evidenceRoot, {recursive: true});
@@ -210,4 +210,5 @@ export function importNativeUtilityRules({game = process.env.CS2_PATH ||
 }
 
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url))
-  importNativeUtilityRules({check: process.argv.includes('--check')});
+  importNativeUtilityRules({check: process.argv.includes('--check'),
+    expectedBuild: process.argv.find(argument => argument.startsWith('--expected-build='))?.slice(17)});

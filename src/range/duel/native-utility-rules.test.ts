@@ -6,7 +6,7 @@ import {nativeUtilityRules, nativeUtilityWeaponField, nativeUtilityCfgOverride} 
 
 describe('fresh static utility evidence', () => {
   it('pins build, extractor and compiled/decompiled source hashes separately', () => {
-    expect(nativeUtilityRules.build).toBe('2000935');
+    expect(nativeUtilityRules.build).toBe('2000940');
     expect(nativeUtilityRules.extractor.version).toMatch(/^20\.1\./);
     for (const source of Object.values(nativeUtilityRules.sources)) expect(source.sha256).toMatch(/^[a-f0-9]{64}$/);
     const source = nativeUtilityRules.sources.weapons;

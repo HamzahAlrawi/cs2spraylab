@@ -77,7 +77,9 @@ describe('bounded human-style combat control', () => {
     const [player, bot] = new DuelSimulation(sanitizeDuelConfig({}), 1, arena()).snapshot();
     const brain = new TacticalBrain({...createBotTraits(10, 1, 1), recognitionMedianMs: 0}, 'aggressive', 1,
       () => .5, arena(), 10, 'ak47', 1);
-    brain.perceive({time: 1, self: bot, visible: {id: 0, position: player.position, aimPoint: player.position}});
+    // Let recognition finish before testing the independent hurt/retreat policy.
+    for (const time of [.9, .94, .98, 1])
+      brain.perceive({time, self: bot, visible: {id: 0, position: player.position, aimPoint: player.position}});
     brain.command(bot, 1);
     expect(brain.phase).toBe('attack');
     brain.hurt(1.2, 72);

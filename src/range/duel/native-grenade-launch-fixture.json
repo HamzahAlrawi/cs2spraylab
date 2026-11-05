@@ -1,8 +1,8 @@
 {
-  "build": "2000935",
-  "clientSha256": "ccaf4e4926babc052994502b19ec61198a11008a39dce712921b93dd993be9f5",
+  "build": "2000940",
+  "clientSha256": "57ee728e15c50881070d847d7516d632d70456e0648d486a53f2528ec53f6ee0",
   "source": "Isolated installed client arithmetic, static file mapped into Unicorn, not loaded into a game.",
-  "launchRva": "0x7c7b10..0x7c7f1a",
+  "launchRva": "0x7c81d0..0x7c85da",
   "excluded": "AngleVectors trigonometry and world hull tracing supplied as explicit fixture inputs; no entity or game logic executed.",
   "constants": {
     "forwardSweep": 16,
@@ -432,6 +432,158 @@
         4.522656188899084e-14,
         738.6057739257812,
         130.2361297607422
+      ]
+    },
+    {
+      "pitchUpDegrees": 0,
+      "yawDegrees": 90,
+      "strength": 0,
+      "throwVelocity": 750,
+      "eye": [
+        0,
+        0,
+        46
+      ],
+      "actorVelocity": [
+        0,
+        0,
+        270
+      ],
+      "traceFraction": 1,
+      "traceSource": [
+        0.0,
+        0.0,
+        34.0
+      ],
+      "adjustedPitchDownDegrees": -10.0,
+      "forward": [
+        6.030208207749146e-17,
+        0.9848077297210693,
+        0.1736481785774231
+      ],
+      "origin": [
+        9.648333132398633e-16,
+        15.75692367553711,
+        36.77836990356445
+      ],
+      "velocity": [
+        1.2211172557060473e-14,
+        199.423583984375,
+        372.66375732421875
+      ]
+    },
+    {
+      "pitchUpDegrees": -35,
+      "yawDegrees": 90,
+      "strength": 0,
+      "throwVelocity": 750,
+      "eye": [
+        0,
+        0,
+        46
+      ],
+      "actorVelocity": [
+        80,
+        -120,
+        -180
+      ],
+      "traceFraction": 0.25,
+      "traceSource": [
+        0.0,
+        0.0,
+        34.0
+      ],
+      "adjustedPitchDownDegrees": 28.88888931274414,
+      "forward": [
+        5.361248055787301e-17,
+        0.8755582571029663,
+        -0.4831126034259796
+      ],
+      "origin": [
+        2.1444992223149204e-16,
+        3.5022330284118652,
+        32.06755065917969
+      ],
+      "velocity": [
+        100.0,
+        27.300567626953125,
+        -322.830322265625
+      ]
+    },
+    {
+      "pitchUpDegrees": 0,
+      "yawDegrees": 90,
+      "strength": 0,
+      "throwVelocity": 750,
+      "eye": [
+        0,
+        0,
+        64
+      ],
+      "actorVelocity": [
+        0,
+        0,
+        270
+      ],
+      "traceFraction": 1,
+      "traceSource": [
+        0.0,
+        0.0,
+        52.0
+      ],
+      "adjustedPitchDownDegrees": -10.0,
+      "forward": [
+        6.030208207749146e-17,
+        0.9848077297210693,
+        0.1736481785774231
+      ],
+      "origin": [
+        9.648333132398633e-16,
+        15.75692367553711,
+        54.77836990356445
+      ],
+      "velocity": [
+        1.2211172557060473e-14,
+        199.423583984375,
+        372.66375732421875
+      ]
+    },
+    {
+      "pitchUpDegrees": 45,
+      "yawDegrees": 90,
+      "strength": 0.5,
+      "throwVelocity": 750,
+      "eye": [
+        0,
+        0,
+        55
+      ],
+      "actorVelocity": [
+        80,
+        -120,
+        270
+      ],
+      "traceFraction": 1,
+      "traceSource": [
+        0.0,
+        0.0,
+        49.0
+      ],
+      "adjustedPitchDownDegrees": -50.0,
+      "forward": [
+        3.9359390979975894e-17,
+        0.6427876353263855,
+        0.7660444378852844
+      ],
+      "origin": [
+        6.297502556796143e-16,
+        10.284602165222168,
+        61.256710052490234
+      ],
+      "velocity": [
+        100.0,
+        132.02304077148438,
+        673.6019287109375
       ]
     }
   ]

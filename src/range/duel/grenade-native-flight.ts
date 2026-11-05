@@ -1,6 +1,6 @@
 import {UNIT,type Vec} from '../actor-physics';
 
-// Installed build 2000935: docs/native-grenade-flight-findings.md.
+// Rechecked in build 2000940: docs/combat-utility-audit-2026-11-05.md.
 export const NATIVE_GRENADE_FLIGHT=Object.freeze({gravity:Math.fround(800*Math.fround(.4)),elasticity:Math.fround(.45),
   maximumElasticity:Math.fround(.9),normalBias:.03125,stopSpeedSquared:400,highSpeedSquared:96000,
   floorNormal:Math.fround(.7),slowSlopeNormal:Math.fround(.1),timerInterval:Math.fround(.2),tickRate:64});

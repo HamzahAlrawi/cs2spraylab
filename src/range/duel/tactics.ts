@@ -20,7 +20,8 @@ import {TravelProgress} from './travel-progress';
 import {tacticalPersonality} from './tactical-personality';
 import {narrowPassage, type NarrowPassage} from './narrow-passage';
 import {FlankPlan} from './flank-plan';
-import {combatMovement, type CombatMovement} from './combat-movement';
+import {combatMovement, combatRangeChanged, type CombatMovement} from './combat-movement';
+import {ExposureRecognition} from './recognition';
 
 type Phase = 'approach' | 'setup' | 'expose' | 'brake' | 'attack' | 'return' | 'push' | 'investigate' | 'microstrafe' | 'reload' | 'close';
 type FightIntent = 'seek' | 'contest' | 'hold-angle' | 'reset' | 'change-angle' | 'close';
@@ -96,6 +97,8 @@ export class TacticalBrain {
   private combatStrafes = 0;
   private microGoal: Vec | null = null;
   private combatMotion?: CombatMovement;
+  private combatRange = Infinity;
+  private readonly recognition = new ExposureRecognition();
   private motionRetryAt = -Infinity;
   private forceReposition = false;
   private lastHurtAt = -Infinity;
@@ -310,6 +313,11 @@ export class TacticalBrain {
     return this.heard ? {...this.heard,
       y: this.arena.native || this.heardSource === 'teammate' ? this.heard.y : this.preaimHeight} : null;
   }
+  utilityMovementGoal(): Vec | undefined {
+    const goal = this.phase === 'return' || this.phase === 'reload' ? this.resetGoal ?? this.lane.retreat
+      : ['setup', 'approach', 'push', 'investigate'].includes(this.phase) ? this.lane.edge : undefined;
+    return goal && {...goal};
+  }
 
   hear(point: Vec, time: number, kind: 'footstep' | 'landing' | 'gunshot', occluded: boolean) {
     if (!Number.isFinite(time) || time < this.heardAt || ![point.x, point.y, point.z].every(Number.isFinite)) return;
@@ -334,6 +342,8 @@ export class TacticalBrain {
     if (observation.time < (this.observation?.time ?? -Infinity)) return;
     const previousSeenAt = this.lastSeenAt;
     const previousEnemyId = this.lastSeen?.id;
+    const previousGeneration = this.lastSeen?.generation;
+    this.recognition.update(observation);
     const trade = activeTrade(this.trade, observation.time, observation.self.generation) ? this.trade : undefined;
     this.memory.observe(observation, trade ? [{source: 'teammate', point: trade.point, observedAt: trade.observedAt,
       readyAt: trade.readyAt, uncertainty: trade.source === 'sound' ? 3 : .75,
@@ -367,9 +377,9 @@ export class TacticalBrain {
       if (observation.time - this.lastSeenAt > .28) this.firstVisible = -1;
       return;
     }
-    if (this.firstVisible < 0 || previousEnemyId !== observation.visible.id) {
+    if (this.firstVisible < 0 || previousEnemyId !== observation.visible.id || previousGeneration !== observation.visible.generation) {
       this.firstVisible = observation.time;
-      const recent = previousEnemyId === observation.visible.id && observation.time - previousSeenAt < 1.2;
+      const recent = previousEnemyId === observation.visible.id && previousGeneration === observation.visible.generation && observation.time - previousSeenAt < 1.2;
       this.readyAt = observation.time + this.traits.recognitionMedianMs / 1000 *
         (recent ? .58 : 1) * Math.exp(.18 * normal(this.random));
       this.aimError = {yaw: normal(this.random) * this.traits.endpointErrorDegrees / this.accuracy * DEG,
@@ -414,6 +424,7 @@ export class TacticalBrain {
     this.phaseAt = time;
     const self = this.observation?.self;
     const range = this.lastSeen && self ? distance(this.lastSeen.position, self.position) : 16;
+    if (self && currentVisible(this.observation, time)) this.refreshCombatMovement(range);
     const plan = sampleCombatPlan(this.level, this.weapon, range, self?.ammo ?? 30, this.crouchSpray, this.random);
     this.attackRounds = Math.min(plan.rounds, this.combatMotion?.maxRounds ?? Infinity); this.burstRecovery = plan.recovery;
     this.attackWait = sniperIds.includes(this.weapon) && !gameData.weapons[this.weapon].fullAuto ? .18 + this.random() * .12
@@ -425,6 +436,12 @@ export class TacticalBrain {
       this.holdUntil = time + (this.defensive ? 1.5 + this.random() * .9 : 4.4 + this.random() * 1.6);
     }
     if (this.intent !== 'hold-angle') this.intent = 'contest';
+  }
+
+  private refreshCombatMovement(range: number) {
+    if (this.combatMotion && !combatRangeChanged(this.combatRange, range)) return;
+    this.combatMotion = combatMovement(this.level, this.weapon, range, this.crouchSpray, this.random);
+    this.combatRange = range;
   }
 
   private laneKey(lane: CoverLane) {return `${lane.anchor.x}:${lane.anchor.z}`;}
@@ -841,13 +858,13 @@ export class TacticalBrain {
     const pendingTrade = this.trade && time >= this.trade.observedAt &&
       activeTrade(this.trade, Math.max(time, this.trade.readyAt), self.generation);
     if (trade && !this.tradeArmed && !visible && !self.reloading && !this.forceReposition) this.stageTrade(self, trade, time, teammates);
-    const identified = !!visible && time >= this.readyAt;
+    const identified = !!visible && time >= this.readyAt && this.recognition.ready(time);
     const stats = gameData.weapons[this.weapon];
     const closeWeapon = this.weapon === 'zeus' || stats.pellets > 1;
     const closing = identified && !!visible && closeWeapon && distance(self.position, visible.position) >
       (this.weapon === 'zeus' ? stats.range * UNIT * .85 : 8);
     if (identified && !this.combatMotion) {
-      this.combatMotion = combatMovement(this.level, this.weapon, distance(self.position, visible!.position), this.crouchSpray, this.random);
+      this.refreshCombatMovement(distance(self.position, visible!.position));
     }
     if (this.combatMotion?.style === 'stutter' && (this.level === '10+' || this.level >= 6)) this.stopThisPeek = true;
     const memoryAge = time - this.lastSeenAt;
@@ -978,6 +995,7 @@ export class TacticalBrain {
     }
     if (this.phase === 'microstrafe' && (this.microGoal && distance(self.position, this.microGoal) < .25 ||
       time - this.phaseAt > .65)) {
+      if (identified && visible) this.refreshCombatMovement(distance(self.position, visible.position));
       const cycling = this.combatMotion?.style === 'stutter' && time + .18 < Math.max(this.nextShotAt, this.nextBurstAt);
       if (!((runningCombat || cycling) && identified && visible && this.combatStrafes < 4 && this.dodge(self, visible, time, teammates)))
         this.transition('brake', time);
@@ -1089,7 +1107,7 @@ export class TacticalBrain {
       expiresAt: this.observation!.time + .075 + Number.EPSILON, confidence: 1});
     if (memoryAim && memoryAge < .65) intents.push({owner: 'repeek', point: memoryAim,
       observedAt: this.lastSeenAt, expiresAt: this.lastSeenAt + .65, confidence: Math.exp(-memoryAge / 1.4)});
-    if (soundAim) intents.push({owner: this.heardSource === 'sound' ? 'audio' : 'support', point: cueAim || soundAim,
+    if (soundAim) intents.push({owner: this.heardSource === 'sound' ? 'audio' : 'support', point: soundAim,
       observedAt: this.heardAt, expiresAt: this.heardAt + 3.5, confidence: .65});
     // tradeAim is offered only for a recognized report at least as fresh as
     // local evidence. A confirmed death trade can interrupt an older re-peek.

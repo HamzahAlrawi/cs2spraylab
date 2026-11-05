@@ -1,5 +1,5 @@
 import {describe, expect, it} from 'vitest';
-import {BotUtilityPlanner, utilityAimDirection} from './utility-tactics';
+import {BotUtilityPlanner, utilityAimDirection, utilityGround} from './utility-tactics';
 import {UTILITY_RULES, utilityLaunchVelocity} from './utilities';
 import {DuelSimulation} from './simulation';
 import {sanitizeDuelConfig} from './config';
@@ -7,6 +7,14 @@ import {testArena} from './geometry';
 import {utilityInventory} from './utility-loadout';
 
 describe('sensed-information utility decisions', () => {
+  it('projects sensed target height onto its platform, not the thrower floor or a lower storey', () => {
+    const arena = testArena(); arena.solids.push({center: {x: 0, y: 2.5, z: 0}, size: {x: 5, y: 1, z: 5}});
+    expect(utilityGround({x: 0, y: 4.6, z: 0}, arena)?.y).toBeCloseTo(3.06);
+    expect(utilityGround({x: 0, y: 9, z: 0}, arena)).toBeUndefined();
+    expect(utilityGround({x: 8, y: 1.6, z: 0}, arena)?.y).toBe(.06);
+    Object.assign(arena, {native: {ray: () => undefined}});
+    expect(utilityGround({x: 8, y: 1.6, z: 0}, arena)).toBeUndefined();
+  });
   it('does not invent a target from hidden enemy positions', () => {
     const sim = new DuelSimulation(sanitizeDuelConfig({botUtilities: false}));
     const planner = new BotUtilityPlanner(1, 1, 10);

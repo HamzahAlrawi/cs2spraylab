@@ -4,7 +4,7 @@ import {traceSolid, rayBoxInterval, type Arena} from './geometry';
 import {armorDamage} from './damage';
 import {DuelRandom} from './rng';
 import {utilityKinds, type UtilityKind} from './utility-loadout';
-import {buildSmokeVolume, smokeContains} from './smoke-volume';
+import {buildSmokeVolume, smokeContains, smokeVolumeSteps} from './smoke-volume';
 import {nativeGrenadeVelocity,nativeGrenadeSpeed,nativeGrenadeThrowVelocity} from './grenade-native-launch';
 import {sweepGrenadeHull} from './grenade-contact';
 import {nativeHEStats,nativeHEBlastDamage,nativeHEArmorDamage,NATIVE_HE} from './grenade-native-blast';
@@ -136,6 +136,8 @@ export class UtilitySimulation {
   private lastTime: number | undefined;
   private nextExtinguishAt = -Infinity;
   private readonly fuseClocks=new Map<number,{deadline:number;nextTick:number}>();
+  private readonly smokePreparations = new Map<number, {position: Vec; arena: Arena; solids: Arena['solids'];
+    steps: Generator<void, Vec[]>; cells?: Vec[]}>();
   private random: DuelRandom;
 
   constructor(private readonly seed = 1) {this.random = new DuelRandom(seed, 'utilities');}
@@ -149,6 +151,7 @@ export class UtilitySimulation {
   reset() {
     this.moving = []; this.active = []; this.simulatedAt = undefined; this.lastTime = undefined;
     this.fuseClocks.clear();
+    this.smokePreparations.clear();
     this.nextId = 1; this.nextExtinguishAt = -Infinity; this.random = new DuelRandom(this.seed, 'utilities');
   }
 
@@ -217,6 +220,7 @@ export class UtilitySimulation {
       const start = this.simulatedAt;
       this.simulatedAt += UTILITY_RULES.step;
       const now = this.simulatedAt;
+      let smokeBudget = 64;
       this.active = this.active.filter(e => {
         if (e.holes.length) e.holes = e.holes.filter(h => h.expiresAt > now);
         if (e.expiresAt > now + 1e-9) return true;
@@ -232,6 +236,22 @@ export class UtilitySimulation {
         if (step <= 0) return true;
         if (age >= UTILITY_RULES.projectileLifetime) {this.fuseClocks.delete(p.id);emit({...this.base(p, now), type: 'expire'}); return false;}
         const floorImpact = this.move(p, step, now, arena, targets, emit);
+        if (p.kind === 'smoke') {
+          let preparation = this.smokePreparations.get(p.id);
+          if (!p.resting || preparation && (preparation.arena !== arena || preparation.solids !== arena.solids || distance(preparation.position, p.position) > 1e-8)) {
+            this.smokePreparations.delete(p.id); preparation = undefined;
+          }
+          if (p.resting) {
+            if (!preparation) {
+              preparation = {position: {...p.position}, arena, solids: arena.solids, steps: smokeVolumeSteps(p.position, UTILITY_RULES.smokeRadius, arena)};
+              this.smokePreparations.set(p.id, preparation);
+            }
+            for (let work = 0; work < 16 && smokeBudget > 0 && !preparation.cells; work++, smokeBudget--) {
+              const next = preparation.steps.next();
+              if (next.done) preparation.cells = next.value;
+            }
+          }
+        }
         const fire = p.kind === 'molotov' || p.kind === 'incendiary';
         const clock=this.fuseClocks.get(p.id),tick=Math.floor(now*64+1e-8);
         let timed=false;
@@ -247,6 +267,7 @@ export class UtilitySimulation {
         }
         return true;
       });
+      for (const id of this.smokePreparations.keys()) if (!this.moving.some(p => p.id === id)) this.smokePreparations.delete(id);
       for(const effect of this.active)if(effect.type==='fire'&&effect.inferno) {
         effect.cells=effect.inferno.advance(now,(from,point)=>{
           const candidate=this.floor({...point,y:point.y+.3},arena);
@@ -426,7 +447,15 @@ export class UtilitySimulation {
       }
     } else if (p.kind === 'smoke') {
       const smoke = this.effect(p, time, 'smoke', UTILITY_RULES.smokeRadius, UTILITY_RULES.smokeLifetime);
-      smoke.cells = buildSmokeVolume(p.position, smoke.radius, arena);
+      const prepared = this.smokePreparations.get(p.id);
+      if (prepared && prepared.arena === arena && distance(prepared.position, p.position) < 1e-8) {
+        if (!prepared.cells) {
+          let next = prepared.steps.next();
+          while (!next.done) next = prepared.steps.next();
+          prepared.cells = next.value;
+        }
+        smoke.cells = prepared.cells;
+      } else smoke.cells = buildSmokeVolume(p.position, smoke.radius, arena);
       this.nextExtinguishAt = time;
       this.sound(p, time, 'smoke', 20, emit);
     } else if (p.kind === 'decoy') {

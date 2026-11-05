@@ -1,5 +1,9 @@
 # Aim-Punch Verification
 
+Update: the November 5 native audit supersedes any shared recoil/damage-cache
+interpretation below. Damage punch recovers independently; see
+[the current audit](combat-utility-audit-2026-11-05.md).
+
 Audit date: 2026-10-11. This is browser training simulation work only. No
 game process access, hooks, input automation, or DLL loading was used.
 

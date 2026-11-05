@@ -349,6 +349,8 @@ const focusLineups: Readonly<Record<string, readonly {id: string; name: string; 
     'openprefire:a_short/9', 'openprefire:a_short/10', 'openprefire:a_short/11', 'openprefire:a_short/13', 'openprefire:a_short/18',
   ]}, {id: 'catwalk-close', name: 'Catwalk / close & stairs', angles: [
     'openprefire:mid_to_b/14', 'openprefire:a_short/3', 'openprefire:a_short/5', 'openprefire:a_short/8', 'openprefire:a_short/9',
+  ]}, {id: 'short-stairs-detail', name: 'Short / beside stairs & raised corner', angles: [
+    'openprefire:mid_to_b/14', 'openprefire:a_short/5', 'openprefire:a_short/8', 'openprefire:a_short/9', 'openprefire:a_short/10',
   ]}, {id: 'short-a-ninja-ramp', name: 'A Short / Ninja, boxes & ramp', angles: [
     'spraylab:dust2/a-ninja', 'spraylab:dust2/a-short-box-edge', 'spraylab:dust2/a-default-box-top', 'spraylab:dust2/a-ramp-short-high', 'openprefire:a_short/18',
   ]}, {id: 'short-a-boxes', name: 'A site / boxes from Short', angles: [
@@ -357,6 +359,20 @@ const focusLineups: Readonly<Record<string, readonly {id: string; name: string; 
   'b-tunnels': [{id: 'b-tunnel-boxes', name: 'B site / elevated & back-site boxes', angles: [
     'openprefire:b_tunnel/11', 'retakes:dust2/13', 'openprefire:b_tunnel/24', 'openprefire:b_tunnel/26', 'openprefire:b_tunnel/9',
   ]}],
+  'b-doors': [{id: 'b-window-car', name: 'B retake / window trap & car', angles: [
+    'openprefire:mid_to_b/28', 'openprefire:mid_to_b/33', 'openprefire:mid_to_b/35',
+    'openprefire:mid_to_b/34', 'openprefire:mid_to_b/36',
+  ]}],
+};
+const routeCoverage: Readonly<Record<string, PrefireRoute['coverageGroups']>> = {
+  'short-a': [
+    {id: 'short-stairs', angleIds: ['openprefire:a_short/8', 'openprefire:a_short/9', 'openprefire:a_short/10']},
+    {id: 'catwalk', angleIds: ['openprefire:mid_to_b/13', 'openprefire:mid_to_b/14', 'openprefire:a_short/3', 'openprefire:a_short/5', 'openprefire:a_short/6']},
+  ],
+  'b-doors': [
+    {id: 'window', angleIds: ['openprefire:mid_to_b/28', 'openprefire:mid_to_b/33', 'openprefire:mid_to_b/35']},
+    {id: 'car', angleIds: ['openprefire:mid_to_b/34', 'openprefire:mid_to_b/36', 'openprefire:b_tunnel/9']},
+  ],
 };
 export const prefireRoutes: readonly PrefireRoute[] = prefireApproachRoutes.map(route => {
   const pool = ((weightedPools.routes as Record<string, readonly string[]>)[route.id] ?? []).map(id => {
@@ -375,7 +391,7 @@ export const prefireRoutes: readonly PrefireRoute[] = prefireApproachRoutes.map(
       return angle;
     })}))]
     .filter(lineup => lineup.angles.every(angle => admitted.has(angle.id)));
-  return {...route, angles: route.angles.map(withFamily), lineups,
+  return {...route, angles: route.angles.map(withFamily), lineups, coverageGroups: routeCoverage[route.id],
     alternatives: pool.filter(angle => !route.angles.some(original => original.id === angle.id))};
 });
 

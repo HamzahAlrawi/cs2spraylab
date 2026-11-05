@@ -5,7 +5,7 @@ import {prefireAuthoringMaps, sha256File} from './prefire-map-adapters.mjs';
 
 const mapId = process.argv.find(a => a.startsWith('--map='))?.slice(6) ?? 'de_dust2';
 const output = process.argv.find(a => a.startsWith('--output='))?.slice(9) ?? 'research/dust2/material-quality.json';
-const vite = await createServer({server: {middlewareMode: true, hmr: false, ws: false}, appType: 'custom', logLevel: 'error'});
+const vite = await createServer({cacheDir: 'node_modules/.vite-material-audit', server: {middlewareMode: true, hmr: false, ws: false}, appType: 'custom', logLevel: 'error'});
 let adapter;
 try {
   adapter = await prefireAuthoringMaps.load(mapId, vite);
