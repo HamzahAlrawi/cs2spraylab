@@ -3,8 +3,8 @@ import { nativeRecoilPattern } from './recoil';
 import {defaultControls, sanitizeControls, type Controls} from './controls';
 
 export type Weapon = keyof typeof data.weapons;
-export type Mode = 'duel' | 'prefire' | 'guided' | 'spray' | 'transfer' | 'peek' | 'precision' | 'burst' | 'hearing';
-export const modeNames: Record<Mode, string> = { duel: 'AI Duel', prefire: 'Map prefire', guided: 'Guided spray', spray: 'Free spray', transfer: 'Spray transfer', peek: 'Peeking practice', precision: 'Counterstrafing practice', burst: 'Burst & reposition', hearing: 'Hearing practice' };
+export type Mode = 'duel' | 'prefire' | 'guided' | 'spray' | 'transfer' | 'peek' | 'precision' | 'burst' | 'hearing' | 'awareness';
+export const modeNames: Record<Mode, string> = { duel: 'AI Duel', prefire: 'Map prefire', guided: 'Guided spray', spray: 'Free spray', transfer: 'Spray transfer', peek: 'Peeking practice', precision: 'Counterstrafing practice', burst: 'Burst & reposition', hearing: 'Hearing practice', awareness:'Map sound awareness' };
 export const historyModeNames = { ...modeNames, tracking: 'Target tracking (retired)' };
 export function migrateMode(mode: unknown): Mode {
   if(typeof mode==='string'&&['weak','ghost','trace','fade','tracking'].includes(mode))return 'guided';

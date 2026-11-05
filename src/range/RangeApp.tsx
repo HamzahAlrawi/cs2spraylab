@@ -31,6 +31,7 @@ import {usePanelFocus} from './use-panel-focus';
 const PrefirePractice = lazy(() => import('./prefire/PrefirePractice'));
 const DuelStage = lazy(() => import('./duel/DuelStage').then(module => ({default: module.DuelStage})));
 const HearingPractice = lazy(() => import('./HearingPractice').then(module => ({default: module.HearingPractice})));
+const AudioAwareness = lazy(() => import('./AudioAwareness'));
 const MovementTutorial = lazy(() => import('./MovementTutorial').then(module => ({default: module.MovementTutorial})));
 const Changelog = lazy(() => import('./Changelog').then(module => ({default: module.Changelog})));
 const loading = <div className="workflow-loading" role="status">Loading practice</div>;
@@ -138,7 +139,7 @@ export default function RangeApp() {
   const [rangeReady, setRangeReady] = useState(false);
   const drawer = useRef<HTMLElement>(null);
   const selectedWeapon = loadoutWeapon(settings);
-  const combatMode = settings.mode === 'duel' || settings.mode === 'prefire';
+  const combatMode = settings.mode === 'duel' || settings.mode === 'prefire' || settings.mode === 'awareness';
   const assetReady = rangeReady && status.assets === 'Models ready' && status.weapon === selectedWeapon;
   const weapon = gameData.weapons[selectedWeapon];
   const recentResult = results.find(r => r.mode === settings.mode && r.weapon === status.equipped);
@@ -280,7 +281,7 @@ export default function RangeApp() {
     } catch (e) { setNotice((e as Error).message); }
   };
   if (!progressionReady) return <main className="range-app"><div className="workflow-loading" role="status">Restoring saved progress</div></main>;
-  return <CoachingActions.Provider value={{practice: settings.mode !== 'prefire' && settings.mode !== 'hearing' ? launchPractice : undefined, lesson: openLesson, record: recordCombat,
+  return <CoachingActions.Provider value={{practice: settings.mode !== 'prefire' && settings.mode !== 'hearing' && settings.mode !== 'awareness' ? launchPractice : undefined, lesson: openLesson, record: recordCombat,
     trends: summary => {
       const source = results.find(row => row.coaching === summary || row.drill?.coaching === summary);
       const key = settings.mode === 'duel' ? combatSample.current?.key : source?.practice ? practiceSettingsKey(settings, source.practice.distance) : undefined;
@@ -345,6 +346,7 @@ export default function RangeApp() {
     <section ref={stage} className={`range-stage${combatMode ? ' duel-stage' : settings.mode !== 'hearing' ? ' with-drill' : ''}`} aria-label="Practice range">
       <XpNotification controller={progression} onOpenAchievements={()=>{setPanel(null);setAchievementRequest(true);}}/>
       <Suspense fallback={loading}>{settings.mode === 'hearing' ? <HearingPractice volume={settings.volume} showTips={settings.showTips} openSettings={() => {setTab('data'); open('settings');}} suspended={!!panel || tutorial || armoryOpen}/>
+        : settings.mode === 'awareness' ? <AudioAwareness settings={settings} progression={progression} suspended={!!panel || tutorial || armoryOpen} openSettings={()=>{setTab('data');open('settings');}} onEnter={()=>setSetupHint(false)}/>
         : settings.mode === 'prefire' ? <Suspense fallback={<div className="empty-state">Loading map practice</div>}><PrefirePractice settings={settings} progression={progression} cosmeticRevision={progressionState.profile.equipped} openSettings={() => {setTab('game'); open('settings');}} onEnter={() => setSetupHint(false)} suspended={!!panel || tutorial || armoryOpen}/></Suspense>
         : settings.mode === 'duel' ? <DuelStage settings={settings} progression={progression} cosmeticRevision={progressionState.profile.equipped} openSettings={() => {setTab('game'); open('settings');}} onEnter={() => setSetupHint(false)} suspended={!!panel || tutorial || armoryOpen}/> : <>
       <div className={`range-view${showRepFeedback?' has-rep-feedback':''}${status.hitFlash?' has-hit-feedback':''}`}>

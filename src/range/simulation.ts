@@ -11,7 +11,7 @@ import {shouldAutoReloadEmptyMagazine} from './empty-magazine';
 import {coachRangeAttempt, type RangePractice, type RangeShotSkill} from './range-coaching';
 import type {CoachingSummary} from './coaching-types';
 import {sampleShotState,type ShotSampleState} from './duel/shot-time';
-import {audibleLanding} from './sound-model';
+import {audibleLanding,audibleJump,strideTravel} from './sound-model';
 
 export {DEG, GRAVITY, JUMP_SPEED, STEP, UNIT, airVelocity, groundVelocity, idleInput, direction};
 export const VERTICAL_FOV = 2 * Math.atan(.75) / DEG;
@@ -160,6 +160,7 @@ export class Simulation {
   }
   onShot: (shot: Shot) => void = () => {};
   onSound: (landing: boolean) => void = () => {};
+  onJump:()=>void=()=>{};
   onResult: (result: Result) => void = () => {};
   constructor(public settings: Settings, private readonly random?: () => number) {this.slot = settings.primaryEnabled ? 1 : 2; this.pattern = recoilPattern(loadoutWeapon(settings)); this.configure(settings);}
   configure(s: Settings, measured?: MeasuredProfile) {
@@ -342,10 +343,11 @@ export class Simulation {
       {...this.environment, time: this.time - dt});
     this.input.jumpPressed = false; this.input.jumpPressOffset = 0;
     const traveled = Math.hypot(next.position.x - this.position.x, next.position.z - this.position.z);
+    if(audibleJump(this,next))this.onJump();
     if (audibleLanding(this,next)) {this.stepDistance=0;this.onSound(true);}
     const audible = Math.hypot(next.velocity.x, next.velocity.z) > weapon.speed * UNIT * .54;
     if (next.grounded && audible && traveled > 0) {
-      this.stepDistance += traveled;
+      this.stepDistance += strideTravel(traveled,next.velocity,dt);
       if (this.stepDistance >= 1.35) {this.stepDistance %= 1.35; this.onSound(false);}
     } else if (!audible) this.stepDistance = 0;
     this.velocity = next.velocity;

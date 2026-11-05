@@ -12,7 +12,7 @@ import {createBotTraits} from './skill';
 import {idleCommand, type ActorCommand, type DuelActorSnapshot, type DuelEvent, type Hitgroup} from './types';
 import {DuelWeaponState, type FiredRound} from './weapon-state';
 import {verticalContact} from '../actor-collision';
-import {FOOTSTEP_RANGE, footstepGain, gunshotGain, gunshotRange, audibleLanding} from '../sound-model';
+import {FOOTSTEP_RANGE, footstepGain, gunshotGain, gunshotRange, audibleLanding,audibleJump,jumpSoundGain,JUMP_SOUND_RANGE,strideTravel} from '../sound-model';
 import {proficiency} from './awareness';
 import {equipmentForSlot, equipmentStats, type Equipment, type Slot} from '../equipment';
 import {DuelCoach} from './coaching';
@@ -222,6 +222,7 @@ export class DuelSimulation {
     }
   }
   protected weaponCommand(_actor: CombatActor, command: ActorCommand): ActorCommand {return command;}
+  protected roundCanFinish() {return true;}
   /** Shared by autonomous Duel and angle-authored Prefire controllers. */
   protected applyBotCombatPolicy(actorId: number, command: Partial<ActorCommand>, report: ThreatReport | null,
     visible: boolean, context: {allowUtility?: boolean; tradePending?: boolean} = {}): Partial<ActorCommand> {
@@ -683,11 +684,13 @@ export class DuelSimulation {
         arenaMovementEnvironment(this.arena,(this.spawnAuthoring?[actor]:this.actors).map(other=>({...other,previous:this.previous[other.id]})),actor.id,this.time-STEP,actor.pitch));
       const traveled = Math.hypot(next.position.x - actor.position.x, next.position.z - actor.position.z);
       const landed=audibleLanding(actor,next);
+      const jumped=audibleJump(actor,next);
       Object.assign(actor,next);
+      if(jumped)this.emitSound(actor,'jump',{...next.position,y:next.feet+30*UNIT});
       if (landed) {actor.stepDistance=0;this.emitSound(actor, 'landing', next.position);}
       const audible = Math.hypot(next.velocity.x, next.velocity.z) > equipmentStats(actor.weapon.id).speed * UNIT * .54;
       if (next.grounded && audible && traveled > 0) {
-        actor.stepDistance += traveled;
+        actor.stepDistance += strideTravel(traveled,next.velocity,STEP);
         if (actor.stepDistance >= 1.35) {
           actor.stepDistance %= 1.35;
           this.emitSound(actor, 'footstep', next.position);
@@ -806,7 +809,7 @@ export class DuelSimulation {
       this.replay.frame(this.tick, this.time, this.replayActors(), this.actors.slice(1).map(actor => ({
       actor: actor.id, decision: this.botDecision(actor.id) ?? {}})));
     }
-    if (competitive && (!this.actors[0].alive || this.actors.slice(1).every(actor => !actor.alive) || this.time >= this.config.roundSeconds)) {
+    if (competitive && this.roundCanFinish() && (!this.actors[0].alive || this.actors.slice(1).every(actor => !actor.alive) || this.time >= this.config.roundSeconds)) {
       const playerAlive = this.actors[0].alive, botsAlive = this.actors.slice(1).some(actor => actor.alive);
       this.outcome = playerAlive && !botsAlive && this.actors.length > 1 ? 'won' : !playerAlive && botsAlive ? 'lost' : 'draw';
       this.phase = 'result';
@@ -1120,12 +1123,12 @@ export class DuelSimulation {
     this.events.push(event);
   }
 
-  private emitSound(actor: CombatActor, sound: 'footstep' | 'landing', point: Vec) {
+  private emitSound(actor: CombatActor, sound: 'footstep' | 'landing' | 'jump', point: Vec) {
     this.emit({kind: 'sound', tick: this.tick, actorId: actor.id, sound, point: {...point}});
     this.informHearing(actor, point, sound);
   }
 
-  private informHearing(actor: CombatActor, point: Vec, sound: 'footstep' | 'landing' | 'gunshot') {
+  private informHearing(actor: CombatActor, point: Vec, sound: 'footstep' | 'landing' | 'jump' | 'gunshot') {
     // Enemy hearing consumes hostile audio only; friendly audio is still rendered.
     if (actor.side !== 'player') return;
     const floor=sound==='gunshot'?undefined:this.arena.native?.floorSurfaceAt?.(point.x,point.z,actor.feet+.25,.5);
@@ -1134,17 +1137,17 @@ export class DuelSimulation {
       if (!listener.alive) continue;
       const dx = point.x - listener.position.x, dy = point.y - listener.position.y, dz = point.z - listener.position.z;
       const distance = Math.hypot(dx, dy, dz);
-      const range = sound === 'gunshot' ? gunshotRange(actor.weapon.id) : FOOTSTEP_RANGE;
+      const range = sound === 'gunshot' ? gunshotRange(actor.weapon.id) : sound==='jump'?JUMP_SOUND_RANGE:FOOTSTEP_RANGE;
       if (distance > range || distance < .01) continue;
       const nativeBlocked=!!this.arena.native?.ray(listener.position,{x:dx/distance,y:dy/distance,z:dz/distance},distance-.02);
       const path=retainSoundOcclusion(this.acoustics.resolve(listener.position,point,this.time),nativeBlocked);
       const occluded=path.gain<1;
       const threshold = .018 + (1 - proficiency(botConfig(this.config, listener.id - 1).skill)) * .03;
       const gain = sound === 'gunshot' ? gunshotGain(actor.weapon.id, path.distance)
-        : footstepGain(path.distance, material, sound === 'landing');
+        : sound==='jump'?jumpSoundGain(path.distance):footstepGain(path.distance, material, sound === 'landing');
       if (gain*path.gain < threshold) continue;
       this.lastContactAt.set(listener.id,this.time);
-      this.hearBot(listener.id, path.apparentPosition, sound, occluded);
+      this.hearBot(listener.id, path.apparentPosition, sound==='jump'?'footstep':sound, occluded);
     }
   }
   protected hearBot(actorId: number, point: Vec, sound: 'footstep' | 'landing' | 'gunshot', occluded: boolean) {

@@ -4,13 +4,13 @@ export const drillGroups: readonly {name: string; modes: readonly Mode[]}[] = [
   {name: 'Match practice', modes: ['duel', 'prefire']},
   {name: 'Aim & movement', modes: ['peek', 'precision', 'burst']},
   {name: 'Recoil control', modes: ['guided', 'spray', 'transfer']},
-  {name: 'Awareness', modes: ['hearing']},
+  {name: 'Awareness', modes: ['awareness','hearing']},
 ];
 
 export const drillSkills: Record<Mode, string> = {
   duel: 'Live fights', prefire: 'Angle clearing', peek: 'Taking space', precision: 'Stop-shot timing',
   burst: 'Movement rhythm', guided: 'Recoil fundamentals', spray: 'Spray consistency',
-  transfer: 'Multiple targets', hearing: 'Sound localization',
+  transfer: 'Multiple targets', hearing: 'Sound localization', awareness:'Map audio and anticipation',
 };
 
 export function matchesDrill(mode: Mode, query: string, name: string, benefit: string): boolean {

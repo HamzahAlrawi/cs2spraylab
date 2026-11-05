@@ -36,6 +36,16 @@ function fixture(extraEvents: Record<string, NativeEvent> = {}, missing: string[
 afterEach(() => vi.unstubAllGlobals());
 
 describe('native audio consumer', () => {
+  it('coalesces same-actor step bursts using native block duration without muting other actors',async()=>{
+    const {audio,sources}=fixture({'step-concrete':{samples:['/step.wav'],volume:.9,pitch:1}});
+    await audio.unlock('ak47');
+    expect(audio.playStep(.4,0,false,undefined,'concrete',1)).toBe(true);
+    expect(audio.playStep(.4,0,false,undefined,'concrete',1)).toBe(false);
+    expect(audio.playStep(.4,0,false,undefined,'concrete',2)).toBe(true);
+    expect(sources).toHaveLength(2);
+    (audio.context as unknown as {currentTime:number}).currentTime=.151;
+    expect(audio.playStep(.4,0,false,undefined,'concrete',1)).toBe(true);audio.dispose();
+  });
   it('prepares silently before a gesture without resuming, fetching or replacing the audio context', async () => {
     const {audio, requests, sources} = fixture();
     expect(audio.prepare()).toBe(true); const context = audio.context!;

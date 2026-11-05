@@ -21,6 +21,8 @@ for (const args of [
   ['tools/import-inferno-presentation.mjs'],
   ['tools/import-utility-presentation-sounds.mjs'],
   ['tools/import-utility-audio.mjs'],
+  ['tools/import-awareness-audio.mjs'],
+  ['tools/import-weapon-sound-events.mjs'],
   ['tools/optimize-assets.mjs', '--world-only'],
   ['tools/import-cosmetics.mjs'],
   ['tools/repair-usp-bleeding-edge.mjs'],

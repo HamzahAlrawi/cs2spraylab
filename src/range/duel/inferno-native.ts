@@ -65,10 +65,14 @@ export class InfernoSpread {
             ((quarter+attempt)%4+this.random.next())*Math.PI/2;
           const candidate={x:flame.point.x+Math.cos(angle)*NATIVE_INFERNO.spacing,y:flame.point.y,z:flame.point.z+Math.sin(angle)*NATIVE_INFERNO.spacing};
           if(Math.hypot(candidate.x-this.origin.x,candidate.z-this.origin.z)>this.radius||
-            this.flames.some(other=>other.active&&Math.hypot(candidate.x-other.point.x,candidate.z-other.point.z)<NATIVE_INFERNO.spacing-1e-7))continue;
+            this.flames.some(other=>other.active&&Math.hypot(candidate.x-other.point.x,candidate.z-other.point.z)<NATIVE_INFERNO.spacing-1e-7&&
+              Math.abs(candidate.y-other.point.y)<.1))continue;
           budget-=2;
           const point=project(flame.point,candidate);
-          if(point){this.add(point,time,i);changed=true;break;}
+          if(point&&Math.hypot(point.x-this.origin.x,point.y-this.origin.y,point.z-this.origin.z)<=this.radius&&
+            !this.flames.some(other=>other.active&&Math.hypot(point.x-other.point.x,point.y-other.point.y,point.z-other.point.z)<NATIVE_INFERNO.spacing-1e-7)){
+            this.add(point,time,i);changed=true;break;
+          }
         }
       }
     }

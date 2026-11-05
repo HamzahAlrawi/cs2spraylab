@@ -1,8 +1,9 @@
 import type {Equipment} from './equipment';
 import type {Vec} from './actor-physics';
 import {AcousticScene, AcousticReverb, positionListener, retainSoundOcclusion, spatialChain, type SpatialSound, type SpatialAudioProfile} from './spatial-audio';
-import {ActionSoundTimeline, curveGain, footstepEventKey, inverseDistanceGain, sampleIndex, type ActorSoundState, type SoundAction, type SoundTimelines} from './sound-model';
+import {ActionSoundTimeline, curveGain, distanceCurveGain, footstepEventKey, inverseDistanceGain, sampleIndex, type ActorSoundState, type SoundAction, type SoundTimelines} from './sound-model';
 import {utilityAudioKey, utilitySampleLoop, type UtilityAudioOwner, type UtilitySamplePlayback} from './utility-audio-model';
+import awarenessAudio from './awareness-native-audio.json';
 
 export type NativeEvent = {samples: string[]; volume: number; pitch: number; distanceCurve?: number[][];
   impactSpeedCurve?:number[][];delay?: number; source?: string; tracks?: {samples:string[]; samplePlayback?:UtilitySamplePlayback[]}[]; dependencies?: NativeEvent[]};
@@ -27,6 +28,7 @@ export class RangeAudio {
   private common?: Promise<void>;
   private utilityBank?: Promise<void>;
   private stepLoads = new Map<string, Promise<void>>();
+  private readonly actorSteps=new Map<number,number>();
   private previous = new Map<string, number>();
   private listenerPose = '';
   private listenerPosition: Vec = {x: 0, y: 0, z: 0};
@@ -46,6 +48,11 @@ export class RangeAudio {
   private reverb?: AcousticReverb;
 
   constructor(private readonly profile: RangeAudioProfile = {}) {}
+  configure(profile: RangeAudioProfile) {this.stopVoices();Object.assign(this.profile,profile);}
+  canPlayEvent(key: string) {
+    const event=this.events[key];
+    return !this.disposed&&this.context?.state==='running'&&!!event&&eventSamples(event).some(url=>this.samples.has(url));
+  }
 
   /** Allocate silently while loading; only a trusted gesture resumes playback. */
   prepare() {
@@ -105,7 +112,7 @@ export class RangeAudio {
       await this.unlockContext();
       await this.loadManifest();
       this.common ??= this.preload(Object.keys(this.events).filter(key =>
-        /^(combat-|hit-|hurt-|impact-|death$)/.test(key) || /^(step|land)-(concrete|wood|metal)$/.test(key)));
+        /^(combat-|hit-|hurt-|impact-|death$|jump$)/.test(key) || /^(step|land)-(concrete|wood|metal)$/.test(key)));
       if (!this.pending.has(weapon)) this.pending.set(weapon, this.load(weapon));
       await Promise.all([this.pending.get(weapon), this.common]);
       if (!this.disposed) this.status = 'ready';
@@ -227,7 +234,7 @@ export class RangeAudio {
       spatial.position.y - this.listenerPosition.y, spatial.position.z - this.listenerPosition.z) : 0);
     const mapped = spatial && event.distanceCurve?.length && this.profile.nativeDistanceCurves !== false;
     const pathMapped = !!spatial?.path && !mapped;
-    const attenuation = mapped ? curveGain(distance / .0254, event.distanceCurve!) : pathMapped ? inverseDistanceGain(distance) : 1;
+    const attenuation = mapped ? distanceCurveGain(distance,event.distanceCurve!) : pathMapped ? inverseDistanceGain(distance) : 1;
     for(const [track,samples] of (event.tracks?.map(t=>t.samples)??[event.samples]).entries()) {
       if(!(event.volume>0))continue;
       const available=samples.map((url,index)=>this.samples.has(url)?index:-1).filter(index=>index>=0);
@@ -241,7 +248,7 @@ export class RangeAudio {
         spatial ? () => {
           const updatedDistance = Math.hypot(spatial.position.x-this.listenerPosition.x,
             spatial.position.y-this.listenerPosition.y,spatial.position.z-this.listenerPosition.z);
-          return volume*event.volume*(mapped?curveGain(updatedDistance/.0254,event.distanceCurve!):pathMapped?inverseDistanceGain(updatedDistance):1);
+          return volume*event.volume*(mapped?distanceCurveGain(updatedDistance,event.distanceCurve!):pathMapped?inverseDistanceGain(updatedDistance):1);
         } : undefined)||played;
     }
     // Child sound events have independent gain/pitch/delay. A silent primary
@@ -256,10 +263,16 @@ export class RangeAudio {
       const buffer = this.buffers.get(weapon); if (buffer) this.emit(buffer, volume * .65, 1, spatial);
     }
   }
-  playStep(volume: number, pan = 0, heavy = false, spatial?: SpatialSound, surface = 'concrete') {
+  playStep(volume: number, pan = 0, heavy = false, spatial?: SpatialSound, surface = 'concrete',actorId?:number) {
     if (this.disposed || this.context?.state !== 'running' || !Number.isFinite(volume) || volume <= 0) return false;
     const key = footstepEventKey(surface, heavy), event = this.events[key];
     if (key.endsWith('-silent') || event && !event.samples.length) return false;
+    if(actorId!==undefined){
+      const now=this.context.currentTime,previous=this.actorSteps.get(actorId);
+      if(previous!==undefined&&now>=previous&&now-previous<awarenessAudio.footsteps.blockDuration)return false;
+      if(this.actorSteps.size>=32&&!this.actorSteps.has(actorId))this.actorSteps.delete(this.actorSteps.keys().next().value!);
+      this.actorSteps.set(actorId,now);
+    }
     if (event?.samples.some(url => this.samples.has(url))) return this.playEvent(key, volume, spatial, pan);
     if (event && !this.stepLoads.has(key)) this.stepLoads.set(key, this.preload([key]));
     // A cold/older asset pack keeps an on-time quiet fallback, never a late

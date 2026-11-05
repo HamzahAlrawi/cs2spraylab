@@ -322,7 +322,7 @@ export class DuelEngine {
       this.camera.far = 180;
       this.camera.updateProjectionMatrix();
       const mapName=nativeMaps.has(scenario.mapId)?nativeMaps.get(scenario.mapId).name:scenario.name;
-      this.renderer.domElement.setAttribute('aria-label', `${mapName} ${scenario.kind === 'duel-map' ? 'Duel map chunk' : 'prefire map'}`);
+      this.renderer.domElement.setAttribute('aria-label', `${mapName} ${scenario.kind === 'duel-map' ? 'Duel map chunk' : scenario.kind==='awareness' ? 'sound awareness map' : 'prefire map'}`);
     }
     this.scene.add(this.actors, this.covers, this.dynamicCovers, this.effects,this.actorShadows.group, this.replayScene.group);
     this.audio.setAcoustics(this.acoustics);
@@ -1244,8 +1244,9 @@ export class DuelEngine {
           const material = native ? surfaceFootstepMaterial(native.surface)
             : support?.material === 'wood' || support?.kind === 'crate' ? 'wood'
               : support?.material === 'metal' || support?.material === 'grate' || support?.kind === 'cargo' ? 'metal' : 'concrete';
-          this.audio.playStep(this.settings.volume * (own ? .45 : 1), 0, event.sound === 'landing',
-            own ? undefined : this.soundLocation(point, FOOTSTEP_RANGE), material);
+          if(event.sound==='jump')this.audio.playEvent('jump',this.settings.volume*(own ? .45 : 1),own?undefined:this.soundLocation(event.point));
+          else this.audio.playStep(this.settings.volume * (own ? .45 : 1), 0, event.sound === 'landing',
+            own ? undefined : this.soundLocation(point, FOOTSTEP_RANGE), material,event.actorId);
         }
       } else if (event.kind === 'surface') {
         endpoint(event.shotId,event.point);
@@ -1645,7 +1646,7 @@ export class DuelEngine {
     if (this.presentingUtility && !this.sim.selectedUtility) this.renderedEquipment = undefined;
     this.presentingUtility = this.sim.selectedUtility;
     if(timestamp-this.shadowAt>=50){this.shadowAt=timestamp;this.actorShadows.update(actorShadows(snapshots,this.sim.arena));}
-    if(timestamp-this.radarAt>=100) {this.radarAt=timestamp;this.radar.update(player,this.sim.radar.snapshot(this.sim.time),
+    if(timestamp-this.radarAt>=100) {this.radarAt=timestamp;this.radar.update(player,this.scenario?.radarContacts?.(this.sim)??this.sim.radar.snapshot(this.sim.time),
       this.sim.time,this.sim.arena,this.config,this.scenario?.radarOverview?.(player.feet)??this.scenario?.scene);}
     if (player.equipment !== this.renderedEquipment) {
       void this.loadViewModel(player.equipment);
@@ -1706,6 +1707,7 @@ export class DuelEngine {
     this.processEvents(events);
     this.updateUtilitySounds();
     this.audio.updateActions(this.sim.time);
+    this.scenario?.present?.({sim:this.sim,audio:this.audio,camera:this.camera,events,active:active&&!this.loadingMap,volume:this.settings.volume,models:this.models});
     this.damageFeedback.update(this.animationClock, player.yaw);
     // Camera and followed aim must use the same presentation time. Reading the
     // last fixed-tick recoil here makes the reticle lag between simulation ticks.

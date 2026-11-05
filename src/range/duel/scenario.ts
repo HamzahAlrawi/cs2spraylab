@@ -10,7 +10,7 @@ export type PrefireStats = PrefireReview & {routeId: string; routeName: string; 
   encounter?: import('../prefire/encounters').EncounterSelection;
   navigation?: import('../prefire/navigation').RouteNavigation};
 export type DuelScenario = {
-  kind?: 'prefire' | 'duel-map';
+  kind?: 'prefire' | 'duel-map' | 'awareness';
   readonly mapId?: string;
   name: string; scene: Group;
   create(settings: Settings, seed: number): DuelSimulation;
@@ -26,4 +26,8 @@ export type DuelScenario = {
   updateView?(position: Vec): void;
   radarOverview?(feet: number): import('./radar').RadarOverview | undefined;
   loadingReport?(): {decodedFresh: number; decodedReused: number; milliseconds: number; warmBudgetBytes: number} | undefined;
+  // Optional training-only presentation. Never installed by competitive Duel.
+  present?(context: {sim:DuelSimulation;audio:import('../audio').RangeAudio;camera:import('three').PerspectiveCamera;
+    events:readonly import('./types').DuelEvent[];active:boolean;volume:number;models?:ReadonlyMap<number,import('three').Object3D>}):void;
+  radarContacts?(sim:DuelSimulation):readonly import('./radar').RadarContact[];
 };

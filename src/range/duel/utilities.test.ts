@@ -1,5 +1,6 @@
 import {describe, expect, it, vi} from 'vitest';
 import {NATIVE_INFERNO} from './inferno-native';
+import {INFERNO_TERRAIN} from './inferno-terrain';
 import type {Vec} from '../actor-physics';
 import {testArena, type Arena} from './geometry';
 import {utilityKinds} from './utility-loadout';
@@ -300,7 +301,7 @@ describe('smoke visibility, holes and fire suppression', () => {
     run(sim, 1, arena, [], 2.5);
     expect(sim.effects.some(e => e.type === 'fire')).toBe(true);
     // Incremental fire still projects children; disconnected smoke adds no long LOS work.
-    expect(ray.mock.calls.every(([, , range])=>range<=NATIVE_INFERNO.spacing+1e-6)).toBe(true);
+    expect(ray.mock.calls.every(([, , range])=>range<=INFERNO_TERRAIN.up+INFERNO_TERRAIN.down+1e-6)).toBe(true);
     expect(ray.mock.calls.length).toBeLessThanOrEqual(NATIVE_INFERNO.maxTraces*11);
   });
 });

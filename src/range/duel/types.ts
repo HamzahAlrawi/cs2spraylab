@@ -63,7 +63,7 @@ export type DuelEvent =
   | {kind: 'action'; tick: number; actorId: ActorId; equipment: Equipment; action: string; silent?: boolean}
   | {kind: 'environment'; tick: number; actorId: ActorId; environmentId: string; action: 'open' | 'close' | 'break' | 'move'; point: Vec}
   | {kind: 'pickup'; tick: number; actorId: ActorId; dropId: number; equipment: Equipment}
-  | {kind: 'sound'; tick: number; actorId: ActorId; sound: 'footstep' | 'landing'; point: Vec}
+  | {kind: 'sound'; tick: number; actorId: ActorId; sound: 'footstep' | 'landing' | 'jump'; point: Vec}
   | {kind: 'fire'; tick: number; actorId: ActorId; shotId: number; equipment: Equipment; origin: Vec; direction: Vec; pelletDirections?:Vec[]; alternate?:boolean; ordinal?:number; accuracy?: ShotState}
   | {kind: 'hit'; tick: number; shooter: ActorId; victim: ActorId; shotId: number; group: Hitgroup; point: Vec; healthDamage: number; armorDamage: number; lethal: boolean;
       armored?:boolean;helmet?:boolean;direction?:Vec;utility?:UtilityKind}

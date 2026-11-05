@@ -5,7 +5,7 @@ import {modeInfo} from './mode-info';
 import {drillGroups, drillSkills, matchesDrill} from './training-ui';
 
 const icons = {duel: Users, prefire: Map, peek: Shield, precision: Footprints, burst: Footprints,
-  guided: Crosshair, spray: Target, transfer: Users, hearing: Ear};
+  guided: Crosshair, spray: Target, transfer: Users, hearing: Ear, awareness:Ear};
 
 export function DrillChooser({mode, choose}: {mode: Mode; choose: (mode: Mode) => void}) {
   const [query, setQuery] = useState('');

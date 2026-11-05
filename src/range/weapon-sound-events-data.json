@@ -1,0 +1,1937 @@
+{
+  "build": "2000942",
+  "source": "soundevents/game_sounds_weapons.vsndevts_c",
+  "sourceSha256": "43783bf047a6ad803a4bffd6980fc53ec7f4dcefd3a00d674e4c3ba260ff49a1",
+  "decompiledSha256": "4a7747f0be0ea7c991a17e98d3e34d40eccddbe165da268d8c3b87108e96b13e",
+  "steamInfSha256": "1b5256bbc6c3188503cbe8a1474c41a286bf3e5a0e56e42f7a2868d0bb0acd2f",
+  "sourceHashes": {
+    "sounds/weapons/ak47/ak47_02.vsnd_c": "f154d5d5da14286fe5c153c961776c0d0d012fe0e580daefaac67b13b4450cd0",
+    "sounds/weapons/ak47/ak47_01.vsnd_c": "12e10554adb67a767846f88f489af4504533cfed7dcb0fda1c6799a60e54f354",
+    "sounds/weapons/ak47/ak47_04.vsnd_c": "bd21cee19e662b2325bee0fa996df32a2c165978337e2b800a5fa842a4f57ac0",
+    "sounds/weapons/ak47/ak47_distant.vsnd_c": "d5f0a19abe3bf1dbd17338176b0000a7983beebb64f78199f5aaee627895d26c",
+    "sounds/weapons/m4a1/m4a1_01.vsnd_c": "0c2b117c0cfbeb635792bf160bda117df0ae63321ad3586da99b3b73a590d6c5",
+    "sounds/weapons/m4a1/m4a1_02.vsnd_c": "17db66e3a9ce715757fb24df23759296ff6b651d191246292c1bc6e698de1381",
+    "sounds/weapons/m4a1/m4a1_distant_01.vsnd_c": "5f1bfd0802c79435ab75bcc149c72d2fd6d43d75aafb61277085c4aa633f936a",
+    "sounds/weapons/m4a1/m4a1_silencer_01.vsnd_c": "d4ac69895ad3c0ed47ba0d93614aff7c71bd4793a8e74626a9beec3ef78ac419",
+    "sounds/weapons/galilar/galil_01.vsnd_c": "fbd6bc5b31fd848764677fe8bb412df879b47a4fd860a5f1bf7fe2fc2f2255a2",
+    "sounds/weapons/galilar/galil_distant.vsnd_c": "38826e331597717b86aa1c1c60e6aee9f03eda102bde1bbf0c625a17a4d15622",
+    "sounds/weapons/famas/famas_01.vsnd_c": "64b9a076467ad6e066d35b515c149e9dd7b8768e4a9081f61b400b4f402935a0",
+    "sounds/weapons/famas/famas_02.vsnd_c": "5d7009a234418ac59b854a17319041e9cc4819791ba5be870c4e08f09b3226f7",
+    "sounds/weapons/famas/famas_03.vsnd_c": "107bf94936fa59e9e7df10dd064335aee6274052474886724ecb65f48275b318",
+    "sounds/weapons/famas/famas_distant_01.vsnd_c": "50d73050c22d1e73d363631aace380a1b33589bf4057f360cbefbe5f46ab74a2",
+    "sounds/weapons/famas/famas_mech.vsnd_c": "0acd803a0cf77ff6aab6cc25b5efa4a7e9580ac852c3fe35a31a4f2d1824fe60",
+    "sounds/weapons/sg556/sg556_01.vsnd_c": "266db2e285a1d0cb97cd86567375534239374d13017c582cce8519b2a2807921",
+    "sounds/weapons/sg556/sg556_02.vsnd_c": "ae4aabee13ac30c2e625c9a514e66b1889bb72b0dc866986a27be9489d06ab0b",
+    "sounds/weapons/sg556/sg556_03.vsnd_c": "15e9e1f6e5b0d5e2cf4545cca88db973dc98a652e12c543b89afd95e34f1647a",
+    "sounds/weapons/sg556/sg556_distant.vsnd_c": "0cf21beb9c34cf65cbf4649d69301471abe83a92e032fddaea5220b7e62d7324",
+    "sounds/weapons/aug/aug_01.vsnd_c": "2f012adad08466da701d0729c89a625c33e2b8335e41f35a0ff3c21bd882881c",
+    "sounds/weapons/aug/aug_02.vsnd_c": "fa2893cbc73494e4f1862177dd2a9f13258d54fe7a34db1ad9169e6913a925b8",
+    "sounds/weapons/aug/aug_03.vsnd_c": "6050e0329279e18ba391480b68b24a122ff060920f4816cccf078a43754b32ae",
+    "sounds/weapons/aug/aug_distant.vsnd_c": "7d4b8d8913e3e87787343ae99ee0060280cb424ec8576333e4bc4d8c40315cc5",
+    "sounds/weapons/mp9/mp9_01.vsnd_c": "6ad7ecd0f1fe893388cc3880fd6885d6a302b3fb2147b83b7fcd44706b488013",
+    "sounds/weapons/mp9/mp9_02.vsnd_c": "ad8e0b422dc9213be8a0117f25ef9607e08dcd920a3a67b79116cb5a68d45f48",
+    "sounds/weapons/mp9/mp9_03.vsnd_c": "ab23c0c935146309ffcb6d24d405e3204a2076a94437ad58b4a2e9ce70162b00",
+    "sounds/weapons/mp9/mp9-1-distant.vsnd_c": "e63754930f221e4def0fcb65605283a582f507bb733967faa80486488224bade",
+    "sounds/weapons/mp7/mp7_01.vsnd_c": "ce85fa1c4b56479226f31b3a643102b5d6624b770a5912ab0e2ab739865b1c9f",
+    "sounds/weapons/mp7/mp7_02.vsnd_c": "37164c395e6e08b1e09878aad99a6de7d9d461663ef82869f53912070396ee25",
+    "sounds/weapons/mp7/mp7_03.vsnd_c": "ae2b10a9bf92e8c1d1703f53f738953bceb6169d27b14ea792e8e80ac6e0e69a",
+    "sounds/weapons/mp7/mp7-1-distant.vsnd_c": "fc98ecae234d17125c3e0373bb7b1af63faca7cedde3488ed1460c8b82a41b25",
+    "sounds/weapons/mp5/mp5_01.vsnd_c": "bd573081cf07b6ed8fa1babcf5bb415f306514062efce0fad5cddcbb2234ca52",
+    "sounds/weapons/mac10/mac10_01.vsnd_c": "0194cde422d948b1302b95c9a2faa437cecb4d72172673f14cc4ae05e883fddf",
+    "sounds/weapons/mac10/mac10_02.vsnd_c": "1d0bc621daacb265b0f97330cecc72c6ca1cc8c64b01d6bdd60c95bcb267b63f",
+    "sounds/weapons/mac10/mac10-1-distant.vsnd_c": "bc5d56231d1671a5954ff475365d326978ecddb99dab3f1529cb12b874308a12",
+    "sounds/weapons/ump45/ump45_02.vsnd_c": "abe09c701d0f1593ed57a5255c734f8c6528f312c9ef56338c488783f2018f9d",
+    "sounds/weapons/ump45/ump45-1-distant.vsnd_c": "e69bc0d651897fb0b178a9e1b3d04c92a4c95baa9c471f44ce01458fd66b06ec",
+    "sounds/weapons/p90/p90_01.vsnd_c": "b1fb388a1e86fad805338828159d8262c5b4c46cae0f120e5bc740de6af402e6",
+    "sounds/weapons/p90/p90_02.vsnd_c": "65f36b89c8942adc9edf965783e7c2e213c27b31dcf5c938c156b8ea5ce6af9b",
+    "sounds/weapons/p90/p90-1-distant.vsnd_c": "23f6ddb7dadc84070513d679ee98a53a92ab660a7279d6cc13bf0baa2026562b",
+    "sounds/weapons/bizon/bizon_01.vsnd_c": "6e274feb7a8b33b5211e362357499b8d69242f843137c111dc0c9e54abd77982",
+    "sounds/weapons/bizon/bizon_02.vsnd_c": "4f1b2a6edb2e01a76567d5be5b7d61997b6502a26b1ef08cb09abc58d608572a",
+    "sounds/weapons/bizon/bizon-1-distant.vsnd_c": "04ea202bc47680176daa704fa0caffe015e8067d0014f3d97a32e59e8f001717",
+    "sounds/weapons/m249/m249_01.vsnd_c": "5df6b4173b1bb0ac6aa10b08b2a5f092f895f55f7ce06aab9d7830e196b4ead2",
+    "sounds/weapons/m249/m249_02.vsnd_c": "338a1306d52aa08e482921cf2a76787d4946258c270851ce168ae901b6b8da98",
+    "sounds/weapons/m249/m249_03.vsnd_c": "34d4580db0b5dc796c93bdf5ad805505304fe179d938fb6695bd120eb54c5c0a",
+    "sounds/weapons/m249/m249-1-distant.vsnd_c": "56251df0bdd9e9e4d07cce7abe14db2bfe716e0e7a347cb47bb6a1dd038052d2",
+    "sounds/weapons/m249/m249_jangle_01.vsnd_c": "5ab3c18918946a7f149549cc860133baf236e236dfc484dacc3f6bdfe5ec8882",
+    "sounds/weapons/m249/m249_jangle_02.vsnd_c": "8b7d864d46e918c2eff14e44a05d32d3a26ea91c844c8a70c31606ec5978916c",
+    "sounds/weapons/m249/m249_jangle_03.vsnd_c": "39232728214752ae38e0cbb55640e2ce0d248e6299ac8a4b476aaba32e7694a7",
+    "sounds/weapons/negev/negev_01.vsnd_c": "aa339f342c4c9a658cda1856140d094ebf8ef4d1fa6e4a17dcb812efc2557059",
+    "sounds/weapons/negev/negev_02.vsnd_c": "6e3437d26a785b4ccef3775eef4aa5483872753f3ebcba3f604995c6d4ae97f5",
+    "sounds/weapons/negev/negev-1-distant.vsnd_c": "a9a9fb1610a5746a3db009d12cb8244e08b4785e8b4b6116ffec81382bbd6cc0",
+    "sounds/weapons/cz75a/cz75_01.vsnd_c": "b7e272c6776dd7fec82da048f32e68b364b8b1159289ed4ba4192d6d8fd2c978",
+    "sounds/weapons/cz75a/cz75_02.vsnd_c": "2604f40fd2b908166db271ae5fef38bcee725f5b8d005c105df6855f0eca2d65",
+    "sounds/weapons/cz75a/cz75_03.vsnd_c": "bcaf067e7b546baa1f832a62c0435fbdfe5db719c8dd447c6177d66e295e47ff",
+    "sounds/weapons/cz75a/cz75a-1-distant.vsnd_c": "754fad6b190ef2a464e0ba0e5fd6196e807d7a417eee670ea0ae72c30914b801",
+    "sounds/weapons/usp/usp_01.vsnd_c": "76e22ba9d7ed038a406dfdc6594117d997bf1929a6db2b26d56e928dd5dfd871",
+    "sounds/weapons/usp/usp_02.vsnd_c": "680d709d2ab7a94e5ce0796267dad2b4dde295c3ae85cc809e9c1d7e415806fd",
+    "sounds/weapons/usp/usp_03.vsnd_c": "615a037bb6fe35ceb05a15bde85abc3d96c89bffaaf7d0c3c91cfa67a56eba7f",
+    "sounds/weapons/glock18/glock_02.vsnd_c": "1900c472d3ae7cac08dc868a7e464c2a53d49e6639617cf9816fcc0c62147b2f",
+    "sounds/weapons/glock18/glock18-1-distant.vsnd_c": "93f0d4e37811452e8c254745c3ecb3d857c2f1093f477e0c0ba9c12404f4e48b",
+    "sounds/weapons/glock18/glock_element_crb_01.vsnd_c": "45067131aad4c9cb8036827d73d5f81b9fc8dc9000163b9d9bc7e23b7a3c5310",
+    "sounds/weapons/glock18/glock_element_crb_02.vsnd_c": "f61d38734936444f3b7210f8a0a477b848c17de2c608064e20faa06a5b6e797f",
+    "sounds/weapons/glock18/glock_element_click_01.vsnd_c": "876fc793dd032ec86cdca339c5b7f02a78f2005d0c6ac13389ae747316ca2ffd",
+    "sounds/weapons/hkp2000/hkp2000_01.vsnd_c": "ec5b313b34059d749bb394dcfdcb99e785ed39bba490b8609b0b44ddec4f565d",
+    "sounds/weapons/hkp2000/hkp2000_02.vsnd_c": "0266cc71953d16ac6d8816ccfcb43151c608cc73eea31ced6f0aeb40e411755c",
+    "sounds/weapons/hkp2000/hkp2000_03.vsnd_c": "6c8aa3d53528286b45ff60f31b5fbd1ade34093e61b2348f6fd2d1cf5cce0e3c",
+    "sounds/weapons/hkp2000/hkp2000-1-distant.vsnd_c": "de2e9413c4a940b6030e0f0e28bf87931408932f2b38c2dd5499de4581e91fca",
+    "sounds/weapons/p250/p250_01.vsnd_c": "c9bf44d0dffef220592160ce19834b109ad6d4143576798e8c508167bd2aac76",
+    "sounds/weapons/p250/p250_distant_01.vsnd_c": "73e0acdbd99aa997ec8216a08067e60a04294a99153f63887e4c5cc787a59432",
+    "sounds/weapons/deagle/deagle_01.vsnd_c": "3f1da4f7560cf8d4ac25df1b160be8a7e594a29e36f3eddac8b8c355ddfdad29",
+    "sounds/weapons/deagle/deagle_02.vsnd_c": "dd0cf2e050b571726cc15b2da807fea8ceb743bbd6b5bb123ee8e40d7ecdd9ba",
+    "sounds/weapons/deagle/deagle-1-distant.vsnd_c": "e9013d707233bb5337b8d2c703ccb1ee1d2f0cfcd8ba65759653f8886a2d674f",
+    "sounds/weapons/elite/elites_01.vsnd_c": "c3725bf488e23726573e7f4589063499c6da065b9dc61cebd73323df23e6982a",
+    "sounds/weapons/elite/elites_02.vsnd_c": "6b74abe8f3964a0a44e891b0bceac04cc5bf79a60b8c61e4152eb87f07bd3d6c",
+    "sounds/weapons/elite/elites_03.vsnd_c": "9702b6bdd1a733ba9c4298d77317573724d0b4e1883531b0380e3121155faf6d",
+    "sounds/weapons/elite/elite-1-distant.vsnd_c": "126c41b293e3a08c77e92f2728ea67ae5c50dadb6d7b76c5c5d27f6727c36d61",
+    "sounds/weapons/fiveseven/fiveseven_01.vsnd_c": "6acd3c82c5f202a717ed561ad51ea009cb68b2b6046968fac687739a370fb994",
+    "sounds/weapons/fiveseven/fiveseven-1-distant.vsnd_c": "ac9743da70d4313cdd637ac51db5b46ab9413c67b6d46d4b462223fa33a83fb3",
+    "sounds/weapons/tec9/tec9_02.vsnd_c": "d651f57c33763a74534296b57b45f8f095a2714ebe1c919f029711e872ad4820",
+    "sounds/weapons/tec9/tec9_distant_01.vsnd_c": "4513a4db6dcc84e0d5bb075d16e288d215492a8c279cf5c108d34f30bec1b6e5",
+    "sounds/weapons/revolver/revolver-1_01.vsnd_c": "e3e421aea8ff0b0e3b55608833f1dd28beea74a67d7ccd44d6e8513c487c69f6",
+    "sounds/weapons/revolver/revolver-1_distant.vsnd_c": "94d8e58de9fe18423665efdad326cfc93536b9e671117bb40494ab55583b0c49",
+    "sounds/weapons/awp/awp_01.vsnd_c": "61c140a662357aed1463d7819be558e04efe455838c77fd8e9cc01f06fcdce78",
+    "sounds/weapons/awp/awp_02.vsnd_c": "60ab3551649438c928b356de0091d7753932ce6081a42c5366ae8b10e4e3cc3c",
+    "sounds/weapons/awp/awp_distant.vsnd_c": "50f6d0a91898a72de3d65ef363e0d5a4fc8e6f111bef7ab44caee80cd0d37902",
+    "sounds/weapons/ssg08/ssg08_01.vsnd_c": "a5fc39c2cd984aa867f9a5df260b4dccad68fc7eb64e84a2f7ee79a03cdcbc23",
+    "sounds/weapons/ssg08/ssg08_distant.vsnd_c": "cb80deb433d5640df6bfacf0aa483625d6ea491f9320178fbc269d81a8225e07",
+    "sounds/weapons/g3sg1/g3sg1_01.vsnd_c": "f8931c58fb14431ae9c08536597574cb1528c77746738877b9f904f77c44efc4",
+    "sounds/weapons/g3sg1/g3sg1_02.vsnd_c": "eacde5b9d4a1b45fc0056aadb29f9cf5cadc3895a4f3e4fed785dfd7e7be7678",
+    "sounds/weapons/g3sg1/g3sg1_03.vsnd_c": "167ae969a04996a31273e4d350010d6771d9aba02eb589a526deed0a546210f1",
+    "sounds/weapons/g3sg1/g3sg1_distant_01.vsnd_c": "e66b402d0b2dc4ddf4ac4fe8fc837bd2f036f9c3d808ff95ce7a5a57c6f925a5",
+    "sounds/weapons/g3sg1/g3sg1_distant_02.vsnd_c": "eedc6508b78bd713c9a30635619f640e34ae79c9a17bac33f46807c6bb966162",
+    "sounds/weapons/g3sg1/g3sg1_distant_03.vsnd_c": "319965033e70c0d887dd7ce5db90576bbbd55747451c7dc76732d87f2716e705",
+    "sounds/weapons/scar20/scar20_01.vsnd_c": "7d4c4589bc2ae058d053392b0ed958803ab74f5bb5669d2fe5d6411a72fd4ec9",
+    "sounds/weapons/scar20/scar20_02.vsnd_c": "3409a5874e1529c28d6d0eb5cd9340d459524acf0371e79c2dafa8b4c8739293",
+    "sounds/weapons/scar20/scar20_03.vsnd_c": "6bcd0091edfc355d5c8cedb798fdd9131a533a593bb01be0585896701482fe60",
+    "sounds/weapons/scar20/scar20_distant_01.vsnd_c": "363837fb1af1a6389adcdc8907caca87358b5143bae2805106ffa21adb79c736",
+    "sounds/weapons/nova/nova-1.vsnd_c": "4f1282a4149f689894b067901e65f44a4660818e502b16c2716232723b9f2b0b",
+    "sounds/weapons/nova/nova-1-distant.vsnd_c": "16624f7752339d7a02dadb10d83e3633fba8f2e898622d8e858e07e0c0378cd8",
+    "sounds/weapons/xm1014/xm1014-1.vsnd_c": "dc8ec7cb9861552bb815a852c5198b6e190bd50f817591f6e63bcb952038f4ef",
+    "sounds/weapons/xm1014/xm1014-1-distant.vsnd_c": "b92924175c6161f9e927f95d41736cb1c48cd738830e1b217240ed3ab9745374",
+    "sounds/weapons/mag7/mag7_01.vsnd_c": "7455942fd2a9c839decb9be0b666f2809e6e96c4ae0b546a4465134bc305b823",
+    "sounds/weapons/mag7/mag7_02.vsnd_c": "f0775fb470fae89919a93d0e81f1eeb86ddea9f402a234b6526a754c49dc3343",
+    "sounds/weapons/mag7/mag7_distant_01.vsnd_c": "101bffb308b8f8a3315c769105a674a03577b559839ad24d688736ac0670d34a",
+    "sounds/weapons/mag7/mag7_distant_02.vsnd_c": "8a7221528de10bcf13ab4c77ecf9818d4e2907aeb3d8f459c238820e03c28461",
+    "sounds/weapons/sawedoff/sawedoff-1.vsnd_c": "bb9f8ec5b9f87c2911a8f7c86900a079fa27ab699b1393a55fe0a875eaee7798",
+    "sounds/weapons/sawedoff/sawedoff-1-distant.vsnd_c": "9d683d5979815ae58db0896178720d67ea98e6a9b645f01461538f0be93f8f1e",
+    "sounds/weapons/taser/taser_shoot.vsnd_c": "8ecae3e28b1709c5608fd3e3b2e1ca5733a5677437bcaa3f28dcbd9f5d3617c9",
+    "sounds/weapons/taser/taser_charging.vsnd_c": "64f34aa123b7670ae8288c8cd21222d9366fb60927f8dfc2014cb2e7b8d7f1b0",
+    "sounds/weapons/knife/knife_slash1.vsnd_c": "b1f0a5b84578e8a294ddd57d92c845f93886e394e625e1821763823dc62453d0",
+    "sounds/weapons/knife/knife_slash2.vsnd_c": "4b26b7222abc5eaddcedf5e326f7863406e25368dd0b7ccd1fda743ec55ac119"
+  },
+  "sampleLimit": 3,
+  "samples": 113,
+  "outputBytes": 39849334,
+  "method": "Offline Source2Viewer static extraction. Enabled native child events retained; no game module execution.",
+  "limits": "Browser HRTF, mixgroups, DSP, curve interpolation and thresholds are adaptations, not complete Source 2 mixer parity.",
+  "weapons": {
+    "ak47": {
+      "source": "Weapon_AK47.Single",
+      "volume": 1.1,
+      "distanceCurve": [
+        [
+          25,
+          0.8
+        ],
+        [
+          30,
+          1
+        ],
+        [
+          175.714279,
+          1
+        ],
+        [
+          440,
+          0.735294
+        ],
+        [
+          1288,
+          0.330882
+        ],
+        [
+          2500,
+          0.014706
+        ]
+      ],
+      "dependencies": [
+        {
+          "source": "Weapon_AK47.SingleDistant",
+          "volume": 0.5,
+          "distanceCurve": [
+            [
+              800,
+              0
+            ],
+            [
+              2335.836914,
+              0.540441
+            ],
+            [
+              2868.571533,
+              0.095588
+            ]
+          ],
+          "dependencies": []
+        }
+      ]
+    },
+    "m4a4": {
+      "source": "Weapon_M4A4.Single",
+      "volume": 1,
+      "distanceCurve": [
+        [
+          25,
+          0.8
+        ],
+        [
+          30,
+          1
+        ],
+        [
+          175.714279,
+          1
+        ],
+        [
+          440,
+          0.735294
+        ],
+        [
+          1288,
+          0.330882
+        ],
+        [
+          2500,
+          0.018382
+        ]
+      ],
+      "dependencies": [
+        {
+          "source": "Weapon_M4A4.SingleDistant",
+          "volume": 1,
+          "distanceCurve": [
+            [
+              800,
+              0
+            ],
+            [
+              2354.285645,
+              0.336806
+            ],
+            [
+              2868.571533,
+              0.095588
+            ]
+          ],
+          "dependencies": []
+        }
+      ]
+    },
+    "m4a1s": {
+      "source": "Weapon_M4A1.Silenced",
+      "volume": 0.8,
+      "distanceCurve": [
+        [
+          25,
+          0.7
+        ],
+        [
+          30,
+          1
+        ],
+        [
+          164,
+          1
+        ],
+        [
+          428,
+          0.618557
+        ],
+        [
+          804,
+          0.226804
+        ],
+        [
+          1300,
+          0.05
+        ],
+        [
+          1400,
+          0
+        ]
+      ],
+      "dependencies": []
+    },
+    "galil": {
+      "source": "Weapon_GalilAR.Single",
+      "volume": 1,
+      "distanceCurve": [
+        [
+          25,
+          0.8
+        ],
+        [
+          30,
+          1
+        ],
+        [
+          175.714279,
+          1
+        ],
+        [
+          440,
+          0.735294
+        ],
+        [
+          1288,
+          0.330882
+        ],
+        [
+          2500,
+          0.022059
+        ]
+      ],
+      "dependencies": [
+        {
+          "source": "Weapon_GalilAR.SingleDistant",
+          "volume": 1,
+          "distanceCurve": [
+            [
+              800,
+              0
+            ],
+            [
+              2352.22876,
+              0.503676
+            ],
+            [
+              2868.571533,
+              0.172794
+            ]
+          ],
+          "dependencies": []
+        }
+      ]
+    },
+    "famas": {
+      "source": "Weapon_FAMAS.Single",
+      "volume": 0.9,
+      "distanceCurve": [
+        [
+          25,
+          0.8
+        ],
+        [
+          30,
+          1
+        ],
+        [
+          175.714279,
+          1
+        ],
+        [
+          440,
+          0.735294
+        ],
+        [
+          1288,
+          0.330882
+        ],
+        [
+          2500,
+          0.033088
+        ]
+      ],
+      "dependencies": [
+        {
+          "source": "Weapon_FAMAS.SingleDistant",
+          "volume": 1,
+          "distanceCurve": [
+            [
+              800,
+              0
+            ],
+            [
+              2354.285645,
+              0.336806
+            ],
+            [
+              2868.571533,
+              0.095588
+            ]
+          ],
+          "dependencies": []
+        },
+        {
+          "source": "Weapon_FAMAS.Mech",
+          "volume": 0.35,
+          "distanceCurve": [
+            [
+              45.942856,
+              1
+            ],
+            [
+              441.051422,
+              0.444853
+            ],
+            [
+              914.262878,
+              0
+            ]
+          ],
+          "dependencies": []
+        }
+      ]
+    },
+    "sg553": {
+      "source": "Weapon_sg556.Single",
+      "volume": 0.9,
+      "distanceCurve": [
+        [
+          25,
+          0.8
+        ],
+        [
+          30,
+          1
+        ],
+        [
+          175.714279,
+          1
+        ],
+        [
+          440,
+          0.735294
+        ],
+        [
+          1288,
+          0.330882
+        ],
+        [
+          2500,
+          0.025735
+        ]
+      ],
+      "dependencies": [
+        {
+          "source": "Weapon_sg556.SingleDistant",
+          "volume": 1,
+          "distanceCurve": [
+            [
+              800,
+              0
+            ],
+            [
+              2354.285645,
+              0.336806
+            ],
+            [
+              2868.571533,
+              0.095588
+            ]
+          ],
+          "dependencies": []
+        }
+      ]
+    },
+    "aug": {
+      "source": "Weapon_AUG.Single",
+      "volume": 0.9,
+      "distanceCurve": [
+        [
+          25,
+          0.8
+        ],
+        [
+          30,
+          1
+        ],
+        [
+          175.714279,
+          1
+        ],
+        [
+          440,
+          0.735294
+        ],
+        [
+          1288,
+          0.330882
+        ],
+        [
+          2500,
+          0.014706
+        ]
+      ],
+      "dependencies": [
+        {
+          "source": "Weapon_AUG.SingleDistant",
+          "volume": 1,
+          "distanceCurve": [
+            [
+              800,
+              0
+            ],
+            [
+              2327.640869,
+              0.408088
+            ],
+            [
+              2868.571533,
+              0.095588
+            ]
+          ],
+          "dependencies": []
+        }
+      ]
+    },
+    "mp9": {
+      "source": "Weapon_MP9.Single",
+      "volume": 0.75,
+      "distanceCurve": [
+        [
+          25,
+          0.8
+        ],
+        [
+          30,
+          1
+        ],
+        [
+          175.714279,
+          1
+        ],
+        [
+          440,
+          0.735294
+        ],
+        [
+          1288,
+          0.330882
+        ],
+        [
+          2500,
+          0.018382
+        ]
+      ],
+      "dependencies": [
+        {
+          "source": "Weapon_MP9.SingleDistant",
+          "volume": 1,
+          "distanceCurve": [
+            [
+              800,
+              0
+            ],
+            [
+              2354.285645,
+              0.336806
+            ],
+            [
+              2868.571533,
+              0.095588
+            ]
+          ],
+          "dependencies": []
+        }
+      ]
+    },
+    "mp7": {
+      "source": "Weapon_MP7.Single",
+      "volume": 1,
+      "distanceCurve": [
+        [
+          25,
+          0.8
+        ],
+        [
+          30,
+          1
+        ],
+        [
+          175.714279,
+          1
+        ],
+        [
+          440,
+          0.735294
+        ],
+        [
+          1288,
+          0.330882
+        ],
+        [
+          2500,
+          0.022059
+        ]
+      ],
+      "dependencies": [
+        {
+          "source": "Weapon_MP7.SingleDistant",
+          "volume": 1,
+          "distanceCurve": [
+            [
+              483.559204,
+              0
+            ],
+            [
+              2354.285645,
+              0.336806
+            ],
+            [
+              2868.571533,
+              0.095588
+            ]
+          ],
+          "dependencies": []
+        }
+      ]
+    },
+    "mp5sd": {
+      "source": "Weapon_MP5.Single",
+      "volume": 1,
+      "distanceCurve": [
+        [
+          25,
+          0.8
+        ],
+        [
+          30,
+          1
+        ],
+        [
+          164,
+          1
+        ],
+        [
+          428,
+          0.618557
+        ],
+        [
+          804,
+          0.226804
+        ],
+        [
+          1300,
+          0.05
+        ],
+        [
+          1400,
+          0
+        ]
+      ],
+      "dependencies": []
+    },
+    "mac10": {
+      "source": "Weapon_MAC10.Single",
+      "volume": 0.65,
+      "distanceCurve": [
+        [
+          25,
+          0.8
+        ],
+        [
+          30,
+          1
+        ],
+        [
+          175.714279,
+          1
+        ],
+        [
+          440,
+          0.735294
+        ],
+        [
+          1288,
+          0.330882
+        ],
+        [
+          2500,
+          0
+        ]
+      ],
+      "dependencies": [
+        {
+          "source": "Weapon_MAC10.SingleDistant",
+          "volume": 1,
+          "distanceCurve": [
+            [
+              800,
+              0
+            ],
+            [
+              2354.285645,
+              0.336806
+            ],
+            [
+              2868.571533,
+              0.095588
+            ]
+          ],
+          "dependencies": []
+        }
+      ]
+    },
+    "ump45": {
+      "source": "Weapon_UMP45.Single",
+      "volume": 0.9,
+      "distanceCurve": [
+        [
+          25,
+          0.8
+        ],
+        [
+          30,
+          1
+        ],
+        [
+          175.714279,
+          1
+        ],
+        [
+          440,
+          0.735294
+        ],
+        [
+          1288,
+          0.330882
+        ],
+        [
+          2500,
+          0
+        ]
+      ],
+      "dependencies": [
+        {
+          "source": "Weapon_UMP45.SingleDistant",
+          "volume": 1,
+          "distanceCurve": [
+            [
+              336.032684,
+              0
+            ],
+            [
+              1942.432739,
+              0.338235
+            ],
+            [
+              2868.571533,
+              0.095588
+            ]
+          ],
+          "dependencies": []
+        }
+      ]
+    },
+    "p90": {
+      "source": "Weapon_P90.Single",
+      "volume": 0.8,
+      "distanceCurve": [
+        [
+          25,
+          0.8
+        ],
+        [
+          30,
+          1
+        ],
+        [
+          175.714279,
+          1
+        ],
+        [
+          440,
+          0.735294
+        ],
+        [
+          1288,
+          0.330882
+        ],
+        [
+          2500,
+          0
+        ]
+      ],
+      "dependencies": [
+        {
+          "source": "Weapon_P90.SingleDistant",
+          "volume": 1,
+          "distanceCurve": [
+            [
+              90.155106,
+              0
+            ],
+            [
+              245.877563,
+              0.106618
+            ],
+            [
+              2008.000122,
+              0.341912
+            ],
+            [
+              2868.571533,
+              0.095588
+            ]
+          ],
+          "dependencies": []
+        }
+      ]
+    },
+    "bizon": {
+      "source": "Weapon_bizon.Single",
+      "volume": 0.8,
+      "distanceCurve": [
+        [
+          25,
+          0.8
+        ],
+        [
+          30,
+          1
+        ],
+        [
+          175.714279,
+          1
+        ],
+        [
+          440,
+          0.735294
+        ],
+        [
+          1288,
+          0.330882
+        ],
+        [
+          2500,
+          0
+        ]
+      ],
+      "dependencies": [
+        {
+          "source": "Weapon_bizon.SingleDistant",
+          "volume": 1,
+          "distanceCurve": [
+            [
+              800,
+              0
+            ],
+            [
+              2354.285645,
+              0.336806
+            ],
+            [
+              2868.571533,
+              0.095588
+            ]
+          ],
+          "dependencies": []
+        }
+      ]
+    },
+    "m249": {
+      "source": "Weapon_M249.Single",
+      "volume": 1.7,
+      "distanceCurve": [
+        [
+          25,
+          0.8
+        ],
+        [
+          30,
+          0.8
+        ],
+        [
+          175.714279,
+          0.8
+        ],
+        [
+          1157.142822,
+          0.290441
+        ],
+        [
+          2500,
+          0.011029
+        ]
+      ],
+      "dependencies": [
+        {
+          "source": "Weapon_M249.SingleDistant",
+          "volume": 1,
+          "distanceCurve": [
+            [
+              352.4245,
+              0
+            ],
+            [
+              2081.763428,
+              0.488971
+            ],
+            [
+              2868.571533,
+              0.095588
+            ]
+          ],
+          "dependencies": []
+        },
+        {
+          "source": "Weapon_M249.Jangle",
+          "volume": 0.15,
+          "distanceCurve": [
+            [
+              33.428574,
+              1
+            ],
+            [
+              237.428574,
+              0
+            ]
+          ],
+          "dependencies": []
+        }
+      ]
+    },
+    "negev": {
+      "source": "Weapon_Negev.Single",
+      "volume": 1,
+      "distanceCurve": [
+        [
+          25,
+          0.8
+        ],
+        [
+          30,
+          1
+        ],
+        [
+          175.714279,
+          1
+        ],
+        [
+          440,
+          0.735294
+        ],
+        [
+          1288,
+          0.330882
+        ],
+        [
+          2500,
+          0
+        ]
+      ],
+      "dependencies": [
+        {
+          "source": "Weapon_Negev.SingleDistant",
+          "volume": 1,
+          "distanceCurve": [
+            [
+              401.600037,
+              0
+            ],
+            [
+              2354.285645,
+              0.336806
+            ],
+            [
+              2868.571533,
+              0.095588
+            ]
+          ],
+          "dependencies": []
+        }
+      ]
+    },
+    "cz75a": {
+      "source": "Weapon_CZ75A.Single",
+      "volume": 0.8,
+      "distanceCurve": [
+        [
+          25,
+          0.8
+        ],
+        [
+          30,
+          1
+        ],
+        [
+          175.714279,
+          1
+        ],
+        [
+          440,
+          0.735294
+        ],
+        [
+          1288,
+          0.330882
+        ],
+        [
+          2500,
+          0.011029
+        ]
+      ],
+      "dependencies": [
+        {
+          "source": "Weapon_CZ75A.SingleDistant",
+          "volume": 0.6,
+          "distanceCurve": [
+            [
+              800,
+              0
+            ],
+            [
+              2352.22876,
+              0.253676
+            ],
+            [
+              2868.571533,
+              0.095588
+            ]
+          ],
+          "dependencies": []
+        }
+      ]
+    },
+    "usp": {
+      "source": "Weapon_USP.SilencedShot",
+      "volume": 0.6,
+      "distanceCurve": [
+        [
+          25,
+          0.8
+        ],
+        [
+          30,
+          1
+        ],
+        [
+          164,
+          1
+        ],
+        [
+          428,
+          0.618557
+        ],
+        [
+          804,
+          0.226804
+        ],
+        [
+          1300,
+          0.05
+        ],
+        [
+          1400,
+          0
+        ]
+      ],
+      "dependencies": []
+    },
+    "glock": {
+      "source": "Weapon_Glock.Single",
+      "volume": 1,
+      "distanceCurve": [
+        [
+          25,
+          0.8
+        ],
+        [
+          30,
+          1
+        ],
+        [
+          175.714279,
+          1
+        ],
+        [
+          440,
+          0.735294
+        ],
+        [
+          1288,
+          0.330882
+        ],
+        [
+          2500,
+          0
+        ]
+      ],
+      "dependencies": [
+        {
+          "source": "Weapon_Glock.SingleDistant",
+          "volume": 0.7,
+          "distanceCurve": [
+            [
+              800,
+              0
+            ],
+            [
+              2354.285645,
+              0.336806
+            ],
+            [
+              2868.571533,
+              0.095588
+            ]
+          ],
+          "dependencies": []
+        },
+        {
+          "source": "Weapon_Glock.Element_CRB",
+          "volume": 0.2,
+          "distanceCurve": [
+            [
+              175.714279,
+              1
+            ],
+            [
+              552,
+              0.547794
+            ],
+            [
+              1240,
+              0.194853
+            ],
+            [
+              2800,
+              0
+            ]
+          ],
+          "dependencies": []
+        },
+        {
+          "source": "Weapon_Glock.Element_Click",
+          "volume": 0.3,
+          "distanceCurve": [
+            [
+              34.57143,
+              1
+            ],
+            [
+              300,
+              0
+            ]
+          ],
+          "dependencies": []
+        }
+      ]
+    },
+    "hkp2000": {
+      "source": "Weapon_hkp2000.Single",
+      "volume": 1,
+      "distanceCurve": [
+        [
+          25,
+          0.8
+        ],
+        [
+          30,
+          1
+        ],
+        [
+          175.714279,
+          1
+        ],
+        [
+          440,
+          0.735294
+        ],
+        [
+          1288,
+          0.330882
+        ],
+        [
+          2500,
+          0.022059
+        ]
+      ],
+      "dependencies": [
+        {
+          "source": "Weapon_hkp2000.SingleDistant",
+          "volume": 1,
+          "distanceCurve": [
+            [
+              458.971466,
+              0
+            ],
+            [
+              2335.836914,
+              0.584559
+            ],
+            [
+              2868.571533,
+              0.095588
+            ]
+          ],
+          "dependencies": []
+        }
+      ]
+    },
+    "p250": {
+      "source": "Weapon_P250.Single",
+      "volume": 0.9,
+      "distanceCurve": [
+        [
+          25,
+          0.8
+        ],
+        [
+          30,
+          1
+        ],
+        [
+          175.714279,
+          1
+        ],
+        [
+          440,
+          0.735294
+        ],
+        [
+          1288,
+          0.330882
+        ],
+        [
+          2500,
+          0
+        ]
+      ],
+      "dependencies": [
+        {
+          "source": "Weapon_P250.SingleDistant",
+          "volume": 1,
+          "distanceCurve": [
+            [
+              499.95105,
+              0
+            ],
+            [
+              1917.844971,
+              0.341912
+            ],
+            [
+              2868.571533,
+              0.095588
+            ]
+          ],
+          "dependencies": []
+        }
+      ]
+    },
+    "deagle": {
+      "source": "Weapon_DEagle.Single",
+      "volume": 0.9,
+      "distanceCurve": [
+        [
+          25,
+          0.8
+        ],
+        [
+          30,
+          1
+        ],
+        [
+          175.714279,
+          1
+        ],
+        [
+          440,
+          0.735294
+        ],
+        [
+          1288,
+          0.330882
+        ],
+        [
+          2500,
+          0.014706
+        ]
+      ],
+      "dependencies": [
+        {
+          "source": "Weapon_DEagle.SingleDistant",
+          "volume": 1,
+          "distanceCurve": [
+            [
+              800,
+              0
+            ],
+            [
+              2354.285645,
+              0.336806
+            ],
+            [
+              2868.571533,
+              0.095588
+            ]
+          ],
+          "dependencies": []
+        }
+      ]
+    },
+    "elite": {
+      "source": "Weapon_ELITE.Single",
+      "volume": 1,
+      "distanceCurve": [
+        [
+          25,
+          0.8
+        ],
+        [
+          30,
+          1
+        ],
+        [
+          175.714279,
+          1
+        ],
+        [
+          440,
+          0.735294
+        ],
+        [
+          1288,
+          0.330882
+        ],
+        [
+          2500,
+          0.022059
+        ]
+      ],
+      "dependencies": [
+        {
+          "source": "Weapon_ELITE.SingleDistant",
+          "volume": 1,
+          "distanceCurve": [
+            [
+              800,
+              0
+            ],
+            [
+              2368.620605,
+              0.227941
+            ],
+            [
+              2868.571533,
+              0.095588
+            ]
+          ],
+          "dependencies": []
+        }
+      ]
+    },
+    "fiveseven": {
+      "source": "Weapon_FiveSeven.Single",
+      "volume": 1,
+      "distanceCurve": [
+        [
+          25,
+          0.8
+        ],
+        [
+          30,
+          1
+        ],
+        [
+          175.714279,
+          1
+        ],
+        [
+          440,
+          0.735294
+        ],
+        [
+          1288,
+          0.330882
+        ],
+        [
+          2500,
+          0.011029
+        ]
+      ],
+      "dependencies": [
+        {
+          "source": "Weapon_FiveSeven.SingleDistant",
+          "volume": 1,
+          "distanceCurve": [
+            [
+              800,
+              0
+            ],
+            [
+              2354.285645,
+              0.336806
+            ],
+            [
+              2868.571533,
+              0.095588
+            ]
+          ],
+          "dependencies": []
+        }
+      ]
+    },
+    "tec9": {
+      "source": "Weapon_tec9.Single",
+      "volume": 0.8,
+      "distanceCurve": [
+        [
+          25,
+          0.8
+        ],
+        [
+          30,
+          1
+        ],
+        [
+          175.714279,
+          1
+        ],
+        [
+          440,
+          0.735294
+        ],
+        [
+          1288,
+          0.330882
+        ],
+        [
+          2500,
+          0.022059
+        ]
+      ],
+      "dependencies": [
+        {
+          "source": "Weapon_tec9.SingleDistant",
+          "volume": 1,
+          "distanceCurve": [
+            [
+              800,
+              0
+            ],
+            [
+              2354.285645,
+              0.336806
+            ],
+            [
+              2868.571533,
+              0.095588
+            ]
+          ],
+          "dependencies": []
+        }
+      ]
+    },
+    "revolver": {
+      "source": "Weapon_Revolver.Single",
+      "volume": 0.8,
+      "distanceCurve": [
+        [
+          25,
+          0.8
+        ],
+        [
+          30,
+          1
+        ],
+        [
+          175.714279,
+          1
+        ],
+        [
+          440,
+          0.735294
+        ],
+        [
+          1288,
+          0.330882
+        ],
+        [
+          2500,
+          0.018382
+        ]
+      ],
+      "dependencies": [
+        {
+          "source": "Weapon_Revolver.SingleDistant",
+          "volume": 0.7,
+          "distanceCurve": [
+            [
+              800,
+              0
+            ],
+            [
+              2354.285645,
+              0.336806
+            ],
+            [
+              2868.571533,
+              0.095588
+            ]
+          ],
+          "dependencies": []
+        }
+      ]
+    },
+    "awp": {
+      "source": "Weapon_AWP.Single",
+      "volume": 1,
+      "distanceCurve": [
+        [
+          175.714279,
+          1
+        ],
+        [
+          440,
+          0.735294
+        ],
+        [
+          1288,
+          0.330882
+        ],
+        [
+          2800,
+          0.047794
+        ]
+      ],
+      "dependencies": [
+        {
+          "source": "Weapon_AWP.SingleDistant",
+          "volume": 1,
+          "distanceCurve": [
+            [
+              800,
+              0
+            ],
+            [
+              2354.285645,
+              0.336806
+            ],
+            [
+              2868.571533,
+              0.095588
+            ]
+          ],
+          "dependencies": []
+        }
+      ]
+    },
+    "ssg08": {
+      "source": "Weapon_SSG08.Single",
+      "volume": 0.8,
+      "distanceCurve": [
+        [
+          25,
+          0.8
+        ],
+        [
+          30,
+          1
+        ],
+        [
+          175.714279,
+          1
+        ],
+        [
+          578.571411,
+          0.764706
+        ],
+        [
+          1342.857178,
+          0.389706
+        ],
+        [
+          2500,
+          0.033088
+        ]
+      ],
+      "dependencies": [
+        {
+          "source": "Weapon_SSG08.SingleDistant",
+          "volume": 1,
+          "distanceCurve": [
+            [
+              524.538818,
+              0
+            ],
+            [
+              2016.196045,
+              0.341912
+            ],
+            [
+              2868.571533,
+              0.095588
+            ]
+          ],
+          "dependencies": []
+        }
+      ]
+    },
+    "g3sg1": {
+      "source": "Weapon_G3SG1.Single",
+      "volume": 1,
+      "distanceCurve": [
+        [
+          25,
+          0.8
+        ],
+        [
+          30,
+          1
+        ],
+        [
+          175.714279,
+          1
+        ],
+        [
+          440,
+          0.735294
+        ],
+        [
+          1288,
+          0.330882
+        ],
+        [
+          2500,
+          0.011029
+        ]
+      ],
+      "dependencies": [
+        {
+          "source": "Weapon_G3SG1.SingleDistant",
+          "volume": 1,
+          "distanceCurve": [
+            [
+              800,
+              0
+            ],
+            [
+              2335.836914,
+              0.496324
+            ],
+            [
+              2868.571533,
+              0.180147
+            ]
+          ],
+          "dependencies": []
+        }
+      ]
+    },
+    "scar20": {
+      "source": "Weapon_SCAR20.Single",
+      "volume": 1,
+      "distanceCurve": [
+        [
+          25,
+          0.8
+        ],
+        [
+          30,
+          1
+        ],
+        [
+          175.714279,
+          1
+        ],
+        [
+          440,
+          0.735294
+        ],
+        [
+          1288,
+          0.330882
+        ],
+        [
+          2500,
+          0.014706
+        ]
+      ],
+      "dependencies": [
+        {
+          "source": "Weapon_SCAR20.SingleDistant",
+          "volume": 1,
+          "distanceCurve": [
+            [
+              800,
+              0
+            ],
+            [
+              2354.285645,
+              0.336806
+            ],
+            [
+              2868.571533,
+              0.095588
+            ]
+          ],
+          "dependencies": []
+        }
+      ]
+    },
+    "nova": {
+      "source": "Weapon_Nova.Single",
+      "volume": 0.9,
+      "distanceCurve": [
+        [
+          25,
+          0.8
+        ],
+        [
+          30,
+          1
+        ],
+        [
+          175.714279,
+          1
+        ],
+        [
+          440,
+          0.735294
+        ],
+        [
+          1178.571411,
+          0.3125
+        ],
+        [
+          2150,
+          0.011029
+        ]
+      ],
+      "dependencies": [
+        {
+          "source": "Weapon_Nova.SingleDistant",
+          "volume": 1,
+          "distanceCurve": [
+            [
+              458.971466,
+              0
+            ],
+            [
+              1942.432739,
+              0.375
+            ],
+            [
+              2868.571533,
+              0.095588
+            ]
+          ],
+          "dependencies": []
+        }
+      ]
+    },
+    "xm1014": {
+      "source": "Weapon_XM1014.Single",
+      "volume": 0.8,
+      "distanceCurve": [
+        [
+          25,
+          0.8
+        ],
+        [
+          30,
+          1
+        ],
+        [
+          175.714279,
+          1
+        ],
+        [
+          440,
+          0.735294
+        ],
+        [
+          1288,
+          0.330882
+        ],
+        [
+          2500,
+          0
+        ]
+      ],
+      "dependencies": [
+        {
+          "source": "Weapon_XM1014.SingleDistant",
+          "volume": 1,
+          "distanceCurve": [
+            [
+              434.383698,
+              0
+            ],
+            [
+              1942.432739,
+              0.327206
+            ],
+            [
+              2868.571533,
+              0.095588
+            ]
+          ],
+          "dependencies": []
+        }
+      ]
+    },
+    "mag7": {
+      "source": "Weapon_Mag7.Single",
+      "volume": 0.9,
+      "distanceCurve": [
+        [
+          25,
+          0.8
+        ],
+        [
+          30,
+          1
+        ],
+        [
+          175.714279,
+          1
+        ],
+        [
+          440,
+          0.735294
+        ],
+        [
+          1288,
+          0.330882
+        ],
+        [
+          2500,
+          0
+        ]
+      ],
+      "dependencies": [
+        {
+          "source": "Weapon_Mag7.SingleDistant",
+          "volume": 1,
+          "distanceCurve": [
+            [
+              800,
+              0
+            ],
+            [
+              2354.285645,
+              0.336806
+            ],
+            [
+              2868.571533,
+              0.095588
+            ]
+          ],
+          "dependencies": []
+        }
+      ]
+    },
+    "sawedoff": {
+      "source": "Weapon_Sawedoff.Single",
+      "volume": 0.9,
+      "distanceCurve": [
+        [
+          25,
+          0.8
+        ],
+        [
+          30,
+          1
+        ],
+        [
+          175.714279,
+          1
+        ],
+        [
+          440,
+          0.735294
+        ],
+        [
+          1288,
+          0.330882
+        ],
+        [
+          2500,
+          0
+        ]
+      ],
+      "dependencies": [
+        {
+          "source": "Weapon_Sawedoff.SingleDistant",
+          "volume": 1,
+          "distanceCurve": [
+            [
+              800,
+              0
+            ],
+            [
+              1827.689941,
+              0.415441
+            ],
+            [
+              2868.571533,
+              0.1875
+            ]
+          ],
+          "dependencies": []
+        }
+      ]
+    },
+    "zeus": {
+      "source": "Weapon_Taser.Single",
+      "volume": 0.35,
+      "distanceCurve": [
+        [
+          175.714279,
+          1
+        ],
+        [
+          847.714294,
+          0.261029
+        ],
+        [
+          2420.285645,
+          0
+        ]
+      ],
+      "dependencies": [
+        {
+          "source": "Weapon_Taser.Charging",
+          "volume": 0.2,
+          "distanceCurve": [
+            [
+              66.293526,
+              1
+            ],
+            [
+              155.708344,
+              0.444853
+            ],
+            [
+              504.407288,
+              0
+            ]
+          ],
+          "dependencies": []
+        }
+      ]
+    },
+    "knife": {
+      "source": "Weapon_Knife.Slash",
+      "volume": 0.3,
+      "distanceCurve": [
+        [
+          72,
+          1
+        ],
+        [
+          352,
+          0.283088
+        ],
+        [
+          800,
+          0
+        ]
+      ],
+      "dependencies": []
+    }
+  }
+}

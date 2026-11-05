@@ -3,6 +3,8 @@ import nativeFootsteps from './native-footsteps-data.json';
 import type {Equipment} from './equipment';
 import type {AcousticPath} from './spatial-audio';
 import type {ActorKinematics} from './actor-physics';
+import awarenessAudio from './awareness-native-audio.json';
+import weaponAudio from './weapon-sound-events-data.json';
 
 // Installed CS2 convar snapshot: sv_min_jump_landing_sound 260. Merely
 // reacquiring support on a ramp is not an audible jump landing.
@@ -11,6 +13,16 @@ export function audibleLanding(before: Pick<ActorKinematics,'grounded'|'landedAt
   after: Pick<ActorKinematics,'grounded'|'landedAt'|'landingVelocity'>) {
   return !before.grounded && !!after.grounded && after.landedAt !== undefined &&
     after.landedAt !== before.landedAt && (after.landingVelocity ?? 0) <= -MIN_AUDIBLE_LANDING_SPEED;
+}
+export const JUMP_SOUND_RANGE=awarenessAudio.jump.distanceCurve[awarenessAudio.jump.distanceCurve.length-1][0]*.0254;
+export const jumpSoundGain=(meters:number)=>awarenessAudio.jump.volume*distanceCurveGain(meters,awarenessAudio.jump.distanceCurve);
+export function audibleJump(before:Pick<ActorKinematics,'verticalVelocity'|'grounded'|'landedAt'>,after:Pick<ActorKinematics,'verticalVelocity'|'grounded'|'landedAt'>) {
+  return !after.grounded&&(after.verticalVelocity??0)>0&&(before.verticalVelocity??0)<=0&&
+    (before.grounded!==false||after.landedAt!==undefined&&after.landedAt!==before.landedAt);
+}
+/** Hull depenetration/support correction is not another walking stride. */
+export function strideTravel(traveled:number,velocity:{x:number;z:number},dt:number) {
+  return Math.max(0,Math.min(traveled,Math.hypot(velocity.x,velocity.z)*Math.max(0,dt)+1e-9));
 }
 
 export function sampleIndex(count: number, previous: number | undefined, random: number) {
@@ -21,7 +33,7 @@ export function sampleIndex(count: number, previous: number | undefined, random:
 }
 
 // Linear interpolation of extracted knots, not Source 2's full Hermite mixer.
-export function curveGain(units: number, points: number[][]) {
+export function curveGain(units: number, points: readonly (readonly number[])[]) {
   if (!points.length) return 1;
   if (units <= points[0][0]) return points[0][1];
   for (let i = 1; i < points.length; i++) if (units <= points[i][0]) {
@@ -29,6 +41,20 @@ export function curveGain(units: number, points: number[][]) {
     return py + (y - py) * (units - px) / (x - px);
   }
   return points[points.length - 1][1];
+}
+/** Shared support interval for trainer playback/hearing; not a measured hearing radius. */
+export function distanceCurveGain(meters:number,points:readonly (readonly number[])[]) {
+  return points.length&&meters/.0254>points[points.length-1][0]?0:curveGain(Math.max(0,meters)/.0254,points);
+}
+export type SoundEnvelope={volume:number;distanceCurve:readonly (readonly number[])[];dependencies?:readonly SoundEnvelope[]};
+export function soundEnvelopeRange(event:SoundEnvelope):number {
+  return Math.max(event.distanceCurve.length?event.distanceCurve[event.distanceCurve.length-1][0]*.0254:0,
+    ...(event.dependencies??[]).map(soundEnvelopeRange));
+}
+/** Audibility uses the strongest component, not an invented phase-coherent mix. */
+export function soundEnvelopeGain(event:SoundEnvelope,meters:number):number {
+  return Math.max(event.volume*(event.distanceCurve.length?distanceCurveGain(meters,event.distanceCurve):inverseDistanceGain(meters)),
+    ...(event.dependencies??[]).map(child=>soundEnvelopeGain(child,meters)));
 }
 export const footstepSurfaces: Readonly<Record<string, string>> = nativeFootsteps.surfaces;
 const footstepEvents: Readonly<Record<string, {volume: number; distanceCurve: number[][]}>> = nativeFootsteps.events;
@@ -42,16 +68,14 @@ const stepCurve = nativeFootsteps.events['step-concrete'].distanceCurve;
 export const FOOTSTEP_RANGE = stepCurve[stepCurve.length - 1][0] * .0254;
 export function footstepGain(meters: number, surface = 'concrete', landing = false) {
   const key = footstepEventKey(surface, landing), event = footstepEvents[key];
-  return key.endsWith('-silent') ? 0 : event.volume * curveGain(Math.max(0, meters) / .0254, event.distanceCurve);
+  return key.endsWith('-silent') ? 0 : event.volume * distanceCurveGain(meters, event.distanceCurve);
 }
 
 export function gunshotRange(equipment: Equipment) {
-  const points = soundEvents.weapons[equipment].distanceCurve;
-  return points[points.length - 1][0] * .0254;
+  return soundEnvelopeRange(weaponAudio.weapons[equipment]);
 }
 export function gunshotGain(equipment: Equipment, meters: number) {
-  const event = soundEvents.weapons[equipment];
-  return meters > gunshotRange(equipment) ? 0 : event.volume * curveGain(meters / .0254, event.distanceCurve);
+  return meters > gunshotRange(equipment) ? 0 : soundEnvelopeGain(weaponAudio.weapons[equipment],meters);
 }
 
 /** Both AI hearing and Web Audio use the path length and cover transmission, once each. */
@@ -66,7 +90,7 @@ export function propagatedCueGain(key: string, path: AcousticPath, silent = fals
   const cues = 'cues' in soundEvents ? soundEvents.cues as Record<string, {volume: number; distanceCurve: number[][]}> : {};
   const event = cues[key];
   if (silent || key.endsWith('-scope-out') || !event) return 0;
-  const attenuation = event.distanceCurve.length ? curveGain(path.distance / .0254, event.distanceCurve)
+  const attenuation = event.distanceCurve.length ? distanceCurveGain(path.distance, event.distanceCurve)
     : inverseDistanceGain(path.distance);
   return event.volume * attenuation * path.gain;
 }

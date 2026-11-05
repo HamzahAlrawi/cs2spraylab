@@ -1,5 +1,6 @@
 import type {Mode} from './config';
 export const modeInfo: Record<Mode, {benefit: string; task: string; spread: boolean}> = {
+  awareness:{benefit:'Turn sound into map awareness',task:'Learn native-map audio with brief source reveals, reduce assistance to a direction hint, then shoot toward hidden sound sources unaided. Compare assisted and unaided direction and answer-time results separately.',spread:true},
   hearing: {benefit: 'Locate opponents before you see them', task: 'Listen to the hidden footsteps or gunfire, then mark their direction and distance. Compare your estimate with the revealed source.', spread: true},
   duel: {benefit: 'Win cleaner duels', task: 'Pre-aim, use cover to isolate a fight and counter-strafe for the opening shot. Review first-bullet placement, shot timing and spray control after the fight.', spread: true},
   prefire: {benefit: 'Clear common angles with better crosshair placement', task: 'Pre-aim the next common angle, slice the pie and stop before firing. Use the angle review to repeat a weak entry, not just race the route timer.', spread: true},

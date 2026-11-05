@@ -2,6 +2,7 @@ import {describe, expect, it} from 'vitest';
 import {equipmentIds} from './equipment';
 import soundEvents from './sound-events-data.json';
 import nativeFootsteps from './native-footsteps-data.json';
+import weaponAudio from './weapon-sound-events-data.json';
 import {ActionSoundTimeline, curveGain, footstepEventKey, footstepGain, FOOTSTEP_RANGE, gunshotGain, gunshotRange, propagatedGunshotGain, propagatedFootstepGain, sampleIndex} from './sound-model';
 import {AcousticScene} from './spatial-audio';
 
@@ -39,7 +40,7 @@ describe('native weapon hearing metadata', () => {
         expect(units).toBeGreaterThanOrEqual(0);
         expect(gain).toBeGreaterThanOrEqual(0);
         if (index) expect(units).toBeGreaterThan(event.distanceCurve[index - 1][0]);
-        expect(gunshotGain(equipment, units * .0254)).toBeCloseTo(event.volume * gain, 8);
+        expect(curveGain(units,event.distanceCurve)).toBeCloseTo(gain,8);
       });
       expect(gunshotGain(equipment, gunshotRange(equipment) + .01)).toBe(0);
     }
@@ -54,10 +55,17 @@ describe('native weapon hearing metadata', () => {
   });
 
   it('does not assign unsuppressed rifle range to a suppressed weapon', () => {
-    expect(gunshotRange('ak47')).toBeCloseTo(2500 * .0254, 8);
+    expect(gunshotRange('ak47')).toBeCloseTo(2868.571533 * .0254, 8);
     expect(gunshotRange('m4a1s')).toBeLessThan(gunshotRange('ak47'));
     expect(gunshotGain('m4a1s', 40)).toBe(0);
     expect(gunshotGain('ak47', 40)).toBeGreaterThan(.1);
+  });
+  it('retains current native distant reports without changing primary source curves',()=>{
+    expect(weaponAudio.build).toBe('2000942');
+    expect(weaponAudio.weapons.ak47.distanceCurve).toEqual(soundEvents.weapons.ak47.distanceCurve);
+    expect(weaponAudio.weapons.ak47.dependencies[0].source).toBe('Weapon_AK47.SingleDistant');
+    expect(gunshotGain('ak47',70)).toBeGreaterThan(.02);
+    expect(gunshotGain('ak47',74)).toBe(0);
   });
 });
 

@@ -13,6 +13,7 @@ import {NATIVE_GRENADE_FLIGHT,nativeGrenadeContact,nativeGrenadeThinkTick,native
 import {nativeFlashArguments,NATIVE_GRENADE_FLASH} from './grenade-native-flash';
 import {nativeFlashVisibility} from './grenade-flash-visibility';
 import {InfernoSpread,nativeInfernoDamage} from './inferno-native';
+import {projectInfernoChild} from './inferno-terrain';
 import {pointInSmokeHole, SMOKE_EXTINCTION, HE_SMOKE_DISPLACEMENT} from './smoke-density';
 import {HE_EXPLOSION_SECONDS} from './he-explosion';
 
@@ -269,11 +270,7 @@ export class UtilitySimulation {
       });
       for (const id of this.smokePreparations.keys()) if (!this.moving.some(p => p.id === id)) this.smokePreparations.delete(id);
       for(const effect of this.active)if(effect.type==='fire'&&effect.inferno) {
-        effect.cells=effect.inferno.advance(now,(from,point)=>{
-          const candidate=this.floor({...point,y:point.y+.3},arena);
-          return candidate&&Math.abs(candidate.y-from.y)<=.35&&
-            clear(add(from,{x:0,y:.1,z:0}),add(candidate,{x:0,y:.1,z:0}),arena)?candidate:undefined;
-        });
+        effect.cells=effect.inferno.advance(now,(from,point)=>projectInfernoChild(from,point,arena,UTILITY_RULES.minFireNormal));
         effect.expiresAt=effect.inferno.expiresAt;
       }
       if (now >= this.nextExtinguishAt) {

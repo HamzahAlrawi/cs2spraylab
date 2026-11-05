@@ -149,7 +149,8 @@ export class RangeEngine {
     this.shotEffects = new ShotEffects(this.scene); this.viewFlashes = new MuzzleFlashes(this.viewScene, 2);
     this.updateDemonstration();
     this.sim.onShot = s => this.shot(s);
-    this.sim.onSound = landing => this.audio.playStep(this.sim.settings.volume * .45, 0, landing);
+    this.sim.onSound = landing => this.audio.playStep(this.sim.settings.volume * .45, 0, landing,undefined,'concrete',0);
+    this.sim.onJump=()=>this.audio.playEvent('jump',this.sim.settings.volume*.45);
     this.observer = new ResizeObserver(() => this.resize()); this.observer.observe(host);
     this.bindInput(); this.resize();
     void this.loadTarget(); void this.setWeapon(loadoutWeapon(settings)).then(() => this.preloadWeapons());

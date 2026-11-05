@@ -536,7 +536,7 @@ const november5CombatChanges = {
   ],
 } as const satisfies ChangelogRelease;
 
-export const latestChanges = {
+const november5RewardsChanges = {
   id: 'update-2026-11-05-rewards-cover', title: 'Better cover & a rewarding practice loop (November 5)', baselineCommit: '3910a1e',
   sections: [
     {id: 'whole-body-cover', title: 'Stronger cover discipline', items: [
@@ -554,7 +554,28 @@ export const latestChanges = {
   ],
 } as const satisfies ChangelogRelease;
 
+export const latestChanges = {
+  id:'update-2026-11-05-sound-awareness',title:'Map sound awareness & multi-level fire (November 5)',baselineCommit:'250cb1e',
+  sections:[
+    {id:'map-sound-awareness',title:'Learn the sound of an angle',items:[
+      'A separate native-map sound drill offers brief screen/radar source reveals, coarse direction hints and unaided shooting estimates. Maps and areas use the shared registry, streamed assets, collision, camera and movement; Dust 2 is currently available.',
+      'Running, jumping, firing and reload demonstrators use shared bot actions and native samples. Grenade impacts and bursts reveal the grenade source, not a guaranteed thrower position. ClientOnly grenade draw/pin foley is excluded from enemy-location drills.',
+      'Direction error, active answer time, optional distance error and saved practice results distinguish assisted/unaided setups. Replayed or paused estimates do not inflate first-listen results. Audio drills do not award Duel combat XP.',
+    ]},
+    {id:'sound-audit-2000942',title:'Audited audio cues',items:[
+      'Installed build 2000942 supplies a jump-launch sample, a refreshed utility bank and complete enabled weapon sound children, including distant reports. Per-actor native footstep block duration prevents same-frame step bursts; support corrections no longer count as strides. Playback and hearing use the same sound envelopes.',
+      'The Dust 2 source physics resource and footstep bank still match their pinned hashes. A native CT corridor/ramp regression checks progress, step spacing and absence of false landing bursts; no map collider was removed by appearance alone.',
+      'Sound fields and source hashes are verified statically. Browser HRTF, curve interpolation, doorway routing and audible thresholds remain documented adaptations, not exact Source 2 audio parity.',
+    ]},
+    {id:'multi-elevation-inferno',title:'Fire across supported elevations',items:[
+      'Molotov/incendiary children project across supported stairs and downward ledges instead of a flat 35 cm band. Current native trace bounds guide the bounded projection, with wall/ceiling rejection, 3D range limits and the existing per-pass trace budget.',
+      'Terrain projection remains an explicit browser adapter. Native timers and damage fixtures are retained; complete Source 2 propagation/RNG equivalence is not claimed.',
+    ]},
+  ],
+} as const satisfies ChangelogRelease;
+
 export const changelogHistory = [
+  november5RewardsChanges,
   november5CombatChanges,
   november4Changes,
   october31CombatMovementChanges,

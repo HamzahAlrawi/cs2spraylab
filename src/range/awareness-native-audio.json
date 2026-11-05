@@ -1,0 +1,135 @@
+{
+  "build": "2000942",
+  "source": "soundevents/game_sounds_player.vsndevts_c",
+  "sourceSha256": "2408be34e284133481e3f311df8c006e459ecb8f59c69c624ecfa053c6a0daae",
+  "decompiledSha256": "35b2ca5d4be176b7690a94521f8278a8456ff3b91142d7acf013d0af4cf89409",
+  "sampleSource": "sounds/player/footsteps/jump_launch_01.vsnd_c",
+  "sampleSha256": "79d9d60b43ae215b933f7c3ebfff030fb247a71581f71b9f712838f77a3cc42b",
+  "jump": {
+    "source": "Default.WalkJump",
+    "samples": [
+      "/audio/native/jump-79d9d60b43ae215b.wav"
+    ],
+    "sampleSources": [
+      "sounds/player/footsteps/jump_launch_01.vsnd"
+    ],
+    "volume": 0.1,
+    "pitch": 1.1,
+    "positionOffset": [
+      0,
+      0,
+      30
+    ],
+    "distanceCurve": [
+      [
+        40,
+        1
+      ],
+      [
+        155.714294,
+        0.263889
+      ],
+      [
+        493.714294,
+        0
+      ]
+    ]
+  },
+  "footsteps": {
+    "source": "soundevents/game_sounds_footsteps.vsndevts_c",
+    "sourceSha256": "ae98b09cac5978787f5866796f18d4437c060b99a4ce9094f6b44e8e07ea639a",
+    "decompiledSha256": "a5e880fb7f55be614163bb9058b10dd39f318411e6891448f5bfb6cdb09dfccc",
+    "blockDuration": 0.15
+  },
+  "cues": {
+    "utility-he-bounce": {
+      "source": "HEGrenade.Bounce",
+      "volume": 0.8,
+      "pitch": 1,
+      "distanceCurve": [
+        [
+          28.285715,
+          1
+        ],
+        [
+          306,
+          0.276923
+        ],
+        [
+          791.714294,
+          0.053846
+        ],
+        [
+          1700,
+          0
+        ]
+      ]
+    },
+    "utility-smoke-bounce": {
+      "source": "SmokeGrenade.Bounce",
+      "volume": 0.6,
+      "pitch": 1,
+      "distanceCurve": [
+        [
+          28.285715,
+          1
+        ],
+        [
+          306,
+          0.276923
+        ],
+        [
+          791.714294,
+          0.053846
+        ],
+        [
+          1700,
+          0
+        ]
+      ]
+    },
+    "utility-he-detonate": {
+      "source": "BaseGrenade.Explode",
+      "volume": 1,
+      "pitch": 1,
+      "distanceCurve": [
+        [
+          0,
+          1
+        ],
+        [
+          231.428574,
+          1
+        ],
+        [
+          779.142883,
+          0.569231
+        ],
+        [
+          2700,
+          0
+        ]
+      ]
+    },
+    "utility-flash-detonate": {
+      "source": "Flashbang.Explode",
+      "volume": 0.4,
+      "pitch": 1,
+      "distanceCurve": [
+        [
+          0,
+          1
+        ],
+        [
+          84,
+          1
+        ],
+        [
+          2740,
+          0
+        ]
+      ]
+    }
+  },
+  "note": "Native static sound fields; broadcast_distance_override is radar broadcasting metadata, not the audible cutoff. Browser panning/occlusion and interpolation are approximations."
+}
