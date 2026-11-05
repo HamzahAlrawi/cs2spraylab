@@ -3,6 +3,7 @@ import sharp from 'sharp';
 import {canvasColors} from './render-frame';
 
 async function rangeEngine(page: Page) {
+  await page.waitForFunction(() => performance.getEntriesByType('resource').some(entry => entry.name.includes('/src/range/engine.ts')));
   await page.evaluate(async () => {
     const url = performance.getEntriesByType('resource').find(entry => entry.name.includes('/src/range/engine.ts'))!.name;
     const {RangeEngine} = await import(/* @vite-ignore */ url);
@@ -31,12 +32,16 @@ test('guided Deagle survives repeated taps, reloads and weapon switching', async
     if (mobile) await canvas.tap(); else {await page.mouse.down(); await page.mouse.up();}
     await page.waitForTimeout(260);
   }
-  await expect(page.getByTestId('ammo')).toHaveText('2/ 21');
+  await expect(page.getByTestId('ammo')).toHaveText('2/ \u221e');
   const recoil = await page.evaluate(() => (window as any).performanceEngine.sim.recoil.pitch);
   expect(recoil).toBeGreaterThan(0);
   if (mobile) await page.getByRole('button',{name:'Reload',exact:true}).click(); else await page.keyboard.press('r');
   await expect(page.locator('.hud-ammo')).toContainText('Reloading');
-  await expect(page.getByTestId('ammo')).toHaveText('7/ 16',{timeout:10000});
+  await expect(page.getByTestId('ammo')).toHaveText('7/ \u221e',{timeout:10000});
+  // Ammo commits before the reload tail finishes; a full magazine alone does
+  // not mean the native fire-readiness gate has opened.
+  await page.waitForFunction(() => {const s=(window as any).performanceEngine.sim;
+    return !s.reloadState.active && s.time>=Math.max(s.equipReadyAt,s.actions.readyAt,s.shotReady.get(s.equipped)??0);});
   for (let i = 0; i < 10; i++) {
     if (mobile) await canvas.tap(); else {await page.mouse.down(); await page.mouse.up();}
     await page.waitForTimeout(40);

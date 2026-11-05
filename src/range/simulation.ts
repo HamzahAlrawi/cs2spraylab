@@ -94,6 +94,8 @@ export class Simulation {
   ammoFor(id: Equipment) {
     let state = this.ammoStates.get(id);
     if (!state) {state = new NativeReloadState(id); this.ammoStates.set(id, state);}
+    state.infiniteReserve = this.settings.mode !== 'duel';
+    if (state.infiniteReserve) state.reserve = Math.max(state.reserve, state.stats.magazine);
     return state;
   }
   get reloadState() {return this.ammoFor(this.equipped);}

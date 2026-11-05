@@ -21,8 +21,8 @@ function brain(arena:Arena) {
 }
 
 describe('contextual angle preference and facing',()=>{
-  it('holds a useful covered common angle without needing to see the player first',()=>{
-    const arena=map(),policy=brain(arena),bot=actor();policy.phase='setup';
+  it('allows lower-skill holders to wait at an eye-safe but partly exposed common angle',()=>{
+    const arena=map(),bot=actor(),policy=new TacticalBrain({...createBotTraits(2,17,1),preaimErrorDegrees:0,lowAimTendency:0},'holder',1,()=>.5,arena,2,'ak47',1);policy.phase='setup';
     for(let tick=1;tick<4/STEP;tick++) {
       const time=tick*STEP;if(tick%4===0)policy.perceive({time,self:bot,visible:null});
       const command=policy.command(bot,time);bot.yaw+=command.yawDelta??0;bot.pitch+=command.pitchDelta??0;

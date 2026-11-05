@@ -70,6 +70,7 @@ export type ReloadActionEvent = {kind: 'reload-start' | 'reload-shell' | 'reload
 export class NativeReloadState {
   ammo: number;
   reserve: number;
+  infiniteReserve = false;
   phase: ReloadPhase = 'idle';
   empty = false;
   silent = false;
@@ -97,6 +98,7 @@ export class NativeReloadState {
   get ammoCommitAt() {return this.phase === 'magazine' && !this.ammoCommitted
     ? this.lastTime + Math.max(0, this.commitWork - (this.phaseDuration - this.remaining)) * (this.silent ? this.silentMultiplier : 1) : 0;}
   start(time: number, silent = false) {
+    if (this.infiniteReserve) this.reserve = Math.max(this.reserve, this.stats.magazine);
     if (this.active || this.id === 'knife' || this.id === 'zeus' || this.ammo >= this.stats.magazine || this.reserve <= 0) return false;
     this.empty = this.ammo === 0; this.silent = silent; this.startedAt = this.lastTime = time;
     const timing = nativeReloadTiming(this.id, this.empty);
@@ -117,7 +119,7 @@ export class NativeReloadState {
     if (this.phase === 'magazine' && !this.ammoCommitted &&
       this.phaseDuration - this.remaining + work + 1e-9 >= this.commitWork) {
       const inserted = Math.min(this.stats.magazine - this.ammo, this.reserve);
-      this.ammo += inserted; this.reserve -= inserted; this.ammoCommitted = true;
+      this.ammo += inserted; if (!this.infiniteReserve) this.reserve -= inserted; this.ammoCommitted = true;
     }
     this.lastTime = Math.max(this.lastTime, time);
     while (this.active && work + 1e-9 >= this.remaining) {
@@ -129,7 +131,7 @@ export class NativeReloadState {
         this.emit('reload-end', boundaryAt); this.cancel(false);
       } else if (this.phase === 'finish') {this.emit('reload-end', boundaryAt); this.cancel(false);}
       else {
-        if (this.phase === 'shell') {this.ammo++; this.reserve--; this.emit('reload-shell', boundaryAt);}
+        if (this.phase === 'shell') {this.ammo++; if (!this.infiniteReserve) this.reserve--; this.emit('reload-shell', boundaryAt);}
         this.phase = this.ammo >= this.stats.magazine || this.reserve <= 0 ? 'finish' : 'shell';
         this.remaining = this.phase === 'finish' ? SHELL_RELOAD_FINISH : this.stats.reload;
       }

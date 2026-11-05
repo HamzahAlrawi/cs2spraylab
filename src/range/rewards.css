@@ -1,0 +1,59 @@
+.progression-armory {background:#1c1e22;border-color:#52545b;width:1120px;color:#eff0f2}
+.progression-armory-content {padding:24px 28px}
+.progression-armory .progression-armory-header h2 {font-size:22px}
+.progression-account {padding:20px 0;gap:28px;border-color:#3e4148}
+.progression-level progress {height:7px}.progression-level>svg {width:32px;height:32px;color:#7dd8c8}
+.progression-level-label strong {font-size:17px}.progression-wallet strong {font-size:26px;color:#f0cf7b}
+.progression-views {margin-top:0;position:sticky;top:-1px;z-index:2;background:#1c1e22;border-color:#42454d;gap:10px}
+.progression-views button {min-height:46px;font-size:12px;padding:8px 10px;gap:6px}
+.progression-views button[aria-pressed=true] {border-bottom-color:#7dd8c8;color:#fff}
+.progression-action-notice:empty {margin:10px 0}.rewards-account-tools {margin-top:28px;border-top:1px solid #42454d}
+.rewards-account-tools summary {padding:12px 0}
+.rewards-section-title {display:flex;justify-content:space-between;align-items:center;gap:16px;min-width:0;margin:18px 0 12px}
+.rewards-section-title>div {min-width:0}.rewards-section-title small {font-size:10px;color:#a7adb8}
+.rewards-overview h3,.progression-armory .rewards-overview h3 {margin:0;color:#f0f1f5;font-size:16px;line-height:1.5;font-weight:600;text-transform:none}
+.rewards-section-title>span {display:inline-flex;align-items:center;gap:6px;font-size:11px;color:#efd18c;flex:none;font-variant-numeric:tabular-nums}
+.rewards-section-title button {display:inline-flex;align-items:center;gap:5px;border:0;background:transparent;padding:6px 0;color:#8fe5d7;font:inherit;font-size:11px;cursor:pointer}
+.rewards-journey {display:flex;align-items:center;gap:18px;padding:18px 0 22px;border-bottom:1px solid #42454d}
+.rewards-journey>svg {color:#eaca7a;flex:none}.rewards-journey>div {flex:1;min-width:0}.rewards-journey strong {display:block;font-size:14px;font-weight:600;overflow-wrap:anywhere}
+.rewards-journey>div>span {display:block;font-size:11px;color:#b9bec8;margin:5px 0;font-variant-numeric:tabular-nums}
+.rewards-journey progress {height:6px;display:block;width:100%;max-width:430px}.rewards-journey button {color:#f0cf7b;border-color:#796d4c;font-size:11px}
+.rewards-goals {border-bottom:1px solid #42454d;padding-bottom:22px}
+.rewards-goals ul {list-style:none;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:22px;margin:0;padding:0}
+.rewards-goals li {display:flex;gap:10px;min-width:0}.rewards-goals li>svg {color:#7dd8c8;flex:none;margin-top:2px}.rewards-goals li>div {min-width:0;flex:1}
+.rewards-goals strong {font-size:12px;line-height:1.5;display:block;overflow-wrap:anywhere}.rewards-goals p {font-size:11px;line-height:1.5;color:#aeb4bf;margin:6px 0 10px;min-height:34px}
+.rewards-goals progress {display:block;width:100%;height:4px;margin-bottom:5px}.rewards-goals small {font-size:10px;color:#bdc4cf;font-variant-numeric:tabular-nums}
+.rewards-eligible ul {list-style:none;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:0;padding:0}
+.rewards-eligible li {min-width:0}.rewards-eligible li button {display:flex;flex-direction:column;align-items:stretch;min-height:196px;width:100%;padding:14px;border:1px solid #454951;border-bottom:2px solid #80cbbf;background:#24272d;color:#f3f3f6;border-radius:6px;text-align:left;font:inherit;cursor:pointer}
+.rewards-eligible li button:hover {border-color:#8edccf;background:#2b3036}
+.rewards-eligible .progression-preview {height:110px}.rewards-eligible strong {font-size:12px;line-height:1.5;overflow-wrap:anywhere;min-height:36px}
+.rewards-eligible li button>span:last-child {display:flex;align-items:center;gap:5px;color:#efce7b;font-size:11px;margin-top:8px;flex-wrap:wrap;font-variant-numeric:tabular-nums}
+.rewards-eligible li button>span:last-child small {margin-left:auto;font-size:10px;color:#aebec1}
+.rewards-next-finish {display:flex;align-items:center;gap:12px;width:100%;margin-top:16px;padding:12px 0;background:transparent;border:0;border-top:1px solid #454951;color:#e3e5eb;text-align:left;font:inherit;cursor:pointer}
+.rewards-next-finish>span {font-size:9px;color:#ddadbf;flex:none}.rewards-next-finish>strong {font-size:12px;min-width:0;overflow-wrap:anywhere}.rewards-next-finish>small {font-size:10px;white-space:nowrap;margin-left:auto;color:#b8bec9}.rewards-next-finish svg {flex:none}
+.rewards-complete {font-size:12px;color:#bdc4cf}
+.armory-browser {gap:24px;grid-template-columns:minmax(0,1fr) 300px}
+.progression-choice {background:#24272d;border-color:#42464e;border-radius:6px;padding:12px;min-height:204px;transition:border-color .12s ease,background .12s ease}
+.progression-choice:hover {background:#2b3036;border-color:#839a9a}.progression-choice[aria-pressed=true] {border-color:#82d6c5;box-shadow:inset 0 0 0 1px #82d6c5}
+.progression-choice .progression-preview {height:108px}.progression-choice-name {font-size:12px;min-height:38px;font-weight:600}
+.armory-detail {border-left-color:#41464e}.armory-detail>.progression-preview {height:220px;background:#272b32;border-radius:6px}
+.armory-status {font-size:11px}.armory-status.is-locked {color:#efb1c6}.armory-detail-facts>div {border-color:#42464e}
+.armory-progress-steps {list-style:none;padding:0;margin:12px 0;display:flex;gap:8px;flex-wrap:wrap;font-size:10px;color:#babfca}
+.armory-progress-steps li {display:inline-flex;align-items:center;gap:4px}.armory-progress-steps .is-met {color:#8bdfcf}
+.armory-funding progress {display:block;width:100%;height:4px}.armory-funding small {display:block;font-size:10px;margin:5px 0 12px;color:#bec4cf}
+.progression-achievements .achievement-overview {padding:16px 0 18px;gap:16px;border-color:#42464e}.achievement-overview>svg {width:42px;height:42px}
+.progression-armory .achievement-overview h3 {font-size:18px}.achievement-overview progress {height:6px}
+.achievement-list {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 26px}
+.achievement-row {gap:12px;border-color:#42464e;padding:18px 0;min-width:0}.achievement-emblem {width:42px;height:42px;background:#292c33;border-color:#4d515a}
+.achievement-row:not(.is-earned) .achievement-combat {color:#dfae86}.achievement-row:not(.is-earned) .achievement-technique {color:#8acfc7}.achievement-row:not(.is-earned) .achievement-training {color:#afc79c}.achievement-row:not(.is-earned) .achievement-collection {color:#d4a6c1}.achievement-row:not(.is-earned) .achievement-career {color:#dbc681}
+.achievement-title {display:block}.achievement-title>span {display:block;margin-top:2px;text-transform:uppercase;font-size:9px}.achievement-detail p {font-size:11px;color:#bac0cb;line-height:1.6}
+.achievement-progress {gap:8px}.achievement-progress progress {max-width:none}.achievement-progress>span {font-size:10px}
+.progression-achievements .progression-filter {grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.achievement-search {grid-column:1/-1}
+@media(min-width:1000px) {.progression-items {grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:900px) {.progression-armory-content{padding:20px}.armory-browser{grid-template-columns:minmax(0,1fr) 260px}.progression-items{grid-template-columns:repeat(2,minmax(0,1fr))}.rewards-goals ul{gap:14px}.progression-views{gap:4px}}
+@media(max-width:720px) {.armory-browser{grid-template-columns:minmax(0,1fr)}.armory-detail>.progression-preview{height:170px}.rewards-goals ul{grid-template-columns:minmax(0,1fr);gap:14px}.rewards-goals p{min-height:0;margin:3px 0 6px}.rewards-eligible ul{gap:8px}.rewards-eligible li button{padding:10px;min-height:170px}.rewards-eligible .progression-preview{height:80px}.rewards-eligible li button>span:last-child small{margin:0;width:100%}.achievement-list{grid-template-columns:minmax(0,1fr)}.progression-views{position:static;flex-wrap:wrap}.rewards-section-title>span{font-size:10px}}
+@media(max-width:480px) {.progression-armory-content{padding:14px}.progression-account{gap:12px}.progression-views{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0}.progression-views button{font-size:11px;min-height:40px;padding:6px;gap:4px}.progression-views .progression-view-label{display:inline}.progression-wallet strong{font-size:22px}.rewards-section-title{align-items:flex-start}.rewards-overview h3,.progression-armory .rewards-overview h3{font-size:14px}.rewards-section-title>span{max-width:105px;flex-wrap:wrap;justify-content:flex-end;text-align:right}.rewards-journey{gap:10px;flex-wrap:wrap}.rewards-journey>svg{width:23px}.rewards-journey>div{min-width:160px}.rewards-journey button{margin-left:33px}.rewards-eligible ul{grid-template-columns:minmax(0,1fr)}.rewards-eligible li button{display:grid;grid-template-columns:110px minmax(0,1fr);align-items:center;gap:8px;min-height:104px}.rewards-eligible .progression-preview{grid-row:1/3;height:80px}.rewards-eligible strong{min-height:0}.rewards-eligible li button>span:last-child{margin-top:0}.rewards-next-finish{gap:8px;flex-wrap:wrap}.rewards-next-finish>span{width:100%}.rewards-next-finish>strong{flex:1}.progression-achievements .progression-filter{grid-template-columns:minmax(0,1fr)}.achievement-search{grid-column:auto}.armory-progress-steps,.armory-funding{grid-column:1/-1}.progression-account-history summary>span{float:none;display:block}.progression-filter label{min-width:100px}}
+@media(prefers-reduced-motion:reduce) {.progression-choice{transition:none}}
+@media(max-width:720px) {.armory-progress-steps,.armory-funding{grid-column:1/-1}}
+@media(max-width:480px) {.progression-armory .progression-views button:nth-child(n){width:100%;flex:none;min-width:0;white-space:normal}.progression-views button svg{flex:none}}
+@media(max-width:380px) {.progression-views{grid-template-columns:repeat(2,minmax(0,1fr))}.progression-views button:last-child{grid-column:1/-1}}

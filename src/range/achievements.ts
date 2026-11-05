@@ -3,7 +3,8 @@ import type {CosmeticDefinition, DrillMode, DuelXpResult, DuelXpSetup, Progressi
 export type AchievementCategory = 'combat' | 'technique' | 'training' | 'collection' | 'career';
 const modes: readonly DrillMode[] = ['guided', 'spray', 'transfer', 'peek', 'precision', 'burst'];
 const counters = ['duelWins', 'duelKills', 'duelHeadshots', 'winsLevel5', 'winsLevel10', 'fiveBotWins',
-  'flawlessWins', 'controlledRounds', 'accurateRounds', 'excellentWins', 'currentWinStreak', 'bestWinStreak'] as const;
+  'flawlessWins', 'controlledRounds', 'accurateRounds', 'excellentWins', 'currentWinStreak', 'bestWinStreak',
+  'cleanHeadRounds', 'efficientWins', 'comebackWins'] as const;
 type Counter = typeof counters[number];
 export type AchievementStats = Readonly<Record<Counter, number> & {drills: Readonly<Record<DrillMode, number>>}>;
 export type AchievementState = Readonly<{stats: AchievementStats; unlocked: Readonly<Record<string, number>>}>;
@@ -18,6 +19,9 @@ const drillNames: Readonly<Record<DrillMode, string>> = {
   guided: 'Guided spray', spray: 'Free spray', transfer: 'Spray transfer', peek: 'Peeking practice',
   precision: 'Counterstrafing practice', burst: 'Burst & reposition',
 };
+const tiers = (id: string, title: string, description: string, category: AchievementCategory, metric: Metric, targets: readonly number[]) =>
+  targets.map(target => badge(`${id}-${target}`, `${title} / ${target.toLocaleString('en-US')}`,
+    `${description.replace('{n}', target.toLocaleString('en-US'))}`, category, metric, target));
 export const ACHIEVEMENTS: readonly AchievementDefinition[] = Object.freeze([
   badge('first-blood', 'First blood', 'Eliminate your first AI Duel opponent.', 'combat', 'duelKills'),
   badge('kills-100', 'Century of duels', 'Eliminate 100 AI Duel opponents.', 'combat', 'duelKills', 100),
@@ -53,6 +57,28 @@ export const ACHIEVEMENTS: readonly AchievementDefinition[] = Object.freeze([
   badge('career-10', 'Dedicated', 'Reach player level 10.', 'career', 'level', 10),
   badge('career-50', 'Seasoned', 'Reach player level 50.', 'career', 'level', 50),
   badge('career-100', 'Centurion', 'Reach player level 100.', 'career', 'level', 100),
+  ...tiers('combat-kills', 'Frag ladder', 'Eliminate {n} AI Duel opponents.', 'combat', 'duelKills', [10,25,50,250,500,2500,5000,10000,25000]),
+  ...tiers('combat-heads', 'Headshot discipline', 'Land {n} AI Duel headshots.', 'combat', 'duelHeadshots', [10,25,50,250,500,2500,5000,10000]),
+  ...tiers('combat-wins', 'Duel circuit', 'Win {n} qualifying AI Duels.', 'combat', 'duelWins', [25,50,250,500,2500,5000]),
+  ...tiers('challenge-five', 'Climbing the ranks', 'Win {n} fair duels against level 5+ gun-equipped, armored, 100+ HP bots at 100%+ accuracy; player HP at most 100.', 'combat', 'winsLevel5', [5,25,100,500]),
+  ...tiers('challenge-ten', 'Elite circuit', 'Win {n} fair duels against level 10/10+ gun-equipped, armored, 100+ HP bots at 100%+ accuracy; player HP at most 100.', 'combat', 'winsLevel10', [5,10,25,50,250,500]),
+  ...tiers('challenge-five-bots', 'Outnumbered', 'Win {n} fair five-bot duels: armed, armored, 100+ HP, 100%+ accuracy; player HP at most 100.', 'combat', 'fiveBotWins', [5,10,25,100]),
+  ...tiers('challenge-flawless', 'Clean sheet', 'Win {n} fair duels without health damage: armed, armored, 100+ HP, 100%+ accuracy bots; player HP at most 100.', 'combat', 'flawlessWins', [5,25,100,500]),
+  ...tiers('technique-settled', 'Stop before the shot', 'Finish {n} duels with 10+ shots, 90%+ settled shots and no airborne shots.', 'technique', 'controlledRounds', [10,50,250,1000]),
+  ...tiers('technique-accuracy', 'Shots with purpose', 'Finish {n} duels with 10+ shots and at least 80% hit accuracy.', 'technique', 'accurateRounds', [10,50,250,1000]),
+  ...tiers('technique-score', 'Complete player', 'Win {n} duels with a feedback score of at least 90.', 'technique', 'excellentWins', [10,50,250,1000]),
+  ...tiers('combat-streak', 'On a heater', 'Win {n} consecutive qualifying AI Duels.', 'combat', 'bestWinStreak', [5,15,25]),
+  ...modes.flatMap(mode => tiers(`practice-${mode}`, `${drillNames[mode]} mastery`,
+    `Complete {n} qualifying ${drillNames[mode].toLowerCase()} attempts.`, 'training', `drill:${mode}`, [5,10,100,250,1000])),
+  ...tiers('practice-total', 'Time in the server', 'Complete {n} qualifying drill attempts.', 'training', 'completedDrills', [10,50,100,250,500,2500,5000]),
+  ...tiers('collect-finishes', 'Finish library', 'Own {n} non-default cosmetics.', 'collection', 'collection', [5,25,50,250,500]),
+  ...tiers('collect-knives', 'Blade archive', 'Own {n} non-default knife finishes.', 'collection', 'knives', [5,10,25,50]),
+  ...tiers('collect-gloves', 'Glove locker', 'Own {n} non-default glove finishes.', 'collection', 'gloves', [2,4,7]),
+  ...tiers('collect-agents', 'Full roster', 'Own {n} non-default bot agents.', 'collection', 'agents', [2,3,5]),
+  ...tiers('rank', 'Rank journey', 'Reach player level {n}.', 'career', 'level', [2,5,15,20,25,30,40,60,75,90]),
+  ...tiers('technique-head-line', 'Keep it head level', 'Finish {n} duels with 10+ shots, 4+ headshots and at least 80% of hits to the head.', 'technique', 'cleanHeadRounds', [1,10,50,250]),
+  ...tiers('technique-efficient', 'Economy of bullets', 'Win {n} fair multi-bot duels with no more than three shots per elimination; armed, armored, 100+ HP, 100%+ accuracy bots; player HP at most 100.', 'technique', 'efficientWins', [1,10,50,250]),
+  ...tiers('combat-recovery', 'Stay in the round', 'Win {n} fair duels after losing at least 50 HP; armed, armored, 100+ HP, 100%+ accuracy bots; player HP at most 100.', 'combat', 'comebackWins', [1,10,50,250]),
 ]);
 
 const MAX_COUNTER = 1_000_000_000_000;
@@ -87,6 +113,8 @@ export function recordDuelAchievements(state: AchievementState, setup: DuelXpSet
     stats.duelWins = increment(stats.duelWins);
     if (review.score !== null && review.score >= 90) stats.excellentWins = increment(stats.excellentWins);
     if (fairChallenge) {
+      if (review.kills >= 2 && review.shots >= review.kills && review.shots <= review.kills * 3) stats.efficientWins = increment(stats.efficientWins);
+      if (typeof review.taken === 'number' && review.taken >= 50 && review.taken < setup.playerHealth) stats.comebackWins = increment(stats.comebackWins);
       if (setup.bots.every(bot => bot.skill === '10+' || bot.skill >= 5)) stats.winsLevel5 = increment(stats.winsLevel5);
       if (setup.bots.every(bot => bot.skill === '10+' || bot.skill >= 10)) stats.winsLevel10 = increment(stats.winsLevel10);
       if (setup.bots.length === 5) stats.fiveBotWins = increment(stats.fiveBotWins);
@@ -94,6 +122,8 @@ export function recordDuelAchievements(state: AchievementState, setup: DuelXpSet
     }
   }
   if (review.shots >= 10) {
+    if (typeof review.heads === 'number' && Number.isInteger(review.heads) && review.heads >= 4 && review.heads <= review.hits &&
+      review.hits > 0 && review.heads / review.hits >= .8) stats.cleanHeadRounds = increment(stats.cleanHeadRounds);
     if (review.hits / review.shots >= .8) stats.accurateRounds = increment(stats.accurateRounds);
     if (typeof review.settled === 'number' && Number.isFinite(review.settled) && review.settled >= 90 && review.settled <= 100 &&
       review.airShots === 0 && Number.isInteger(review.movingShots) && review.movingShots! >= 0 && review.movingShots! <= review.shots * .1 &&

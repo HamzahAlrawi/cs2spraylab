@@ -22,6 +22,7 @@ import {narrowPassage, type NarrowPassage} from './narrow-passage';
 import {FlankPlan} from './flank-plan';
 import {combatMovement, combatRangeChanged, type CombatMovement} from './combat-movement';
 import {ExposureRecognition} from './recognition';
+import {bodyBehindCover, CoverDiscipline, findBodyCover, strictCover} from './cover-discipline';
 
 type Phase = 'approach' | 'setup' | 'expose' | 'brake' | 'attack' | 'return' | 'push' | 'investigate' | 'microstrafe' | 'reload' | 'close';
 type FightIntent = 'seek' | 'contest' | 'hold-angle' | 'reset' | 'change-angle' | 'close';
@@ -88,6 +89,7 @@ export class TacticalBrain {
   private engagementAt = -Infinity;
   private resetGoal: Vec | null = null;
   private resetCovered = false;
+  private resetDuck = false;
   private resetPlannedAt = -Infinity;
   private holdGeometryAt = -Infinity;
   private holdGeometryResult = false;
@@ -99,6 +101,7 @@ export class TacticalBrain {
   private combatMotion?: CombatMovement;
   private combatRange = Infinity;
   private readonly recognition = new ExposureRecognition();
+  private readonly coverDiscipline: CoverDiscipline;
   private motionRetryAt = -Infinity;
   private forceReposition = false;
   private lastHurtAt = -Infinity;
@@ -155,6 +158,7 @@ export class TacticalBrain {
       ? {...lane, role: nativeLaneRole(lane, arena.tactical?.watchPoints ?? [])} : lane);
     if (!lanes.length) throw new Error('Tactical brain needs cover lanes');
     this.stagger = Math.floor((actorId - 1) / 2) * .18;
+    this.coverDiscipline = new CoverDiscipline(level, actorId);
     this.style = combatStyle(level);
     this.personality = tacticalPersonality(traits, behavior, actorId);
     this.flankPlan = new FlankPlan(this.personality);
@@ -470,8 +474,9 @@ export class TacticalBrain {
     this.holdGeometryResult=shelters.some(feet=>{
       if(distance(self.position,feet)<.15 || !canFitInArena(feet,feet.y,height,this.arena))return false;
       const eye={...feet,y:feet.y+eyeHeight},range=Math.hypot(eye.x-point.x,eye.y-point.y,eye.z-point.z);
-      return Number.isFinite(traceSolid(point,{x:(eye.x-point.x)/range,y:(eye.y-point.y)/range,z:(eye.z-point.z)/range},
-        this.arena,range-.02).distance) && clearSegment(self.position,feet,this.arena);
+      return (strictCover(this.level) ? bodyBehindCover(feet,self.duckAmount,point,this.arena) :
+        Number.isFinite(traceSolid(point,{x:(eye.x-point.x)/range,y:(eye.y-point.y)/range,z:(eye.z-point.z)/range},
+          this.arena,range-.02).distance)) && clearSegment(self.position,feet,this.arena);
     });
     return this.holdGeometryResult;
   }
@@ -712,6 +717,7 @@ export class TacticalBrain {
     this.resetPlannedAt = this.phaseAt;
     this.resetGoal = {...this.lane.retreat};
     this.resetCovered = false;
+    this.resetDuck = false;
     const threat = this.memory.focus(time) ?? (time >= this.heardReadyAt && time - this.heardAt < 3.5 ? this.heard : null);
     if (!threat) return;
     let best = Infinity;
@@ -719,6 +725,13 @@ export class TacticalBrain {
     // opening waypoint. Geometry is checked once per reset, not each tick.
     const nearby = [...this.lanes].sort((a, b) =>
       distance(self.position, a.anchor) - distance(self.position, b.anchor)).slice(0, 12);
+    if (strictCover(this.level)) {
+      const candidates=nearby.flatMap(lane => [lane.retreat,lane.anchor]).sort((a,b)=>distance(self.position,a)-distance(self.position,b));
+      const safe = findBodyCover(self, threat, this.arena, candidates);
+      if (safe) {this.resetGoal = safe; this.resetCovered = true; return;}
+      const duckSafe=findBodyCover({...self,duckAmount:1},threat,this.arena,candidates);
+      if(duckSafe){this.resetGoal=duckSafe;this.resetCovered=true;this.resetDuck=true;return;}
+    }
     for (const lane of nearby) for (const point of [lane.retreat, lane.anchor]) {
       const travel = distance(self.position, point);
       if (travel < .45 || travel > 7 || !clearSegment(self.position, point, this.arena)) continue;
@@ -732,8 +745,9 @@ export class TacticalBrain {
     const eye = {...this.resetGoal, y: this.resetGoal.y+self.position.y-self.feet};
     const dx = threat.x - eye.x, dy = threat.y - eye.y, dz = threat.z - eye.z;
     const length = Math.hypot(dx, dy, dz);
-    this.resetCovered = length > .01 && Number.isFinite(traceSolid(eye,
-      {x: dx / length, y: dy / length, z: dz / length}, this.arena, length - .02).distance);
+    this.resetCovered = strictCover(this.level) ? bodyBehindCover(this.resetGoal,self.duckAmount,threat,this.arena) :
+      length > .01 && Number.isFinite(traceSolid(eye,
+        {x: dx / length, y: dy / length, z: dz / length}, this.arena, length - .02).distance);
   }
 
   private finishBurst(self: DuelActorSnapshot, target: VisibleEnemy | null, time: number,
@@ -954,7 +968,20 @@ export class TacticalBrain {
     const commonAim=informationAim || visible?primaryWatch:this.approachAim.focus(self.position,time,primaryWatch,this.scanPoints,this.arena);
     const holdAim = visible?.aimPoint ?? informationAim ?? commonAim;
     const holdingUsefulAngle = !!holdAim && this.usefulHold(self, holdAim, time);
-    if (this.phase === 'setup' && !this.staticLane && (!holdingUsefulAngle || time >= this.coverRecheckAt || !!trade ||
+    const setupCover = this.coverDiscipline.update(self, informationAim ?? this.lane.watch, this.arena, this.lane,
+      time, this.phase === 'setup' && !visible && !trade, this.staticLane);
+    if (setupCover && this.staticLane && distance(setupCover,this.lane.edge) > .15) {
+      // A newly tucked static hold still needs a way to contest its old angle.
+      // findBodyCover validated this short segment through the real actor hull.
+      const dx=this.lane.edge.x-setupCover.x,dz=this.lane.edge.z-setupCover.z,length=Math.hypot(dx,dz);
+      this.lane={...this.lane,anchor:{...setupCover},retreat:{...setupCover},axis:{x:dx/length,z:dz/length}};
+      this.phaseAt=time;this.holdGeometryAt=-Infinity;
+    }
+    if (this.phase==='setup' && this.staticLane && time-this.phaseAt>this.setupWait) {
+      if(this.coverDiscipline.crouching){this.activePeek='quick';this.stopThisPeek=true;this.transition('expose',time);}
+      else if(this.coverDiscipline.exposed){this.chooseLane(self,teammates,time,true);this.transition('approach',time);}
+    }
+    if (this.phase === 'setup' && !setupCover && !this.staticLane && (!holdingUsefulAngle || time >= this.coverRecheckAt || !!trade ||
       team?.role === 'trade' || team?.role === 'entry') && (team && !trade
       ? !team.waitForPartner && time >= teamReadyAt && time - this.phaseAt > .08
       : time - this.phaseAt > (trade ? .04 : this.setupWait))) {
@@ -1015,7 +1042,8 @@ export class TacticalBrain {
       this.forceReposition = false; this.intent = 'contest';
       this.transition(speed > .3 ? 'brake' : 'attack', time);
     }
-    if (this.phase === 'return' && distance(self.position, this.resetGoal ?? this.lane.retreat) < .35) {
+    if (this.phase === 'return' && distance(self.position, this.resetGoal ?? this.lane.retreat) <
+      (strictCover(this.level) && this.resetCovered ? .09 : .35)) {
       const moveAgain = this.forceReposition || blindFor > searchDelay ||
         (this.peekCount > 0 && this.peekCount % (this.defensive ? 4 : 2) === 0) || this.random() < (this.defensive ? .08 : .22);
       if (moveAgain) this.chooseLane(self, teammates, time, this.forceReposition);
@@ -1045,17 +1073,19 @@ export class TacticalBrain {
         this.searchGoal ?? (this.heard && time - this.heardAt < 3 ? {x: clamp(this.heard.x, this.arena.minX + 2, this.arena.maxX - 2), y: 0, z: clamp(this.heard.z, this.arena.minZ + 2, this.arena.maxZ - 2)}
           : this.lastSeen && memoryAge < 8 ? {x: clamp(this.lastSeen.position.x, this.arena.minX + 2, this.arena.maxX - 2), y: 0,
             z: clamp(this.lastSeen.position.z, this.arena.minZ + 2, this.arena.maxZ - 2)} : this.lane.edge)
-        : self.position;
-    const moving = lateBrake || ['approach', 'expose', 'return', 'push', 'investigate', 'microstrafe', 'reload', 'close'].includes(this.phase);
+      : this.phase === 'setup' && setupCover ? setupCover : self.position;
+    const preciseCover = strictCover(this.level) && (!!setupCover && this.phase === 'setup' ||
+      this.resetCovered && (this.phase === 'return' || this.phase === 'reload'));
+    const moving = !!setupCover && this.phase === 'setup' || lateBrake || ['approach', 'expose', 'return', 'push', 'investigate', 'microstrafe', 'reload', 'close'].includes(this.phase);
     const goalKey = `${this.phase}:${goal.x.toFixed(2)}:${goal.z.toFixed(2)}`;
     const remaining = distance(self.position, goal);
-    if (remaining < .24) this.arrivedGoal = goalKey;
+    if (remaining < (preciseCover ? .07 : .24)) this.arrivedGoal = goalKey;
     const arrived = this.arrivedGoal === goalKey;
     const waypoint = moving && !arrived ? this.travel(self, goal, time) : self.position;
     const dx = waypoint.x - self.position.x, dz = waypoint.z - self.position.z;
     const separation = Math.hypot(dx, dz);
-    let wishX = moving && separation > .14 ? dx / separation : 0;
-    let wishZ = moving && separation > .14 ? dz / separation : 0;
+    let wishX = moving && separation > (preciseCover ? .035 : .14) ? dx / separation : 0;
+    let wishZ = moving && separation > (preciseCover ? .035 : .14) ? dz / separation : 0;
     // Soft local avoidance changes desired input, never actor velocity or position.
     for (const peer of teammates) {
       if (peer.id === self.id || !peer.alive) continue;
@@ -1069,7 +1099,9 @@ export class TacticalBrain {
     if (wishLength > 1) {wishX /= wishLength; wishZ /= wishLength;}
     const finalLeg = distance(waypoint, goal) < .01;
     const stoppingDistance = speed * speed / (2 * 9 * gameData.weapons[this.weapon].speed * UNIT);
-    const shouldBrake = !moving || arrived || finalLeg && remaining < Math.max(.24, stoppingDistance + .14);
+    const shouldBrake = !moving || arrived || finalLeg && (preciseCover
+      ? speed > .15 && remaining < Math.max(.07, stoppingDistance + .02)
+      : remaining < Math.max(.24, stoppingDistance + .14));
     if (shouldBrake && speed > .15) {
       wishX = -self.velocity.x / speed; wishZ = -self.velocity.z / speed;
     } else if (shouldBrake) {wishX = 0; wishZ = 0;}
@@ -1196,10 +1228,13 @@ export class TacticalBrain {
       !trade && (this.behavior !== 'aggressive' || this.phase !== 'approach' || remaining < 4);
     return {forward, side, walk: this.phase === 'expose' && this.activePeek === 'slice' || quietTravel ||
       this.phase === 'approach' && this.behavior === 'patient' && remaining < 3 && time > 1,
-      crouch: this.activePeek === 'crouch' && ['expose', 'brake'].includes(this.phase) || lateCrouchWide || fightingCrouch,
+      crouch: this.phase==='setup' && this.coverDiscipline.crouching ||
+        this.resetDuck && (this.phase==='return'||this.phase==='reload') ||
+        this.activePeek === 'crouch' && ['expose', 'brake'].includes(this.phase) || lateCrouchWide || fightingCrouch,
       jump: this.activePeek === 'jump' && this.phase === 'expose' && time - this.phaseAt < .07,
       yawDelta, pitchDelta, fireHeld: fire, firePressed: press,
       reloadPressed: this.weapon !== 'zeus' && self.reserve !== 0 && this.phase === 'reload' &&
-        distance(self.position, this.resetGoal ?? this.lane.retreat) < .7 && !self.reloading};
+        distance(self.position, this.resetGoal ?? this.lane.retreat) <
+          (strictCover(this.level) && this.resetCovered ? .09 : .7) && !self.reloading};
   }
 }

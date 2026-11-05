@@ -11,6 +11,8 @@ test('browse, cancel, confirm and equip are separate keyboard-safe actions', asy
   const errors: string[] = []; page.on('pageerror', error => errors.push(error.message));
   const dialog = await openArmory(page);
   await expect(dialog.getByRole('button', {name: 'Close armory'})).toBeFocused();
+  await expect(dialog.getByRole('region', {name: 'Rewards overview'})).toBeVisible();
+  await dialog.getByRole('button', {name: 'Collection', exact: true}).click();
   await expect(dialog.locator('.progression-choice')).toHaveCount(1);
   await dialog.getByRole('button', {name: 'Unlocks', exact: true}).click();
   await expect(dialog.locator('.progression-choice')).toHaveCount(8);
@@ -104,6 +106,7 @@ test('the existing app opens the redesigned armory without integration changes',
   await trigger.click();
   const dialog = page.getByRole('dialog', {name: 'Armory', exact: true});
   await expect(dialog.getByRole('region', {name: 'Progression account'})).toBeVisible();
+  await dialog.getByRole('button', {name: 'Collection', exact: true}).click();
   await expect(dialog.getByLabel('Equipment', {exact: true})).toHaveValue('ak47');
   await dialog.getByText('Account totals', {exact: false}).click();
   await expect(dialog.getByText('Credits earned', {exact: true})).toBeVisible();

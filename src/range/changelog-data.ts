@@ -517,7 +517,7 @@ const november4Changes = {
   ],
 } as const satisfies ChangelogRelease;
 
-export const latestChanges = {
+const november5CombatChanges = {
   id: 'update-2026-11-05-contact-utility', title: 'Clearer contact & smoother utilities (November 5)', baselineCommit: 'cd709d7',
   sections: [
     {id: 'observed-contact-decisions', title: 'More reliable contact decisions', items: [
@@ -536,7 +536,26 @@ export const latestChanges = {
   ],
 } as const satisfies ChangelogRelease;
 
+export const latestChanges = {
+  id: 'update-2026-11-05-rewards-cover', title: 'Better cover & a rewarding practice loop (November 5)', baselineCommit: '3910a1e',
+  sections: [
+    {id: 'whole-body-cover', title: 'Stronger cover discipline', items: [
+      'Level 6+ bots check a conservative whole-body envelope before waiting behind cover or treating a reset as sheltered. Bounded local corrections tuck exposed shoulders and legs in, with tighter arrival control. Deliberate combat peeks and head-only static holds remain possible.',
+      'Cover decisions use sensed or remembered threats and authored approaches, not hidden live player positions. Beginner behavior and shared physical hitboxes are unchanged.',
+    ]},
+    {id: 'rewards-journey', title: 'A clearer rewards journey', items: [
+      'Armory opens on an overview of the next milestone, nearby achievement goals and finishes you can choose to purchase. Unlock details separate level eligibility, saved credits and ownership; existing wallets and owned finishes are preserved.',
+      '172 persistent achievements include longer mastery ladders, efficient multi-bot wins, head-level discipline and low-health recoveries. Existing known history earns eligible new tiers; unknown historical skill metrics are not invented.',
+      'Level-ups show a short rank reveal, credit payout and eligible finish previews. Click to skip after 0.5 seconds; reduced-motion settings are respected. Rewards remain deterministic, with no random paid prizes or extra credits from replaying the effects.',
+    ]},
+    {id: 'unlimited-training-reserves', title: 'Keep practicing', items: [
+      'Range drills and Prefire have unlimited reserve ammunition. Magazines still empty and normal reload commitment, animation and attack timing remain in force. AI Duel keeps finite ammunition.',
+    ]},
+  ],
+} as const satisfies ChangelogRelease;
+
 export const changelogHistory = [
+  november5CombatChanges,
   november4Changes,
   october31CombatMovementChanges,
   october30MapPackageChanges,

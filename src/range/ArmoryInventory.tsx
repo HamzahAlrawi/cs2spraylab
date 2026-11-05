@@ -64,6 +64,8 @@ export function ArmoryItemDetails({item, profile, controller, equipmentLabel, on
     <dl className="armory-detail-facts"><div><dt>Rarity</dt><dd>{item.rarity ?? (item.isDefault ? 'Standard' : 'Finish')}</dd></div>
       <div><dt>Required level</dt><dd>{item.unlockLevel}{locked ? ` (you are ${level})` : item.unlockLevel <= level ? ' / reached' : ' / already owned'}</dd></div>
       <div><dt>{owned ? 'Ownership' : 'Price'}</dt><dd>{owned ? item.isDefault ? 'Included' : 'In your collection' : <><Coins size={14} aria-hidden="true"/>{number(price)} credits</>}</dd></div></dl>
+    {!owned && <><ol className="armory-progress-steps" aria-label="Unlock requirements"><li className={!locked ? 'is-met' : ''}>{!locked ? <Check size={12}/> : <LockKeyhole size={12}/>}Level {item.unlockLevel}</li><li className={!shortfall ? 'is-met' : ''}>{!shortfall ? <Check size={12}/> : <Coins size={12}/>}Save {number(price)} credits</li></ol>
+      <div className="armory-funding"><progress value={Math.min(profile.balance,price)} max={Math.max(1,price)} aria-label="Credits saved for this finish"/><small>{number(Math.min(profile.balance,price))} / {number(price)} credits saved</small></div></>}
     {locked ? <p className="armory-requirement">Reach level {item.unlockLevel} to purchase.</p> : !owned && shortfall > 0 ?
       <p className="armory-requirement">{number(shortfall)} more credits needed.</p> : null}
     {confirming && !owned ? <div className="armory-confirmation" role="group" aria-label="Purchase confirmation" aria-describedby={summaryId}>
@@ -83,20 +85,20 @@ export function ArmoryItemDetails({item, profile, controller, equipmentLabel, on
 }
 
 type InventoryProps = {
-  controller: ProgressionController; profile: ProgressionProfile; initialEquipment?: string;
+  controller: ProgressionController; profile: ProgressionProfile; initialEquipment?: string; initialSelected?: string;
   equipmentLabels: Readonly<Record<string, string>>; view: 'collection' | 'unlocks';
   onViewChange: (view: 'collection' | 'unlocks') => void; onNotice: (notice: string) => void;
 };
 
-export function ArmoryInventory({controller, profile, initialEquipment, equipmentLabels, view, onViewChange, onNotice}: InventoryProps) {
+export function ArmoryInventory({controller, profile, initialEquipment, initialSelected, equipmentLabels, view, onViewChange, onNotice}: InventoryProps) {
   const initial = controller.catalog.find(item => item.equipment === initialEquipment) ?? controller.catalog.find(item => cosmeticCategory(item) === 'weapon') ?? controller.catalog[0];
   const [category, setCategory] = useState<CosmeticCategory>(initial ? cosmeticCategory(initial) : 'weapon');
   const [equipment, setEquipment] = useState(initial?.equipment ?? '');
   const [knifeType, setKnifeType] = useState('all'), [availability, setAvailability] = useState('all');
-  const [query, setQuery] = useState(''), [sort, setSort] = useState('level'), [selectedId, setSelectedId] = useState('');
+  const [query, setQuery] = useState(''), [sort, setSort] = useState('level'), [selectedId, setSelectedId] = useState(initialSelected ?? '');
   const [pageState, setPageState] = useState({key: '', page: 0});
   const [focusPurchased, setFocusPurchased] = useState(false);
-  const [inspecting, setInspecting] = useState(false), [returnToResults, setReturnToResults] = useState(false);
+  const [inspecting, setInspecting] = useState(!!initialSelected), [returnToResults, setReturnToResults] = useState(false);
   const previousView = useRef(view);
   const inventory = useRef<HTMLDivElement>(null);
   const panelId = useId(), headingId = useId();

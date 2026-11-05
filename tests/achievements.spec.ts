@@ -14,16 +14,16 @@ test('achievement progress, filters and earned badges persist on desktop and mob
   await page.getByRole('button', {name: /Open armory/}).click();
   const dialog = page.getByRole('dialog', {name: 'Armory'});
   await dialog.getByRole('button', {name: /^Achievements/}).click();
-  await expect(dialog.locator('.achievement-overview')).toContainText('3 / 42 earned');
+  await expect(dialog.locator('.achievement-overview')).toContainText('9 / 172 earned');
   await expect(dialog.locator('[data-achievement="kills-100"]')).toContainText('99 / 100');
   await expect(dialog.locator('[data-achievement="heads-100"]')).toContainText('99 / 100');
   await dialog.getByLabel('Achievement status', {exact: true}).selectOption('earned');
-  await expect(dialog.locator('.achievement-row')).toHaveCount(3);
+  await expect(dialog.locator('.achievement-row')).toHaveCount(9);
   await expect(dialog.locator('[data-achievement="first-blood"]')).toContainText('Earned previously');
   await dialog.getByLabel('Achievement category', {exact: true}).selectOption('training');
   await expect(dialog.getByText('No achievements match these filters.', {exact: true})).toBeVisible();
   await dialog.getByLabel('Achievement status', {exact: true}).selectOption('remaining');
-  await expect(dialog.locator('.achievement-row')).toHaveCount(14);
+  await expect(dialog.locator('.achievement-row')).toHaveCount(51);
   await dialog.getByLabel('Achievement category', {exact: true}).selectOption('combat');
   await dialog.getByLabel('Sort achievements', {exact: true}).selectOption('progress');
   await expect(dialog.locator('.achievement-row').first()).toHaveAttribute('data-achievement', 'kills-100');
@@ -50,6 +50,6 @@ test('achievement progress, filters and earned badges persist on desktop and mob
   expect(await page.evaluate(() => JSON.parse(localStorage.getItem('spraylab.progression.v1')!).achievements.unlocked['first-blood'])).toBe(0);
   await page.getByRole('button', {name: /Open armory/}).click();
   await dialog.getByRole('button', {name: /^Achievements/}).click();
-  await expect(dialog.locator('.achievement-overview')).toContainText('3 / 42 earned');
+  await expect(dialog.locator('.achievement-overview')).toContainText('9 / 172 earned');
   expect(errors).toEqual([]);
 });

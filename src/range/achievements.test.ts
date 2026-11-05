@@ -32,9 +32,9 @@ const cosmetics: CosmeticDefinition[] = [
 ];
 
 describe('achievement catalog and persistent state', () => {
-  it('contains 42 unique, bounded, actionable goals across five categories', () => {
-    expect(ACHIEVEMENTS).toHaveLength(42);
-    expect(new Set(ACHIEVEMENTS.map(item => item.id)).size).toBe(42);
+  it('contains 172 unique, bounded, actionable goals across five categories', () => {
+    expect(ACHIEVEMENTS).toHaveLength(172);
+    expect(new Set(ACHIEVEMENTS.map(item => item.id)).size).toBe(172);
     expect(new Set(ACHIEVEMENTS.map(item => item.category)).size).toBe(5);
     for (const item of ACHIEVEMENTS) {
       expect(item.title.length).toBeGreaterThan(3); expect(item.description.length).toBeGreaterThan(10);
@@ -69,7 +69,7 @@ describe('achievement catalog and persistent state', () => {
   });
   it('does not fabricate skill, headshot or drill history from v1 XP', () => {
     const controller = createProgressionController({storage: memory({version: 1, xp: xpForLevel(100)}).storage});
-    expect(Object.keys(controller.getSnapshot().profile.achievements.unlocked)).toEqual(['career-10', 'career-50', 'career-100']);
+    expect(Object.keys(controller.getSnapshot().profile.achievements.unlocked)).toEqual(ACHIEVEMENTS.filter(item=>item.metric==='level').map(item=>item.id));
     expect(controller.getSnapshot().profile.achievements.stats.duelWins).toBe(0);
   });
   it.each(ACHIEVEMENTS)('has bounded progress for $id', item => {
@@ -96,7 +96,7 @@ describe('validated duel and drill achievement events', () => {
     expect(reloaded.getSnapshot().profile).toEqual(saved); expect(reloaded.getSnapshot().notification).toBeNull();
     controller.dismissNotification();
     award(controller);
-    expect(controller.getSnapshot().notification?.achievementIds).toEqual([]);
+    expect(controller.getSnapshot().notification?.achievementIds).toEqual(['rank-2']);
   });
   it.each(['reset', 'abandoned', 'settings-changed'] as const)('ignores %s rounds', completion => {
     const controller = createProgressionController({storage: null});
@@ -211,7 +211,7 @@ describe('collection achievements and accessible presentation', () => {
     const controller = createProgressionController({storage: null}); award(controller);
     const profile = controller.getSnapshot().profile;
     const html = renderToStaticMarkup(createElement(AchievementPanel, {profile, catalog: controller.catalog}));
-    expect(html).toContain('7 / 42 earned'); expect(html).toContain('Achievement category'); expect(html).toContain('Achievement status');
+    expect(html).toContain('7 / 172 earned'); expect(html).toContain('Achievement category'); expect(html).toContain('Achievement status');
     expect(html).toContain('Sort achievements'); expect(html).toContain('data-achievement="first-blood"'); expect(html).toContain('<time dateTime=');
     expect(html).toContain('100%'); expect(html).toContain('aria-label="First blood"');
     const toast = renderToStaticMarkup(createElement(XpNotification, {controller, onOpenAchievements: () => {}}));
@@ -228,18 +228,22 @@ describe('collection achievements and accessible presentation', () => {
     const controller = createProgressionController({storage: null}); award(controller);
     const ids = controller.getSnapshot().notification!.achievementIds;
     award(controller);
-    expect(controller.getSnapshot().notification!.achievementIds).toEqual(ids);
+    expect(controller.getSnapshot().notification!.achievementIds).toEqual([...ids, 'rank-2']);
     controller.dismissNotification(); award(controller);
-    expect(controller.getSnapshot().notification!.achievementIds).toEqual(['streak-3']);
+    expect(controller.getSnapshot().notification!.achievementIds).toEqual(['streak-3', 'combat-heads-10']);
   });
   it('makes every goal attainable at its exact threshold and unlocks each only once', () => {
-    const catalog = [...cosmetics, ...Array.from({length: 100}, (_, i) => ({...cosmetics[1], id: `finish-${i}`}))];
-    const stats = {duelWins: 1000, duelKills: 1000, duelHeadshots: 1000, winsLevel5: 1, winsLevel10: 100, fiveBotWins: 1,
-      flawlessWins: 1, controlledRounds: 1, accurateRounds: 1, excellentWins: 1, currentWinStreak: 10, bestWinStreak: 10,
-      drills: {guided: 25, spray: 25, transfer: 25, peek: 25, precision: 25, burst: 25}};
-    const profile = sanitizeProgression({version: 2, xp: xpForLevel(100), completedDrills: 1000, owned: catalog.map(item => item.id), achievements: {stats}}, catalog);
+    const catalog = [...cosmetics, ...Array.from({length: 600}, (_, i) => ({...cosmetics[1], id: `finish-${i}`})),
+      ...Array.from({length:50},(_,i)=>({...cosmetics[2],id:`knife-${i}`})),
+      ...Array.from({length:7},(_,i)=>({...cosmetics[3],id:`gloves-${i}`})),
+      ...Array.from({length:5},(_,i)=>({...cosmetics[4],id:`agent-${i}`}))];
+    const stats = {duelWins: 5000, duelKills: 25000, duelHeadshots: 10000, winsLevel5: 500, winsLevel10: 500, fiveBotWins: 100,
+      flawlessWins: 500, controlledRounds: 1000, accurateRounds: 1000, excellentWins: 1000, currentWinStreak: 25, bestWinStreak: 25,
+      cleanHeadRounds:250, efficientWins:250, comebackWins:250,
+      drills: {guided: 1000, spray: 1000, transfer: 1000, peek: 1000, precision: 1000, burst: 1000}};
+    const profile = sanitizeProgression({version: 2, xp: xpForLevel(100), completedDrills: 6000, owned: catalog.map(item => item.id), achievements: {stats}}, catalog);
     const unlocked = unlockAchievements(profile, catalog, 100, 12345);
-    expect(unlocked.ids).toHaveLength(42);
+    expect(unlocked.ids).toHaveLength(172);
     const next = {...profile, achievements: unlocked.state};
     for (const item of ACHIEVEMENTS) expect(achievementProgress(item, next, catalog, 100)).toMatchObject({earned: true, fraction: 1, current: item.target, earnedAt: 12345});
     expect(unlockAchievements(next, catalog, 100, 23456).ids).toEqual([]);

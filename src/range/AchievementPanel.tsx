@@ -1,5 +1,5 @@
 import {useState} from 'react';
-import {Award, Check, Crosshair, GraduationCap, Paintbrush, Swords, Trophy} from 'lucide-react';
+import {Award, Check, Crosshair, GraduationCap, Paintbrush, Search, Swords, Trophy} from 'lucide-react';
 import {ACHIEVEMENTS, achievementProgress, type AchievementCategory} from './achievements';
 import {levelProgress, type CosmeticDefinition, type ProgressionProfile} from './progression';
 
@@ -12,10 +12,11 @@ const number = (value: number) => value.toLocaleString('en-US');
 
 export function AchievementPanel({profile, catalog}: {profile: ProgressionProfile; catalog: readonly CosmeticDefinition[]}) {
   const [category, setCategory] = useState('all'), [status, setStatus] = useState('all'), [sort, setSort] = useState('default');
+  const [query, setQuery] = useState('');
   const level = levelProgress(profile.xp).level;
   const achievements = ACHIEVEMENTS.map(item => ({...item, progress: achievementProgress(item, profile, catalog, level)}));
   const earned = achievements.filter(item => item.progress.earned).length;
-  const items = achievements.filter(item => (category === 'all' || item.category === category) &&
+  const items = achievements.filter(item => `${item.title} ${item.description}`.toLowerCase().includes(query.trim().toLowerCase()) && (category === 'all' || item.category === category) &&
     (status === 'all' || status === 'earned' && item.progress.earned || status === 'remaining' && !item.progress.earned))
     .sort((a, b) => sort === 'progress' ? +a.progress.earned - +b.progress.earned || b.progress.fraction - a.progress.fraction :
       sort === 'recent' ? +(b.progress.earnedAt ?? -1) - +(a.progress.earnedAt ?? -1) : 0);
@@ -23,6 +24,7 @@ export function AchievementPanel({profile, catalog}: {profile: ProgressionProfil
     <header className="achievement-overview"><Trophy size={26} aria-hidden="true"/><div><h3>Achievements</h3>
       <span>{earned} / {ACHIEVEMENTS.length} earned</span><progress value={earned} max={ACHIEVEMENTS.length} aria-label="Achievements earned"/></div></header>
     <div className="progression-filter">
+      <div className="progression-search achievement-search"><Search size={15} aria-hidden="true"/><input type="search" aria-label="Search achievements" placeholder="Search goals" value={query} onChange={event=>setQuery(event.target.value)}/></div>
       <select aria-label="Achievement category" value={category} onChange={event => setCategory(event.target.value)}>
         <option value="all">All categories</option>{categories.map(item => <option key={item.id} value={item.id}>{item.label}</option>)}</select>
       <select aria-label="Achievement status" value={status} onChange={event => setStatus(event.target.value)}>

@@ -107,6 +107,10 @@ export class PrefireSimulation extends DuelSimulation {
     Object.assign(actor, {feet: p.y, position: {...p, y: p.y + actor.eyeHeight}, yaw, grounded: true, velocity: {x: 0, z: 0}});
   }
   protected override weaponCommand(actor: CombatActor, command: ActorCommand) {
+    if (actor.id === 0) {
+      actor.weapon.reload.infiniteReserve = true;
+      actor.weapon.reserve = Math.max(actor.weapon.reserve, actor.weapon.reload.stats.magazine);
+    }
     if (actor.id) this.controllers[actor.id - 1].guardSight(this.time, actor, this.actors[0], this.map.collision);
     if (actor.id && (command.fireHeld || command.firePressed) && actor.weapon.nextShotAt <= this.time + 1e-9 &&
       !this.controllers[actor.id - 1].verifyShot(this.time, actor, this.actors[0], this.map.collision, this.practice.reactionMs)) {

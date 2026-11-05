@@ -235,6 +235,21 @@ describe('prefire scenarios use shared weapon and movement simulation', () => {
     expect(sim.actors[1].weapon.reloadUntil).toBeGreaterThan(sim.time);
     expect(simulate(sim, 5).some(e => e.kind === 'fire')).toBe(true);
   });
+  it('replenishes only player reserves in Prefire while preserving normal reload readiness', () => {
+    const sim=new PrefireSimulation(flatMap(),sanitizePrefireConfig({botBehavior:'static',returnFire:false}),
+      {...route,angles:[route.angles[0]]},17,defaults,undefined,dust2Catalog);
+    const player=sim.actors[0],bot=sim.actors[1];
+    player.weapon.ammo=0;player.weapon.reserve=0;bot.weapon.reserve=0;
+    sim.start();sim.step();
+    expect(player.weapon.reload.infiniteReserve).toBe(true);
+    expect(player.weapon.reserve).toBe(player.weapon.reload.stats.magazine);
+    expect(player.weapon.ammo).toBe(0);
+    expect(player.weapon.reload.active).toBe(true);
+    expect(bot.weapon.reload.infiniteReserve).toBe(false);expect(bot.weapon.reserve).toBe(0);
+    simulate(sim,5);
+    expect(player.weapon.ammo).toBe(player.weapon.reload.stats.magazine);
+    expect(player.weapon.reserve).toBe(player.weapon.reload.stats.magazine);
+  });
   it('turns toward a seen player but does not track their movement behind cover', () => {
     const map = flatMap();
     const sim = new PrefireSimulation(map, sanitizePrefireConfig({botBehavior: 'static', returnFire: true, reactionMs: 2500}),

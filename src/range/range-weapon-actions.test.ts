@@ -42,13 +42,13 @@ describe('native range discharge and ammo controller', () => {
     expect(sim.loadedAmmo).toBe(28);
     sim.reset(); expect(sim.loadedAmmo).toBe(30); expect(sim.reserveAmmo).toBe(90);
   });
-  it('completes finite MAG-7 magazine reloads and cannot reload an exhausted reserve', () => {
+  it('completes normal MAG-7 magazine reloads from unlimited practice reserves', () => {
     const sim = make('mag7'); sim.reloadState.ammo = 2; sim.reloadState.reserve = 1;
     expect(sim.reload()).toBe(true); expect(sim.start()).toBe(false);
     runTo(sim, 32 / 30 - STEP); expect(sim.loadedAmmo).toBe(2);
-    runTo(sim, 32 / 30 + STEP); expect(sim.loadedAmmo).toBe(3); expect(sim.reloadState.active).toBe(true);
+    runTo(sim, 32 / 30 + STEP); expect(sim.loadedAmmo).toBe(5); expect(sim.reloadState.active).toBe(true);
     expect(sim.start()).toBe(false);
-    runTo(sim, equipmentStats('mag7').reload); expect(sim.loadedAmmo).toBe(3); expect(sim.reserveAmmo).toBe(0);
+    runTo(sim, equipmentStats('mag7').reload); expect(sim.loadedAmmo).toBe(5); expect(sim.reserveAmmo).toBe(5);
     expect(sim.reload()).toBe(false); expect(sim.drainActionEvents().map(event => event.kind)).toEqual(['reload-start', 'reload-end']);
   });
   it.each([false, true])('AK-47 knife/back keeps ammo only after commitment (committed=%s)', committed => {
@@ -57,7 +57,7 @@ describe('native range discharge and ammo controller', () => {
     const state = sim.reloadState;
     sim.equip(3); sim.equip(1);
     expect(sim.reloadState).toBe(state); expect(sim.loadedAmmo).toBe(committed ? 30 : 11);
-    expect(sim.reserveAmmo).toBe(committed ? 71 : 90);
+    expect(sim.reserveAmmo).toBe(90);
     expect(sim.reloadState.active).toBe(false);
     expect(sim.reloadState.fireReadyAt).toBeCloseTo(committed ? state.stats.reload : 0);
   });
@@ -66,7 +66,7 @@ describe('native range discharge and ammo controller', () => {
     sim.reload(); expect(sim.reloadSilent).toBe(true); expect(sim.primaryReloadAt).toBeCloseTo(sim.stats.reload * 2);
     sim.step(1); sim.reloadHeld = false; sim.step(.5);
     expect(sim.primaryReloadAt).toBeCloseTo(1.5 + sim.stats.reload - .75);
-    sim.step(sim.primaryReloadAt - sim.time); expect(sim.loadedAmmo).toBe(30); expect(sim.reserveAmmo).toBe(60);
+    sim.step(sim.primaryReloadAt - sim.time); expect(sim.loadedAmmo).toBe(30); expect(sim.reserveAmmo).toBe(90);
     expect(sim.drainActionEvents().map(event => event.kind)).toEqual(['reload-start', 'reload-mode', 'reload-end']);
   });
   it.each(['nova', 'xm1014', 'sawedoff'] as const)('%s queues an empty reload interruption until one shell and finish are complete', id => {
@@ -74,7 +74,7 @@ describe('native range discharge and ammo controller', () => {
     sim.reloadState.ammo = 0; sim.reload(); expect(sim.start()).toBe(true);
     sim.step(SHELL_RELOAD_START); expect(shots).toHaveLength(0);
     sim.step(sim.stats.reload); expect(sim.loadedAmmo).toBe(1); expect(sim.reloadPhase).toBe('finish');
-    sim.step(SHELL_RELOAD_FINISH); expect(shots).toHaveLength(1); expect(sim.loadedAmmo).toBe(0); expect(sim.reserveAmmo).toBe(31);
+    sim.step(SHELL_RELOAD_FINISH); expect(shots).toHaveLength(1); expect(sim.loadedAmmo).toBe(0); expect(sim.reserveAmmo).toBe(32);
     expect(sim.drainActionEvents().map(event => event.kind)).toEqual(['reload-start', 'reload-shell', 'reload-end']);
   });
   it('preserves the pump deadline when reload is interrupted by holstering', () => {
@@ -121,7 +121,7 @@ describe('range AK reload fire-gate integration', () => {
     const sim = make('ak47', false), shots:Shot[] = [];
     sim.active = true; sim.reloadState.ammo = empty ? 0 : 11;
     sim.onShot = shot => shots.push(shot);
-    const total = sim.loadedAmmo + sim.reserveAmmo, timing = nativeReloadTiming('ak47', empty)!;
+    const total = sim.stats.magazine + sim.reserveAmmo, timing = nativeReloadTiming('ak47', empty)!;
     expect(sim.reload(false)).toBe(true);
     return {sim, shots, total, timing};
   };
@@ -203,7 +203,7 @@ describe('range AK reload fire-gate integration', () => {
       expect(shots).toHaveLength(1); expect(shots[0].equipment).toBe(equipment);
       expect(shots[0].at).toBeCloseTo(tickAt(deployAt), 8);
       expect(shots[0].at).toBeLessThan(ak.fireReadyAt);
-      expect(ak.ammo).toBe(30); expect(ak.reserve).toBe(empty ? 60 : 71);
+      expect(ak.ammo).toBe(30); expect(ak.reserve).toBe(90);
     });
 });
 
@@ -214,7 +214,7 @@ describe('range empty-magazine idle auto-reload', () => {
     expect(sim.reloadState.active).toBe(true); expect(sim.reloadState.startedAt).toBe(began);
     expect(sim.loadedAmmo).toBe(0); expect(sim.reserveAmmo).toBe(90);
     sim.step(timing.ammoAt - 1e-6); expect(sim.loadedAmmo).toBe(0);
-    sim.step(1e-6); expect(sim.loadedAmmo).toBe(30); expect(sim.reserveAmmo).toBe(60);
+    sim.step(1e-6); expect(sim.loadedAmmo).toBe(30); expect(sim.reserveAmmo).toBe(90);
     expect(sim.reloadState.active).toBe(true);
     expect(sim.reloadState.fireReadyAt).toBeCloseTo(began + timing.attackLock);
   });
@@ -280,12 +280,11 @@ describe('range empty-magazine idle auto-reload', () => {
     sim.step(5); expect(sim.reloadState.active).toBe(false);
   });
 
-  it('does not refill exhausted reserves and preserves finite partial reserve accounting', () => {
+  it('restores exhausted practice reserves while retaining a normal empty reload and attack gate', () => {
     const sim = make('ak47'); sim.active = true; sim.reloadState.ammo = sim.reloadState.reserve = 0;
-    sim.step(1); expect(sim.reloadState.active).toBe(false); expect(sim.loadedAmmo).toBe(0);
-    sim.reloadState.reserve = 3; sim.step(STEP);
+    sim.step(STEP); expect(sim.reloadState.active).toBe(true); expect(sim.loadedAmmo).toBe(0);
     const began = sim.time; sim.step(nativeReloadTiming('ak47', true)!.attackLock);
-    expect(sim.reloadState.startedAt).toBe(began); expect(sim.loadedAmmo).toBe(3); expect(sim.reserveAmmo).toBe(0);
+    expect(sim.reloadState.startedAt).toBe(began); expect(sim.loadedAmmo).toBe(30); expect(sim.reserveAmmo).toBe(30);
     expect(sim.drainActionEvents().map(event => event.kind)).toEqual(['reload-start', 'reload-end']);
   });
 

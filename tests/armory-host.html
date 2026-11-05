@@ -5,7 +5,7 @@
 <body><div id="root"></div><script type="module">
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import {ProgressionPanel} from '../src/range/ProgressionPanel.tsx';
+import {ProgressionPanel, XpNotification} from '../src/range/ProgressionPanel.tsx';
 import {createProgressionController} from '../src/range/progression.ts';
 import {cosmeticCatalog} from '../src/range/cosmetics.ts';
 import {equipmentNames} from '../src/range/equipment.ts';
@@ -13,6 +13,7 @@ window.armoryController = createProgressionController({catalog: cosmeticCatalog}
 function Harness() {
   const [requestedEquipment, setRequested] = React.useState(null);
   return React.createElement(React.Fragment, null,
+    React.createElement(XpNotification, {controller:window.armoryController,durationMs:30000}),
     React.createElement('button', {onClick: () => setRequested('gloves')}, 'Open glove unlocks'),
     React.createElement(ProgressionPanel, {controller: window.armoryController, equipmentLabels: equipmentNames, activeEquipment: 'ak47',
       requestedEquipment, onRequestHandled: () => setRequested(null), onOpenChange: open => {window.armoryOpen = open;}}));
