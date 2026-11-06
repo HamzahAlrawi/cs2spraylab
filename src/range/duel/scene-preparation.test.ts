@@ -24,3 +24,37 @@ it.each([false,true])('restores attached scene ownership, draw ranges and render
   expect(renderer.info.render).toEqual({calls:2,triangles:3});expect(scissor.toArray()).toEqual([3,4,80,60]);
   expect(test).toBe(false);expect(renderer.shadowMap.autoUpdate).toBe(true);
 });
+
+it('warms every retained resource with fewer foreground turns without accelerating background preparation',async()=>{
+  let frames=0;
+  vi.stubGlobal('requestAnimationFrame',(run:FrameRequestCallback)=>{frames++;queueMicrotask(()=>run(0));return frames;});
+  vi.spyOn(performance,'now').mockReturnValue(0);
+  try {
+    const run=async(background:boolean)=>{
+      frames=0;
+      const root=new THREE.Group(),scene=new THREE.Scene(),material=new THREE.MeshStandardMaterial();
+      for(let i=0;i<128;i++)root.add(new THREE.Mesh(new THREE.BoxGeometry(),material));
+      const textures=Array.from({length:12},()=>new THREE.DataTexture(null,1024,1024));
+      root.children.forEach((mesh,index)=>{
+        const own=material.clone();own.map=textures[index%textures.length];(mesh as THREE.Mesh).material=own;
+      });
+      scene.add(root);
+      const gl={SYNC_GPU_COMMANDS_COMPLETE:1,ALREADY_SIGNALED:2,CONDITION_SATISFIED:3,WAIT_FAILED:4,
+        isContextLost:()=>false,fenceSync:()=>({}),flush:vi.fn(),clientWaitSync:()=>2,deleteSync:vi.fn()};
+      const renderer={getContext:()=>gl,shadowMap:{enabled:false,type:0,autoUpdate:true,needsUpdate:false},
+        compileAsync:vi.fn(async()=>{}),initTexture:vi.fn(),getRenderTarget:()=>null,setRenderTarget:vi.fn(),
+        getActiveCubeFace:()=>0,getActiveMipmapLevel:()=>0,info:{autoReset:true,render:{calls:0,triangles:0}},
+        autoClear:true,getViewport:(v:THREE.Vector4)=>v.set(0,0,800,600),setViewport:vi.fn(),
+        getScissor:(v:THREE.Vector4)=>v.set(0,0,800,600),setScissor:vi.fn(),getScissorTest:()=>false,setScissorTest:vi.fn(),render:vi.fn(),
+      } as unknown as THREE.WebGLRenderer;
+      await prepareSceneGpu(renderer,root,scene,new THREE.PerspectiveCamera(),new AbortController().signal,undefined,background);
+      expect(renderer.render).toHaveBeenCalledTimes(128);expect(renderer.initTexture).toHaveBeenCalledTimes(12);
+      expect(renderer.compileAsync).toHaveBeenCalledOnce();expect(root.parent).toBe(scene);
+      root.traverse(node=>{if(node instanceof THREE.Mesh){expect(node.geometry.drawRange.count).toBe(Infinity);node.geometry.dispose();(node.material as THREE.Material).dispose();}});
+      textures.forEach(texture=>texture.dispose());material.dispose();
+      return frames;
+    };
+    const background=await run(true),foreground=await run(false);
+    expect(background).toBeGreaterThanOrEqual(28);expect(foreground).toBeLessThan(background/2);
+  }finally{vi.restoreAllMocks();}
+});

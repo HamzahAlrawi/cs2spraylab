@@ -5,9 +5,10 @@ import {PrefireLighting,retainPreparedLighting} from '../prefire/lighting';
 import type {Settings} from '../config';
 import {waitForGpu,textureUploadBytes} from './gpu-readiness';
 
-/** Upload in small turns; compile the retained materials rather than disposable clones. */
+/** Bound upload turns; initial entry can use larger batches than preparation during play. */
 export async function prepareSceneGpu(renderer: THREE.WebGLRenderer, root: THREE.Group,
-  lighting: THREE.Scene, camera: THREE.Camera, signal: AbortSignal, quality?: Settings['quality']) {
+  lighting: THREE.Scene, camera: THREE.Camera, signal: AbortSignal, quality?: Settings['quality'],background=true) {
+  const uploadBudget=background?4*1024*1024:16*1024*1024,timeBudget=background?2:8,meshBudget=background?8:64;
   const parent=root.parent,parentIndex=parent?.children.indexOf(root)??-1;
   const scene = new THREE.Scene(), textures = new Set<THREE.Texture>(),meshes:THREE.Mesh[]=[];
   const shadowState={enabled:renderer.shadowMap.enabled,type:renderer.shadowMap.type,
@@ -33,7 +34,7 @@ export async function prepareSceneGpu(renderer: THREE.WebGLRenderer, root: THREE
       await backgroundFrame(signal); const start = performance.now();let uploaded=0;
       do {
         signal.throwIfAborted();const texture=list[index++];renderer.initTexture(texture);uploaded+=textureUploadBytes(texture);
-      } while (index < list.length && uploaded<4*1024*1024 && performance.now() - start < 2);
+      } while (index < list.length && uploaded<uploadBudget && performance.now() - start < timeBudget);
       await waitForGpu(renderer,signal);
     }
     await backgroundFrame(signal);
@@ -47,7 +48,7 @@ export async function prepareSceneGpu(renderer: THREE.WebGLRenderer, root: THREE
     let batchAt=performance.now(),batchCount=0;
     for(const mesh of meshes) {
       if(seen.has(mesh.geometry))continue;seen.add(mesh.geometry);
-      if(batchCount>=8||performance.now()-batchAt>=2){await backgroundFrame(signal);batchAt=performance.now();batchCount=0;}
+      if(batchCount>=meshBudget||performance.now()-batchAt>=timeBudget){await backgroundFrame(signal);batchAt=performance.now();batchCount=0;}
       signal.throwIfAborted();batchCount++;
       const clone=mesh.clone(false);clone.frustumCulled=false;clone.visible=true;clone.matrixAutoUpdate=false;
       clone.matrix.copy(mesh.matrixWorld);scene.add(clone);

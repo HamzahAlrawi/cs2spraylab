@@ -38,7 +38,7 @@ export async function loadNativeMap(signal: AbortSignal | undefined, options: Na
   const base = options.base;
   if(!/^\/maps\/[a-zA-Z0-9_\-/]+\/$/.test(base))throw Error('Invalid native map asset base.');
   const scope = createLoadScope(signal), network = createTaskLimiter(4), decode = createTaskLimiter(options?.background?1:4);
-  const geometryDecoder=createMapDecoder(scope.signal);
+  const geometryDecoder=createMapDecoder(scope.signal,!!options.background);
   const resourceWork=createTaskLimiter(1),resourceTurn=backgroundBudget(scope.signal);
   const fetchChecked = async (name: string) => {
     scope.signal.throwIfAborted();

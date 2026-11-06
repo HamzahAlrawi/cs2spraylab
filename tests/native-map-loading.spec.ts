@@ -16,8 +16,10 @@ test('loads actual Dust 2 resources and releases scenes with bounded idle image 
     URL.revokeObjectURL=url=>{revoked.add(url);revoke(url);};
     const start=performance.now(),map=await loadDust2();
     let meshes=0;map.scene.traverse((node:{isMesh?:boolean})=>{if(node.isMesh)meshes++;});
+    const threePath=performance.getEntriesByType('resource').find(entry=>new URL(entry.name).pathname.endsWith('/deps/three.js'))!.name;
+    const THREE=await import(threePath);
     let compiled=false;
-    await compileMapShaders({compileAsync:async()=>{compiled=true;}},{} as never,{} as never);
+    await compileMapShaders({compileAsync:async()=>{compiled=true;}},new THREE.Scene(),new THREE.PerspectiveCamera());
     const diagnostics={...map.collision.surfaceDiagnostics};
     map.dispose();map.dispose();
     const aborted=new AbortController();aborted.abort();

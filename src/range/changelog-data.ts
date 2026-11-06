@@ -640,7 +640,7 @@ const november6MapPoolThrows = {
   ]}],
 } as const satisfies ChangelogRelease;
 
-export const latestChanges = {
+const november6PrefireGrenadeFlight = {
   id:'update-2026-11-06-prefire-grenade-flight',title:'Prefire grenade clips & contact fixes (November 6)',baselineCommit:'2a26b65',
   sections:[{id:'prefire-grenade-path',title:'Complete grenade collision in Prefire',items:[
     'Prefire now uses the same verified, persistently cached full-map delivery as Duel and Awareness. Supplemental native brush and grenade-only clips are installed in every mode rather than silently omitted in Prefire.',
@@ -652,7 +652,17 @@ export const latestChanges = {
   ]}],
 } as const satisfies ChangelogRelease;
 
+export const latestChanges = {
+  id:'update-2026-11-07-loading',title:'Faster map entry (November 7)',baselineCommit:'385123d',
+  sections:[{id:'faster-map-entry',title:'Less waiting before practice',items:[
+    'Initial map loading dispatches geometry decoding in larger bounded worker batches instead of applying the small background-preload budget to thousands of jobs.',
+    'Initial GPU preparation uses larger bounded texture and mesh batches, while still preparing retained shaders, buffers and textures before entry. Upcoming rounds retain their gentler background budget.',
+    'Verified local map caching, cancellation and exact combat geometry are unchanged. Cold downloads and browser resource limits still affect loading time.',
+  ]}],
+} as const satisfies ChangelogRelease;
+
 export const changelogHistory = [
+  november6PrefireGrenadeFlight,
   november6MapPoolThrows,
   november6MirageBeta,
   november6MapAdmission,

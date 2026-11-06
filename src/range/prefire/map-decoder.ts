@@ -1,5 +1,5 @@
 import {MeshoptDecoder} from 'three/examples/jsm/libs/meshopt_decoder.module.js';
-import {backgroundFrame,backgroundBudget} from './background-work';
+import {backgroundBudget} from './background-work';
 import {createTaskLimiter} from './map-loading';
 
 type DecodeArgs = [count:number,size:number,source:Uint8Array,mode:string,filter?:string];
@@ -7,14 +7,15 @@ type Job = {resolve(value:Uint8Array):void;reject(reason:unknown):void;fallback(
 
 /** One disposable worker per map load, shared by its sectors. The decoder's
  * default "Async" API otherwise runs WASM synchronously on the combat thread. */
-export function createMapDecoder(signal:AbortSignal) {
+export function createMapDecoder(signal:AbortSignal,background=false) {
   let worker:Worker|undefined,closed=false,next=0;
   const jobs=new Map<number,Job>();
-  const submit=createTaskLimiter(1),checkpoint=backgroundBudget(signal,1,4);
-  const fallback=async(args:DecodeArgs)=>{
-    await MeshoptDecoder.ready;await backgroundFrame(signal);signal.throwIfAborted();
+  const submit=createTaskLimiter(1),fallbackQueue=createTaskLimiter(1);
+  const checkpoint=backgroundBudget(signal,background?1:6,background?4:128);
+  const fallback=(args:DecodeArgs)=>fallbackQueue(async()=>{
+    await MeshoptDecoder.ready;await checkpoint();signal.throwIfAborted();
     const bytes=new Uint8Array(args[0]*args[1]);MeshoptDecoder.decodeGltfBuffer(bytes,...args);return bytes;
-  };
+  },signal);
   const disable=()=>{
     worker?.terminate();worker=undefined;
     for(const job of jobs.values()){clearTimeout(job.timer);job.fallback();}jobs.clear();
@@ -41,6 +42,7 @@ export function createMapDecoder(signal:AbortSignal) {
       const id=next++,timer=setTimeout(disable,30000);
       jobs.set(id,{resolve,reject,timer,fallback:()=>{void fallback(args).then(resolve,reject);}});
       void submit(async()=>{
+        if(!jobs.has(id)||!worker)return;
         await checkpoint();if(!jobs.has(id)||!worker)return;
         try{const copy=args[2].slice();worker.postMessage({id,count:args[0],size:args[1],source:copy,mode:args[3],filter:args[4]},[copy.buffer]);}
         catch{disable();}

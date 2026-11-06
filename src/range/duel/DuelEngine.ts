@@ -345,7 +345,7 @@ export class DuelEngine {
       this.audio.prepare();
       if (this.config.utilitiesEnabled && this.settings.volume > 0) void this.audio.preloadUtilities().catch(() => {});
       if(scenario){
-        await prepareSceneGpu(this.renderer,scenario.scene,this.scene,this.camera,this.gpuPreparationAbort.signal,this.settings.quality);
+        await prepareSceneGpu(this.renderer,scenario.scene,this.scene,this.camera,this.gpuPreparationAbort.signal,this.settings.quality,false);
         this.mapLighting?.dispose();
         this.mapLighting=takePreparedLighting(this.scene,scenario.scene)??new PrefireLighting(this.scene,scenario.scene);
         this.mapLighting.configure(this.renderer,this.settings.quality);
