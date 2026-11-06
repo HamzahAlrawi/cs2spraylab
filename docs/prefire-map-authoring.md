@@ -1,5 +1,11 @@
 # Prefire Map Authoring
 
+**Release admission:** follow [Map onboarding and acceptance](map-onboarding.md)
+before exposing a new map in any mode. It adds an independent coverage brief,
+native/browser evidence gates, draft isolation and source-pinned receipts across
+Prefire, Duel and Awareness. This older guide remains the detailed authoring
+reference; existing Dust 2 is explicitly provisional, not a completed certificate.
+
 ## Reusable Contract
 
 `schema.ts` separates a `PrefireCatalog` from the shared session, physics, bots,

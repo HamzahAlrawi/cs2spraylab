@@ -16,7 +16,8 @@ const planningOnly = process.argv.includes('--planning-only'), requestedRoutes =
 if (!seeds.length || seeds.some(seed => !Number.isSafeInteger(seed)) || new Set(seeds).size !== seeds.length || !(seconds > 0 && seconds <= 180)) {
   throw new Error('Use integer seeds and a duration in (0, 180]. Short runs are diagnostic, not full audits.');
 }
-const vite = await createServer({root, server: {middlewareMode: true, hmr: false, ws: false}, appType: 'custom', logLevel: 'error'});
+// Offline authoring may simulate drafts; runtime selectors never receive this policy.
+const vite = await createServer({root,mode:'test',cacheDir:'node_modules/.vite-prefire-bot-audit', server: {middlewareMode: true, hmr: false, ws: false}, appType: 'custom', logLevel: 'error'});
 let collision, restoreController, restoreVerification;
 const started = performance.now(), failures = [], observations = [], diagnostics = [], failureKeys = new Set(), runs = [], planning = [];
 const fail = (code, context, detail) => {
@@ -40,7 +41,11 @@ try {
   const {PrefireBotController} = await vite.ssrLoadModule('/src/range/prefire/bot-controller.ts');
   const {prefireBotCatalog, prefireBotKey, validPrefireExcursion, hasPrefireSight, prefireRouteViews} =
     await vite.ssrLoadModule('/src/range/prefire/bot-behavior.ts');
-  const {prefireRoutes, sourcePoint} = await vite.ssrLoadModule('/src/range/prefire/routes.ts');
+  const {nativeMaps,defaultNativeMapId} = await vite.ssrLoadModule('/src/range/prefire/maps/index.ts');
+  const definition=nativeMaps.forAuthoring(arg('map')??defaultNativeMapId);
+  const catalog=await nativeMaps.loadCatalogForAuthoring(definition.id),prefireRoutes=catalog.routes;
+  const {sourcePoint} = await vite.ssrLoadModule('/src/range/prefire/route-helpers.ts');
+  const {catalogSha256,mapPackageKey}=await vite.ssrLoadModule('/src/range/prefire/map-onboarding.ts');
   if (requestedRoutes?.some(id => !prefireRoutes.some(route => route.id === id))) throw new Error('Unknown --routes ID.');
   const selectedRoutes = requestedRoutes ? prefireRoutes.filter(route => requestedRoutes.includes(route.id)) : prefireRoutes;
   const {placePrefireTarget} = await vite.ssrLoadModule('/src/range/prefire/placement.ts');
@@ -51,8 +56,9 @@ try {
   const {actorHeadPoint, traceActor} = await vite.ssrLoadModule('/src/range/duel/geometry.ts');
   const {moveOnTerrain} = await vite.ssrLoadModule('/src/range/actor-collision.ts');
   const {actorContactSolids} = await vite.ssrLoadModule('/src/range/actor-contact.ts');
-  const bytes = fs.readFileSync(path.join(root, 'public/revamp/maps/dust2/collision.bin'));
-  const manifest = JSON.parse(fs.readFileSync(path.join(root, 'public/revamp/maps/dust2/collision.json'), 'utf8'));
+  const mapBase=path.join(root,'public/revamp',definition.base);
+  const bytes = fs.readFileSync(path.join(mapBase, 'collision.bin'));
+  const manifest = JSON.parse(fs.readFileSync(path.join(mapBase, 'collision.json'), 'utf8'));
   const binarySha256 = createHash('sha256').update(bytes).digest('hex');
   if (binarySha256 !== manifest.collisionSha256) throw new Error('Native collision checksum mismatch.');
   const sourceSha256 = Object.fromEntries(['bot-behavior.ts', 'bot-controller.ts', 'session.ts', 'routes.ts', 'native-collision.ts']
@@ -253,11 +259,11 @@ try {
   }
   for (const route of selectedRoutes) {
     let warmup, targets, views, plans;
-    const practice = sanitizePrefireConfig({routeId: route.id, population: 'all', botBehavior: 'angle-specific', returnFire: true, reactionMs: 1000});
+    const practice = sanitizePrefireConfig({mapId:definition.id,routeId: route.id, population: 'all', botBehavior: 'angle-specific', returnFire: true, reactionMs: 1000},catalog);
     resetQueries();
     const coldStarted = performance.now();
     try {
-      warmup = new PrefireSimulation(map, practice, route, seeds[0], defaults);
+      warmup = new PrefireSimulation(map, practice, route, seeds[0], defaults,catalog.density,catalog);
       const coldMs = performance.now() - coldStarted, coldQueries = {...queryCounts};
       plans = warmup.actors.slice(1).map((_, i) => warmup.controllers[i].plan);
       if (plans.length !== route.angles.length || plans.length > 5) {
@@ -269,14 +275,14 @@ try {
       views = prefireRouteViews([route.spawn, ...route.path], collision);
       resetQueries();
       const repeatStarted = performance.now();
-      new PrefireSimulation(map, practice, route, seeds[0] + 1, defaults);
+      new PrefireSimulation(map, practice, route, seeds[0] + 1, defaults,catalog.density,catalog);
       const repeatMs = performance.now() - repeatStarted, repeatQueries = {...queryCounts};
       if (repeatQueries.ray || repeatQueries.sweep) fail('planning-cache-repeated', {route: route.id}, {repeatQueries});
       const randomStarted = performance.now(); resetQueries();
-      new PrefireSimulation(map, {...practice, population: 'random'}, route, seeds[0] + 2, defaults);
+      new PrefireSimulation(map, {...practice, population: 'random'}, route, seeds[0] + 2, defaults,catalog.density,catalog);
       const randomMs = performance.now() - randomStarted, randomQueries = {...queryCounts};
       const cachedRandomStarted = performance.now(); resetQueries();
-      new PrefireSimulation(map, {...practice, population: 'random'}, route, seeds[0] + 2, defaults);
+      new PrefireSimulation(map, {...practice, population: 'random'}, route, seeds[0] + 2, defaults,catalog.density,catalog);
       const cachedRandomMs = performance.now() - cachedRandomStarted, cachedRandomQueries = {...queryCounts};
       if (cachedRandomQueries.ray || cachedRandomQueries.sweep) fail('planning-cache-random-occupancy', {route: route.id}, {cachedRandomQueries});
       planning.push({route: route.id, coldMs: round(coldMs), coldQueries, cachedMs: round(repeatMs), cachedQueries: repeatQueries,
@@ -359,7 +365,7 @@ try {
     if (planningOnly) continue;
 
     for (const seed of seeds) {
-      const sim = seed === seeds[0] ? warmup : new PrefireSimulation(map, practice, route, seed, defaults);
+      const sim = seed === seeds[0] ? warmup : new PrefireSimulation(map, practice, route, seed, defaults,catalog.density,catalog);
       sim.actors[0].health = 1e9;
       const metric = {route: route.id, seed, controllerMs: 0, controllerCalls: 0, controllerRays: 0, controllerSamples: [],
         verificationMs: 0, verificationCalls: 0, verificationSamples: [],
@@ -528,7 +534,7 @@ try {
   if (selectedRoutes.length === routeCount) for (const [kind, count] of Object.entries(kinds)) {
     if (!count) fail('missing-actual-behavior', {}, {kind, counts: kinds});
   }
-  const report = {version: 1, build: manifest.build, collisionSha256: binarySha256, sourceSha256, seeds, requestedSeconds: seconds,
+  const report = {version: 1,mapId:definition.id,packageKey:mapPackageKey(definition),catalogSha256:await catalogSha256(catalog), build: manifest.build, collisionSha256: binarySha256, sourceSha256, seeds, requestedSeconds: seconds,
     completeDuration: !planningOnly && seconds === 180, fullCoverage: !planningOnly && selectedRoutes.length === routeCount,
     allCoursesTraversed: !planningOnly && runs.length === selectedRoutes.length * seeds.length &&
       runs.every(run => run.routeCompletedAt !== undefined),

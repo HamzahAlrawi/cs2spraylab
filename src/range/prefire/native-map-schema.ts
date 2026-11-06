@@ -1,6 +1,7 @@
 import type {DeliveredAsset} from './asset-delivery';
 import type {PrefireCatalog} from './schema';
 import type {SourceRadarMetadata} from '../duel/radar-overview';
+import {catalogSha256,validateMapAcceptance,validateMapCatalogScope,type MapAcceptanceReceipt} from './map-onboarding';
 
 export type NativeMapChunk = {id: string; name: string; routeId: string; sourceMin: readonly number[];
   sourceMax: readonly number[]; contextPaddingUnits: number; mapId: string};
@@ -22,17 +23,30 @@ export type NativeMapDefinition = {
   release: NativeMapRelease; radar?: NativeRadarManifest;
   sharedTextureBase?: string;
   fullDelivery?: DeliveredAsset;
+  onboarding?:{state:'draft'|'provisional'|'approved';note:string;acceptance?:MapAcceptanceReceipt};
   loadCatalog(): Promise<PrefireCatalog>;
 };
 
 /** Descriptors are small; geometry and full route/evidence catalogs stay lazy. */
-export function createNativeMapRegistry(definitions: readonly NativeMapDefinition[] = []) {
+export function createNativeMapRegistry(definitions: readonly NativeMapDefinition[] = [],
+  policy:{requireApproval?:boolean;provisionalIds?:readonly string[]}={}) {
   const maps = new Map<string, NativeMapDefinition>(), pending = new Map<string, Promise<PrefireCatalog>>();
-  const get = (id: string) => {
+  const decisions=new WeakMap<NativeMapDefinition,string[]>(),approvedCatalogs=new WeakSet<PrefireCatalog>();
+  const forAuthoring = (id: string) => {
     const map = maps.get(id);
     if (!map) throw new Error(`Unknown native map: ${id}`);
     return map;
   };
+  const admissionErrors=(map:NativeMapDefinition)=>{
+    if(!policy.requireApproval)return [];
+    let errors=decisions.get(map);if(errors)return errors;
+    const review=map.onboarding;
+    errors=review?.state==='provisional'&&typeof review.note==='string'&&review.note.trim()&&policy.provisionalIds?.includes(map.id)?[]:
+      review?.state==='approved'?validateMapAcceptance(map,review.acceptance):['Map is a draft or has no approved acceptance receipt.'];
+    decisions.set(map,errors);return errors;
+  };
+  const get=(id:string)=>{const map=forAuthoring(id),errors=admissionErrors(map);
+    if(errors.length)throw Error(`Native map not admitted: ${id}: ${errors.join(' ')}`);return map;};
   function register(map: NativeMapDefinition) {
     if (!/^[a-z0-9_\-]+$/.test(map.id) || !/^[a-z0-9][a-z0-9_-]*$/.test(map.assetId) || !map.revision.trim() ||
       !map.name.trim() || !/^\/maps\/[a-z0-9_\-/]+\/$/.test(map.base) ||
@@ -49,9 +63,8 @@ export function createNativeMapRegistry(definitions: readonly NativeMapDefinitio
     maps.set(map.id, map);
   }
   definitions.forEach(register);
-  return {get, register, list: () => [...maps.values()], has: (id: unknown): id is string => typeof id === 'string' && maps.has(id),
-    async loadCatalog(id: string) {
-      const map = get(id);
+  async function loadCatalogForAuthoring(id:string){
+      const map = forAuthoring(id);
       let request = pending.get(id);
       if (!request) {
         request = Promise.resolve().then(() => map.loadCatalog()).then(catalog => {
@@ -66,7 +79,22 @@ export function createNativeMapRegistry(definitions: readonly NativeMapDefinitio
         pending.set(id, request);
       }
       return request;
-    },
+  }
+  return {get,forAuthoring,loadCatalogForAuthoring,register,
+    candidates:()=>[...maps.values()].map(map=>({id:map.id,name:map.name,state:map.onboarding?.state??'draft',errors:admissionErrors(map)})),
+    list: () => [...maps.values()].filter(map=>!admissionErrors(map).length),
+    has: (id: unknown): id is string => typeof id === 'string' && maps.has(id)&&!admissionErrors(maps.get(id)!).length,
+    async loadCatalog(id:string){
+      const map=get(id),catalog=await loadCatalogForAuthoring(id);
+      if(policy.requireApproval&&map.onboarding?.state==='approved'&&!approvedCatalogs.has(catalog)){
+        const errors=validateMapAcceptance(map,map.onboarding.acceptance,catalog);
+        if(await catalogSha256(catalog)!==map.onboarding.acceptance?.catalogSha256)errors.push('Catalog/source/weighting snapshot changed after acceptance.');
+        errors.push(...validateMapCatalogScope(map,catalog));
+        if(errors.length)throw Error(`Native map not admitted: ${id}: ${errors.join(' ')}`);
+        approvedCatalogs.add(catalog);
+      }
+      return catalog;
+    }
   };
 }
 

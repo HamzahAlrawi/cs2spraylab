@@ -13,5 +13,6 @@ export const dust2Map: NativeMapDefinition = {
   release: release as NativeMapRelease, radar: radar as NativeRadarManifest,
   sharedTextureBase: '/maps/dust2/duel/shared/',
   fullDelivery: fullDelivery as DeliveredAsset,
+  onboarding:{state:'provisional',note:'Existing map retained during acceptance migration. Visual/collision, bot-angle coverage and reference-review debt remain; this is not a full-map fidelity certificate.'},
   loadCatalog: async () => (await import('../routes')).dust2Catalog,
 };

@@ -3,6 +3,7 @@ import react from '@vitejs/plugin-react';
 import {fileURLToPath} from 'node:url';
 
 export default defineConfig({
+  mode: 'test', // Synthetic registry entries are not production map admissions.
   publicDir: false,
   cacheDir: 'node_modules/.vite-prefire-map-switch',
   optimizeDeps: {noDiscovery: true, include: ['react', 'react-dom/client', 'react/jsx-dev-runtime', 'three', 'lucide-react', '@dimforge/rapier3d-compat']},

@@ -599,7 +599,7 @@ const november6SoundDensity = {
   ],
 } as const satisfies ChangelogRelease;
 
-export const latestChanges = {
+const november6SoundVariety = {
   id:'update-2026-11-06-sound-variety',title:'Less repetitive sound practice (November 6)',baselineCommit:'249e27f',
   sections:[
     {id:'heard-source-variety',title:'Broader positions, familiar priorities',items:[
@@ -610,7 +610,17 @@ export const latestChanges = {
   ],
 } as const satisfies ChangelogRelease;
 
+export const latestChanges = {
+  id:'update-2026-11-06-map-admission',title:'Stricter map acceptance (November 6)',baselineCommit:'79d8840',
+  sections:[{id:'map-acceptance-pipeline',title:'A repeatable map acceptance process',items:[
+    'New maps remain drafts until independently reviewed angle coverage, geometry, bot scenarios, browser aim/radar and loading evidence pass admission checks.',
+    'Map-specific offline audits now use the selected catalog. Build checks reject missing or stale approval evidence; repeat loading and chunk handoffs have explicit network and frame-time budgets.',
+    'Dust 2 remains available as a provisional map with a documented review backlog. This does not claim its remaining geometry or bot-position issues are solved.',
+  ]}],
+} as const satisfies ChangelogRelease;
+
 export const changelogHistory = [
+  november6SoundVariety,
   november6SoundDensity,
   november5FullMapAwareness,
   november5SoundChanges,

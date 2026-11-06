@@ -4,4 +4,6 @@ import {dust2Map} from './dust2';
 export const defaultNativeMapId = dust2Map.id;
 /** Missing IDs in historical browser saves mean this map, even if the default changes later. */
 export const legacyNativeMapId = dust2Map.id;
-export const nativeMaps = createNativeMapRegistry([dust2Map]);
+export const nativeMaps = createNativeMapRegistry([dust2Map],{
+  requireApproval:(import.meta as ImportMeta & {env?:{MODE?:string}}).env?.MODE!=='test',provisionalIds:[dust2Map.id],
+});

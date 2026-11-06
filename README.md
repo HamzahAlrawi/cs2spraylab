@@ -73,6 +73,12 @@ The November 4 pass moves large inflation and geometry decoding to workers, slic
 
 ## Architecture
 
+New native maps must pass the [map onboarding and acceptance process](docs/map-onboarding.md):
+independent angle coverage, native geometry/route audits, bot scenarios, browser
+aim/radar review and measured loading budgets. Draft maps remain unselectable;
+builds verify approved evidence. `npm run maps:status` reports admission state.
+Dust 2 remains playable but [provisional](docs/dust2-map-acceptance-backlog.md).
+
 For a data engineer: React is the view layer, TypeScript supplies static contracts, and Vite serves/builds static files. Three.js owns the 3D world and rendering loop. React updates the HUD separately rather than rebuilding the scene each frame.
 
 - `src/range/simulation.ts`: fixed-step movement, target motion, shot timing and drill state.
