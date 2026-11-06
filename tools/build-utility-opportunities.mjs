@@ -6,6 +6,7 @@ import catalog from '../src/range/duel/real-map-catalog.json' with {type:'json'}
 const vite = await createServer({server:{middlewareMode:true,hmr:false,ws:false},appType:'custom',logLevel:'error'});
 try {
   const {NativeMapCollision} = await vite.ssrLoadModule('/src/range/prefire/native-collision.ts');
+  const {acquireNativeGrenadeQuery}=await vite.ssrLoadModule('/src/range/prefire/native-grenade-query.ts');
   const {UtilitySimulation,UTILITY_KERNEL_VERSION} = await vite.ssrLoadModule('/src/range/duel/utilities.ts');
   const {solveUtilityThrow} = await vite.ssrLoadModule('/src/range/duel/utility-ballistics.ts');
   const entries = [], reports = [];
@@ -13,6 +14,11 @@ try {
     const base = `public/revamp/maps/dust2/duel/${chunk.id}/`, buffer = fs.readFileSync(base+'collision.bin');
     const collision = await NativeMapCollision.create(JSON.parse(fs.readFileSync(base+'collision.json')),
       buffer.buffer.slice(buffer.byteOffset, buffer.byteOffset+buffer.byteLength));
+    const archive=JSON.parse(fs.readFileSync('public/revamp/maps/dust2/grenade-collision.json'));
+    collision.installGrenadeQuery(await acquireNativeGrenadeQuery(archive,async()=>{
+      const bytes=fs.readFileSync('public/revamp/maps/dust2/grenade-query.bin');
+      return bytes.buffer.slice(bytes.byteOffset,bytes.byteOffset+bytes.byteLength);
+    },collision.sourceCollisionSha256));
     const arena = {...collision.bounds, native:collision, solids:[]};
     let attempts = 0, count = 0;
     try {
@@ -50,7 +56,7 @@ try {
     } finally {collision.dispose();}
   }
   fs.writeFileSync('src/range/duel/utility-opportunities.json',JSON.stringify({version:2,kernelVersion:UTILITY_KERNEL_VERSION,
-    source:'Independently authored from native Dust 2 training approaches; trajectories tested with installed chunk collision and trainer launch kernel. Not copied upstream lineup data or native-engine certification.',entries},null,2)+'\n');
+    source:'Independently authored from native Dust 2 training approaches; trajectories tested with the complete native grenade query world and current trainer motion kernel. Not copied upstream lineup data or native-engine certification.',entries},null,2)+'\n');
   console.log(JSON.stringify(reports));
   if (entries.length < 8) throw new Error('Insufficient validated utility setups');
 } finally {await vite.close();}

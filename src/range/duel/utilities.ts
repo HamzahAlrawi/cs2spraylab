@@ -9,7 +9,8 @@ import {nativeGrenadeVelocity,nativeGrenadeSpeed,nativeGrenadeThrowVelocity} fro
 import {sweepGrenadeHull} from './grenade-contact';
 import {nativeHEStats,nativeHEBlastDamage,nativeHEArmorDamage,NATIVE_HE} from './grenade-native-blast';
 import {nativeUtilityDefault} from './native-utility-defaults';
-import {NATIVE_GRENADE_FLIGHT,nativeGrenadeContact,nativeGrenadeThinkTick,nativeGrenadeNextThinkTick} from './grenade-native-flight';
+import {NATIVE_GRENADE_FLIGHT,nativeGrenadeContact,nativeGrenadeThinkTick,nativeGrenadeNextThinkTick,
+  nativeGrenadeFlightStep,nativeGrenadeResidualDelta,nativeGrenadeSecondaryDelta} from './grenade-native-flight';
 import {nativeFlashArguments,NATIVE_GRENADE_FLASH} from './grenade-native-flash';
 import {nativeFlashVisibility} from './grenade-flash-visibility';
 import {InfernoSpread,nativeInfernoDamage} from './inferno-native';
@@ -18,7 +19,7 @@ import {pointInSmokeHole, SMOKE_EXTINCTION, HE_SMOKE_DISPLACEMENT} from './smoke
 import {HE_EXPLOSION_SECONDS} from './he-explosion';
 
 export type {UtilityKind} from './utility-loadout';
-export const UTILITY_KERNEL_VERSION='native-launch-contact-think-inferno-2000935-v4';
+export const UTILITY_KERNEL_VERSION='native-motion-residual-2000942-v5';
 // Extracted values and approximation boundaries: docs/utility-kernel.md.
 export const UTILITY_RULES = Object.freeze({
   step: 1 / 128, gravity: NATIVE_GRENADE_FLIGHT.gravity * UNIT, throwSpeed: Math.fround(nativeGrenadeSpeed())*UNIT,
@@ -31,7 +32,7 @@ export const UTILITY_RULES = Object.freeze({
   molotovRadius: nativeUtilityDefault('inferno_max_range') * UNIT, incendiaryRadius: nativeUtilityDefault('inferno_max_range_ct') * UNIT,
   heRadius: nativeHEStats.radiusUnits * UNIT, heDamage: nativeHEStats.damage, smokeRadius: 4.2, smokeLifetime: 20,
   smokeMinimumAge: Math.fround(1.188), smokeDetonateSpeed: Math.fround(.1)*UNIT,
-  smokeBloom: 1, decoyLifetime: 15, projectileLifetime: 8,
+  smokeBloom: 1, decoyLifetime: 15,
   maxProjectiles: 32, maxEffects: 64, maxActors: 64, maxEvents: 4096,
   maxSteps: 128, maxContacts: 4, maxHoles: 16,
 });
@@ -235,7 +236,6 @@ export class UtilitySimulation {
         if (p.thrownAt > now + 1e-9) return true;
         const step = now - Math.max(start, p.thrownAt), age = now - p.thrownAt;
         if (step <= 0) return true;
-        if (age >= UTILITY_RULES.projectileLifetime) {this.fuseClocks.delete(p.id);emit({...this.base(p, now), type: 'expire'}); return false;}
         const floorImpact = this.move(p, step, now, arena, targets, emit);
         if (p.kind === 'smoke') {
           let preparation = this.smokePreparations.get(p.id);
@@ -343,11 +343,9 @@ export class UtilitySimulation {
       if (support && support.normal.y > NATIVE_GRENADE_FLIGHT.slowSlopeNormal) return support.normal.y>=UTILITY_RULES.minFireNormal;
       p.resting = false;
     }
-    let remaining = dt, floorImpact = false;
-    const initialDelta=scale(p.velocity,dt);initialDelta.y-=.5*UTILITY_RULES.gravity*dt*dt;
-    p.velocity.y-=UTILITY_RULES.gravity*dt;
-    for (let contact = 0; contact < UTILITY_RULES.maxContacts && remaining > 1e-7; contact++) {
-      const delta = contact===0?initialDelta:scale(p.velocity, remaining);
+    let floorImpact = false;
+    const movement=nativeGrenadeFlightStep(p.velocity,dt);p.velocity=movement.velocity;
+    const push=(delta:Vec)=>{
       let hit = this.contact(p.position, delta, p.radius, arena);
       let worldSupport=true;
       const range=length(delta),direction=range>1e-10?scale(delta,1/range):zero();
@@ -362,20 +360,23 @@ export class UtilitySimulation {
           hit={fraction:Math.max(0,interval.entryDistance/range-.0001/range),normal:interval.entryNormal};worldSupport=false;
         }
       }
-      const fraction = hit?.fraction ?? 1, used = remaining * fraction;
+      const fraction = hit?.fraction ?? 1;
       p.position = add(p.position, scale(delta, fraction));
-      if (!hit) break;
-      p.position = add(p.position, scale(hit.normal, .0002));
-      const into = dot(p.velocity, hit.normal);
-      const response=nativeGrenadeContact(p.velocity,hit.normal,worldSupport);
-      p.velocity=response.velocity;p.resting=response.resting;
-      p.bounces++;
-      floorImpact ||= hit.normal.y >= UTILITY_RULES.minFireNormal;
-      emit({...this.base(p, time - remaining + used), type: 'bounce', normal: {...hit.normal}});
-      if (Math.abs(into) > .7) this.sound(p, time - remaining + used, 'bounce', 12, emit);
-      if (p.resting) break;
-      remaining -= Math.max(used, 1e-6);
-    }
+      if(hit){p.position=add(p.position,scale(hit.normal,.0002));floorImpact ||= hit.normal.y>=UTILITY_RULES.minFireNormal;}
+      return hit?{...hit,worldSupport}:undefined;
+    };
+    const hit=push(movement.delta);
+    if(!hit)return floorImpact;
+    const into=dot(p.velocity,hit.normal),at=time-dt+dt*hit.fraction;
+    const response=nativeGrenadeContact(p.velocity,hit.normal,hit.worldSupport);
+    p.velocity=response.velocity;p.resting=response.resting;p.bounces++;
+    emit({...this.base(p,at),type:'bounce',normal:{...hit.normal}});
+    if(Math.abs(into)>.7)this.sound(p,at,'bounce',12,emit);
+    if(p.resting)return floorImpact;
+    // PhysicsPushEntity reports residual contacts but does not recursively run
+    // the grenade response. The wall branch alone gets one extra clipped push.
+    const residual=nativeGrenadeResidualDelta(p.velocity,dt,hit.fraction),second=push(residual);
+    if(!response.supported&&second&&second.fraction<.5)push(nativeGrenadeSecondaryDelta(residual,second.fraction,second.normal));
     return floorImpact;
   }
 

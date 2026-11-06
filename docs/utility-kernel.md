@@ -7,6 +7,11 @@ Updated October 28, 2026. The [native fidelity audit](native-grenade-fidelity-20
 supersedes earlier numeric assumptions. Build 2000935 is statically inspected;
 offline arithmetic fixtures are not a measured comparison with a running game.
 
+The [November 6 follow-up](grenade-lineup-followup-2026-11-06.md) supersedes the
+ordinary residual-contact loop: current native float32 flight uses one response
+and bounded residual pushes, not repeated restitution at every substep contact.
+Prefire, Duel and Awareness now all install the complete native grenade archive.
+
 ## Integration
 
 - `UtilityKind` is imported/re-exported from `utility-loadout.ts`; all six item
@@ -135,8 +140,12 @@ Separate grenade mask selection does not certify every native trace flag.
 HE/flash store a 1.5-second deadline and use strict greater-than and tick-quantized
 0.2-second think requests. The trainer's first check is the nearest outer tick at
 creation; native first-dispatch ordering has not been measured. Do not replace
-these clocks with a universal 1.5, 1.6 or 1.625-second detonation. The eight-second
-defensive projectile timeout remains a trainer limit.
+these clocks with a universal 1.5, 1.6 or 1.625-second detonation. The former
+eight-second live/replay cutoff was removed on November 6: it deleted legitimate
+high throws before they could settle. Bot planning still bounds each candidate
+to eight seconds, independently of live projectile lifetime. The live pool is
+bounded to 32 projectiles and reset with the session/round. Escaped-map removal
+is not claimed to reproduce the native out-of-world dispatcher.
 
 HE uses extracted 99 damage, 350-unit radius and native exponential falloff,
 with native ordinary blast armor ratio/cost/truncation. Exposure has the native

@@ -1,5 +1,8 @@
 # Grenade Collision And Jump-Throw Audit
 
+See the [follow-up](grenade-lineup-followup-2026-11-06.md) for the subsequently
+found Prefire loader omission, eight-second expiry and residual-contact fixes.
+
 ## Source And Method
 
 Installed CS2 build **2000942**, patch 1.41.9.6, SourceRevision 11206718,

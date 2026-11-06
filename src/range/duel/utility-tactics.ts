@@ -25,8 +25,9 @@ export function utilityAimDirection(from: Vec, to: Vec): Vec | undefined {
   return {x: dx / d * Math.cos(pitch), y: Math.sin(pitch), z: dz / d * Math.cos(pitch)};
 }
 // Authored training policy, not native bot logic or a claim of gameplay parity.
+export const BOT_UTILITY_FLIGHT_SECONDS=8;
 const POLICY = {sightAge: 1.5, soundAge: .8, setupSightAge: 3, setupSoundAge: 2,
-  checks: .35, candidates: 4, flightSeconds: UTILITY_RULES.projectileLifetime,
+  checks: .35, candidates: 4, flightSeconds: BOT_UTILITY_FLIGHT_SECONDS,
   positionTolerance: .08, allyTolerance: .2, contactTolerance: 1.5, flashSeconds: .15};
 type Context = {visible: boolean; lastShotAt: number; teammates: readonly DuelActorSnapshot[];
   movementGoal?: Vec;

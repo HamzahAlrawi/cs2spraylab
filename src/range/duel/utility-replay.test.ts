@@ -10,6 +10,13 @@ const effect = (): UtilityEffect => ({id: 2, actorId: 0, side: 'player', kind: '
   radius: 4, startedAt: 0, expiresAt: 20, cells: [], holes: []});
 
 describe('utility replay capture and absolute-time sampling', () => {
+  it('retains a long-flight smoke after eight seconds until its recorded removal',()=>{
+    const replay=new CombatReplay(1),p={...projectile(),kind:'smoke' as const};
+    replay.utility(8*128,8,[p],[]);replay.utility(9*128,9,[p],[]);
+    replay.utility(10*128,10,[],[]);
+    expect(sampleReplayUtilities(replay.export().utilities,8.5).projectiles).toHaveLength(1);
+    expect(sampleReplayUtilities(replay.export().utilities,10).projectiles).toHaveLength(0);
+  });
   it('bounds allowlisted nested state and rejects invalid geometry without retaining aliases', () => {
     const p = projectile(), e = {...effect(), type: 'fire' as const, nextTick: Infinity, foreign: 'not serialized'};
     e.cells = Array.from({length: 100}, () => ({x: 1, y: 0, z: 2}));

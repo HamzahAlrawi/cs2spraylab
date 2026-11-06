@@ -24,6 +24,7 @@
     "assets:check:dust2": "node tools/check-dust2.mjs",
     "audit:prefire": "node tools/audit-prefire.mjs",
     "audit:prefire:bots": "node tools/audit-prefire-bots.mjs",
+    "audit:grenades": "node tools/audit-grenade-trajectories.mjs",
     "maps:status": "node tools/map-onboarding.mjs status",
     "maps:init": "node tools/map-onboarding.mjs init",
     "maps:cases": "node tools/map-onboarding.mjs cases",

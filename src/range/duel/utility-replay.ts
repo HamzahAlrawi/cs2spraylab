@@ -153,7 +153,7 @@ export function sampleReplayUtilities(data: ReplayUtilities | undefined, time: n
   }
   const effects = before.effects.map(index => data.effects[index]).filter(e => !!e && e.startedAt <= time && e.expiresAt > time &&
     !ended.has(e.id));
-  const projectiles = before.projectiles.filter(p => p.thrownAt <= time && time - p.thrownAt < UTILITY_RULES.projectileLifetime &&
+  const projectiles = before.projectiles.filter(p => p.thrownAt <= time &&
     !ended.has(p.id) && !detonated.has(p.id)).map(p => {
     const next = after?.projectiles.find(n => n.id === p.id && n.thrownAt === p.thrownAt);
     // Never smooth a bounce/rest transition or invent a flight path beyond the last sample.

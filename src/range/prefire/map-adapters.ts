@@ -2,6 +2,7 @@ import {createPrefireMapRegistry} from './map-registry';
 import type {PrefireMap} from './map';
 import type {PrefireMapQuality} from './map-quality';
 import {defaultNativeMapId, nativeMaps} from './maps';
+import {fetchDeliveredAsset,validateDelivery} from './asset-delivery';
 
 const read = async <T,>(url: string): Promise<T> => {
   const response = await fetch(url);
@@ -17,6 +18,11 @@ export const prefireMaps = createPrefireMapRegistry<PrefireMap>(nativeMaps.list(
     ]);
     return {catalog, build: {mapId: catalog.id, catalogRevision: catalog.revision,
       gameBuild: manifest.build, geometrySha256: manifest.collisionSha256}, quality,beta:map.onboarding?.state==='beta'?map.onboarding.beta:undefined,
-      loadRuntime: async signal => (await import('./map')).loadNativeMap(signal,{base:map.base,sharedTextureBase:map.sharedTextureBase})};
+      loadRuntime: async signal => {
+        const delivery=map.fullDelivery?validateDelivery(JSON.parse(new TextDecoder().decode(
+          await fetchDeliveredAsset(map.fullDelivery,signal)))):undefined;
+        signal?.throwIfAborted();
+        return (await import('./map')).loadNativeMap(signal,{base:map.base,sharedTextureBase:map.sharedTextureBase,delivery});
+      }};
   },
 })));

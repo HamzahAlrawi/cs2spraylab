@@ -1,6 +1,7 @@
 import {existsSync,readFileSync} from 'node:fs';
 import {describe,expect,it} from 'vitest';
 import {NativeMapCollision} from '../prefire/native-collision';
+import {acquireNativeGrenadeQuery} from '../prefire/native-grenade-query';
 import {utilityLaunchPose} from './utility-ballistics';
 import {UtilitySimulation,UTILITY_KERNEL_VERSION} from './utilities';
 import type {UtilityKind} from './utility-loadout';
@@ -13,6 +14,11 @@ describe.skipIf(chunks.some(chunk=>!existsSync(`public/revamp/maps/dust2/duel/${
     const root=`public/revamp/maps/dust2/duel/${chunk}/`,bytes=readFileSync(root+'collision.bin');
     const collision=await NativeMapCollision.create(JSON.parse(readFileSync(root+'collision.json','utf8')),
       bytes.buffer.slice(bytes.byteOffset,bytes.byteOffset+bytes.byteLength));
+    const archive=JSON.parse(readFileSync('public/revamp/maps/dust2/grenade-collision.json','utf8'));
+    collision.installGrenadeQuery(await acquireNativeGrenadeQuery(archive,async()=>{
+      const snapshot=readFileSync('public/revamp/maps/dust2/grenade-query.bin');
+      return snapshot.buffer.slice(snapshot.byteOffset,snapshot.byteOffset+snapshot.byteLength) as ArrayBuffer;
+    },collision.sourceCollisionSha256));
     try {
       const arena={...collision.bounds!,native:collision,solids:[]},seen=new Set<string>();
       for(const entry of setups.entries.filter(item=>item.chunk===chunk)) {

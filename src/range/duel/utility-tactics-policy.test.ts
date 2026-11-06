@@ -3,7 +3,7 @@ import {STEP} from '../actor-physics';
 import type {Arena} from './geometry';
 import type {DuelActorSnapshot} from './types';
 import type {ThreatReport} from './trading';
-import {BotUtilityPlanner} from './utility-tactics';
+import {BotUtilityPlanner,BOT_UTILITY_FLIGHT_SECONDS} from './utility-tactics';
 import {utilityInventory, type UtilityKind} from './utility-loadout';
 import {UtilitySimulation, UTILITY_RULES, type UtilityEvent, type UtilityThrow} from './utilities';
 import * as ballistics from './utility-ballistics';
@@ -397,6 +397,6 @@ describe('bounded observed-contact utility policy (authored, not native bot pari
     expect(advances).not.toHaveBeenCalled();
     expect(throws).not.toHaveBeenCalled();
     // Four candidates * eight seconds * 128 kernel steps is the hard planning ceiling.
-    expect(4 * UTILITY_RULES.projectileLifetime / UTILITY_RULES.step).toBe(4096);
+    expect(4 * BOT_UTILITY_FLIGHT_SECONDS / UTILITY_RULES.step).toBe(4096);
   });
 });

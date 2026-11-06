@@ -1,0 +1,471 @@
+{
+  "build": "2000942",
+  "serverSha256": "70c66e850b2ce72c8c7ca026de6989ef4de7f12dad64ec503645fbd2a7f06d9f",
+  "integrationRva": "0xe8e9b0..0xe8eb36",
+  "contactRva": "0x9ce9d5..0x9cf007",
+  "clipRva": "0xe8efa0..0xe8f02a",
+  "method": "Isolated static native arithmetic; getter/setter, time, gravity, support, normalization and world traces are explicit fixture inputs/stubs.",
+  "excluded": "No live game, DLL loading, full entity dispatch, trace solver, moving supports, breakables or first-spawn scheduling.",
+  "smokeGateRva": "0x9d4721..0x9d4793",
+  "integration": [
+    {
+      "velocity": [
+        675,
+        0,
+        117.21251678466797
+      ],
+      "dt": 0.0078125,
+      "delta": [
+        5.2734375,
+        0.0,
+        0.9059571623802185
+      ],
+      "after": [
+        675.0,
+        0.0,
+        114.71251678466797
+      ]
+    },
+    {
+      "velocity": [
+        675,
+        0,
+        117.21251678466797
+      ],
+      "dt": 0.003125,
+      "delta": [
+        2.109375,
+        0.0,
+        0.36472663283348083
+      ],
+      "after": [
+        675.0,
+        0.0,
+        116.21251678466797
+      ]
+    },
+    {
+      "velocity": [
+        120,
+        -250,
+        800
+      ],
+      "dt": 0.0078125,
+      "delta": [
+        0.9375,
+        -1.953125,
+        6.240234375
+      ],
+      "after": [
+        120.0,
+        -250.0,
+        797.5
+      ]
+    },
+    {
+      "velocity": [
+        120,
+        -250,
+        800
+      ],
+      "dt": 0.003125,
+      "delta": [
+        0.375,
+        -0.78125,
+        2.4984376430511475
+      ],
+      "after": [
+        120.0,
+        -250.0,
+        799.0
+      ]
+    },
+    {
+      "velocity": [
+        0,
+        0,
+        -900
+      ],
+      "dt": 0.0078125,
+      "delta": [
+        0.0,
+        0.0,
+        -7.041015625
+      ],
+      "after": [
+        0.0,
+        0.0,
+        -902.5
+      ]
+    },
+    {
+      "velocity": [
+        0,
+        0,
+        -900
+      ],
+      "dt": 0.003125,
+      "delta": [
+        0.0,
+        0.0,
+        -2.8140625953674316
+      ],
+      "after": [
+        0.0,
+        0.0,
+        -901.0
+      ]
+    },
+    {
+      "velocity": [
+        0,
+        0,
+        0
+      ],
+      "dt": 0.0078125,
+      "delta": [
+        0.0,
+        0.0,
+        -0.009765625
+      ],
+      "after": [
+        0.0,
+        0.0,
+        -2.5
+      ]
+    },
+    {
+      "velocity": [
+        0,
+        0,
+        0
+      ],
+      "dt": 0.003125,
+      "delta": [
+        0.0,
+        0.0,
+        -0.0015625000232830644
+      ],
+      "after": [
+        0.0,
+        0.0,
+        -1.0
+      ]
+    }
+  ],
+  "contacts": [
+    {
+      "velocity": [
+        300,
+        40,
+        -500
+      ],
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "supportEligible": true,
+      "fraction": 0.25,
+      "secondaryFraction": 1,
+      "secondaryNormal": [
+        0,
+        0,
+        1
+      ],
+      "dt": 0.0078125,
+      "after": [
+        135.0,
+        18.0,
+        225.01405334472656
+      ],
+      "resting": false,
+      "pushes": [
+        [
+          0.791015625,
+          0.10546875,
+          1.3184417486190796
+        ]
+      ]
+    },
+    {
+      "velocity": [
+        100,
+        50,
+        0
+      ],
+      "normal": [
+        -1,
+        0,
+        0
+      ],
+      "supportEligible": true,
+      "fraction": 0.25,
+      "secondaryFraction": 0.2,
+      "secondaryNormal": [
+        0,
+        0,
+        1
+      ],
+      "dt": 0.0078125,
+      "after": [
+        -45.014060974121094,
+        22.5,
+        0.0
+      ],
+      "resting": false,
+      "pushes": [
+        [
+          -0.2637542486190796,
+          0.1318359375,
+          0.0
+        ],
+        [
+          -0.2110034078359604,
+          0.10546875,
+          0.03125
+        ]
+      ]
+    },
+    {
+      "velocity": [
+        100,
+        50,
+        -400
+      ],
+      "normal": [
+        -1,
+        0,
+        0
+      ],
+      "supportEligible": true,
+      "fraction": 0.4,
+      "secondaryFraction": 0.7,
+      "secondaryNormal": [
+        0,
+        0,
+        1
+      ],
+      "dt": 0.0078125,
+      "after": [
+        -45.014060974121094,
+        22.5,
+        -180.0
+      ],
+      "resting": false,
+      "pushes": [
+        [
+          -0.21100342273712158,
+          0.1054687574505806,
+          -0.8437500596046448
+        ]
+      ]
+    },
+    {
+      "velocity": [
+        100,
+        50,
+        -400
+      ],
+      "normal": [
+        -1,
+        0,
+        0
+      ],
+      "supportEligible": true,
+      "fraction": 0.4,
+      "secondaryFraction": 0.2,
+      "secondaryNormal": [
+        0,
+        0,
+        1
+      ],
+      "dt": 0.0078125,
+      "after": [
+        -45.014060974121094,
+        22.5,
+        -180.0
+      ],
+      "resting": false,
+      "pushes": [
+        [
+          -0.21100342273712158,
+          0.1054687574505806,
+          -0.8437500596046448
+        ],
+        [
+          -0.16880273818969727,
+          0.08437500894069672,
+          0.7062500715255737
+        ]
+      ]
+    },
+    {
+      "velocity": [
+        100,
+        50,
+        -400
+      ],
+      "normal": [
+        -1,
+        0,
+        0
+      ],
+      "supportEligible": true,
+      "fraction": 0.4,
+      "secondaryFraction": 0.5,
+      "secondaryNormal": [
+        0,
+        0,
+        1
+      ],
+      "dt": 0.0078125,
+      "after": [
+        -45.014060974121094,
+        22.5,
+        -180.0
+      ],
+      "resting": false,
+      "pushes": [
+        [
+          -0.21100342273712158,
+          0.1054687574505806,
+          -0.8437500596046448
+        ]
+      ]
+    },
+    {
+      "velocity": [
+        0,
+        0,
+        -5
+      ],
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "supportEligible": true,
+      "fraction": 0.8,
+      "secondaryFraction": 1,
+      "secondaryNormal": [
+        0,
+        0,
+        1
+      ],
+      "dt": 0.0078125,
+      "after": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "resting": true,
+      "pushes": []
+    },
+    {
+      "velocity": [
+        0,
+        0,
+        -1000
+      ],
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "supportEligible": true,
+      "fraction": 0.2,
+      "secondaryFraction": 1,
+      "secondaryNormal": [
+        0,
+        0,
+        1
+      ],
+      "dt": 0.0078125,
+      "after": [
+        0.0,
+        0.0,
+        225.00701904296875
+      ],
+      "resting": false,
+      "pushes": [
+        [
+          0.0,
+          0.0,
+          1.4062938690185547
+        ]
+      ]
+    },
+    {
+      "velocity": [
+        0,
+        0,
+        -1000
+      ],
+      "normal": [
+        0,
+        0,
+        1
+      ],
+      "supportEligible": false,
+      "fraction": 0.2,
+      "secondaryFraction": 1,
+      "secondaryNormal": [
+        0,
+        0,
+        1
+      ],
+      "dt": 0.0078125,
+      "after": [
+        0.0,
+        0.0,
+        450.0140380859375
+      ],
+      "resting": false,
+      "pushes": [
+        [
+          0.0,
+          0.0,
+          2.8125877380371094
+        ]
+      ]
+    }
+  ],
+  "smokes": [
+    {
+      "age": 1,
+      "speed": 0,
+      "detonated": false
+    },
+    {
+      "age": 1.1875,
+      "speed": 0,
+      "detonated": false
+    },
+    {
+      "age": 1.203125,
+      "speed": 0,
+      "detonated": true
+    },
+    {
+      "age": 8,
+      "speed": 100,
+      "detonated": false
+    },
+    {
+      "age": 12,
+      "speed": 100,
+      "detonated": false
+    },
+    {
+      "age": 30,
+      "speed": 100,
+      "detonated": false
+    },
+    {
+      "age": 12,
+      "speed": 0,
+      "detonated": true
+    }
+  ]
+}

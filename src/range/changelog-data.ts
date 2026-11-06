@@ -628,7 +628,7 @@ const november6MirageBeta = {
   ]}],
 } as const satisfies ChangelogRelease;
 
-export const latestChanges = {
+const november6MapPoolThrows = {
   id:'update-2026-11-06-map-pool-throws',title:'Map pools & grenade collision (November 6)',baselineCommit:'c9bf14a',
   sections:[{id:'duel-map-pool',title:'Your Duel map pool',items:[
     'Choose Duel maps with checkboxes. New players start with all available maps checked; maps receive equal selection chances regardless of their chunk count. Fixed chunks and custom lineups remain available in a single-map pool.',
@@ -640,7 +640,20 @@ export const latestChanges = {
   ]}],
 } as const satisfies ChangelogRelease;
 
+export const latestChanges = {
+  id:'update-2026-11-06-prefire-grenade-flight',title:'Prefire grenade clips & contact fixes (November 6)',baselineCommit:'2a26b65',
+  sections:[{id:'prefire-grenade-path',title:'Complete grenade collision in Prefire',items:[
+    'Prefire now uses the same verified, persistently cached full-map delivery as Duel and Awareness. Supplemental native brush and grenade-only clips are installed in every mode rather than silently omitted in Prefire.',
+    'Browser regressions check the actual thin native clip through the Prefire loader on desktop and mobile.',
+  ]},{id:'native-residual-flight',title:'Native contact continuation',items:[
+    'High jump throws no longer disappear after an arbitrary eight seconds. Live flight and fight review keep the grenade until its actual fuse/settling event; bot planning retains its separate bounded search budget.',
+    'Grenade flight uses Source-unit float32 integration. Residual wall/floor traces no longer apply repeated full restitution within one physics substep; wall secondary clipping follows the installed contact branch.',
+    'New offline installed-server fixtures cover integration and ordinary contact continuation. A launch-state-to-rest audit accepts recorded throws and reports errors and contacts without attaching to the game. Exact manual lineup parity remains subject to matched-build verification.',
+  ]}],
+} as const satisfies ChangelogRelease;
+
 export const changelogHistory = [
+  november6MapPoolThrows,
   november6MirageBeta,
   november6MapAdmission,
   november6SoundVariety,

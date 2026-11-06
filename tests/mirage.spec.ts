@@ -33,8 +33,11 @@ test('Mirage beta plays six Prefire routes, uses native Duel chunks and retains 
     await expect.poll(()=>page.evaluate(()=>(window as any).mirageEngine.sim.route.id)).toBe(route);
     const state=await page.evaluate(()=>{const s=(window as any).mirageEngine.sim,p=s.actors[0];return {
       map:s.config.mapId,bots:s.actors.length-1,fits:s.arena.native.fits(p.position,p.feet,72*.0254),
-      source:s.route.angles.every((a:any)=>a.id.startsWith('de_mirage:')),native:s.arena.native.collisionSha256};});
-    expect(state).toMatchObject({map:'de_mirage',bots:5,fits:true,source:true,native:'6253487f363acf4b1b5bd2e8af0468a8fc29814ec36e564a8643f4645da88352'});
+      source:s.route.angles.every((a:any)=>a.id.startsWith('de_mirage:')),native:s.arena.native.collisionSha256,
+      grenade:!!s.arena.native.grenadeQuery,
+      clip:s.arena.native.sweepGrenade({x:-11,y:0,z:-18.5},{x:-13,y:0,z:-18.5},2*.0254).fraction};});
+    expect(state).toMatchObject({map:'de_mirage',bots:5,fits:true,source:true,grenade:true,native:'6253487f363acf4b1b5bd2e8af0468a8fc29814ec36e564a8643f4645da88352'});
+    expect(state.clip).toBeLessThan(1);
   }
   await page.getByLabel('Prefire route').selectOption('a-ramp');
   await page.screenshot({path:info.outputPath('mirage-ramp.png'),fullPage:true});
