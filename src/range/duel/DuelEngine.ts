@@ -762,7 +762,8 @@ export class DuelEngine {
 
   setConfig(config: DuelConfig) {
     if (config === this.config) return;
-    const changeMap = this.scenario?.kind === 'duel-map' && config.realMapChunk !== this.config.realMapChunk;
+    const changeMap = this.scenario?.kind === 'duel-map' && (config.realMapChunk !== this.config.realMapChunk||
+      config.mapPool.join('|')!==this.config.mapPool.join('|'));
     const displayOnly=this.scenario?.kind==='duel-map' &&
       JSON.stringify({...config,routeGuide:false})===JSON.stringify({...this.config,routeGuide:false});
     this.config = config;

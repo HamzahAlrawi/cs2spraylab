@@ -157,6 +157,15 @@ describe('native scene queries without installed game assets', () => {
     } finally {collision.dispose();}
     expect(collision.corpseGeometry({x: 0, y: 0, z: 0}, 4).indices).toHaveLength(0);
   });
+  it('does not apply grenade-only supplemental queries to movement or bullets',async()=>{
+    const {manifest,binary}=build(),collision=await NativeMapCollision.create(manifest,binary);
+    const from={x:0,y:1,z:0},to={x:1,y:1,z:0},movement=collision.sweep(from,to,72*UNIT),ray=collision.ray(from,{x:1,y:0,z:0},5);
+    const query={identity:'supplement',sweep:vi.fn(()=>({position:from,fraction:0,startSolid:false})),release:vi.fn()};
+    collision.installGrenadeQuery(query);
+    expect(collision.sweepGrenade(from,to,.05).fraction).toBe(0);expect(query.sweep).toHaveBeenCalledOnce();
+    expect(collision.sweep(from,to,72*UNIT)).toEqual(movement);expect(collision.ray(from,{x:1,y:0,z:0},5)).toEqual(ray);
+    collision.dispose();collision.dispose();expect(query.release).toHaveBeenCalledOnce();
+  });
   it('preserves exact support, clipping and shot masks with baked query indexes and a restored world',async()=>{
     const {manifest,binary}=build(),original=await NativeMapCollision.create(manifest,binary);
     const prepared=original.exportPrepared(),snapshot=prepared.snapshot.slice().buffer as ArrayBuffer;

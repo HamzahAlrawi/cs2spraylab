@@ -4,6 +4,7 @@ import {nativeMapFiles} from './native-map-identity.mjs';
 const vite=await createServer({mode:'test',cacheDir:'node_modules/.vite-real-duel-audit',server:{middlewareMode:true,hmr:false,ws:false},appType:'custom',logLevel:'error'});
 try {
   const {NativeMapCollision}=await vite.ssrLoadModule('/src/range/prefire/native-collision.ts');
+  const {acquireNativeGrenadeQuery}=await vite.ssrLoadModule('/src/range/prefire/native-grenade-query.ts');
   const {createRealMapArena,realMapChunks}=await vite.ssrLoadModule('/src/range/duel/real-map.ts');
   const {sanitizeDuelConfig}=await vite.ssrLoadModule('/src/range/duel/config.ts');
   const {nativeMaps,defaultNativeMapId}=await vite.ssrLoadModule('/src/range/prefire/maps/index.ts');
@@ -19,6 +20,11 @@ try {
     const collision=await NativeMapCollision.create(JSON.parse(fs.readFileSync(base+'collision.json')),
       bytes.buffer.slice(bytes.byteOffset,bytes.byteOffset+bytes.byteLength));
     try {
+      if(fs.existsSync(`${files.out}/grenade-collision.json`)){
+        const archive=JSON.parse(fs.readFileSync(`${files.out}/grenade-collision.json`)),snapshot=fs.readFileSync(`${files.out}/grenade-query.bin`);
+        collision.installGrenadeQuery(await acquireNativeGrenadeQuery(archive,
+          snapshot.buffer.slice(snapshot.byteOffset,snapshot.byteOffset+snapshot.byteLength),collision.sourceCollisionSha256));
+      }
       const config=sanitizeDuelConfig({mapId,botCount:5,skill:8,health:500,playerHealth:500});
       const bounds={minX:chunk.sourceMin[0]*.0254,maxX:chunk.sourceMax[0]*.0254,minZ:-chunk.sourceMax[1]*.0254,maxZ:-chunk.sourceMin[1]*.0254};
       if(fs.existsSync(base+'navigation.json'))installNativeNavigation({...bounds,native:collision},JSON.parse(fs.readFileSync(base+'navigation.json')));

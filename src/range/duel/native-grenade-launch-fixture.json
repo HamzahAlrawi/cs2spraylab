@@ -1,8 +1,8 @@
 {
-  "build": "2000940",
-  "clientSha256": "57ee728e15c50881070d847d7516d632d70456e0648d486a53f2528ec53f6ee0",
+  "build": "2000942",
+  "clientSha256": "9279421852772522121be2f13409dd37436e8c809ff48898c8c3d41b09e77844",
   "source": "Isolated installed client arithmetic, static file mapped into Unicorn, not loaded into a game.",
-  "launchRva": "0x7c81d0..0x7c85da",
+  "launchRva": "0x7c82f0..0x7c86fa",
   "excluded": "AngleVectors trigonometry and world hull tracing supplied as explicit fixture inputs; no entity or game logic executed.",
   "constants": {
     "forwardSweep": 16,

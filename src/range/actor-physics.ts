@@ -32,6 +32,7 @@ export type ActorKinematics = {
   velocityModifier?: number;
   movementTime?: number;
   lastJumpPressTime?: number;
+  jumpedAt?: number;
   pendingJumpPressTime?: number;
   landedAt?: number;
   landingVelocity?: number;
@@ -156,7 +157,9 @@ export function advanceActor(
   const wantsJump = validPress || !!rules?.autoBhop && jump;
   const bhop = isBhopPress(validPress ? time : undefined, actor.landedAt, rules);
   let verticalVelocity = actor.verticalVelocity;
+  let jumpedAt=actor.jumpedAt;
   if (wantsJump && supported) {
+    jumpedAt=time;
     verticalVelocity = JUMP_SPEED * (actor.landedAt === undefined ? 1 :
       jumpLandingFactor(actor.landingVelocity ?? 0, time - actor.landedAt));
     pendingJumpPressTime = undefined;
@@ -279,6 +282,7 @@ export function advanceActor(
     if (isBhopPress(pendingJumpPressTime, landedAt, rules) || rules?.autoBhop && jump) {
       const remainder = dt - landingOffset;
       verticalVelocity = JUMP_SPEED * jumpLandingFactor(landingVelocity, 0);
+      jumpedAt=landedAt;
       pendingJumpPressTime = undefined;
       const bounceFeet = feet + verticalVelocity * remainder - GRAVITY * remainder * remainder / 2;
       const bounce = vertical(resolved, feet, bounceFeet, hullHeight);
@@ -304,7 +308,7 @@ export function advanceActor(
     duckSpeed, crouchHeld: crouch, duckCooldown, duckRecoveryOrigin,
     velocityModifier: actor.velocityModifier,
     movementTime: time + dt, lastJumpPressTime: pressed ? time : actor.lastJumpPressTime, pendingJumpPressTime,
-    landedAt, landingVelocity, landingVelocityXY,
+    landedAt, landingVelocity, landingVelocityXY, jumpedAt,
     supportId: contact.grounded && contact.support?.traversal?.kind === 'actor' ? contact.support.traversal.actorId : undefined,
     moveMode: specialVelocity ? moveMode : contact.grounded ? 'ground' : 'air', waterLevel: water, ladderDetached,
   };

@@ -4,6 +4,9 @@
   "chunks":[
     {"id":"mirage-a","name":"Mirage / A site & Palace","routeId":"a-ramp","sourceMin":[-1500,-2850,-450],"sourceMax":[1500,-800,280],"contextPaddingUnits":256},
     {"id":"mirage-mid","name":"Mirage / Mid, Short & Connector","routeId":"mid-short","sourceMin":[-1800,-1500,-450],"sourceMax":[1500,1100,280],"contextPaddingUnits":256},
-    {"id":"mirage-b","name":"Mirage / B site, Apartments & Market","routeId":"market-b","sourceMin":[-2900,-1000,-450],"sourceMax":[0,1200,280],"contextPaddingUnits":256}
+    {"id":"mirage-b","name":"Mirage / B site, Apartments & Market","routeId":"market-b","sourceMin":[-2900,-1000,-450],"sourceMax":[0,1200,280],"contextPaddingUnits":256},
+    {"id":"mirage-palace","name":"Mirage / Palace & Under balcony","routeId":"a-palace","sourceMin":[-700,-2800,-300],"sourceMax":[1300,-1300,300],"contextPaddingUnits":256},
+    {"id":"mirage-apartments","name":"Mirage / Apartments, Van & Bench","routeId":"b-apartments","sourceMin":[-2600,-300,-300],"sourceMax":[-600,1100,300],"contextPaddingUnits":256},
+    {"id":"mirage-underpass","name":"Mirage / Underpass & Connector","routeId":"underpass-connector","sourceMin":[-1500,-1600,-450],"sourceMax":[-300,650,300],"contextPaddingUnits":256}
   ]
 }

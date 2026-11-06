@@ -7,13 +7,13 @@
     "route-helpers.ts": "7c9fed6c6d9126688f618bda6f501306dead030015c86bbddb6dc7c4a96ebeba",
     "spawn-audit.ts": "08d5288582e0ec1dfdc408b4d67f60103847e2083ea223da46d85140b9ca7672",
     "placement.ts": "b3465084e322501b3ae687d098b6c7f495c3784b840b4333406a168c6893a274",
-    "native-collision.ts": "c2475e991133b17762f22405b9df25cd562b4e4e56bfb3b2e27df441594dc231",
+    "native-collision.ts": "19b4aa59b73141d23799d7cf86206d2595fb0fecccdc758213ba90f51a6e86a8",
     "data/openprefire-dust2.json": "d27958364b642d52af0a31847d488556146fa04b5c309ec50f90368e96de39de",
     "data/retakes-dust2.json": "a7e620bbceb52599d651ad06227f4408a9b8681e834b4a2a43e7bb2a58e52e55",
     "data/authored-dust2.json": "4a9e05733883dd2d5f6c3b01b35ee18820339d83fdc787c78499ca572df7b6b3",
     "data/combat-dust2-leads.json": "b814ce710e1caf1d6cc4ad7e1db04f7acc9ec9bbc18a0e4c006ca9335be0bc6c",
     "../actor-collision.ts": "58f633f617b00d6e17a05fd8222fcb32d5a5f6282aaa161344444d1908e517f4",
-    "../actor-physics.ts": "0ac521adb77662036f8a93d4918cf5436289200741306ad7edbf0015193b0679"
+    "../actor-physics.ts": "b81cb73bea722c7fb5c5df48ec3766a1b1170a8449b7407cc49328cca340aa8a"
   },
   "approaches": {
     "long-doors": {

@@ -9,21 +9,24 @@ import {sanitizeDuelConfig} from './config';
 import {testArena} from './geometry';
 
 describe('installed native grenade input arithmetic',()=>{
-  it('samples a short crouch-jump throw at its fractional release deadline, not the later tick pose', () => {
+  it('samples a short crouch-jump at the fractional jump latch rather than the later release pose', () => {
     const sim = new DuelSimulation(sanitizeDuelConfig({botUtilities: false, utilityLoadout: ['he']}), 24, testArena());
     sim.command(1, {}); sim.selectUtility('he'); sim.start();
     sim.command(0, {secondaryHeld: true}); sim.step();
     sim.command(0, {secondaryHeld: false, crouch: true, jump: true}); sim.step();
     const releaseAt = sim.utilityPresentation()!.releaseAt!;
+    const latchAt=nativeGrenadeReleaseAt(sim.actors[0].jumpedAt!);
     const thrown = vi.spyOn(sim.utilities, 'throw');
-    let before = sim.snapshot()[0];
-    while (!thrown.mock.calls.length) {before = sim.snapshot()[0]; sim.step();}
+    let before = sim.snapshot()[0],sample:ReturnType<typeof sampleShotState>|undefined;
+    while (!thrown.mock.calls.length) {before = sim.snapshot()[0]; sim.step();
+      if(!sample&&sim.time>=latchAt)sample=sampleShotState(before,sim.snapshot()[0],latchAt,sim.time);
+    }
     const after = sim.snapshot()[0], input = thrown.mock.calls[0][0];
-    const sample = sampleShotState(before, after, releaseAt, sim.time);
+    expect(sample).toBeDefined();
     expect(input.strength).toBe(0); expect(input.time).toBe(releaseAt);
     expect(input.time).toBeLessThan(sim.time);
-    expect(input.origin).toEqual(utilityLaunchPose(sample.position, sample.yaw, sample.pitch, sim.arena, 0).origin);
-    expect(input.velocity?.y).toBeCloseTo(sample.verticalVelocity, 8);
+    expect(input.origin).toEqual(utilityLaunchPose(sample!.position, sample!.yaw, sample!.pitch, sim.arena, 0).origin);
+    expect(input.velocity?.y).toBeCloseTo(sample!.verticalVelocity, 8);
     expect(input.velocity?.y).not.toBe(after.verticalVelocity);
     expect(input.origin.y).toBeGreaterThan(52 * UNIT);
     expect(sim.time - releaseAt).toBeLessThan(STEP);

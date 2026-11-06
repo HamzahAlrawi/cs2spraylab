@@ -15,7 +15,7 @@ function renderSetup(patch: Partial<DuelConfig> = {}) {
 }
 
 const globalLabels = [
-  'Duel map',
+  'Play Dust 2', 'Play Mirage (Beta)',
   'Number of bots', 'Bot skill level', 'Bot behavior', 'Add bot weapon', 'Add weapon to bot pool',
   'Use generated arenas', 'Real map chunk', 'Duel approach course', 'Duel route arrows', 'Bot health', 'Player health', 'Bot armor', 'Bot helmet',
   'Bot armor points', 'Player armor', 'Player helmet', 'Player armor points',

@@ -47,6 +47,7 @@ export type DuelConfig = {
   mapDesign: 'random' | typeof arenaDesigns[number];
   generatedMaps: boolean;
   mapId: string;
+  mapPool: string[];
   realMapChunk: string;
   realMapCourse: string;
   manualLineup: ManualLineup | null;
@@ -63,7 +64,7 @@ export const duelDefaults: DuelConfig = {
   radarEnabled: true, radarRotate: true, radarScale: .7,
   arenaScale: 1,
   mapDesign: 'random',
-  generatedMaps: false, mapId: defaultNativeMapId, realMapChunk: 'random', routeGuide: true,
+  generatedMaps: false, mapId: defaultNativeMapId, mapPool: [defaultNativeMapId], realMapChunk: 'random', routeGuide: true,
   realMapCourse: 'standard', manualLineup: null,
   utilitiesEnabled: true, botUtilities: true, utilityLoadout: ['he', 'flash', 'smoke', 'molotov'],
 };
@@ -81,9 +82,12 @@ const behavior = (value: unknown): BotBehavior => behaviors.find(item => item ==
 
 export function sanitizeDuelConfig(raw: unknown): DuelConfig {
   const input = record(raw);
-  const mapId = nativeMaps.has(input.mapId) ? input.mapId : defaultNativeMapId;
+  const requestedMap = nativeMaps.has(input.mapId) ? input.mapId : defaultNativeMapId;
+  const selected = Array.isArray(input.mapPool) ? [...new Set(input.mapPool.filter(nativeMaps.has))] : [requestedMap];
+  const mapPool = selected.length ? selected : [requestedMap];
+  const mapId = mapPool.includes(requestedMap) ? requestedMap : mapPool[0];
   const map = nativeMaps.get(mapId);
-  const chunk = map.chunks.find(chunk => chunk.id === input.realMapChunk);
+  const chunk = mapPool.length === 1 ? map.chunks.find(chunk => chunk.id === input.realMapChunk) : undefined;
   const custom = parseManualLineup(input.manualLineup);
   const count = integer(input.botCount, duelDefaults.botCount, 1, 5);
   const weapons = Array.isArray(input.weapons) ? [...new Set(input.weapons.filter(weapon))] : [];
@@ -119,6 +123,7 @@ export function sanitizeDuelConfig(raw: unknown): DuelConfig {
     mapDesign: arenaDesigns.find(name => name === input.mapDesign) ?? 'random',
     generatedMaps: input.generatedMaps === true,
     mapId,
+    mapPool,
     realMapChunk: chunk?.id ?? 'random',
     realMapCourse: input.realMapCourse === 'shuffle' ? 'shuffle' :
       chunk && map.index.approaches[chunk.id]?.some(course => course.id === input.realMapCourse) ? input.realMapCourse as string : 'standard',
@@ -131,7 +136,7 @@ export function sanitizeDuelConfig(raw: unknown): DuelConfig {
 /** First-visit preset is separate from the kernel's legacy fallback settings. */
 export function restoreDuelConfig(saved:string|null):DuelConfig {
   if(saved!==null)try{return sanitizeDuelConfig(JSON.parse(saved));}catch{/* Use the new-player preset for unreadable storage. */}
-  return sanitizeDuelConfig({botCount:3,skill:1});
+  return sanitizeDuelConfig({botCount:3,skill:1,mapPool:nativeMaps.list().map(map=>map.id)});
 }
 
 export function botConfig(config: DuelConfig, index: number) {

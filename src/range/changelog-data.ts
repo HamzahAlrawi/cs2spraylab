@@ -619,7 +619,7 @@ const november6MapAdmission = {
   ]}],
 } as const satisfies ChangelogRelease;
 
-export const latestChanges = {
+const november6MirageBeta = {
   id:'update-2026-11-06-mirage-beta',title:'Mirage beta (November 6)',baselineCommit:'85d38d7',
   sections:[{id:'mirage-native-beta',title:'Mirage training beta',items:[
     'Mirage is available in Prefire, native-map AI Duel and whole-map Sound Awareness, with six approaches, three native Duel chunks and the installed radar.',
@@ -628,7 +628,20 @@ export const latestChanges = {
   ]}],
 } as const satisfies ChangelogRelease;
 
+export const latestChanges = {
+  id:'update-2026-11-06-map-pool-throws',title:'Map pools & grenade collision (November 6)',baselineCommit:'c9bf14a',
+  sections:[{id:'duel-map-pool',title:'Your Duel map pool',items:[
+    'Choose Duel maps with checkboxes. New players start with all available maps checked; maps receive equal selection chances regardless of their chunk count. Fixed chunks and custom lineups remain available in a single-map pool.',
+    'Mirage now has six native Duel chunks, adding smaller Palace/under-balcony, Apartments/Van and Underpass/Connector fights. Next-round preparation, retained replays and persistent verified downloads work across maps.',
+  ]},{id:'grenade-map-collision',title:'Throw consistency & native clips',items:[
+    'Grenades query complete native map collision, including enabled brush-entity physics and grenade-only clips, instead of losing surfaces at combat chunk boundaries. Player movement and bullet collision are unchanged.',
+    'Jump throws capture aim, position and velocity at the traced jump-relative latch, including the early-release deferral. Installed-build arithmetic checks cover the launch and cache gate; full in-game lineup, contact and dynamic/breakable-state parity remains unverified.',
+    'Grenade query snapshots are prepared offline, cached by content and shared by resident chunks to avoid rebuilding whole-map collision between rounds.',
+  ]}],
+} as const satisfies ChangelogRelease;
+
 export const changelogHistory = [
+  november6MirageBeta,
   november6MapAdmission,
   november6SoundVariety,
   november6SoundDensity,

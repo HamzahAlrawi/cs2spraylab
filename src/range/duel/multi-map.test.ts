@@ -8,7 +8,7 @@ import type {PrefireCatalog} from '../prefire/schema';
 import {loadNativeMap, type PrefireMap} from '../prefire/map';
 import {fetchDeliveredAsset, type DeliveredAsset} from '../prefire/asset-delivery';
 import {defaults} from '../config';
-import {chunkContains, createRealMapArena, chooseRealMapChunk, loadRealMapChunk, RealMapSession} from './real-map';
+import {chunkContains, createRealMapArena, chooseRealMapChunk, chooseDuelMapChunk, loadRealMapChunk, RealMapSession} from './real-map';
 import {localChunkManifest} from './map-manifests';
 import {loadMapContext} from './map-context';
 import {loadNativeRadar} from './native-radar-cache';
@@ -97,6 +97,25 @@ describe('native map package boundaries', () => {
     expect(() => chooseRealMapChunk('dust2-mid-ct', 8, undefined, b.map.id)).toThrow('Unknown map chunk');
     expect(() => localChunkManifest('dust2-mid-ct', b.map)).toThrow('Unsupported map chunk');
   });
+  it('sanitizes a persisted map pool, prevents empty selection and removes foreign fixed courses',()=>{
+    const config=sanitizeDuelConfig({mapId:a.map.id,mapPool:[b.map.id,b.map.id,'de_missing',5],realMapChunk:a.chunk.id,realMapCourse:'shared-route'});
+    expect(config).toMatchObject({mapId:b.map.id,mapPool:[b.map.id],realMapChunk:b.chunk.id});
+    expect(sanitizeDuelConfig(JSON.parse(JSON.stringify(config)))).toEqual(config);
+    expect(sanitizeDuelConfig({mapId:a.map.id,mapPool:[]}).mapPool).toEqual([a.map.id]);
+    expect(sanitizeDuelConfig({mapPool:[a.map.id,b.map.id],realMapChunk:a.chunk.id,realMapCourse:'shared-route'}))
+      .toMatchObject({realMapChunk:'random',realMapCourse:'standard',manualLineup:null});
+  });
+  it('selects maps evenly rather than overweighting the one with more chunks',()=>{
+    const config=sanitizeDuelConfig({mapPool:['de_dust2','de_mirage']});
+    const choices=Array.from({length:1000},(_,seed)=>chooseDuelMapChunk(config,seed));
+    expect(choices).toEqual(Array.from({length:1000},(_,seed)=>chooseDuelMapChunk(config,seed)));
+    const count=choices.filter(chunk=>chunk.mapId==='de_mirage').length;
+    expect(count).toBeGreaterThan(440);expect(count).toBeLessThan(560);
+    for(let seed=0;seed<100;seed++){
+      const first=chooseDuelMapChunk(config,seed),next=chooseDuelMapChunk(config,seed,first);
+      expect(`${next.mapId}/${next.id}`).not.toBe(`${first.mapId}/${first.id}`);
+    }
+  });
   it('rejects duplicate full-catalog routes that would hide a missing indexed route', async () => {
     const summary = {id: 'second-route', name: 'Second route'};
     const map = {...b.map, index: {...b.map.index, routes: [...b.map.index.routes, summary]},
@@ -140,11 +159,18 @@ describe('native map package boundaries', () => {
         expect(session.mapId).toBe(f.map.id); expect(session.spawnContext().mapId).toBe(f.map.id);
         expect(sim.config.mapId).toBe(f.map.id); expect(sim.arena.design).toBe(f.chunk.name);
         expect(sim.arena.roundSetup?.course).toBe('shared-route');
-        expect(() => session.configureDuel(sanitizeDuelConfig({mapId: index ? a.map.id : b.map.id}))).toThrow('new native-map session');
         expect(await session.prepareRound(5, signal)).toBe(false);
       }
       expect(loadNativeMap).toHaveBeenCalledTimes(2);
       expect(vi.mocked(loadNativeMap).mock.calls.map(call => call[1].base)).toEqual([`${a.map.base}duel/shared-chunk/`, `${b.map.base}duel/shared-chunk/`]);
+      const session=sessions[0];
+      session.configureDuel(sanitizeDuelConfig({mapId:b.map.id,realMapChunk:b.chunk.id,botCount:1}));
+      expect(await session.prepareRound(6,signal)).toBe(true);
+      expect(session.mapId).toBe(b.map.id);expect(session.create(defaults,6).config.mapId).toBe(b.map.id);
+      session.configureDuel(sanitizeDuelConfig({mapId:a.map.id,realMapChunk:a.chunk.id,botCount:1}));
+      expect(await session.prepareRound(7,signal)).toBe(true);
+      expect(session.mapId).toBe(a.map.id);expect(session.create(defaults,7).config.mapId).toBe(a.map.id);
+      expect(loadNativeMap).toHaveBeenCalledTimes(3); // Previous cross-map scene is retained, not reloaded.
       expect(() => createRealMapArena(records.get(a.map.id)!, b.chunk, sanitizeDuelConfig({mapId: b.map.id}), 1,
         {collisionSha256: a.collisionSha256, courses: [a.course]}, a.catalog)).toThrow('do not match');
       await expect(loadRealMapChunk({...a.chunk, mapId: 'de_missing'}, signal)).rejects.toThrow('Unknown native map');

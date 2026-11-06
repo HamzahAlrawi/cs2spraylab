@@ -1,6 +1,7 @@
 [
   "Beta, not full CS2 parity certification: matched-build visual, movement and utility capture review remains pending.",
   "Common-angle coverage and individual peek tactics need further review. Current weights are authored physical-family coverage, not measured encounter probabilities.",
-  "Three native Duel chunks and six Prefire approaches are included; Palace dropping, the full CT Palace push and additional retake approaches are not guided routes yet.",
+  "Six native Duel chunks and six Prefire approaches are included; Palace dropping, the full CT Palace push and additional retake approaches are not guided routes yet.",
+  "Whole-map grenade queries include enabled static brush physics; dynamic/breakable state and matched-build smoke lineup trajectories remain unverified.",
   "Broad-device frame-time, complete chunk-handoff and long-session memory acceptance are not fully certified."
 ]

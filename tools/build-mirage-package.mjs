@@ -15,6 +15,8 @@ if(!process.argv.includes('--pack-only')){
   run('build-duel-query-cache.mjs','mirage');
   run('build-duel-visibility.mjs','mirage');
 }
+if(process.argv.includes('--pack-only'))run('build-grenade-map-collision.mjs','de_mirage');
+run('build-full-map-delivery.mjs','mirage');
 run('build-duel-delivery.mjs','mirage');
 await buildDuelContext(process.cwd(),{assetId:'mirage'});
 console.log('Mirage assets built. Re-run native/beta evidence after reviewing changed source hashes; this command never approves a map.');

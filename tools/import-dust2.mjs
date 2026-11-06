@@ -123,4 +123,5 @@ const audit = {build, exporterVersion, mapSha256, physicsSha256: sha(fs.readFile
 fs.writeFileSync(identity.assetId==='dust2'?'docs/dust2-map-inventory.json':`${work}/map-inventory.json`, JSON.stringify(audit, null, 2) + '\n');
 fs.writeFileSync(cacheFile, JSON.stringify({mapSha256, exporterVersion}));
 }
+execFileSync(process.execPath,['tools/build-grenade-map-collision.mjs',identity.mapId],{stdio:'inherit',windowsHide:true});
 if(fs.existsSync(`${out}/visual.json`))execFileSync(process.execPath,['tools/build-full-map-delivery.mjs',identity.assetId],{stdio:'inherit',windowsHide:true});

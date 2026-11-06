@@ -71,6 +71,9 @@ for(const {chunk,folder,visual,metadata,index} of chunks) {
     ...visual.resources.filter(r=>!r.name.endsWith('.webp')).map(r=>r.name),...(metadata.radar?['radar.json','radar.png']:[])];
   for(const name of ['query-cache.json','visibility.json','visibility.bin'])try{await fs.stat(path.join(folder,name));names.push(name);}catch{}
   for(const name of names)files[name]=await deliver(await fs.readFile(path.join(folder,name)),!name.endsWith('.png'));
+  for(const name of ['grenade-collision.json','grenade-query.bin'])try{
+    files[name]=await deliver(await fs.readFile(path.join(path.dirname(root),name)));
+  }catch(error){if(error.code!=='ENOENT')throw error;}
   const selected=bundles.filter(bundle=>bundle.mask&(1<<index));
   const delivery={version:1,files,textures:{bundles:selected.map(b=>b.asset),
     images:selected.flatMap((b,i)=>b.images.map(image=>({...image,bundle:i})))}};

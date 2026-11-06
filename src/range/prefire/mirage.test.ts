@@ -9,10 +9,10 @@ import {validateMapCatalogScope} from './map-onboarding';
 import {realMapApproaches} from '../duel/real-map-rounds';
 
 describe('Mirage package/catalog isolation',()=>{
-  it('has six distinct native-authored approaches and three bounded Duel chunks',()=>{
+  it('has six distinct native-authored approaches and six bounded Duel chunks',()=>{
     expect(mirageCatalog.routes.map(r=>r.id)).toEqual(['a-ramp','a-palace','b-apartments','mid-short','underpass-connector','market-b']);
     expect(mirageMap.index.routes.map(r=>r.id)).toEqual(mirageCatalog.routes.map(r=>r.id));
-    expect(mirageMap.chunks).toHaveLength(3);expect(validateMapCatalogScope(mirageMap,mirageCatalog)).toEqual([]);
+    expect(mirageMap.chunks).toHaveLength(6);expect(validateMapCatalogScope(mirageMap,mirageCatalog)).toEqual([]);
     for(const chunk of mirageMap.chunks){
       expect(chunk.mapId).toBe('de_mirage');expect(realMapApproaches(chunk,mirageCatalog).some(r=>r.id===chunk.routeId)).toBe(true);
     }

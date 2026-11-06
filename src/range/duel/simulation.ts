@@ -36,6 +36,7 @@ import {BodyTurnTimeline} from './body-turn';
 import {recoilView} from '../view-recoil';
 import {scopeVerticalFov} from '../weapon-actions';
 import {sampleShotState} from './shot-time';
+import {GrenadeJumpLatch} from './grenade-jump-latch';
 import {configureArenaAcoustics} from './native-acoustics';
 import {botLoadoutDecision} from './bot-loadout';
 import {UtilitySimulation, type UtilityEvent} from './utilities';
@@ -92,7 +93,8 @@ export class DuelSimulation {
   readonly utilities: UtilitySimulation;
   private readonly utilityStocks = new Map<number, UtilityInventory>();
   private readonly heldUtilities = new Map<number, {kind: UtilityKind; selectedAt: number; readyAt: number; primedAt?: number;
-    strength?: number; strengthUpdatedAt?:number; releaseAt?: number; throwStartedAt?: number}>();
+    strength?: number; strengthUpdatedAt?:number; releaseAt?: number; throwStartedAt?: number; jumpThrow?:boolean}>();
+  private readonly grenadeLatches=new Map<number,GrenadeJumpLatch>();
   private readonly utilityPlanners = new Map<number, BotUtilityPlanner>();
   private readonly utilityDefenses = new Map<number, BotUtilityDefense>();
   private readonly flashes = new Map<number, NativeBlindState>();
@@ -334,8 +336,8 @@ export class DuelSimulation {
     strength=releasedGrenadeStrength(strength);
     const releasedAt = Math.max(this.time - STEP, Math.min(this.time, held.releaseAt ?? this.time));
     const before = this.previous[actorId];
-    const release = before && releasedAt < this.time
-      ? sampleShotState(before, actor, releasedAt, this.time) : actor;
+    const release = this.grenadeLatches.get(actorId)?.sample(releasedAt) ?? (before && releasedAt < this.time
+      ? sampleShotState(before, actor, releasedAt, this.time) : actor);
     const {origin, direction} = utilityLaunchPose(release.position, release.yaw, release.pitch, this.arena,strength);
     const id = this.utilities.throw({actorId, side: actor.side, kind, origin, direction,
       velocity: {x: release.velocity.x, y: release.verticalVelocity ?? 0, z: release.velocity.z}, strength, time: releasedAt});
@@ -357,6 +359,7 @@ export class DuelSimulation {
     if(held.releaseAt!==undefined)return true;
     held.primedAt ??= Math.max(this.time,held.readyAt); held.strength = releasedGrenadeStrength(strength);
     held.throwStartedAt=Math.max(this.time,held.readyAt);
+    held.jumpThrow=this.grenadeLatches.get(actorId)?.eligible(held.throwStartedAt,.1)??false;
     held.releaseAt = nativeGrenadeReleaseAt(held.throwStartedAt);
     return true;
   }
@@ -365,7 +368,12 @@ export class DuelSimulation {
     if (!held) return;
     if (this.time<held.readyAt) return;
     if (held.releaseAt!==undefined) {
-      if(this.time>=held.releaseAt)this.throwUtility(actor.id,held.kind,held.strength);
+      if(this.time>=held.releaseAt){
+        if(!held.jumpThrow&&this.grenadeLatches.get(actor.id)?.eligible(this.time,.1)){
+          held.jumpThrow=true;held.releaseAt=nativeGrenadeReleaseAt(this.time);return;
+        }
+        this.throwUtility(actor.id,held.kind,held.strength);
+      }
       return;
     }
     const command = actor.command;
@@ -377,6 +385,7 @@ export class DuelSimulation {
     } else if (held.primedAt !== undefined) {
       held.strength=releasedGrenadeStrength(held.strength??1);
       held.throwStartedAt=this.time;
+      held.jumpThrow=this.grenadeLatches.get(actor.id)?.eligible(this.time,.1)??false;
       held.releaseAt = nativeGrenadeReleaseAt(held.throwStartedAt);
       if (this.time >= held.releaseAt && this.time >= held.readyAt) this.throwUtility(actor.id, held.kind, held.strength);
     }
@@ -685,6 +694,9 @@ export class DuelSimulation {
       const traveled = Math.hypot(next.position.x - actor.position.x, next.position.z - actor.position.z);
       const landed=audibleLanding(actor,next);
       const jumped=audibleJump(actor,next);
+      let latch=this.grenadeLatches.get(actor.id);
+      if(!latch){latch=new GrenadeJumpLatch();this.grenadeLatches.set(actor.id,latch);}
+      latch.observe(actor,{...next,pitch:actor.pitch},this.time);
       Object.assign(actor,next);
       if(jumped)this.emitSound(actor,'jump',{...next.position,y:next.feet+30*UNIT});
       if (landed) {actor.stepDistance=0;this.emitSound(actor, 'landing', next.position);}

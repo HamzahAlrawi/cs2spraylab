@@ -62,6 +62,24 @@
         "id": "market-b",
         "name": "Market retake"
       }
+    ],
+    "mirage-palace": [
+      {
+        "id": "a-palace",
+        "name": "Palace balcony"
+      }
+    ],
+    "mirage-apartments": [
+      {
+        "id": "b-apartments",
+        "name": "Apartments to B"
+      }
+    ],
+    "mirage-underpass": [
+      {
+        "id": "underpass-connector",
+        "name": "Underpass to Connector"
+      }
     ]
   }
 }

@@ -14,6 +14,7 @@ import {prepareCollision} from './collision-preparation';
 import {backgroundTurn,backgroundBudget} from './background-work';
 import {releasePreparedLighting} from './lighting';
 import {compileRetainedShaders} from '../shader-warmup';
+import {acquireNativeGrenadeQuery,type NativeGrenadeArchive} from './native-grenade-query';
 type DecodedTexture={width:number;height:number;texture:THREE.Texture;close():void};
 const sharedBitmaps = new SharedBitmapCache<DecodedTexture>();
 
@@ -127,6 +128,10 @@ export async function loadNativeMap(signal: AbortSignal | undefined, options: Na
     const names = options?.visibility === false ? ['collision.json','collision.bin','visual.json']
       : ['collision.json','collision.bin','visual.json','visibility.json','visibility.bin'];
     if(options?.delivery?.files['query-cache.json'])names.push('query-cache.json');
+    if(options?.delivery?.files['grenade-collision.json']){
+      if(!options.delivery.files['grenade-query.bin'])throw Error('Missing native grenade query delivery.');
+      names.push('grenade-collision.json');
+    }
     const pendingFiles=new Map(names.map(name=>[name,network(async()=> {
         const response=await fetchChecked(name), bytes=await response.arrayBuffer();
         if(options?.hashes?.[name])await verifyMapDigest(bytes,options.hashes[name]);
@@ -143,6 +148,12 @@ export async function loadNativeMap(signal: AbortSignal | undefined, options: Na
       await new Promise<void>(resolve=>setTimeout(resolve,0));scope.signal.throwIfAborted();
       const prepared=pendingFiles.has('query-cache.json')?{metadata:await pendingFiles.get('query-cache.json') as PreparedNativeQueries}:undefined;
       collision=await prepareCollision(manifest,binary,prepared?.metadata,scope.signal);scope.signal.throwIfAborted();
+      if(pendingFiles.has('grenade-collision.json')){
+        const archive=await pendingFiles.get('grenade-collision.json') as NativeGrenadeArchive;
+        collision.installGrenadeQuery(await acquireNativeGrenadeQuery(archive,
+          ()=>network(async()=>(await fetchChecked('grenade-query.bin')).arrayBuffer(),scope.signal),collision.sourceCollisionSha256,scope.signal));
+        scope.signal.throwIfAborted();
+      }
     })();
     void collisionTask.catch(error=>scope.abort(error));
     const visibilityTask=options?.visibility===false?undefined:Promise.all([

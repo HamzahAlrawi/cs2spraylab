@@ -14,7 +14,8 @@ exact encounter probabilities have been invented.
   Underpass to Connector and Market retake. Standing/crouched paths and the
   full-speed shared actor motor are checked. Palace drops are not a guided
   traversal, and the full CT Palace push is not included yet.
-- Duel: A/Palace, Mid/Short/Connector and B/Apartments/Market native chunks.
+- Duel: A/Palace, Mid/Short/Connector, B/Apartments/Market, Palace/Under balcony,
+  Apartments/Van/Bench and Underpass/Connector native chunks.
   Covered starts, alternate holds, source-facing approaches and local peek lanes
   are baked offline. Player/bot physics and ballistics use the shared implementation,
   with no Mirage-specific aim, sensitivity, scale or recoil multiplier.
@@ -51,7 +52,7 @@ stance are retained exactly.
    Per-pocket expert/capture review is still pending; references alone do not pass it.
 
 Native visuals retain material/texture associations, cutouts/blending and native
-PVS. Three chunks keep combat geometry exact; only the distant backdrop is a
+PVS. Six chunks retain native combat geometry; only the distant backdrop is a
 visual approximation with no collision. Cached delivery objects are content-addressed,
 texture bundles are shared across chunks, and navigation/collision indexes are
 prepared offline. Source hashes and catalog/package identities invalidate stale
@@ -105,6 +106,30 @@ and the production build. The separate existing Node tooling suite passed 79 tes
 the two new map-namespace/header tests also passed. Four applicable browser checks
 passed (desktop/mobile route flow, desktop whole-map Awareness and persistent chunk
 cache); the duplicate mobile Awareness case is intentionally skipped.
+
+## November 6 Follow-Up
+
+Three additional small Duel packages use the existing independently authored
+Palace, Apartments and Underpass approaches, with newly baked covered starts,
+holds and navigation rather than renaming the previous large chunks. A checked
+map pool selects the map before the chunk; adding chunks does not silently raise
+a map's probability. Legacy saved single-map selections are preserved.
+
+Grenades use a separate complete-map query archive shared by all resident chunks,
+with world PHYS plus enabled native brush entities, including `func_clip_vphysics`.
+This does not change player or bullet hulls or certify their remaining gaps.
+The archive is prebuilt into a versioned physics snapshot and delivered through
+the same persistent, digest-checked cache as other resources. Rebuild with:
+
+```sh
+npm run assets:grenade-collision -- de_mirage
+node tools/build-full-map-delivery.mjs mirage
+node tools/build-duel-delivery.mjs mirage
+```
+
+See [the throw audit](grenade-map-audit-2026-11-06.md) for installed-file provenance,
+the jump-pose latch and the explicit remaining lineup-validation gap. The original
+verification figures above describe the initial beta, not a new full approval.
 
 Content-addressed map cache headers are generated per map, respecting
 [Cloudflare Pages' single-wildcard rule](https://developers.cloudflare.com/pages/configuration/headers/).

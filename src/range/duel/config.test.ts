@@ -1,10 +1,12 @@
 import {describe, expect, it} from 'vitest';
 import {botConfig,duelDefaults,restoreDuelConfig,rosterBehaviors,sanitizeDuelConfig} from './config';
+import {nativeMaps} from '../prefire/maps';
 
 describe('first-visit Duel setup',()=>{
   it('starts three FACEIT level 1 bots when no settings have been saved',()=>{
     const config=restoreDuelConfig(null);
     expect(config).toMatchObject({botCount:3,skill:1});
+    expect(config.mapPool).toEqual(nativeMaps.list().map(map=>map.id));
     expect(Array.from({length:config.botCount},(_,index)=>botConfig(config,index).skill)).toEqual([1,1,1]);
   });
   it.each([{botCount:1,skill:3},{botCount:5,skill:'10+'},{botCount:2,skill:7,overrides:[{skill:9}]}])(

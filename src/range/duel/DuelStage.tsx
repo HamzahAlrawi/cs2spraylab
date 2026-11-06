@@ -45,6 +45,7 @@ function loadHint() {
 export function DuelStage({settings, openSettings, onEnter, suspended, progression, cosmeticRevision, prefire}: {settings: Settings; openSettings: () => void; onEnter: () => void; suspended: boolean; progression?: ProgressionController; cosmeticRevision?: Readonly<Record<string,string>>;
   prefire?: {session: PrefireSession; config: PrefireConfig; update: (patch: Partial<PrefireConfig>) => void; showTips?: boolean}}) {
   const [config, setConfig] = useState(loadConfig);
+  const mapPoolKey=config.mapPool.join('|');
   const [status, setStatus] = useState<DuelStatus>(initialStatus);
   const profileSetupKey = useMemo(() => setupKey([config, {primary: status.loadout?.primary ?? null, sidearm: status.loadout?.sidearm ?? null}]),
     [config, status.loadout?.primary, status.loadout?.sidearm]);
@@ -101,7 +102,7 @@ export function DuelStage({settings, openSettings, onEnter, suspended, progressi
       }
     })();
     return () => {abort.abort();instance?.dispose();session?.dispose();if(engine.current===instance)engine.current=undefined;if(nativeSession.current===session)nativeSession.current=undefined;};
-  }, [prefire?.session,config.generatedMaps,config.mapId]);
+  }, [prefire?.session,config.generatedMaps,config.mapId,mapPoolKey]);
   useEffect(() => {if (prefire) {closeReplay(); prefire.session.configure(prefire.config); engine.current?.restart();}}, [prefire?.config, closeReplay]);
   useEffect(() => {engine.current?.setSettings(settings);}, [settings]);
   useEffect(() => {closeReplay(); void engine.current?.refreshCosmetics();}, [cosmeticRevision, closeReplay]);
@@ -207,7 +208,8 @@ export function DuelStage({settings, openSettings, onEnter, suspended, progressi
               capture={()=>{engine.current?.pause();return authoringEngine()?.captureSpawnPose?.();}}
               curated={id=>nativeSession.current?.curatedLineup(id)}
               validate={lineup=>nativeSession.current?.validateLineup(lineup)??{errors:['Native map is not ready.'],warnings:[]}}
-              apply={lineup=>{authoringEngine()?.setSpawnAuthoring?.(false);setAuthoring(false);update({mapId:lineup.mapId??config.mapId,realMapChunk:lineup.chunkId,manualLineup:lineup,botCount:lineup.bots.length});}}
+              apply={lineup=>{authoringEngine()?.setSpawnAuthoring?.(false);setAuthoring(false);const mapId=lineup.mapId??config.mapId;
+                update({mapId,mapPool:[mapId],realMapChunk:lineup.chunkId,manualLineup:lineup,botCount:lineup.bots.length});}}
               restore={()=>{authoringEngine()?.setSpawnAuthoring?.(false);setAuthoring(false);update({manualLineup:null,realMapCourse:'standard'});}}/>}/>}
       {prefire && <UtilityLoadout config={config} update={update}/>}
       <button className="combat-review-launch" disabled={!!busy || !status.replayAvailable} onClick={() => setRecording(engine.current?.openReplay())}><Film size={15}/>Review fight</button>

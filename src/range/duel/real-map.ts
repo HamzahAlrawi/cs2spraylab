@@ -43,6 +43,13 @@ export function chooseRealMapChunk(choice: string, seed: number, previous?: stri
   const alternatives=chunks.filter(chunk=>chunk.id!==previous),pool=alternatives.length?alternatives:chunks;
   return pool[Math.floor(randomStream(seed,'duel-real-map')()*pool.length)];
 }
+/** Pick a map first so adding chunks does not bias the pool toward that map. */
+export function chooseDuelMapChunk(config:DuelConfig,seed:number,previous?:Pick<RealMapChunk,'mapId'|'id'>):RealMapChunk {
+  const pool=config.mapPool;
+  const mapId=pool[Math.floor(randomStream(seed,'duel-map-pool')()*pool.length)];
+  return chooseRealMapChunk(pool.length===1?config.realMapChunk:'random',seed,
+    previous?.mapId===mapId?previous.id:undefined,mapId);
+}
 export function chunkBounds(chunk: RealMapChunk) {
   return {minX:chunk.sourceMin[0]*UNIT,maxX:chunk.sourceMax[0]*UNIT,
     minZ:-chunk.sourceMax[1]*UNIT,maxZ:-chunk.sourceMin[1]*UNIT};
@@ -230,12 +237,13 @@ export class RealMapSession implements DuelScenario {
   private readonly prepared=new PreparedRound<PrefireMap>();
   private readonly resident:ResidentChunks<PrefireMap>;
   get mapId(){return this.chunk.mapId;}
-  private key(chunk:RealMapChunk){return nativeChunkKey(nativeMaps.get(this.mapId),chunk);}
+  private key(chunk:RealMapChunk){return nativeChunkKey(nativeMaps.get(chunk.mapId),chunk);}
+  private sameChunk(a:RealMapChunk,b?:RealMapChunk){return a.id===b?.id&&a.mapId===b.mapId;}
   get name(){return this.chunk.name;}
   spawnContext():SpawnContext {return {mapId:this.mapId,chunkId:this.chunk.id,collisionSha256:this.map.collision.collisionSha256};}
   validateLineup(lineup:unknown){return validateManualLineup(lineup,this.spawnContext(),this.map.collision);}
   curatedLineup(key:string):ManualLineup {
-    const arena=createRealMapArena(this.map,this.chunk,{...this.config,manualLineup:null,realMapCourse:'standard'},0);
+    const arena=createRealMapArena(this.map,this.chunk,{...this.config,mapId:this.mapId,manualLineup:null,realMapCourse:'standard'},0);
     return manualLineupFromArena(this.spawnContext(),arena,key);
   }
   private constructor(private map:PrefireMap,public chunk:RealMapChunk,private config:DuelConfig) {
@@ -245,13 +253,14 @@ export class RealMapSession implements DuelScenario {
     this.scene.add(map.scene,this.arrows);
   }
   static async load(config:DuelConfig,seed:number,signal:AbortSignal) {
-    const chunk=chooseRealMapChunk(config.realMapChunk,seed,undefined,config.mapId);
+    const chunk=chooseDuelMapChunk(config,seed);
     const map=await loadRealMapChunk(chunk,signal);
     try {signal.throwIfAborted();return new RealMapSession(map,chunk,config);}catch(error){map.dispose();throw error;}
   }
   configureDuel(config:DuelConfig){
-    if(config.mapId!==this.mapId)throw new Error('Changing maps requires a new native-map session.');
-    if(config.realMapChunk!==this.config.realMapChunk){this.prefetchAbort?.abort();this.prefetchId=undefined;this.prepared.cancel();}
+    if(config.realMapChunk!==this.config.realMapChunk||config.mapPool.join('|')!==this.config.mapPool.join('|')){
+      this.prefetchAbort?.abort();this.prefetchId=undefined;this.prepared.cancel();
+    }
     this.config=config;this.arrows.visible=config.routeGuide;
   }
   prefetchRound(seed:number,warm?:(scene:THREE.Group,signal:AbortSignal)=>Promise<void>) {
@@ -260,8 +269,8 @@ export class RealMapSession implements DuelScenario {
     if(connection?.saveData||['slow-2g','2g'].includes(connection?.effectiveType??'')) {
       this.prefetchAbort?.abort();this.prepared.cancel();this.prefetchId=undefined;return;
     }
-    const chunk=chooseRealMapChunk(this.config.realMapChunk,seed,this.chunk.id,this.mapId),key=this.key(chunk);
-    if(chunk.id===this.chunk.id||chunk.id===this.previousChunk?.id||this.resident.has(key)||key===this.prefetchId)return;
+    const chunk=chooseDuelMapChunk(this.config,seed,this.chunk),key=this.key(chunk);
+    if(this.sameChunk(chunk,this.chunk)||this.sameChunk(chunk,this.previousChunk)||this.resident.has(key)||key===this.prefetchId)return;
     this.prefetchAbort?.abort();const controller=new AbortController();this.prefetchAbort=controller;this.prefetchId=key;
     if(decodedPreloadAllowed(device)) {
       const pending=this.prepared.start(key,async signal=>{
@@ -280,7 +289,7 @@ export class RealMapSession implements DuelScenario {
     }).catch(()=>{if(this.prefetchAbort===controller)this.prefetchId=undefined;});
   }
   create(settings:Settings,seed:number) {
-    const config=sanitizeDuelConfig({...this.config,arenaScale:1,shortcutProtection:settings.protectShortcuts});
+    const config=sanitizeDuelConfig({...this.config,mapId:this.mapId,mapPool:[this.mapId],arenaScale:1,shortcutProtection:settings.protectShortcuts});
     const arena=createRealMapArena(this.map,this.chunk,config,seed),baked=chunkRounds.get(this.map)!;
     const course=baked.courses.find(course=>course.id===arena.roundSetup!.course);
     const start=course?.starts.find(start=>start.viewIndex===arena.roundSetup!.start);
@@ -290,8 +299,8 @@ export class RealMapSession implements DuelScenario {
   }
   async stageRound(seed:number,signal:AbortSignal,warm:(scene:THREE.Group,signal:AbortSignal)=>Promise<void>) {
     signal.throwIfAborted();
-    const chunk=chooseRealMapChunk(this.config.realMapChunk,seed,this.chunk.id,this.mapId),key=this.key(chunk);
-    if(chunk.id===this.chunk.id||chunk.id===this.previousChunk?.id||this.resident.has(key))return;
+    const chunk=chooseDuelMapChunk(this.config,seed,this.chunk),key=this.key(chunk);
+    if(this.sameChunk(chunk,this.chunk)||this.sameChunk(chunk,this.previousChunk)||this.resident.has(key))return;
     this.prefetchId=key;
     this.prepared.start(key,async preparation=>{
       const map=await loadRealMapChunk(chunk,preparation,true);
@@ -301,11 +310,11 @@ export class RealMapSession implements DuelScenario {
     await this.prepared.wait(key,signal);
   }
   async prepareRound(seed:number,signal:AbortSignal) {
-    const chunk=chooseRealMapChunk(this.config.realMapChunk,seed,this.chunk.id,this.mapId),key=this.key(chunk);
-    if(chunk.id===this.chunk.id)return false;
+    const chunk=chooseDuelMapChunk(this.config,seed,this.chunk),key=this.key(chunk);
+    if(this.sameChunk(chunk,this.chunk))return false;
     if(this.prepared.key!==key)this.prepared.cancel();
     let map:PrefireMap;
-    if(this.previous && this.previousChunk?.id===chunk.id) {
+    if(this.previous && this.sameChunk(chunk,this.previousChunk)) {
       map=this.previous;this.previous=undefined;this.previousChunk=undefined;
     }else {
       const resident=this.resident.take(key);

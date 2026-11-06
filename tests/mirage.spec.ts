@@ -48,17 +48,56 @@ test('Mirage beta plays six Prefire routes, uses native Duel chunks and retains 
   }
   await page.getByLabel('Training mode').selectOption('duel');await panel(page);
   await expect(page.getByRole('button',{name:'Enter duel',exact:true})).toBeEnabled({timeout:120000});
-  await expect(page.getByLabel('Duel map',{exact:true})).toHaveValue('de_mirage');
+  await expect(page.getByLabel('Play Mirage (Beta)',{exact:true})).toBeChecked();
+  await expect(page.getByLabel('Play Dust 2',{exact:true})).not.toBeChecked();
   const duel=await page.evaluate(()=>{const e=(window as any).mirageEngine;return {map:e.sim.config.mapId,bots:e.sim.actors.length-1,
     native:!!e.sim.arena.native,geometry:e.map?.collision?.collisionSha256??e.sim.arena.native.collisionSha256};});
   expect(duel).toMatchObject({map:'de_mirage',bots:3,native:true});
   expect(await canvasColors(page,'canvas[data-duel]')).toBeGreaterThan(8);
   await page.screenshot({path:info.outputPath('mirage-duel.png'),fullPage:true});
-  await page.getByLabel('Duel map',{exact:true}).selectOption('de_dust2');
+  await page.locator('.duel-setup-section').filter({has:page.getByLabel('Real map chunk',{exact:true})}).locator('summary').click();
+  for(const chunk of ['mirage-palace','mirage-apartments','mirage-underpass']){
+    await page.getByLabel('Real map chunk',{exact:true}).selectOption(chunk);
+    await expect.poll(()=>page.evaluate(()=>(window as any).mirageEngine.scenario.chunk.id),{timeout:120000}).toBe(chunk);
+    await expect(page.getByRole('button',{name:'Enter duel',exact:true})).toBeEnabled({timeout:120000});
+    const state=await page.evaluate(()=>{const e=(window as any).mirageEngine;return {map:e.sim.config.mapId,
+      grenade:!!e.sim.arena.native.grenadeQuery,bots:e.sim.actors.length-1,route:e.sim.arena.roundSetup.course};});
+    expect(state.map).toBe('de_mirage');expect(state.grenade).toBe(true);expect(state.bots).toBe(3);
+    expect(state.route).toBe({'mirage-palace':'a-palace','mirage-apartments':'b-apartments','mirage-underpass':'underpass-connector'}[chunk]);
+    expect(await canvasColors(page,'canvas[data-duel]')).toBeGreaterThan(8);
+    await page.screenshot({path:info.outputPath(`${chunk}.png`),fullPage:true});
+  }
+  await page.getByLabel('Play Dust 2',{exact:true}).check();
+  await expect(page.getByLabel('Real map chunk',{exact:true})).toBeDisabled();
+  await page.getByLabel('Play Mirage (Beta)',{exact:true}).uncheck();
   await expect(page.getByRole('button',{name:'Enter duel',exact:true})).toBeEnabled({timeout:120000});
   await expect.poll(()=>page.evaluate(()=>(window as any).mirageEngine.sim.config.mapId)).toBe('de_dust2');
   expect(failed).toEqual([]);expect(errors).toEqual([]);
   expect(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth)).toBe(false);
+});
+
+test('new Duel users get every available map checked and maps rotate without replacing the session',async({page},info)=>{
+  test.skip(info.project.name!=='chromium');test.setTimeout(240000);
+  const errors:string[]=[];page.on('pageerror',e=>errors.push(e.message));
+  await page.addInitScript(()=>localStorage.setItem('spraylab.range.v2',JSON.stringify({mode:'duel',volume:0,quality:'performance',frameLimit:60,protectShortcuts:false})));
+  await page.goto('/');await capture(page);await panel(page);
+  await expect(page.getByRole('button',{name:'Enter duel',exact:true})).toBeEnabled({timeout:120000});
+  await expect(page.getByLabel('Play Dust 2',{exact:true})).toBeChecked();
+  await expect(page.getByLabel('Play Mirage (Beta)',{exact:true})).toBeChecked();
+  await expect(page.getByLabel('Real map chunk',{exact:true})).toBeDisabled();
+  const first=await page.evaluate(async()=>{
+    const e=(window as any).mirageEngine;(window as any).firstDuelSession=e.scenario;
+    const url='/src/range/duel/real-map.ts',api=await import(/* @vite-ignore */url),current=e.scenario.chunk;
+    let seed=1;while(api.chooseDuelMapChunk(e.config,seed,current).mapId===current.mapId)seed++;
+    const next=api.chooseDuelMapChunk(e.config,seed,current);e.seed=seed;e.restart(false,true);
+    return {map:current.mapId,next:next.mapId,chunk:next.id};
+  });
+  await expect.poll(()=>page.evaluate(()=>(window as any).mirageEngine.sim.config.mapId),{timeout:120000}).toBe(first.next);
+  await expect(page.getByRole('button',{name:'Enter duel',exact:true})).toBeEnabled({timeout:120000});
+  expect(await page.evaluate(()=>(window as any).mirageEngine.scenario===(window as any).firstDuelSession)).toBe(true);
+  expect(await page.evaluate(()=>(window as any).mirageEngine.scenario.chunk.id)).toBe(first.chunk);
+  expect(await canvasColors(page,'canvas[data-duel]')).toBeGreaterThan(8);
+  expect(errors).toEqual([]);
 });
 
 test('Mirage sound awareness loads the whole map with native radar and supported continuous sources',async({page},info)=>{

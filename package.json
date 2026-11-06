@@ -20,6 +20,7 @@
     "assets:dust2": "node tools/import-dust2.mjs",
     "assets:mirage": "node tools/import-dust2.mjs --map=de_mirage",
     "assets:mirage:package": "node tools/build-mirage-package.mjs",
+    "assets:grenade-collision": "node tools/build-grenade-map-collision.mjs",
     "assets:check:dust2": "node tools/check-dust2.mjs",
     "audit:prefire": "node tools/audit-prefire.mjs",
     "audit:prefire:bots": "node tools/audit-prefire-bots.mjs",

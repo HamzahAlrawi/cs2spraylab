@@ -14,7 +14,7 @@ from unicorn import Uc, UC_ARCH_X86, UC_MODE_64, UC_HOOK_CODE
 from unicorn import x86_const as reg
 
 GAME=Path(os.environ.get('CS2_PATH','C:/Program Files (x86)/Steam/steamapps/common/Counter-Strike Global Offensive'))
-SHA='57ee728e15c50881070d847d7516d632d70456e0648d486a53f2528ec53f6ee0'
+SHA='9279421852772522121be2f13409dd37436e8c809ff48898c8c3d41b09e77844'
 raw=(GAME/'game/csgo/bin/win64/client.dll').read_bytes()
 if hashlib.sha256(raw).hexdigest()!=SHA:raise SystemExit('Native client changed: re-inspect before regenerating grenade fixtures')
 pe=pefile.PE(data=raw);base=pe.OPTIONAL_HEADER.ImageBase
@@ -31,7 +31,7 @@ scalar=lambda at,value:machine.mem_write(at,struct.pack('<f',value))
 vector=lambda at: list(struct.unpack('<3f',machine.mem_read(at,12)))
 def xmm(register,value):machine.reg_write(register,struct.unpack('<I',struct.pack('<f',value))[0])
 def xmm_float(register):return struct.unpack('<f',struct.pack('<I',machine.reg_read(register)&0xffffffff))[0]
-pointer(base+0x24cb278,heap+0x1000)
+pointer(base+0x24cc288,heap+0x1000)
 machine.mem_write(heap+0x1058,b'\0')
 trace_fraction=1
 trace_source=[]
@@ -41,7 +41,7 @@ def hook(uc,address,_size,_data):
     global trace_source,trace_forward
     rva=address-base
     if address==sentinel:uc.emu_stop();return
-    if rva==0x17449f0:
+    if rva==0x1745310:
         # External AngleVectors math is isolated; it does not decide gameplay.
         p,y,_=vector(angles);p,y=math.radians(p),math.radians(y)
         forward=[f32(math.cos(p)*math.cos(y)),f32(math.cos(p)*math.sin(y)),f32(-math.sin(p))]
@@ -49,7 +49,7 @@ def hook(uc,address,_size,_data):
         sp=uc.reg_read(reg.UC_X86_REG_RSP)
         uc.reg_write(reg.UC_X86_REG_RIP,struct.unpack('<Q',uc.mem_read(sp,8))[0]);uc.reg_write(reg.UC_X86_REG_RSP,sp+8)
         return
-    if rva==0x7c832d:
+    if rva==0x7c844d:
         # Only world tracing is stubbed. The native code's own +16u sweep end
         # and +/-2.02u hull are separately audited from instructions/constants.
         sp=uc.reg_read(reg.UC_X86_REG_RSP)
@@ -57,9 +57,9 @@ def hook(uc,address,_size,_data):
         end=[f32(a+f32(b*16*trace_fraction)) for a,b in zip(trace_source,trace_forward)]
         uc.reg_write(reg.UC_X86_REG_XMM0,int.from_bytes(struct.pack('<2f',*end[:2]),'little'))
         uc.reg_write(reg.UC_X86_REG_RAX,struct.unpack('<I',struct.pack('<f',end[2]))[0])
-        uc.reg_write(reg.UC_X86_REG_RIP,base+0x7c853e)
+        uc.reg_write(reg.UC_X86_REG_RIP,base+0x7c865e)
         return
-    if not (0x7c81d0<=rva<0x7c832d or 0x7c853e<=rva<0x7c85da):
+    if not (0x7c82f0<=rva<0x7c844d or 0x7c865e<=rva<0x7c86fa):
         raise RuntimeError(f'Unverified native path {rva:#x}')
 
 machine.hook_add(UC_HOOK_CODE,hook)
@@ -81,13 +81,13 @@ for case in [
     pointer(sp+0x40,out_origin);pointer(sp+0x48,out_velocity)
     for register,value in [(reg.UC_X86_REG_RSP,sp),(reg.UC_X86_REG_RCX,heap+0x2000),
         (reg.UC_X86_REG_RDX,angles),(reg.UC_X86_REG_R8,eye),(reg.UC_X86_REG_R9,heap+0x3000)]:machine.reg_write(register,value)
-    machine.emu_start(base+0x7c81d0,sentinel,count=10000)
+    machine.emu_start(base+0x7c82f0,sentinel,count=10000)
     fixtures.append({'pitchUpDegrees':pitch,'yawDegrees':90,'strength':strength,'throwVelocity':speed,
         'eye':initial_eye,'actorVelocity':motion,'traceFraction':fraction,'traceSource':trace_source,
         'adjustedPitchDownDegrees':vector(angles)[0],'forward':trace_forward,
         'origin':vector(out_origin),'velocity':vector(out_velocity)})
-report={'build':'2000940','clientSha256':SHA,'source':'Isolated installed client arithmetic, static file mapped into Unicorn, not loaded into a game.',
-    'launchRva':'0x7c81d0..0x7c85da','excluded':'AngleVectors trigonometry and world hull tracing supplied as explicit fixture inputs; no entity or game logic executed.',
+report={'build':'2000942','clientSha256':SHA,'source':'Isolated installed client arithmetic, static file mapped into Unicorn, not loaded into a game.',
+    'launchRva':'0x7c82f0..0x7c86fa','excluded':'AngleVectors trigonometry and world hull tracing supplied as explicit fixture inputs; no entity or game logic executed.',
     'constants':{'forwardSweep':16,'hullRadius':2.02,'strengthHeight':12,'minimumSpeed':15,'maximumSpeed':750,
         'velocityScale':f32(.9),'strengthScale':f32(.7),'strengthBase':f32(.3),'velocityInheritance':1.25},'cases':fixtures}
 path=ROOT/'src/range/duel/native-grenade-launch-fixture.json'

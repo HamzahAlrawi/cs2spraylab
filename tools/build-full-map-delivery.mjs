@@ -19,6 +19,7 @@ const deliver=async(raw,compress=true)=>{
 const files={},bundles=[],images=[];
 const names=['collision.json','collision.bin','visual.json','visibility.json','visibility.bin',...visual.files,
   ...visual.resources.filter(r=>!r.name.endsWith('.webp')).map(r=>r.name)];
+try{await fs.stat(path.join(base,'grenade-collision.json'));names.push('grenade-collision.json','grenade-query.bin');}catch(error){if(error.code!=='ENOENT')throw error;}
 for(const name of names){
   if(!/^[a-z0-9-]+\.(json|bin|gltf)$/.test(name))throw Error('Invalid full map resource name');
   files[name]=await deliver(await fs.readFile(path.join(base,name)));

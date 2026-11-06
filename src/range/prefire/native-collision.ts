@@ -6,6 +6,7 @@ import type {TerrainQueries} from '../terrain';
 import {validateNativeSurfaces, type NativeSurface, type NativePrimitive, type NativeSurfaceInterval, type NativeSurfaceHit} from './native-surfaces';
 import {validateConvexSolid, convexRayInterval, buildSolidTree, solidTreeSteps, querySolidTree, type ConvexNativeSolid} from './native-solids';
 import grenadeClips from './native-grenade-clips.json';
+import type {NativeGrenadeQuery} from './native-grenade-query';
 
 export type NativeCollisionManifest = {version: number; unit: number; build: string; collisionSha256: string; sourceCollisionSha256?:string;
   surfaces?: NativeSurface[];
@@ -88,6 +89,8 @@ function clipTriangle(vertices: Float32Array, indices: Uint32Array, triangle: nu
 export class NativeMapCollision implements TerrainQueries {
   readonly build: string;
   readonly collisionSha256: string;
+  readonly sourceCollisionSha256: string;
+  private grenadeQuery?:NativeGrenadeQuery;
   readonly bounds = {minX: Infinity, maxX: -Infinity, minZ: Infinity, maxZ: -Infinity};
   private readonly world: RAPIER.World;
   private readonly shapes = new Map<number, RAPIER.Cuboid>();
@@ -178,6 +181,7 @@ export class NativeMapCollision implements TerrainQueries {
   }
   private constructor(manifest: NativeCollisionManifest, binary: ArrayBuffer,prepared?:{metadata:PreparedNativeQueries;snapshot?:ArrayBuffer},deferPrepared=false) {
     this.build = manifest.build; this.collisionSha256 = manifest.collisionSha256;
+    this.sourceCollisionSha256=manifest.sourceCollisionSha256??manifest.collisionSha256;
     this.world = prepared?.snapshot?RAPIER.World.restoreSnapshot(new Uint8Array(prepared.snapshot)):new RAPIER.World({x: 0, y: 0, z: 0});
     if (prepared) {
       if (deferPrepared) return;
@@ -367,7 +371,7 @@ export class NativeMapCollision implements TerrainQueries {
       const group=groups.get(id),collider=this.world.getCollider(handle);if(!group||!collider)continue;
       const tags=group.tags??[],excluded=group.excludes??[];
       const grenade=!tags.some(tag=>['playerclip','npcclip','sky'].includes(tag.toLowerCase()))&&
-        !excluded.some(tag=>['grenade','csgo_grenade'].includes(tag.toLowerCase()));
+        !excluded.some(tag=>['grenade','csgo_grenade','csgo_thrown_grenade'].includes(tag.toLowerCase()));
       const bits=Number(group.movement)|Number(group.shots)*2|Number(grenade)*4;
       collider.setCollisionGroups((bits<<16)|bits);
     }
@@ -376,8 +380,13 @@ export class NativeMapCollision implements TerrainQueries {
     if(!present)this.world.createCollider(RAPIER.ColliderDesc.trimesh(new Float32Array(grenadeClips.vertices),new Uint32Array(grenadeClips.indices))
       .setCollisionGroups(grenadeGroup));
   }
+  installGrenadeQuery(query:NativeGrenadeQuery){
+    if(this.disposed){query.release();return;}
+    this.grenadeQuery?.release();this.grenadeQuery=query;
+  }
   sweepGrenade(from:Vec,to:Vec,radius:number):HullSweep {
     if(this.disposed)return{position:{...from},fraction:0,startSolid:true};
+    if(this.grenadeQuery)return this.grenadeQuery.sweep(from,to,radius);
     let shape=this.grenadeShapes.get(radius);if(!shape){shape=new RAPIER.Cuboid(radius,radius,radius);this.grenadeShapes.set(radius,shape);}
     const delta={x:to.x-from.x,y:to.y-from.y,z:to.z-from.z},length=Math.hypot(delta.x,delta.y,delta.z);
     if(length<1e-9)return{position:{...to},fraction:1,startSolid:false};
@@ -530,6 +539,7 @@ export class NativeMapCollision implements TerrainQueries {
   dispose() {
     if (this.disposed) return;
     this.disposed = true;
+    this.grenadeQuery?.release();this.grenadeQuery=undefined;
     this.world.free(); this.shapes.clear(); this.grenadeShapes.clear();this.sphereShapes.clear();this.columns.clear(); this.surfaces.clear(); this.triangles.length = 0; this.corpseMeshes.clear();
     this.ids.clear(); this.sourceSurfaces.clear(); this.primitiveGroups.clear(); this.openShots.length = 0; this.solidTree = undefined;
   }
