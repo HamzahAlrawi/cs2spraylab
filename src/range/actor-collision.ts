@@ -119,22 +119,36 @@ export function moveOnTerrain(from: Vec, to: Vec, height: number, world: Terrain
   const boxes = terrainColliders(world), floor = world.floor === undefined ? 0 : world.floor;
   let moved = slideHull(from, to, height, boxes, world.native), stepped = false;
   const distance = (p: Vec) => (p.x - from.x) ** 2 + (p.z - from.z) ** 2;
+  const mayStep=supported && to.y<=from.y+EPS;
   // Compare ordinary sliding with up/forward/down. Actors are never stairs.
-  if (supported && to.y <= from.y + EPS && moved.contacts.some(c => c.normal.y >= 0)) {
+  const stepCandidate=()=>{
     const up = sweepHull(from, {...from, y: from.y + RULES.stepHeight}, height, boxes, world.native);
     const across = slideHull(up.position, {x: to.x, y: up.position.y, z: to.z}, height, boxes, world.native);
     const down = verticalContact(across.position, up.position.y, to.y - RULES.stepHeight, height, boxes, floor, world.native);
     const landing = {...across.position, y: down.feet};
-    if (down.grounded && down.support?.traversal?.kind !== 'actor' && distance(landing) > distance(moved.position) + EPS &&
-      fitsTerrain(landing, landing.y, height, world)) {
-      moved = {...across, position: landing, contacts: [...across.contacts, {normal: down.normal ?? {x: 0, y: 1, z: 0}, solid: down.support}]};
-      stepped = true;
+    if (down.grounded && down.support?.traversal?.kind !== 'actor' && fitsTerrain(landing, landing.y, height, world))
+      return {...across, position: landing, contacts: [...across.contacts, {normal: down.normal ?? {x: 0, y: 1, z: 0}, solid: down.support}]};
+  };
+  if (mayStep && moved.contacts.length) {
+    const candidate=stepCandidate();
+    if(candidate&&distance(candidate.position)>distance(moved.position)+EPS){moved=candidate;stepped=true;}
+  }
+  const groundProbe=()=>verticalContact(moved.position, moved.position.y,
+    moved.position.y - (supported && to.y <= from.y + EPS ? RULES.stepHeight : EPS), height, boxes, floor, world.native);
+  let down=groundProbe();
+  // Footprint support alone does not prove that a lower body pose clears nearby walls.
+  const canSnap=()=>down.grounded && (supported || moved.position.y - down.feet <= EPS) &&
+    (down.support?.traversal?.kind !== 'actor' || moved.position.y - down.feet <= EPS) &&
+    (Math.abs(down.feet-moved.position.y)<=EPS || fitsTerrain(moved.position,down.feet,height,world));
+  let snapped=canSnap();
+  if(mayStep&&down.grounded&&!snapped){
+    // A missed tiny uphill contact can select a lower, embedded support plane.
+    // Retry the real step path, not an unchecked upward position correction.
+    const candidate=stepCandidate();
+    if(candidate&&distance(candidate.position)>=distance(moved.position)-EPS){
+      moved=candidate;stepped=true;down=groundProbe();snapped=canSnap();
     }
   }
-  const down = verticalContact(moved.position, moved.position.y,
-    moved.position.y - (supported && to.y <= from.y + EPS ? RULES.stepHeight : EPS), height, boxes, floor, world.native);
-  const snapped = down.grounded && (supported || moved.position.y - down.feet <= EPS) &&
-    (down.support?.traversal?.kind !== 'actor' || moved.position.y - down.feet <= EPS);
   if (floor !== null && moved.position.y < floor) moved.position.y = floor;
   if (snapped) moved.position.y = down.feet;
   const ground = moved.contacts.find(c => c.normal.y >= RULES.standableNormal);

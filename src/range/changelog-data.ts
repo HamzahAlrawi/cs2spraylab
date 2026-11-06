@@ -652,7 +652,7 @@ const november6PrefireGrenadeFlight = {
   ]}],
 } as const satisfies ChangelogRelease;
 
-export const latestChanges = {
+const november7Loading = {
   id:'update-2026-11-07-loading',title:'Faster map entry (November 7)',baselineCommit:'385123d',
   sections:[{id:'faster-map-entry',title:'Less waiting before practice',items:[
     'Initial map loading dispatches geometry decoding in larger bounded worker batches instead of applying the small background-preload budget to thousands of jobs.',
@@ -661,7 +661,17 @@ export const latestChanges = {
   ]}],
 } as const satisfies ChangelogRelease;
 
+export const latestChanges = {
+  id:'update-2026-11-07-wall-slide',title:'Smoother wall & floor contact (November 7)',baselineCommit:'a5c1a40',
+  sections:[{id:'wall-floor-contact',title:'Less snagging while moving',items:[
+    'Diagonal movement along native walls maintains perpendicular query clearance instead of repeatedly catching triangle edges. The shared correction applies to Mirage and Dust 2.',
+    'Ground snaps check full-body clearance before lowering the player near walls. Small uphill seams can recover through a collision-tested step path rather than embedding the hull or losing support.',
+    'Map geometry, bullet and grenade collision, hull dimensions, movement speeds and acceleration are unchanged. Regression checks cover angled walls, crouched floor seams and native map contacts.',
+  ]}],
+} as const satisfies ChangelogRelease;
+
 export const changelogHistory = [
+  november7Loading,
   november6PrefireGrenadeFlight,
   november6MapPoolThrows,
   november6MirageBeta,

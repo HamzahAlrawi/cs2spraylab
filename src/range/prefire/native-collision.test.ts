@@ -285,6 +285,26 @@ describe('native scene queries without installed game assets', () => {
       expect(a.position.z).toBeLessThan(1);
     } finally {collision.dispose();}
   });
+  it.each([0,.1,.3,.785,1.1,1.57])('does not snag on a tessellated %s-radian wall at world coordinates',async angle=>{
+    for(const offset of [0,42]){
+      const {manifest,binary}=build([new BoxGeometry(40,.2,40).translate(offset,-.1,-offset),
+        new BoxGeometry(.2,4,20,1,1,20).rotateY(angle).translate(offset,2,-offset)]);
+      const collision=await NativeMapCollision.create(manifest,binary);
+      try {
+        const normal={x:Math.cos(angle),z:-Math.sin(angle)},tangent={x:Math.sin(angle),z:Math.cos(angle)};
+        const distance=.1+16*UNIT*(Math.abs(normal.x)+Math.abs(normal.z))+.02;
+        let p={x:offset-normal.x*distance-tangent.x*5,y:0,z:-offset-normal.z*distance-tangent.z*5};
+        const start={...p},world={solids:[],floor:null,native:collision};
+        expect(collision.fits(p,p.y,72*UNIT)).toBe(true);
+        for(let tick=0;tick<160;tick++){
+          const moved=moveOnTerrain(p,{...p,x:p.x+.025*(normal.x+tangent.x),z:p.z+.025*(normal.z+tangent.z)},72*UNIT,world,true);
+          expect(moved.grounded).toBe(true);p=moved.position;
+        }
+        expect((p.x-start.x)*tangent.x+(p.z-start.z)*tangent.z).toBeGreaterThan(3.85);
+        expect((p.x-offset)*normal.x+(p.z+offset)*normal.z).toBeLessThan(-distance+.021);
+      }finally{collision.dispose();}
+    }
+  });
   it.each([18, 19])('respects the shared 18u limit at a native %iu stair', async units => {
     const rise = units * UNIT;
     const {manifest, binary} = build([new BoxGeometry(30, .2, 30).translate(0, -.1, 0),
@@ -306,6 +326,21 @@ describe('native scene queries without installed game assets', () => {
         expect(a.feet).toBeCloseTo(0, 6);
       }
     } finally {collision.dispose();}
+  });
+  it.each([54,72])('crosses subdivided floor seams and small lips with a %su hull',async units=>{
+    const {manifest,binary}=build([new BoxGeometry(30,.2,30,40,1,40).rotateY(.3).translate(42,-.1,-54),
+      new BoxGeometry(2,.003,20,4,1,20).translate(43,.0015,-54)]);
+    const collision=await NativeMapCollision.create(manifest,binary);
+    try {
+      let p={x:40,y:0,z:-57};
+      for(let tick=0;tick<160;tick++){
+        const next=moveOnTerrain(p,{...p,x:p.x+.025,z:p.z+.025},units*UNIT,{solids:[],floor:null,native:collision},true);
+        expect(next.grounded,`tick ${tick}`).toBe(true);
+        expect(Math.hypot(next.position.x-p.x,next.position.z-p.z)).toBeGreaterThan(.02);
+        expect(Math.abs(next.position.y-p.y)).toBeLessThan(.0031);p=next.position;
+      }
+      expect(p.x).toBeGreaterThan(43.9);expect(p.z).toBeGreaterThan(-53.1);
+    }finally{collision.dispose();}
   });
   it('supports partial footprint overlap without extending a triangle beyond its edge', async () => {
     const {manifest, binary} = build([new BoxGeometry(1, .2, 1).translate(0, -.1, 0)]);

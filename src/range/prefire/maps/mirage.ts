@@ -5,7 +5,7 @@ import index from './mirage-index.json';
 import fullDelivery from './mirage-full-delivery.json';
 import type {NativeMapDefinition,NativeMapRelease,NativeRadarManifest} from '../native-map-schema';
 import type {DeliveredAsset} from '../asset-delivery';
-import beta from '../../../../docs/map-beta/de_mirage/2026-11-07-loading.receipt.json';
+import beta from '../../../../docs/map-beta/de_mirage/2026-11-07-wall-slide-v2.receipt.json';
 import type {MapBetaReceipt} from '../map-onboarding';
 
 export const mirageMap:NativeMapDefinition={id:'de_mirage',name:'Mirage (Beta)',assetId:'mirage',base:'/maps/mirage/',revision:index.revision,

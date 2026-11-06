@@ -16,6 +16,8 @@ const rotation = {x: 0, y: 0, z: 0, w: 1};
 const movementGroup = (1 << 16) | 1, shotGroup = (2 << 16) | 2;
 const grenadeGroup=(4<<16)|4;
 const skin = .0003, radius = 16 * .0254;
+// Numeric query clearance, not a change to the native hull or map geometry.
+const movementClearance = .001;
 // Ground queries must cover the shape-cast skin. Otherwise a small uphill
 // increment can miss both queries and incorrectly switch to air acceleration.
 const cellSize = 2, contactTolerance = skin + .0001;
@@ -350,7 +352,12 @@ export class NativeMapCollision implements TerrainQueries {
     const hit = this.world.castShape({x: from.x, y: from.y + height / 2 + skin, z: from.z}, rotation, delta,
       this.shape(height), 0, 1, false, undefined, movementGroup);
     if (!hit) return {position: {...to}, fraction: 1, startSolid: false};
-    const fraction = Math.max(0, Math.min(1, hit.time_of_impact - skin / Math.max(skin, Math.hypot(delta.x, delta.y, delta.z))));
+    // Directional backoff collapses at shallow angles and exposes triangle-edge
+    // normals on the next cast. Keep wall separation perpendicular to its plane.
+    const approach=-(delta.x*hit.normal1.x+delta.y*hit.normal1.y+delta.z*hit.normal1.z);
+    const retreat=Math.abs(hit.normal1.y)<.7?movementClearance/Math.max(movementClearance,approach):
+      skin/Math.max(skin,Math.hypot(delta.x,delta.y,delta.z));
+    const fraction = Math.max(0, Math.min(1, hit.time_of_impact - retreat));
     return {position: {x: from.x + delta.x * fraction, y: from.y + delta.y * fraction, z: from.z + delta.z * fraction},
       fraction, contact: {normal: {...hit.normal1}}, startSolid: false};
   }

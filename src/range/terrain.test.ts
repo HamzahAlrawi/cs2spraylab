@@ -75,6 +75,13 @@ describe('continuous shared hull collision', () => {
 });
 
 describe('terrain stepping and ramps', () => {
+  it.each([false,true])('checks the full hull before snapping down to footprint support (clear=%s)',clear=>{
+    const native={sweep:(_from: any,to: any)=>({position:to,fraction:1,startSolid:false}),
+      vertical:()=>({feet:0,grounded:true,ceiling:false,normal:{x:0,y:1,z:0}}),fits:vi.fn(()=>clear)};
+    const moved=moveOnTerrain({x:0,y:.3,z:0},{x:.04,y:.3,z:0},R.standingHeight,{solids:[],floor:null,native},true);
+    expect(native.fits).toHaveBeenCalledWith(expect.objectContaining({x:.04,z:0}),0,R.standingHeight);
+    expect(moved.position).toEqual({x:.04,y:clear?0:.3,z:0});expect(moved.grounded).toBe(clear);
+  });
   it.each([8, 16, 18])('steps over a %s-unit stair while grounded', height => {
     const moved = moveOnTerrain({x: 0, y: 0, z: 0}, {x: .8, y: 0, z: 0}, R.standingHeight, stepWorld(height * UNIT), true);
     expect(moved.position.x).toBeCloseTo(.8); expect(moved.position.y).toBeCloseTo(height * UNIT);
