@@ -14,7 +14,7 @@ test('map sound awareness reveals only heard sources, then scores an unaided phy
   const errors:string[]=[];page.on('pageerror',e=>errors.push(e.message));
   await page.addInitScript(()=>{
     localStorage.setItem('spraylab.range.v2',JSON.stringify({mode:'awareness',volume:.5,quality:'performance',frameLimit:60,protectShortcuts:false}));
-    localStorage.setItem('spraylab.awareness.v1',JSON.stringify({chunk:'dust2-mid-ct',stage:'reveal',autoNext:false}));
+    localStorage.setItem('spraylab.awareness.v1',JSON.stringify({chunk:'dust2-mid-ct',stage:'reveal',cues:'shots',autoNext:false}));
   });
   await page.goto('/');await capture(page);
   const enter=page.getByRole('button',{name:'Start sound practice',exact:true});
@@ -23,9 +23,18 @@ test('map sound awareness reveals only heard sources, then scores an unaided phy
   const loaded=await page.evaluate(()=>{const e=(window as any).awarenessEngine;return {geometry:e.sim.arena.native.collisionSha256};});
   expect(loaded.geometry).toBe('395a10802ed5a26dce1c48b754adc7c2f1418755edc4f62c401597d19f7e6396');
   expect(await canvasColors(page,'canvas[data-duel]')).toBeGreaterThan(8);
+  await page.evaluate(()=>{
+    const e=(window as any).awarenessEngine,audit={shots:0,flashes:0,traces:0,impacts:0};(window as any).awarenessVfx=audit;
+    const play=e.audio.play.bind(e.audio);e.audio.play=(weapon:any,volume:any,spatial:any)=>{if(spatial)audit.shots++;return play(weapon,volume,spatial);};
+    const fire=e.shotEffects.flashes.fire.bind(e.shotEffects.flashes);e.shotEffects.flashes.fire=(...args:any[])=>{audit.flashes++;return fire(...args);};
+    const trace=e.shotEffects.trace.bind(e.shotEffects);e.shotEffects.trace=(...args:any[])=>{if(args[5]===e.enemyTraceColor)audit.traces++;return trace(...args);};
+    const impact=e.shotEffects.impact.bind(e.shotEffects);e.shotEffects.impact=(...args:any[])=>{if(args[2]===e.enemyTraceColor)audit.impacts++;return impact(...args);};
+  });
   await expect(page.locator('.awareness-marker')).toBeHidden();await enter.click();
   await page.waitForFunction(()=>{const e=(window as any).awarenessEngine;return !!e.scenario.trial?.heardAt&&e.sim.time>=e.scenario.trial.heardAt;},undefined,{timeout:30000});
   await expect(page.locator('.awareness-marker')).toBeVisible();
+  await page.waitForFunction(()=>(window as any).awarenessVfx.shots>0);
+  expect(await page.evaluate(()=>{const {flashes,traces,impacts}=(window as any).awarenessVfx;return {flashes,traces,impacts};})).toEqual({flashes:0,traces:0,impacts:0});
   await page.screenshot({path:info.outputPath('awareness-assisted.png'),fullPage:true});
   if(info.project.name==='mobile-chromium')await page.getByRole('button',{name:'Pause listening',exact:true}).click();else await page.keyboard.press('Escape');
   if(!await page.getByRole('radio',{name:'Unaided training',exact:true}).isVisible())await page.getByRole('button',{name:'Show drill panel',exact:true}).click();
@@ -41,6 +50,7 @@ test('map sound awareness reveals only heard sources, then scores an unaided phy
   await page.getByRole('button',{name:'Resume listening',exact:true}).click();
   await page.waitForFunction(()=>{const e=(window as any).awarenessEngine;return !!e.scenario.trial?.heardAt&&e.sim.time>=e.scenario.trial.heardAt;},undefined,{timeout:30000});
   await expect(page.locator('.awareness-marker')).toBeHidden();
+  expect(await page.evaluate(()=>(window as any).awarenessEngine.models.get(1)?.visible)).toBe(false);
   expect(await page.evaluate(()=>{const e=(window as any).awarenessEngine;return e.scenario.radarContacts(e.sim).length;})).toBe(0);
   await page.evaluate(()=>{
     const e=(window as any).awarenessEngine,s=e.sim,a=s.actors[0],target=e.scenario.trial.target;

@@ -588,7 +588,7 @@ const november5FullMapAwareness = {
   ],
 } as const satisfies ChangelogRelease;
 
-export const latestChanges = {
+const november6SoundDensity = {
   id:'update-2026-11-06-sound-density',title:'Playable-space sound density (November 6)',baselineCommit:'e67a8dc',
   sections:[
     {id:'continuous-sound-density',title:'Common positions, natural variation',items:[
@@ -599,7 +599,19 @@ export const latestChanges = {
   ],
 } as const satisfies ChangelogRelease;
 
+export const latestChanges = {
+  id:'update-2026-11-06-sound-variety',title:'Less repetitive sound practice (November 6)',baselineCommit:'249e27f',
+  sections:[
+    {id:'heard-source-variety',title:'Broader positions, familiar priorities',items:[
+      'Continuous source neighborhoods now cover wider playable space. Common-position evidence still increases probability, while a soft recent-area and perceived-direction penalty reduces back-to-back repetition.',
+      'Sources no longer have to hide behind cover: that filter was funneling cues into a few corners. Unaided demonstrators, their shadows, gun flashes, tracers and impact clues stay hidden; assist markers still appear only after an audible cue.',
+      'Final heard positions are tested over 100 trials per map area. Replay retains the same source. Expanded source preparation, including hull-walk validation and acoustic ranking, is sliced across render frames.',
+    ]},
+  ],
+} as const satisfies ChangelogRelease;
+
 export const changelogHistory = [
+  november6SoundDensity,
   november5FullMapAwareness,
   november5SoundChanges,
   november5RewardsChanges,

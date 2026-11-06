@@ -4,9 +4,9 @@ import type {Vec} from './actor-physics';
 import type {DuelScenario} from './duel/scenario';
 import {DuelSimulation,type CombatActor} from './duel/simulation';
 import {idleCommand,type ActorCommand} from './duel/types';
-import {canFitInArena,traceSolid} from './duel/geometry';
+import {canFitInArena} from './duel/geometry';
 import type {AwarenessWorld} from './awareness-map';
-import {nearbyAwarenessSources,awarenessRunEdge,AWARENESS_RELOCATE_DISTANCE} from './awareness-sources';
+import {awarenessSourceWork,awarenessRunEdge,rankAwarenessSourceWork,AWARENESS_RELOCATE_DISTANCE,AWARENESS_DENSITY_POLICY,type RecentAwarenessSource} from './awareness-sources';
 import {sanitizeDuelConfig} from './duel/config';
 import {AcousticScene,type AcousticPath} from './spatial-audio';
 import {configureArenaAcoustics} from './duel/native-acoustics';
@@ -46,7 +46,7 @@ export class AwarenessSimulation extends DuelSimulation {
   }
 }
 type Trial={cue:AwarenessCue;feet:Vec;point:Vec;target:Vec;listener:Vec;crouched:boolean;sequence:{at:number;key:string}[];
-  start:number;cursor:number;heardAt?:number;lastHeardAt?:number;replays:number;volume:number;paused?:boolean;silenced?:boolean;answer?:AwarenessAnswer;finishedAt?:number;path?:AcousticPath;loading?:boolean;activity?:AwarenessSimulation['activity'];reloadAt?:number;playedLabel?:string};
+  start:number;cursor:number;heardAt?:number;lastHeardAt?:number;replays:number;volume:number;paused?:boolean;silenced?:boolean;answer?:AwarenessAnswer;finishedAt?:number;path?:AcousticPath;loading?:boolean;activity?:AwarenessSimulation['activity'];reloadAt?:number;playedLabel?:string;remembered?:boolean};
 export type AwarenessReport={message:string;cue?:string;origin?:string;answer?:AwarenessAnswer;heard:boolean;attempts:number;replays:number;unavailable:boolean};
 export type AwarenessMarker={visible:boolean;hint:boolean;x:number;y:number;height:number;angle:number;offscreen:boolean};
 const quiet=()=>({visible:false,hint:false,x:0,y:0,height:0,angle:0,offscreen:false});
@@ -62,7 +62,8 @@ export class AwarenessSession implements DuelScenario {
   private nextAt=1;
   private random=randomStream(1,'awareness');
   private readonly acoustics=new AcousticScene();
-  private previousSource='';
+  private readonly recentSources:RecentAwarenessSource[]=[];
+  private search?:Generator<void,void>;
   private active=false;
   private message='Enter the map to listen';
   private unavailable=false;
@@ -70,27 +71,35 @@ export class AwarenessSession implements DuelScenario {
   private newAnswer?:AwarenessAnswer;
   private sim?:AwarenessSimulation;
   private audio?:import('./audio').RangeAudio;
+  private cancelSearch(){this.search?.return(undefined);this.search=undefined;}
   private stopSource(){if(this.sim){this.sim.activity=undefined;this.sim.actors[1].weapon.reload.cancel();}this.audio?.cancelAction(1);}
   estimate=12;
   onMarker?:(marker:AwarenessMarker)=>void;
   constructor(readonly base:AwarenessWorld,public config:AwarenessConfig) {this.scene=base.scene;}
   get mapId(){return this.base.mapId;}
   get name(){return this.base.name;}
-  configure(config:AwarenessConfig){this.stopSource();this.config=config;this.trial=undefined;this.nextAt=0;this.unavailable=false;this.onMarker?.(quiet());}
+  configure(config:AwarenessConfig){this.cancelSearch();this.stopSource();this.config=config;this.trial=undefined;this.nextAt=0;this.unavailable=false;this.onMarker?.(quiet());}
   create(settings:Settings,seed:number) {
     const sim=new AwarenessSimulation(awarenessDuelConfig(this.config),seed,this.base.arena,settings.weapon,settings.sidearm,settings.primaryEnabled);
     for(const actor of sim.actors.slice(1))sim.command(actor.id,idleCommand());
     this.random=randomStream(seed,'awareness');this.trial=undefined;this.nextAt=1;this.active=false;
+    this.cancelSearch();
+    this.recentSources.length=0;
     this.sim=sim;configureArenaAcoustics(this.acoustics,sim.arena);return sim;
   }
   updateView(position:Vec){this.base.updateView(position);}
   radarOverview(feet:number){return this.base.radarOverview(feet);}
   loadingReport(){return this.base.loadingReport();}
+  private remember(t:Trial,point:Vec,path:AcousticPath){
+    if(t.remembered||t.replays)return;t.remembered=true;
+    this.recentSources.push({point:{...point,y:(t.activity&&this.sim?this.sim.actors[1].feet:t.feet.y)+1.2},apparent:{...path.apparentPosition}});
+    if(this.recentSources.length>AWARENESS_DENSITY_POLICY.recentSources)this.recentSources.shift();
+  }
   takeAnswer(){const answer=this.newAnswer;this.newAnswer=undefined;return answer;}
   statusReport():AwarenessReport {const t=this.trial;return {message:this.message,cue:t&&(t.heardAt!==undefined&&(this.config.stage!=='training'||t.answer)||t.answer)?t.playedLabel??t.cue.label:undefined,
     origin:t&&(this.config.stage==='reveal'||t.answer)?t.cue.origin:undefined,answer:t?.answer,heard:t?.heardAt!==undefined,
     attempts:this.attempts,replays:t?.replays??0,unavailable:this.unavailable};}
-  next(now:number){this.stopSource();this.audio?.stopVoices();this.trial=undefined;this.nextAt=now+.6;this.message='Listen for the next cue';this.onMarker?.(quiet());}
+  next(now:number){this.cancelSearch();this.stopSource();this.audio?.stopVoices();this.trial=undefined;this.nextAt=now+.6;this.message='Listen for the next cue';this.onMarker?.(quiet());}
   replay(now:number){const t=this.trial;if(!t)return;t.replays++;t.cursor=0;t.start=now+.2;
     t.answer=undefined;t.finishedAt=undefined;t.lastHeardAt=undefined;t.silenced=false;
     this.audio?.stopVoices();
@@ -101,23 +110,24 @@ export class AwarenessSession implements DuelScenario {
   radarContacts(sim:DuelSimulation){const t=this.trial,now=sim.time;
     return t&&t.heardAt!==undefined&&now>=t.heardAt&&(t.answer||this.config.stage==='reveal'&&this.config.display!=='screen')&&
       now-(t.finishedAt??t.lastHeardAt??t.heardAt)<3?[{id:1,position:{...t.target},seenAt:now,dead:false}]:[];}
-  private choose(sim:DuelSimulation,volume:number) {
+  private *choose(sim:DuelSimulation,volume:number):Generator<void,void> {
     const player=sim.actors[0],arena=sim.arena;
-    const unique=nearbyAwarenessSources({...player.position,y:player.feet},arena,this.base.sources,this.random);
+    const listener={...player.position};
+    const unique=yield* awarenessSourceWork({...listener,y:player.feet},arena,this.base.sources,this.random);
     const cues=awarenessCues.filter(c=>(this.config.cues==='mixed'||c.group===this.config.cues)&&c.sequence.length);
-    const offset=Math.floor(this.random()*Math.max(1,unique.length)),cueOffset=Math.floor(this.random()*Math.max(1,cues.length));
-    const candidates=[...unique.slice(offset),...unique.slice(0,offset)].sort((a,b)=>+(a[0]===this.previousSource)-+(b[0]===this.previousSource));
+    const cueOffset=Math.floor(this.random()*Math.max(1,cues.length));
+    const candidates=yield* rankAwarenessSourceWork(unique,listener,this.recentSources,this.random,
+      point=>this.acoustics.resolve(listener,point,sim.time).apparentPosition);
     for(let i=0;i<candidates.length;i++){
-      const [id,location]=candidates[i],feet=location.feet;
-      if(Math.hypot(feet.x-player.position.x,feet.z-player.position.z)<2)continue;
+      yield;
+      const [,location]=candidates[i],feet=location.feet;
+      if(Math.hypot(feet.x-player.position.x,feet.z-player.position.z)<2||
+        Math.hypot(feet.x-player.position.x,feet.y-player.feet,feet.z-player.position.z)>28)continue;
       const crouched=!canFitInArena(feet,feet.y,72*.0254,arena);
       if(crouched&&!canFitInArena(feet,feet.y,54*.0254,arena))continue;
       const target={...feet,y:feet.y+(crouched?1:1.5)};
-      const d=Math.hypot(target.x-player.position.x,target.y-player.position.y,target.z-player.position.z);
-      const direction={x:(target.x-player.position.x)/d,y:(target.y-player.position.y)/d,z:(target.z-player.position.z)/d};
-      // The unaided drill must not accidentally turn into a visible-target test.
-      if(!Number.isFinite(traceSolid(player.position,direction,arena,d-.03).distance))continue;
       for(let j=0;j<cues.length;j++) {
+        yield;
         const cue=cues[(j+cueOffset)%cues.length],low=cue.group==='steps'||cue.id==='land'||cue.origin==='grenade';
         const point={...feet,y:feet.y+(low ? .08 : cue.id==='jump'?30*.0254:(crouched?46:60)*.0254)};
         const path=this.acoustics.resolve(player.position,point,sim.time);
@@ -129,7 +139,7 @@ export class AwarenessSession implements DuelScenario {
         if(!sequence.some(s=>awarenessGain(s.key,path,volume)>=.0015))continue;
         const edge=cue.id==='run'&&!crouched?awarenessRunEdge(feet,arena,location.edge):undefined;
         if(cue.id==='run'&&(crouched||!edge))continue;
-        this.previousSource=id;this.unavailable=false;
+        this.unavailable=false;
         const source=sim.actors[1];source.feet=feet.y;source.position={...feet,y:feet.y+(crouched?46:64)*.0254};source.duckAmount=crouched?1:0;
         source.eyeHeight=source.position.y-feet.y;source.velocity={x:0,z:0};source.verticalVelocity=0;source.grounded=true;source.command.crouch=crouched;
         const equipment:Equipment=cue.id==='suppressed'?'usp':cue.id==='sniper'?'awp':'ak47';
@@ -145,11 +155,12 @@ export class AwarenessSession implements DuelScenario {
         this.message='Listen, then shoot toward the source';return;
       }
     }
-    this.unavailable=true;this.message='No audible hidden source nearby. Move toward cover or try another cue.';this.nextAt=sim.time+1.5;
+    this.unavailable=true;this.message='No audible source nearby. Move a little or try another cue.';this.nextAt=sim.time+1.5;
   }
   present({sim,audio,camera,events,active,volume,models}:Parameters<NonNullable<DuelScenario['present']>>[0]) {
     this.audio=audio;
     if(!active||volume<=0||audio.context?.state!=='running'){
+      this.cancelSearch();
       const model=models?.get(1);if(model)model.visible=false;
       if(this.active){
         this.stopSource();audio.stopVoices();
@@ -160,7 +171,14 @@ export class AwarenessSession implements DuelScenario {
     }
     this.active=true;
     if(this.trial&&Math.abs(this.trial.volume-volume)>.001){this.next(sim.time);return;}
-    if(!this.trial&&sim.time>=this.nextAt)this.choose(sim,volume);
+    if(!this.trial&&sim.time>=this.nextAt){
+      this.search??=this.choose(sim,volume);
+      const started=performance.now();
+      for(let work=0;work<8;work++){
+        if(this.search.next().done){this.search=undefined;break;}
+        if(performance.now()-started>=2)break;
+      }
+    }
     const t=this.trial;
     // A preview/unaided actor must not reveal the hidden demonstration source.
     // Grenade impacts identify the grenade, not an opponent standing there.
@@ -221,6 +239,7 @@ export class AwarenessSession implements DuelScenario {
       if(played){t.path=path;if(t.heardAt===undefined)t.heardAt=sim.time+path.delay;t.lastHeardAt=sim.time+path.delay;this.message=this.config.experience?'Listen and explore':'Sound played. Shoot toward its source';}
     }
     if(!t.activity&&t.cursor===t.sequence.length&&t.heardAt===undefined){this.trial=undefined;this.nextAt=sim.time+1;return;}
+    if(t.heardAt!==undefined&&sim.time>=t.heardAt&&t.path)this.remember(t,t.point,t.path);
     if(t.heardAt!==undefined&&sim.time>=t.heardAt&&!t.answer&&!this.config.experience){
       const shot=events.find((e):e is Extract<typeof e,{kind:'fire'}>=>e.kind==='fire'&&e.actorId===0&&e.equipment!=='knife');
       if(shot&&this.config.device!=='mono') {
@@ -240,5 +259,5 @@ export class AwarenessSession implements DuelScenario {
     this.onMarker?.({visible:true,hint,x:Math.max(-.86,Math.min(.86,projected.x)),y:Math.max(-.75,Math.min(.75,projected.y)),
       height:Math.min(1,Math.abs(top.y-bottom.y)),angle:Math.round(angle/(Math.PI/4))*(Math.PI/4),offscreen});
   }
-  dispose(){this.trial=undefined;this.onMarker=undefined;this.base.dispose();}
+  dispose(){this.cancelSearch();this.trial=undefined;this.onMarker=undefined;this.base.dispose();}
 }

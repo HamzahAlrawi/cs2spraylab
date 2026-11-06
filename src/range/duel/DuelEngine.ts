@@ -1249,6 +1249,7 @@ export class DuelEngine {
             own ? undefined : this.soundLocation(point, FOOTSTEP_RANGE), material,event.actorId);
         }
       } else if (event.kind === 'surface') {
+        if(this.scenario?.kind==='awareness'&&event.shooter!==0)continue;
         endpoint(event.shotId,event.point);
         this.shotEffects.impact(v3(event.point),this.settings.impactSize,event.shooter===0?this.ownTraceColor:this.enemyTraceColor,this.animationClock);
         if(event.phase!=='exit')this.audio.playImpact(['wood','metal','glass'].includes(event.material??'')?event.material as 'wood'|'metal'|'glass':'concrete',
@@ -1310,6 +1311,8 @@ export class DuelEngine {
       }
     }
     for (const [id, shot] of shots) {
+      // Audio-only demonstrators must not leak a cue through flashes or tracers.
+      if(this.scenario?.kind==='awareness'&&shot.actorId!==0)continue;
       const count = this.shotCounts.get(shot.actorId) ?? 0;
       this.shotCounts.set(shot.actorId, count + 1);
       const shotAge = Number.isFinite(shot.tick) ? Math.max(0, this.sim.time - shot.tick * STEP) : 0;
@@ -1645,7 +1648,7 @@ export class DuelEngine {
     const viewWeapon=this.sim.actors[0].weapon;
     if (this.presentingUtility && !this.sim.selectedUtility) this.renderedEquipment = undefined;
     this.presentingUtility = this.sim.selectedUtility;
-    if(timestamp-this.shadowAt>=50){this.shadowAt=timestamp;this.actorShadows.update(actorShadows(snapshots,this.sim.arena));}
+    if(timestamp-this.shadowAt>=50){this.shadowAt=timestamp;this.actorShadows.update(actorShadows(this.scenario?.kind==='awareness'?snapshots.filter(actor=>actor.id===0):snapshots,this.sim.arena));}
     if(timestamp-this.radarAt>=100) {this.radarAt=timestamp;this.radar.update(player,this.scenario?.radarContacts?.(this.sim)??this.sim.radar.snapshot(this.sim.time),
       this.sim.time,this.sim.arena,this.config,this.scenario?.radarOverview?.(player.feet)??this.scenario?.scene);}
     if (player.equipment !== this.renderedEquipment) {

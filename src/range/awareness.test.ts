@@ -47,8 +47,14 @@ function fixture(stage:'reveal'|'hint'|'training'='reveal',cues:'utility'|'steps
   const session=new AwarenessSession(base,config),sim=session.create(defaults,1),onMarker=vi.fn();session.onMarker=onMarker;
   const camera=new PerspectiveCamera(74,1.6,.03,100);camera.position.set(0,1.6,4);camera.updateMatrixWorld();
   const audio={context:{state:'running'},canPlayEvent:()=>true,playEvent:vi.fn(()=>true),cancelAction:vi.fn(),stopVoices:vi.fn(),unlockEvents:vi.fn(async()=>true)} as unknown as RangeAudio;
-  const frame=(time:number,events:DuelEvent[]=[],volume=.2,active=true)=>{sim.time=time;session.present({sim,audio,camera,events,active,volume});};
-  return {session,sim,frame,audio,onMarker};
+  const frame=(time:number,events:DuelEvent[]=[],volume=.2,active=true)=>{
+    sim.time=time;
+    for(let render=0;render<128;render++){
+      session.present({sim,audio,camera,events:render?[]:events,active,volume});
+      if(!(session as any).search)break;
+    }
+  };
+  return {session,sim,frame,audio,onMarker,camera};
 }
 it.each(['reveal','hint','training'] as const)('%s assistance cannot reveal a source before audible playback',stage=>{
   const {session,sim,frame,audio,onMarker}=fixture(stage);
@@ -114,6 +120,25 @@ it('runs a real reload rather than playing foley while the demonstrator holds a 
   const {sim,frame,session}=fixture('reveal','reload');sim.start();let started=false;
   for(let i=0;i<5*128;i++){sim.step();const events=sim.drainEvents();started ||= events.some(e=>e.kind==='action'&&e.actorId===1&&e.action==='reload-start');frame(sim.time,events);}
   expect(started).toBe(true);expect(session.statusReport().heard).toBe(true);
+});
+it('uses uncovered playable positions instead of forcing every cue into the same hidden corner',()=>{
+  const {sim,session,frame}=fixture('training');sim.arena.solids.length=0;
+  frame(1);frame(1.6);frame(1.8);
+  expect(session.statusReport().heard).toBe(true);
+  expect(session.radarContacts(sim)).toEqual([]);
+});
+it('remembers heard areas once, not for every bounce or deliberate replay',()=>{
+  const {session,frame}=fixture();frame(1);frame(1.6);frame(1.8);frame(2.3);
+  expect((session as any).recentSources).toHaveLength(1);
+  session.replay(3);frame(3.3);frame(3.8);
+  expect((session as any).recentSources).toHaveLength(1);
+});
+it('prepares cues in resumable render work and cancels pending work when paused',()=>{
+  const {session,sim,audio,camera}=fixture();sim.time=1;
+  session.present({sim,audio,camera,events:[],active:true,volume:.2});
+  expect((session as any).search).toBeDefined();expect(session.statusReport().heard).toBe(false);
+  session.present({sim,audio,camera,events:[],active:false,volume:.2});
+  expect((session as any).search).toBeUndefined();expect((session as any).recentSources).toHaveLength(0);
 });
 it.each([['rifle',0],['suppressed',.4],['sniper',.9]] as const)('%s demonstrations actually fire after native readiness gates',(_id,random)=>{
   const {sim,session,frame}=fixture('reveal','shots');(session as any).random=()=>random||.1;sim.start();let fired=0;

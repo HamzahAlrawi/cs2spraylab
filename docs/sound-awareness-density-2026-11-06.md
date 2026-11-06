@@ -1,5 +1,8 @@
 # Continuous, playable-space sound density
 
+The narrow kernels, hidden-only eligibility and single-frame preparation below
+were subsequently revised in [the source-variety follow-up](sound-awareness-variety-2026-11-06.md).
+
 Follow-up to `sound-awareness-full-map-2026-11-05.md`. This replaces its
 listener-centered radial probes. Full-map loading, caching, native collision,
 movement constants, native sound fields and scoring are unchanged.

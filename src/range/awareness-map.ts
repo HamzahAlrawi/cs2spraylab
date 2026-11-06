@@ -93,8 +93,8 @@ export async function buildAwarenessArena(map:PrefireMap,catalog:PrefireCatalog,
   const holdFeet=new Map([...holds.values()].map(row=>[row.angle,row.feet]));
   const weighted=selectionWeights([...holds.values()]);
   const sources:AwarenessLocation[]=[
-    ...weighted.map(row=>({feet:holdFeet.get(row.angle)!,kind:'hold' as const,weight:row.weight,spread:.65})),
-    ...[...routePoints.values()].map(feet=>({feet,kind:'route' as const,weight:1,spread:.8})),
+    ...weighted.map(row=>({feet:holdFeet.get(row.angle)!,kind:'hold' as const,weight:row.weight,spread:1.8})),
+    ...[...routePoints.values()].map(feet=>({feet,kind:'route' as const,weight:1,spread:2.8})),
   ];
   return {arena,sources};
 }
