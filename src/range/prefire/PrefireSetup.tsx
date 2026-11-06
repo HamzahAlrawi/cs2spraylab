@@ -18,6 +18,7 @@ import {PracticeBlock, SkillTrends} from '../PracticeBlock';
 import {skillTrends} from '../skill-trends';
 import {DuelAimProfile} from '../duel/DuelAimProfile';
 import {readAimMetrics, type AimMetrics} from '../duel/aim-metrics';
+import {MapBetaNotice} from './MapBetaNotice';
 
 const noPreviousAim: readonly AimMetrics[] = [];
 
@@ -75,6 +76,7 @@ export const PrefireSetup = memo(function PrefireSetup({config, update, routes, 
       </div>
     </div>
     <div className="prefire-controls-body">
+      <MapBetaNotice mapId={config.mapId}/>
       <section className="prefire-essentials" aria-label="Route and training essentials">
         <h3>Route &amp; course</h3>
         {maps.length > 1 && <label className="prefire-field"><span>Map</span>

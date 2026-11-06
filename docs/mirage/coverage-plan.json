@@ -1,0 +1,524 @@
+{
+  "schemaVersion": 1,
+  "mapId": "de_mirage",
+  "revision": "2026-11-06-mirage-beta-v1",
+  "weighting": "authored-coverage",
+  "native": {
+    "gameBuild": "2000942",
+    "resourceSha256": {
+      "maps/de_mirage.vpk": "e66cdf1ae6a976f6f6ba510a2addd04b25a4c1cfd811f51f1ef13f0954e6e350",
+      "maps/de_mirage/world_physics.vmdl_c": "c0c1423bf3ade3e5e65495299a4cb76147ef0487ec31170c9ee0d3acb5968a9b",
+      "Source2Viewer-CLI.exe": "fbdfb2eb289f21a86bcab2391cf3258bf61359a274bc67b69e471845301c27b9"
+    },
+    "extractorRevision": "Source 2 Viewer (installed CLI; executable SHA pinned)",
+    "extractionMethod": "Static VPK -> PHYS KV3; hull faces and mesh triangles converted without recentering. Native vmap GLB and visibility exported separately.",
+    "coordinateTransform": "[Source.x, Source.z, -Source.y] * 0.0254 metres",
+    "collisionMasks": "Separate movement, shot and csgo_grenadeclip attributes from PHYS; grenade-only groups retained.",
+    "referenceCapture": "Pending matched-build in-game trajectory and image captures; beta is not native parity certification."
+  },
+  "scopeReview": {
+    "reviewer": "",
+    "reference": "docs/mirage.md",
+    "approved": false
+  },
+  "references": [
+    {
+      "id": "native",
+      "kind": "native",
+      "independentGroup": "Valve",
+      "reference": "Installed de_mirage.vpk, native radar and PHYS",
+      "revision": "2000942",
+      "license": "Local CS2 installation; media excluded from Git"
+    },
+    {
+      "id": "coordinates",
+      "kind": "coordinates",
+      "independentGroup": "lengran",
+      "reference": "https://github.com/lengran/OpenPrefirePrac",
+      "revision": "44fb66eab70fb3b1b7112ed3c30cc68fb977dd26",
+      "license": "MIT"
+    },
+    {
+      "id": "expert",
+      "kind": "expert",
+      "independentGroup": "EliGE",
+      "reference": "https://www.youtube.com/watch?v=S9fe6AgxVHs",
+      "revision": "2024-01-14",
+      "license": "Reference only; no video assets copied"
+    }
+  ],
+  "areas": [
+    {
+      "id": "a-site",
+      "name": "A site, Ramp and Palace",
+      "routeIds": [
+        "a-ramp",
+        "a-palace"
+      ],
+      "pockets": [
+        {
+          "id": "pocket-1",
+          "name": "Ramp close",
+          "angleIds": [],
+          "referenceIds": [
+            "native",
+            "coordinates",
+            "expert"
+          ],
+          "status": "pending",
+          "reviewer": "",
+          "note": "Independent required-angle review remains pending; do not infer completion from the coordinate pool."
+        },
+        {
+          "id": "pocket-2",
+          "name": "Tetris",
+          "angleIds": [],
+          "referenceIds": [
+            "native",
+            "coordinates",
+            "expert"
+          ],
+          "status": "pending",
+          "reviewer": "",
+          "note": "Independent required-angle review remains pending; do not infer completion from the coordinate pool."
+        },
+        {
+          "id": "pocket-3",
+          "name": "Under balcony / Shadows",
+          "angleIds": [],
+          "referenceIds": [
+            "native",
+            "coordinates",
+            "expert"
+          ],
+          "status": "pending",
+          "reviewer": "",
+          "note": "Independent required-angle review remains pending; do not infer completion from the coordinate pool."
+        },
+        {
+          "id": "pocket-4",
+          "name": "Sandwich",
+          "angleIds": [],
+          "referenceIds": [
+            "native",
+            "coordinates",
+            "expert"
+          ],
+          "status": "pending",
+          "reviewer": "",
+          "note": "Independent required-angle review remains pending; do not infer completion from the coordinate pool."
+        },
+        {
+          "id": "pocket-5",
+          "name": "Default",
+          "angleIds": [],
+          "referenceIds": [
+            "native",
+            "coordinates",
+            "expert"
+          ],
+          "status": "pending",
+          "reviewer": "",
+          "note": "Independent required-angle review remains pending; do not infer completion from the coordinate pool."
+        },
+        {
+          "id": "pocket-6",
+          "name": "Triple",
+          "angleIds": [],
+          "referenceIds": [
+            "native",
+            "coordinates",
+            "expert"
+          ],
+          "status": "pending",
+          "reviewer": "",
+          "note": "Independent required-angle review remains pending; do not infer completion from the coordinate pool."
+        },
+        {
+          "id": "pocket-7",
+          "name": "Firebox",
+          "angleIds": [],
+          "referenceIds": [
+            "native",
+            "coordinates",
+            "expert"
+          ],
+          "status": "pending",
+          "reviewer": "",
+          "note": "Independent required-angle review remains pending; do not infer completion from the coordinate pool."
+        },
+        {
+          "id": "pocket-8",
+          "name": "Ninja",
+          "angleIds": [],
+          "referenceIds": [
+            "native",
+            "coordinates",
+            "expert"
+          ],
+          "status": "pending",
+          "reviewer": "",
+          "note": "Independent required-angle review remains pending; do not infer completion from the coordinate pool."
+        },
+        {
+          "id": "pocket-9",
+          "name": "Stairs",
+          "angleIds": [],
+          "referenceIds": [
+            "native",
+            "coordinates",
+            "expert"
+          ],
+          "status": "pending",
+          "reviewer": "",
+          "note": "Independent required-angle review remains pending; do not infer completion from the coordinate pool."
+        },
+        {
+          "id": "pocket-10",
+          "name": "Jungle",
+          "angleIds": [],
+          "referenceIds": [
+            "native",
+            "coordinates",
+            "expert"
+          ],
+          "status": "pending",
+          "reviewer": "",
+          "note": "Independent required-angle review remains pending; do not infer completion from the coordinate pool."
+        },
+        {
+          "id": "pocket-11",
+          "name": "Ticket",
+          "angleIds": [],
+          "referenceIds": [
+            "native",
+            "coordinates",
+            "expert"
+          ],
+          "status": "pending",
+          "reviewer": "",
+          "note": "Independent required-angle review remains pending; do not infer completion from the coordinate pool."
+        },
+        {
+          "id": "pocket-12",
+          "name": "Palace balcony",
+          "angleIds": [],
+          "referenceIds": [
+            "native",
+            "coordinates",
+            "expert"
+          ],
+          "status": "pending",
+          "reviewer": "",
+          "note": "Independent required-angle review remains pending; do not infer completion from the coordinate pool."
+        }
+      ]
+    },
+    {
+      "id": "mid",
+      "name": "Top mid, Short and Underpass",
+      "routeIds": [
+        "mid-short",
+        "underpass-connector"
+      ],
+      "pockets": [
+        {
+          "id": "pocket-1",
+          "name": "Top-mid boxes",
+          "angleIds": [],
+          "referenceIds": [
+            "native",
+            "coordinates",
+            "expert"
+          ],
+          "status": "pending",
+          "reviewer": "",
+          "note": "Independent required-angle review remains pending; do not infer completion from the coordinate pool."
+        },
+        {
+          "id": "pocket-2",
+          "name": "Chair",
+          "angleIds": [],
+          "referenceIds": [
+            "native",
+            "coordinates",
+            "expert"
+          ],
+          "status": "pending",
+          "reviewer": "",
+          "note": "Independent required-angle review remains pending; do not infer completion from the coordinate pool."
+        },
+        {
+          "id": "pocket-3",
+          "name": "Window",
+          "angleIds": [],
+          "referenceIds": [
+            "native",
+            "coordinates",
+            "expert"
+          ],
+          "status": "pending",
+          "reviewer": "",
+          "note": "Independent required-angle review remains pending; do not infer completion from the coordinate pool."
+        },
+        {
+          "id": "pocket-4",
+          "name": "Window close",
+          "angleIds": [],
+          "referenceIds": [
+            "native",
+            "coordinates",
+            "expert"
+          ],
+          "status": "pending",
+          "reviewer": "",
+          "note": "Independent required-angle review remains pending; do not infer completion from the coordinate pool."
+        },
+        {
+          "id": "pocket-5",
+          "name": "Connector close",
+          "angleIds": [],
+          "referenceIds": [
+            "native",
+            "coordinates",
+            "expert"
+          ],
+          "status": "pending",
+          "reviewer": "",
+          "note": "Independent required-angle review remains pending; do not infer completion from the coordinate pool."
+        },
+        {
+          "id": "pocket-6",
+          "name": "Connector stairs",
+          "angleIds": [],
+          "referenceIds": [
+            "native",
+            "coordinates",
+            "expert"
+          ],
+          "status": "pending",
+          "reviewer": "",
+          "note": "Independent required-angle review remains pending; do not infer completion from the coordinate pool."
+        },
+        {
+          "id": "pocket-7",
+          "name": "Underpass mouth",
+          "angleIds": [],
+          "referenceIds": [
+            "native",
+            "coordinates",
+            "expert"
+          ],
+          "status": "pending",
+          "reviewer": "",
+          "note": "Independent required-angle review remains pending; do not infer completion from the coordinate pool."
+        },
+        {
+          "id": "pocket-8",
+          "name": "Short corner",
+          "angleIds": [],
+          "referenceIds": [
+            "native",
+            "coordinates",
+            "expert"
+          ],
+          "status": "pending",
+          "reviewer": "",
+          "note": "Independent required-angle review remains pending; do not infer completion from the coordinate pool."
+        },
+        {
+          "id": "pocket-9",
+          "name": "Ladder room",
+          "angleIds": [],
+          "referenceIds": [
+            "native",
+            "coordinates",
+            "expert"
+          ],
+          "status": "pending",
+          "reviewer": "",
+          "note": "Independent required-angle review remains pending; do not infer completion from the coordinate pool."
+        },
+        {
+          "id": "pocket-10",
+          "name": "Short arches",
+          "angleIds": [],
+          "referenceIds": [
+            "native",
+            "coordinates",
+            "expert"
+          ],
+          "status": "pending",
+          "reviewer": "",
+          "note": "Independent required-angle review remains pending; do not infer completion from the coordinate pool."
+        },
+        {
+          "id": "pocket-11",
+          "name": "Short boost",
+          "angleIds": [],
+          "referenceIds": [
+            "native",
+            "coordinates",
+            "expert"
+          ],
+          "status": "pending",
+          "reviewer": "",
+          "note": "Independent required-angle review remains pending; do not infer completion from the coordinate pool."
+        }
+      ]
+    },
+    {
+      "id": "b-site",
+      "name": "B site, Apartments and Market",
+      "routeIds": [
+        "b-apartments",
+        "market-b"
+      ],
+      "pockets": [
+        {
+          "id": "pocket-1",
+          "name": "Apartments close",
+          "angleIds": [],
+          "referenceIds": [
+            "native",
+            "coordinates",
+            "expert"
+          ],
+          "status": "pending",
+          "reviewer": "",
+          "note": "Independent required-angle review remains pending; do not infer completion from the coordinate pool."
+        },
+        {
+          "id": "pocket-2",
+          "name": "Balcony",
+          "angleIds": [],
+          "referenceIds": [
+            "native",
+            "coordinates",
+            "expert"
+          ],
+          "status": "pending",
+          "reviewer": "",
+          "note": "Independent required-angle review remains pending; do not infer completion from the coordinate pool."
+        },
+        {
+          "id": "pocket-3",
+          "name": "Van",
+          "angleIds": [],
+          "referenceIds": [
+            "native",
+            "coordinates",
+            "expert"
+          ],
+          "status": "pending",
+          "reviewer": "",
+          "note": "Independent required-angle review remains pending; do not infer completion from the coordinate pool."
+        },
+        {
+          "id": "pocket-4",
+          "name": "Bench",
+          "angleIds": [],
+          "referenceIds": [
+            "native",
+            "coordinates",
+            "expert"
+          ],
+          "status": "pending",
+          "reviewer": "",
+          "note": "Independent required-angle review remains pending; do not infer completion from the coordinate pool."
+        },
+        {
+          "id": "pocket-5",
+          "name": "Default",
+          "angleIds": [],
+          "referenceIds": [
+            "native",
+            "coordinates",
+            "expert"
+          ],
+          "status": "pending",
+          "reviewer": "",
+          "note": "Independent required-angle review remains pending; do not infer completion from the coordinate pool."
+        },
+        {
+          "id": "pocket-6",
+          "name": "Back site",
+          "angleIds": [],
+          "referenceIds": [
+            "native",
+            "coordinates",
+            "expert"
+          ],
+          "status": "pending",
+          "reviewer": "",
+          "note": "Independent required-angle review remains pending; do not infer completion from the coordinate pool."
+        },
+        {
+          "id": "pocket-7",
+          "name": "Get Right",
+          "angleIds": [],
+          "referenceIds": [
+            "native",
+            "coordinates",
+            "expert"
+          ],
+          "status": "pending",
+          "reviewer": "",
+          "note": "Independent required-angle review remains pending; do not infer completion from the coordinate pool."
+        },
+        {
+          "id": "pocket-8",
+          "name": "Short corner",
+          "angleIds": [],
+          "referenceIds": [
+            "native",
+            "coordinates",
+            "expert"
+          ],
+          "status": "pending",
+          "reviewer": "",
+          "note": "Independent required-angle review remains pending; do not infer completion from the coordinate pool."
+        },
+        {
+          "id": "pocket-9",
+          "name": "Market window",
+          "angleIds": [],
+          "referenceIds": [
+            "native",
+            "coordinates",
+            "expert"
+          ],
+          "status": "pending",
+          "reviewer": "",
+          "note": "Independent required-angle review remains pending; do not infer completion from the coordinate pool."
+        },
+        {
+          "id": "pocket-10",
+          "name": "Market door",
+          "angleIds": [],
+          "referenceIds": [
+            "native",
+            "coordinates",
+            "expert"
+          ],
+          "status": "pending",
+          "reviewer": "",
+          "note": "Independent required-angle review remains pending; do not infer completion from the coordinate pool."
+        },
+        {
+          "id": "pocket-11",
+          "name": "Market shelves",
+          "angleIds": [],
+          "referenceIds": [
+            "native",
+            "coordinates",
+            "expert"
+          ],
+          "status": "pending",
+          "reviewer": "",
+          "note": "Independent required-angle review remains pending; do not infer completion from the coordinate pool."
+        }
+      ]
+    }
+  ]
+}

@@ -10,6 +10,7 @@ import {MeshoptDecoder, MeshoptEncoder} from 'meshoptimizer';
 import {MeshoptSimplifier} from 'meshoptimizer-lod';
 import sharp from 'sharp';
 import {buildMapManifests} from './build-map-manifests.mjs';
+import {nativeMapFiles} from './native-map-identity.mjs';
 
 // Distant visual approximation only: no collision, navigation or active-map edits.
 // Simplification selects existing vertices; there is no centering, rescaling,
@@ -121,9 +122,9 @@ export async function bakeContextAtlas(document) {
   return {size,tiles:textures.length+1,bytes:atlasImage.length};
 }
 
-export async function buildDuelContext(root=process.cwd()) {
+export async function buildDuelContext(root=process.cwd(),{assetId='dust2'}={}) {
   await Promise.all([MeshoptDecoder.ready,MeshoptEncoder.ready,MeshoptSimplifier.ready]);
-  const base=path.join(root,'public/revamp/maps/dust2'),out=path.join(base,'duel/context');
+  const base=path.join(root,nativeMapFiles(assetId).out),out=path.join(base,'duel/context');
   const manifestBytes=await fs.readFile(path.join(base,'visual.json')),manifest=JSON.parse(manifestBytes);
   if(manifest.version!==2)throw Error('Expected full native visual manifest v2');
   const io=new NodeIO().registerExtensions(ALL_EXTENSIONS).registerDependencies({
@@ -140,7 +141,7 @@ export async function buildDuelContext(root=process.cwd()) {
     mergeDocuments(document,source);
     console.log(`Read native ${file}`);
   }
-  const scene=document.createScene('dust2-distant-context');
+  const scene=document.createScene(`${assetId}-distant-context`);
   for(const original of [...document.getRoot().listScenes()])if(original!==scene) {
     for(const child of [...original.listChildren()]){original.removeChild(child);scene.addChild(child);}
     original.dispose();
@@ -177,9 +178,9 @@ export async function buildDuelContext(root=process.cwd()) {
   let triangles=0;
   for(const mesh of document.getRoot().listMeshes())for(const primitive of mesh.listPrimitives())triangles+=primitive.getIndices().getCount()/3;
   const objectHash=hash(compressed),objectName=objectHash+'.bin';
-  const delivery={url:'/maps/dust2/duel/objects/'+objectName,bytes:compressed.length,sha256:objectHash,
+  const delivery={url:`/maps/${assetId}/duel/objects/`+objectName,bytes:compressed.length,sha256:objectHash,
     decodedBytes:binary.length,decodedSha256:hash(binary),encoding:'gzip'};
-  const metadata={version:2,map:'dust2',visualOnly:true,delivery,sourceVisualManifestSha256:hash(manifestBytes),
+  const metadata={version:2,map:assetId,visualOnly:true,delivery,sourceVisualManifestSha256:hash(manifestBytes),
     coordinateSystem:'Original native GLTF world metres; x=Source.x*.0254, y=Source.z*.0254, z=-Source.y*.0254; no recentering',
     policy:contextPolicy,atlas,sourceTriangles,triangles,meshes:document.getRoot().listMeshes().length,
     textures:document.getRoot().listTextures().length,materials:document.getRoot().listMaterials().length,
@@ -190,7 +191,7 @@ export async function buildDuelContext(root=process.cwd()) {
   await fs.writeFile(path.join(base,'duel/objects',objectName),compressed);
   await fs.writeFile(path.join(out,'context.glb'),binary);
   await fs.writeFile(path.join(out,'context.json'),JSON.stringify(metadata,null,2)+'\n');
-  await buildMapManifests(root);
+  await buildMapManifests(root,{assetId});
   console.log(JSON.stringify(metadata));return metadata;
 }
 

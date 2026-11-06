@@ -1,0 +1,4529 @@
+{
+  "revision": "2026-11-06-mirage-beta-v1",
+  "routes": [
+    {
+      "id": "a-ramp",
+      "name": "Ramp to A",
+      "region": "A site",
+      "enemySide": "ct",
+      "phase": "preplant",
+      "startLabel": "Ramp",
+      "spawn": [
+        1189,
+        -880,
+        -258.7109593669278
+      ],
+      "look": [
+        1100.850443201741,
+        -1038.609241876077,
+        -260.7276169887066
+      ],
+      "path": [
+        [
+          1100.850443201741,
+          -1038.609241876077,
+          -260.7276169887066
+        ],
+        [
+          779.105896,
+          -1103.905273,
+          -258.3006394769737
+        ],
+        [
+          590.428101,
+          -1553.684448,
+          -263.99994677324435
+        ],
+        [
+          376.4409943828436,
+          -1574.0423127422189,
+          -200.22049313642864
+        ],
+        [
+          48.282063,
+          -1579.7579350000003,
+          -173.22420680722703
+        ]
+      ],
+      "angles": [
+        {
+          "id": "de_mirage:openprefire/a_ramp/1",
+          "name": "Ramp / Tetris / a ramp 1",
+          "position": [
+            498.344238,
+            -1623.469604,
+            -264.237122
+          ],
+          "rotation": [
+            -0.481254,
+            58.084442,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "a_ramp",
+            "index": 1
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/a_ramp/2",
+          "name": "Ramp / Tetris / a ramp 2",
+          "position": [
+            738.518799,
+            -1711.344849,
+            -252.268661
+          ],
+          "rotation": [
+            0.038454,
+            89.593239,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "a_ramp",
+            "index": 2
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/a_ramp/4",
+          "name": "A site / a ramp 4",
+          "position": [
+            179.971832,
+            -1598.053467,
+            -173.963272
+          ],
+          "rotation": [
+            12.454713,
+            5.796865,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "a_ramp",
+            "index": 4
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/a_ramp/5",
+          "name": "Stairs / Connector / a ramp 5",
+          "position": [
+            -498.622742,
+            -1524.324951,
+            -41.03125
+          ],
+          "rotation": [
+            10.760789,
+            -2.039819,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "a_ramp",
+            "index": 5
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/a_ramp/6",
+          "name": "A site / a ramp 6",
+          "position": [
+            250.850922,
+            -1440.156616,
+            -176.96875
+          ],
+          "rotation": [
+            16.593512,
+            -28.526819,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "a_ramp",
+            "index": 6
+          }
+        }
+      ],
+      "alternatives": [
+        {
+          "id": "de_mirage:openprefire/a_ramp/7",
+          "name": "Ramp / Tetris / a ramp 7",
+          "position": [
+            458.491882,
+            -1438.355469,
+            -176.96875
+          ],
+          "rotation": [
+            25.563988,
+            -91.356567,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "a_ramp",
+            "index": 7
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/a_ramp/9",
+          "name": "Jungle / a ramp 9",
+          "position": [
+            -729.41095,
+            -2072.19458,
+            -180.96875
+          ],
+          "rotation": [
+            -0.327212,
+            27.958685,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "a_ramp",
+            "index": 9
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/a_ramp/10",
+          "name": "Jungle / a ramp 10",
+          "position": [
+            -999.222473,
+            -2483.588867,
+            -168.96875
+          ],
+          "rotation": [
+            -0.096213,
+            37.314137,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "a_ramp",
+            "index": 10
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/a_ramp/11",
+          "name": "A site / a ramp 11",
+          "position": [
+            176.810928,
+            -1714.208618,
+            -168.96875
+          ],
+          "rotation": [
+            0.924031,
+            87.254456,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "a_ramp",
+            "index": 11
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/a_ramp/12",
+          "name": "A site / a ramp 12",
+          "position": [
+            -265.248535,
+            -2186.310059,
+            -173.707657
+          ],
+          "rotation": [
+            -0.404217,
+            57.329151,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "a_ramp",
+            "index": 12
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/a_ramp/13",
+          "name": "A site / a ramp 13",
+          "position": [
+            -34.03125,
+            -1848.03125,
+            -168.96875
+          ],
+          "rotation": [
+            1.212748,
+            60.66975,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "a_ramp",
+            "index": 13
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/a_ramp/14",
+          "name": "A site / a ramp 14",
+          "position": [
+            -264.099365,
+            -2409.35083,
+            -165.265549
+          ],
+          "rotation": [
+            -0.076962,
+            67.781647,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "a_ramp",
+            "index": 14
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/a_palace/20",
+          "name": "Stairs / Connector / a palace 20",
+          "position": [
+            -91.110596,
+            -1418.081665,
+            -119.91937999999999
+          ],
+          "rotation": [
+            -3.658989,
+            -77.223915,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "a_palace",
+            "index": 20
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/a_palace/27",
+          "name": "Stairs / Connector / a palace 27",
+          "position": [
+            -30.46875,
+            -1418.188354,
+            -169.483231
+          ],
+          "rotation": [
+            -9.004884,
+            -84.627235,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "a_palace",
+            "index": 27
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/a_palace/28",
+          "name": "A site / a palace 28",
+          "position": [
+            181.96875,
+            -1717.96875,
+            -168.96875
+          ],
+          "rotation": [
+            2.040787,
+            -178.180389,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "a_palace",
+            "index": 28
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/a_palace/29",
+          "name": "Jungle / a palace 29",
+          "position": [
+            -780.223206,
+            -1698.852417,
+            -178.05384800000002
+          ],
+          "rotation": [
+            -6.983604,
+            -31.496941,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "a_palace",
+            "index": 29
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/a_palace/30",
+          "name": "Jungle / a palace 30",
+          "position": [
+            -781.971069,
+            -1980.639404,
+            -180.96875
+          ],
+          "rotation": [
+            -8.044481,
+            -13.750564,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "a_palace",
+            "index": 30
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/a_palace/35",
+          "name": "Jungle / a palace 35",
+          "position": [
+            -888.016052,
+            -2571.9729,
+            -36.96875
+          ],
+          "rotation": [
+            0.513178,
+            27.682903,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "a_palace",
+            "index": 35
+          }
+        }
+      ]
+    },
+    {
+      "id": "a-palace",
+      "name": "Palace balcony",
+      "region": "A site",
+      "enemySide": "ct",
+      "phase": "preplant",
+      "startLabel": "Palace balcony",
+      "spawn": [
+        954,
+        -1422,
+        -167.99999972966714
+      ],
+      "look": [
+        954,
+        -1600,
+        -120.00000382971577
+      ],
+      "path": [
+        [
+          954,
+          -1600,
+          -120.00000382971577
+        ],
+        [
+          954,
+          -1800,
+          -71.99999854320616
+        ],
+        [
+          900,
+          -2250,
+          -40.00000127657192
+        ],
+        [
+          502.42524635134765,
+          -2266.9556985689896,
+          -40.00000127657192
+        ],
+        [
+          124.47249044583585,
+          -2298.451761561116,
+          -40.00000127657192
+        ],
+        [
+          92.97642745370986,
+          -2298.451761561116,
+          -40.00000127657192
+        ],
+        [
+          80,
+          -2250,
+          -40.00000127657192
+        ],
+        [
+          80,
+          -2130,
+          -40.00000127657192
+        ]
+      ],
+      "angles": [
+        {
+          "id": "de_mirage:openprefire/a_palace/3",
+          "name": "Palace / a palace 3",
+          "position": [
+            810.865417,
+            -2224.027344,
+            -40.96875
+          ],
+          "rotation": [
+            6.525754,
+            71.195473,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "a_palace",
+            "index": 3
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/a_palace/4",
+          "name": "Palace / a palace 4",
+          "position": [
+            709.547668,
+            -2194.469238,
+            -40.96875
+          ],
+          "rotation": [
+            5.274503,
+            50.476536,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "a_palace",
+            "index": 4
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/a_palace/5",
+          "name": "Palace / a palace 5",
+          "position": [
+            1071.387085,
+            -1768.03125,
+            -41.03125
+          ],
+          "rotation": [
+            19.846844,
+            169.273499,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "a_palace",
+            "index": 5
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/a_palace/7",
+          "name": "A site / a palace 7",
+          "position": [
+            582.120667,
+            -2255.639893,
+            -40.96875
+          ],
+          "rotation": [
+            3.291777,
+            42.988247,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "a_palace",
+            "index": 7
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/a_palace/8",
+          "name": "A site / a palace 8",
+          "position": [
+            517.005798,
+            -2166.072266,
+            -40.96875
+          ],
+          "rotation": [
+            3.676777,
+            25.432186,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "a_palace",
+            "index": 8
+          }
+        }
+      ],
+      "alternatives": [
+        {
+          "id": "de_mirage:openprefire/a_palace/9",
+          "name": "A site / a palace 9",
+          "position": [
+            353.255554,
+            -2152.657471,
+            -40.96875
+          ],
+          "rotation": [
+            3.041522,
+            18.540695,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "a_palace",
+            "index": 9
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/a_palace/10",
+          "name": "A site / a palace 10",
+          "position": [
+            272.227905,
+            -1960.03125,
+            -40.96875
+          ],
+          "rotation": [
+            0.712272,
+            -1.286871,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "a_palace",
+            "index": 10
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/a_palace/11",
+          "name": "A site / a palace 11",
+          "position": [
+            367.96875,
+            -2209.475342,
+            -40.96875
+          ],
+          "rotation": [
+            -0.692985,
+            -1.864399,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "a_palace",
+            "index": 11
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/a_palace/12",
+          "name": "A site / a palace 12",
+          "position": [
+            16.03125,
+            -2289.821777,
+            -40.96875
+          ],
+          "rotation": [
+            -0.327237,
+            4.686253,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "a_palace",
+            "index": 12
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/a_palace/13",
+          "name": "A site / a palace 13",
+          "position": [
+            -56.38739,
+            -2129.221436,
+            -40.96875
+          ],
+          "rotation": [
+            -1.501481,
+            -40.557228,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "a_palace",
+            "index": 13
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/a_palace/14",
+          "name": "Jungle / a palace 14",
+          "position": [
+            -1311.971436,
+            -1152.613159,
+            -168.96875
+          ],
+          "rotation": [
+            -3.565518,
+            -38.023785,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "a_palace",
+            "index": 14
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/a_palace/15",
+          "name": "Jungle / a palace 15",
+          "position": [
+            -996.010193,
+            -1331.96875,
+            -164.808548
+          ],
+          "rotation": [
+            -3.63182,
+            -40.316189,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "a_palace",
+            "index": 15
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/a_palace/16",
+          "name": "Jungle / a palace 16",
+          "position": [
+            -743.129578,
+            -1427.301514,
+            -168.96875
+          ],
+          "rotation": [
+            -4.685866,
+            -44.812881,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "a_palace",
+            "index": 16
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/a_palace/17",
+          "name": "Jungle / a palace 17",
+          "position": [
+            -800.370056,
+            -1152.187744,
+            -121.175354
+          ],
+          "rotation": [
+            -2.365177,
+            -51.21946,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "a_palace",
+            "index": 17
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/a_palace/19",
+          "name": "Stairs / Connector / a palace 19",
+          "position": [
+            -290.01416,
+            -1504.03125,
+            -166.30458099999998
+          ],
+          "rotation": [
+            -7.282054,
+            -63.744099,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "a_palace",
+            "index": 19
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/a_palace/20",
+          "name": "Stairs / Connector / a palace 20",
+          "position": [
+            -91.110596,
+            -1418.081665,
+            -119.91937999999999
+          ],
+          "rotation": [
+            -3.658989,
+            -77.223915,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "a_palace",
+            "index": 20
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/a_palace/21",
+          "name": "A site / a palace 21",
+          "position": [
+            101.807205,
+            -2071.58252,
+            -40.96875
+          ],
+          "rotation": [
+            0.933212,
+            -92.537674,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "a_palace",
+            "index": 21
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/a_palace/23",
+          "name": "A site / a palace 23",
+          "position": [
+            151.96875,
+            -1914.03125,
+            -40.96875
+          ],
+          "rotation": [
+            1.499167,
+            -106.883873,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "a_palace",
+            "index": 23
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/a_palace/27",
+          "name": "Stairs / Connector / a palace 27",
+          "position": [
+            -30.46875,
+            -1418.188354,
+            -169.483231
+          ],
+          "rotation": [
+            -9.004884,
+            -84.627235,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "a_palace",
+            "index": 27
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/a_palace/29",
+          "name": "Jungle / a palace 29",
+          "position": [
+            -780.223206,
+            -1698.852417,
+            -178.05384800000002
+          ],
+          "rotation": [
+            -6.983604,
+            -31.496941,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "a_palace",
+            "index": 29
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/a_palace/30",
+          "name": "Jungle / a palace 30",
+          "position": [
+            -781.971069,
+            -1980.639404,
+            -180.96875
+          ],
+          "rotation": [
+            -8.044481,
+            -13.750564,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "a_palace",
+            "index": 30
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/a_palace/31",
+          "name": "A site / a palace 31",
+          "position": [
+            -683.367798,
+            -2161.848633,
+            -180.96875
+          ],
+          "rotation": [
+            -9.443305,
+            0.513559,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "a_palace",
+            "index": 31
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/a_palace/32",
+          "name": "A site / a palace 32",
+          "position": [
+            -272.614868,
+            -2155.963867,
+            -176.73246799999998
+          ],
+          "rotation": [
+            -24.956631,
+            -1.29893,
+            0
+          ],
+          "crouched": true,
+          "moving": false,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "a_palace",
+            "index": 32
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/a_palace/33",
+          "name": "CT / Ticket / a palace 33",
+          "position": [
+            -1053.986694,
+            -2328.525391,
+            -168.96875
+          ],
+          "rotation": [
+            -5.982534,
+            9.469848,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "a_palace",
+            "index": 33
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/a_ramp/5",
+          "name": "Stairs / Connector / a ramp 5",
+          "position": [
+            -498.622742,
+            -1524.324951,
+            -41.03125
+          ],
+          "rotation": [
+            10.760789,
+            -2.039819,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "a_ramp",
+            "index": 5
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/a_ramp/8",
+          "name": "Jungle / a ramp 8",
+          "position": [
+            -783.96875,
+            -1668.609741,
+            -175.029556
+          ],
+          "rotation": [
+            -0.269463,
+            2.240653,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "a_ramp",
+            "index": 8
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/a_ramp/12",
+          "name": "A site / a ramp 12",
+          "position": [
+            -265.248535,
+            -2186.310059,
+            -173.707657
+          ],
+          "rotation": [
+            -0.404217,
+            57.329151,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "a_ramp",
+            "index": 12
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/a_ramp/20",
+          "name": "Jungle / a ramp 20",
+          "position": [
+            -1243.96875,
+            -1226.349121,
+            -168.96875
+          ],
+          "rotation": [
+            0.057771,
+            -31.270672,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "a_ramp",
+            "index": 20
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/a_ramp/22",
+          "name": "Jungle / a ramp 22",
+          "position": [
+            -879.96875,
+            -1306.03125,
+            -168.96875
+          ],
+          "rotation": [
+            0.096268,
+            -44.559196,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "a_ramp",
+            "index": 22
+          }
+        }
+      ]
+    },
+    {
+      "id": "b-apartments",
+      "name": "Apartments to B",
+      "region": "B site",
+      "enemySide": "ct",
+      "phase": "preplant",
+      "startLabel": "Apartments",
+      "spawn": [
+        -800,
+        560,
+        -82.22978380037313
+      ],
+      "look": [
+        -1150,
+        560,
+        -80.00000255314384
+      ],
+      "path": [
+        [
+          -1150,
+          560,
+          -80.00000255314384
+        ],
+        [
+          -1165.9881264093356,
+          693.6742226908525,
+          -80.00000255314384
+        ],
+        [
+          -1399.9999999999998,
+          699.9999999999999,
+          -66.66668893512801
+        ],
+        [
+          -1544.818848136842,
+          756.6663486751046,
+          -48.00000059323048
+        ],
+        [
+          -1520,
+          785,
+          -48.00000059323048
+        ]
+      ],
+      "angles": [
+        {
+          "id": "de_mirage:openprefire/b_apts/6",
+          "name": "Short / Ladder / b apts 6",
+          "position": [
+            -1154.03125,
+            378.071808,
+            -80.96875
+          ],
+          "rotation": [
+            0.731455,
+            43.858047,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "b_apts",
+            "index": 6
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/b_apts/7",
+          "name": "Short / Ladder / b apts 7",
+          "position": [
+            -1024.785767,
+            397.997131,
+            -40.96875
+          ],
+          "rotation": [
+            12.257966,
+            85.53669,
+            0
+          ],
+          "crouched": true,
+          "moving": false,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "b_apts",
+            "index": 7
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/b_apts/8",
+          "name": "Apartments / Van / b apts 8",
+          "position": [
+            -1008.03125,
+            769.956177,
+            -52.695343
+          ],
+          "rotation": [
+            9.99072,
+            -94.269356,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "b_apts",
+            "index": 8
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/b_apts/9",
+          "name": "Apartments / Van / b apts 9",
+          "position": [
+            -1985.140625,
+            798.569946,
+            -51.03125
+          ],
+          "rotation": [
+            1.636325,
+            -9.695889,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "b_apts",
+            "index": 9
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/b_apts/10",
+          "name": "Apartments / Van / b apts 10",
+          "position": [
+            -2313.599609,
+            712.557373,
+            -40.96875
+          ],
+          "rotation": [
+            1.847988,
+            -0.418847,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "b_apts",
+            "index": 10
+          }
+        }
+      ],
+      "alternatives": [
+        {
+          "id": "de_mirage:openprefire/b_apts/11",
+          "name": "Apartments / Van / b apts 11",
+          "position": [
+            -2384.625244,
+            652.626282,
+            -79.96875
+          ],
+          "rotation": [
+            -2.079026,
+            6.376532,
+            0
+          ],
+          "crouched": true,
+          "moving": false,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "b_apts",
+            "index": 11
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/b_apts/12",
+          "name": "Apartments / Van / b apts 12",
+          "position": [
+            -1520.03125,
+            863.96875,
+            -10.968735000000002
+          ],
+          "rotation": [
+            14.995724,
+            -83.411194,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "b_apts",
+            "index": 12
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/b_apts/14",
+          "name": "B site / b apts 14",
+          "position": [
+            -2655.96875,
+            365.1315,
+            -168.013657
+          ],
+          "rotation": [
+            -3.975557,
+            16.532207,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "b_apts",
+            "index": 14
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/b_apts/16",
+          "name": "B site / b apts 16",
+          "position": [
+            -2065.702881,
+            412.234283,
+            -160.96875
+          ],
+          "rotation": [
+            -9.386997,
+            28.890722,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "b_apts",
+            "index": 16
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/b_apts/17",
+          "name": "B site / b apts 17",
+          "position": [
+            -1910.923706,
+            242.03125,
+            -160.96875
+          ],
+          "rotation": [
+            -9.560245,
+            55.205502,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "b_apts",
+            "index": 17
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/b_retake/5",
+          "name": "B site / b retake 5",
+          "position": [
+            -2306.701172,
+            460.703491,
+            -168.96875
+          ],
+          "rotation": [
+            -0.365906,
+            -62.473877,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "b_retake",
+            "index": 5
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/b_retake/14",
+          "name": "B site / b retake 14",
+          "position": [
+            -2434.689209,
+            421.066742,
+            -168.568939
+          ],
+          "rotation": [
+            -0.231035,
+            -80.373253,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "b_retake",
+            "index": 14
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/b_retake/15",
+          "name": "Apartments / Van / b retake 15",
+          "position": [
+            -2368.049316,
+            777.269287,
+            -84.19693
+          ],
+          "rotation": [
+            4.292609,
+            -86.74733,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "b_retake",
+            "index": 15
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/b_retake/16",
+          "name": "B site / b retake 16",
+          "position": [
+            -2247.194092,
+            489.03125,
+            -168.96875
+          ],
+          "rotation": [
+            -0.250394,
+            -94.178314,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "b_retake",
+            "index": 16
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/b_retake/22",
+          "name": "B site / b retake 22",
+          "position": [
+            -2508.191406,
+            400.336761,
+            -168.96875
+          ],
+          "rotation": [
+            -1.135924,
+            -64.962196,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "b_retake",
+            "index": 22
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/b_retake/25",
+          "name": "Apartments / Van / b retake 25",
+          "position": [
+            -1713.465088,
+            723.584961,
+            -48.96875
+          ],
+          "rotation": [
+            8.662245,
+            -134.245117,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "b_retake",
+            "index": 25
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/b_retake/28",
+          "name": "Apartments / Van / b retake 28",
+          "position": [
+            -1856.452637,
+            753.341553,
+            -48.96875
+          ],
+          "rotation": [
+            8.508274,
+            -146.063614,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "b_retake",
+            "index": 28
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/b_retake/31",
+          "name": "Apartments / Van / b retake 31",
+          "position": [
+            -2329.031982,
+            770.139343,
+            -128.555618
+          ],
+          "rotation": [
+            2.328946,
+            -14.335866,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "b_retake",
+            "index": 31
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/mid_to_b/29",
+          "name": "Apartments / Van / mid to b 29",
+          "position": [
+            -1958.287231,
+            747.560669,
+            -48.96875
+          ],
+          "rotation": [
+            5.00498,
+            -31.475428,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "mid_to_b",
+            "index": 29
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/mid_to_b/32",
+          "name": "Apartments / Van / mid to b 32",
+          "position": [
+            -2351.215088,
+            809.768494,
+            -84.19693
+          ],
+          "rotation": [
+            2.810448,
+            -25.873674,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "mid_to_b",
+            "index": 32
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/mid_to_b/39",
+          "name": "B site / mid to b 39",
+          "position": [
+            -2265.0271,
+            473.639648,
+            -168.96875
+          ],
+          "rotation": [
+            -0.365689,
+            1.155341,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "mid_to_b",
+            "index": 39
+          }
+        }
+      ]
+    },
+    {
+      "id": "mid-short",
+      "name": "Top mid to Short",
+      "region": "Mid & Short",
+      "enemySide": "ct",
+      "phase": "preplant",
+      "startLabel": "Top mid",
+      "spawn": [
+        1216,
+        -16,
+        -163.99999303141917
+      ],
+      "look": [
+        1226.8346951702454,
+        284.2254037932147,
+        -206.81694106122728
+      ],
+      "path": [
+        [
+          1226.8346951702454,
+          284.2254037932147,
+          -206.81694106122728
+        ],
+        [
+          1163.8425691859934,
+          473.2017817459707,
+          -262.54094342985786
+        ],
+        [
+          1137.422729,
+          474.581604,
+          -261.9446219176052
+        ],
+        [
+          336.175659,
+          478.684631,
+          -261.09473903001333
+        ],
+        [
+          278.188232,
+          -185.99273699999998,
+          -167.86129841878
+        ],
+        [
+          261.301392,
+          -415.420044,
+          -165.34036292226997
+        ],
+        [
+          -127.49600808684727,
+          -408.6879649983995,
+          -167.93414997691917
+        ],
+        [
+          -536.9448387887053,
+          -408.68798390913,
+          -167.90940734144354
+        ],
+        [
+          -749.624207,
+          -401.56921400000004,
+          -168.1033390147514
+        ],
+        [
+          -810.258545,
+          186.916092,
+          -173.20865012311606
+        ]
+      ],
+      "angles": [
+        {
+          "id": "de_mirage:openprefire/mid_to_b/2",
+          "name": "Mid / Window / mid to b 2",
+          "position": [
+            178.396652,
+            -803.472351,
+            -166.41963199999998
+          ],
+          "rotation": [
+            4.523532,
+            79.453583,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "mid_to_b",
+            "index": 2
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/mid_to_b/3",
+          "name": "Mid / Window / mid to b 3",
+          "position": [
+            356.831573,
+            -794.03125,
+            -165.184677
+          ],
+          "rotation": [
+            4.523677,
+            88.899628,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "mid_to_b",
+            "index": 3
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/mid_to_b/4",
+          "name": "Mid / Window / mid to b 4",
+          "position": [
+            160.03125,
+            135.96875,
+            -165.324768
+          ],
+          "rotation": [
+            30.18388,
+            7.471654,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "mid_to_b",
+            "index": 4
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/mid_to_b/5",
+          "name": "Top mid / mid to b 5",
+          "position": [
+            502.96875,
+            -64.03125,
+            -161.518219
+          ],
+          "rotation": [
+            11.241871,
+            171.134903,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "mid_to_b",
+            "index": 5
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/mid_to_b/7",
+          "name": "Jungle / mid to b 7",
+          "position": [
+            -807.96875,
+            -913.714844,
+            -168.96875
+          ],
+          "rotation": [
+            -0.365893,
+            33.368191,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "mid_to_b",
+            "index": 7
+          }
+        }
+      ],
+      "alternatives": [
+        {
+          "id": "de_mirage:openprefire/mid_to_b/8",
+          "name": "Mid / Window / mid to b 8",
+          "position": [
+            -888.887024,
+            -788.972595,
+            -222.96875
+          ],
+          "rotation": [
+            -2.579616,
+            25.987957,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "mid_to_b",
+            "index": 8
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/mid_to_b/9",
+          "name": "Mid / Window / mid to b 9",
+          "position": [
+            -1172.9021,
+            -731.481018,
+            -168.96875
+          ],
+          "rotation": [
+            -0.327366,
+            18.673264,
+            0
+          ],
+          "crouched": true,
+          "moving": false,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "mid_to_b",
+            "index": 9
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/mid_to_b/10",
+          "name": "Mid / Window / mid to b 10",
+          "position": [
+            -1247.96875,
+            -605.912903,
+            -168.96875
+          ],
+          "rotation": [
+            -0.077218,
+            12.309391,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "mid_to_b",
+            "index": 10
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/mid_to_b/11",
+          "name": "Mid / Window / mid to b 11",
+          "position": [
+            -924.10144,
+            -508.329834,
+            -49.09375
+          ],
+          "rotation": [
+            5.139634,
+            10.451426,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "mid_to_b",
+            "index": 11
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/mid_to_b/12",
+          "name": "Mid / Window / mid to b 12",
+          "position": [
+            -817.697571,
+            -328.538696,
+            -168.65386999999998
+          ],
+          "rotation": [
+            -0.288868,
+            -0.848358,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "mid_to_b",
+            "index": 12
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/mid_to_b/14",
+          "name": "Mid / Window / mid to b 14",
+          "position": [
+            296.417206,
+            -803.191772,
+            -165.579346
+          ],
+          "rotation": [
+            1.000784,
+            135.663559,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "mid_to_b",
+            "index": 14
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/mid_to_b/15",
+          "name": "Jungle / mid to b 15",
+          "position": [
+            -719.971069,
+            -1013.249023,
+            -216.96875
+          ],
+          "rotation": [
+            -4.408471,
+            61.295624,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "mid_to_b",
+            "index": 15
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/mid_to_b/16",
+          "name": "Mid / Window / mid to b 16",
+          "position": [
+            -1008.660095,
+            -68.943665,
+            -168.96875
+          ],
+          "rotation": [
+            -0.231068,
+            -36.503529,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "mid_to_b",
+            "index": 16
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/mid_to_b/17",
+          "name": "Jungle / mid to b 17",
+          "position": [
+            -807.96875,
+            -1206.07666,
+            -168.96875
+          ],
+          "rotation": [
+            0.615883,
+            66.066772,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "mid_to_b",
+            "index": 17
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/mid_to_b/18",
+          "name": "Jungle / mid to b 18",
+          "position": [
+            -728.007751,
+            -1306.029053,
+            -168.96875
+          ],
+          "rotation": [
+            1.443626,
+            77.853584,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "mid_to_b",
+            "index": 18
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/mid_to_b/19",
+          "name": "Jungle / mid to b 19",
+          "position": [
+            -800.165283,
+            -2224.115479,
+            -180.948792
+          ],
+          "rotation": [
+            -0.308111,
+            83.108788,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "mid_to_b",
+            "index": 19
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/mid_to_b/20",
+          "name": "Stairs / Connector / mid to b 20",
+          "position": [
+            -601.556519,
+            -1309.074829,
+            -168.96875
+          ],
+          "rotation": [
+            0.53889,
+            92.233086,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "mid_to_b",
+            "index": 20
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/mid_to_b/21",
+          "name": "Short / Ladder / mid to b 21",
+          "position": [
+            -962.599731,
+            295.30481,
+            -169.441757
+          ],
+          "rotation": [
+            -0.096386,
+            -64.12114,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "mid_to_b",
+            "index": 21
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/mid_to_b/22",
+          "name": "Short / Ladder / mid to b 22",
+          "position": [
+            -753.979919,
+            292.96875,
+            -166.82308999999998
+          ],
+          "rotation": [
+            -0.231135,
+            -89.236107,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "mid_to_b",
+            "index": 22
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/mid_to_b/23",
+          "name": "Short / Ladder / mid to b 23",
+          "position": [
+            -1053.175049,
+            295.971649,
+            -165.59136999999998
+          ],
+          "rotation": [
+            -0.153975,
+            -48.269905,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "mid_to_b",
+            "index": 23
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/mid_to_b/24",
+          "name": "Mid / Window / mid to b 24",
+          "position": [
+            -1183.97168,
+            -808.152832,
+            -168.96875
+          ],
+          "rotation": [
+            -0.096384,
+            54.53384,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "mid_to_b",
+            "index": 24
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/mid_to_b/25",
+          "name": "Mid / Window / mid to b 25",
+          "position": [
+            -1180.508179,
+            -66.03125,
+            -56.96875
+          ],
+          "rotation": [
+            16.574072,
+            -12.783839,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "mid_to_b",
+            "index": 25
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/mid_to_b/26",
+          "name": "Mid / Window / mid to b 26",
+          "position": [
+            -1103.838745,
+            -56.030579,
+            -168.96875
+          ],
+          "rotation": [
+            -0.288829,
+            -19.001442,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "mid_to_b",
+            "index": 26
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/mid_to_b/27",
+          "name": "Mid / Window / mid to b 27",
+          "position": [
+            -1185.253662,
+            -270.164429,
+            -56.96875
+          ],
+          "rotation": [
+            15.630846,
+            32.511524,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "mid_to_b",
+            "index": 27
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/mid_to_b/28",
+          "name": "Mid / Window / mid to b 28",
+          "position": [
+            -1103.96875,
+            -151.96875,
+            -168.96875
+          ],
+          "rotation": [
+            0.057713,
+            12.222405,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "mid_to_b",
+            "index": 28
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/mid_to_b/29",
+          "name": "Apartments / Van / mid to b 29",
+          "position": [
+            -1958.287231,
+            747.560669,
+            -48.96875
+          ],
+          "rotation": [
+            5.00498,
+            -31.475428,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "mid_to_b",
+            "index": 29
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/mid_to_b/30",
+          "name": "Apartments / Van / mid to b 30",
+          "position": [
+            -2008.796997,
+            683.248901,
+            -48.670246
+          ],
+          "rotation": [
+            4.812454,
+            -27.856339,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "mid_to_b",
+            "index": 30
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/mid_to_b/31",
+          "name": "B site / mid to b 31",
+          "position": [
+            -2534.316406,
+            319.807922,
+            -168.96875
+          ],
+          "rotation": [
+            -0.288821,
+            -7.527193,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "mid_to_b",
+            "index": 31
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/mid_to_b/32",
+          "name": "Apartments / Van / mid to b 32",
+          "position": [
+            -2351.215088,
+            809.768494,
+            -84.19693
+          ],
+          "rotation": [
+            2.810448,
+            -25.873674,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "mid_to_b",
+            "index": 32
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/mid_to_b/33",
+          "name": "B site / mid to b 33",
+          "position": [
+            -2094.970215,
+            368.714264,
+            -160.96875
+          ],
+          "rotation": [
+            -0.288804,
+            -12.735641,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "mid_to_b",
+            "index": 33
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/mid_to_b/34",
+          "name": "B site / mid to b 34",
+          "position": [
+            -2265.03125,
+            349.561157,
+            -168.02533
+          ],
+          "rotation": [
+            -0.635185,
+            -10.524932,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "mid_to_b",
+            "index": 34
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/under_to_jungle/8",
+          "name": "Mid / Window / under to jungle 8",
+          "position": [
+            -1055.565552,
+            -788.969604,
+            -264.96875
+          ],
+          "rotation": [
+            5.543737,
+            85.685379,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "under_to_jungle",
+            "index": 8
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/under_to_jungle/10",
+          "name": "Mid / Window / under to jungle 10",
+          "position": [
+            -1100.249878,
+            -660.399841,
+            -135.96875
+          ],
+          "rotation": [
+            30.72286,
+            73.770157,
+            0
+          ],
+          "crouched": true,
+          "moving": false,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "under_to_jungle",
+            "index": 10
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/under_to_jungle/11",
+          "name": "Mid / Window / under to jungle 11",
+          "position": [
+            -923.210938,
+            -519.824585,
+            -49.09375
+          ],
+          "rotation": [
+            57.72924,
+            116.525337,
+            0
+          ],
+          "crouched": true,
+          "moving": false,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "under_to_jungle",
+            "index": 11
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/under_to_jungle/13",
+          "name": "Mid / Window / under to jungle 13",
+          "position": [
+            -367.969116,
+            -814.45166,
+            -168.96875
+          ],
+          "rotation": [
+            11.047883,
+            155.246033,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "under_to_jungle",
+            "index": 13
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/under_to_jungle/14",
+          "name": "Mid / Window / under to jungle 14",
+          "position": [
+            376.69751,
+            -794.999268,
+            -165.72692899999998
+          ],
+          "rotation": [
+            5.022646,
+            169.607056,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "under_to_jungle",
+            "index": 14
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/under_to_jungle/15",
+          "name": "Top mid / under to jungle 15",
+          "position": [
+            379.420258,
+            -521.770325,
+            -166.927414
+          ],
+          "rotation": [
+            4.368186,
+            -178.131882,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "under_to_jungle",
+            "index": 15
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/under_to_jungle/17",
+          "name": "Short / Ladder / under to jungle 17",
+          "position": [
+            -819.838501,
+            294.96875,
+            -168.695694
+          ],
+          "rotation": [
+            2.385028,
+            -90.661613,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "under_to_jungle",
+            "index": 17
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/under_to_jungle/18",
+          "name": "Stairs / Connector / under to jungle 18",
+          "position": [
+            -600.076538,
+            -1309.030518,
+            -168.96875
+          ],
+          "rotation": [
+            12.00998,
+            101.741745,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "under_to_jungle",
+            "index": 18
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/under_to_jungle/19",
+          "name": "Jungle / under to jungle 19",
+          "position": [
+            -727.358215,
+            -1306.03125,
+            -168.96875
+          ],
+          "rotation": [
+            11.740481,
+            88.574852,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "under_to_jungle",
+            "index": 19
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/under_to_jungle/21",
+          "name": "Jungle / under to jungle 21",
+          "position": [
+            -808.24762,
+            -2307.05249,
+            -178.677567
+          ],
+          "rotation": [
+            1.905611,
+            84.931007,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "under_to_jungle",
+            "index": 21
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/under_to_jungle/22",
+          "name": "Jungle / under to jungle 22",
+          "position": [
+            -807.96875,
+            -1204.848267,
+            -168.96875
+          ],
+          "rotation": [
+            11.297721,
+            65.854034,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "under_to_jungle",
+            "index": 22
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/under_to_jungle/23",
+          "name": "Jungle / under to jungle 23",
+          "position": [
+            -714.923889,
+            -2181.968018,
+            -180.96875
+          ],
+          "rotation": [
+            2.13473,
+            88.728294,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "under_to_jungle",
+            "index": 23
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/under_to_jungle/24",
+          "name": "A site / under to jungle 24",
+          "position": [
+            -495.810791,
+            -2093.833496,
+            -180.96875
+          ],
+          "rotation": [
+            2.15398,
+            98.776421,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "under_to_jungle",
+            "index": 24
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/under_to_jungle/34",
+          "name": "Mid / Window / under to jungle 34",
+          "position": [
+            -1134.637207,
+            -200.25946,
+            -56.96875
+          ],
+          "rotation": [
+            6.080884,
+            -92.633118,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "under_to_jungle",
+            "index": 34
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/under_to_jungle/41",
+          "name": "Mid / Window / under to jungle 41",
+          "position": [
+            -1247.96875,
+            -759.96875,
+            -129.96875
+          ],
+          "rotation": [
+            22.192945,
+            -8.37637,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "under_to_jungle",
+            "index": 41
+          }
+        }
+      ]
+    },
+    {
+      "id": "underpass-connector",
+      "name": "Underpass to Connector",
+      "region": "Mid & Short",
+      "enemySide": "ct",
+      "phase": "preplant",
+      "startLabel": "Underpass",
+      "spawn": [
+        -1003,
+        412,
+        -368.00001549908495
+      ],
+      "look": [
+        -1009.418213,
+        -356.21698,
+        -357.8915174800321
+      ],
+      "path": [
+        [
+          -1009.418213,
+          -356.21698,
+          -357.8915174800321
+        ],
+        [
+          -1015.67627,
+          -557.844299,
+          -287.99999417282464
+        ],
+        [
+          -883.402893,
+          -625.451782,
+          -261.9779954745075
+        ],
+        [
+          -662.826111,
+          -798.794495,
+          -263.99999152956985
+        ],
+        [
+          -664.179626,
+          -1155.724365,
+          -167.99999972966714
+        ],
+        [
+          -674.8195189999999,
+          -1416.629883,
+          -167.99999972966714
+        ]
+      ],
+      "angles": [
+        {
+          "id": "de_mirage:openprefire/under_to_jungle/10",
+          "name": "Mid / Window / under to jungle 10",
+          "position": [
+            -1100.249878,
+            -660.399841,
+            -135.96875
+          ],
+          "rotation": [
+            30.72286,
+            73.770157,
+            0
+          ],
+          "crouched": true,
+          "moving": false,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "under_to_jungle",
+            "index": 10
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/under_to_jungle/11",
+          "name": "Mid / Window / under to jungle 11",
+          "position": [
+            -923.210938,
+            -519.824585,
+            -49.09375
+          ],
+          "rotation": [
+            57.72924,
+            116.525337,
+            0
+          ],
+          "crouched": true,
+          "moving": false,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "under_to_jungle",
+            "index": 11
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/under_to_jungle/12",
+          "name": "Stairs / Connector / under to jungle 12",
+          "position": [
+            -520.030273,
+            -1021.00116,
+            -168.96875
+          ],
+          "rotation": [
+            12.510902,
+            131.523865,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "under_to_jungle",
+            "index": 12
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/under_to_jungle/13",
+          "name": "Mid / Window / under to jungle 13",
+          "position": [
+            -367.969116,
+            -814.45166,
+            -168.96875
+          ],
+          "rotation": [
+            11.047883,
+            155.246033,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "under_to_jungle",
+            "index": 13
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/under_to_jungle/14",
+          "name": "Mid / Window / under to jungle 14",
+          "position": [
+            376.69751,
+            -794.999268,
+            -165.72692899999998
+          ],
+          "rotation": [
+            5.022646,
+            169.607056,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "under_to_jungle",
+            "index": 14
+          }
+        }
+      ],
+      "alternatives": [
+        {
+          "id": "de_mirage:openprefire/under_to_jungle/15",
+          "name": "Top mid / under to jungle 15",
+          "position": [
+            379.420258,
+            -521.770325,
+            -166.927414
+          ],
+          "rotation": [
+            4.368186,
+            -178.131882,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "under_to_jungle",
+            "index": 15
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/under_to_jungle/17",
+          "name": "Short / Ladder / under to jungle 17",
+          "position": [
+            -819.838501,
+            294.96875,
+            -168.695694
+          ],
+          "rotation": [
+            2.385028,
+            -90.661613,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "under_to_jungle",
+            "index": 17
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/under_to_jungle/18",
+          "name": "Stairs / Connector / under to jungle 18",
+          "position": [
+            -600.076538,
+            -1309.030518,
+            -168.96875
+          ],
+          "rotation": [
+            12.00998,
+            101.741745,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "under_to_jungle",
+            "index": 18
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/under_to_jungle/19",
+          "name": "Jungle / under to jungle 19",
+          "position": [
+            -727.358215,
+            -1306.03125,
+            -168.96875
+          ],
+          "rotation": [
+            11.740481,
+            88.574852,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "under_to_jungle",
+            "index": 19
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/under_to_jungle/20",
+          "name": "Jungle / under to jungle 20",
+          "position": [
+            -825.105042,
+            -2520.172852,
+            -36.96875
+          ],
+          "rotation": [
+            7.640225,
+            84.718819,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "under_to_jungle",
+            "index": 20
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/under_to_jungle/21",
+          "name": "Jungle / under to jungle 21",
+          "position": [
+            -808.24762,
+            -2307.05249,
+            -178.677567
+          ],
+          "rotation": [
+            1.905611,
+            84.931007,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "under_to_jungle",
+            "index": 21
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/under_to_jungle/22",
+          "name": "Jungle / under to jungle 22",
+          "position": [
+            -807.96875,
+            -1204.848267,
+            -168.96875
+          ],
+          "rotation": [
+            11.297721,
+            65.854034,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "under_to_jungle",
+            "index": 22
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/under_to_jungle/23",
+          "name": "Jungle / under to jungle 23",
+          "position": [
+            -714.923889,
+            -2181.968018,
+            -180.96875
+          ],
+          "rotation": [
+            2.13473,
+            88.728294,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "under_to_jungle",
+            "index": 23
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/under_to_jungle/24",
+          "name": "A site / under to jungle 24",
+          "position": [
+            -495.810791,
+            -2093.833496,
+            -180.96875
+          ],
+          "rotation": [
+            2.15398,
+            98.776421,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "under_to_jungle",
+            "index": 24
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/under_to_jungle/25",
+          "name": "Stairs / Connector / under to jungle 25",
+          "position": [
+            -447.958313,
+            -1574.59668,
+            -40.96875
+          ],
+          "rotation": [
+            17.380583,
+            120.816963,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "under_to_jungle",
+            "index": 25
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/under_to_jungle/26",
+          "name": "A site / under to jungle 26",
+          "position": [
+            -330.087646,
+            -2206.322266,
+            -174.810532
+          ],
+          "rotation": [
+            -0.598899,
+            112.371567,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "under_to_jungle",
+            "index": 26
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/under_to_jungle/27",
+          "name": "Stairs / Connector / under to jungle 27",
+          "position": [
+            -496.029175,
+            -1309.061035,
+            -160.96875
+          ],
+          "rotation": [
+            -0.019473,
+            177.91568,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "under_to_jungle",
+            "index": 27
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/under_to_jungle/30",
+          "name": "Jungle / under to jungle 30",
+          "position": [
+            -1275.284546,
+            -1500.62915,
+            -154.279022
+          ],
+          "rotation": [
+            0.844853,
+            20.331661,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "under_to_jungle",
+            "index": 30
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/under_to_jungle/40",
+          "name": "Mid / Window / under to jungle 40",
+          "position": [
+            -1247.97229,
+            -456.15625,
+            -96.96875
+          ],
+          "rotation": [
+            7.986503,
+            -79.909279,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "under_to_jungle",
+            "index": 40
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/under_to_jungle/41",
+          "name": "Mid / Window / under to jungle 41",
+          "position": [
+            -1247.96875,
+            -759.96875,
+            -129.96875
+          ],
+          "rotation": [
+            22.192945,
+            -8.37637,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "under_to_jungle",
+            "index": 41
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/mid_to_b/2",
+          "name": "Mid / Window / mid to b 2",
+          "position": [
+            178.396652,
+            -803.472351,
+            -166.41963199999998
+          ],
+          "rotation": [
+            4.523532,
+            79.453583,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "mid_to_b",
+            "index": 2
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/mid_to_b/3",
+          "name": "Mid / Window / mid to b 3",
+          "position": [
+            356.831573,
+            -794.03125,
+            -165.184677
+          ],
+          "rotation": [
+            4.523677,
+            88.899628,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "mid_to_b",
+            "index": 3
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/mid_to_b/7",
+          "name": "Jungle / mid to b 7",
+          "position": [
+            -807.96875,
+            -913.714844,
+            -168.96875
+          ],
+          "rotation": [
+            -0.365893,
+            33.368191,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "mid_to_b",
+            "index": 7
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/mid_to_b/8",
+          "name": "Mid / Window / mid to b 8",
+          "position": [
+            -888.887024,
+            -788.972595,
+            -222.96875
+          ],
+          "rotation": [
+            -2.579616,
+            25.987957,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "mid_to_b",
+            "index": 8
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/mid_to_b/10",
+          "name": "Mid / Window / mid to b 10",
+          "position": [
+            -1247.96875,
+            -605.912903,
+            -168.96875
+          ],
+          "rotation": [
+            -0.077218,
+            12.309391,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "mid_to_b",
+            "index": 10
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/mid_to_b/11",
+          "name": "Mid / Window / mid to b 11",
+          "position": [
+            -924.10144,
+            -508.329834,
+            -49.09375
+          ],
+          "rotation": [
+            5.139634,
+            10.451426,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "mid_to_b",
+            "index": 11
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/mid_to_b/12",
+          "name": "Mid / Window / mid to b 12",
+          "position": [
+            -817.697571,
+            -328.538696,
+            -168.65386999999998
+          ],
+          "rotation": [
+            -0.288868,
+            -0.848358,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "mid_to_b",
+            "index": 12
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/mid_to_b/14",
+          "name": "Mid / Window / mid to b 14",
+          "position": [
+            296.417206,
+            -803.191772,
+            -165.579346
+          ],
+          "rotation": [
+            1.000784,
+            135.663559,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "mid_to_b",
+            "index": 14
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/mid_to_b/15",
+          "name": "Jungle / mid to b 15",
+          "position": [
+            -719.971069,
+            -1013.249023,
+            -216.96875
+          ],
+          "rotation": [
+            -4.408471,
+            61.295624,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "mid_to_b",
+            "index": 15
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/mid_to_b/17",
+          "name": "Jungle / mid to b 17",
+          "position": [
+            -807.96875,
+            -1206.07666,
+            -168.96875
+          ],
+          "rotation": [
+            0.615883,
+            66.066772,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "mid_to_b",
+            "index": 17
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/mid_to_b/18",
+          "name": "Jungle / mid to b 18",
+          "position": [
+            -728.007751,
+            -1306.029053,
+            -168.96875
+          ],
+          "rotation": [
+            1.443626,
+            77.853584,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "mid_to_b",
+            "index": 18
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/mid_to_b/19",
+          "name": "Jungle / mid to b 19",
+          "position": [
+            -800.165283,
+            -2224.115479,
+            -180.948792
+          ],
+          "rotation": [
+            -0.308111,
+            83.108788,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "mid_to_b",
+            "index": 19
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/mid_to_b/20",
+          "name": "Stairs / Connector / mid to b 20",
+          "position": [
+            -601.556519,
+            -1309.074829,
+            -168.96875
+          ],
+          "rotation": [
+            0.53889,
+            92.233086,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "mid_to_b",
+            "index": 20
+          }
+        }
+      ]
+    },
+    {
+      "id": "market-b",
+      "name": "Market retake",
+      "region": "B site",
+      "enemySide": "t",
+      "phase": "postplant",
+      "startLabel": "Market retake",
+      "spawn": [
+        -2331,
+        -592,
+        -167.99999972966714
+      ],
+      "look": [
+        -2331,
+        100,
+        -167.99999972966714
+      ],
+      "path": [
+        [
+          -2331,
+          100,
+          -167.99999972966714
+        ],
+        [
+          -2331,
+          500,
+          -167.99999972966714
+        ]
+      ],
+      "angles": [
+        {
+          "id": "de_mirage:openprefire/b_retake/3",
+          "name": "Market / b retake 3",
+          "position": [
+            -1985.900635,
+            -205.440552,
+            -168.70173599999998
+          ],
+          "rotation": [
+            0.673593,
+            -56.242691,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "b_retake",
+            "index": 3
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/b_retake/6",
+          "name": "Apartments / Van / b retake 6",
+          "position": [
+            -2156.070801,
+            823.448181,
+            -127.33521999999999
+          ],
+          "rotation": [
+            1.501342,
+            -78.091408,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "b_retake",
+            "index": 6
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/b_retake/7",
+          "name": "B site / b retake 7",
+          "position": [
+            -1768.766113,
+            503.011566,
+            -168.976837
+          ],
+          "rotation": [
+            -0.423477,
+            -99.413391,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "b_retake",
+            "index": 7
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/b_retake/9",
+          "name": "B site / b retake 9",
+          "position": [
+            -2585.545898,
+            254.014893,
+            -168.958908
+          ],
+          "rotation": [
+            -0.770182,
+            -38.185932,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "b_retake",
+            "index": 9
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/b_retake/10",
+          "name": "Short / Ladder / b retake 10",
+          "position": [
+            -1495.725098,
+            408.55838,
+            -167.96875
+          ],
+          "rotation": [
+            0.076847,
+            -121.300941,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "b_retake",
+            "index": 10
+          }
+        }
+      ],
+      "alternatives": [
+        {
+          "id": "de_mirage:openprefire/b_retake/11",
+          "name": "Short / Ladder / b retake 11",
+          "position": [
+            -1358.953735,
+            320.794678,
+            -168.96875
+          ],
+          "rotation": [
+            0.307847,
+            -132.849731,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "b_retake",
+            "index": 11
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/b_retake/17",
+          "name": "B site / b retake 17",
+          "position": [
+            -1969.03125,
+            450.027557,
+            -160.96875
+          ],
+          "rotation": [
+            1.308853,
+            -110.598473,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "b_retake",
+            "index": 17
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/b_retake/18",
+          "name": "B site / b retake 18",
+          "position": [
+            -2001.027588,
+            167.193375,
+            -160.96875
+          ],
+          "rotation": [
+            0.962355,
+            -123.727402,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "b_retake",
+            "index": 18
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/b_retake/19",
+          "name": "Market / b retake 19",
+          "position": [
+            -2411.972168,
+            -247.968994,
+            -168.199738
+          ],
+          "rotation": [
+            -1.520915,
+            -15.272323,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "b_retake",
+            "index": 19
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/b_retake/20",
+          "name": "Mid / Window / b retake 20",
+          "position": [
+            -1553.301758,
+            -231.947632,
+            -161.526474
+          ],
+          "rotation": [
+            0.250087,
+            179.364609,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "b_retake",
+            "index": 20
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/b_retake/21",
+          "name": "Apartments / Van / b retake 21",
+          "position": [
+            -2114.03125,
+            831.96875,
+            -125.299789
+          ],
+          "rotation": [
+            3.041205,
+            -110.870392,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "b_retake",
+            "index": 21
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/b_retake/22",
+          "name": "B site / b retake 22",
+          "position": [
+            -2508.191406,
+            400.336761,
+            -168.96875
+          ],
+          "rotation": [
+            -1.135924,
+            -64.962196,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "b_retake",
+            "index": 22
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/b_retake/23",
+          "name": "B site / b retake 23",
+          "position": [
+            -2635.96875,
+            104.03125,
+            -163.768723
+          ],
+          "rotation": [
+            1.116302,
+            -1.033096,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "b_retake",
+            "index": 23
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/b_retake/24",
+          "name": "B site / b retake 24",
+          "position": [
+            -1906.583252,
+            519.329346,
+            -168.542038
+          ],
+          "rotation": [
+            0.057551,
+            -135.090271,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "b_retake",
+            "index": 24
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/b_retake/25",
+          "name": "Apartments / Van / b retake 25",
+          "position": [
+            -1713.465088,
+            723.584961,
+            -48.96875
+          ],
+          "rotation": [
+            8.662245,
+            -134.245117,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "b_retake",
+            "index": 25
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/b_retake/26",
+          "name": "Short / Ladder / b retake 26",
+          "position": [
+            -1359.793945,
+            408.299377,
+            -168.96875
+          ],
+          "rotation": [
+            -0.019451,
+            -166.15947,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "b_retake",
+            "index": 26
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/b_retake/27",
+          "name": "Short / Ladder / b retake 27",
+          "position": [
+            -792.445618,
+            66.995956,
+            -167.730377
+          ],
+          "rotation": [
+            -0.32745,
+            171.298325,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "b_retake",
+            "index": 27
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/b_retake/28",
+          "name": "Apartments / Van / b retake 28",
+          "position": [
+            -1856.452637,
+            753.341553,
+            -48.96875
+          ],
+          "rotation": [
+            8.508274,
+            -146.063614,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "b_retake",
+            "index": 28
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/b_retake/29",
+          "name": "B site / b retake 29",
+          "position": [
+            -1830.972656,
+            473.260345,
+            -168.96875
+          ],
+          "rotation": [
+            -0.288943,
+            178.900848,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "b_retake",
+            "index": 29
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/b_retake/30",
+          "name": "Apartments / Van / b retake 30",
+          "position": [
+            -1543.434082,
+            739.175476,
+            -48.96875
+          ],
+          "rotation": [
+            6.621755,
+            -161.232956,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "b_retake",
+            "index": 30
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/b_apts/5",
+          "name": "Apartments / Van / b apts 5",
+          "position": [
+            -1871.97229,
+            792.598145,
+            -48.96875
+          ],
+          "rotation": [
+            2.590192,
+            -11.857055,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "b_apts",
+            "index": 5
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/b_apts/9",
+          "name": "Apartments / Van / b apts 9",
+          "position": [
+            -1985.140625,
+            798.569946,
+            -51.03125
+          ],
+          "rotation": [
+            1.636325,
+            -9.695889,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "b_apts",
+            "index": 9
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/b_apts/12",
+          "name": "Apartments / Van / b apts 12",
+          "position": [
+            -1520.03125,
+            863.96875,
+            -10.968735000000002
+          ],
+          "rotation": [
+            14.995724,
+            -83.411194,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "b_apts",
+            "index": 12
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/b_apts/14",
+          "name": "B site / b apts 14",
+          "position": [
+            -2655.96875,
+            365.1315,
+            -168.013657
+          ],
+          "rotation": [
+            -3.975557,
+            16.532207,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "b_apts",
+            "index": 14
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/b_apts/16",
+          "name": "B site / b apts 16",
+          "position": [
+            -2065.702881,
+            412.234283,
+            -160.96875
+          ],
+          "rotation": [
+            -9.386997,
+            28.890722,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "b_apts",
+            "index": 16
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/b_apts/17",
+          "name": "B site / b apts 17",
+          "position": [
+            -1910.923706,
+            242.03125,
+            -160.96875
+          ],
+          "rotation": [
+            -9.560245,
+            55.205502,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "b_apts",
+            "index": 17
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/b_apts/18",
+          "name": "B site / b apts 18",
+          "position": [
+            -1851.914917,
+            22.969439,
+            -168.96875
+          ],
+          "rotation": [
+            -8.674742,
+            70.181969,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "b_apts",
+            "index": 18
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/b_apts/20",
+          "name": "Mid / Window / b apts 20",
+          "position": [
+            -1553.299683,
+            -231.906067,
+            -161.52990699999998
+          ],
+          "rotation": [
+            -5.549801,
+            96.379669,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "b_apts",
+            "index": 20
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/b_apts/21",
+          "name": "Short / Ladder / b apts 21",
+          "position": [
+            -1485.21106,
+            108.03125,
+            -167.96875
+          ],
+          "rotation": [
+            -9.010498,
+            103.681885,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "b_apts",
+            "index": 21
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/b_apts/22",
+          "name": "Short / Ladder / b apts 22",
+          "position": [
+            -1340.651245,
+            294.613251,
+            -168.96875
+          ],
+          "rotation": [
+            -11.192806,
+            128.20546,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "b_apts",
+            "index": 22
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/b_apts/25",
+          "name": "Apartments / Van / b apts 25",
+          "position": [
+            -2012.437622,
+            849.971863,
+            -25.03125
+          ],
+          "rotation": [
+            5.890657,
+            -38.359776,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "b_apts",
+            "index": 25
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/b_apts/27",
+          "name": "B site / b apts 27",
+          "position": [
+            -2494.529785,
+            321.158417,
+            -168.96875
+          ],
+          "rotation": [
+            -9.871135,
+            35.014805,
+            0
+          ],
+          "crouched": true,
+          "moving": false,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "b_apts",
+            "index": 27
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/b_apts/28",
+          "name": "B site / b apts 28",
+          "position": [
+            -2556.010742,
+            104.028923,
+            -166.399872
+          ],
+          "rotation": [
+            -8.219739,
+            51.902359,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "b_apts",
+            "index": 28
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/b_apts/29",
+          "name": "B site / b apts 29",
+          "position": [
+            -2145.971191,
+            22.97253,
+            -168.025116
+          ],
+          "rotation": [
+            -9.139624,
+            74.708481,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "b_apts",
+            "index": 29
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/b_apts/30",
+          "name": "Market / b apts 30",
+          "position": [
+            -1996.743408,
+            -24.693726,
+            -168.176788
+          ],
+          "rotation": [
+            -8.157878,
+            88.087494,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "b_apts",
+            "index": 30
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/b_apts/31",
+          "name": "Apartments / Van / b apts 31",
+          "position": [
+            -2114.03125,
+            831.968933,
+            -125.299744
+          ],
+          "rotation": [
+            -55.070122,
+            -64.878845,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "b_apts",
+            "index": 31
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/b_apts/32",
+          "name": "Short / Ladder / b apts 32",
+          "position": [
+            -1248.060059,
+            515.977173,
+            -165.065292
+          ],
+          "rotation": [
+            -0.092136,
+            174.937317,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "b_apts",
+            "index": 32
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/b_apts/36",
+          "name": "Market / b apts 36",
+          "position": [
+            -1941.856689,
+            -17.868286,
+            -168.403687
+          ],
+          "rotation": [
+            -0.438826,
+            131.613617,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "b_apts",
+            "index": 36
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/b_apts/37",
+          "name": "B site / b apts 37",
+          "position": [
+            -2178.781982,
+            22.968725,
+            -168.96875
+          ],
+          "rotation": [
+            -0.669831,
+            174.868561,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "b_apts",
+            "index": 37
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/b_apts/39",
+          "name": "Short / Ladder / b apts 39",
+          "position": [
+            -1365.035034,
+            255.563522,
+            -168.96875
+          ],
+          "rotation": [
+            0.557462,
+            175.075851,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "b_apts",
+            "index": 39
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/mid_to_b/21",
+          "name": "Short / Ladder / mid to b 21",
+          "position": [
+            -962.599731,
+            295.30481,
+            -169.441757
+          ],
+          "rotation": [
+            -0.096386,
+            -64.12114,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "mid_to_b",
+            "index": 21
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/mid_to_b/22",
+          "name": "Short / Ladder / mid to b 22",
+          "position": [
+            -753.979919,
+            292.96875,
+            -166.82308999999998
+          ],
+          "rotation": [
+            -0.231135,
+            -89.236107,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "mid_to_b",
+            "index": 22
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/mid_to_b/23",
+          "name": "Short / Ladder / mid to b 23",
+          "position": [
+            -1053.175049,
+            295.971649,
+            -165.59136999999998
+          ],
+          "rotation": [
+            -0.153975,
+            -48.269905,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "mid_to_b",
+            "index": 23
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/mid_to_b/29",
+          "name": "Apartments / Van / mid to b 29",
+          "position": [
+            -1958.287231,
+            747.560669,
+            -48.96875
+          ],
+          "rotation": [
+            5.00498,
+            -31.475428,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "mid_to_b",
+            "index": 29
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/mid_to_b/30",
+          "name": "Apartments / Van / mid to b 30",
+          "position": [
+            -2008.796997,
+            683.248901,
+            -48.670246
+          ],
+          "rotation": [
+            4.812454,
+            -27.856339,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "mid_to_b",
+            "index": 30
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/mid_to_b/31",
+          "name": "B site / mid to b 31",
+          "position": [
+            -2534.316406,
+            319.807922,
+            -168.96875
+          ],
+          "rotation": [
+            -0.288821,
+            -7.527193,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "mid_to_b",
+            "index": 31
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/mid_to_b/33",
+          "name": "B site / mid to b 33",
+          "position": [
+            -2094.970215,
+            368.714264,
+            -160.96875
+          ],
+          "rotation": [
+            -0.288804,
+            -12.735641,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "mid_to_b",
+            "index": 33
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/mid_to_b/35",
+          "name": "Market / mid to b 35",
+          "position": [
+            -2181.280029,
+            -30.40332,
+            -167.931778
+          ],
+          "rotation": [
+            -0.577576,
+            11.614176,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "mid_to_b",
+            "index": 35
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/mid_to_b/36",
+          "name": "Short / Ladder / mid to b 36",
+          "position": [
+            -1248.626709,
+            516.058899,
+            -165.10063200000002
+          ],
+          "rotation": [
+            -0.269575,
+            -87.62426,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "mid_to_b",
+            "index": 36
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/mid_to_b/37",
+          "name": "Apartments / Van / mid to b 37",
+          "position": [
+            -2013.037964,
+            849.972412,
+            -24.96875
+          ],
+          "rotation": [
+            7.969594,
+            -37.919533,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "mid_to_b",
+            "index": 37
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/mid_to_b/42",
+          "name": "Mid / Window / mid to b 42",
+          "position": [
+            -1583.051025,
+            -230.96582,
+            -164.93515
+          ],
+          "rotation": [
+            0.404346,
+            87.289505,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "mid_to_b",
+            "index": 42
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/mid_to_b/44",
+          "name": "B site / mid to b 44",
+          "position": [
+            -2499.82959,
+            289.771729,
+            -168.96875
+          ],
+          "rotation": [
+            -8.527665,
+            37.87421,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "mid_to_b",
+            "index": 44
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/mid_to_b/45",
+          "name": "Apartments / Van / mid to b 45",
+          "position": [
+            -2114.03125,
+            831.96875,
+            -125.29496
+          ],
+          "rotation": [
+            2.23308,
+            -86.217216,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "mid_to_b",
+            "index": 45
+          }
+        }
+      ]
+    }
+  ]
+}

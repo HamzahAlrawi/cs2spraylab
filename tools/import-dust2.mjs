@@ -4,20 +4,23 @@ import {execFileSync} from 'node:child_process';
 import {parseKv3} from './kv3.mjs';
 import crypto from 'node:crypto';
 import {extractNativeSurfaces} from './native-surface-metadata.mjs';
+import {nativeMapIdentity} from './native-map-identity.mjs';
+
+const identity=nativeMapIdentity(process.argv.find(a=>a.startsWith('--map='))?.slice(6)??'de_dust2');
 
 const cli = path.resolve(process.env.CS2_MAP_CLI || (fs.existsSync('.local-tools/vrf-dev/Source2Viewer-CLI.exe')
   ? '.local-tools/vrf-dev/Source2Viewer-CLI.exe' : '.local-tools/vrf/Source2Viewer-CLI.exe'));
 const exporterVersion = execFileSync(cli, ['--version'], {encoding: 'utf8'}).split(/\r?\n/)[0];
 const game = process.env.CS2_PATH || 'C:/Program Files (x86)/Steam/steamapps/common/Counter-Strike Global Offensive';
-const vpk = `${game}/game/csgo/maps/de_dust2.vpk`;
-const work = 'research/dust2';
+const vpk = `${game}/game/csgo/maps/${identity.mapId}.vpk`;
+const work = identity.work;
 fs.mkdirSync(work, {recursive: true});
 const sha = buffer => crypto.createHash('sha256').update(buffer).digest('hex');
 const mapSha256 = sha(fs.readFileSync(vpk)), cacheFile = `${work}/cache.json`;
 const cache = fs.existsSync(cacheFile) ? JSON.parse(fs.readFileSync(cacheFile, 'utf8')) : {};
 const refresh = process.argv.includes('--refresh') || cache.mapSha256 !== mapSha256;
 const native = `${work}/world_physics.vmdl_c`;
-if (refresh || !fs.existsSync(native)) execFileSync(cli, ['-i', vpk, '-f', 'maps/de_dust2/world_physics.vmdl_c', '-o', native], {stdio: 'ignore'});
+if (refresh || !fs.existsSync(native)) execFileSync(cli, ['-i', vpk, '-f', `maps/${identity.mapId}/world_physics.vmdl_c`, '-o', native], {stdio: 'ignore',windowsHide:true});
 const jsonFile = `${work}/physics.json`;
 if (refresh || !fs.existsSync(jsonFile)) {
   const dump = execFileSync(cli, ['-i', native, '-b', 'PHYS'], {encoding: 'utf8', maxBuffer: 512e6});
@@ -36,7 +39,7 @@ for (const [kind, source, output] of [
   surfaceSources[kind] = {source,sha256:sha(bytes),data:parseKv3(bytes.toString('utf8')).SurfacePropertiesList};
 }
 const surfaces = extractNativeSurfaces(physics.m_surfacePropertyHashes,surfaceSources.physics.data,surfaceSources.game.data);
-const out = 'public/revamp/maps/dust2';
+const out = identity.out;
 fs.mkdirSync(out, {recursive: true});
 const unit = .0254;
 const convert = (x, y, z) => [x * unit, z * unit, -y * unit];
@@ -92,7 +95,7 @@ for (const group of groups.values()) {
   const onlyGrenades = as.includes('csgo_grenadeclip'), sky = as.includes('sky');
   const movement = !onlyGrenades && !sky && !exclude.includes('player');
   const shots = !onlyGrenades && !sky && !as.some(s => ['playerclip', 'npcclip', 'passbullets'].includes(s));
-  if (!movement && !shots) continue;
+  if (!movement && !shots && !onlyGrenades) continue;
   if (group.indices.some(index => index < 0 || index >= group.vertices.length / 3)) throw new Error('Invalid native triangle indices');
   const vertices = new Float32Array(group.vertices), indices = new Uint32Array(group.indices);
   buffers.push(Buffer.from(vertices.buffer), Buffer.from(indices.buffer));
@@ -102,7 +105,7 @@ for (const group of groups.values()) {
 const collision = Buffer.concat(buffers);
 fs.writeFileSync(`${out}/collision.bin`, collision);
 const build = fs.readFileSync(`${game}/game/csgo/steam.inf`, 'utf8').match(/ClientVersion=(\d+)/)[1];
-fs.writeFileSync(`${out}/collision.json`, JSON.stringify({version: 2, build, unit, transform: '[x,z,-y]*0.0254', source: 'maps/de_dust2/world_physics.vmdl_c',
+fs.writeFileSync(`${out}/collision.json`, JSON.stringify({version: 2, build, unit, transform: '[x,z,-y]*0.0254', source: `maps/${identity.mapId}/world_physics.vmdl_c`,
   sourceSha256: sha(fs.readFileSync(native)), mapSha256, collisionSha256: sha(collision), groups: manifestGroups, surfaces,
   surfaceSources:Object.fromEntries(Object.values(surfaceSources).map(s=>[s.source,s.sha256]))}));
 console.log('Native collision:', manifestGroups.map(g => `${g.id}: ${g.indexCount / 3} triangles, movement=${g.movement}, shots=${g.shots}`).join('; '));
@@ -110,14 +113,14 @@ console.log(`Source surfaces: ${surfaces.filter(s=>s.name).length}/${surfaces.le
 
 if (!process.argv.includes('--collision-only')) {
 const rawMap = `${work}/native-current.glb`;
-if (refresh || cache.exporterVersion !== exporterVersion || !fs.existsSync(rawMap)) execFileSync(cli, ['-i', vpk, '-f', 'maps/de_dust2.vmap_c', '-d', '--gltf_export_format', 'glb', '--gltf_export_materials', '--gltf_textures_adapt', '--gltf_export_extras', '-o', rawMap], {stdio: 'ignore'});
+if (refresh || cache.exporterVersion !== exporterVersion || !fs.existsSync(rawMap)) execFileSync(cli, ['-i', vpk, '-f', `maps/${identity.mapId}.vmap_c`, '-d', '--gltf_export_format', 'glb', '--gltf_export_materials', '--gltf_textures_adapt', '--gltf_export_extras', '-o', rawMap], {stdio: 'ignore',windowsHide:true});
 const {buildDust2Visuals} = await import('./build-dust2-visuals.mjs');
 const {importVisibility} = await import('./import-dust2-visibility.mjs');
-const visibility = importVisibility(cli, vpk, work, out, refresh);
-const visuals = await buildDust2Visuals(rawMap, out, visibility);
+const visibility = importVisibility(cli, vpk, work, out, refresh,identity.mapId);
+const visuals = await buildDust2Visuals(rawMap, out, visibility,identity.name);
 const audit = {build, exporterVersion, mapSha256, physicsSha256: sha(fs.readFileSync(native)), collisionSha256: sha(collision),
   collisionBytes: collision.length, ...visuals, transform: '[x,z,-y]*0.0254', groups: manifestGroups};
-fs.writeFileSync('docs/dust2-map-inventory.json', JSON.stringify(audit, null, 2) + '\n');
+fs.writeFileSync(identity.assetId==='dust2'?'docs/dust2-map-inventory.json':`${work}/map-inventory.json`, JSON.stringify(audit, null, 2) + '\n');
 fs.writeFileSync(cacheFile, JSON.stringify({mapSha256, exporterVersion}));
 }
-if(fs.existsSync(`${out}/visual.json`))execFileSync(process.execPath,['tools/build-full-map-delivery.mjs'],{stdio:'inherit',windowsHide:true});
+if(fs.existsSync(`${out}/visual.json`))execFileSync(process.execPath,['tools/build-full-map-delivery.mjs',identity.assetId],{stdio:'inherit',windowsHide:true});

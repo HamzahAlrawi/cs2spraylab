@@ -7,6 +7,7 @@ import {ALL_EXTENSIONS, EXTMeshoptCompression, KHRMeshQuantization} from '@gltf-
 import {copyToDocument, dedup} from '@gltf-transform/functions';
 import {MeshoptDecoder, MeshoptEncoder} from 'meshoptimizer';
 import {Box3, Matrix4, Triangle, Vector3} from 'three';
+import {nativeMapFiles} from './native-map-identity.mjs';
 
 export const PAGES_LIMIT = 25 * 1024 * 1024;
 export const sha256 = bytes => crypto.createHash('sha256').update(bytes).digest('hex');
@@ -212,12 +213,12 @@ async function writeVisuals(io, parts, directory) {
   return {manifest, primary, triangles, nodes};
 }
 
-export async function buildDuelMapChunks({root = process.cwd(), ids} = {}) {
+export async function buildDuelMapChunks({root = process.cwd(), ids,assetId='dust2'} = {}) {
   await MeshoptDecoder.ready; await MeshoptEncoder.ready;
-  const catalogPath = path.join(root, 'src/range/duel/real-map-catalog.json');
+  const files=nativeMapFiles(assetId),catalogPath = path.join(root, files.catalog);
   const catalogBytes = fs.readFileSync(catalogPath), catalog = JSON.parse(catalogBytes);
-  if (catalog.version !== 1 || catalog.map !== 'dust2') throw new Error('Unsupported real-map catalog');
-  const sourceDirectory = path.join(root, 'public/revamp/maps/dust2');
+  if (catalog.version !== 1 || catalog.map !== assetId) throw new Error('Unsupported real-map catalog');
+  const sourceDirectory = path.join(root, files.out);
   const outputRoot = path.resolve(sourceDirectory, 'duel');
   if (!outputRoot.startsWith(path.resolve(root) + path.sep)) throw new Error('Chunk outputs must stay inside workspace');
   const sourceCollisionBytes = fs.readFileSync(path.join(sourceDirectory, 'collision.json'));

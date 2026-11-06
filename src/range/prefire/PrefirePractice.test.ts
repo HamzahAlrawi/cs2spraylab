@@ -15,6 +15,7 @@ const render = () => renderToStaticMarkup(createElement(PrefirePractice, {
 
 describe('Prefire map-aware loading', () => {
   it('labels a single-map legacy setup without an unnecessary map selector', () => {
+    vi.spyOn(nativeMaps,'list').mockReturnValue([nativeMaps.get(legacyNativeMapId)]);
     vi.stubGlobal('localStorage', {getItem: () => null});
     const html = render();
     expect(html).toContain(`Loading ${nativeMaps.get(legacyNativeMapId).name}`);

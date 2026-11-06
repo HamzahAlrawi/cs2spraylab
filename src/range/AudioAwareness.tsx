@@ -5,6 +5,7 @@ import type {ProgressionController} from './progression';
 import {DuelEngine,type DuelStatus} from './duel/DuelEngine';
 import {loadAwarenessWorld} from './awareness-map';
 import {nativeMaps} from './prefire/maps';
+import {MapBetaNotice} from './prefire/MapBetaNotice';
 import {AwarenessSession,awarenessDuelConfig,type AwarenessReport} from './awareness-session';
 import {awarenessCues,awarenessEventKeys,awarenessHistoryKey,awarenessKey,awarenessTip,parseAwarenessHistory,sanitizeAwareness,type AwarenessConfig} from './awareness';
 import {readHearingStorage,saveHearingStorage} from './hearing-practice';
@@ -91,6 +92,7 @@ export default function AudioAwareness({settings,suspended,openSettings,onEnter,
     </div>
     <aside className="duel-controls awareness-settings" aria-label="Sound awareness setup"><header><h2>Sound Awareness</h2><button className="icon-button" title="Audio and mouse settings" aria-label="Audio and mouse settings" onClick={openSettings}><Settings2 size={17}/></button></header>
       <label>Map<select aria-label="Awareness map" value={config.mapId} onChange={e=>update({mapId:e.target.value})}>{nativeMaps.list().map(map=><option key={map.id} value={map.id}>{map.name}</option>)}</select></label>
+      <MapBetaNotice mapId={config.mapId}/>
       <fieldset className="awareness-stages"><legend>Assistance</legend>{(['reveal','hint','training'] as const).map(stage=><label key={stage}><input type="radio" name="awareness-stage" value={stage} checked={config.stage===stage} onChange={()=>update({stage})}/>{stage==='reveal'?<Eye size={16}/>:stage==='hint'?<Ear size={16}/>:<Headphones size={16}/>}<span>{stage==='reveal'?'Learn with reveal':stage==='hint'?'Direction hint':'Unaided training'}</span></label>)}</fieldset>
       {config.stage==='reveal'&&<label>Reveal on<select aria-label="Reveal location" value={config.display} onChange={e=>update({display:e.target.value as AwarenessConfig['display']})}><option value="both">Screen and radar</option><option value="screen">Screen only</option><option value="radar">Radar only</option></select></label>}
       <label>Sounds<select aria-label="Awareness cues" value={config.cues} onChange={e=>update({cues:e.target.value as AwarenessConfig['cues']})}>

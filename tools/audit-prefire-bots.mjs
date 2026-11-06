@@ -531,8 +531,9 @@ try {
   const genuineCrouchHiders = planning.flatMap(item => item.appropriateness).filter(item => item.actualKind === 'crouch-hide' && item.genuineHideViews > 0).length;
   const coverChangingPeeks = new Set(planning.flatMap(item => item.appropriateness).filter(item => item.actualKind === 'periodic-peek' && item.peekVisibilityChanges > 0).map(item => item.key));
   for (const run of runs) for (const bot of run.bots) if (bot.kind === 'periodic-peek' && bot.peekBodyChanges) coverChangingPeeks.add(bot.key);
-  if (selectedRoutes.length === routeCount) for (const [kind, count] of Object.entries(kinds)) {
-    if (!count) fail('missing-actual-behavior', {}, {kind, counts: kinds});
+  if (selectedRoutes.length === routeCount) for (const kind of new Set(selectedRoutes.flatMap(route=>route.angles)
+    .map(angle=>prefireBotCatalog[prefireBotKey(angle)]?.kind).filter(Boolean))) {
+    if (!kinds[kind]) fail('missing-actual-behavior', {}, {kind, counts: kinds});
   }
   const report = {version: 1,mapId:definition.id,packageKey:mapPackageKey(definition),catalogSha256:await catalogSha256(catalog), build: manifest.build, collisionSha256: binarySha256, sourceSha256, seeds, requestedSeconds: seconds,
     completeDuration: !planningOnly && seconds === 180, fullCoverage: !planningOnly && selectedRoutes.length === routeCount,

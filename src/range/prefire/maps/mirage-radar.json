@@ -1,0 +1,24 @@
+{
+  "version": 1,
+  "map": "mirage",
+  "build": "2000942",
+  "archiveDirectorySha256": "10d5831cbf008808419a438141362c466f14550a8a4cf04ace56a7828ccf2b27",
+  "viewerSha256": "ef9f6fb3943c30b73f0991bce6654128727b0807968f7997a6bb014efbec8830",
+  "description": "resource/overviews/de_mirage.txt",
+  "descriptionSha256": "f201fd608d6ea0bd091920620a4f74e97197d26caf36f133875b58d5ba1d77fe",
+  "texture": "panorama/images/overheadmaps/de_mirage_radar_psd.vtex_c",
+  "textureSha256": "00171ef3ee89d12038db8341c05c3adcba1d78e9d86371b7586bca921547d6a4",
+  "metadata": {
+    "pos_x": -3230,
+    "pos_y": 1713,
+    "scale": 5
+  },
+  "delivery": {
+    "url": "/maps/mirage/duel/objects/f8432e460dbc1da5b8abe0fd9b5d603e200ee3011e4c635e4a4f8988cc3a9070.bin",
+    "bytes": 81792,
+    "sha256": "f8432e460dbc1da5b8abe0fd9b5d603e200ee3011e4c635e4a4f8988cc3a9070",
+    "decodedBytes": 81792,
+    "decodedSha256": "f8432e460dbc1da5b8abe0fd9b5d603e200ee3011e4c635e4a4f8988cc3a9070",
+    "encoding": "identity"
+  }
+}

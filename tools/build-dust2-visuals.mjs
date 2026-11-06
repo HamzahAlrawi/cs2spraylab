@@ -22,12 +22,12 @@ export function pruneDust2Assets(out, manifest) {
   }
 }
 
-export async function buildDust2Visuals(rawMap, out, visibility) {
+export async function buildDust2Visuals(rawMap, out, visibility,mapName='Dust 2') {
   await MeshoptEncoder.ready; await MeshoptSimplifier.ready;
   const io = new NodeIO().registerExtensions(ALL_EXTENSIONS).registerDependencies({'meshopt.encoder': MeshoptEncoder});
   const original = await io.read(rawMap), output = new Document();
   output.setLogger(new Logger(Logger.Verbosity.ERROR));
-  const buffer = output.createBuffer(), scene = output.createScene('Dust 2 native surfaces');
+  const buffer = output.createBuffer(), scene = output.createScene(`${mapName} native surfaces`);
   const sourceMaterials = original.getRoot().listMaterials();
   const copied = copyToDocument(output, original, sourceMaterials);
   output.createExtension(EXTTextureWebP).setRequired(true);
@@ -49,7 +49,7 @@ export async function buildDust2Visuals(rawMap, out, visibility) {
     const overlay = vmat.IntParams?.F_OVERLAY === 1 || /overlay/.test(vmat.ShaderName ?? '');
     // Exported static overlays sometimes lack their native blend declaration.
     if (overlay && material.getAlphaMode() === 'OPAQUE') material.setAlphaMode('BLEND');
-    material.setExtras({nativeDust2: true, nativeMaterial: vmat.Name ?? source.getName(), nativeOverlay: overlay});
+    material.setExtras({nativeMap:mapName,...(/Dust ?2/.test(mapName)?{nativeDust2:true}:{}),nativeMaterial: vmat.Name ?? source.getName(), nativeOverlay: overlay});
     material.setBaseColorFactor([1, 1, 1, 1]);
   }
   // Native prop instances often differ only by tint. Bake that exact linear
@@ -134,7 +134,7 @@ export async function buildDust2Visuals(rawMap, out, visibility) {
   // embedded hundreds of times. Every geometry buffer stays below Pages' limit.
   const selectedSectors = [...sectors.values()];
   for (let start = 0; start < selectedSectors.length; start += 10) {
-    const part = new Document(), partScene = part.createScene('Dust 2 sector');
+    const part = new Document(), partScene = part.createScene(`${mapName} sector`);
     part.setLogger(new Logger(Logger.Verbosity.ERROR));
     const selected = selectedSectors.slice(start, start + 10).flat(), mapping = copyToDocument(part, output, selected);
     for (const node of selected) partScene.addChild(mapping.get(node));

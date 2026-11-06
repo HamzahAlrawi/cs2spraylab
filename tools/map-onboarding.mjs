@@ -7,7 +7,7 @@ import {digest,sourceDigest,jsonDigest,inside,writeNew,dependencies,validateDepe
 
 const root=path.resolve(path.dirname(fileURLToPath(import.meta.url)),'..');
 const command=process.argv[2]??'status',arg=name=>process.argv.find(a=>a.startsWith(`--${name}=`))?.slice(name.length+3);
-if(!['status','init','cases','native','check','source'].includes(command))throw Error('Use maps:status, maps:init, maps:cases, maps:native, maps:check or maps:source.');
+if(!['status','init','cases','native','check','source','beta'].includes(command))throw Error('Use maps:status, maps:init, maps:cases, maps:native, maps:check, maps:beta or maps:source.');
 const vite=await createServer({root,cacheDir:'node_modules/.vite-onboarding',server:{middlewareMode:true,hmr:false,ws:false},appType:'custom',logLevel:'error'});
 let collision;
 try{
@@ -19,6 +19,14 @@ try{
     if(!errors.length)return;
     if(arg('diagnostics'))writeNew(root,arg('diagnostics'),{passed:false,errors});
     throw Error(`${errors.length} map acceptance error(s):\n${errors.slice(0,20).join('\n')}${errors.length>20?'\nMore errors omitted; use --diagnostics=<new-file.json> for the complete list.':''}`);
+  };
+  const verifyBeta=(map,catalog,report)=>{
+    const errors=[];
+    if(report.mapId!==map.id||report.revision!==map.revision||report.packageKey!==api.mapPackageKey(map)||report.catalogSha256!==jsonDigest(catalog)||
+      report.complete!==true||!Array.isArray(report.findings)||report.findings.length)errors.push('Stale, incomplete or failed beta native audit.');
+    errors.push(...api.validateMapCatalogScope(map,catalog),...validateDependencies(report.dependencies,snapshot()));
+    errors.push(...api.validateMapCaseResults(api.requiredBetaCases(map,catalog),(report.results??[]).map(r=>({...r,artifactSha256:jsonDigest(report)}))));
+    return errors;
   };
   const verify=(map,catalog,archive)=>{
     const errors=[...api.validateMapReviewPlan(map,catalog,archive.plan),...api.validateMapCatalogScope(map,catalog)],current=snapshot();
@@ -37,6 +45,16 @@ try{
       if(candidate.state==='draft')continue; // Authoring-only; never selectable.
       errors.push(...candidate.errors.map(e=>`${candidate.id}: ${e}`));
       if(candidate.state==='provisional'){console.log(`${candidate.id}: provisional legacy map, not a fidelity certificate.`);continue;}
+      if(candidate.state==='beta'){
+        try{
+          const receipt=map.onboarding.beta,catalog=await nativeMaps.loadCatalogForAuthoring(map.id),bytes=fs.readFileSync(inside(root,receipt.evidenceFile)),report=JSON.parse(bytes);
+          errors.push(...api.validateMapBeta(map,receipt,catalog),...verifyBeta(map,catalog,report));
+          if(sourceDigest(bytes)!==receipt.evidenceSha256||report.inputs.collisionSha256!==receipt.nativeCollisionSha256||report.inputs.gameBuild!==receipt.nativeBuild)
+            errors.push(`${map.id}: beta proof/native source mismatch.`);
+          console.log(`${map.id}: user-authorized beta, basic geometry verified; full acceptance remains incomplete.`);
+        }catch(e){errors.push(`${map.id}: ${e.message}`);}
+        continue;
+      }
       try{
         const receipt=map.onboarding.acceptance,catalog=await nativeMaps.loadCatalogForAuthoring(map.id),
           bytes=fs.readFileSync(inside(root,receipt.evidenceFile)),archive=JSON.parse(bytes),result=verify(map,catalog,archive);
@@ -86,6 +104,18 @@ try{
         writeNew(root,arg('out'),report);
         console.log(JSON.stringify({complete:result.complete,cases:result.results.length,findings:report.findings},null,2));
         if(report.findings.length)process.exitCode=1;
+      }else if(command==='beta'){
+        if(!arg('report')||!arg('limitations')||!/^docs\/map-beta\/[a-z0-9_\/-]+\.json$/.test(arg('out')??''))throw Error('Use --report=<native.json> --limitations=<json-array.json> --out=docs/map-beta/<map>/<revision>.json');
+        const report=read(arg('report'));requireClean(verifyBeta(map,catalog,report));
+        const unresolved=read(arg('limitations')),serialized=JSON.stringify(report,null,2)+'\n';
+        const receipt={schemaVersion:1,mapId:map.id,revision:map.revision,packageKey:api.mapPackageKey(map),catalogSha256:jsonDigest(catalog),
+          evidenceFile:arg('out'),evidenceSha256:sourceDigest(serialized),nativeCollisionSha256:report.inputs.collisionSha256,nativeBuild:report.inputs.gameBuild,
+          caseCount:report.results.length,unresolved};
+        requireClean(api.validateMapBeta(map,receipt,catalog));
+        const receiptFile=arg('out').replace(/\.json$/,'.receipt.json');
+        if(fs.existsSync(inside(root,arg('out')))||fs.existsSync(inside(root,receiptFile)))throw Error('Refusing to overwrite beta proof.');
+        writeNew(root,arg('out'),report);writeNew(root,receiptFile,receipt);
+        console.log(`Basic geometry proof saved. This is a beta receipt, not full map approval: ${receiptFile}`);
       }else{
         if(!arg('reports')||!/^docs\/map-acceptance\/[a-z0-9_\/-]+\.json$/.test(arg('out')??''))throw Error('Use --reports=a.json,b.json --out=docs/map-acceptance/<map>/<revision>.json');
         const reports=arg('reports').split(',').map(file=>{const body=fs.readFileSync(inside(root,file),'utf8');return {sha256:digest(body),body};});

@@ -13,10 +13,10 @@ export const prefireMaps = createPrefireMapRegistry<PrefireMap>(nativeMaps.list(
   async load() {
     const [catalog, manifest, quality] = await Promise.all([
       nativeMaps.loadCatalog(map.id), read<{build: string; collisionSha256: string}>(`${map.base}collision.json`),
-      read<PrefireMapQuality>(`${map.base}quality.json`),
+      map.onboarding?.state==='beta'?Promise.resolve(undefined):read<PrefireMapQuality>(`${map.base}quality.json`),
     ]);
     return {catalog, build: {mapId: catalog.id, catalogRevision: catalog.revision,
-      gameBuild: manifest.build, geometrySha256: manifest.collisionSha256}, quality,
+      gameBuild: manifest.build, geometrySha256: manifest.collisionSha256}, quality,beta:map.onboarding?.state==='beta'?map.onboarding.beta:undefined,
       loadRuntime: async signal => (await import('./map')).loadNativeMap(signal,{base:map.base,sharedTextureBase:map.sharedTextureBase})};
   },
 })));

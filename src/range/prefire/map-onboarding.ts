@@ -29,6 +29,8 @@ export type MapCaseResult=MapAcceptanceCase & {status:'passed'|'failed'|'pending
 export type MapAcceptanceReceipt={schemaVersion:1;mapId:string;revision:string;packageKey:string;catalogSha256:string;
   planSha256:string;evidenceSha256:string;evidenceFile:string;areaIds:string[];caseCount:number;gateCounts:Record<MapAcceptanceGate,number>;
   reviewers:string[];sourceSha256:Record<string,string>};
+export type MapBetaReceipt={schemaVersion:1;mapId:string;revision:string;packageKey:string;catalogSha256:string;
+  evidenceFile:string;evidenceSha256:string;nativeCollisionSha256:string;nativeBuild:string;caseCount:number;unresolved:string[]};
 const sha=(x:unknown):x is string=>typeof x==='string'&&/^[a-f0-9]{64}$/.test(x);
 const text=(x:unknown):x is string=>typeof x==='string'&&x.trim().length>0;
 const unique=(xs:readonly string[])=>new Set(xs).size===xs.length;
@@ -50,6 +52,20 @@ function packagePinErrors(map:NativeMapDefinition):string[]{
       errors.push(`Missing/mismatched chunk package pins: ${chunk.id}.`);
   }
   return errors;
+}
+export const requiredBetaCases=(map:NativeMapDefinition,catalog?:PrefireCatalog)=>requiredMapCases(map,catalog,[])
+  .filter(c=>['route-motor','entry-protection','hold-placement'].includes(c.gate));
+/** Explicit user-authorized beta: basic native checks, never a full acceptance certificate. */
+export function validateMapBeta(map:NativeMapDefinition,receipt:MapBetaReceipt|undefined,catalog?:PrefireCatalog):string[]{
+  try{
+    if(!receipt||receipt.schemaVersion!==1||receipt.mapId!==map.id||receipt.revision!==map.revision||receipt.packageKey!==mapPackageKey(map)||
+      !/\bbeta\b/i.test(map.name)||![receipt.catalogSha256,receipt.evidenceSha256,receipt.nativeCollisionSha256].every(sha)||!text(receipt.nativeBuild)||
+      !/^docs\/map-beta\/[a-z0-9_\/-]+\.json$/.test(receipt.evidenceFile)||receipt.evidenceFile.includes('..')||
+      !receipt.unresolved.length||receipt.unresolved.some(g=>!text(g))||!Number.isSafeInteger(receipt.caseCount)||
+      receipt.caseCount<requiredBetaCases(map,catalog).length||catalog&&receipt.caseCount!==requiredBetaCases(map,catalog).length)
+      return ['Missing, malformed or stale beta geometry receipt/limitations.'];
+    return packagePinErrors(map);
+  }catch{return ['Malformed map beta receipt.'];}
 }
 
 /** Bounded identity key; evidence bodies and code dependencies are separately SHA-256 pinned. */

@@ -29,9 +29,10 @@ const render = (patch: Partial<PrefireSetupProps> = {}) => renderToStaticMarkup(
 
 describe('Prefire setup hierarchy', () => {
   it('only offers a map selector when multiple map descriptors are registered', () => {
-    expect(render()).not.toContain('aria-label="Prefire map"');
     const first = nativeMaps.list()[0];
-    vi.spyOn(nativeMaps, 'list').mockReturnValue([first, {...first, id: 'synthetic', name: 'Synthetic Map'}]);
+    const listing=vi.spyOn(nativeMaps,'list').mockReturnValue([first]);
+    expect(render()).not.toContain('aria-label="Prefire map"');
+    listing.mockReturnValue([first, {...first, id: 'synthetic', name: 'Synthetic Map'}]);
     const html = render({config: {...props.config, mapId: 'synthetic'}, catalog: {...catalog, id: 'synthetic', name: 'Synthetic Map'}});
     expect(html).toContain('aria-label="Prefire map"');
     expect(html).toContain('value="synthetic" selected=""');

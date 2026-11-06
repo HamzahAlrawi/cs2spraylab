@@ -1,7 +1,7 @@
 import type {DeliveredAsset} from './asset-delivery';
 import type {PrefireCatalog} from './schema';
 import type {SourceRadarMetadata} from '../duel/radar-overview';
-import {catalogSha256,validateMapAcceptance,validateMapCatalogScope,type MapAcceptanceReceipt} from './map-onboarding';
+import {catalogSha256,validateMapAcceptance,validateMapCatalogScope,validateMapBeta,type MapAcceptanceReceipt,type MapBetaReceipt} from './map-onboarding';
 
 export type NativeMapChunk = {id: string; name: string; routeId: string; sourceMin: readonly number[];
   sourceMax: readonly number[]; contextPaddingUnits: number; mapId: string};
@@ -23,13 +23,13 @@ export type NativeMapDefinition = {
   release: NativeMapRelease; radar?: NativeRadarManifest;
   sharedTextureBase?: string;
   fullDelivery?: DeliveredAsset;
-  onboarding?:{state:'draft'|'provisional'|'approved';note:string;acceptance?:MapAcceptanceReceipt};
+  onboarding?:{state:'draft'|'provisional'|'approved'|'beta';note:string;acceptance?:MapAcceptanceReceipt;beta?:MapBetaReceipt};
   loadCatalog(): Promise<PrefireCatalog>;
 };
 
 /** Descriptors are small; geometry and full route/evidence catalogs stay lazy. */
 export function createNativeMapRegistry(definitions: readonly NativeMapDefinition[] = [],
-  policy:{requireApproval?:boolean;provisionalIds?:readonly string[]}={}) {
+  policy:{requireApproval?:boolean;provisionalIds?:readonly string[];betaIds?:readonly string[]}={}) {
   const maps = new Map<string, NativeMapDefinition>(), pending = new Map<string, Promise<PrefireCatalog>>();
   const decisions=new WeakMap<NativeMapDefinition,string[]>(),approvedCatalogs=new WeakSet<PrefireCatalog>();
   const forAuthoring = (id: string) => {
@@ -42,7 +42,7 @@ export function createNativeMapRegistry(definitions: readonly NativeMapDefinitio
     let errors=decisions.get(map);if(errors)return errors;
     const review=map.onboarding;
     errors=review?.state==='provisional'&&typeof review.note==='string'&&review.note.trim()&&policy.provisionalIds?.includes(map.id)?[]:
-      review?.state==='approved'?validateMapAcceptance(map,review.acceptance):['Map is a draft or has no approved acceptance receipt.'];
+      review?.state==='approved'?validateMapAcceptance(map,review.acceptance):review?.state==='beta'&&policy.betaIds?.includes(map.id)?validateMapBeta(map,review.beta):['Map is a draft or has no approved acceptance receipt.'];
     decisions.set(map,errors);return errors;
   };
   const get=(id:string)=>{const map=forAuthoring(id),errors=admissionErrors(map);
@@ -86,9 +86,10 @@ export function createNativeMapRegistry(definitions: readonly NativeMapDefinitio
     has: (id: unknown): id is string => typeof id === 'string' && maps.has(id)&&!admissionErrors(maps.get(id)!).length,
     async loadCatalog(id:string){
       const map=get(id),catalog=await loadCatalogForAuthoring(id);
-      if(policy.requireApproval&&map.onboarding?.state==='approved'&&!approvedCatalogs.has(catalog)){
-        const errors=validateMapAcceptance(map,map.onboarding.acceptance,catalog);
-        if(await catalogSha256(catalog)!==map.onboarding.acceptance?.catalogSha256)errors.push('Catalog/source/weighting snapshot changed after acceptance.');
+      if(policy.requireApproval&&['approved','beta'].includes(map.onboarding?.state??'')&&!approvedCatalogs.has(catalog)){
+        const review=map.onboarding!,beta=review.state==='beta';
+        const errors=beta?validateMapBeta(map,review.beta,catalog):validateMapAcceptance(map,review.acceptance,catalog);
+        if(await catalogSha256(catalog)!==(beta?review.beta:review.acceptance)?.catalogSha256)errors.push('Catalog/source/weighting snapshot changed after acceptance.');
         errors.push(...validateMapCatalogScope(map,catalog));
         if(errors.length)throw Error(`Native map not admitted: ${id}: ${errors.join(' ')}`);
         approvedCatalogs.add(catalog);

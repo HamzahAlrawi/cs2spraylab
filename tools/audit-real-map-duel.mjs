@@ -1,23 +1,25 @@
 import fs from 'node:fs';
 import {createServer} from 'vite';
-const vite=await createServer({server:{middlewareMode:true,hmr:false,ws:false},appType:'custom',logLevel:'error'});
+import {nativeMapFiles} from './native-map-identity.mjs';
+const vite=await createServer({mode:'test',cacheDir:'node_modules/.vite-real-duel-audit',server:{middlewareMode:true,hmr:false,ws:false},appType:'custom',logLevel:'error'});
 try {
   const {NativeMapCollision}=await vite.ssrLoadModule('/src/range/prefire/native-collision.ts');
   const {createRealMapArena,realMapChunks}=await vite.ssrLoadModule('/src/range/duel/real-map.ts');
   const {sanitizeDuelConfig}=await vite.ssrLoadModule('/src/range/duel/config.ts');
   const {nativeMaps,defaultNativeMapId}=await vite.ssrLoadModule('/src/range/prefire/maps/index.ts');
-  const sourceCatalog=await nativeMaps.loadCatalog(defaultNativeMapId);
-  const roundData=JSON.parse(fs.readFileSync('src/range/duel/real-map-round-data.json','utf8'));
+  const mapId=process.argv[2]??defaultNativeMapId,definition=nativeMaps.forAuthoring(mapId),files=nativeMapFiles(definition.assetId);
+  const sourceCatalog=await nativeMaps.loadCatalogForAuthoring(mapId);
+  const roundData=JSON.parse(fs.readFileSync(files.rounds,'utf8'));
   const {exportNativeNavigation,installNativeNavigation,nativeClearSegment,nativeRouteTo}=await vite.ssrLoadModule('/src/range/duel/native-navigation.ts');
   const {DuelSimulation}=await vite.ssrLoadModule('/src/range/duel/simulation.ts');
   const {Group}=await import('three');
   const reports=[];
-  for(const chunk of realMapChunks.filter(chunk=>!process.env.CHUNKS || process.env.CHUNKS.split(',').includes(chunk.id))) {
-    const base=`public/revamp/maps/dust2/duel/${chunk.id}/`,bytes=fs.readFileSync(base+'collision.bin');
+  for(const chunk of definition.chunks.filter(chunk=>!process.env.CHUNKS || process.env.CHUNKS.split(',').includes(chunk.id))) {
+    const base=`${files.out}/duel/${chunk.id}/`,bytes=fs.readFileSync(base+'collision.bin');
     const collision=await NativeMapCollision.create(JSON.parse(fs.readFileSync(base+'collision.json')),
       bytes.buffer.slice(bytes.byteOffset,bytes.byteOffset+bytes.byteLength));
     try {
-      const config=sanitizeDuelConfig({botCount:5,skill:8,health:500,playerHealth:500});
+      const config=sanitizeDuelConfig({mapId,botCount:5,skill:8,health:500,playerHealth:500});
       const bounds={minX:chunk.sourceMin[0]*.0254,maxX:chunk.sourceMax[0]*.0254,minZ:-chunk.sourceMax[1]*.0254,maxZ:-chunk.sourceMin[1]*.0254};
       if(fs.existsSync(base+'navigation.json'))installNativeNavigation({...bounds,native:collision},JSON.parse(fs.readFileSync(base+'navigation.json')));
       const arena=createRealMapArena({collision,scene:new Group()},chunk,config,1,roundData.chunks[chunk.id],sourceCatalog),data=exportNativeNavigation(arena);
@@ -46,4 +48,3 @@ try {
   }
   process.stdout.write(JSON.stringify(reports,null,2)+'\n');
 }finally{await vite.close();}
-import roundData from '../src/range/duel/real-map-round-data.json' with {type:'json'};

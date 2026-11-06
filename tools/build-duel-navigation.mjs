@@ -5,12 +5,13 @@ import {fileURLToPath} from 'node:url';
 import {createServer} from 'vite';
 import {Group} from 'three';
 import {PAGES_LIMIT, sha256} from './build-duel-map-chunks.mjs';
+import {nativeMapFiles} from './native-map-identity.mjs';
 
 const defaultRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const sourceFiles = ['src/range/duel/real-map-catalog.json', 'src/range/duel/real-map.ts',
   'src/range/duel/real-map-rounds.ts', 'src/range/duel/real-map-round-data.json',
   'src/range/duel/native-navigation.ts', 'src/range/actor-collision.ts', 'src/range/actor-physics.ts'];
-const sourceHashes = root => Object.fromEntries(sourceFiles.map(file => [file, sha256(fs.readFileSync(path.join(root, file)))]));
+const sourceHashes = (root,files=sourceFiles) => Object.fromEntries(files.map(file => [file, sha256(fs.readFileSync(path.join(root, file)))]));
 const binaryView = bytes => bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.byteLength);
 
 export function validateNavigation(data, arena) {
@@ -53,23 +54,24 @@ export function metadataBytes(directory, original, navigationBytes, navigationSt
   return Buffer.from(JSON.stringify(metadata));
 }
 
-export async function buildDuelNavigation({root = defaultRoot, ids} = {}) {
-  const catalog = JSON.parse(fs.readFileSync(path.join(root, sourceFiles[0]))), builderHashes = sourceHashes(root);
-  const rounds=JSON.parse(fs.readFileSync(path.join(root,'src/range/duel/real-map-round-data.json')));
-  if (catalog.version !== 1 || catalog.map !== 'dust2') throw new Error('Unsupported real-map catalog');
+export async function buildDuelNavigation({root = defaultRoot, ids,assetId='dust2'} = {}) {
+  const files=nativeMapFiles(assetId),inputs=[files.catalog,...sourceFiles.slice(1).filter(f=>f!=='src/range/duel/real-map-round-data.json'),files.rounds];
+  const catalog = JSON.parse(fs.readFileSync(path.join(root, files.catalog))), builderHashes = sourceHashes(root,inputs);
+  const rounds=JSON.parse(fs.readFileSync(path.join(root,files.rounds)));
+  if (catalog.version !== 1 || catalog.map !== assetId) throw new Error('Unsupported real-map catalog');
   const chunks = catalog.chunks.filter(chunk => !ids || ids.includes(chunk.id));
   if (!chunks.length || (ids && chunks.length !== ids.length)) throw new Error('Unknown or duplicate chunk ID');
-  const outputRoot = path.resolve(root, 'public/revamp/maps/dust2/duel');
-  const vite = await createServer({root, server: {middlewareMode: true, hmr: false, ws: false}, appType: 'custom', logLevel: 'error'});
+  const outputRoot = path.resolve(root, files.out,'duel');
+  const vite = await createServer({root,mode:'test',cacheDir:'node_modules/.vite-nav-bake',server: {middlewareMode: true, hmr: false, ws: false}, appType: 'custom', logLevel: 'error'});
   let collision;
   try {
     const {NativeMapCollision} = await vite.ssrLoadModule('/src/range/prefire/native-collision.ts');
     const {createRealMapArena, chunkBounds} = await vite.ssrLoadModule('/src/range/duel/real-map.ts');
     const {sanitizeDuelConfig} = await vite.ssrLoadModule('/src/range/duel/config.ts');
     const {nativeMaps,defaultNativeMapId} = await vite.ssrLoadModule('/src/range/prefire/maps/index.ts');
-    const sourceCatalog = await nativeMaps.loadCatalog(defaultNativeMapId);
+    const sourceCatalog = await nativeMaps.loadCatalog(files.mapId);
     const {exportNativeNavigation, installNativeNavigation} = await vite.ssrLoadModule('/src/range/duel/native-navigation.ts');
-    const config = sanitizeDuelConfig({botCount: 5}), pending = [];
+    const config = sanitizeDuelConfig({botCount: 5,mapId:files.mapId}), pending = [];
     for (const chunk of chunks) {
       if (!/^[a-z0-9-]+$/.test(chunk.id)) throw new Error('Invalid catalog chunk ID');
       const directory = path.resolve(outputRoot, chunk.id);
@@ -86,7 +88,7 @@ export async function buildDuelNavigation({root = defaultRoot, ids} = {}) {
       const started = performance.now();
       collision = await NativeMapCollision.create(manifest, binaryView(binary));
       const mapStub = () => ({scene: new Group(), collision, settle() {throw new Error('Navigation bake unexpectedly requested map.settle');}, dispose() {}});
-      const selectedChunk = {...chunk,mapId:defaultNativeMapId};
+      const selectedChunk = {...chunk,mapId:files.mapId};
       const arena = createRealMapArena(mapStub(), selectedChunk, config, 1,rounds.chunks[chunk.id],sourceCatalog), data = exportNativeNavigation(arena);
       const stats = validateNavigation(data, arena), bytes = Buffer.from(JSON.stringify(data));
       if (bytes.length > PAGES_LIMIT) throw new Error('Navigation exceeds Pages file limit');
@@ -111,7 +113,7 @@ export async function buildDuelNavigation({root = defaultRoot, ids} = {}) {
       pending.push({chunk, directory, originalMetadataBytes, original, bytes, stats});
       console.log(`${chunk.id}: ${stats.nodes} nodes, ${stats.directedLinks} directed links, max ${stats.maxLinks} links/node, ${bytes.length} bytes; fresh-install/no-rebuild roundtrip passed (${((performance.now() - started) / 1000).toFixed(1)}s)`);
     }
-    assert.deepEqual(sourceHashes(root), builderHashes, 'Navigation inputs changed during export; rerun after edits finish');
+    assert.deepEqual(sourceHashes(root,inputs), builderHashes, 'Navigation inputs changed during export; rerun after edits finish');
     for (const result of pending) {
       assert.deepEqual(fs.readFileSync(path.join(result.directory, 'chunk.json')), result.originalMetadataBytes, 'Chunk metadata changed during navigation bake');
       assert.equal(sha256(fs.readFileSync(path.join(result.directory, 'collision.json'))), result.original.collisionManifestSha256);

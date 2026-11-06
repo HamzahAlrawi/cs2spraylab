@@ -610,7 +610,7 @@ const november6SoundVariety = {
   ],
 } as const satisfies ChangelogRelease;
 
-export const latestChanges = {
+const november6MapAdmission = {
   id:'update-2026-11-06-map-admission',title:'Stricter map acceptance (November 6)',baselineCommit:'79d8840',
   sections:[{id:'map-acceptance-pipeline',title:'A repeatable map acceptance process',items:[
     'New maps remain drafts until independently reviewed angle coverage, geometry, bot scenarios, browser aim/radar and loading evidence pass admission checks.',
@@ -619,7 +619,17 @@ export const latestChanges = {
   ]}],
 } as const satisfies ChangelogRelease;
 
+export const latestChanges = {
+  id:'update-2026-11-06-mirage-beta',title:'Mirage beta (November 6)',baselineCommit:'85d38d7',
+  sections:[{id:'mirage-native-beta',title:'Mirage training beta',items:[
+    'Mirage is available in Prefire, native-map AI Duel and whole-map Sound Awareness, with six approaches, three native Duel chunks and the installed radar.',
+    'Sourced enemy coordinates stay unchanged; unsupported positions are excluded. Walking paths, covered starts, head-shot lanes and chunk navigation are checked against extracted native collision.',
+    'The beta has explicit remaining validation gaps and authored coverage weights, not measured encounter rates. Local game assets remain excluded from Git; full map acceptance is still pending.',
+  ]}],
+} as const satisfies ChangelogRelease;
+
 export const changelogHistory = [
+  november6MapAdmission,
   november6SoundVariety,
   november6SoundDensity,
   november5FullMapAwareness,

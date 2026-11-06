@@ -10,6 +10,7 @@ import {MeshoptDecoder, MeshoptEncoder} from 'meshoptimizer';
 import {Matrix3, Matrix4, Vector3} from 'three';
 import sharp from 'sharp';
 import {appendVisualSubset, createMapIO, newVisualPart, PAGES_LIMIT, sha256, sourceBounds} from './build-duel-map-chunks.mjs';
+import {nativeMapFiles} from './native-map-identity.mjs';
 
 const rootDefault = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const textureBase = '/maps/dust2/duel/shared/';
@@ -261,7 +262,7 @@ export function normalizeRepeatedUVs(document, policy = visualPolicy) {
   return {normalizedChannels, skippedRotated, skippedLarge};
 }
 
-export async function optimizeDocument(document, policy = visualPolicy) {
+export async function optimizeDocument(document, policy = visualPolicy,sharedTextureBase=textureBase) {
   await MeshoptEncoder.ready; await MeshoptDecoder.ready;
   await document.transform(dedup({propertyTypes: ['Texture']}));
   const before = await inspectVisuals(document), textureChanges = await boundTextures(document, policy);
@@ -286,7 +287,7 @@ export async function optimizeDocument(document, policy = visualPolicy) {
   }
   if (gltf.length > 16 * 1024 * 1024) throw new Error('Optimized glTF exceeds loader JSON budget');
   const visual = {version: 2, files: ['visual-0.gltf'], fileHashes: {'visual-0.gltf': sha256(gltf)},
-    bytes: [...files.values()].reduce((sum, bytes) => sum + bytes.length, 0), textureBase,
+    bytes: [...files.values()].reduce((sum, bytes) => sum + bytes.length, 0), textureBase:sharedTextureBase,
     resources: [...files].filter(([name]) => name !== 'visual-0.gltf').map(([name, bytes]) => ({name, bytes: bytes.length, sha256: sha256(bytes)}))};
   const pack = buildTexturePack(visual, name => files.get(name));
   visual.texturePack = pack.manifest; files.set(pack.manifest.name, pack.binary);
@@ -318,7 +319,7 @@ export function optimizedMetadata(original, files, protectedAssets, stats, input
   metadata.visual = {...metadata.visual, triangles: stats.after.triangles, batches: stats.after.primitives, files: stats.visual.files.length,
     bytes: stats.visual.bytes, textures: stats.after.textures};
   metadata.visualOptimization = {version: 1, policy, toolSha256: toolHash, inputVisualSha256,
-    before: stats.before, after: {...stats.after, bytes: stats.visual.bytes}, sharedTextureBase: textureBase};
+    before: stats.before, after: {...stats.after, bytes: stats.visual.bytes}, sharedTextureBase: stats.visual.textureBase};
   if (stats.visual.texturePack) metadata.visualOptimization.packToolSha256 = toolHash;
   const assetBytes = [...files.values(), ...protectedAssets.values()].reduce((sum, bytes) => sum + bytes.length, 0);
   metadata.outputBytes = assetBytes;
@@ -349,8 +350,8 @@ async function readChunk(directory, io) {
   return {document: combined, visual, visualBytes};
 }
 
-export async function reconstructSourceChunk(root, chunk, metadata, io) {
-  const directory = path.join(root, 'public/revamp/maps/dust2'), manifestBytes = fs.readFileSync(path.join(directory, 'visual.json')), manifest = JSON.parse(manifestBytes);
+export async function reconstructSourceChunk(root, chunk, metadata, io,assetId='dust2') {
+  const directory = path.join(root, nativeMapFiles(assetId).out), manifestBytes = fs.readFileSync(path.join(directory, 'visual.json')), manifest = JSON.parse(manifestBytes);
   assert.equal(sha256(manifestBytes), metadata.sourceVisualManifestSha256, 'Native render source identity changed');
   const part = newVisualPart('Reconstructed original native chunk'), bounds = sourceBounds(chunk.sourceMin, chunk.sourceMax, chunk.contextPaddingUnits);
   for (const resource of manifest.resources) {
@@ -375,17 +376,17 @@ function validateProtected(directory, metadata, assets) {
   assert.equal(sha256(assets.get('navigation.json')), metadata.navigationSha256);
 }
 
-export async function optimizeDuelVisuals({root = rootDefault, ids, apply = false, policy = visualPolicy, rebuildVisuals = false} = {}) {
+export async function optimizeDuelVisuals({root = rootDefault, ids, apply = false, policy = visualPolicy, rebuildVisuals = false,assetId='dust2'} = {}) {
   await MeshoptDecoder.ready; await MeshoptEncoder.ready;
-  const catalog = JSON.parse(fs.readFileSync(path.join(root, 'src/range/duel/real-map-catalog.json')));
+  const mapFiles=nativeMapFiles(assetId),catalog = JSON.parse(fs.readFileSync(path.join(root, mapFiles.catalog)));
   const chunks = catalog.chunks.filter(chunk => !ids || ids.includes(chunk.id));
   if (!chunks.length || (ids && chunks.length !== ids.length)) throw new Error('Unknown/duplicate chunk ID');
-  const outputRoot = path.resolve(root, 'public/revamp/maps/dust2/duel'), io = createMapIO(), toolHash = sha256(fs.readFileSync(fileURLToPath(import.meta.url))), summaries = [];
+  const outputRoot = path.resolve(root, mapFiles.out,'duel'), io = createMapIO(), toolHash = sha256(fs.readFileSync(fileURLToPath(import.meta.url))), summaries = [];
   for (const chunk of chunks) {
     if (!/^[a-z0-9-]+$/.test(chunk.id)) throw new Error('Invalid chunk ID');
     const directory = path.resolve(outputRoot, chunk.id), metadataFile = path.join(directory, 'chunk.json'), oldMetadataBytes = fs.readFileSync(metadataFile), metadata = JSON.parse(oldMetadataBytes);
     if (path.dirname(directory) !== outputRoot || metadata.id !== chunk.id) throw new Error('Invalid chunk output root/identity');
-    const retained = [...protectedFiles, ...['radar.json','radar.png'].filter(name=>fs.existsSync(path.join(directory,name)))];
+    const retained = [...protectedFiles, ...['radar.json','radar.png','query-cache.json','visibility.json','visibility.bin'].filter(name=>fs.existsSync(path.join(directory,name)))];
     const protectedAssets = new Map(retained.map(name => [name, fs.readFileSync(path.join(directory, name))]));
     validateProtected(directory, metadata, protectedAssets);
     if (metadata.visualOptimization && !rebuildVisuals) {
@@ -396,9 +397,9 @@ export async function optimizeDuelVisuals({root = rootDefault, ids, apply = fals
       summaries.push({id: chunk.id, skipped: true, reason: 'Already optimized by this exact policy/tool', ...metadata.visualOptimization}); continue;
     }
     console.log(`${chunk.id}: inspecting and optimizing${apply ? ' (authorized apply)' : ' (dry run; no asset writes)'}...`);
-    const source = rebuildVisuals ? await reconstructSourceChunk(root, chunk, metadata, io) : await readChunk(directory, io);
+    const source = rebuildVisuals ? await reconstructSourceChunk(root, chunk, metadata, io,assetId) : await readChunk(directory, io);
     if (source.visualBytes) assert.equal(sha256(source.visualBytes), metadata.visualManifestSha256);
-    const result = await optimizeDocument(source.document, policy); result.before.bytes = source.visual.bytes;
+    const result = await optimizeDocument(source.document, policy,`/maps/${assetId}/duel/shared/`); result.before.bytes = source.visual.bytes;
     const updatedMetadata = optimizedMetadata(metadata, result.files, protectedAssets, result, source.inputVisualSha256 ?? sha256(source.visualBytes), toolHash, policy);
     // Validate the exact serialized asset through a separate glTF decode before
     // it can replace a working chunk, including texture/material associations.

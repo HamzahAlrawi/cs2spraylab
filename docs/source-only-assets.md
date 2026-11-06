@@ -43,6 +43,9 @@ or weakening hash/admission checks to make a build pass.
 
 ## Dust 2 Packages
 
+For Mirage, use `npm run assets:mirage:package`; see [Mirage's package and beta
+admission instructions](mirage.md). All imported media still remains local/ignored.
+
 Start with `node tools/import-dust2.mjs`. Build chunk geometry, rounds, navigation,
 optimized visuals, overview/context data and verified delivery in the order
 documented in [dynamic rounds](dynamic-duel-rounds.md#asset-build-order),

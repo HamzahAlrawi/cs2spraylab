@@ -243,6 +243,21 @@ assets retain byte-exact SHA-256; no binary data is newline-normalized.
 
 ## 8. Changes Invalidate Evidence
 
+### Explicit Beta Authorization
+
+The owner authorized **Mirage (Beta)** to be selectable before full certification.
+This is a distinct `beta` state, not an `approved` receipt or another provisional
+legacy exception. The production registry additionally requires an explicit
+composition-root `betaIds` authorization. Other new maps remain drafts by default.
+Beta admission still requires pinned whole/chunk/radar resources, exact catalog
+identity, all basic native route/start/hold checks, and visible nonempty limitations.
+`maps:beta` verifies actual complete native report bytes and current dependencies;
+`maps:source` repeats those checks at build time. A beta cannot satisfy contextual
+encounter or full map approval by presenting that smaller receipt.
+
+Do not add another beta ID without explicit owner approval. Do not omit gaps to
+make a beta appear fully accepted. [Mirage's scope](mirage.md) records this case.
+
 | Change | Revalidation |
 | --- | --- |
 | Native map/build, masks, extraction, units, art or collision | All geometry/material/utility/trajectory/visual evidence, starts, holds, navigation/acoustics and browser playtests. Compare source resource differences first. |

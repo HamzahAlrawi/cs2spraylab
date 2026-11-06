@@ -3,9 +3,10 @@ import {execFileSync} from 'node:child_process';
 import {parseKv3} from './kv3.mjs';
 import {NativeVisibility} from '../src/range/prefire/native-visibility.mjs';
 
-export function importVisibility(cli, vpk, work, out, refresh) {
+export function importVisibility(cli, vpk, work, out, refresh,mapId='de_dust2') {
+  if(!/^de_[a-z0-9_]+$/.test(mapId))throw Error('Invalid native visibility map ID.');
   const file = `${work}/world_visibility.vvis_c`;
-  if (refresh || !fs.existsSync(file)) execFileSync(cli, ['-i', vpk, '-f', 'maps/de_dust2/world_visibility.vvis_c', '-o', file], {stdio: 'ignore'});
+  if (refresh || !fs.existsSync(file)) execFileSync(cli, ['-i', vpk, '-f', `maps/${mapId}/world_visibility.vvis_c`, '-o', file], {stdio: 'ignore',windowsHide:true});
   const text = execFileSync(cli, ['-i', file, '-b', 'DATA'], {encoding: 'utf8', maxBuffer: 1e6});
   const metadata = parseKv3(text.slice(text.indexOf('<!-- kv3')));
   const resource = fs.readFileSync(file), table = 8 + resource.readUInt32LE(8), count = resource.readUInt32LE(12);
@@ -17,7 +18,7 @@ export function importVisibility(cli, vpk, work, out, refresh) {
       bytes = resource.subarray(offset, offset + resource.readUInt32LE(entry + 8));
     }
   }
-  if (!bytes) throw new Error('Dust 2 has no native VXVS visibility block.');
+  if (!bytes) throw new Error(`${mapId} has no native VXVS visibility block.`);
   const visibility = new NativeVisibility(metadata, bytes);
   fs.writeFileSync(`${out}/visibility.json`, JSON.stringify(metadata));
   fs.writeFileSync(`${out}/visibility.bin`, bytes);

@@ -2,7 +2,7 @@ import fs from 'node:fs';
 import {createServer} from 'vite';
 import {Group} from 'three';
 
-const vite = await createServer({server: {middlewareMode: true, hmr: false, ws: false, watch: null}, appType: 'custom', logLevel: 'error'});
+const vite = await createServer({mode:'test',cacheDir:'node_modules/.vite-round-bake',server: {middlewareMode: true, hmr: false, ws: false, watch: null}, appType: 'custom', logLevel: 'error'});
 try {
   const {NativeMapCollision} = await vite.ssrLoadModule('/src/range/prefire/native-collision.ts');
   const {buildRealMapCourses} = await vite.ssrLoadModule('/src/range/duel/real-map-rounds.ts');

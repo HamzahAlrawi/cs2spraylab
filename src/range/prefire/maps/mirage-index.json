@@ -1,0 +1,67 @@
+{
+  "id": "de_mirage",
+  "revision": "2026-11-06-mirage-beta-v1",
+  "routes": [
+    {
+      "id": "a-ramp",
+      "name": "Ramp to A"
+    },
+    {
+      "id": "a-palace",
+      "name": "Palace balcony"
+    },
+    {
+      "id": "b-apartments",
+      "name": "Apartments to B"
+    },
+    {
+      "id": "mid-short",
+      "name": "Top mid to Short"
+    },
+    {
+      "id": "underpass-connector",
+      "name": "Underpass to Connector"
+    },
+    {
+      "id": "market-b",
+      "name": "Market retake"
+    }
+  ],
+  "aliases": {},
+  "approaches": {
+    "mirage-a": [
+      {
+        "id": "a-ramp",
+        "name": "Ramp to A"
+      },
+      {
+        "id": "a-palace",
+        "name": "Palace balcony"
+      }
+    ],
+    "mirage-mid": [
+      {
+        "id": "b-apartments",
+        "name": "Apartments to B"
+      },
+      {
+        "id": "mid-short",
+        "name": "Top mid to Short"
+      },
+      {
+        "id": "underpass-connector",
+        "name": "Underpass to Connector"
+      }
+    ],
+    "mirage-b": [
+      {
+        "id": "b-apartments",
+        "name": "Apartments to B"
+      },
+      {
+        "id": "market-b",
+        "name": "Market retake"
+      }
+    ]
+  }
+}

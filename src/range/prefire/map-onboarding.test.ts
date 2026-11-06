@@ -1,7 +1,7 @@
 import {describe,expect,it} from 'vitest';
 import {createNativeMapRegistry,type NativeMapDefinition} from './native-map-schema';
 import {catalogSha256,mapPackageKey,requiredMapCases,validateMapAcceptance,validateMapCaseResults,validateMapReviewPlan,validateMapCatalogScope,
-  MAP_ACCEPTANCE_GATES,type MapAcceptanceReceipt,type MapReviewPlan,type MapCaseResult} from './map-onboarding';
+  MAP_ACCEPTANCE_GATES,validateMapBeta,requiredBetaCases,type MapBetaReceipt,type MapAcceptanceReceipt,type MapReviewPlan,type MapCaseResult} from './map-onboarding';
 import type {PrefireCatalog} from './schema';
 
 const hash='a'.repeat(64);
@@ -34,6 +34,20 @@ async function approved(){const f=fixture(),gateCounts=Object.fromEntries(Object
   return {...f,receipt,map:{...f.map,onboarding:{state:'approved' as const,note:'Synthetic',acceptance:receipt}}};}
 
 describe('map onboarding admission (synthetic structural fixtures, not native parity)',()=>{
+  it('requires explicit beta authorization, native proof and visible limitations without full approval',async()=>{
+    const f=fixture(),receipt:MapBetaReceipt={schemaVersion:1,mapId:f.map.id,revision:f.map.revision,packageKey:mapPackageKey(f.map),
+      catalogSha256:await catalogSha256(f.catalog),evidenceFile:'docs/map-beta/fixture/native.json',evidenceSha256:hash,nativeCollisionSha256:hash,
+      nativeBuild:'synthetic',caseCount:requiredBetaCases(f.map,f.catalog).length,unresolved:['Synthetic: reference review pending']};
+    const map={...f.map,name:'Fixture (Beta)',onboarding:{state:'beta' as const,note:'Synthetic beta only',beta:receipt}};
+    expect(validateMapBeta(map,receipt,f.catalog)).toEqual([]);
+    expect(createNativeMapRegistry([map],{requireApproval:true}).has(map.id)).toBe(false);
+    const registry=createNativeMapRegistry([map],{requireApproval:true,betaIds:[map.id]});
+    expect(await registry.loadCatalog(map.id)).toBe(f.catalog);
+    expect(validateMapAcceptance(map,receipt as unknown as MapAcceptanceReceipt,f.catalog).length).toBeGreaterThan(0);
+    for(const bad of [{...receipt,unresolved:[]},{...receipt,caseCount:0},{...receipt,packageKey:'stale'}])
+      expect(validateMapBeta(map,bad,f.catalog).length).toBeGreaterThan(0);
+    expect(validateMapBeta({...map,name:'Unlabeled fixture'},receipt,f.catalog).length).toBeGreaterThan(0);
+  });
   it('keeps drafts available for authoring but out of runtime selection',async()=>{
     const {map,catalog}=fixture(),registry=createNativeMapRegistry([map],{requireApproval:true});
     expect(registry.list()).toEqual([]);expect(registry.has(map.id)).toBe(false);expect(registry.forAuthoring(map.id)).toBe(map);

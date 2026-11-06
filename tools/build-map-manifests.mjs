@@ -3,14 +3,15 @@ import path from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {createHash} from 'node:crypto';
 import {gunzipSync} from 'node:zlib';
+import {nativeMapFiles} from './native-map-identity.mjs';
 
 const hash=bytes=>createHash('sha256').update(bytes).digest('hex');
 const digest=value=>typeof value==='string'&&/^[a-f0-9]{64}$/.test(value);
 const same=(a,b)=>JSON.stringify(a)===JSON.stringify(b);
 
-async function verifyDelivery(root,asset) {
+async function verifyDelivery(root,asset,assetId) {
   if(!asset||!digest(asset.sha256)||!digest(asset.decodedSha256)||
-    asset.url!==`/maps/dust2/duel/objects/${asset.sha256}.bin`||
+    asset.url!==`/maps/${assetId}/duel/objects/${asset.sha256}.bin`||
     !Number.isSafeInteger(asset.bytes)||asset.bytes<=0||asset.bytes>25*1024*1024||
     !Number.isSafeInteger(asset.decodedBytes)||asset.decodedBytes<=0||asset.decodedBytes>64*1024*1024||
     !['gzip','identity'].includes(asset.encoding))throw Error('Invalid pinned delivery reference');
@@ -22,11 +23,11 @@ async function verifyDelivery(root,asset) {
 
 /** Only root metadata is bundled. Resource manifests, textures and round data
  * remain content-addressed assets managed by the existing browser byte cache. */
-export async function buildMapManifests(root=process.cwd(),{check=false}={}) {
-  const catalogBytes=await fs.readFile(path.join(root,'src/range/duel/real-map-catalog.json'));
-  const catalog=JSON.parse(catalogBytes),base=path.join(root,'public/revamp/maps/dust2/duel');
-  if(catalog.version!==1||catalog.map!=='dust2'||!Array.isArray(catalog.chunks)||!catalog.chunks.length||
-    catalog.chunks.some(chunk=>!/^dust2-[a-z0-9-]+$/.test(chunk.id))||
+export async function buildMapManifests(root=process.cwd(),{check=false,assetId='dust2'}={}) {
+  const files=nativeMapFiles(assetId),catalogBytes=await fs.readFile(path.join(root,files.catalog));
+  const catalog=JSON.parse(catalogBytes),base=path.join(root,files.out,'duel');
+  if(catalog.version!==1||catalog.map!==assetId||!Array.isArray(catalog.chunks)||!catalog.chunks.length||
+    catalog.chunks.some(chunk=>!new RegExp(`^${assetId}-[a-z0-9-]+$`).test(chunk.id))||
     new Set(catalog.chunks.map(chunk=>chunk.id)).size!==catalog.chunks.length)throw Error('Unsupported map catalog');
   const chunks={};
   for(const chunk of catalog.chunks) {
@@ -36,17 +37,20 @@ export async function buildMapManifests(root=process.cwd(),{check=false}={}) {
       metadata.contextPaddingUnits!==chunk.contextPaddingUnits||
       ['sourceCollisionSha256','collisionManifestSha256','visualManifestSha256','navigationSha256'].some(key=>!digest(metadata[key])))
       throw Error(`Stale map catalog entry: ${chunk.id}`);
-    await verifyDelivery(root,metadata.delivery);
+    await verifyDelivery(root,metadata.delivery,assetId);
     chunks[chunk.id]=metadata;
   }
-  const context=JSON.parse(await fs.readFile(path.join(base,'context/context.json'),'utf8'));
+  let context;
+  try{context=JSON.parse(await fs.readFile(path.join(base,'context/context.json'),'utf8'));}catch(error){if(error.code!=='ENOENT'||assetId==='dust2')throw error;}
+  if(context){
   if(![1,2].includes(context.version)||context.map!==catalog.map||context.visualOnly!==true||
     !digest(context.sha256)||context.delivery?.decodedSha256!==context.sha256||context.delivery.decodedBytes>5_000_000||
     Object.values(chunks).some(chunk=>chunk.sourceVisualManifestSha256!==context.sourceVisualManifestSha256))
     throw Error('Stale map context metadata');
-  await verifyDelivery(root,context.delivery);
+  await verifyDelivery(root,context.delivery,assetId);
+  }
   const data={version:1,map:catalog.map,chunks,context};
-  const output=path.join(root,'src/range/duel/map-manifests.json'),serialized=JSON.stringify(data)+'\n';
+  const output=path.join(root,files.manifests),serialized=JSON.stringify(data)+'\n';
   if(check) {
     if(await fs.readFile(output,'utf8')!==serialized)throw Error('Bundled map metadata is stale. Run node tools/build-map-manifests.mjs.');
   }else await fs.writeFile(output,serialized);

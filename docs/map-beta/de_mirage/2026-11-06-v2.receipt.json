@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "mapId": "de_mirage",
+  "revision": "2026-11-06-mirage-beta-v1",
+  "packageKey": "setup-v2:5a1794b8c896231f008cfe541fdbbcac",
+  "catalogSha256": "f433de710e5da46cb46350393fdf75c9b773accdd0d6fb2567f53361d0296871",
+  "evidenceFile": "docs/map-beta/de_mirage/2026-11-06-v2.json",
+  "evidenceSha256": "7342af2393db78376826dc8c468771460958ef1d7576463e5827bd93203a9dd9",
+  "nativeCollisionSha256": "6253487f363acf4b1b5bd2e8af0468a8fc29814ec36e564a8643f4645da88352",
+  "nativeBuild": "2000942",
+  "caseCount": 212,
+  "unresolved": [
+    "Beta, not full CS2 parity certification: matched-build visual, movement and utility capture review remains pending.",
+    "Common-angle coverage and individual peek tactics need further review. Current weights are authored physical-family coverage, not measured encounter probabilities.",
+    "Three native Duel chunks and six Prefire approaches are included; Palace dropping, the full CT Palace push and additional retake approaches are not guided routes yet.",
+    "Broad-device frame-time, complete chunk-handoff and long-session memory acceptance are not fully certified."
+  ]
+}

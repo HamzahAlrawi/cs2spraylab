@@ -2,10 +2,11 @@ import fs from 'node:fs/promises';
 import {createHash} from 'node:crypto';
 import assert from 'node:assert/strict';
 import {NativeVisibility} from '../src/range/prefire/native-visibility.mjs';
-const root='public/revamp/maps/dust2';
+import {nativeMapFiles} from './native-map-identity.mjs';
+const files=nativeMapFiles(process.argv[2]??'dust2'),root=files.out;
 const metadata=JSON.parse(await fs.readFile(`${root}/visibility.json`,'utf8')),bytes=await fs.readFile(`${root}/visibility.bin`);
 const source=new NativeVisibility(metadata,bytes),sourceView=new DataView(bytes.buffer,bytes.byteOffset,bytes.byteLength);
-const catalog=JSON.parse(await fs.readFile('src/range/duel/real-map-catalog.json','utf8'));
+const catalog=JSON.parse(await fs.readFile(files.catalog,'utf8'));
 for(const chunk of catalog.chunks) {
   const nodes=[],regions=[],masks=[],maskIds=new Map(),clusters=new Set();
   const writeNode=(id,index,min,max)=>{

@@ -1,9 +1,11 @@
 import {validatePrefireMapQuality} from './map-quality';
 import type {PrefireMapQuality} from './map-quality';
 import type {PrefireBuildIdentity, PrefireCatalog} from './schema';
+import type {MapBetaReceipt} from './map-onboarding';
 
 export type PrefireMapPackage<Runtime = unknown> = {
   catalog: PrefireCatalog; build: PrefireBuildIdentity; quality?: PrefireMapQuality;
+  beta?:MapBetaReceipt;
   // Geometry/material engines remain map-owned and lazily loaded.
   loadRuntime?: (signal?: AbortSignal) => Promise<Runtime>;
 };
@@ -35,7 +37,13 @@ export function createPrefireMapRegistry<Runtime = unknown>(adapters: readonly P
   }
   return {register, load, list: () => [...entries.values()].map(({id, name}) => ({id, name})),
     async activate(id: string, mode: 'coverage' | 'contextual-evidence' = 'coverage') {
-      const pack = await load(id), errors = validatePrefireMapQuality(pack.catalog, pack.build, pack.quality, mode);
+      const pack = await load(id);
+      if(pack.beta&&mode==='coverage'){
+        if(pack.beta.mapId!==id||pack.beta.revision!==pack.catalog.revision||pack.beta.nativeBuild!==pack.build.gameBuild||
+          pack.beta.nativeCollisionSha256!==pack.build.geometrySha256||!pack.beta.unresolved.length)throw Error(`Stale beta geometry: ${id}`);
+        return pack;
+      }
+      const errors = validatePrefireMapQuality(pack.catalog, pack.build, pack.quality, mode);
       if (errors.length) throw new Error(`Map quality gates failed for ${id}: ${errors.join(' ')}`);
       return pack;
     }};

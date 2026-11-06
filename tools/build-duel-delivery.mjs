@@ -3,11 +3,13 @@ import path from 'node:path';
 import {createHash} from 'node:crypto';
 import {gzipSync,gunzipSync} from 'node:zlib';
 import {buildMapManifests} from './build-map-manifests.mjs';
+import {nativeMapFiles} from './native-map-identity.mjs';
 
-const root='public/revamp/maps/dust2/duel',objects=path.join(root,'objects');
+const files=nativeMapFiles(process.argv[2]??'dust2'),assetId=files.assetId;
+const root=path.join(files.out,'duel'),objects=path.join(root,'objects');
 const hash=bytes=>createHash('sha256').update(bytes).digest('hex');
-const catalog=JSON.parse(await fs.readFile('src/range/duel/real-map-catalog.json','utf8'));
-const rounds=JSON.parse(await fs.readFile('src/range/duel/real-map-round-data.json','utf8'));
+const catalog=JSON.parse(await fs.readFile(files.catalog,'utf8'));
+const rounds=JSON.parse(await fs.readFile(files.rounds,'utf8'));
 await fs.mkdir(objects,{recursive:true});
 const chunks=[],images=new Map();
 const referencedObjects=new Set();
@@ -44,7 +46,7 @@ async function deliver(raw,compress=true) {
   const encoded=compress?gzipSync(raw,{level:6}):raw,sha256=hash(encoded),extension='bin';
   const name=`${sha256}.${extension}`;await fs.writeFile(path.join(objects,name),encoded);
   referencedObjects.add(name);
-  return {url:`/maps/dust2/duel/objects/${name}`,bytes:encoded.length,sha256,
+  return {url:`/maps/${assetId}/duel/objects/${name}`,bytes:encoded.length,sha256,
     decodedBytes:raw.length,decodedSha256:hash(raw),encoding:compress?'gzip':'identity'};
 }
 const bundles=[];
@@ -81,7 +83,10 @@ for(const {chunk,folder,visual,metadata,index} of chunks) {
   console.log(JSON.stringify({chunk:chunk.id,bundles:selected.length,textureBytes:selected.reduce((s,b)=>s+b.asset.bytes,0),
     deliveredBytes:asset.bytes+Object.values(files).reduce((s,a)=>s+a.bytes,0)+selected.reduce((s,b)=>s+b.asset.bytes,0)}));
 }
-const headers='/maps/dust2/duel/objects/*\n  Cache-Control: public, max-age=31536000, immutable\n\n/models/objects/*\n  Cache-Control: public, max-age=31536000, immutable\n\n/assets/*\n  Cache-Control: public, max-age=31536000, immutable\n';
+// Pages permits only one splat per rule. Enumerate map roots, not /maps/*/.../*.
+const mapRoots=(await fs.readdir('public/revamp/maps',{withFileTypes:true})).filter(entry=>entry.isDirectory()&&/^[a-z0-9_-]+$/.test(entry.name)).map(entry=>entry.name).sort();
+const headers=[...mapRoots.map(id=>`/maps/${id}/duel/objects/*`),'/models/objects/*','/assets/*']
+  .map(rule=>`${rule}\n  Cache-Control: public, max-age=31536000, immutable\n`).join('\n');
 await fs.writeFile('public/revamp/_headers',headers);
 // This directory owns only generated, content-addressed delivery objects.
 // Delete stale generations only after every referencing manifest was written.
@@ -89,9 +94,9 @@ const resolvedObjects=path.resolve(objects);
 if(resolvedObjects!==path.resolve(root,'objects'))throw new Error('Invalid delivery output root');
 // The native HUD overview is shared by every chunk, not a per-chunk file.
 try {
-  const radar=JSON.parse(await fs.readFile('src/range/duel/native-radar.json','utf8'));
+  const radar=JSON.parse(await fs.readFile(files.radar,'utf8'));
   const asset=radar.delivery;
-  if(asset?.url===`/maps/dust2/duel/objects/${asset.sha256}.bin` && /^[a-f0-9]{64}$/.test(asset.sha256)) {
+  if(asset?.url===`/maps/${assetId}/duel/objects/${asset.sha256}.bin` && /^[a-f0-9]{64}$/.test(asset.sha256)) {
     const bytes=await fs.readFile(path.join(resolvedObjects,path.basename(asset.url)));
     if(bytes.length!==asset.bytes||hash(bytes)!==asset.sha256)throw Error('Stale shared native radar');
     referencedObjects.add(path.basename(asset.url));
@@ -100,12 +105,12 @@ try {
 try {
   const context=JSON.parse(await fs.readFile(path.join(root,'context/context.json'),'utf8'));
   const asset=context.delivery;
-  if(asset&&new RegExp(`^/maps/dust2/duel/objects/[a-f0-9]{64}\\.bin$`).test(asset.url)&&
+  if(asset&&new RegExp(`^/maps/${assetId}/duel/objects/[a-f0-9]{64}\\.bin$`).test(asset.url)&&
     path.basename(asset.url)===`${asset.sha256}.bin`)referencedObjects.add(path.basename(asset.url));
 }catch(error){if(error.code!=='ENOENT')throw error;}
 // Whole-map awareness owns delivery objects in the same content-addressed store.
 let fullMapPin;
-try {fullMapPin=JSON.parse(await fs.readFile('src/range/prefire/maps/dust2-full-delivery.json','utf8'));}
+try {fullMapPin=JSON.parse(await fs.readFile(`src/range/prefire/maps/${assetId}-full-delivery.json`,'utf8'));}
 catch(error){if(error.code!=='ENOENT')throw error;}
 if(fullMapPin) {
   const pin=fullMapPin;
@@ -115,7 +120,7 @@ if(fullMapPin) {
   if(hash(decoded)!==pin.decodedSha256)throw Error('Stale full map delivery metadata');
   const full=JSON.parse(decoded);
   for(const asset of [pin,...Object.values(full.files),...full.textures.bundles]){
-    if(asset.url!==`/maps/dust2/duel/objects/${asset.sha256}.bin`)throw Error('Invalid full map delivery object');
+    if(asset.url!==`/maps/${assetId}/duel/objects/${asset.sha256}.bin`)throw Error('Invalid full map delivery object');
     referencedObjects.add(path.basename(asset.url));
   }
 }
@@ -124,5 +129,5 @@ for(const name of await fs.readdir(resolvedObjects))if(/^[a-f0-9]{64}\.(bin|gz)$
   if(path.dirname(target)!==resolvedObjects)throw new Error('Invalid generated object path');
   await fs.unlink(target);
 }
-await buildMapManifests();
+await buildMapManifests(process.cwd(),{assetId});
 console.log(JSON.stringify({uniqueImages:images.size,bundles:bundles.length,uniqueTextureBytes:bundles.reduce((s,b)=>s+b.asset.bytes,0)}));

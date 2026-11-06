@@ -1,6 +1,6 @@
 # SprayLab
 
-A browser Counter-Strike recoil and movement trainer with AI Duels and Dust2 Prefire. React + TypeScript + Three.js, built with Vite. No server, account, telemetry or connection to the game process.
+A browser Counter-Strike recoil and movement trainer with AI Duels and native-map Prefire. React + TypeScript + Three.js, built with Vite. No server, account, telemetry or connection to the game process.
 
 ## Run
 
@@ -17,6 +17,11 @@ Open the URL printed by Vite. Phones on the same network can use the LAN address
 **A fresh clone needs assets.** Runtime models, textures, audio, generated runtime manifests and icons are excluded from Git, including past published asset commits after the October 30 history cleanup. Your local workspace retains its copies. Follow [source-only setup and extraction](docs/source-only-assets.md); the original range and icon are generated from project source, while game media comes from your own CS2 installation. `npm run source:check` guards the source boundary. Do not deploy an asset-less build.
 
 ## Training
+
+**Mirage (Beta)** is available in native-map AI Duel, Prefire and whole-map Sound
+Awareness. It has six authored clearing approaches, three native chunks and the
+installed radar. The [Mirage guide](docs/mirage.md) records sources, rebuild steps
+and remaining certification gaps. New clones must extract the local map assets.
 
 Every mode now has a skill-specific review with measured evidence, a next-rep action and a repeatable goal. The local scores distinguish shot timing, preparation, recoil control and angle isolation rather than converting hit rate into a rank. Body-focused weapons and unexpected mouse corrections are handled contextually; old unmeasured attempts are not assigned new quality scores. See [coaching criteria and research](docs/skill-coaching.md).
 

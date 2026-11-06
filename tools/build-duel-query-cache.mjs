@@ -1,8 +1,9 @@
 import fs from 'node:fs/promises';
 import {createServer} from 'vite';
-const root='public/revamp/maps/dust2/duel';
-const catalog=JSON.parse(await fs.readFile('src/range/duel/real-map-catalog.json','utf8'));
-const server=await createServer({server:{middlewareMode:true,hmr:false,ws:false},appType:'custom',logLevel:'error'});
+import {nativeMapFiles} from './native-map-identity.mjs';
+const files=nativeMapFiles(process.argv[2]??'dust2'),root=files.out+'/duel';
+const catalog=JSON.parse(await fs.readFile(files.catalog,'utf8'));
+const server=await createServer({mode:'test',cacheDir:'node_modules/.vite-query-bake',server:{middlewareMode:true,hmr:false,ws:false},appType:'custom',logLevel:'error'});
 try {
   const {NativeMapCollision}=await server.ssrLoadModule('/src/range/prefire/native-collision.ts');
   for(const chunk of catalog.chunks) {
