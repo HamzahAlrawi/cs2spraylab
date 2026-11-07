@@ -170,7 +170,7 @@ npm audit
 
 Browser tests cover Chromium, Firefox, WebKit, mobile viewports and optional isolated Brave/Opera GX installations. Windows Playwright WebKit currently loses visible WebGL output after a canvas resize, also reproduced with a standalone canvas without this app. The resized-canvas visual assertion is an explicit expected failure only on Windows WebKit; framebuffer and interaction checks still run. This does not verify Safari rendering on Apple hardware. Physical phone behavior still requires device testing.
 
-Cloudflare Pages serves `dist`; `npm run deploy:cloudflare` explicitly publishes it. Building or pushing this repository does not deploy to [spraylab.pages.dev](https://spraylab.pages.dev/).
+Cloudflare Pages serves `dist`; use the checked upload sequence below for native-map builds. Building or pushing this repository does not deploy to [spraylab.pages.dev](https://spraylab.pages.dev/).
 
 To update the existing Pages project from this asset-complete Windows workspace, run in Command Prompt:
 
@@ -178,11 +178,19 @@ To update the existing Pages project from this asset-complete Windows workspace,
 cd /d C:\Users\Ham\Desktop\cs2-spray-trainer-mvp
 npm run assets:check
 npm run check
+node tools/prepare-pages-deploy.mjs
 npx wrangler login
 npx wrangler pages deploy dist --project-name=spraylab --branch=main
 ```
 
 Stop if either check fails. Skip login when already authenticated. `main` must match the project's configured production branch; otherwise use that branch to avoid creating only a preview. This uploads the built folder, not the source ZIP. See [Cloudflare's Direct Upload instructions](https://developers.cloudflare.com/pages/get-started/direct-upload/).
+
+Run the preparation command after every build. It validates compressed native
+delivery against its pinned hashes before omitting redundant oversized raw grenade
+snapshots from `dist`; source assets and delivered collision bytes are unchanged.
+Unknown oversized files, corrupt delivery or mismatched snapshots stop packaging
+without removing any generated copies. Packaging regressions run with
+`node --test tools/prepare-pages-deploy.test.mjs`.
 
 On Windows, `tools/package-release.ps1 -Output <absolute-path.zip>` packages tracked source. Add `-IncludeGameAssets` for a local test ZIP containing the converted runtime assets. Both are lean archives without node_modules, Git history, research scratch files or agent notes; run `npm ci` after extraction. Valve-inclusive archives are not uploaded to GitHub by this tool.
 
