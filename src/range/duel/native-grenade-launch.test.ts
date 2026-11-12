@@ -1,5 +1,6 @@
 import {describe,expect,it,vi} from 'vitest';
 import native from './native-grenade-launch-fixture.json';
+import current from '../../../tests/fixtures/native-grenade-launch-2000943.json';
 import {nativeGrenadePitch,nativeGrenadeVelocity,nativeGrenadeThrowVelocity} from './grenade-native-launch';
 import {utilityLaunchPose} from './utility-ballistics';
 import {testArena} from './geometry';
@@ -7,7 +8,7 @@ import {UNIT,DEG} from '../actor-physics';
 import {utilityKinds} from './utility-loadout';
 
 const world=(v:number[])=>({x:v[0]*UNIT,y:v[2]*UNIT,z:-v[1]*UNIT});
-describe('installed CS2 grenade launch arithmetic',()=>{
+describe.each([native,current])('CS2 $build grenade launch arithmetic',native=>{
   it.each(native.cases)('matches native pitch=$pitchUpDegrees strength=$strength speed=$throwVelocity',sample=>{
     const eye=world(sample.eye),arena=testArena();
     const sweep=vi.fn((from:{x:number;y:number;z:number},to:typeof from)=>({

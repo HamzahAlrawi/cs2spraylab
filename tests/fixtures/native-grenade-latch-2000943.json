@@ -1,0 +1,213 @@
+{
+  "build": "2000943",
+  "clientSha256": "99a6720b29d8b477d55f0a2d7fd4333b5df13f354ba723804e996bead1231aa8",
+  "gateAndCopyRva": "0x8c8a7c..0x8c8b2c",
+  "jumpScheduleRva": "0x8e3b12..0x8e3b61",
+  "captureRva": "0x8e1740..0x8e18a4",
+  "earlyDeferralRva": "0x7d13f3..0x7d145d",
+  "fields": {
+    "m_fStashGrenadeParameterWhen": "movement+0x684",
+    "m_grenadeParameterStashTime": "pawn+0x1f50",
+    "m_bGrenadeParametersStashed": "pawn+0x1f54",
+    "m_angStashedShootAngles": "pawn+0x1f58",
+    "m_vecStashedGrenadeThrowPosition": "pawn+0x1f64",
+    "m_vecStashedVelocity": "pawn+0x1f7c"
+  },
+  "constants": {
+    "delay": 0.10000000149011612,
+    "window": 0.20000000298023224
+  },
+  "excluded": "Elapsed clock and cached vectors are explicit inputs. No movement, world trace, command backlog, capture scheduling or live entity system executed.",
+  "cases": [
+    {
+      "elapsed": -0.20000000298023224,
+      "usedCache": false,
+      "eye": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "velocity": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "angles": [
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "elapsed": -9.999999974752427e-07,
+      "usedCache": false,
+      "eye": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "velocity": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "angles": [
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "elapsed": 0.0,
+      "usedCache": false,
+      "eye": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "velocity": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "angles": [
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "elapsed": 9.999999974752427e-07,
+      "usedCache": true,
+      "eye": [
+        1200.0,
+        -352.0,
+        64.0
+      ],
+      "velocity": [
+        120.0,
+        40.0,
+        220.0
+      ],
+      "angles": [
+        -42.0,
+        173.0,
+        0.0
+      ]
+    },
+    {
+      "elapsed": 0.015625,
+      "usedCache": true,
+      "eye": [
+        1200.0,
+        -352.0,
+        64.0
+      ],
+      "velocity": [
+        120.0,
+        40.0,
+        220.0
+      ],
+      "angles": [
+        -42.0,
+        173.0,
+        0.0
+      ]
+    },
+    {
+      "elapsed": 0.10000000149011612,
+      "usedCache": true,
+      "eye": [
+        1200.0,
+        -352.0,
+        64.0
+      ],
+      "velocity": [
+        120.0,
+        40.0,
+        220.0
+      ],
+      "angles": [
+        -42.0,
+        173.0,
+        0.0
+      ]
+    },
+    {
+      "elapsed": 0.19999900460243225,
+      "usedCache": true,
+      "eye": [
+        1200.0,
+        -352.0,
+        64.0
+      ],
+      "velocity": [
+        120.0,
+        40.0,
+        220.0
+      ],
+      "angles": [
+        -42.0,
+        173.0,
+        0.0
+      ]
+    },
+    {
+      "elapsed": 0.20000000298023224,
+      "usedCache": true,
+      "eye": [
+        1200.0,
+        -352.0,
+        64.0
+      ],
+      "velocity": [
+        120.0,
+        40.0,
+        220.0
+      ],
+      "angles": [
+        -42.0,
+        173.0,
+        0.0
+      ]
+    },
+    {
+      "elapsed": 0.20000100135803223,
+      "usedCache": false,
+      "eye": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "velocity": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "angles": [
+        0.0,
+        0.0,
+        0.0
+      ]
+    },
+    {
+      "elapsed": 0.30000001192092896,
+      "usedCache": false,
+      "eye": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "velocity": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "angles": [
+        0.0,
+        0.0,
+        0.0
+      ]
+    }
+  ]
+}
