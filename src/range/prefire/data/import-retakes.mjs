@@ -3,7 +3,9 @@ import {createHash} from 'node:crypto';
 
 const commit = '2fde4a9cc21e791d6909b98bacc833aa5c54bdad';
 const repository = 'https://github.com/B3none/cs2-retakes';
-const file = 'RetakesPlugin/map_config/de_dust2.json';
+const map = process.argv.find(arg => arg.startsWith('--map='))?.slice(6) ?? 'dust2';
+if (!['dust2', 'mirage'].includes(map)) throw new Error(`Unsupported retake map: ${map}`);
+const file = `RetakesPlugin/map_config/de_${map}.json`;
 const base = `https://raw.githubusercontent.com/B3none/cs2-retakes/${commit}/`;
 async function text(path) {
   const response = await fetch(base + path);
@@ -22,6 +24,6 @@ const angles = JSON.parse(raw).Spawns.map((spawn, i) => ({index: i + 1, position
   rotation: coordinates(spawn.QAngle), team: spawn.Team, site: spawn.Bombsite === 0 ? 'a' : 'b', crouched: false}));
 const result = {source: repository, commit, file, sha256: createHash('sha256').update(raw).digest('hex'),
   license: 'GPL-3.0', licenseNotice, context: 'Authored post-plant retake spawns; not match-frequency telemetry.', angles};
-await fs.writeFile(new URL('./retakes-dust2.json', import.meta.url), JSON.stringify(result, null, 2) + '\n');
+await fs.writeFile(new URL(`./retakes-${map}.json`, import.meta.url), JSON.stringify(result, null, 2) + '\n');
 await fs.writeFile(new URL('./Retakes.LICENSE.txt', import.meta.url), licenseNotice);
 console.log(`Imported ${angles.length} authored retake placements at ${commit}.`);

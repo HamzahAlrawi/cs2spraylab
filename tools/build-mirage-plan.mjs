@@ -5,9 +5,9 @@ const collision=JSON.parse(fs.readFileSync('public/revamp/maps/mirage/collision.
   routes=JSON.parse(fs.readFileSync('src/range/prefire/data/mirage-authored-routes.json')),
   dataset=JSON.parse(fs.readFileSync('src/range/prefire/data/openprefire-mirage.json'));
 const areas=[
-  {id:'a-site',name:'A site, Ramp and Palace',routeIds:['a-ramp','a-palace'],pockets:['Ramp close','Tetris','Under balcony / Shadows','Sandwich','Default','Triple','Firebox','Ninja','Stairs','Jungle','Ticket','Palace balcony']},
+  {id:'a-site',name:'A site, Ramp and Palace',routeIds:['a-ramp','a-palace','jungle-a'],pockets:['Ramp close','Tetris','Under balcony / Shadows','Sandwich','Default','Triple','Firebox','Ninja','Stairs','Jungle','Ticket','Palace balcony']},
   {id:'mid',name:'Top mid, Short and Underpass',routeIds:['mid-short','underpass-connector'],pockets:['Top-mid boxes','Chair','Window','Window close','Connector close','Connector stairs','Underpass mouth','Short corner','Ladder room','Short arches','Short boost']},
-  {id:'b-site',name:'B site, Apartments and Market',routeIds:['b-apartments','market-b'],pockets:['Apartments close','Balcony','Van','Bench','Default','Back site','Get Right','Short corner','Market window','Market door','Market shelves']},
+  {id:'b-site',name:'B site, Apartments and Market',routeIds:['b-apartments','market-b','short-b'],pockets:['Apartments close','Balcony','Van','Bench','Default','Back site','Get Right','Short corner','Market window','Market door','Market shelves']},
 ];
 const plan={schemaVersion:1,mapId:'de_mirage',revision:routes.revision,weighting:'authored-coverage',
   native:{gameBuild:collision.build,resourceSha256:{'maps/de_mirage.vpk':collision.mapSha256,'maps/de_mirage/world_physics.vmdl_c':collision.sourceSha256,
@@ -18,6 +18,8 @@ const plan={schemaVersion:1,mapId:'de_mirage',revision:routes.revision,weighting
   scopeReview:{reviewer:'',reference:'docs/mirage.md',approved:false},
   references:[{id:'native',kind:'native',independentGroup:'Valve',reference:'Installed de_mirage.vpk, native radar and PHYS',revision:collision.build,license:'Local CS2 installation; media excluded from Git'},
     {id:'coordinates',kind:'coordinates',independentGroup:'lengran',reference:dataset.source,revision:dataset.commit,license:dataset.license},
+    {id:'retakes',kind:'coordinates',independentGroup:'B3none',reference:'https://github.com/B3none/cs2-retakes/blob/2fde4a9cc21e791d6909b98bacc833aa5c54bdad/RetakesPlugin/map_config/de_mirage.json',revision:'2fde4a9cc21e791d6909b98bacc833aa5c54bdad',license:'GPL-3.0; coordinate-only adaptation, no server plugin execution'},
+    {id:'callouts',kind:'expert',independentGroup:'TotalCS',reference:'https://totalcsgo.com/callouts/mirage',revision:'Reviewed 2026-11-13',license:'Reference only; no media or descriptions copied'},
     {id:'expert',kind:'expert',independentGroup:'EliGE',reference:'https://www.youtube.com/watch?v=S9fe6AgxVHs',revision:'2024-01-14',license:'Reference only; no video assets copied'}],
   areas:areas.map(a=>({...a,pockets:a.pockets.map((name,i)=>({id:`pocket-${i+1}`,name,angleIds:[],referenceIds:['native','coordinates','expert'],
     status:'pending',reviewer:'',note:'Independent required-angle review remains pending; do not infer completion from the coordinate pool.'}))}))};

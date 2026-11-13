@@ -1,14 +1,26 @@
 {
   "id": "de_mirage",
-  "revision": "2026-11-06-mirage-beta-v1",
+  "revision": "2026-11-13-mirage-coverage-v2",
   "routes": [
     {
       "id": "a-ramp",
-      "name": "Ramp to A"
+      "name": "Ramp to A",
+      "lineups": [
+        {
+          "id": "a-ramp-common-angles",
+          "name": "A site / boxes, Stairs & Sandwich"
+        }
+      ]
     },
     {
       "id": "a-palace",
-      "name": "Palace balcony"
+      "name": "Palace balcony",
+      "lineups": [
+        {
+          "id": "a-palace-common-angles",
+          "name": "A site / boxes & Jungle from Palace"
+        }
+      ]
     },
     {
       "id": "b-apartments",
@@ -16,15 +28,35 @@
     },
     {
       "id": "mid-short",
-      "name": "Top mid to Short"
+      "name": "Top mid to Short",
+      "lineups": [
+        {
+          "id": "mid-short-common-angles",
+          "name": "Mid / Connector & Short"
+        }
+      ]
     },
     {
       "id": "underpass-connector",
-      "name": "Underpass to Connector"
+      "name": "Underpass to Connector",
+      "lineups": [
+        {
+          "id": "underpass-connector-common-angles",
+          "name": "Connector / crossfire & Window"
+        }
+      ]
     },
     {
       "id": "market-b",
       "name": "Market retake"
+    },
+    {
+      "id": "short-b",
+      "name": "Short to B"
+    },
+    {
+      "id": "jungle-a",
+      "name": "Jungle to A retake"
     }
   ],
   "aliases": {},
@@ -32,11 +64,27 @@
     "mirage-a": [
       {
         "id": "a-ramp",
-        "name": "Ramp to A"
+        "name": "Ramp to A",
+        "lineups": [
+          {
+            "id": "a-ramp-common-angles",
+            "name": "A site / boxes, Stairs & Sandwich"
+          }
+        ]
       },
       {
         "id": "a-palace",
-        "name": "Palace balcony"
+        "name": "Palace balcony",
+        "lineups": [
+          {
+            "id": "a-palace-common-angles",
+            "name": "A site / boxes & Jungle from Palace"
+          }
+        ]
+      },
+      {
+        "id": "jungle-a",
+        "name": "Jungle to A retake"
       }
     ],
     "mirage-mid": [
@@ -46,11 +94,23 @@
       },
       {
         "id": "mid-short",
-        "name": "Top mid to Short"
+        "name": "Top mid to Short",
+        "lineups": [
+          {
+            "id": "mid-short-common-angles",
+            "name": "Mid / Connector & Short"
+          }
+        ]
       },
       {
         "id": "underpass-connector",
-        "name": "Underpass to Connector"
+        "name": "Underpass to Connector",
+        "lineups": [
+          {
+            "id": "underpass-connector-common-angles",
+            "name": "Connector / crossfire & Window"
+          }
+        ]
       }
     ],
     "mirage-b": [
@@ -61,12 +121,22 @@
       {
         "id": "market-b",
         "name": "Market retake"
+      },
+      {
+        "id": "short-b",
+        "name": "Short to B"
       }
     ],
     "mirage-palace": [
       {
         "id": "a-palace",
-        "name": "Palace balcony"
+        "name": "Palace balcony",
+        "lineups": [
+          {
+            "id": "a-palace-common-angles",
+            "name": "A site / boxes & Jungle from Palace"
+          }
+        ]
       }
     ],
     "mirage-apartments": [
@@ -78,7 +148,13 @@
     "mirage-underpass": [
       {
         "id": "underpass-connector",
-        "name": "Underpass to Connector"
+        "name": "Underpass to Connector",
+        "lineups": [
+          {
+            "id": "underpass-connector-common-angles",
+            "name": "Connector / crossfire & Window"
+          }
+        ]
       }
     ]
   }

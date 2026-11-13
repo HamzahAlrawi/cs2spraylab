@@ -8,6 +8,7 @@ import {createHash} from 'node:crypto';
 import {performance} from 'node:perf_hooks';
 import * as THREE from 'three';
 import {createServer} from 'vite';
+import {pointFromEvidence,boundedAimCommand,watchOnAuthoredRoute,anySilhouetteSight} from './prefire-audit-contracts.mjs';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const arg = name => process.argv.find(value => value.startsWith(`--${name}=`))?.slice(name.length + 3);
@@ -18,7 +19,7 @@ if (!seeds.length || seeds.some(seed => !Number.isSafeInteger(seed)) || new Set(
 }
 // Offline authoring may simulate drafts; runtime selectors never receive this policy.
 const vite = await createServer({root,mode:'test',cacheDir:'node_modules/.vite-prefire-bot-audit', server: {middlewareMode: true, hmr: false, ws: false}, appType: 'custom', logLevel: 'error'});
-let collision, restoreController, restoreVerification;
+let collision, restoreController, restoreVerification, restoreContextual;
 const started = performance.now(), failures = [], observations = [], diagnostics = [], failureKeys = new Set(), runs = [], planning = [];
 const fail = (code, context, detail) => {
   const key = `${code}/${context.route ?? ''}/${context.seed ?? ''}/${context.bot ?? ''}`;
@@ -39,7 +40,7 @@ try {
   const {NativeMapCollision} = await vite.ssrLoadModule('/src/range/prefire/native-collision.ts');
   const {PrefireSimulation} = await vite.ssrLoadModule('/src/range/prefire/session.ts');
   const {PrefireBotController} = await vite.ssrLoadModule('/src/range/prefire/bot-controller.ts');
-  const {prefireBotCatalog, prefireBotKey, validPrefireExcursion, hasPrefireSight, prefireRouteViews} =
+  const {prefireBotCatalog, prefireBotKey, validPrefireExcursion, hasPrefireSight, prefireRouteViews,densePrefireRouteViews} =
     await vite.ssrLoadModule('/src/range/prefire/bot-behavior.ts');
   const {nativeMaps,defaultNativeMapId} = await vite.ssrLoadModule('/src/range/prefire/maps/index.ts');
   const definition=nativeMaps.forAuthoring(arg('map')??defaultNativeMapId);
@@ -54,6 +55,7 @@ try {
   const {STEP, UNIT, stanceCurve} = await vite.ssrLoadModule('/src/range/actor-physics.ts');
   const {idleCommand} = await vite.ssrLoadModule('/src/range/duel/types.ts');
   const {actorHeadPoint, traceActor} = await vite.ssrLoadModule('/src/range/duel/geometry.ts');
+  const {actorVisibilitySamples}=await vite.ssrLoadModule('/src/range/duel/actor-visibility.ts');
   const {moveOnTerrain} = await vite.ssrLoadModule('/src/range/actor-collision.ts');
   const {actorContactSolids} = await vite.ssrLoadModule('/src/range/actor-contact.ts');
   const mapBase=path.join(root,'public/revamp',definition.base);
@@ -83,10 +85,11 @@ try {
   }
   const heading = (a, b) => Math.atan2(-(b.x - a.x), -(b.z - a.z));
   const angleDelta = (a, b) => Math.atan2(Math.sin(b - a), Math.cos(b - a));
-  const clamp = (value, limit) => Math.max(-limit, Math.min(limit, value));
   const gap = (a, b) => Math.hypot(a.x - b.x, a.z - b.z);
   const feetOf = actor => ({x: actor.position.x, y: actor.feet, z: actor.position.z});
   const headOf = actor => actorHeadPoint(feetOf(actor), actor.duckAmount ?? 0, actor.yaw);
+  const canSeeActor=(origin,actor)=>anySilhouetteSight(origin,
+    actorVisibilitySamples(actor,origin).map(sample=>sample.point),nativeRay);
   const resetQueries = () => {queryCounts = {ray: 0, sweep: 0, fits: 0, vertical: 0};};
   const walkLane = (from, to, sim) => {
     let p = {...from};
@@ -143,6 +146,17 @@ try {
   };
 
   const commandOriginal = PrefireBotController.prototype.command;
+  const contextualOriginal=PrefireBotController.prototype.contextualAim;
+  PrefireBotController.prototype.contextualAim=function(...args){
+    const desired=args[3],result=contextualOriginal.apply(this,args);
+    if(activeRun){
+      const evidence=[this.contact,this.knownApproach,this.plan.watchPoint,this.heard?.point,this.trade?.point];
+      if(!pointFromEvidence(desired,evidence)||!pointFromEvidence(result,[...evidence,...this.preaimOpenings]))
+        fail('hidden-aim-not-evidence',{route:activeRun.route,seed:activeRun.seed,bot:this.plan.key},{time:args[0],desired,result});
+    }
+    return result;
+  };
+  restoreContextual=()=>{PrefireBotController.prototype.contextualAim=contextualOriginal;};
   PrefireBotController.prototype.command = function(time, actor, player, terrain, options) {
     if (!activeRun) return commandOriginal.call(this, time, actor, player, terrain, options);
     const metric = activeRun.bots[actor.id - 1], commandProbe = {rays: 0}, previousPhase = this.snapshot().phase;
@@ -159,29 +173,12 @@ try {
     }
     const context = {route: activeRun.route, seed: activeRun.seed, bot: this.plan.key};
     if (!decision.visible) {
-      // Structural memory check only. Independent visible-actor quality is
-      // measured by audit-prefire-encounters.mjs, not this desired-aim mirror.
       const remembered = this.contact && time < this.contactUntil ? this.contact : undefined;
-      let aim = remembered ?? (time < this.areaUntil ? this.knownApproach : undefined) ?? this.plan.watchPoint;
-      let observedAt = remembered ? this.contactAt : -Infinity;
-      const heard = this.heard && time >= this.heard.readyAt && time - this.heard.observedAt < 3.5 ? this.heard : undefined;
-      if (heard && heard.observedAt > observedAt) {aim = heard.point; observedAt = heard.observedAt;}
-      const trade = this.trade && options.returnFire && options.tradeEnabled !== false && time >= this.trade.readyAt &&
-        time < this.trade.expiresAt && (actor.generation === undefined || this.trade.generation === actor.generation) ? this.trade : undefined;
-      if (trade && trade.observedAt > observedAt) aim = trade.point;
-      const expectedYaw = aim ? heading(actor.position, aim) : metric.homeYaw;
-      const expectedPitch = aim ? Math.atan2(aim.y - actor.position.y, gap(aim, actor.position)) : metric.homePitch;
-      const punch = actor.punch?.shotFor(actor.weapon.recovery?.angle ?? {yaw: 0, pitch: 0});
-      const viewYaw = actor.yaw - (punch?.yaw ?? 0) * Math.PI / 180, viewPitch = actor.pitch + (punch?.pitch ?? 0) * Math.PI / 180;
       metric.hiddenAimChecks++;
       if (remembered) metric.hiddenMemoryAimChecks++;
-      else if (aim) metric.routePreAimChecks++;
+      else if (this.plan.watchPoint) metric.routePreAimChecks++;
       else metric.sourceFacingChecks++;
-      if (Math.abs(command.yawDelta - (aim || options.returnFire ? clamp(angleDelta(viewYaw, expectedYaw), .035) : 0)) > 1e-8 ||
-        Math.abs(command.pitchDelta - (aim || options.returnFire ? clamp(expectedPitch - viewPitch, .025) : 0)) > 1e-8) {
-        fail('hidden-player-tracking', context, {time, command, lastContact: metric.lastContact, watchPoint: this.plan.watchPoint,
-          expectedAim: aim, expectedYaw, expectedPitch, hiddenPlayer: {...player.position}});
-      }
+      if(!boundedAimCommand(command))fail('unbounded-hidden-aim',context,{time,command});
     }
     const speed = Math.hypot(actor.velocity.x, actor.velocity.z), yaw = actor.yaw + command.yawDelta;
     const wish = {x: command.side * Math.cos(yaw) - command.forward * Math.sin(yaw),
@@ -211,7 +208,7 @@ try {
       origin: {...actor.position}, player: {...player.position}};
     if (command.fireHeld && actor.weapon.nextShotAt <= time + STEP + 1e-9) {
       metric.firingOpportunities++;
-      if (!hasPrefireSight({ray: nativeRay}, actor.position, headOf(player))) fail('blocked-fire-command', context, {time, ...metric.lastCommand});
+      if (!canSeeActor(actor.position,player)) fail('blocked-fire-command', context, {time, ...metric.lastCommand});
       if (!decision.visible || decision.seenAt === undefined || time - decision.seenAt + 1e-9 < options.reactionMs / 1000) {
         fail('reaction-or-visibility', context, {time, ...metric.lastCommand});
       }
@@ -233,7 +230,7 @@ try {
       activeRun.verificationCalls++; activeRun.controllerRays += probe.rays;
       if (activeRun.verificationCalls % 16 === 0) activeRun.verificationSamples.push(cost);
       if (decision.visible && probe.rays) {bot.lastContact = {...this.contact}; bot.lastContactAt = this.contactAt;}
-      if (ready && (!hasPrefireSight({ray: nativeRay}, actor.position, headOf(player)) || decision.seenAt === undefined ||
+      if (ready && (!canSeeActor(actor.position,player) || decision.seenAt === undefined ||
         time - decision.seenAt + 1e-9 < reactionMs / 1000)) {
         fail('post-movement-fire-verification', {route: activeRun.route, seed: activeRun.seed, bot: this.plan.key}, {time, decision});
       }
@@ -309,7 +306,7 @@ try {
         : angle.rotation ? -angle.rotation[0] * Math.PI / 180 : 0;
       if (Math.abs(angleDelta(actor.yaw, expectedYaw)) > 1e-10 || Math.abs(actor.pitch - expectedPitch) > 1e-10)
         fail('authored-approach-facing-changed', context, {expectedYaw, expectedPitch, yaw: actor.yaw, pitch: actor.pitch});
-      if (plan.watchPoint && !views.some(view => gap(view, plan.watchPoint) < 1e-8 && Math.abs(view.y - plan.watchPoint.y) < 1e-8)) {
+      if (!watchOnAuthoredRoute(plan.watchPoint,views,densePrefireRouteViews(views))) {
         fail('watch-point-not-authored-route-view', context, {watchPoint: plan.watchPoint});
       }
       if (plan.anchor.x !== sampled.x || plan.anchor.z !== sampled.z || Math.abs(plan.anchor.y - sampled.y) > 6 * UNIT) {
@@ -478,7 +475,7 @@ try {
           if (!priorBurst || sim.time - priorBurst.lastAt > .3) bot.bursts.push({count: 1, firstAt: sim.time, lastAt: sim.time});
           else {priorBurst.count++; priorBurst.lastAt = sim.time;}
           if (bot.bursts[bot.bursts.length - 1].count > 4) fail('unbounded-burst', context, {time: sim.time, burst: bot.bursts[bot.bursts.length - 1]});
-          if (!hasPrefireSight({ray: nativeRay}, event.origin, headOf(player))) fail('actual-shot-blocked-los', context,
+          if (!canSeeActor(event.origin,player)) fail('actual-shot-blocked-los', context,
             {time: sim.time, origin: event.origin, player: {...player.position}, intent});
           if (intent.speed >= .12 || intent.grounded === false || intent.reloading ||
             !(['holding', 'exposed'].includes(intent.phase) || intent.phase === 'waiting' && bot.kind !== 'crouch-hide' && intent.visible)) {
@@ -556,5 +553,5 @@ try {
   } else console.log(JSON.stringify(report, null, 2));
   if (failures.length) process.exitCode = 1;
 } finally {
-  restoreController?.(); restoreVerification?.(); collision?.dispose(); await vite.close();
+  restoreController?.(); restoreVerification?.(); restoreContextual?.(); collision?.dispose(); await vite.close();
 }

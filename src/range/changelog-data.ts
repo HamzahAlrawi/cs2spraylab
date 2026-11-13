@@ -661,7 +661,7 @@ const november7Loading = {
   ]}],
 } as const satisfies ChangelogRelease;
 
-export const latestChanges = {
+const november7WallSlide = {
   id:'update-2026-11-07-wall-slide',title:'Smoother wall & floor contact (November 7)',baselineCommit:'a5c1a40',
   sections:[{id:'wall-floor-contact',title:'Less snagging while moving',items:[
     'Diagonal movement along native walls maintains perpendicular query clearance instead of repeatedly catching triangle edges. The shared correction applies to Mirage and Dust 2.',
@@ -670,7 +670,17 @@ export const latestChanges = {
   ]}],
 } as const satisfies ChangelogRelease;
 
+export const latestChanges = {
+  id:'update-2026-11-13-common-angles',title:'More common map angles (November 13)',baselineCommit:'affaeae',
+  sections:[{id:'common-map-holds',title:'Expanded Dust 2 & Mirage coverage',items:[
+    'Additional source-pinned holds cover Short stairs, Xbox, CT under A and the B tunnel exit on Dust 2, plus more site boxes, Stairs, Jungle, Connector and Short on Mirage.',
+    'Mirage adds Short-to-B and Jungle-to-A retake approaches, with focused common-angle lineups. Duel uses newly baked hold lanes and starts from the same source catalog.',
+    'Coordinates retain their source positions and pass native support, hull, covered-entry and head-visibility checks. Coverage choices are training policy, not claimed match probabilities; Mirage remains a beta.',
+  ]}],
+} as const satisfies ChangelogRelease;
+
 export const changelogHistory = [
+  november7WallSlide,
   november7Loading,
   november6PrefireGrenadeFlight,
   november6MapPoolThrows,

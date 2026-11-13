@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "mapId": "de_mirage",
-  "revision": "2026-11-06-mirage-beta-v1",
+  "revision": "2026-11-13-mirage-coverage-v2",
   "weighting": "authored-coverage",
   "native": {
     "gameBuild": "2000942",
@@ -39,6 +39,22 @@
       "license": "MIT"
     },
     {
+      "id": "retakes",
+      "kind": "coordinates",
+      "independentGroup": "B3none",
+      "reference": "https://github.com/B3none/cs2-retakes/blob/2fde4a9cc21e791d6909b98bacc833aa5c54bdad/RetakesPlugin/map_config/de_mirage.json",
+      "revision": "2fde4a9cc21e791d6909b98bacc833aa5c54bdad",
+      "license": "GPL-3.0; coordinate-only adaptation, no server plugin execution"
+    },
+    {
+      "id": "callouts",
+      "kind": "expert",
+      "independentGroup": "TotalCS",
+      "reference": "https://totalcsgo.com/callouts/mirage",
+      "revision": "Reviewed 2026-11-13",
+      "license": "Reference only; no media or descriptions copied"
+    },
+    {
       "id": "expert",
       "kind": "expert",
       "independentGroup": "EliGE",
@@ -53,7 +69,8 @@
       "name": "A site, Ramp and Palace",
       "routeIds": [
         "a-ramp",
-        "a-palace"
+        "a-palace",
+        "jungle-a"
       ],
       "pockets": [
         {
@@ -372,7 +389,8 @@
       "name": "B site, Apartments and Market",
       "routeIds": [
         "b-apartments",
-        "market-b"
+        "market-b",
+        "short-b"
       ],
       "pockets": [
         {

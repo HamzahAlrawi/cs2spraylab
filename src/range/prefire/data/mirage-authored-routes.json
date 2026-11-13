@@ -1,5 +1,5 @@
 {
-  "revision": "2026-11-06-mirage-beta-v1",
+  "revision": "2026-11-13-mirage-coverage-v2",
   "routes": [
     {
       "id": "a-ramp",
@@ -111,7 +111,7 @@
         },
         {
           "id": "de_mirage:openprefire/a_ramp/5",
-          "name": "Stairs / Connector / a ramp 5",
+          "name": "Stairs / Jungle raised box",
           "position": [
             -498.622742,
             -1524.324951,
@@ -176,7 +176,7 @@
         },
         {
           "id": "de_mirage:openprefire/a_ramp/9",
-          "name": "Jungle / a ramp 9",
+          "name": "Ticket / site back wall",
           "position": [
             -729.41095,
             -2072.19458,
@@ -235,7 +235,8 @@
             "dataset": "openprefire-mirage",
             "profile": "a_ramp",
             "index": 11
-          }
+          },
+          "exclusionGroup": "de_mirage:overlap/de_mirage:openprefire/a_palace/28"
         },
         {
           "id": "de_mirage:openprefire/a_ramp/12",
@@ -256,7 +257,8 @@
             "dataset": "openprefire-mirage",
             "profile": "a_ramp",
             "index": 12
-          }
+          },
+          "exclusionGroup": "de_mirage:overlap/de_mirage:openprefire/a_palace/32"
         },
         {
           "id": "de_mirage:openprefire/a_ramp/13",
@@ -361,7 +363,8 @@
             "dataset": "openprefire-mirage",
             "profile": "a_palace",
             "index": 28
-          }
+          },
+          "exclusionGroup": "de_mirage:overlap/de_mirage:openprefire/a_palace/28"
         },
         {
           "id": "de_mirage:openprefire/a_palace/29",
@@ -382,7 +385,8 @@
             "dataset": "openprefire-mirage",
             "profile": "a_palace",
             "index": 29
-          }
+          },
+          "exclusionGroup": "de_mirage:overlap/de_mirage:openprefire/a_palace/29"
         },
         {
           "id": "de_mirage:openprefire/a_palace/30",
@@ -425,6 +429,287 @@
             "profile": "a_palace",
             "index": 35
           }
+        },
+        {
+          "id": "de_mirage:openprefire/under_to_jungle/20",
+          "name": "Ticket Booth / raised hold",
+          "position": [
+            -825.105042,
+            -2520.172852,
+            -36.96875
+          ],
+          "rotation": [
+            7.640225,
+            84.718819,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "under_to_jungle",
+            "index": 20
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/under_to_jungle/21",
+          "name": "Ticket / site-side corner",
+          "position": [
+            -808.24762,
+            -2307.05249,
+            -178.677567
+          ],
+          "rotation": [
+            1.905611,
+            84.931007,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "under_to_jungle",
+            "index": 21
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/under_to_jungle/24",
+          "name": "Triple / front corner",
+          "position": [
+            -495.810791,
+            -2093.833496,
+            -180.96875
+          ],
+          "rotation": [
+            2.15398,
+            98.776421,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "under_to_jungle",
+            "index": 24
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/under_to_jungle/25",
+          "name": "Stairs / Jungle raised box",
+          "position": [
+            -447.958313,
+            -1574.59668,
+            -40.96875
+          ],
+          "rotation": [
+            17.380583,
+            120.816963,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "under_to_jungle",
+            "index": 25
+          }
+        },
+        {
+          "id": "de_mirage:retakes/2",
+          "name": "Default / front box",
+          "position": [
+            -321.03,
+            -2036.16,
+            -174.56
+          ],
+          "rotation": [
+            0,
+            132.62,
+            0
+          ],
+          "crouched": false,
+          "moving": false,
+          "source": {
+            "dataset": "retakes-mirage",
+            "profile": "mirage",
+            "index": 2
+          }
+        },
+        {
+          "id": "de_mirage:retakes/3",
+          "name": "Triple / Ticket-side box",
+          "position": [
+            -554.97,
+            -2103.69,
+            -179.97
+          ],
+          "rotation": [
+            0,
+            -71.46,
+            0
+          ],
+          "crouched": false,
+          "moving": false,
+          "source": {
+            "dataset": "retakes-mirage",
+            "profile": "mirage",
+            "index": 3
+          }
+        },
+        {
+          "id": "de_mirage:retakes/7",
+          "name": "Sandwich / site-side corner",
+          "position": [
+            111.53,
+            -1717.97,
+            -167.97
+          ],
+          "rotation": [
+            0,
+            70.31,
+            0
+          ],
+          "crouched": false,
+          "moving": false,
+          "source": {
+            "dataset": "retakes-mirage",
+            "profile": "mirage",
+            "index": 7
+          }
+        },
+        {
+          "id": "de_mirage:retakes/8",
+          "name": "Stairs / top step",
+          "position": [
+            -142.97,
+            -1418.03,
+            -72.18
+          ],
+          "rotation": [
+            0,
+            -76.73,
+            0
+          ],
+          "crouched": false,
+          "moving": false,
+          "source": {
+            "dataset": "retakes-mirage",
+            "profile": "mirage",
+            "index": 8
+          }
+        }
+      ],
+      "lineups": [
+        {
+          "id": "a-ramp-common-angles",
+          "name": "A site / boxes, Stairs & Sandwich",
+          "angles": [
+            {
+              "id": "de_mirage:retakes/2",
+              "name": "Default / front box",
+              "position": [
+                -321.03,
+                -2036.16,
+                -174.56
+              ],
+              "rotation": [
+                0,
+                132.62,
+                0
+              ],
+              "crouched": false,
+              "moving": false,
+              "source": {
+                "dataset": "retakes-mirage",
+                "profile": "mirage",
+                "index": 2
+              }
+            },
+            {
+              "id": "de_mirage:retakes/3",
+              "name": "Triple / Ticket-side box",
+              "position": [
+                -554.97,
+                -2103.69,
+                -179.97
+              ],
+              "rotation": [
+                0,
+                -71.46,
+                0
+              ],
+              "crouched": false,
+              "moving": false,
+              "source": {
+                "dataset": "retakes-mirage",
+                "profile": "mirage",
+                "index": 3
+              }
+            },
+            {
+              "id": "de_mirage:retakes/7",
+              "name": "Sandwich / site-side corner",
+              "position": [
+                111.53,
+                -1717.97,
+                -167.97
+              ],
+              "rotation": [
+                0,
+                70.31,
+                0
+              ],
+              "crouched": false,
+              "moving": false,
+              "source": {
+                "dataset": "retakes-mirage",
+                "profile": "mirage",
+                "index": 7
+              }
+            },
+            {
+              "id": "de_mirage:retakes/8",
+              "name": "Stairs / top step",
+              "position": [
+                -142.97,
+                -1418.03,
+                -72.18
+              ],
+              "rotation": [
+                0,
+                -76.73,
+                0
+              ],
+              "crouched": false,
+              "moving": false,
+              "source": {
+                "dataset": "retakes-mirage",
+                "profile": "mirage",
+                "index": 8
+              }
+            },
+            {
+              "id": "de_mirage:openprefire/under_to_jungle/20",
+              "name": "Ticket Booth / raised hold",
+              "position": [
+                -825.105042,
+                -2520.172852,
+                -36.96875
+              ],
+              "rotation": [
+                7.640225,
+                84.718819,
+                0
+              ],
+              "crouched": false,
+              "moving": true,
+              "source": {
+                "dataset": "openprefire-mirage",
+                "profile": "under_to_jungle",
+                "index": 20
+              }
+            }
+          ]
         }
       ]
     },
@@ -803,7 +1088,8 @@
             "dataset": "openprefire-mirage",
             "profile": "a_palace",
             "index": 19
-          }
+          },
+          "exclusionGroup": "de_mirage:overlap/de_mirage:openprefire/a_palace/19"
         },
         {
           "id": "de_mirage:openprefire/a_palace/20",
@@ -908,7 +1194,8 @@
             "dataset": "openprefire-mirage",
             "profile": "a_palace",
             "index": 29
-          }
+          },
+          "exclusionGroup": "de_mirage:overlap/de_mirage:openprefire/a_palace/29"
         },
         {
           "id": "de_mirage:openprefire/a_palace/30",
@@ -971,7 +1258,8 @@
             "dataset": "openprefire-mirage",
             "profile": "a_palace",
             "index": 32
-          }
+          },
+          "exclusionGroup": "de_mirage:overlap/de_mirage:openprefire/a_palace/32"
         },
         {
           "id": "de_mirage:openprefire/a_palace/33",
@@ -996,7 +1284,7 @@
         },
         {
           "id": "de_mirage:openprefire/a_ramp/5",
-          "name": "Stairs / Connector / a ramp 5",
+          "name": "Stairs / Jungle raised box",
           "position": [
             -498.622742,
             -1524.324951,
@@ -1017,7 +1305,7 @@
         },
         {
           "id": "de_mirage:openprefire/a_ramp/8",
-          "name": "Jungle / a ramp 8",
+          "name": "Jungle / A-site entrance",
           "position": [
             -783.96875,
             -1668.609741,
@@ -1034,7 +1322,8 @@
             "dataset": "openprefire-mirage",
             "profile": "a_ramp",
             "index": 8
-          }
+          },
+          "exclusionGroup": "de_mirage:overlap/de_mirage:openprefire/a_palace/29"
         },
         {
           "id": "de_mirage:openprefire/a_ramp/12",
@@ -1055,7 +1344,8 @@
             "dataset": "openprefire-mirage",
             "profile": "a_ramp",
             "index": 12
-          }
+          },
+          "exclusionGroup": "de_mirage:overlap/de_mirage:openprefire/a_palace/32"
         },
         {
           "id": "de_mirage:openprefire/a_ramp/20",
@@ -1080,7 +1370,7 @@
         },
         {
           "id": "de_mirage:openprefire/a_ramp/22",
-          "name": "Jungle / a ramp 22",
+          "name": "Jungle / close wall",
           "position": [
             -879.96875,
             -1306.03125,
@@ -1098,6 +1388,352 @@
             "profile": "a_ramp",
             "index": 22
           }
+        },
+        {
+          "id": "de_mirage:openprefire/ct_push_palace/1",
+          "name": "Palace / balcony back edge",
+          "position": [
+            288.031281,
+            -2374.96875,
+            -40.12875
+          ],
+          "rotation": [
+            -1.188253,
+            151.667908,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "ct_push_palace",
+            "index": 1
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/ct_push_palace/7",
+          "name": "Palace / balcony-side pillar",
+          "position": [
+            406.245575,
+            -2110.32959,
+            -40.12875
+          ],
+          "rotation": [
+            -1.320225,
+            -130.116653,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "ct_push_palace",
+            "index": 7
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/under_to_jungle/21",
+          "name": "Ticket / site-side corner",
+          "position": [
+            -808.24762,
+            -2307.05249,
+            -178.677567
+          ],
+          "rotation": [
+            1.905611,
+            84.931007,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "under_to_jungle",
+            "index": 21
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/under_to_jungle/24",
+          "name": "Triple / front corner",
+          "position": [
+            -495.810791,
+            -2093.833496,
+            -180.96875
+          ],
+          "rotation": [
+            2.15398,
+            98.776421,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "under_to_jungle",
+            "index": 24
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/under_to_jungle/25",
+          "name": "Stairs / Jungle raised box",
+          "position": [
+            -447.958313,
+            -1574.59668,
+            -40.96875
+          ],
+          "rotation": [
+            17.380583,
+            120.816963,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "under_to_jungle",
+            "index": 25
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/under_to_jungle/26",
+          "name": "Default / rear box",
+          "position": [
+            -330.087646,
+            -2206.322266,
+            -174.810532
+          ],
+          "rotation": [
+            -0.598899,
+            112.371567,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "under_to_jungle",
+            "index": 26
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/under_to_jungle/28",
+          "name": "Palace / balcony edge",
+          "position": [
+            223.972626,
+            -2373.858643,
+            -40.96875
+          ],
+          "rotation": [
+            4.887369,
+            136.286133,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "under_to_jungle",
+            "index": 28
+          }
+        },
+        {
+          "id": "de_mirage:retakes/3",
+          "name": "Triple / Ticket-side box",
+          "position": [
+            -554.97,
+            -2103.69,
+            -179.97
+          ],
+          "rotation": [
+            0,
+            -71.46,
+            0
+          ],
+          "crouched": false,
+          "moving": false,
+          "source": {
+            "dataset": "retakes-mirage",
+            "profile": "mirage",
+            "index": 3
+          }
+        },
+        {
+          "id": "de_mirage:retakes/4",
+          "name": "Default / plant-side box",
+          "position": [
+            -253.97,
+            -2134.08,
+            -172.95
+          ],
+          "rotation": [
+            0,
+            131.13,
+            0
+          ],
+          "crouched": false,
+          "moving": false,
+          "source": {
+            "dataset": "retakes-mirage",
+            "profile": "mirage",
+            "index": 4
+          },
+          "exclusionGroup": "de_mirage:overlap/de_mirage:openprefire/a_palace/32"
+        },
+        {
+          "id": "de_mirage:retakes/8",
+          "name": "Stairs / top step",
+          "position": [
+            -142.97,
+            -1418.03,
+            -72.18
+          ],
+          "rotation": [
+            0,
+            -76.73,
+            0
+          ],
+          "crouched": false,
+          "moving": false,
+          "source": {
+            "dataset": "retakes-mirage",
+            "profile": "mirage",
+            "index": 8
+          }
+        },
+        {
+          "id": "de_mirage:retakes/29",
+          "name": "Jungle / Window-side wall",
+          "position": [
+            -1187.47,
+            -1273.15,
+            -167.97
+          ],
+          "rotation": [
+            0,
+            98.6,
+            0
+          ],
+          "crouched": false,
+          "moving": false,
+          "source": {
+            "dataset": "retakes-mirage",
+            "profile": "mirage",
+            "index": 29
+          }
+        }
+      ],
+      "lineups": [
+        {
+          "id": "a-palace-common-angles",
+          "name": "A site / boxes & Jungle from Palace",
+          "angles": [
+            {
+              "id": "de_mirage:retakes/3",
+              "name": "Triple / Ticket-side box",
+              "position": [
+                -554.97,
+                -2103.69,
+                -179.97
+              ],
+              "rotation": [
+                0,
+                -71.46,
+                0
+              ],
+              "crouched": false,
+              "moving": false,
+              "source": {
+                "dataset": "retakes-mirage",
+                "profile": "mirage",
+                "index": 3
+              }
+            },
+            {
+              "id": "de_mirage:retakes/4",
+              "name": "Default / plant-side box",
+              "position": [
+                -253.97,
+                -2134.08,
+                -172.95
+              ],
+              "rotation": [
+                0,
+                131.13,
+                0
+              ],
+              "crouched": false,
+              "moving": false,
+              "source": {
+                "dataset": "retakes-mirage",
+                "profile": "mirage",
+                "index": 4
+              },
+              "exclusionGroup": "de_mirage:overlap/de_mirage:openprefire/a_palace/32"
+            },
+            {
+              "id": "de_mirage:retakes/8",
+              "name": "Stairs / top step",
+              "position": [
+                -142.97,
+                -1418.03,
+                -72.18
+              ],
+              "rotation": [
+                0,
+                -76.73,
+                0
+              ],
+              "crouched": false,
+              "moving": false,
+              "source": {
+                "dataset": "retakes-mirage",
+                "profile": "mirage",
+                "index": 8
+              }
+            },
+            {
+              "id": "de_mirage:retakes/29",
+              "name": "Jungle / Window-side wall",
+              "position": [
+                -1187.47,
+                -1273.15,
+                -167.97
+              ],
+              "rotation": [
+                0,
+                98.6,
+                0
+              ],
+              "crouched": false,
+              "moving": false,
+              "source": {
+                "dataset": "retakes-mirage",
+                "profile": "mirage",
+                "index": 29
+              }
+            },
+            {
+              "id": "de_mirage:openprefire/ct_push_palace/1",
+              "name": "Palace / balcony back edge",
+              "position": [
+                288.031281,
+                -2374.96875,
+                -40.12875
+              ],
+              "rotation": [
+                -1.188253,
+                151.667908,
+                0
+              ],
+              "crouched": false,
+              "moving": true,
+              "source": {
+                "dataset": "openprefire-mirage",
+                "profile": "ct_push_palace",
+                "index": 1
+              }
+            }
+          ]
         }
       ]
     },
@@ -1272,7 +1908,8 @@
             "dataset": "openprefire-mirage",
             "profile": "b_apts",
             "index": 11
-          }
+          },
+          "exclusionGroup": "de_mirage:overlap/de_mirage:openprefire/b_apts/11"
         },
         {
           "id": "de_mirage:openprefire/b_apts/12",
@@ -1440,7 +2077,8 @@
             "dataset": "openprefire-mirage",
             "profile": "b_retake",
             "index": 16
-          }
+          },
+          "exclusionGroup": "de_mirage:overlap/de_mirage:openprefire/b_retake/16"
         },
         {
           "id": "de_mirage:openprefire/b_retake/22",
@@ -1587,7 +2225,8 @@
             "dataset": "openprefire-mirage",
             "profile": "mid_to_b",
             "index": 39
-          }
+          },
+          "exclusionGroup": "de_mirage:overlap/de_mirage:openprefire/b_retake/16"
         }
       ]
     },
@@ -1701,7 +2340,8 @@
             "dataset": "openprefire-mirage",
             "profile": "mid_to_b",
             "index": 3
-          }
+          },
+          "exclusionGroup": "de_mirage:overlap/de_mirage:openprefire/mid_to_b/3"
         },
         {
           "id": "de_mirage:openprefire/mid_to_b/4",
@@ -1850,7 +2490,8 @@
             "dataset": "openprefire-mirage",
             "profile": "mid_to_b",
             "index": 11
-          }
+          },
+          "exclusionGroup": "de_mirage:overlap/de_mirage:openprefire/mid_to_b/11"
         },
         {
           "id": "de_mirage:openprefire/mid_to_b/12",
@@ -1955,7 +2596,8 @@
             "dataset": "openprefire-mirage",
             "profile": "mid_to_b",
             "index": 17
-          }
+          },
+          "exclusionGroup": "de_mirage:overlap/de_mirage:openprefire/mid_to_b/17"
         },
         {
           "id": "de_mirage:openprefire/mid_to_b/18",
@@ -1976,7 +2618,8 @@
             "dataset": "openprefire-mirage",
             "profile": "mid_to_b",
             "index": 18
-          }
+          },
+          "exclusionGroup": "de_mirage:overlap/de_mirage:openprefire/mid_to_b/18"
         },
         {
           "id": "de_mirage:openprefire/mid_to_b/19",
@@ -2018,7 +2661,8 @@
             "dataset": "openprefire-mirage",
             "profile": "mid_to_b",
             "index": 20
-          }
+          },
+          "exclusionGroup": "de_mirage:overlap/de_mirage:openprefire/mid_to_b/20"
         },
         {
           "id": "de_mirage:openprefire/mid_to_b/21",
@@ -2375,7 +3019,8 @@
             "dataset": "openprefire-mirage",
             "profile": "under_to_jungle",
             "index": 11
-          }
+          },
+          "exclusionGroup": "de_mirage:overlap/de_mirage:openprefire/mid_to_b/11"
         },
         {
           "id": "de_mirage:openprefire/under_to_jungle/13",
@@ -2417,7 +3062,8 @@
             "dataset": "openprefire-mirage",
             "profile": "under_to_jungle",
             "index": 14
-          }
+          },
+          "exclusionGroup": "de_mirage:overlap/de_mirage:openprefire/mid_to_b/3"
         },
         {
           "id": "de_mirage:openprefire/under_to_jungle/15",
@@ -2480,7 +3126,8 @@
             "dataset": "openprefire-mirage",
             "profile": "under_to_jungle",
             "index": 18
-          }
+          },
+          "exclusionGroup": "de_mirage:overlap/de_mirage:openprefire/mid_to_b/20"
         },
         {
           "id": "de_mirage:openprefire/under_to_jungle/19",
@@ -2501,11 +3148,12 @@
             "dataset": "openprefire-mirage",
             "profile": "under_to_jungle",
             "index": 19
-          }
+          },
+          "exclusionGroup": "de_mirage:overlap/de_mirage:openprefire/mid_to_b/18"
         },
         {
           "id": "de_mirage:openprefire/under_to_jungle/21",
-          "name": "Jungle / under to jungle 21",
+          "name": "Ticket / site-side corner",
           "position": [
             -808.24762,
             -2307.05249,
@@ -2543,7 +3191,8 @@
             "dataset": "openprefire-mirage",
             "profile": "under_to_jungle",
             "index": 22
-          }
+          },
+          "exclusionGroup": "de_mirage:overlap/de_mirage:openprefire/mid_to_b/17"
         },
         {
           "id": "de_mirage:openprefire/under_to_jungle/23",
@@ -2568,7 +3217,7 @@
         },
         {
           "id": "de_mirage:openprefire/under_to_jungle/24",
-          "name": "A site / under to jungle 24",
+          "name": "Triple / front corner",
           "position": [
             -495.810791,
             -2093.833496,
@@ -2628,6 +3277,267 @@
             "profile": "under_to_jungle",
             "index": 41
           }
+        },
+        {
+          "id": "de_mirage:openprefire/a_ramp/8",
+          "name": "Jungle / A-site entrance",
+          "position": [
+            -783.96875,
+            -1668.609741,
+            -175.029556
+          ],
+          "rotation": [
+            -0.269463,
+            2.240653,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "a_ramp",
+            "index": 8
+          },
+          "exclusionGroup": "de_mirage:overlap/de_mirage:openprefire/a_palace/29"
+        },
+        {
+          "id": "de_mirage:openprefire/a_ramp/9",
+          "name": "Ticket / site back wall",
+          "position": [
+            -729.41095,
+            -2072.19458,
+            -180.96875
+          ],
+          "rotation": [
+            -0.327212,
+            27.958685,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "a_ramp",
+            "index": 9
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/a_ramp/24",
+          "name": "Short / Ladder-room corner",
+          "position": [
+            -865.098633,
+            127.120186,
+            -173.699005
+          ],
+          "rotation": [
+            0.077013,
+            -79.985458,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "a_ramp",
+            "index": 24
+          }
+        },
+        {
+          "id": "de_mirage:retakes/13",
+          "name": "Short / Ladder-room approach",
+          "position": [
+            -1040.86,
+            238.6,
+            -171.73
+          ],
+          "rotation": [
+            0,
+            -35.02,
+            0
+          ],
+          "crouched": false,
+          "moving": false,
+          "source": {
+            "dataset": "retakes-mirage",
+            "profile": "mirage",
+            "index": 13
+          }
+        },
+        {
+          "id": "de_mirage:retakes/14",
+          "name": "Top mid / boxes side",
+          "position": [
+            215.21,
+            -323.35,
+            -167.4
+          ],
+          "rotation": [
+            0,
+            -139.94,
+            0
+          ],
+          "crouched": false,
+          "moving": false,
+          "source": {
+            "dataset": "retakes-mirage",
+            "profile": "mirage",
+            "index": 14
+          }
+        },
+        {
+          "id": "de_mirage:retakes/15",
+          "name": "Connector / Mid corner",
+          "position": [
+            -174.44,
+            -479.53,
+            -166.4
+          ],
+          "rotation": [
+            0,
+            165.44,
+            0
+          ],
+          "crouched": false,
+          "moving": false,
+          "source": {
+            "dataset": "retakes-mirage",
+            "profile": "mirage",
+            "index": 15
+          }
+        },
+        {
+          "id": "de_mirage:retakes/16",
+          "name": "Connector / lower entrance",
+          "position": [
+            -84.52,
+            -770.57,
+            -209.42
+          ],
+          "rotation": [
+            0,
+            142.59,
+            0
+          ],
+          "crouched": false,
+          "moving": false,
+          "source": {
+            "dataset": "retakes-mirage",
+            "profile": "mirage",
+            "index": 16
+          }
+        }
+      ],
+      "lineups": [
+        {
+          "id": "mid-short-common-angles",
+          "name": "Mid / Connector & Short",
+          "angles": [
+            {
+              "id": "de_mirage:retakes/13",
+              "name": "Short / Ladder-room approach",
+              "position": [
+                -1040.86,
+                238.6,
+                -171.73
+              ],
+              "rotation": [
+                0,
+                -35.02,
+                0
+              ],
+              "crouched": false,
+              "moving": false,
+              "source": {
+                "dataset": "retakes-mirage",
+                "profile": "mirage",
+                "index": 13
+              }
+            },
+            {
+              "id": "de_mirage:retakes/14",
+              "name": "Top mid / boxes side",
+              "position": [
+                215.21,
+                -323.35,
+                -167.4
+              ],
+              "rotation": [
+                0,
+                -139.94,
+                0
+              ],
+              "crouched": false,
+              "moving": false,
+              "source": {
+                "dataset": "retakes-mirage",
+                "profile": "mirage",
+                "index": 14
+              }
+            },
+            {
+              "id": "de_mirage:retakes/15",
+              "name": "Connector / Mid corner",
+              "position": [
+                -174.44,
+                -479.53,
+                -166.4
+              ],
+              "rotation": [
+                0,
+                165.44,
+                0
+              ],
+              "crouched": false,
+              "moving": false,
+              "source": {
+                "dataset": "retakes-mirage",
+                "profile": "mirage",
+                "index": 15
+              }
+            },
+            {
+              "id": "de_mirage:retakes/16",
+              "name": "Connector / lower entrance",
+              "position": [
+                -84.52,
+                -770.57,
+                -209.42
+              ],
+              "rotation": [
+                0,
+                142.59,
+                0
+              ],
+              "crouched": false,
+              "moving": false,
+              "source": {
+                "dataset": "retakes-mirage",
+                "profile": "mirage",
+                "index": 16
+              }
+            },
+            {
+              "id": "de_mirage:openprefire/a_ramp/24",
+              "name": "Short / Ladder-room corner",
+              "position": [
+                -865.098633,
+                127.120186,
+                -173.699005
+              ],
+              "rotation": [
+                0.077013,
+                -79.985458,
+                0
+              ],
+              "crouched": false,
+              "moving": true,
+              "source": {
+                "dataset": "openprefire-mirage",
+                "profile": "a_ramp",
+                "index": 24
+              }
+            }
+          ]
         }
       ]
     },
@@ -2721,7 +3631,8 @@
             "dataset": "openprefire-mirage",
             "profile": "under_to_jungle",
             "index": 11
-          }
+          },
+          "exclusionGroup": "de_mirage:overlap/de_mirage:openprefire/mid_to_b/11"
         },
         {
           "id": "de_mirage:openprefire/under_to_jungle/12",
@@ -2784,7 +3695,8 @@
             "dataset": "openprefire-mirage",
             "profile": "under_to_jungle",
             "index": 14
-          }
+          },
+          "exclusionGroup": "de_mirage:overlap/de_mirage:openprefire/mid_to_b/3"
         }
       ],
       "alternatives": [
@@ -2849,7 +3761,8 @@
             "dataset": "openprefire-mirage",
             "profile": "under_to_jungle",
             "index": 18
-          }
+          },
+          "exclusionGroup": "de_mirage:overlap/de_mirage:openprefire/mid_to_b/20"
         },
         {
           "id": "de_mirage:openprefire/under_to_jungle/19",
@@ -2870,11 +3783,12 @@
             "dataset": "openprefire-mirage",
             "profile": "under_to_jungle",
             "index": 19
-          }
+          },
+          "exclusionGroup": "de_mirage:overlap/de_mirage:openprefire/mid_to_b/18"
         },
         {
           "id": "de_mirage:openprefire/under_to_jungle/20",
-          "name": "Jungle / under to jungle 20",
+          "name": "Ticket Booth / raised hold",
           "position": [
             -825.105042,
             -2520.172852,
@@ -2895,7 +3809,7 @@
         },
         {
           "id": "de_mirage:openprefire/under_to_jungle/21",
-          "name": "Jungle / under to jungle 21",
+          "name": "Ticket / site-side corner",
           "position": [
             -808.24762,
             -2307.05249,
@@ -2933,7 +3847,8 @@
             "dataset": "openprefire-mirage",
             "profile": "under_to_jungle",
             "index": 22
-          }
+          },
+          "exclusionGroup": "de_mirage:overlap/de_mirage:openprefire/mid_to_b/17"
         },
         {
           "id": "de_mirage:openprefire/under_to_jungle/23",
@@ -2958,7 +3873,7 @@
         },
         {
           "id": "de_mirage:openprefire/under_to_jungle/24",
-          "name": "A site / under to jungle 24",
+          "name": "Triple / front corner",
           "position": [
             -495.810791,
             -2093.833496,
@@ -2979,7 +3894,7 @@
         },
         {
           "id": "de_mirage:openprefire/under_to_jungle/25",
-          "name": "Stairs / Connector / under to jungle 25",
+          "name": "Stairs / Jungle raised box",
           "position": [
             -447.958313,
             -1574.59668,
@@ -3000,7 +3915,7 @@
         },
         {
           "id": "de_mirage:openprefire/under_to_jungle/26",
-          "name": "A site / under to jungle 26",
+          "name": "Default / rear box",
           "position": [
             -330.087646,
             -2206.322266,
@@ -3038,7 +3953,8 @@
             "dataset": "openprefire-mirage",
             "profile": "under_to_jungle",
             "index": 27
-          }
+          },
+          "exclusionGroup": "de_mirage:overlap/de_mirage:openprefire/a_ramp/25"
         },
         {
           "id": "de_mirage:openprefire/under_to_jungle/30",
@@ -3143,7 +4059,8 @@
             "dataset": "openprefire-mirage",
             "profile": "mid_to_b",
             "index": 3
-          }
+          },
+          "exclusionGroup": "de_mirage:overlap/de_mirage:openprefire/mid_to_b/3"
         },
         {
           "id": "de_mirage:openprefire/mid_to_b/7",
@@ -3227,7 +4144,8 @@
             "dataset": "openprefire-mirage",
             "profile": "mid_to_b",
             "index": 11
-          }
+          },
+          "exclusionGroup": "de_mirage:overlap/de_mirage:openprefire/mid_to_b/11"
         },
         {
           "id": "de_mirage:openprefire/mid_to_b/12",
@@ -3311,7 +4229,8 @@
             "dataset": "openprefire-mirage",
             "profile": "mid_to_b",
             "index": 17
-          }
+          },
+          "exclusionGroup": "de_mirage:overlap/de_mirage:openprefire/mid_to_b/17"
         },
         {
           "id": "de_mirage:openprefire/mid_to_b/18",
@@ -3332,7 +4251,8 @@
             "dataset": "openprefire-mirage",
             "profile": "mid_to_b",
             "index": 18
-          }
+          },
+          "exclusionGroup": "de_mirage:overlap/de_mirage:openprefire/mid_to_b/18"
         },
         {
           "id": "de_mirage:openprefire/mid_to_b/19",
@@ -3374,7 +4294,375 @@
             "dataset": "openprefire-mirage",
             "profile": "mid_to_b",
             "index": 20
+          },
+          "exclusionGroup": "de_mirage:overlap/de_mirage:openprefire/mid_to_b/20"
+        },
+        {
+          "id": "de_mirage:openprefire/a_ramp/5",
+          "name": "Stairs / Jungle raised box",
+          "position": [
+            -498.622742,
+            -1524.324951,
+            -41.03125
+          ],
+          "rotation": [
+            10.760789,
+            -2.039819,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "a_ramp",
+            "index": 5
           }
+        },
+        {
+          "id": "de_mirage:openprefire/a_ramp/8",
+          "name": "Jungle / A-site entrance",
+          "position": [
+            -783.96875,
+            -1668.609741,
+            -175.029556
+          ],
+          "rotation": [
+            -0.269463,
+            2.240653,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "a_ramp",
+            "index": 8
+          },
+          "exclusionGroup": "de_mirage:overlap/de_mirage:openprefire/a_palace/29"
+        },
+        {
+          "id": "de_mirage:openprefire/a_ramp/9",
+          "name": "Ticket / site back wall",
+          "position": [
+            -729.41095,
+            -2072.19458,
+            -180.96875
+          ],
+          "rotation": [
+            -0.327212,
+            27.958685,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "a_ramp",
+            "index": 9
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/a_ramp/18",
+          "name": "Firebox / Ninja-side corner",
+          "position": [
+            -385.123535,
+            -2394.96875,
+            -167.42038
+          ],
+          "rotation": [
+            -1.405229,
+            94.53334,
+            0
+          ],
+          "crouched": true,
+          "moving": false,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "a_ramp",
+            "index": 18
+          },
+          "exclusionGroup": "de_mirage:overlap/de_mirage:openprefire/a_palace/37"
+        },
+        {
+          "id": "de_mirage:openprefire/a_ramp/19",
+          "name": "Jungle / back-room corner",
+          "position": [
+            -1275.555054,
+            -1421.77417,
+            -162.254761
+          ],
+          "rotation": [
+            0.327273,
+            -16.987068,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "a_ramp",
+            "index": 19
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/a_ramp/22",
+          "name": "Jungle / close wall",
+          "position": [
+            -879.96875,
+            -1306.03125,
+            -168.96875
+          ],
+          "rotation": [
+            0.096268,
+            -44.559196,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "a_ramp",
+            "index": 22
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/a_ramp/24",
+          "name": "Short / Ladder-room corner",
+          "position": [
+            -865.098633,
+            127.120186,
+            -173.699005
+          ],
+          "rotation": [
+            0.077013,
+            -79.985458,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "a_ramp",
+            "index": 24
+          }
+        },
+        {
+          "id": "de_mirage:retakes/12",
+          "name": "Window / back room",
+          "position": [
+            -1166.2,
+            -519.36,
+            -167.97
+          ],
+          "rotation": [
+            0,
+            -33.34,
+            0
+          ],
+          "crouched": false,
+          "moving": false,
+          "source": {
+            "dataset": "retakes-mirage",
+            "profile": "mirage",
+            "index": 12
+          }
+        },
+        {
+          "id": "de_mirage:retakes/14",
+          "name": "Top mid / boxes side",
+          "position": [
+            215.21,
+            -323.35,
+            -167.4
+          ],
+          "rotation": [
+            0,
+            -139.94,
+            0
+          ],
+          "crouched": false,
+          "moving": false,
+          "source": {
+            "dataset": "retakes-mirage",
+            "profile": "mirage",
+            "index": 14
+          }
+        },
+        {
+          "id": "de_mirage:retakes/15",
+          "name": "Connector / Mid corner",
+          "position": [
+            -174.44,
+            -479.53,
+            -166.4
+          ],
+          "rotation": [
+            0,
+            165.44,
+            0
+          ],
+          "crouched": false,
+          "moving": false,
+          "source": {
+            "dataset": "retakes-mirage",
+            "profile": "mirage",
+            "index": 15
+          }
+        },
+        {
+          "id": "de_mirage:retakes/16",
+          "name": "Connector / lower entrance",
+          "position": [
+            -84.52,
+            -770.57,
+            -209.42
+          ],
+          "rotation": [
+            0,
+            142.59,
+            0
+          ],
+          "crouched": false,
+          "moving": false,
+          "source": {
+            "dataset": "retakes-mirage",
+            "profile": "mirage",
+            "index": 16
+          }
+        },
+        {
+          "id": "de_mirage:retakes/17",
+          "name": "Jungle / connector-side corner",
+          "position": [
+            -1221.5,
+            -1399.1,
+            -163.29
+          ],
+          "rotation": [
+            0,
+            87.2,
+            0
+          ],
+          "crouched": false,
+          "moving": false,
+          "source": {
+            "dataset": "retakes-mirage",
+            "profile": "mirage",
+            "index": 17
+          }
+        }
+      ],
+      "lineups": [
+        {
+          "id": "underpass-connector-common-angles",
+          "name": "Connector / crossfire & Window",
+          "angles": [
+            {
+              "id": "de_mirage:retakes/12",
+              "name": "Window / back room",
+              "position": [
+                -1166.2,
+                -519.36,
+                -167.97
+              ],
+              "rotation": [
+                0,
+                -33.34,
+                0
+              ],
+              "crouched": false,
+              "moving": false,
+              "source": {
+                "dataset": "retakes-mirage",
+                "profile": "mirage",
+                "index": 12
+              }
+            },
+            {
+              "id": "de_mirage:retakes/14",
+              "name": "Top mid / boxes side",
+              "position": [
+                215.21,
+                -323.35,
+                -167.4
+              ],
+              "rotation": [
+                0,
+                -139.94,
+                0
+              ],
+              "crouched": false,
+              "moving": false,
+              "source": {
+                "dataset": "retakes-mirage",
+                "profile": "mirage",
+                "index": 14
+              }
+            },
+            {
+              "id": "de_mirage:retakes/15",
+              "name": "Connector / Mid corner",
+              "position": [
+                -174.44,
+                -479.53,
+                -166.4
+              ],
+              "rotation": [
+                0,
+                165.44,
+                0
+              ],
+              "crouched": false,
+              "moving": false,
+              "source": {
+                "dataset": "retakes-mirage",
+                "profile": "mirage",
+                "index": 15
+              }
+            },
+            {
+              "id": "de_mirage:retakes/16",
+              "name": "Connector / lower entrance",
+              "position": [
+                -84.52,
+                -770.57,
+                -209.42
+              ],
+              "rotation": [
+                0,
+                142.59,
+                0
+              ],
+              "crouched": false,
+              "moving": false,
+              "source": {
+                "dataset": "retakes-mirage",
+                "profile": "mirage",
+                "index": 16
+              }
+            },
+            {
+              "id": "de_mirage:retakes/17",
+              "name": "Jungle / connector-side corner",
+              "position": [
+                -1221.5,
+                -1399.1,
+                -163.29
+              ],
+              "rotation": [
+                0,
+                87.2,
+                0
+              ],
+              "crouched": false,
+              "moving": false,
+              "source": {
+                "dataset": "retakes-mirage",
+                "profile": "mirage",
+                "index": 17
+              }
+            }
+          ]
         }
       ]
     },
@@ -3534,7 +4822,8 @@
             "dataset": "openprefire-mirage",
             "profile": "b_retake",
             "index": 11
-          }
+          },
+          "exclusionGroup": "de_mirage:overlap/de_mirage:openprefire/b_apts/22"
         },
         {
           "id": "de_mirage:openprefire/b_retake/17",
@@ -3618,7 +4907,8 @@
             "dataset": "openprefire-mirage",
             "profile": "b_retake",
             "index": 20
-          }
+          },
+          "exclusionGroup": "de_mirage:overlap/de_mirage:openprefire/b_apts/20"
         },
         {
           "id": "de_mirage:openprefire/b_retake/21",
@@ -3639,7 +4929,8 @@
             "dataset": "openprefire-mirage",
             "profile": "b_retake",
             "index": 21
-          }
+          },
+          "exclusionGroup": "de_mirage:overlap/de_mirage:openprefire/b_apts/31"
         },
         {
           "id": "de_mirage:openprefire/b_retake/22",
@@ -3996,7 +5287,8 @@
             "dataset": "openprefire-mirage",
             "profile": "b_apts",
             "index": 20
-          }
+          },
+          "exclusionGroup": "de_mirage:overlap/de_mirage:openprefire/b_apts/20"
         },
         {
           "id": "de_mirage:openprefire/b_apts/21",
@@ -4038,7 +5330,8 @@
             "dataset": "openprefire-mirage",
             "profile": "b_apts",
             "index": 22
-          }
+          },
+          "exclusionGroup": "de_mirage:overlap/de_mirage:openprefire/b_apts/22"
         },
         {
           "id": "de_mirage:openprefire/b_apts/25",
@@ -4059,7 +5352,8 @@
             "dataset": "openprefire-mirage",
             "profile": "b_apts",
             "index": 25
-          }
+          },
+          "exclusionGroup": "de_mirage:overlap/de_mirage:openprefire/b_apts/25"
         },
         {
           "id": "de_mirage:openprefire/b_apts/27",
@@ -4080,7 +5374,8 @@
             "dataset": "openprefire-mirage",
             "profile": "b_apts",
             "index": 27
-          }
+          },
+          "exclusionGroup": "de_mirage:overlap/de_mirage:openprefire/b_apts/27"
         },
         {
           "id": "de_mirage:openprefire/b_apts/28",
@@ -4164,7 +5459,8 @@
             "dataset": "openprefire-mirage",
             "profile": "b_apts",
             "index": 31
-          }
+          },
+          "exclusionGroup": "de_mirage:overlap/de_mirage:openprefire/b_apts/31"
         },
         {
           "id": "de_mirage:openprefire/b_apts/32",
@@ -4185,7 +5481,8 @@
             "dataset": "openprefire-mirage",
             "profile": "b_apts",
             "index": 32
-          }
+          },
+          "exclusionGroup": "de_mirage:overlap/de_mirage:openprefire/b_apts/32"
         },
         {
           "id": "de_mirage:openprefire/b_apts/36",
@@ -4437,7 +5734,8 @@
             "dataset": "openprefire-mirage",
             "profile": "mid_to_b",
             "index": 36
-          }
+          },
+          "exclusionGroup": "de_mirage:overlap/de_mirage:openprefire/b_apts/32"
         },
         {
           "id": "de_mirage:openprefire/mid_to_b/37",
@@ -4458,7 +5756,8 @@
             "dataset": "openprefire-mirage",
             "profile": "mid_to_b",
             "index": 37
-          }
+          },
+          "exclusionGroup": "de_mirage:overlap/de_mirage:openprefire/b_apts/25"
         },
         {
           "id": "de_mirage:openprefire/mid_to_b/42",
@@ -4479,7 +5778,8 @@
             "dataset": "openprefire-mirage",
             "profile": "mid_to_b",
             "index": 42
-          }
+          },
+          "exclusionGroup": "de_mirage:overlap/de_mirage:openprefire/b_apts/20"
         },
         {
           "id": "de_mirage:openprefire/mid_to_b/44",
@@ -4500,7 +5800,8 @@
             "dataset": "openprefire-mirage",
             "profile": "mid_to_b",
             "index": 44
-          }
+          },
+          "exclusionGroup": "de_mirage:overlap/de_mirage:openprefire/b_apts/27"
         },
         {
           "id": "de_mirage:openprefire/mid_to_b/45",
@@ -4521,6 +5822,2296 @@
             "dataset": "openprefire-mirage",
             "profile": "mid_to_b",
             "index": 45
+          },
+          "exclusionGroup": "de_mirage:overlap/de_mirage:openprefire/b_apts/31"
+        },
+        {
+          "id": "de_mirage:retakes/25",
+          "name": "Get Right / Apartments-side pillar",
+          "position": [
+            -1944.35,
+            629.97,
+            -167.97
+          ],
+          "rotation": [
+            0,
+            -25.35,
+            0
+          ],
+          "crouched": false,
+          "moving": false,
+          "source": {
+            "dataset": "retakes-mirage",
+            "profile": "mirage",
+            "index": 25
+          }
+        }
+      ]
+    },
+    {
+      "id": "short-b",
+      "name": "Short to B",
+      "region": "B site",
+      "enemySide": "ct",
+      "phase": "preplant",
+      "startLabel": "Catwalk / Short corner",
+      "spawn": [
+        -750,
+        -402,
+        -168.10411916687872
+      ],
+      "path": [
+        [
+          -810,
+          187,
+          -173.20787119109252
+        ],
+        [
+          -2384,
+          296,
+          -166.00000576710138
+        ]
+      ],
+      "look": [
+        -810,
+        187,
+        -173.20787119109252
+      ],
+      "angles": [
+        {
+          "id": "de_mirage:openprefire/mid_to_b/23",
+          "name": "B site / mid to b 23",
+          "position": [
+            -1053.175049,
+            295.971649,
+            -165.59136999999998
+          ],
+          "rotation": [
+            -0.153975,
+            -48.269905,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "mid_to_b",
+            "index": 23
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/mid_to_b/24",
+          "name": "B site / mid to b 24",
+          "position": [
+            -1183.97168,
+            -808.152832,
+            -168.96875
+          ],
+          "rotation": [
+            -0.096384,
+            54.53384,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "mid_to_b",
+            "index": 24
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/mid_to_b/25",
+          "name": "B site / mid to b 25",
+          "position": [
+            -1180.508179,
+            -66.03125,
+            -56.96875
+          ],
+          "rotation": [
+            16.574072,
+            -12.783839,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "mid_to_b",
+            "index": 25
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/mid_to_b/26",
+          "name": "B site / mid to b 26",
+          "position": [
+            -1103.838745,
+            -56.030579,
+            -168.96875
+          ],
+          "rotation": [
+            -0.288829,
+            -19.001442,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "mid_to_b",
+            "index": 26
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/mid_to_b/27",
+          "name": "B site / mid to b 27",
+          "position": [
+            -1185.253662,
+            -270.164429,
+            -56.96875
+          ],
+          "rotation": [
+            15.630846,
+            32.511524,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "mid_to_b",
+            "index": 27
+          }
+        }
+      ],
+      "alternatives": [
+        {
+          "id": "de_mirage:openprefire/mid_to_b/28",
+          "name": "B site / mid to b 28",
+          "position": [
+            -1103.96875,
+            -151.96875,
+            -168.96875
+          ],
+          "rotation": [
+            0.057713,
+            12.222405,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "mid_to_b",
+            "index": 28
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/mid_to_b/29",
+          "name": "B site / mid to b 29",
+          "position": [
+            -1958.287231,
+            747.560669,
+            -48.96875
+          ],
+          "rotation": [
+            5.00498,
+            -31.475428,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "mid_to_b",
+            "index": 29
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/mid_to_b/30",
+          "name": "B site / mid to b 30",
+          "position": [
+            -2008.796997,
+            683.248901,
+            -48.670246
+          ],
+          "rotation": [
+            4.812454,
+            -27.856339,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "mid_to_b",
+            "index": 30
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/mid_to_b/31",
+          "name": "B site / mid to b 31",
+          "position": [
+            -2534.316406,
+            319.807922,
+            -168.96875
+          ],
+          "rotation": [
+            -0.288821,
+            -7.527193,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "mid_to_b",
+            "index": 31
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/mid_to_b/32",
+          "name": "B site / mid to b 32",
+          "position": [
+            -2351.215088,
+            809.768494,
+            -84.19693
+          ],
+          "rotation": [
+            2.810448,
+            -25.873674,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "mid_to_b",
+            "index": 32
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/mid_to_b/33",
+          "name": "B site / mid to b 33",
+          "position": [
+            -2094.970215,
+            368.714264,
+            -160.96875
+          ],
+          "rotation": [
+            -0.288804,
+            -12.735641,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "mid_to_b",
+            "index": 33
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/mid_to_b/34",
+          "name": "B site / mid to b 34",
+          "position": [
+            -2265.03125,
+            349.561157,
+            -168.02533
+          ],
+          "rotation": [
+            -0.635185,
+            -10.524932,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "mid_to_b",
+            "index": 34
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/mid_to_b/35",
+          "name": "B site / mid to b 35",
+          "position": [
+            -2181.280029,
+            -30.40332,
+            -167.931778
+          ],
+          "rotation": [
+            -0.577576,
+            11.614176,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "mid_to_b",
+            "index": 35
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/mid_to_b/36",
+          "name": "B site / mid to b 36",
+          "position": [
+            -1248.626709,
+            516.058899,
+            -165.10063200000002
+          ],
+          "rotation": [
+            -0.269575,
+            -87.62426,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "mid_to_b",
+            "index": 36
+          },
+          "exclusionGroup": "de_mirage:overlap/de_mirage:openprefire/b_apts/32"
+        },
+        {
+          "id": "de_mirage:openprefire/mid_to_b/37",
+          "name": "B site / mid to b 37",
+          "position": [
+            -2013.037964,
+            849.972412,
+            -24.96875
+          ],
+          "rotation": [
+            7.969594,
+            -37.919533,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "mid_to_b",
+            "index": 37
+          },
+          "exclusionGroup": "de_mirage:overlap/de_mirage:openprefire/b_apts/25"
+        },
+        {
+          "id": "de_mirage:openprefire/mid_to_b/38",
+          "name": "B site / mid to b 38",
+          "position": [
+            -2354.735352,
+            -298.894043,
+            -168.96875
+          ],
+          "rotation": [
+            -0.539069,
+            27.12504,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "mid_to_b",
+            "index": 38
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/mid_to_b/39",
+          "name": "B site / mid to b 39",
+          "position": [
+            -2265.0271,
+            473.639648,
+            -168.96875
+          ],
+          "rotation": [
+            -0.365689,
+            1.155341,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "mid_to_b",
+            "index": 39
+          },
+          "exclusionGroup": "de_mirage:overlap/de_mirage:openprefire/b_retake/16"
+        },
+        {
+          "id": "de_mirage:openprefire/mid_to_b/40",
+          "name": "B site / mid to b 40",
+          "position": [
+            -2083.808838,
+            -596.728516,
+            -168.96875
+          ],
+          "rotation": [
+            -0.154069,
+            60.485203,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "mid_to_b",
+            "index": 40
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/mid_to_b/42",
+          "name": "B site / mid to b 42",
+          "position": [
+            -1583.051025,
+            -230.96582,
+            -164.93515
+          ],
+          "rotation": [
+            0.404346,
+            87.289505,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "mid_to_b",
+            "index": 42
+          },
+          "exclusionGroup": "de_mirage:overlap/de_mirage:openprefire/b_apts/20"
+        },
+        {
+          "id": "de_mirage:openprefire/mid_to_b/43",
+          "name": "B site / mid to b 43",
+          "position": [
+            -2284.412842,
+            13.976574,
+            -168.96875
+          ],
+          "rotation": [
+            0.019255,
+            -0.304974,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "mid_to_b",
+            "index": 43
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/mid_to_b/45",
+          "name": "B site / mid to b 45",
+          "position": [
+            -2114.03125,
+            831.96875,
+            -125.29496
+          ],
+          "rotation": [
+            2.23308,
+            -86.217216,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "mid_to_b",
+            "index": 45
+          },
+          "exclusionGroup": "de_mirage:overlap/de_mirage:openprefire/b_apts/31"
+        },
+        {
+          "id": "de_mirage:openprefire/mid_to_b/46",
+          "name": "B site / mid to b 46",
+          "position": [
+            -1743.617188,
+            -600.676147,
+            -168.96875
+          ],
+          "rotation": [
+            -0.192429,
+            117.947769,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "mid_to_b",
+            "index": 46
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/mid_to_b/47",
+          "name": "B site / mid to b 47",
+          "position": [
+            -2294.39624,
+            -498.529236,
+            -168.96875
+          ],
+          "rotation": [
+            -0.46191,
+            88.298141,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "mid_to_b",
+            "index": 47
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/b_apts/4",
+          "name": "B site / b apts 4",
+          "position": [
+            -1520.03125,
+            785.301208,
+            -51.03125
+          ],
+          "rotation": [
+            3.830695,
+            -19.821058,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "b_apts",
+            "index": 4
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/b_apts/5",
+          "name": "B site / b apts 5",
+          "position": [
+            -1871.97229,
+            792.598145,
+            -48.96875
+          ],
+          "rotation": [
+            2.590192,
+            -11.857055,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "b_apts",
+            "index": 5
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/b_apts/9",
+          "name": "B site / b apts 9",
+          "position": [
+            -1985.140625,
+            798.569946,
+            -51.03125
+          ],
+          "rotation": [
+            1.636325,
+            -9.695889,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "b_apts",
+            "index": 9
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/b_apts/10",
+          "name": "B site / b apts 10",
+          "position": [
+            -2313.599609,
+            712.557373,
+            -40.96875
+          ],
+          "rotation": [
+            1.847988,
+            -0.418847,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "b_apts",
+            "index": 10
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/b_apts/11",
+          "name": "B site / b apts 11",
+          "position": [
+            -2384.625244,
+            652.626282,
+            -79.96875
+          ],
+          "rotation": [
+            -2.079026,
+            6.376532,
+            0
+          ],
+          "crouched": true,
+          "moving": false,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "b_apts",
+            "index": 11
+          },
+          "exclusionGroup": "de_mirage:overlap/de_mirage:openprefire/b_apts/11"
+        },
+        {
+          "id": "de_mirage:openprefire/b_apts/12",
+          "name": "B site / b apts 12",
+          "position": [
+            -1520.03125,
+            863.96875,
+            -10.968735000000002
+          ],
+          "rotation": [
+            14.995724,
+            -83.411194,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "b_apts",
+            "index": 12
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/b_apts/13",
+          "name": "B site / b apts 13",
+          "position": [
+            -2392.066895,
+            596.053162,
+            -128.96875
+          ],
+          "rotation": [
+            -4.600809,
+            13.171304,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "b_apts",
+            "index": 13
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/b_apts/14",
+          "name": "B site / b apts 14",
+          "position": [
+            -2655.96875,
+            365.1315,
+            -168.013657
+          ],
+          "rotation": [
+            -3.975557,
+            16.532207,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "b_apts",
+            "index": 14
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/b_apts/16",
+          "name": "B site / b apts 16",
+          "position": [
+            -2065.702881,
+            412.234283,
+            -160.96875
+          ],
+          "rotation": [
+            -9.386997,
+            28.890722,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "b_apts",
+            "index": 16
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/b_apts/17",
+          "name": "B site / b apts 17",
+          "position": [
+            -1910.923706,
+            242.03125,
+            -160.96875
+          ],
+          "rotation": [
+            -9.560245,
+            55.205502,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "b_apts",
+            "index": 17
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/b_apts/18",
+          "name": "B site / b apts 18",
+          "position": [
+            -1851.914917,
+            22.969439,
+            -168.96875
+          ],
+          "rotation": [
+            -8.674742,
+            70.181969,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "b_apts",
+            "index": 18
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/b_apts/19",
+          "name": "B site / b apts 19",
+          "position": [
+            -2072.953613,
+            -646.660461,
+            -168.96875
+          ],
+          "rotation": [
+            -4.048324,
+            71.013916,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "b_apts",
+            "index": 19
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/b_apts/21",
+          "name": "B site / b apts 21",
+          "position": [
+            -1485.21106,
+            108.03125,
+            -167.96875
+          ],
+          "rotation": [
+            -9.010498,
+            103.681885,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "b_apts",
+            "index": 21
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/b_apts/22",
+          "name": "B site / b apts 22",
+          "position": [
+            -1340.651245,
+            294.613251,
+            -168.96875
+          ],
+          "rotation": [
+            -11.192806,
+            128.20546,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "b_apts",
+            "index": 22
+          },
+          "exclusionGroup": "de_mirage:overlap/de_mirage:openprefire/b_apts/22"
+        },
+        {
+          "id": "de_mirage:openprefire/b_apts/23",
+          "name": "B site / b apts 23",
+          "position": [
+            -2313.212646,
+            142.447678,
+            -168.96875
+          ],
+          "rotation": [
+            -6.655999,
+            43.061619,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "b_apts",
+            "index": 23
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/b_apts/24",
+          "name": "B site / b apts 24",
+          "position": [
+            -2398.919922,
+            543.96875,
+            -166.926193
+          ],
+          "rotation": [
+            -12.931521,
+            21.712349,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "b_apts",
+            "index": 24
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/b_apts/28",
+          "name": "B site / b apts 28",
+          "position": [
+            -2556.010742,
+            104.028923,
+            -166.399872
+          ],
+          "rotation": [
+            -8.219739,
+            51.902359,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "b_apts",
+            "index": 28
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/b_apts/29",
+          "name": "B site / b apts 29",
+          "position": [
+            -2145.971191,
+            22.97253,
+            -168.025116
+          ],
+          "rotation": [
+            -9.139624,
+            74.708481,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "b_apts",
+            "index": 29
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/b_apts/30",
+          "name": "B site / b apts 30",
+          "position": [
+            -1996.743408,
+            -24.693726,
+            -168.176788
+          ],
+          "rotation": [
+            -8.157878,
+            88.087494,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "b_apts",
+            "index": 30
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/b_apts/36",
+          "name": "B site / b apts 36",
+          "position": [
+            -1941.856689,
+            -17.868286,
+            -168.403687
+          ],
+          "rotation": [
+            -0.438826,
+            131.613617,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "b_apts",
+            "index": 36
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/b_apts/38",
+          "name": "B site / b apts 38",
+          "position": [
+            -1872.02771,
+            -310.614746,
+            -168.96875
+          ],
+          "rotation": [
+            -0.839232,
+            121.81749,
+            0
+          ],
+          "crouched": true,
+          "moving": false,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "b_apts",
+            "index": 38
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/b_retake/2",
+          "name": "B site / b retake 2",
+          "position": [
+            -1870.012817,
+            -381.838379,
+            -84.452454
+          ],
+          "rotation": [
+            9.259097,
+            -55.261143,
+            0
+          ],
+          "crouched": true,
+          "moving": false,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "b_retake",
+            "index": 2
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/b_retake/3",
+          "name": "B site / b retake 3",
+          "position": [
+            -1985.900635,
+            -205.440552,
+            -168.70173599999998
+          ],
+          "rotation": [
+            0.673593,
+            -56.242691,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "b_retake",
+            "index": 3
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/b_retake/7",
+          "name": "B site / b retake 7",
+          "position": [
+            -1768.766113,
+            503.011566,
+            -168.976837
+          ],
+          "rotation": [
+            -0.423477,
+            -99.413391,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "b_retake",
+            "index": 7
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/b_retake/9",
+          "name": "B site / b retake 9",
+          "position": [
+            -2585.545898,
+            254.014893,
+            -168.958908
+          ],
+          "rotation": [
+            -0.770182,
+            -38.185932,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "b_retake",
+            "index": 9
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/b_retake/10",
+          "name": "B site / b retake 10",
+          "position": [
+            -1495.725098,
+            408.55838,
+            -167.96875
+          ],
+          "rotation": [
+            0.076847,
+            -121.300941,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "b_retake",
+            "index": 10
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/b_retake/12",
+          "name": "B site / b retake 12",
+          "position": [
+            -2262.03125,
+            -695.96875,
+            -168.96875
+          ],
+          "rotation": [
+            1.597577,
+            34.572479,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "b_retake",
+            "index": 12
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/b_retake/13",
+          "name": "B site / b retake 13",
+          "position": [
+            -2367.96875,
+            -368.435791,
+            -168.96875
+          ],
+          "rotation": [
+            -0.288929,
+            -44.737499,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "b_retake",
+            "index": 13
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/b_retake/14",
+          "name": "B site / b retake 14",
+          "position": [
+            -2434.689209,
+            421.066742,
+            -168.568939
+          ],
+          "rotation": [
+            -0.231035,
+            -80.373253,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "b_retake",
+            "index": 14
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/b_retake/17",
+          "name": "B site / b retake 17",
+          "position": [
+            -1969.03125,
+            450.027557,
+            -160.96875
+          ],
+          "rotation": [
+            1.308853,
+            -110.598473,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "b_retake",
+            "index": 17
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/b_retake/18",
+          "name": "B site / b retake 18",
+          "position": [
+            -2001.027588,
+            167.193375,
+            -160.96875
+          ],
+          "rotation": [
+            0.962355,
+            -123.727402,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "b_retake",
+            "index": 18
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/b_retake/19",
+          "name": "B site / b retake 19",
+          "position": [
+            -2411.972168,
+            -247.968994,
+            -168.199738
+          ],
+          "rotation": [
+            -1.520915,
+            -15.272323,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "b_retake",
+            "index": 19
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/b_retake/22",
+          "name": "B site / b retake 22",
+          "position": [
+            -2508.191406,
+            400.336761,
+            -168.96875
+          ],
+          "rotation": [
+            -1.135924,
+            -64.962196,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "b_retake",
+            "index": 22
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/b_retake/23",
+          "name": "B site / b retake 23",
+          "position": [
+            -2635.96875,
+            104.03125,
+            -163.768723
+          ],
+          "rotation": [
+            1.116302,
+            -1.033096,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "b_retake",
+            "index": 23
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/b_retake/24",
+          "name": "B site / b retake 24",
+          "position": [
+            -1906.583252,
+            519.329346,
+            -168.542038
+          ],
+          "rotation": [
+            0.057551,
+            -135.090271,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "b_retake",
+            "index": 24
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/b_retake/25",
+          "name": "B site / b retake 25",
+          "position": [
+            -1713.465088,
+            723.584961,
+            -48.96875
+          ],
+          "rotation": [
+            8.662245,
+            -134.245117,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "b_retake",
+            "index": 25
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/b_retake/26",
+          "name": "B site / b retake 26",
+          "position": [
+            -1359.793945,
+            408.299377,
+            -168.96875
+          ],
+          "rotation": [
+            -0.019451,
+            -166.15947,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "b_retake",
+            "index": 26
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/b_retake/29",
+          "name": "B site / b retake 29",
+          "position": [
+            -1830.972656,
+            473.260345,
+            -168.96875
+          ],
+          "rotation": [
+            -0.288943,
+            178.900848,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "b_retake",
+            "index": 29
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/b_retake/30",
+          "name": "B site / b retake 30",
+          "position": [
+            -1543.434082,
+            739.175476,
+            -48.96875
+          ],
+          "rotation": [
+            6.621755,
+            -161.232956,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "b_retake",
+            "index": 30
+          }
+        },
+        {
+          "id": "de_mirage:retakes/22",
+          "name": "B site / Market-side cover",
+          "position": [
+            -2198.97,
+            89.03,
+            -159.97
+          ],
+          "rotation": [
+            0,
+            67.56,
+            0
+          ],
+          "crouched": false,
+          "moving": false,
+          "source": {
+            "dataset": "retakes-mirage",
+            "profile": "mirage",
+            "index": 22
+          }
+        },
+        {
+          "id": "de_mirage:retakes/24",
+          "name": "Van / raised cover",
+          "position": [
+            -2384.63,
+            652.63,
+            -78.97
+          ],
+          "rotation": [
+            0,
+            7.03,
+            0
+          ],
+          "crouched": false,
+          "moving": false,
+          "source": {
+            "dataset": "retakes-mirage",
+            "profile": "mirage",
+            "index": 24
+          },
+          "exclusionGroup": "de_mirage:overlap/de_mirage:openprefire/b_apts/11"
+        },
+        {
+          "id": "de_mirage:retakes/25",
+          "name": "Get Right / Apartments-side pillar",
+          "position": [
+            -1944.35,
+            629.97,
+            -167.97
+          ],
+          "rotation": [
+            0,
+            -25.35,
+            0
+          ],
+          "crouched": false,
+          "moving": false,
+          "source": {
+            "dataset": "retakes-mirage",
+            "profile": "mirage",
+            "index": 25
+          }
+        }
+      ]
+    },
+    {
+      "id": "jungle-a",
+      "name": "Jungle to A retake",
+      "region": "A site",
+      "enemySide": "t",
+      "phase": "postplant",
+      "startLabel": "Jungle / Window back room",
+      "spawn": [
+        -1187.47,
+        -1273.15,
+        -167.99999972966714
+      ],
+      "path": [
+        [
+          -1135.3700292392036,
+          -1322.0738088052103,
+          -168.13644720060537
+        ],
+        [
+          -851.9054623100702,
+          -1416.5619977815884,
+          -167.99999972966714
+        ],
+        [
+          -757.4172733336922,
+          -1637.0344387264695,
+          -169.30344458145225
+        ],
+        [
+          -783.96875,
+          -1668.609741,
+          -172.4609815368265
+        ],
+        [
+          -473.95270640455817,
+          -1794.5147536871016,
+          -177.44089530579126
+        ],
+        [
+          -473.95270640455817,
+          -2109.4753836083605,
+          -180.00000105129453
+        ],
+        [
+          -495.810791,
+          -2093.833496,
+          -180.00000105129453
+        ],
+        [
+          -347.96845443605406,
+          -2203.963572584738,
+          -172.7129489635402
+        ],
+        [
+          -253.4802654596761,
+          -2203.963572584738,
+          -168.51346780764757
+        ],
+        [
+          -253.97000000000003,
+          -2134.08,
+          -172.97867121450113
+        ]
+      ],
+      "look": [
+        -1135.3700292392036,
+        -1322.0738088052103,
+        -168.13644720060537
+      ],
+      "angles": [
+        {
+          "id": "de_mirage:openprefire/a_ramp/4",
+          "name": "A site / a ramp 4",
+          "position": [
+            179.971832,
+            -1598.053467,
+            -173.963272
+          ],
+          "rotation": [
+            12.454713,
+            5.796865,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "a_ramp",
+            "index": 4
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/a_ramp/6",
+          "name": "A site / a ramp 6",
+          "position": [
+            250.850922,
+            -1440.156616,
+            -176.96875
+          ],
+          "rotation": [
+            16.593512,
+            -28.526819,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "a_ramp",
+            "index": 6
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/a_ramp/7",
+          "name": "A site / a ramp 7",
+          "position": [
+            458.491882,
+            -1438.355469,
+            -176.96875
+          ],
+          "rotation": [
+            25.563988,
+            -91.356567,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "a_ramp",
+            "index": 7
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/a_ramp/8",
+          "name": "Jungle / A-site entrance",
+          "position": [
+            -783.96875,
+            -1668.609741,
+            -175.029556
+          ],
+          "rotation": [
+            -0.269463,
+            2.240653,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "a_ramp",
+            "index": 8
+          },
+          "exclusionGroup": "de_mirage:overlap/de_mirage:openprefire/a_palace/29"
+        },
+        {
+          "id": "de_mirage:openprefire/a_ramp/9",
+          "name": "Ticket / site back wall",
+          "position": [
+            -729.41095,
+            -2072.19458,
+            -180.96875
+          ],
+          "rotation": [
+            -0.327212,
+            27.958685,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "a_ramp",
+            "index": 9
+          }
+        }
+      ],
+      "alternatives": [
+        {
+          "id": "de_mirage:openprefire/a_ramp/10",
+          "name": "A site / a ramp 10",
+          "position": [
+            -999.222473,
+            -2483.588867,
+            -168.96875
+          ],
+          "rotation": [
+            -0.096213,
+            37.314137,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "a_ramp",
+            "index": 10
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/a_ramp/11",
+          "name": "A site / a ramp 11",
+          "position": [
+            176.810928,
+            -1714.208618,
+            -168.96875
+          ],
+          "rotation": [
+            0.924031,
+            87.254456,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "a_ramp",
+            "index": 11
+          },
+          "exclusionGroup": "de_mirage:overlap/de_mirage:openprefire/a_palace/28"
+        },
+        {
+          "id": "de_mirage:openprefire/a_ramp/12",
+          "name": "A site / a ramp 12",
+          "position": [
+            -265.248535,
+            -2186.310059,
+            -173.707657
+          ],
+          "rotation": [
+            -0.404217,
+            57.329151,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "a_ramp",
+            "index": 12
+          },
+          "exclusionGroup": "de_mirage:overlap/de_mirage:openprefire/a_palace/32"
+        },
+        {
+          "id": "de_mirage:openprefire/a_ramp/17",
+          "name": "A site / a ramp 17",
+          "position": [
+            -264.03125,
+            -1504.068604,
+            -166.307693
+          ],
+          "rotation": [
+            1.13577,
+            -87.090324,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "a_ramp",
+            "index": 17
+          },
+          "exclusionGroup": "de_mirage:overlap/de_mirage:openprefire/a_palace/19"
+        },
+        {
+          "id": "de_mirage:openprefire/a_ramp/18",
+          "name": "Firebox / Ninja-side corner",
+          "position": [
+            -385.123535,
+            -2394.96875,
+            -167.42038
+          ],
+          "rotation": [
+            -1.405229,
+            94.53334,
+            0
+          ],
+          "crouched": true,
+          "moving": false,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "a_ramp",
+            "index": 18
+          },
+          "exclusionGroup": "de_mirage:overlap/de_mirage:openprefire/a_palace/37"
+        },
+        {
+          "id": "de_mirage:openprefire/a_ramp/21",
+          "name": "A site / a ramp 21",
+          "position": [
+            119.231071,
+            -1925.813843,
+            -168.96875
+          ],
+          "rotation": [
+            0.769995,
+            176.474289,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "a_ramp",
+            "index": 21
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/a_ramp/24",
+          "name": "Short / Ladder-room corner",
+          "position": [
+            -865.098633,
+            127.120186,
+            -173.699005
+          ],
+          "rotation": [
+            0.077013,
+            -79.985458,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "a_ramp",
+            "index": 24
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/a_ramp/25",
+          "name": "A site / a ramp 25",
+          "position": [
+            -514.121887,
+            -1326.837524,
+            -160.96875
+          ],
+          "rotation": [
+            1.09725,
+            -105.832802,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "a_ramp",
+            "index": 25
+          },
+          "exclusionGroup": "de_mirage:overlap/de_mirage:openprefire/a_ramp/25"
+        },
+        {
+          "id": "de_mirage:openprefire/a_palace/30",
+          "name": "A site / a palace 30",
+          "position": [
+            -781.971069,
+            -1980.639404,
+            -180.96875
+          ],
+          "rotation": [
+            -8.044481,
+            -13.750564,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "a_palace",
+            "index": 30
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/a_palace/31",
+          "name": "A site / a palace 31",
+          "position": [
+            -683.367798,
+            -2161.848633,
+            -180.96875
+          ],
+          "rotation": [
+            -9.443305,
+            0.513559,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "a_palace",
+            "index": 31
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/a_palace/32",
+          "name": "A site / a palace 32",
+          "position": [
+            -272.614868,
+            -2155.963867,
+            -176.73246799999998
+          ],
+          "rotation": [
+            -24.956631,
+            -1.29893,
+            0
+          ],
+          "crouched": true,
+          "moving": false,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "a_palace",
+            "index": 32
+          },
+          "exclusionGroup": "de_mirage:overlap/de_mirage:openprefire/a_palace/32"
+        },
+        {
+          "id": "de_mirage:openprefire/a_palace/33",
+          "name": "A site / a palace 33",
+          "position": [
+            -1053.986694,
+            -2328.525391,
+            -168.96875
+          ],
+          "rotation": [
+            -5.982534,
+            9.469848,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "a_palace",
+            "index": 33
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/a_palace/34",
+          "name": "A site / a palace 34",
+          "position": [
+            -1036.911011,
+            -2530.385742,
+            -168.96875
+          ],
+          "rotation": [
+            -5.698054,
+            21.368526,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "a_palace",
+            "index": 34
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/a_palace/35",
+          "name": "A site / a palace 35",
+          "position": [
+            -888.016052,
+            -2571.9729,
+            -36.96875
+          ],
+          "rotation": [
+            0.513178,
+            27.682903,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "a_palace",
+            "index": 35
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/a_palace/36",
+          "name": "A site / a palace 36",
+          "position": [
+            -643.861145,
+            -2480.254883,
+            -168.96875
+          ],
+          "rotation": [
+            -5.10779,
+            34.189316,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "a_palace",
+            "index": 36
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/a_palace/37",
+          "name": "A site / a palace 37",
+          "position": [
+            -381.651062,
+            -2394.972412,
+            -167.419815
+          ],
+          "rotation": [
+            -13.173533,
+            38.501411,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "a_palace",
+            "index": 37
+          },
+          "exclusionGroup": "de_mirage:overlap/de_mirage:openprefire/a_palace/37"
+        },
+        {
+          "id": "de_mirage:openprefire/a_palace/39",
+          "name": "A site / a palace 39",
+          "position": [
+            -114.03125,
+            -2387.96875,
+            -168.068863
+          ],
+          "rotation": [
+            -1.257786,
+            85.5541,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "a_palace",
+            "index": 39
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/a_palace/43",
+          "name": "A site / a palace 43",
+          "position": [
+            -600.814514,
+            -788.969055,
+            -264.96875
+          ],
+          "rotation": [
+            -4.216276,
+            -94.031258,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "a_palace",
+            "index": 43
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/a_palace/46",
+          "name": "A site / a palace 46",
+          "position": [
+            -520.027649,
+            -1214.009277,
+            -168.96875
+          ],
+          "rotation": [
+            0.288861,
+            -156.060333,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "a_palace",
+            "index": 46
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/a_palace/59",
+          "name": "A site / a palace 59",
+          "position": [
+            -767.795837,
+            -226.912842,
+            -160.96875
+          ],
+          "rotation": [
+            1.039597,
+            -129.655991,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "a_palace",
+            "index": 59
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/under_to_jungle/12",
+          "name": "A site / under to jungle 12",
+          "position": [
+            -520.030273,
+            -1021.00116,
+            -168.96875
+          ],
+          "rotation": [
+            12.510902,
+            131.523865,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "under_to_jungle",
+            "index": 12
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/under_to_jungle/17",
+          "name": "A site / under to jungle 17",
+          "position": [
+            -819.838501,
+            294.96875,
+            -168.695694
+          ],
+          "rotation": [
+            2.385028,
+            -90.661613,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "under_to_jungle",
+            "index": 17
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/under_to_jungle/18",
+          "name": "A site / under to jungle 18",
+          "position": [
+            -600.076538,
+            -1309.030518,
+            -168.96875
+          ],
+          "rotation": [
+            12.00998,
+            101.741745,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "under_to_jungle",
+            "index": 18
+          },
+          "exclusionGroup": "de_mirage:overlap/de_mirage:openprefire/mid_to_b/20"
+        },
+        {
+          "id": "de_mirage:openprefire/under_to_jungle/20",
+          "name": "Ticket Booth / raised hold",
+          "position": [
+            -825.105042,
+            -2520.172852,
+            -36.96875
+          ],
+          "rotation": [
+            7.640225,
+            84.718819,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "under_to_jungle",
+            "index": 20
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/under_to_jungle/21",
+          "name": "Ticket / site-side corner",
+          "position": [
+            -808.24762,
+            -2307.05249,
+            -178.677567
+          ],
+          "rotation": [
+            1.905611,
+            84.931007,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "under_to_jungle",
+            "index": 21
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/under_to_jungle/24",
+          "name": "Triple / front corner",
+          "position": [
+            -495.810791,
+            -2093.833496,
+            -180.96875
+          ],
+          "rotation": [
+            2.15398,
+            98.776421,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "under_to_jungle",
+            "index": 24
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/under_to_jungle/26",
+          "name": "Default / rear box",
+          "position": [
+            -330.087646,
+            -2206.322266,
+            -174.810532
+          ],
+          "rotation": [
+            -0.598899,
+            112.371567,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "under_to_jungle",
+            "index": 26
+          }
+        },
+        {
+          "id": "de_mirage:retakes/2",
+          "name": "Default / front box",
+          "position": [
+            -321.03,
+            -2036.16,
+            -174.56
+          ],
+          "rotation": [
+            0,
+            132.62,
+            0
+          ],
+          "crouched": false,
+          "moving": false,
+          "source": {
+            "dataset": "retakes-mirage",
+            "profile": "mirage",
+            "index": 2
+          }
+        },
+        {
+          "id": "de_mirage:retakes/3",
+          "name": "Triple / Ticket-side box",
+          "position": [
+            -554.97,
+            -2103.69,
+            -179.97
+          ],
+          "rotation": [
+            0,
+            -71.46,
+            0
+          ],
+          "crouched": false,
+          "moving": false,
+          "source": {
+            "dataset": "retakes-mirage",
+            "profile": "mirage",
+            "index": 3
+          }
+        },
+        {
+          "id": "de_mirage:retakes/4",
+          "name": "Default / plant-side box",
+          "position": [
+            -253.97,
+            -2134.08,
+            -172.95
+          ],
+          "rotation": [
+            0,
+            131.13,
+            0
+          ],
+          "crouched": false,
+          "moving": false,
+          "source": {
+            "dataset": "retakes-mirage",
+            "profile": "mirage",
+            "index": 4
+          },
+          "exclusionGroup": "de_mirage:overlap/de_mirage:openprefire/a_palace/32"
+        },
+        {
+          "id": "de_mirage:retakes/5",
+          "name": "Firebox / rear site",
+          "position": [
+            -583.17,
+            -2393.24,
+            -167.97
+          ],
+          "rotation": [
+            0,
+            169.48,
+            0
+          ],
+          "crouched": false,
+          "moving": false,
+          "source": {
+            "dataset": "retakes-mirage",
+            "profile": "mirage",
+            "index": 5
+          }
+        },
+        {
+          "id": "de_mirage:retakes/7",
+          "name": "Sandwich / site-side corner",
+          "position": [
+            111.53,
+            -1717.97,
+            -167.97
+          ],
+          "rotation": [
+            0,
+            70.31,
+            0
+          ],
+          "crouched": false,
+          "moving": false,
+          "source": {
+            "dataset": "retakes-mirage",
+            "profile": "mirage",
+            "index": 7
           }
         }
       ]

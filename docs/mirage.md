@@ -10,6 +10,12 @@ exact encounter probabilities have been invented.
 
 ## Scope
 
+November 13 adds Short-to-B and Jungle-to-A retake approaches, bringing the
+catalog to eight approaches, 197 source identities and 341 assignments. Four
+focused common-angle lineups are selectable. See the
+[coverage expansion audit](common-angle-coverage-2026-11-13.md); the initial beta
+counts and verification below remain historical, not a new full approval.
+
 - Prefire: Ramp to A, Palace balcony, Apartments to B, Top mid to Short,
   Underpass to Connector and Market retake. Standing/crouched paths and the
   full-speed shared actor motor are checked. Palace drops are not a guided

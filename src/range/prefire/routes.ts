@@ -233,13 +233,29 @@ const extraCandidates: Record<string, readonly PrefireAngle[]> = {
   'upper-tunnels': [angle('b_tunnel', 1, 'Upper exit right corner'), angle('b_tunnel', 5, 'Upper exit deep left')],
 };
 for(const [route,ids] of Object.entries({
-  'long-doors':['long-blue-exit'],
-  'long-a':['a-ramp-cross-low','short-platform-front','a-short-ramp-edge','a-back-default'],
-  'short-a':['a-ramp-cross-low','short-platform-front','a-short-ramp-edge','a-back-default'],
-  'a-retake':['a-ramp-cross-low','short-platform-front','a-short-ramp-edge','a-back-default'],
-  'b-tunnels':['b-default-back'], 'b-doors':['b-default-back','ct-spawn-b-slope'],
-  'mid-doors':['ct-spawn-b-slope'], 'ct-mid-push':['ct-spawn-b-slope'],
+  'long-a':['a-ramp-cross-low','short-platform-front','a-short-ramp-edge','a-back-default','short-platform-wall','ct-under-a-close','ct-under-a-ramp'],
+  'short-a':['a-ramp-cross-low','short-platform-front','a-short-ramp-edge','a-back-default','short-platform-wall','short-stairs-inner','xbox-catwalk-lip','xbox-upper-edge','ct-under-a-close','ct-under-a-ramp'],
+  'a-retake':['a-ramp-cross-low','short-platform-front','a-short-ramp-edge','a-back-default','short-platform-wall'],
+  'b-tunnels':['b-default-back','b-tunnel-exit-left'],
+  'b-doors':['b-default-back','ct-spawn-b-slope','b-tunnel-exit-left'],
+  'mid-doors':['ct-spawn-b-slope','ct-under-a-close','ct-under-a-ramp','xbox-catwalk-lip','xbox-upper-edge'],
+  'ct-mid-push':['ct-spawn-b-slope','xbox-catwalk-lip','xbox-upper-edge'],
+  'long-doors':['long-blue-exit','long-side-pit-cross'],
 }))extraCandidates[route]=[...extraCandidates[route]??[],...ids.map(combatHold)];
+
+// Exact licensed retake coordinates reused as authored defensive holds. Their
+// original team/site remain in the source bundle; these are not encounter odds.
+const retakeCoverageNames:Record<number,string>={
+  1:'CT spawn / under-A corner',2:'CT spawn / back wall',5:'Mid doors / CT-side close',
+  6:'Lower tunnels / mouth',7:'T tunnels / outside left',8:'T tunnels / outside right',
+  24:'Catwalk / Xbox-side rail',25:'Lower tunnels / door-side mouth',
+  26:'CT mid / B-side corner',27:'CT mid / B-ramp back wall',
+};
+for(const [route,indices] of Object.entries({
+  'short-a':[1,2,5,6,24,25,26,27], 'long-a':[1,2,26,27],
+  'mid-doors':[1,2,5,6,24,25,26,27], 'ct-mid-push':[5,6,24,25],
+  'lower-tunnels':[5,6,7,8,25], 'upper-tunnels':[7,8],
+}))extraCandidates[route]=[...extraCandidates[route]??[],...indices.map(index=>retake(index,retakeCoverageNames[index]))];
 
 const coverageProfiles: Record<string, readonly (keyof typeof dataset.profiles)[]> = {
   'long-doors':['a_long','a_short'], 'long-a':['a_long','a_short'], 'short-a':['a_short','a_long'],
@@ -395,9 +411,10 @@ export const prefireRoutes: readonly PrefireRoute[] = prefireApproachRoutes.map(
     alternatives: pool.filter(angle => !route.angles.some(original => original.id === angle.id))};
 });
 
-export const dust2Catalog: PrefireCatalog = {id: 'de_dust2', name: 'Dust 2', revision: authored.revision, routes: prefireRoutes, density,
+export const dust2Catalog: PrefireCatalog = {id: 'de_dust2', name: 'Dust 2', revision: `${authored.revision}-2026-11-13`, routes: prefireRoutes, density,
   sources: [
     {id: 'openprefire', ...prefireAngleSource, context: 'Authored common-angle practice coordinates, not match statistics.'},
-    {id: 'retakes', repository: retakes.source, commit: retakes.commit, license: retakes.license, notice: retakes.licenseNotice, context: retakes.context},
+    {id: 'retakes', repository: retakes.source, commit: retakes.commit, license: retakes.license, notice: retakes.licenseNotice,
+      context: `${retakes.context} Reuse as preplant defensive holds is a trainer-authored team/phase adaptation, not a measured opening setup.`},
     {id:'duel-density',repository:combatLeads.source,commit:combatLeads.commit,license:combatLeads.license,notice:combatLeads.licenseNotice,context:combatLeads.context},
   ]};

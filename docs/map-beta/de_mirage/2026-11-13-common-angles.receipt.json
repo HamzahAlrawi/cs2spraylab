@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "mapId": "de_mirage",
+  "revision": "2026-11-13-mirage-coverage-v2",
+  "packageKey": "setup-v2:1712557d10fe341c530cbe526ee67db5",
+  "catalogSha256": "4217cb26a4bb78b5549c32c19fa92a74f118d6a5ecdb62ce07639b7882b17919",
+  "evidenceFile": "docs/map-beta/de_mirage/2026-11-13-common-angles.json",
+  "evidenceSha256": "91f8db0f806666c3545a4f8791c362ea2fd34bb1aeb71cfd94a399f323b06d7b",
+  "nativeCollisionSha256": "6253487f363acf4b1b5bd2e8af0468a8fc29814ec36e564a8643f4645da88352",
+  "nativeBuild": "2000942",
+  "caseCount": 357,
+  "unresolved": [
+    "Beta, not full CS2 parity certification: matched-build visual, movement and utility capture review remains pending.",
+    "Common-angle coverage and individual peek tactics need further review. Current weights are authored physical-family coverage, not measured encounter probabilities.",
+    "Six native Duel chunks and eight Prefire approaches are included, including Short-to-B and Jungle-to-A. Palace dropping, the full CT Palace push and other retake approaches remain outside guided-route coverage.",
+    "Whole-map grenade queries include enabled static brush physics; dynamic/breakable state and matched-build smoke lineup trajectories remain unverified.",
+    "Broad-device frame-time, complete chunk-handoff and long-session memory acceptance are not fully certified."
+  ]
+}

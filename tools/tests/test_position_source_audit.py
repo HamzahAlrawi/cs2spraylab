@@ -1,6 +1,7 @@
 import csv
 import hashlib
 import importlib.util
+import json
 import tempfile
 import unittest
 from pathlib import Path
@@ -11,6 +12,15 @@ spec.loader.exec_module(audit)
 
 
 class SourceAuditTests(unittest.TestCase):
+    @unittest.skipUnless((audit.ROOT/'research/position-sources/dust2_kills_with_coords.csv').exists(), 'local source corpus not installed')
+    def test_shipped_combat_leads_preserve_exact_source_role_and_coordinates(self):
+        rows, _, _ = audit.read_encounters(audit.ROOT/'research/position-sources/dust2_kills_with_coords.csv')
+        by_id = {row['id']: row for row in rows}
+        data = json.loads((audit.ROOT/'src/range/prefire/data/combat-dust2-leads.json').read_text())
+        for lead in data['angles']:
+            with self.subTest(lead=lead['id']):
+                self.assertEqual(lead['position'], by_id[lead['event']][lead['role']]['point'])
+
     def fixture(self, rows):
         directory = tempfile.TemporaryDirectory()
         self.addCleanup(directory.cleanup)

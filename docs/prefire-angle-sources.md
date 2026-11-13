@@ -2,6 +2,11 @@
 
 ## Current Coverage Follow-up
 
+November 13 coverage has 212 source identities / 375 approach assignments,
+including additional licensed retake and exact combat-origin positions. See
+[the two-map coverage audit](common-angle-coverage-2026-11-13.md) for sources,
+native gates, rejected-placement policy and explicit statistical limits.
+
 October 19 coverage-v7 has 160 identities / 213 approach assignments. Nine local
 Pit/car/A-site/Ninja holds and a covered Catwalk entry are documented in
 [the coverage-v7 audit](prefire-requested-coverage-v7.md). Original imported
