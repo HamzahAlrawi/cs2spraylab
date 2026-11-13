@@ -1,5 +1,5 @@
 {
-  "revision": "2026-11-13-mirage-coverage-v2",
+  "revision": "2026-11-13-mirage-pockets-v3",
   "routes": [
     {
       "id": "a-ramp",
@@ -43,6 +43,46 @@
           48.282063,
           -1579.7579350000003,
           -173.22420680722703
+        ],
+        [
+          -64.5038875069202,
+          -1731.5226277028478,
+          -167.99999972966714
+        ],
+        [
+          -64.50388750692022,
+          -2046.4832576241088,
+          -167.99999972966714
+        ],
+        [
+          95.258591,
+          -2070.39917,
+          -167.99999972966714
+        ],
+        [
+          -1.5117615226682473,
+          -2077.9793206162344,
+          -167.99999972966714
+        ],
+        [
+          -265.248535,
+          -2186.310059,
+          -170.60570804525378
+        ],
+        [
+          -442.4566434124322,
+          -2172.4675095926123,
+          -179.71207351902365
+        ],
+        [
+          -495.810791,
+          -2093.833496,
+          -180.00000105129453
+        ],
+        [
+          -808.2476199999999,
+          -2307.05249,
+          -175.57565187341356
         ]
       ],
       "angles": [
@@ -240,7 +280,7 @@
         },
         {
           "id": "de_mirage:openprefire/a_ramp/12",
-          "name": "A site / a ramp 12",
+          "name": "Ninja / site box gap",
           "position": [
             -265.248535,
             -2186.310059,
@@ -597,6 +637,812 @@
             "profile": "mirage",
             "index": 8
           }
+        },
+        {
+          "id": "de_mirage:community-retakes/1",
+          "name": "Default / Ramp-facing site hold",
+          "position": [
+            -112.508484,
+            -1924.332397,
+            -167.968719
+          ],
+          "rotation": [
+            2.364989,
+            149.84021,
+            0
+          ],
+          "crouched": false,
+          "moving": false,
+          "source": {
+            "dataset": "community-retakes-mirage",
+            "profile": "mirage-community",
+            "index": 1
+          }
+        },
+        {
+          "id": "de_mirage:community-retakes/19",
+          "name": "Palace / balcony outer ledge",
+          "position": [
+            15.770305,
+            -1980.930908,
+            -37.968807
+          ],
+          "rotation": [
+            6.019581,
+            147.985504,
+            0
+          ],
+          "crouched": false,
+          "moving": false,
+          "source": {
+            "dataset": "community-retakes-mirage",
+            "profile": "mirage-community",
+            "index": 19
+          }
+        },
+        {
+          "id": "de_mirage:community-retakes/21",
+          "name": "A site / Firebox-side default",
+          "position": [
+            -128.305664,
+            -2246.563232,
+            -167.968719
+          ],
+          "rotation": [
+            0.248077,
+            115.335808,
+            0
+          ],
+          "crouched": false,
+          "moving": false,
+          "source": {
+            "dataset": "community-retakes-mirage",
+            "profile": "mirage-community",
+            "index": 21
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/a_ramp/15",
+          "name": "Shadows / under Palace exit",
+          "position": [
+            -27.279663,
+            -2156.934814,
+            -168.96875
+          ],
+          "rotation": [
+            -0.500477,
+            90.413803,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "a_ramp",
+            "index": 15
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/a_ramp/16",
+          "name": "Shadows / Palace-side pillar",
+          "position": [
+            95.258591,
+            -2070.39917,
+            -168.96875
+          ],
+          "rotation": [
+            -0.346478,
+            126.199448,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "a_ramp",
+            "index": 16
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/a_ramp/17",
+          "name": "A site / a ramp 17",
+          "position": [
+            -264.03125,
+            -1504.068604,
+            -166.307693
+          ],
+          "rotation": [
+            1.13577,
+            -87.090324,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "a_ramp",
+            "index": 17
+          },
+          "exclusionGroup": "de_mirage:overlap/de_mirage:openprefire/a_palace/19"
+        },
+        {
+          "id": "de_mirage:openprefire/a_ramp/18",
+          "name": "Firebox / Ninja-side corner",
+          "position": [
+            -385.123535,
+            -2394.96875,
+            -167.42038
+          ],
+          "rotation": [
+            -1.405229,
+            94.53334,
+            0
+          ],
+          "crouched": true,
+          "moving": false,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "a_ramp",
+            "index": 18
+          },
+          "exclusionGroup": "de_mirage:overlap/de_mirage:openprefire/a_palace/37"
+        },
+        {
+          "id": "de_mirage:openprefire/a_ramp/19",
+          "name": "Jungle / back-room corner",
+          "position": [
+            -1275.555054,
+            -1421.77417,
+            -162.254761
+          ],
+          "rotation": [
+            0.327273,
+            -16.987068,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "a_ramp",
+            "index": 19
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/a_ramp/20",
+          "name": "A site / a ramp 20",
+          "position": [
+            -1243.96875,
+            -1226.349121,
+            -168.96875
+          ],
+          "rotation": [
+            0.057771,
+            -31.270672,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "a_ramp",
+            "index": 20
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/a_ramp/21",
+          "name": "Shadows / front edge",
+          "position": [
+            119.231071,
+            -1925.813843,
+            -168.96875
+          ],
+          "rotation": [
+            0.769995,
+            176.474289,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "a_ramp",
+            "index": 21
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/a_ramp/22",
+          "name": "Jungle / close wall",
+          "position": [
+            -879.96875,
+            -1306.03125,
+            -168.96875
+          ],
+          "rotation": [
+            0.096268,
+            -44.559196,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "a_ramp",
+            "index": 22
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/a_ramp/24",
+          "name": "Short / Ladder-room corner",
+          "position": [
+            -865.098633,
+            127.120186,
+            -173.699005
+          ],
+          "rotation": [
+            0.077013,
+            -79.985458,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "a_ramp",
+            "index": 24
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/a_ramp/25",
+          "name": "A site / a ramp 25",
+          "position": [
+            -514.121887,
+            -1326.837524,
+            -160.96875
+          ],
+          "rotation": [
+            1.09725,
+            -105.832802,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "a_ramp",
+            "index": 25
+          },
+          "exclusionGroup": "de_mirage:overlap/de_mirage:openprefire/a_ramp/25"
+        },
+        {
+          "id": "de_mirage:openprefire/a_palace/13",
+          "name": "A site / a palace 13",
+          "position": [
+            -56.38739,
+            -2129.221436,
+            -40.96875
+          ],
+          "rotation": [
+            -1.501481,
+            -40.557228,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "a_palace",
+            "index": 13
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/a_palace/14",
+          "name": "A site / a palace 14",
+          "position": [
+            -1311.971436,
+            -1152.613159,
+            -168.96875
+          ],
+          "rotation": [
+            -3.565518,
+            -38.023785,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "a_palace",
+            "index": 14
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/a_palace/15",
+          "name": "A site / a palace 15",
+          "position": [
+            -996.010193,
+            -1331.96875,
+            -164.808548
+          ],
+          "rotation": [
+            -3.63182,
+            -40.316189,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "a_palace",
+            "index": 15
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/a_palace/16",
+          "name": "A site / a palace 16",
+          "position": [
+            -743.129578,
+            -1427.301514,
+            -168.96875
+          ],
+          "rotation": [
+            -4.685866,
+            -44.812881,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "a_palace",
+            "index": 16
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/a_palace/21",
+          "name": "A site / a palace 21",
+          "position": [
+            101.807205,
+            -2071.58252,
+            -40.96875
+          ],
+          "rotation": [
+            0.933212,
+            -92.537674,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "a_palace",
+            "index": 21
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/a_palace/23",
+          "name": "A site / a palace 23",
+          "position": [
+            151.96875,
+            -1914.03125,
+            -40.96875
+          ],
+          "rotation": [
+            1.499167,
+            -106.883873,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "a_palace",
+            "index": 23
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/a_palace/25",
+          "name": "A site / a palace 25",
+          "position": [
+            87.96875,
+            -2165.96875,
+            -109.23254400000002
+          ],
+          "rotation": [
+            7.928715,
+            146.080551,
+            0
+          ],
+          "crouched": true,
+          "moving": false,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "a_palace",
+            "index": 25
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/a_palace/26",
+          "name": "A site / a palace 26",
+          "position": [
+            151.721985,
+            -2067.145264,
+            -168.96875
+          ],
+          "rotation": [
+            3.560588,
+            -169.573761,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "a_palace",
+            "index": 26
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/a_palace/31",
+          "name": "A site / a palace 31",
+          "position": [
+            -683.367798,
+            -2161.848633,
+            -180.96875
+          ],
+          "rotation": [
+            -9.443305,
+            0.513559,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "a_palace",
+            "index": 31
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/a_palace/32",
+          "name": "A site / a palace 32",
+          "position": [
+            -272.614868,
+            -2155.963867,
+            -176.73246799999998
+          ],
+          "rotation": [
+            -24.956631,
+            -1.29893,
+            0
+          ],
+          "crouched": true,
+          "moving": false,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "a_palace",
+            "index": 32
+          },
+          "exclusionGroup": "de_mirage:overlap/de_mirage:openprefire/a_palace/32"
+        },
+        {
+          "id": "de_mirage:openprefire/a_palace/33",
+          "name": "A site / a palace 33",
+          "position": [
+            -1053.986694,
+            -2328.525391,
+            -168.96875
+          ],
+          "rotation": [
+            -5.982534,
+            9.469848,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "a_palace",
+            "index": 33
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/a_palace/36",
+          "name": "A site / a palace 36",
+          "position": [
+            -643.861145,
+            -2480.254883,
+            -168.96875
+          ],
+          "rotation": [
+            -5.10779,
+            34.189316,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "a_palace",
+            "index": 36
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/a_palace/37",
+          "name": "A site / a palace 37",
+          "position": [
+            -381.651062,
+            -2394.972412,
+            -167.419815
+          ],
+          "rotation": [
+            -13.173533,
+            38.501411,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "a_palace",
+            "index": 37
+          },
+          "exclusionGroup": "de_mirage:overlap/de_mirage:openprefire/a_palace/37"
+        },
+        {
+          "id": "de_mirage:openprefire/a_palace/39",
+          "name": "A site / a palace 39",
+          "position": [
+            -114.03125,
+            -2387.96875,
+            -168.068863
+          ],
+          "rotation": [
+            -1.257786,
+            85.5541,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "a_palace",
+            "index": 39
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/a_palace/59",
+          "name": "A site / a palace 59",
+          "position": [
+            -767.795837,
+            -226.912842,
+            -160.96875
+          ],
+          "rotation": [
+            1.039597,
+            -129.655991,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "a_palace",
+            "index": 59
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/under_to_jungle/17",
+          "name": "A site / under to jungle 17",
+          "position": [
+            -819.838501,
+            294.96875,
+            -168.695694
+          ],
+          "rotation": [
+            2.385028,
+            -90.661613,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "under_to_jungle",
+            "index": 17
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/under_to_jungle/18",
+          "name": "A site / under to jungle 18",
+          "position": [
+            -600.076538,
+            -1309.030518,
+            -168.96875
+          ],
+          "rotation": [
+            12.00998,
+            101.741745,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "under_to_jungle",
+            "index": 18
+          },
+          "exclusionGroup": "de_mirage:overlap/de_mirage:openprefire/mid_to_b/20"
+        },
+        {
+          "id": "de_mirage:openprefire/under_to_jungle/19",
+          "name": "A site / under to jungle 19",
+          "position": [
+            -727.358215,
+            -1306.03125,
+            -168.96875
+          ],
+          "rotation": [
+            11.740481,
+            88.574852,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "under_to_jungle",
+            "index": 19
+          },
+          "exclusionGroup": "de_mirage:overlap/de_mirage:openprefire/mid_to_b/18"
+        },
+        {
+          "id": "de_mirage:openprefire/under_to_jungle/26",
+          "name": "Default / rear box",
+          "position": [
+            -330.087646,
+            -2206.322266,
+            -174.810532
+          ],
+          "rotation": [
+            -0.598899,
+            112.371567,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "under_to_jungle",
+            "index": 26
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/under_to_jungle/29",
+          "name": "A site / under to jungle 29",
+          "position": [
+            90.820152,
+            -1996.480469,
+            -168.96875
+          ],
+          "rotation": [
+            0.036367,
+            150.487579,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "under_to_jungle",
+            "index": 29
+          }
+        },
+        {
+          "id": "de_mirage:retakes/4",
+          "name": "Default / plant-side box",
+          "position": [
+            -253.97,
+            -2134.08,
+            -172.95
+          ],
+          "rotation": [
+            0,
+            131.13,
+            0
+          ],
+          "crouched": false,
+          "moving": false,
+          "source": {
+            "dataset": "retakes-mirage",
+            "profile": "mirage",
+            "index": 4
+          },
+          "exclusionGroup": "de_mirage:overlap/de_mirage:openprefire/a_palace/32"
+        },
+        {
+          "id": "de_mirage:retakes/5",
+          "name": "Firebox / rear site",
+          "position": [
+            -583.17,
+            -2393.24,
+            -167.97
+          ],
+          "rotation": [
+            0,
+            169.48,
+            0
+          ],
+          "crouched": false,
+          "moving": false,
+          "source": {
+            "dataset": "retakes-mirage",
+            "profile": "mirage",
+            "index": 5
+          }
+        },
+        {
+          "id": "de_mirage:retakes/17",
+          "name": "Jungle / connector-side corner",
+          "position": [
+            -1221.5,
+            -1399.1,
+            -163.29
+          ],
+          "rotation": [
+            0,
+            87.2,
+            0
+          ],
+          "crouched": false,
+          "moving": false,
+          "source": {
+            "dataset": "retakes-mirage",
+            "profile": "mirage",
+            "index": 17
+          }
+        },
+        {
+          "id": "de_mirage:retakes/29",
+          "name": "Jungle / Window-side wall",
+          "position": [
+            -1187.47,
+            -1273.15,
+            -167.97
+          ],
+          "rotation": [
+            0,
+            98.6,
+            0
+          ],
+          "crouched": false,
+          "moving": false,
+          "source": {
+            "dataset": "retakes-mirage",
+            "profile": "mirage",
+            "index": 29
+          }
+        },
+        {
+          "id": "de_mirage:community-retakes/22",
+          "name": "Connector / A-side exit",
+          "position": [
+            -656.814209,
+            -1187.054443,
+            -167.968719
+          ],
+          "rotation": [
+            1.084033,
+            98.368919,
+            0
+          ],
+          "crouched": false,
+          "moving": false,
+          "source": {
+            "dataset": "community-retakes-mirage",
+            "profile": "mirage-community",
+            "index": 22
+          }
         }
       ],
       "lineups": [
@@ -710,8 +1556,122 @@
               }
             }
           ]
+        },
+        {
+          "id": "a-ramp-deep-site",
+          "name": "A / Shadows, Ninja & Firebox",
+          "angles": [
+            {
+              "id": "de_mirage:openprefire/a_ramp/16",
+              "name": "Shadows / Palace-side pillar",
+              "position": [
+                95.258591,
+                -2070.39917,
+                -168.96875
+              ],
+              "rotation": [
+                -0.346478,
+                126.199448,
+                0
+              ],
+              "crouched": false,
+              "moving": true,
+              "source": {
+                "dataset": "openprefire-mirage",
+                "profile": "a_ramp",
+                "index": 16
+              }
+            },
+            {
+              "id": "de_mirage:openprefire/a_ramp/12",
+              "name": "Ninja / site box gap",
+              "position": [
+                -265.248535,
+                -2186.310059,
+                -173.707657
+              ],
+              "rotation": [
+                -0.404217,
+                57.329151,
+                0
+              ],
+              "crouched": false,
+              "moving": true,
+              "source": {
+                "dataset": "openprefire-mirage",
+                "profile": "a_ramp",
+                "index": 12
+              },
+              "exclusionGroup": "de_mirage:overlap/de_mirage:openprefire/a_palace/32"
+            },
+            {
+              "id": "de_mirage:openprefire/a_ramp/18",
+              "name": "Firebox / Ninja-side corner",
+              "position": [
+                -385.123535,
+                -2394.96875,
+                -167.42038
+              ],
+              "rotation": [
+                -1.405229,
+                94.53334,
+                0
+              ],
+              "crouched": true,
+              "moving": false,
+              "source": {
+                "dataset": "openprefire-mirage",
+                "profile": "a_ramp",
+                "index": 18
+              },
+              "exclusionGroup": "de_mirage:overlap/de_mirage:openprefire/a_palace/37"
+            },
+            {
+              "id": "de_mirage:openprefire/under_to_jungle/20",
+              "name": "Ticket Booth / raised hold",
+              "position": [
+                -825.105042,
+                -2520.172852,
+                -36.96875
+              ],
+              "rotation": [
+                7.640225,
+                84.718819,
+                0
+              ],
+              "crouched": false,
+              "moving": true,
+              "source": {
+                "dataset": "openprefire-mirage",
+                "profile": "under_to_jungle",
+                "index": 20
+              }
+            },
+            {
+              "id": "de_mirage:retakes/8",
+              "name": "Stairs / top step",
+              "position": [
+                -142.97,
+                -1418.03,
+                -72.18
+              ],
+              "rotation": [
+                0,
+                -76.73,
+                0
+              ],
+              "crouched": false,
+              "moving": false,
+              "source": {
+                "dataset": "retakes-mirage",
+                "profile": "mirage",
+                "index": 8
+              }
+            }
+          ]
         }
-      ]
+      ],
+      "clearExtension": "common-pockets-v1"
     },
     {
       "id": "a-palace",
@@ -1327,7 +2287,7 @@
         },
         {
           "id": "de_mirage:openprefire/a_ramp/12",
-          "name": "A site / a ramp 12",
+          "name": "Ninja / site box gap",
           "position": [
             -265.248535,
             -2186.310059,
@@ -1619,6 +2579,48 @@
             "dataset": "retakes-mirage",
             "profile": "mirage",
             "index": 29
+          }
+        },
+        {
+          "id": "de_mirage:community-retakes/19",
+          "name": "Palace / balcony outer ledge",
+          "position": [
+            15.770305,
+            -1980.930908,
+            -37.968807
+          ],
+          "rotation": [
+            6.019581,
+            147.985504,
+            0
+          ],
+          "crouched": false,
+          "moving": false,
+          "source": {
+            "dataset": "community-retakes-mirage",
+            "profile": "mirage-community",
+            "index": 19
+          }
+        },
+        {
+          "id": "de_mirage:community-retakes/35",
+          "name": "Palace / balcony front lip",
+          "position": [
+            72.359215,
+            -2247.370361,
+            -39.968758
+          ],
+          "rotation": [
+            6.454378,
+            136.479874,
+            0
+          ],
+          "crouched": false,
+          "moving": false,
+          "source": {
+            "dataset": "community-retakes-mirage",
+            "profile": "mirage-community",
+            "index": 35
           }
         }
       ],
@@ -3425,6 +4427,174 @@
             "profile": "mirage",
             "index": 16
           }
+        },
+        {
+          "id": "de_mirage:community-retakes/7",
+          "name": "Top Mid / side alley",
+          "position": [
+            451.76297,
+            -820.916321,
+            -159.968719
+          ],
+          "rotation": [
+            4.619969,
+            178.851425,
+            0
+          ],
+          "crouched": false,
+          "moving": false,
+          "source": {
+            "dataset": "community-retakes-mirage",
+            "profile": "mirage-community",
+            "index": 7
+          }
+        },
+        {
+          "id": "de_mirage:community-retakes/10",
+          "name": "Top Mid / Chair-side approach",
+          "position": [
+            106.191574,
+            -513.117493,
+            -170.874207
+          ],
+          "rotation": [
+            -0.605047,
+            164.081406,
+            0
+          ],
+          "crouched": false,
+          "moving": false,
+          "source": {
+            "dataset": "community-retakes-mirage",
+            "profile": "mirage-community",
+            "index": 10
+          }
+        },
+        {
+          "id": "de_mirage:community-retakes/16",
+          "name": "Mid / right-side wall",
+          "position": [
+            -12.737061,
+            -582.874207,
+            -195.748978
+          ],
+          "rotation": [
+            0.65993,
+            157.710449,
+            0
+          ],
+          "crouched": false,
+          "moving": false,
+          "source": {
+            "dataset": "community-retakes-mirage",
+            "profile": "mirage-community",
+            "index": 16
+          }
+        },
+        {
+          "id": "de_mirage:community-retakes/18",
+          "name": "Mid / Top Mid wall",
+          "position": [
+            6.668025,
+            -377.234467,
+            -167.968719
+          ],
+          "rotation": [
+            0.274854,
+            177.714798,
+            0
+          ],
+          "crouched": false,
+          "moving": false,
+          "source": {
+            "dataset": "community-retakes-mirage",
+            "profile": "mirage-community",
+            "index": 18
+          }
+        },
+        {
+          "id": "de_mirage:community-retakes/20",
+          "name": "Chair / Mid corner",
+          "position": [
+            -779.827332,
+            -757.823303,
+            -261.96875
+          ],
+          "rotation": [
+            3.44488,
+            85.495865,
+            0
+          ],
+          "crouched": false,
+          "moving": false,
+          "source": {
+            "dataset": "community-retakes-mirage",
+            "profile": "mirage-community",
+            "index": 20
+          }
+        },
+        {
+          "id": "de_mirage:community-retakes/22",
+          "name": "Connector / A-side exit",
+          "position": [
+            -656.814209,
+            -1187.054443,
+            -167.968719
+          ],
+          "rotation": [
+            1.084033,
+            98.368919,
+            0
+          ],
+          "crouched": false,
+          "moving": false,
+          "source": {
+            "dataset": "community-retakes-mirage",
+            "profile": "mirage-community",
+            "index": 22
+          }
+        },
+        {
+          "id": "de_mirage:community-retakes/37",
+          "name": "Short / B archway",
+          "position": [
+            -1566.54834,
+            258.836182,
+            -168.726517
+          ],
+          "rotation": [
+            -0.487181,
+            -13.030231,
+            0
+          ],
+          "crouched": false,
+          "moving": false,
+          "source": {
+            "dataset": "community-retakes-mirage",
+            "profile": "mirage-community",
+            "index": 37
+          }
+        },
+        {
+          "id": "de_mirage:community-retakes/38",
+          "name": "Short / Ladder-side corner",
+          "position": [
+            -1395.506714,
+            113.095078,
+            -163.362167
+          ],
+          "rotation": [
+            0.861776,
+            0.411072,
+            0
+          ],
+          "crouched": false,
+          "moving": false,
+          "source": {
+            "dataset": "community-retakes-mirage",
+            "profile": "mirage-community",
+            "index": 38
+          }
         }
       ],
       "lineups": [
@@ -3547,18 +4717,23 @@
       "region": "Mid & Short",
       "enemySide": "ct",
       "phase": "preplant",
-      "startLabel": "Underpass",
+      "startLabel": "House / Underpass stairs",
       "spawn": [
-        -1003,
-        412,
-        -368.00001549908495
+        -351.364014,
+        416.931061,
+        -80.00000105199018
       ],
       "look": [
-        -1009.418213,
-        -356.21698,
-        -357.8915174800321
+        -1003,
+        412.00000000000006,
+        -368.00001549908495
       ],
       "path": [
+        [
+          -1003,
+          412.00000000000006,
+          -368.00001549908495
+        ],
         [
           -1009.418213,
           -356.21698,
@@ -4550,6 +5725,216 @@
             "profile": "mirage",
             "index": 17
           }
+        },
+        {
+          "id": "de_mirage:community-retakes/7",
+          "name": "Top Mid / side alley",
+          "position": [
+            451.76297,
+            -820.916321,
+            -159.968719
+          ],
+          "rotation": [
+            4.619969,
+            178.851425,
+            0
+          ],
+          "crouched": false,
+          "moving": false,
+          "source": {
+            "dataset": "community-retakes-mirage",
+            "profile": "mirage-community",
+            "index": 7
+          }
+        },
+        {
+          "id": "de_mirage:community-retakes/10",
+          "name": "Top Mid / Chair-side approach",
+          "position": [
+            106.191574,
+            -513.117493,
+            -170.874207
+          ],
+          "rotation": [
+            -0.605047,
+            164.081406,
+            0
+          ],
+          "crouched": false,
+          "moving": false,
+          "source": {
+            "dataset": "community-retakes-mirage",
+            "profile": "mirage-community",
+            "index": 10
+          }
+        },
+        {
+          "id": "de_mirage:community-retakes/16",
+          "name": "Mid / right-side wall",
+          "position": [
+            -12.737061,
+            -582.874207,
+            -195.748978
+          ],
+          "rotation": [
+            0.65993,
+            157.710449,
+            0
+          ],
+          "crouched": false,
+          "moving": false,
+          "source": {
+            "dataset": "community-retakes-mirage",
+            "profile": "mirage-community",
+            "index": 16
+          }
+        },
+        {
+          "id": "de_mirage:community-retakes/18",
+          "name": "Mid / Top Mid wall",
+          "position": [
+            6.668025,
+            -377.234467,
+            -167.968719
+          ],
+          "rotation": [
+            0.274854,
+            177.714798,
+            0
+          ],
+          "crouched": false,
+          "moving": false,
+          "source": {
+            "dataset": "community-retakes-mirage",
+            "profile": "mirage-community",
+            "index": 18
+          }
+        },
+        {
+          "id": "de_mirage:community-retakes/20",
+          "name": "Chair / Mid corner",
+          "position": [
+            -779.827332,
+            -757.823303,
+            -261.96875
+          ],
+          "rotation": [
+            3.44488,
+            85.495865,
+            0
+          ],
+          "crouched": false,
+          "moving": false,
+          "source": {
+            "dataset": "community-retakes-mirage",
+            "profile": "mirage-community",
+            "index": 20
+          }
+        },
+        {
+          "id": "de_mirage:community-retakes/22",
+          "name": "Connector / A-side exit",
+          "position": [
+            -656.814209,
+            -1187.054443,
+            -167.968719
+          ],
+          "rotation": [
+            1.084033,
+            98.368919,
+            0
+          ],
+          "crouched": false,
+          "moving": false,
+          "source": {
+            "dataset": "community-retakes-mirage",
+            "profile": "mirage-community",
+            "index": 22
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/under_to_jungle/8",
+          "name": "Mid & Short / under to jungle 8",
+          "position": [
+            -1055.565552,
+            -788.969604,
+            -264.96875
+          ],
+          "rotation": [
+            5.543737,
+            85.685379,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "under_to_jungle",
+            "index": 8
+          }
+        },
+        {
+          "id": "de_mirage:openprefire/under_to_jungle/9",
+          "name": "Mid & Short / under to jungle 9",
+          "position": [
+            -952.090942,
+            -221.44397,
+            -367.919373
+          ],
+          "rotation": [
+            0.230739,
+            91.691048,
+            0
+          ],
+          "crouched": false,
+          "moving": true,
+          "source": {
+            "dataset": "openprefire-mirage",
+            "profile": "under_to_jungle",
+            "index": 9
+          }
+        },
+        {
+          "id": "de_mirage:community-retakes/14",
+          "name": "Underpass / rear landing",
+          "position": [
+            -1018.140564,
+            253.515839,
+            -367.96875
+          ],
+          "rotation": [
+            -0.880001,
+            -91.710075,
+            0
+          ],
+          "crouched": false,
+          "moving": false,
+          "source": {
+            "dataset": "community-retakes-mirage",
+            "profile": "mirage-community",
+            "index": 14
+          }
+        },
+        {
+          "id": "de_mirage:community-retakes/17",
+          "name": "Underpass / stairs corner",
+          "position": [
+            -985.417725,
+            180.727234,
+            -367.96875
+          ],
+          "rotation": [
+            6.819944,
+            91.460251,
+            0
+          ],
+          "crouched": false,
+          "moving": false,
+          "source": {
+            "dataset": "community-retakes-mirage",
+            "profile": "mirage-community",
+            "index": 17
+          }
         }
       ],
       "lineups": [
@@ -4664,7 +6049,8 @@
             }
           ]
         }
-      ]
+      ],
+      "entryRevision": "house-stairs-v1"
     },
     {
       "id": "market-b",
@@ -4693,6 +6079,16 @@
           -2331,
           500,
           -167.99999972966714
+        ],
+        [
+          -2508.191406,
+          400.3367610000001,
+          -167.99999972966714
+        ],
+        [
+          -2634.04248,
+          499.1091,
+          -160.0000051062877
         ]
       ],
       "angles": [
@@ -5845,8 +7241,114 @@
             "profile": "mirage",
             "index": 25
           }
+        },
+        {
+          "id": "de_mirage:community-retakes/29",
+          "name": "B site / centre pillar",
+          "position": [
+            -2043.76416,
+            283.532043,
+            -159.968719
+          ],
+          "rotation": [
+            -0.75041,
+            -9.190388,
+            0
+          ],
+          "crouched": false,
+          "moving": false,
+          "source": {
+            "dataset": "community-retakes-mirage",
+            "profile": "mirage-community",
+            "index": 29
+          }
+        },
+        {
+          "id": "de_mirage:community-retakes/33",
+          "name": "Bench / back-wall corner",
+          "position": [
+            -2634.04248,
+            499.1091,
+            -159.968719
+          ],
+          "rotation": [
+            1.336745,
+            -24.874432,
+            0
+          ],
+          "crouched": false,
+          "moving": false,
+          "source": {
+            "dataset": "community-retakes-mirage",
+            "profile": "mirage-community",
+            "index": 33
+          }
+        },
+        {
+          "id": "de_mirage:community-retakes/34",
+          "name": "GeT_RiGhT / Van-side pillar",
+          "position": [
+            -2069.074707,
+            629.96875,
+            -165.733765
+          ],
+          "rotation": [
+            0.335675,
+            -29.158257,
+            0
+          ],
+          "crouched": false,
+          "moving": false,
+          "source": {
+            "dataset": "community-retakes-mirage",
+            "profile": "mirage-community",
+            "index": 34
+          }
+        },
+        {
+          "id": "de_mirage:community-retakes/37",
+          "name": "Short / B archway",
+          "position": [
+            -1566.54834,
+            258.836182,
+            -168.726517
+          ],
+          "rotation": [
+            -0.487181,
+            -13.030231,
+            0
+          ],
+          "crouched": false,
+          "moving": false,
+          "source": {
+            "dataset": "community-retakes-mirage",
+            "profile": "mirage-community",
+            "index": 37
+          }
+        },
+        {
+          "id": "de_mirage:community-retakes/38",
+          "name": "Short / Ladder-side corner",
+          "position": [
+            -1395.506714,
+            113.095078,
+            -163.362167
+          ],
+          "rotation": [
+            0.861776,
+            0.411072,
+            0
+          ],
+          "crouched": false,
+          "moving": false,
+          "source": {
+            "dataset": "community-retakes-mirage",
+            "profile": "mirage-community",
+            "index": 38
+          }
         }
-      ]
+      ],
+      "clearExtension": "common-pockets-v1"
     },
     {
       "id": "short-b",
@@ -7252,6 +8754,132 @@
             "profile": "mirage",
             "index": 25
           }
+        },
+        {
+          "id": "de_mirage:community-retakes/2",
+          "name": "Market / B window corner",
+          "position": [
+            -1938.881714,
+            -392.26001,
+            -167.968719
+          ],
+          "rotation": [
+            0.824994,
+            -47.719395,
+            0
+          ],
+          "crouched": false,
+          "moving": false,
+          "source": {
+            "dataset": "community-retakes-mirage",
+            "profile": "mirage-community",
+            "index": 2
+          }
+        },
+        {
+          "id": "de_mirage:community-retakes/29",
+          "name": "B site / centre pillar",
+          "position": [
+            -2043.76416,
+            283.532043,
+            -159.968719
+          ],
+          "rotation": [
+            -0.75041,
+            -9.190388,
+            0
+          ],
+          "crouched": false,
+          "moving": false,
+          "source": {
+            "dataset": "community-retakes-mirage",
+            "profile": "mirage-community",
+            "index": 29
+          }
+        },
+        {
+          "id": "de_mirage:community-retakes/33",
+          "name": "Bench / back-wall corner",
+          "position": [
+            -2634.04248,
+            499.1091,
+            -159.968719
+          ],
+          "rotation": [
+            1.336745,
+            -24.874432,
+            0
+          ],
+          "crouched": false,
+          "moving": false,
+          "source": {
+            "dataset": "community-retakes-mirage",
+            "profile": "mirage-community",
+            "index": 33
+          }
+        },
+        {
+          "id": "de_mirage:community-retakes/34",
+          "name": "GeT_RiGhT / Van-side pillar",
+          "position": [
+            -2069.074707,
+            629.96875,
+            -165.733765
+          ],
+          "rotation": [
+            0.335675,
+            -29.158257,
+            0
+          ],
+          "crouched": false,
+          "moving": false,
+          "source": {
+            "dataset": "community-retakes-mirage",
+            "profile": "mirage-community",
+            "index": 34
+          }
+        },
+        {
+          "id": "de_mirage:community-retakes/37",
+          "name": "Short / B archway",
+          "position": [
+            -1566.54834,
+            258.836182,
+            -168.726517
+          ],
+          "rotation": [
+            -0.487181,
+            -13.030231,
+            0
+          ],
+          "crouched": false,
+          "moving": false,
+          "source": {
+            "dataset": "community-retakes-mirage",
+            "profile": "mirage-community",
+            "index": 37
+          }
+        },
+        {
+          "id": "de_mirage:community-retakes/38",
+          "name": "Short / Ladder-side corner",
+          "position": [
+            -1395.506714,
+            113.095078,
+            -163.362167
+          ],
+          "rotation": [
+            0.861776,
+            0.411072,
+            0
+          ],
+          "crouched": false,
+          "moving": false,
+          "source": {
+            "dataset": "community-retakes-mirage",
+            "profile": "mirage-community",
+            "index": 38
+          }
         }
       ]
     },
@@ -7478,7 +9106,7 @@
         },
         {
           "id": "de_mirage:openprefire/a_ramp/12",
-          "name": "A site / a ramp 12",
+          "name": "Ninja / site box gap",
           "position": [
             -265.248535,
             -2186.310059,
@@ -7544,7 +9172,7 @@
         },
         {
           "id": "de_mirage:openprefire/a_ramp/21",
-          "name": "A site / a ramp 21",
+          "name": "Shadows / front edge",
           "position": [
             119.231071,
             -1925.813843,
@@ -8112,6 +9740,48 @@
             "dataset": "retakes-mirage",
             "profile": "mirage",
             "index": 7
+          }
+        },
+        {
+          "id": "de_mirage:community-retakes/21",
+          "name": "A site / Firebox-side default",
+          "position": [
+            -128.305664,
+            -2246.563232,
+            -167.968719
+          ],
+          "rotation": [
+            0.248077,
+            115.335808,
+            0
+          ],
+          "crouched": false,
+          "moving": false,
+          "source": {
+            "dataset": "community-retakes-mirage",
+            "profile": "mirage-community",
+            "index": 21
+          }
+        },
+        {
+          "id": "de_mirage:community-retakes/22",
+          "name": "Connector / A-side exit",
+          "position": [
+            -656.814209,
+            -1187.054443,
+            -167.968719
+          ],
+          "rotation": [
+            1.084033,
+            98.368919,
+            0
+          ],
+          "crouched": false,
+          "moving": false,
+          "source": {
+            "dataset": "community-retakes-mirage",
+            "profile": "mirage-community",
+            "index": 22
           }
         }
       ]

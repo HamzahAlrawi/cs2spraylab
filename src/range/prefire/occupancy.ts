@@ -115,6 +115,10 @@ export function choosePrefireAngles(route: PrefireRoute, population: 'all' | 'ra
   }
   // Training density is an explicit setting, not an invented match statistic.
   const draw = () => clamp(random(), 0, 1 - Number.EPSILON);
+  const coverageOrder=[...route.coverageGroups??[]];
+  // Rotate named pockets between reps. A fixed list otherwise gives only its
+  // first few pockets reserved slots, leaving later common angles rarely seen.
+  for(let i=coverageOrder.length-1;i>0;i--){const j=Math.floor(draw()*(i+1));[coverageOrder[i],coverageOrder[j]]=[coverageOrder[j],coverageOrder[i]];}
   let targetCount = Math.min(candidates.length, clamp(Math.round(Number.isFinite(botsPerRun) ? botsPerRun : 4), 1, cap));
   while (!canFill(candidates, targetCount)) targetCount--;
   const pool = candidates.map(angle => ({angle, evidence: holdingEvidence(angle, route, density)}));
@@ -124,7 +128,7 @@ export function choosePrefireAngles(route: PrefireRoute, population: 'all' | 'ra
     const available = pool.filter(entry => canFill(pool.filter(other => !incompatible(entry.angle, other.angle))
       .map(other => other.angle), targetCount - selected.length - 1));
     // Coverage is allocated per physical family, not per authored source record.
-    const coverage = selected.length < targetCount - 1 ? route.coverageGroups?.find(group =>
+    const coverage = selected.length < targetCount - 1 ? coverageOrder.find(group =>
       !selected.some(angle => group.angleIds.includes(angleIdentity(angle))) &&
       available.some(entry => group.angleIds.includes(angleIdentity(entry.angle)))) : undefined;
     const viable = selectionWeights(coverage

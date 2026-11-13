@@ -4,6 +4,8 @@ import density from './data/dust2-hold-density.json';
 import weightedPools from './data/dust2-weighted-pools.json';
 import authored from './data/authored-dust2.json';
 import combatLeads from './data/combat-dust2-leads.json';
+import community from './data/community-retakes-dust2.json';
+import pocketCoverage from './data/common-pocket-coverage.json';
 import type {PrefireAngle, PrefireRoute, PrefireCatalog, SourcePoint} from './schema';
 export type {PrefireAngle, PrefireRoute, SourcePoint} from './schema';
 
@@ -257,6 +259,41 @@ for(const [route,indices] of Object.entries({
   'lower-tunnels':[5,6,7,8,25], 'upper-tunnels':[7,8],
 }))extraCandidates[route]=[...extraCandidates[route]??[],...indices.map(index=>retake(index,retakeCoverageNames[index]))];
 
+const communityNames:Record<number,string>={
+  1:'Long / car approach',2:'CT spawn / B-side back wall',3:'CT mid / B ramp corner',4:'B doors / outer ramp',
+  5:'Lower tunnels / back wall',6:'Catwalk / Mid-side ledge',7:'Top Mid / Catwalk entrance',8:'Top Mid / Suicide-side wall',
+  9:'B default / front face',10:'B back site / Window-side wall',11:'B tunnel exit / right-hand close',12:'B tunnel exit / site-side cover',
+  13:'B back platform / left corner',14:'CT spawn / under A',15:'CT mid / A-side corner',16:'CT mid / doors cross',
+  17:'Mid doors / CT-side right',18:'Mid slope / Catwalk-side edge',19:'Lower tunnels / Mid exit',20:'T platform / tunnel approach',
+  21:'Catwalk / stairs approach',22:'B back platform / rear wall',23:'Mid doors / Xbox side',24:'Mid doors / CT-side left',
+  25:'B big box / front edge',26:'B back site / deep wall',27:'B doors / inner right corner',28:'Long / cross-side wall',
+  29:'A Goose / ramp-side back wall',30:'A Goose / deep corner',31:'A site / Short-facing box',32:'CT spawn / under Short',
+  33:'Xbox / upper box edge',34:'Tunnel stairs / lower landing',35:'Upper tunnels / T-side pillar',36:'T tunnels / entrance',
+  37:'Catwalk / Mid-facing close',38:'Long doors / T-side entrance',39:'Mid doors / T-side close',40:'Long / car-side cross',
+  41:'A ramp / upper lip',42:'A back platform / ramp-side wall',43:'A default / Short-side box',44:'A default / front box',
+  45:'A site / ramp-side box',46:'A site / close ramp edge',47:'A default / ramp-side edge',48:'A site / central box cover',
+  49:'B Window / inner ledge',50:'B Window / stairs side',51:'B default / rear edge',52:'B doors / site corner',
+};
+const communityScopes:Record<string,(p:readonly number[])=>boolean>={
+  'long-doors':p=>p[0]>400&&p[1]<1100,
+  'long-a':p=>p[0]>600&&p[1]>1500,
+  'short-a':p=>p[0]>-400&&p[1]>500,
+  'a-retake':p=>p[0]>600&&p[1]>1500,
+  'b-tunnels':p=>p[0]<-1200&&p[1]>1700,
+  'b-doors':p=>p[0]<-1200&&p[1]>1700,
+  'mid-doors':p=>p[0]<650&&p[0]>-1200&&p[1]>1400,
+  'ct-mid-push':p=>p[0]>-600&&p[0]<400&&p[1]<1650,
+  'lower-tunnels':p=>p[0]<-700&&p[1]<1600,
+  'upper-tunnels':p=>p[0]<-800&&p[1]<1500,
+};
+for(const [route,scope] of Object.entries(communityScopes)){
+  extraCandidates[route]=[...extraCandidates[route]??[],...community.angles.filter(a=>scope(a.position)).map(a=>({
+    id:`de_dust2:community-retakes/${a.index}`,name:communityNames[a.index],position:a.position as unknown as SourcePoint,
+    rotation:a.rotation as unknown as SourcePoint,crouched:a.crouched,moving:false,
+    source:{dataset:'community-retakes-dust2',profile:'dust2',index:a.index},
+  }))];
+}
+
 const coverageProfiles: Record<string, readonly (keyof typeof dataset.profiles)[]> = {
   'long-doors':['a_long','a_short'], 'long-a':['a_long','a_short'], 'short-a':['a_short','a_long'],
   'a-retake':['a_short','a_long'], 'b-tunnels':['b_tunnel','mid_to_b'], 'b-backsite':['b_tunnel','mid_to_b'],
@@ -304,6 +341,7 @@ export const proposedPrefirePools = Object.fromEntries(prefireClearingRoutes.map
   })(),
 ]));
 const sharedFamilies: Readonly<Record<string, string>> = {
+  'de_dust2:community-retakes/23':'mid-doors-xbox-community', 'de_dust2:community-retakes/39':'mid-doors-xbox-community',
   'openprefire:a_long/27': 'long-tight-car', 'openprefire:a_short/26': 'long-tight-car',
   'openprefire:a_long/29': 'short-ramp-edge', 'openprefire:a_short/16': 'short-ramp-edge',
   'openprefire:a_long/34': 'goose-back-wall', 'openprefire:a_short/29': 'goose-back-wall',
@@ -319,6 +357,17 @@ const sharedFamilies: Readonly<Record<string, string>> = {
 const withFamily = (angle: PrefireAngle): PrefireAngle => sharedFamilies[angle.id ?? '']
   ? {...angle, exclusionGroup: sharedFamilies[angle.id!]} : angle;
 const sourceAngles = new Map(Object.values(proposedPrefirePools).flat().map(angle => [angle.id!, withFamily(angle)]));
+// Community configs sometimes record the same pawn-sized corner again. Keep
+// its source identity but share the existing family's single sampling ticket.
+for(const candidate of [...sourceAngles.values()].filter(a=>a.source?.dataset==='community-retakes-dust2')){
+  const original=[...sourceAngles.values()].find(a=>a.id!==candidate.id&&a.source?.dataset!=='community-retakes-dust2'&&
+    Math.hypot(a.position[0]-candidate.position[0],a.position[1]-candidate.position[1])<32&&Math.abs(a.position[2]-candidate.position[2])<24);
+  if(!original)continue;
+  const family=original.exclusionGroup??`de_dust2:overlap/${original.id}`;
+  sourceAngles.set(original.id!,{...original,exclusionGroup:family});
+  sourceAngles.set(candidate.id!,{...candidate,exclusionGroup:family});
+}
+const sourceFamily=(angle:PrefireAngle)=>sourceAngles.get(angle.id!)??withFamily(angle);
 // A route is a distinct approach, not a five-bot roster. Keep old clearing sets
 // as provenance and selectable lineups, not duplicate entries in the route menu.
 export const prefireRouteAliases = Object.fromEntries(families.flatMap(ids => ids.map(id => [id, ids[0]])));
@@ -400,19 +449,22 @@ export const prefireRoutes: readonly PrefireRoute[] = prefireApproachRoutes.map(
   const siblings = families.find(ids => ids[0] === route.id)!;
   const lineups = [...siblings.map(id => prefireClearingRoutes.find(other => other.id === id)!)
     .map(other => ({id: other.id, name: other.id === route.id ? route.name : other.name,
-      angles: (other.id === route.id ? route.angles : other.angles).map(withFamily)})),
+      angles: (other.id === route.id ? route.angles : other.angles).map(sourceFamily)})),
     ...(focusLineups[route.id] ?? []).map(lineup => ({...lineup, angles: lineup.angles.map(id => {
       const angle = sourceAngles.get(id);
       if (!angle) throw new Error(`Missing focused lineup hold ${id}`);
       return angle;
     })}))]
     .filter(lineup => lineup.angles.every(angle => admitted.has(angle.id)));
-  return {...route, angles: route.angles.map(withFamily), lineups, coverageGroups: routeCoverage[route.id],
+  const pocketGroups=(pocketCoverage.maps as Record<string,Record<string,NonNullable<PrefireRoute['coverageGroups']>>>)['de_dust2']?.[route.id]??[];
+  return {...route, angles: route.angles.map(sourceFamily), lineups,
+    coverageGroups: [...pocketGroups,...(routeCoverage[route.id]??[]).filter(g=>!pocketGroups.some(p=>p.id===g.id))],
     alternatives: pool.filter(angle => !route.angles.some(original => original.id === angle.id))};
 });
 
-export const dust2Catalog: PrefireCatalog = {id: 'de_dust2', name: 'Dust 2', revision: `${authored.revision}-2026-11-13`, routes: prefireRoutes, density,
+export const dust2Catalog: PrefireCatalog = {id: 'de_dust2', name: 'Dust 2', revision: `${authored.revision}-2026-11-13-pockets-v2`, routes: prefireRoutes, density,
   sources: [
+    {id:'community-retakes-dust2',repository:community.source,commit:community.commit,license:community.license,notice:community.licenseNotice,context:community.context},
     {id: 'openprefire', ...prefireAngleSource, context: 'Authored common-angle practice coordinates, not match statistics.'},
     {id: 'retakes', repository: retakes.source, commit: retakes.commit, license: retakes.license, notice: retakes.licenseNotice,
       context: `${retakes.context} Reuse as preplant defensive holds is a trainer-authored team/phase adaptation, not a measured opening setup.`},

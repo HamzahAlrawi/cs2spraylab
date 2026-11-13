@@ -670,7 +670,7 @@ const november7WallSlide = {
   ]}],
 } as const satisfies ChangelogRelease;
 
-export const latestChanges = {
+const november13CommonAngles = {
   id:'update-2026-11-13-common-angles',title:'More common map angles (November 13)',baselineCommit:'affaeae',
   sections:[{id:'common-map-holds',title:'Expanded Dust 2 & Mirage coverage',items:[
     'Additional source-pinned holds cover Short stairs, Xbox, CT under A and the B tunnel exit on Dust 2, plus more site boxes, Stairs, Jungle, Connector and Short on Mirage.',
@@ -679,7 +679,17 @@ export const latestChanges = {
   ]}],
 } as const satisfies ChangelogRelease;
 
+export const latestChanges = {
+  id:'update-2026-11-13-common-pockets',title:'Clear the whole angle (November 13)',baselineCommit:'8bda170',
+  sections:[{id:'named-map-pockets',title:'Common holds & complete clears',items:[
+    'Mirage Ramp now continues through the site to clear Shadows and deep boxes. Underpass begins before the House stairs, and Market continues toward Bench.',
+    'Additional source-pinned retake coordinates expand Dust 2 site, Window, CT and Catwalk holds, plus Mirage site, Mid and B corners. Unsupported samples stay rejected.',
+    'Named common pockets rotate through weighted practice instead of always reserving slots for the first entries. Nearby source variants share a sampling family; exact encounter frequencies remain unclaimed.',
+  ]}],
+} as const satisfies ChangelogRelease;
+
 export const changelogHistory = [
+  november13CommonAngles,
   november7WallSlide,
   november7Loading,
   november6PrefireGrenadeFlight,

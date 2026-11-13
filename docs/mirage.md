@@ -10,6 +10,12 @@ exact encounter probabilities have been invented.
 
 ## Scope
 
+The named-pocket follow-up now has 221 source identities / 412 assignments.
+Ramp continues through A, Underpass begins before the House stairs and Market
+continues toward Bench. See [the pocket audit](common-angle-pockets-2026-11-13.md)
+for exact source pins, the rejected Mirage pack and per-approach gaps. The
+historical counts below are retained; neither expansion grants full approval.
+
 November 13 adds Short-to-B and Jungle-to-A retake approaches, bringing the
 catalog to eight approaches, 197 source identities and 341 assignments. Four
 focused common-angle lineups are selectable. See the

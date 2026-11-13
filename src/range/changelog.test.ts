@@ -7,9 +7,9 @@ import {changelogHistory, changelogReleases, latestChanges} from './changelog-da
 
 describe('append-only changelog', () => {
   it('identifies the requested baseline without claiming a deployment', () => {
-    expect(latestChanges.id).toBe('update-2026-11-13-common-angles');
-    expect(latestChanges.title).toBe('More common map angles (November 13)');
-    expect(latestChanges.baselineCommit).toBe('affaeae');
+    expect(latestChanges.id).toBe('update-2026-11-13-common-pockets');
+    expect(latestChanges.title).toBe('Clear the whole angle (November 13)');
+    expect(latestChanges.baselineCommit).toBe('8bda170');
     const html = renderToStaticMarkup(createElement(Changelog));
     expect(html).toContain('Ready rounds &amp; more Dust 2 angles (October 23)');
     expect(html).toContain('Combat feedback &amp; map delivery (October 23)');
@@ -18,7 +18,7 @@ describe('append-only changelog', () => {
     expect(html).toContain('Dust 2 angle coverage (October 18)');
     expect(html).toContain('CS2 coaching update (October 17)');
     expect(html).toContain('Training quality update (October 16)');
-    expect(html).toContain('Since baseline <code>affaeae</code>');
+    expect(html).toContain('Since baseline <code>8bda170</code>');
     expect(html).not.toMatch(/<time|deployed on|released on/i);
   });
 
@@ -40,6 +40,7 @@ describe('append-only changelog', () => {
 
   it('keeps all releases in newest-first order with no duplicate IDs', () => {
     expect(changelogReleases.slice(1).map(release => release.id)).toEqual([
+      'update-2026-11-13-common-angles',
       'update-2026-11-07-wall-slide',
       'update-2026-11-07-loading',
       'update-2026-11-06-prefire-grenade-flight',
@@ -63,11 +64,11 @@ describe('append-only changelog', () => {
     ]);
     expect(changelogReleases).toEqual([latestChanges, ...changelogHistory]);
     expect(new Set(changelogReleases.map(release => release.id)).size).toBe(changelogReleases.length);
-    expect(changelogReleases.flatMap(release => release.sections)).toHaveLength(107);
+    expect(changelogReleases.flatMap(release => release.sections)).toHaveLength(108);
   });
 
   it('covers Prefire, native-map limits and expanded Duel arenas', () => {
-    expect(latestChanges.sections.map(section=>section.id)).toEqual(['common-map-holds']);
+    expect(latestChanges.sections.map(section=>section.id)).toEqual(['named-map-pockets']);
     expect(changelogHistory.find(release=>release.id==='update-2026-11-07-wall-slide')!.sections.map(section=>section.id)).toEqual(['wall-floor-contact']);
     expect(changelogHistory.find(release=>release.id==='update-2026-11-07-loading')!.sections.map(section=>section.id)).toEqual(['faster-map-entry']);
     expect(changelogHistory.find(release=>release.id==='update-2026-11-06-prefire-grenade-flight')!.sections.map(section=>section.id)).toEqual(['prefire-grenade-path','native-residual-flight']);

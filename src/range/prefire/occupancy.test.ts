@@ -14,6 +14,19 @@ const density: HoldingDensity = {schemaVersion: 1, mapId: 'fixture',
     episodeAnchors: 81, seconds: 150, rounds: 20, matches: 8, roundKeys: Array.from({length: 20}, (_, i) => `match/${i}`)}]};
 
 describe('regional evidence and coverage-first training selection', () => {
+  it('rotates more common pockets than fit in one rep instead of reserving only the first ones',()=>{
+    const angles=Array.from({length:12},(_,i)=>({id:`pocket-${i}`,name:`Pocket ${i}`,position:[i*256,300,0] as const}));
+    const course={...route,angles,coverageGroups:angles.map(a=>({id:a.id,angleIds:[a.id]}))};
+    const counts=new Map<string,number>();
+    for(let seed=0;seed<256;seed++){
+      const selected=choosePrefireAngles(course,'random',randomStream(seed,'pockets'),undefined,4);
+      expect(selected).toHaveLength(4);
+      for(const a of selected)counts.set(a.id!,(counts.get(a.id!)??0)+1);
+    }
+    expect(counts.size).toBe(12);
+    expect(Math.min(...counts.values())).toBeGreaterThan(40);
+    expect(Math.max(...counts.values())).toBeLessThan(130);
+  });
   it('keeps explicitly prioritized route regions populated without inventing encounter weights', () => {
     const covered = {...route, coverageGroups: [{id: 'near-stairs', angleIds: ['angle-3']},
       {id: 'window', angleIds: ['angle-4']}]};

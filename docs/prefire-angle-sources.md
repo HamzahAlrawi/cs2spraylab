@@ -2,6 +2,11 @@
 
 ## Current Coverage Follow-up
 
+The named-pocket follow-up has 256 Dust 2 source identities / 453 assignments,
+with explicit named-pocket training groups instead of relying on record counts.
+See [the pocket/source audit](common-angle-pockets-2026-11-13.md). Exact encounter
+probabilities remain unclaimed and older figures below remain historical.
+
 November 13 coverage has 212 source identities / 375 approach assignments,
 including additional licensed retake and exact combat-origin positions. See
 [the two-map coverage audit](common-angle-coverage-2026-11-13.md) for sources,

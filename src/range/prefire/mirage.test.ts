@@ -6,6 +6,7 @@ import {mirageMap} from './maps/mirage';
 import {mirageCatalog} from './mirage-routes';
 import data from './data/openprefire-mirage.json';
 import retakes from './data/retakes-mirage.json';
+import community from './data/community-retakes-mirage.json';
 import {prefireCandidates} from './occupancy';
 import {validateMapCatalogScope} from './map-onboarding';
 import {realMapApproaches} from '../duel/real-map-rounds';
@@ -21,11 +22,11 @@ describe('Mirage package/catalog isolation',()=>{
   });
   it('retains exact upstream enemy coordinates, stance and rotation with scoped source IDs',()=>{
     let count=0;for(const route of mirageCatalog.routes)for(const angle of prefireCandidates(route)){
-      const s=angle.source!,sample=s.dataset==='retakes-mirage'?retakes.angles[s.index-1]:data.profiles[s.profile as keyof typeof data.profiles].angles[s.index-1];
+      const s=angle.source!,sample=s.dataset==='community-retakes-mirage'?community.angles[s.index-1]:s.dataset==='retakes-mirage'?retakes.angles[s.index-1]:data.profiles[s.profile as keyof typeof data.profiles].angles[s.index-1];
       expect(angle.position).toEqual(sample.position);expect(angle.rotation).toEqual(sample.rotation);expect(angle.crouched).toBe(sample.crouched);
-      expect(['openprefire-mirage','retakes-mirage']).toContain(s.dataset);expect(angle.id).toMatch(/^de_mirage:/);count++;
+      expect(['openprefire-mirage','retakes-mirage','community-retakes-mirage']).toContain(s.dataset);expect(angle.id).toMatch(/^de_mirage:/);count++;
     }
-    expect(count).toBe(341);expect(mirageCatalog.density).toBeUndefined();expect(mirageCatalog.encounters).toBeUndefined();
+    expect(count).toBe(412);expect(mirageCatalog.density).toBeUndefined();expect(mirageCatalog.encounters).toBeUndefined();
   });
   it('includes focused common-angle sets without moving source anchors or overlapping holders',()=>{
     for(const route of mirageCatalog.routes.filter(r=>r.lineups?.length))for(const lineup of route.lineups!){
@@ -34,6 +35,7 @@ describe('Mirage package/catalog isolation',()=>{
       expect(new Set(lineup.angles.map(a=>a.exclusionGroup??a.id)).size).toBe(5);
     }
     expect(mirageCatalog.routes.filter(r=>r.lineups?.length)).toHaveLength(4);
+    expect(mirageCatalog.routes.flatMap(r=>r.lineups??[])).toHaveLength(5);
     expect(mirageCatalog.sources.some(s=>s.id==='retakes-mirage'&&s.license==='GPL-3.0')).toBe(true);
   });
   it('keeps independent full-acceptance coverage pending, rather than treating beta as verified parity',()=>{

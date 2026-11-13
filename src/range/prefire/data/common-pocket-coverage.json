@@ -1,0 +1,1160 @@
+{
+  "schemaVersion": 1,
+  "method": "Authored named-pocket training coverage, not occupancy or encounter rates.",
+  "maps": {
+    "de_dust2": {
+      "long-doors": [
+        {
+          "id": "long-corner",
+          "name": "Long corner",
+          "angleIds": [
+            "openprefire:a_long/1",
+            "openprefire:a_long/8",
+            "openprefire:a_long/5",
+            "openprefire:a_long/15"
+          ]
+        },
+        {
+          "id": "blue",
+          "name": "Blue / doors close",
+          "angleIds": [
+            "openprefire:a_long/2",
+            "openprefire:a_long/9",
+            "openprefire:a_long/11",
+            "duel-density:dust2/long-blue-exit",
+            "duel-density:dust2/long-side-pit-cross"
+          ]
+        },
+        {
+          "id": "pit-floor",
+          "name": "Pit floor",
+          "angleIds": [
+            "openprefire:a_long/18",
+            "spraylab:dust2/pit-slope",
+            "spraylab:dust2/pit-floor"
+          ]
+        },
+        {
+          "id": "pit-platform",
+          "name": "Pit platform",
+          "angleIds": [
+            "openprefire:a_long/13",
+            "openprefire:a_long/14",
+            "openprefire:a_short/31"
+          ]
+        }
+      ],
+      "long-a": [
+        {
+          "id": "long-car",
+          "name": "Long car",
+          "angleIds": [
+            "openprefire:a_long/19",
+            "openprefire:a_long/20",
+            "openprefire:a_long/27",
+            "openprefire:a_short/26",
+            "openprefire:a_short/28",
+            "openprefire:a_short/23",
+            "spraylab:dust2/car-front-edge",
+            "spraylab:dust2/car-back-edge",
+            "de_dust2:community-retakes/40"
+          ]
+        },
+        {
+          "id": "a-ramp",
+          "name": "A ramp",
+          "angleIds": [
+            "openprefire:mid_to_b/26",
+            "spraylab:dust2/a-ramp-short-low",
+            "spraylab:dust2/a-ramp-short-high",
+            "de_dust2:community-retakes/41",
+            "openprefire:a_short/22"
+          ]
+        },
+        {
+          "id": "a-default",
+          "name": "A default / site boxes",
+          "angleIds": [
+            "openprefire:a_long/23",
+            "openprefire:a_long/35",
+            "openprefire:a_long/25",
+            "openprefire:a_long/24",
+            "openprefire:a_long/37",
+            "openprefire:a_short/19",
+            "openprefire:a_short/25",
+            "retakes:dust2/17",
+            "spraylab:dust2/a-default-box-top",
+            "spraylab:dust2/a-short-box-edge",
+            "duel-density:dust2/a-back-default",
+            "de_dust2:community-retakes/31",
+            "de_dust2:community-retakes/43",
+            "de_dust2:community-retakes/44",
+            "de_dust2:community-retakes/45",
+            "de_dust2:community-retakes/48"
+          ]
+        },
+        {
+          "id": "goose",
+          "name": "Goose / back platform",
+          "angleIds": [
+            "openprefire:a_long/34",
+            "openprefire:a_long/21",
+            "openprefire:a_short/29",
+            "retakes:dust2/21",
+            "de_dust2:community-retakes/29",
+            "de_dust2:community-retakes/30",
+            "de_dust2:community-retakes/42",
+            "openprefire:a_short/18"
+          ]
+        },
+        {
+          "id": "a-ninja",
+          "name": "A Ninja",
+          "angleIds": [
+            "openprefire:a_long/36",
+            "openprefire:a_short/14",
+            "spraylab:dust2/a-ninja",
+            "openprefire:a_short/13"
+          ]
+        }
+      ],
+      "short-a": [
+        {
+          "id": "long-car",
+          "name": "Long car",
+          "angleIds": [
+            "openprefire:a_short/23",
+            "openprefire:a_short/26",
+            "openprefire:a_short/28",
+            "spraylab:dust2/car-front-edge",
+            "spraylab:dust2/car-back-edge",
+            "de_dust2:community-retakes/40",
+            "openprefire:a_long/20"
+          ]
+        },
+        {
+          "id": "a-ramp",
+          "name": "A ramp",
+          "angleIds": [
+            "openprefire:a_short/21",
+            "openprefire:a_short/22",
+            "openprefire:mid_to_b/26",
+            "spraylab:dust2/a-ramp-short-high",
+            "de_dust2:community-retakes/41"
+          ]
+        },
+        {
+          "id": "a-default",
+          "name": "A default / site boxes",
+          "angleIds": [
+            "openprefire:a_short/25",
+            "openprefire:a_short/19",
+            "retakes:dust2/17",
+            "openprefire:a_long/37",
+            "spraylab:dust2/a-default-box-top",
+            "spraylab:dust2/a-short-box-edge",
+            "duel-density:dust2/a-back-default",
+            "de_dust2:community-retakes/31",
+            "de_dust2:community-retakes/43",
+            "de_dust2:community-retakes/44",
+            "de_dust2:community-retakes/45",
+            "de_dust2:community-retakes/48",
+            "openprefire:a_long/23",
+            "openprefire:a_long/35"
+          ]
+        },
+        {
+          "id": "goose",
+          "name": "Goose / back platform",
+          "angleIds": [
+            "openprefire:a_short/18",
+            "retakes:dust2/21",
+            "de_dust2:community-retakes/29",
+            "de_dust2:community-retakes/42"
+          ]
+        },
+        {
+          "id": "a-ninja",
+          "name": "A Ninja",
+          "angleIds": [
+            "openprefire:a_short/13",
+            "openprefire:a_short/14",
+            "spraylab:dust2/a-ninja",
+            "openprefire:a_long/36"
+          ]
+        },
+        {
+          "id": "short-stairs",
+          "name": "Short stairs / close cubby",
+          "angleIds": [
+            "openprefire:a_short/5",
+            "openprefire:a_short/9",
+            "openprefire:a_short/8",
+            "openprefire:a_short/6",
+            "duel-density:dust2/short-stairs-inner"
+          ]
+        },
+        {
+          "id": "catwalk",
+          "name": "Catwalk close / rails",
+          "angleIds": [
+            "openprefire:mid_to_b/14",
+            "duel-density:dust2/xbox-catwalk-lip",
+            "duel-density:dust2/xbox-upper-edge",
+            "retakes:dust2/24",
+            "de_dust2:community-retakes/6",
+            "de_dust2:community-retakes/21",
+            "de_dust2:community-retakes/33",
+            "de_dust2:community-retakes/37"
+          ]
+        }
+      ],
+      "a-retake": [
+        {
+          "id": "long-car",
+          "name": "Long car",
+          "angleIds": [
+            "openprefire:a_short/23",
+            "openprefire:a_short/28",
+            "spraylab:dust2/car-back-edge",
+            "de_dust2:community-retakes/40",
+            "openprefire:a_long/20"
+          ]
+        },
+        {
+          "id": "a-ramp",
+          "name": "A ramp",
+          "angleIds": [
+            "openprefire:a_short/21",
+            "openprefire:mid_to_b/26",
+            "spraylab:dust2/a-ramp-short-low",
+            "spraylab:dust2/a-ramp-short-high",
+            "de_dust2:community-retakes/41",
+            "openprefire:a_short/22"
+          ]
+        },
+        {
+          "id": "a-default",
+          "name": "A default / site boxes",
+          "angleIds": [
+            "openprefire:a_short/19",
+            "retakes:dust2/19",
+            "openprefire:a_short/25",
+            "retakes:dust2/17",
+            "spraylab:dust2/a-default-box-top",
+            "spraylab:dust2/a-short-box-edge",
+            "duel-density:dust2/a-back-default",
+            "de_dust2:community-retakes/31",
+            "de_dust2:community-retakes/43",
+            "de_dust2:community-retakes/44",
+            "de_dust2:community-retakes/45",
+            "de_dust2:community-retakes/48",
+            "openprefire:a_long/23",
+            "openprefire:a_long/35"
+          ]
+        },
+        {
+          "id": "goose",
+          "name": "Goose / back platform",
+          "angleIds": [
+            "openprefire:a_short/18",
+            "retakes:dust2/20",
+            "retakes:dust2/21",
+            "openprefire:a_short/29",
+            "de_dust2:community-retakes/29",
+            "de_dust2:community-retakes/30",
+            "de_dust2:community-retakes/42"
+          ]
+        }
+      ],
+      "ct-mid-push": [
+        {
+          "id": "catwalk",
+          "name": "Catwalk close / rails",
+          "angleIds": [
+            "openprefire:ct_push_mid/1",
+            "openprefire:mid_to_b/16",
+            "de_dust2:community-retakes/6",
+            "de_dust2:community-retakes/21"
+          ]
+        },
+        {
+          "id": "mid-door-close",
+          "name": "Mid doors close / Hiko",
+          "angleIds": [
+            "openprefire:ct_push_mid/5",
+            "openprefire:ct_push_mid/10"
+          ]
+        },
+        {
+          "id": "top-mid",
+          "name": "Top Mid / Palm-side hold",
+          "angleIds": [
+            "openprefire:ct_push_mid/1",
+            "openprefire:ct_push_mid/12",
+            "openprefire:ct_push_mid/20",
+            "openprefire:mid_to_b/16",
+            "de_dust2:community-retakes/7"
+          ]
+        }
+      ],
+      "mid-doors": [
+        {
+          "id": "ct-box",
+          "name": "CT spawn head-height boxes",
+          "angleIds": [
+            "openprefire:mid_to_b/24",
+            "openprefire:mid_to_b/24:standing"
+          ]
+        },
+        {
+          "id": "ct-under-a",
+          "name": "CT under A / under Short",
+          "angleIds": [
+            "openprefire:mid_to_b/27",
+            "openprefire:a_long/33",
+            "openprefire:a_long/31",
+            "openprefire:a_long/30",
+            "openprefire:mid_to_b/22",
+            "openprefire:mid_to_b/24",
+            "openprefire:mid_to_b/25",
+            "openprefire:mid_to_b/24:standing",
+            "duel-density:dust2/ct-under-a-close",
+            "duel-density:dust2/ct-under-a-ramp",
+            "retakes:dust2/1",
+            "retakes:dust2/2",
+            "de_dust2:community-retakes/14",
+            "de_dust2:community-retakes/15",
+            "de_dust2:community-retakes/16",
+            "de_dust2:community-retakes/32"
+          ]
+        },
+        {
+          "id": "mid-door-close",
+          "name": "Mid doors close / Hiko",
+          "angleIds": [
+            "openprefire:mid_to_b/20",
+            "openprefire:mid_to_b/21",
+            "retakes:dust2/26",
+            "de_dust2:community-retakes/17",
+            "de_dust2:community-retakes/24",
+            "openprefire:ct_push_mid/6"
+          ]
+        }
+      ],
+      "b-tunnels": [
+        {
+          "id": "b-car",
+          "name": "B car / Closet",
+          "angleIds": [
+            "openprefire:b_tunnel/11",
+            "openprefire:b_tunnel/9",
+            "openprefire:b_tunnel/25",
+            "openprefire:b_tunnel/18",
+            "duel-density:dust2/b-tunnel-exit-left",
+            "openprefire:mid_to_b/38"
+          ]
+        },
+        {
+          "id": "b-close",
+          "name": "Tunnel exit close",
+          "angleIds": [
+            "openprefire:b_tunnel/21",
+            "de_dust2:community-retakes/11",
+            "de_dust2:community-retakes/12",
+            "openprefire:mid_to_b/40"
+          ]
+        },
+        {
+          "id": "b-platform",
+          "name": "B back platform / headshot",
+          "angleIds": [
+            "openprefire:b_tunnel/10",
+            "openprefire:b_tunnel/12",
+            "de_dust2:community-retakes/13",
+            "de_dust2:community-retakes/22"
+          ]
+        },
+        {
+          "id": "b-default",
+          "name": "B default / big box",
+          "angleIds": [
+            "openprefire:b_tunnel/13",
+            "de_dust2:community-retakes/9",
+            "de_dust2:community-retakes/25",
+            "de_dust2:community-retakes/51",
+            "openprefire:mid_to_b/44",
+            "openprefire:mid_to_b/45"
+          ]
+        },
+        {
+          "id": "b-window",
+          "name": "B Window / inner ledge",
+          "angleIds": [
+            "openprefire:b_tunnel/16",
+            "openprefire:b_tunnel/14",
+            "openprefire:b_tunnel/15",
+            "openprefire:b_tunnel/17",
+            "retakes:dust2/13",
+            "openprefire:b_tunnel/24",
+            "duel-density:dust2/b-default-back",
+            "de_dust2:community-retakes/26",
+            "de_dust2:community-retakes/49",
+            "de_dust2:community-retakes/52"
+          ]
+        }
+      ],
+      "b-doors": [
+        {
+          "id": "b-car",
+          "name": "B car / Closet",
+          "angleIds": [
+            "openprefire:mid_to_b/36",
+            "openprefire:mid_to_b/34",
+            "openprefire:mid_to_b/38",
+            "openprefire:b_tunnel/9",
+            "openprefire:b_tunnel/11"
+          ]
+        },
+        {
+          "id": "b-close",
+          "name": "Tunnel exit close",
+          "angleIds": [
+            "openprefire:mid_to_b/40",
+            "openprefire:b_tunnel/21",
+            "de_dust2:community-retakes/11",
+            "de_dust2:community-retakes/12"
+          ]
+        },
+        {
+          "id": "b-platform",
+          "name": "B back platform / headshot",
+          "angleIds": [
+            "openprefire:mid_to_b/39",
+            "retakes:dust2/10",
+            "de_dust2:community-retakes/13",
+            "de_dust2:community-retakes/22",
+            "openprefire:b_tunnel/12"
+          ]
+        },
+        {
+          "id": "b-default",
+          "name": "B default / big box",
+          "angleIds": [
+            "openprefire:mid_to_b/46",
+            "openprefire:mid_to_b/44",
+            "openprefire:mid_to_b/45",
+            "retakes:dust2/12",
+            "de_dust2:community-retakes/9",
+            "de_dust2:community-retakes/25",
+            "de_dust2:community-retakes/51",
+            "openprefire:b_tunnel/13"
+          ]
+        },
+        {
+          "id": "b-window",
+          "name": "B Window / inner ledge",
+          "angleIds": [
+            "openprefire:mid_to_b/43",
+            "retakes:dust2/11",
+            "retakes:dust2/14",
+            "retakes:dust2/13",
+            "openprefire:b_tunnel/24",
+            "duel-density:dust2/b-default-back",
+            "de_dust2:community-retakes/26",
+            "de_dust2:community-retakes/49",
+            "de_dust2:community-retakes/52",
+            "openprefire:b_tunnel/16"
+          ]
+        },
+        {
+          "id": "b-window-outside",
+          "name": "B Window outside / scaffolding trap",
+          "angleIds": [
+            "openprefire:mid_to_b/35",
+            "retakes:dust2/11",
+            "de_dust2:community-retakes/27",
+            "de_dust2:community-retakes/52",
+            "openprefire:b_tunnel/16",
+            "openprefire:mid_to_b/28",
+            "openprefire:mid_to_b/33"
+          ]
+        }
+      ],
+      "lower-tunnels": [
+        {
+          "id": "lower-tunnel",
+          "name": "Lower tunnels / stairs",
+          "angleIds": [
+            "openprefire:ct_push_lower/7",
+            "openprefire:ct_push_lower/14",
+            "openprefire:ct_push_lower/11",
+            "openprefire:ct_push_lower/12",
+            "openprefire:mid_to_b/11",
+            "openprefire:mid_to_b/15",
+            "retakes:dust2/25",
+            "de_dust2:community-retakes/5",
+            "de_dust2:community-retakes/19",
+            "de_dust2:community-retakes/34"
+          ]
+        },
+        {
+          "id": "upper-tunnel",
+          "name": "Upper tunnel pillar / entrance",
+          "angleIds": [
+            "openprefire:ct_push_lower/16",
+            "openprefire:ct_push_lower/17",
+            "openprefire:ct_push_lower/11",
+            "openprefire:ct_push_lower/12",
+            "openprefire:ct_push_lower/19",
+            "openprefire:ct_push_lower/21",
+            "openprefire:ct_push_lower/22",
+            "de_dust2:community-retakes/35",
+            "openprefire:ct_push_lower/15",
+            "openprefire:ct_push_lower/25",
+            "openprefire:ct_push_lower/26",
+            "openprefire:mid_to_b/2",
+            "openprefire:mid_to_b/3",
+            "openprefire:mid_to_b/6"
+          ]
+        }
+      ],
+      "upper-tunnels": [
+        {
+          "id": "upper-tunnel",
+          "name": "Upper tunnel pillar / entrance",
+          "angleIds": [
+            "openprefire:b_tunnel/6",
+            "openprefire:b_tunnel/3",
+            "openprefire:b_tunnel/2",
+            "openprefire:b_tunnel/1",
+            "openprefire:ct_push_lower/11",
+            "openprefire:ct_push_lower/16",
+            "openprefire:ct_push_lower/17",
+            "openprefire:ct_push_lower/19",
+            "openprefire:ct_push_lower/21"
+          ]
+        }
+      ]
+    },
+    "de_mirage": {
+      "a-ramp": [
+        {
+          "id": "tetris",
+          "name": "Tetris / Ramp close",
+          "angleIds": [
+            "de_mirage:openprefire/a_ramp/4",
+            "de_mirage:openprefire/a_ramp/6",
+            "de_mirage:openprefire/a_ramp/7",
+            "de_mirage:openprefire/a_ramp/11",
+            "de_mirage:openprefire/a_palace/28",
+            "de_mirage:retakes/7"
+          ]
+        },
+        {
+          "id": "shadows",
+          "name": "Shadows / under Palace",
+          "angleIds": [
+            "de_mirage:openprefire/a_ramp/16",
+            "de_mirage:openprefire/a_ramp/21",
+            "de_mirage:openprefire/a_palace/25",
+            "de_mirage:openprefire/a_palace/26",
+            "de_mirage:openprefire/under_to_jungle/29"
+          ]
+        },
+        {
+          "id": "sandwich",
+          "name": "Sandwich",
+          "angleIds": [
+            "de_mirage:openprefire/a_ramp/11",
+            "de_mirage:openprefire/a_palace/28",
+            "de_mirage:retakes/7"
+          ]
+        },
+        {
+          "id": "stairs",
+          "name": "Stairs / raised box",
+          "angleIds": [
+            "de_mirage:openprefire/a_ramp/5",
+            "de_mirage:openprefire/under_to_jungle/25",
+            "de_mirage:openprefire/a_ramp/25",
+            "de_mirage:openprefire/under_to_jungle/18"
+          ]
+        },
+        {
+          "id": "a-default",
+          "name": "A default / plant boxes",
+          "angleIds": [
+            "de_mirage:openprefire/a_ramp/13",
+            "de_mirage:openprefire/under_to_jungle/24",
+            "de_mirage:retakes/2",
+            "de_mirage:community-retakes/1",
+            "de_mirage:community-retakes/19",
+            "de_mirage:openprefire/a_palace/13"
+          ]
+        },
+        {
+          "id": "triple",
+          "name": "Triple / site-side edges",
+          "angleIds": [
+            "de_mirage:openprefire/a_ramp/9",
+            "de_mirage:openprefire/a_ramp/12",
+            "de_mirage:openprefire/a_ramp/14",
+            "de_mirage:openprefire/under_to_jungle/24",
+            "de_mirage:retakes/3",
+            "de_mirage:openprefire/a_ramp/18",
+            "de_mirage:openprefire/a_palace/31",
+            "de_mirage:openprefire/a_palace/32",
+            "de_mirage:openprefire/a_palace/37",
+            "de_mirage:openprefire/under_to_jungle/26",
+            "de_mirage:retakes/4",
+            "de_mirage:retakes/5"
+          ]
+        },
+        {
+          "id": "ninja",
+          "name": "Ninja / site box gap",
+          "angleIds": [
+            "de_mirage:openprefire/a_ramp/12",
+            "de_mirage:community-retakes/21",
+            "de_mirage:openprefire/a_palace/32",
+            "de_mirage:openprefire/under_to_jungle/26",
+            "de_mirage:retakes/4"
+          ]
+        },
+        {
+          "id": "firebox",
+          "name": "Firebox / rear site corner",
+          "angleIds": [
+            "de_mirage:openprefire/a_ramp/14",
+            "de_mirage:openprefire/a_ramp/18",
+            "de_mirage:openprefire/a_palace/37",
+            "de_mirage:openprefire/a_palace/39"
+          ]
+        },
+        {
+          "id": "ticket",
+          "name": "Ticket / CT entrance",
+          "angleIds": [
+            "de_mirage:openprefire/a_ramp/10",
+            "de_mirage:openprefire/a_palace/35",
+            "de_mirage:openprefire/under_to_jungle/20",
+            "de_mirage:openprefire/under_to_jungle/21",
+            "de_mirage:openprefire/a_palace/33"
+          ]
+        },
+        {
+          "id": "jungle",
+          "name": "Jungle / Connector crossfire",
+          "angleIds": [
+            "de_mirage:openprefire/a_palace/29",
+            "de_mirage:openprefire/a_ramp/20",
+            "de_mirage:openprefire/a_ramp/22",
+            "de_mirage:openprefire/a_palace/15",
+            "de_mirage:openprefire/a_palace/16",
+            "de_mirage:openprefire/under_to_jungle/19",
+            "de_mirage:retakes/17",
+            "de_mirage:retakes/29"
+          ]
+        },
+        {
+          "id": "palace",
+          "name": "Palace / balcony ledges",
+          "angleIds": [
+            "de_mirage:community-retakes/19",
+            "de_mirage:openprefire/a_palace/21",
+            "de_mirage:openprefire/a_palace/23"
+          ]
+        }
+      ],
+      "jungle-a": [
+        {
+          "id": "tetris",
+          "name": "Tetris / Ramp close",
+          "angleIds": [
+            "de_mirage:openprefire/a_ramp/4",
+            "de_mirage:openprefire/a_ramp/6",
+            "de_mirage:openprefire/a_ramp/7",
+            "de_mirage:openprefire/a_ramp/11",
+            "de_mirage:retakes/7"
+          ]
+        },
+        {
+          "id": "shadows",
+          "name": "Shadows / under Palace",
+          "angleIds": [
+            "de_mirage:openprefire/a_ramp/21"
+          ]
+        },
+        {
+          "id": "stairs",
+          "name": "Stairs / raised box",
+          "angleIds": [
+            "de_mirage:openprefire/a_ramp/25",
+            "de_mirage:openprefire/a_palace/46",
+            "de_mirage:openprefire/under_to_jungle/18"
+          ]
+        },
+        {
+          "id": "a-default",
+          "name": "A default / plant boxes",
+          "angleIds": [
+            "de_mirage:openprefire/under_to_jungle/24",
+            "de_mirage:retakes/2"
+          ]
+        },
+        {
+          "id": "triple",
+          "name": "Triple / site-side edges",
+          "angleIds": [
+            "de_mirage:openprefire/a_ramp/9",
+            "de_mirage:openprefire/a_ramp/12",
+            "de_mirage:openprefire/a_ramp/18",
+            "de_mirage:openprefire/a_palace/31",
+            "de_mirage:openprefire/a_palace/32",
+            "de_mirage:openprefire/a_palace/37",
+            "de_mirage:openprefire/under_to_jungle/24",
+            "de_mirage:openprefire/under_to_jungle/26",
+            "de_mirage:retakes/3",
+            "de_mirage:retakes/4",
+            "de_mirage:retakes/5"
+          ]
+        },
+        {
+          "id": "ninja",
+          "name": "Ninja / site box gap",
+          "angleIds": [
+            "de_mirage:openprefire/a_ramp/12",
+            "de_mirage:openprefire/a_palace/32",
+            "de_mirage:openprefire/under_to_jungle/26",
+            "de_mirage:retakes/4",
+            "de_mirage:community-retakes/21"
+          ]
+        },
+        {
+          "id": "firebox",
+          "name": "Firebox / rear site corner",
+          "angleIds": [
+            "de_mirage:openprefire/a_ramp/18",
+            "de_mirage:openprefire/a_palace/37",
+            "de_mirage:openprefire/a_palace/39"
+          ]
+        },
+        {
+          "id": "ticket",
+          "name": "Ticket / CT entrance",
+          "angleIds": [
+            "de_mirage:openprefire/a_ramp/10",
+            "de_mirage:openprefire/a_palace/33",
+            "de_mirage:openprefire/a_palace/34",
+            "de_mirage:openprefire/a_palace/35",
+            "de_mirage:openprefire/under_to_jungle/20",
+            "de_mirage:openprefire/under_to_jungle/21"
+          ]
+        }
+      ],
+      "a-palace": [
+        {
+          "id": "stairs",
+          "name": "Stairs / raised box",
+          "angleIds": [
+            "de_mirage:openprefire/a_ramp/5",
+            "de_mirage:openprefire/under_to_jungle/25"
+          ]
+        },
+        {
+          "id": "a-default",
+          "name": "A default / plant boxes",
+          "angleIds": [
+            "de_mirage:openprefire/a_palace/13",
+            "de_mirage:openprefire/under_to_jungle/24",
+            "de_mirage:community-retakes/19"
+          ]
+        },
+        {
+          "id": "triple",
+          "name": "Triple / site-side edges",
+          "angleIds": [
+            "de_mirage:openprefire/a_palace/31",
+            "de_mirage:openprefire/a_palace/32",
+            "de_mirage:openprefire/a_ramp/12",
+            "de_mirage:openprefire/under_to_jungle/24",
+            "de_mirage:openprefire/under_to_jungle/26",
+            "de_mirage:retakes/3",
+            "de_mirage:retakes/4"
+          ]
+        },
+        {
+          "id": "ninja",
+          "name": "Ninja / site box gap",
+          "angleIds": [
+            "de_mirage:openprefire/a_palace/32",
+            "de_mirage:openprefire/a_ramp/12",
+            "de_mirage:openprefire/under_to_jungle/26",
+            "de_mirage:retakes/4"
+          ]
+        },
+        {
+          "id": "ticket",
+          "name": "Ticket / CT entrance",
+          "angleIds": [
+            "de_mirage:openprefire/a_palace/33",
+            "de_mirage:openprefire/under_to_jungle/21"
+          ]
+        },
+        {
+          "id": "jungle",
+          "name": "Jungle / Connector crossfire",
+          "angleIds": [
+            "de_mirage:openprefire/a_palace/15",
+            "de_mirage:openprefire/a_palace/16",
+            "de_mirage:openprefire/a_palace/17",
+            "de_mirage:openprefire/a_palace/29",
+            "de_mirage:openprefire/a_ramp/8",
+            "de_mirage:openprefire/a_ramp/20",
+            "de_mirage:openprefire/a_ramp/22",
+            "de_mirage:retakes/29"
+          ]
+        }
+      ],
+      "mid-short": [
+        {
+          "id": "window",
+          "name": "Window / Sniper's Nest",
+          "angleIds": [
+            "de_mirage:openprefire/mid_to_b/9",
+            "de_mirage:openprefire/mid_to_b/10",
+            "de_mirage:openprefire/mid_to_b/24",
+            "de_mirage:openprefire/under_to_jungle/10",
+            "de_mirage:openprefire/under_to_jungle/41"
+          ]
+        },
+        {
+          "id": "chair",
+          "name": "Chair / Mid corner",
+          "angleIds": [
+            "de_mirage:openprefire/mid_to_b/8",
+            "de_mirage:community-retakes/20"
+          ]
+        },
+        {
+          "id": "connector",
+          "name": "Connector close / upper exit",
+          "angleIds": [
+            "de_mirage:openprefire/mid_to_b/7",
+            "de_mirage:openprefire/mid_to_b/8",
+            "de_mirage:openprefire/mid_to_b/15",
+            "de_mirage:openprefire/mid_to_b/17",
+            "de_mirage:openprefire/mid_to_b/18",
+            "de_mirage:openprefire/mid_to_b/20",
+            "de_mirage:openprefire/under_to_jungle/18",
+            "de_mirage:openprefire/under_to_jungle/19",
+            "de_mirage:openprefire/under_to_jungle/22",
+            "de_mirage:community-retakes/20",
+            "de_mirage:community-retakes/22"
+          ]
+        },
+        {
+          "id": "catwalk",
+          "name": "Catwalk / Short corner",
+          "angleIds": [
+            "de_mirage:openprefire/mid_to_b/12",
+            "de_mirage:openprefire/mid_to_b/16",
+            "de_mirage:openprefire/mid_to_b/26",
+            "de_mirage:openprefire/mid_to_b/28",
+            "de_mirage:openprefire/a_ramp/24"
+          ]
+        },
+        {
+          "id": "ladder",
+          "name": "Ladder room / Short edge",
+          "angleIds": [
+            "de_mirage:openprefire/mid_to_b/23",
+            "de_mirage:openprefire/mid_to_b/25",
+            "de_mirage:openprefire/mid_to_b/26",
+            "de_mirage:community-retakes/38"
+          ]
+        }
+      ],
+      "underpass-connector": [
+        {
+          "id": "window",
+          "name": "Window / Sniper's Nest",
+          "angleIds": [
+            "de_mirage:openprefire/under_to_jungle/10",
+            "de_mirage:openprefire/under_to_jungle/40",
+            "de_mirage:openprefire/under_to_jungle/41",
+            "de_mirage:openprefire/mid_to_b/10",
+            "de_mirage:retakes/12"
+          ]
+        },
+        {
+          "id": "chair",
+          "name": "Chair / Mid corner",
+          "angleIds": [
+            "de_mirage:openprefire/mid_to_b/8",
+            "de_mirage:community-retakes/20"
+          ]
+        },
+        {
+          "id": "connector",
+          "name": "Connector close / upper exit",
+          "angleIds": [
+            "de_mirage:openprefire/under_to_jungle/12",
+            "de_mirage:openprefire/under_to_jungle/18",
+            "de_mirage:openprefire/under_to_jungle/19",
+            "de_mirage:openprefire/under_to_jungle/22",
+            "de_mirage:openprefire/mid_to_b/7",
+            "de_mirage:openprefire/mid_to_b/8",
+            "de_mirage:openprefire/mid_to_b/15",
+            "de_mirage:openprefire/mid_to_b/17",
+            "de_mirage:openprefire/mid_to_b/18",
+            "de_mirage:openprefire/mid_to_b/20",
+            "de_mirage:openprefire/a_ramp/22",
+            "de_mirage:community-retakes/20",
+            "de_mirage:community-retakes/22"
+          ]
+        },
+        {
+          "id": "catwalk",
+          "name": "Catwalk / Short corner",
+          "angleIds": [
+            "de_mirage:openprefire/mid_to_b/12",
+            "de_mirage:openprefire/a_ramp/24"
+          ]
+        },
+        {
+          "id": "underpass",
+          "name": "Underpass / lower steps",
+          "angleIds": [
+            "de_mirage:openprefire/under_to_jungle/9",
+            "de_mirage:community-retakes/14",
+            "de_mirage:community-retakes/17"
+          ]
+        }
+      ],
+      "short-b": [
+        {
+          "id": "ladder",
+          "name": "Ladder room / Short edge",
+          "angleIds": [
+            "de_mirage:openprefire/mid_to_b/23",
+            "de_mirage:openprefire/mid_to_b/25",
+            "de_mirage:openprefire/mid_to_b/26",
+            "de_mirage:openprefire/b_apts/21",
+            "de_mirage:openprefire/b_apts/22",
+            "de_mirage:openprefire/b_retake/10",
+            "de_mirage:openprefire/b_retake/26",
+            "de_mirage:community-retakes/38"
+          ]
+        },
+        {
+          "id": "bench",
+          "name": "Bench / back wall",
+          "angleIds": [
+            "de_mirage:openprefire/mid_to_b/31",
+            "de_mirage:openprefire/b_apts/14",
+            "de_mirage:openprefire/b_retake/9",
+            "de_mirage:openprefire/b_retake/14",
+            "de_mirage:openprefire/b_retake/22",
+            "de_mirage:community-retakes/33"
+          ]
+        },
+        {
+          "id": "van",
+          "name": "Van / raised ledge",
+          "angleIds": [
+            "de_mirage:openprefire/mid_to_b/32",
+            "de_mirage:openprefire/b_apts/10",
+            "de_mirage:openprefire/b_apts/11",
+            "de_mirage:openprefire/b_apts/13",
+            "de_mirage:retakes/24"
+          ]
+        },
+        {
+          "id": "get-right",
+          "name": "GeT_RiGhT / Apps-side pillar",
+          "angleIds": [
+            "de_mirage:openprefire/b_retake/7",
+            "de_mirage:openprefire/b_retake/24",
+            "de_mirage:retakes/25",
+            "de_mirage:community-retakes/34"
+          ]
+        },
+        {
+          "id": "b-default",
+          "name": "B default / plant cover",
+          "angleIds": [
+            "de_mirage:openprefire/mid_to_b/33",
+            "de_mirage:openprefire/b_apts/16",
+            "de_mirage:openprefire/b_apts/17",
+            "de_mirage:openprefire/b_retake/17",
+            "de_mirage:openprefire/b_retake/29",
+            "de_mirage:community-retakes/29"
+          ]
+        },
+        {
+          "id": "b-arches",
+          "name": "B arches / Short entry",
+          "angleIds": [
+            "de_mirage:openprefire/b_apts/21",
+            "de_mirage:openprefire/b_retake/10",
+            "de_mirage:community-retakes/37"
+          ]
+        },
+        {
+          "id": "market-window",
+          "name": "Market Window / E-box side",
+          "angleIds": [
+            "de_mirage:openprefire/mid_to_b/35",
+            "de_mirage:openprefire/b_apts/18",
+            "de_mirage:openprefire/b_apts/29",
+            "de_mirage:openprefire/b_apts/30",
+            "de_mirage:openprefire/b_apts/36",
+            "de_mirage:openprefire/b_apts/38",
+            "de_mirage:openprefire/b_retake/2",
+            "de_mirage:openprefire/b_retake/3",
+            "de_mirage:community-retakes/2"
+          ]
+        },
+        {
+          "id": "market-door",
+          "name": "Market Door / Jail side",
+          "angleIds": [
+            "de_mirage:openprefire/mid_to_b/38",
+            "de_mirage:openprefire/mid_to_b/43",
+            "de_mirage:openprefire/mid_to_b/47",
+            "de_mirage:openprefire/b_apts/23",
+            "de_mirage:openprefire/b_apts/28",
+            "de_mirage:openprefire/b_retake/13",
+            "de_mirage:openprefire/b_retake/19",
+            "de_mirage:openprefire/b_retake/23"
+          ]
+        }
+      ],
+      "market-b": [
+        {
+          "id": "bench",
+          "name": "Bench / back wall",
+          "angleIds": [
+            "de_mirage:openprefire/b_retake/9",
+            "de_mirage:openprefire/b_retake/22",
+            "de_mirage:openprefire/b_apts/14",
+            "de_mirage:openprefire/b_apts/27",
+            "de_mirage:openprefire/mid_to_b/31",
+            "de_mirage:openprefire/mid_to_b/44",
+            "de_mirage:community-retakes/33"
+          ]
+        },
+        {
+          "id": "get-right",
+          "name": "GeT_RiGhT / Apps-side pillar",
+          "angleIds": [
+            "de_mirage:openprefire/b_retake/7",
+            "de_mirage:openprefire/b_retake/24",
+            "de_mirage:retakes/25",
+            "de_mirage:community-retakes/34"
+          ]
+        },
+        {
+          "id": "b-default",
+          "name": "B default / plant cover",
+          "angleIds": [
+            "de_mirage:openprefire/b_retake/17",
+            "de_mirage:openprefire/b_retake/29",
+            "de_mirage:openprefire/b_apts/16",
+            "de_mirage:openprefire/b_apts/17",
+            "de_mirage:openprefire/mid_to_b/33",
+            "de_mirage:community-retakes/29"
+          ]
+        },
+        {
+          "id": "b-arches",
+          "name": "B arches / Short entry",
+          "angleIds": [
+            "de_mirage:openprefire/b_retake/10",
+            "de_mirage:openprefire/b_apts/21",
+            "de_mirage:community-retakes/37"
+          ]
+        }
+      ],
+      "b-apartments": [
+        {
+          "id": "van",
+          "name": "Van / raised ledge",
+          "angleIds": [
+            "de_mirage:openprefire/b_apts/10",
+            "de_mirage:openprefire/b_apts/11",
+            "de_mirage:openprefire/b_retake/15",
+            "de_mirage:openprefire/b_retake/31",
+            "de_mirage:openprefire/mid_to_b/32"
+          ]
+        },
+        {
+          "id": "b-default",
+          "name": "B default / plant cover",
+          "angleIds": [
+            "de_mirage:openprefire/b_apts/16",
+            "de_mirage:openprefire/b_apts/17"
+          ]
+        }
+      ]
+    }
+  },
+  "gaps": [
+    {
+      "map": "de_mirage",
+      "route": "a-palace",
+      "pocket": "sandwich",
+      "name": "Sandwich"
+    },
+    {
+      "map": "de_mirage",
+      "route": "a-palace",
+      "pocket": "firebox",
+      "name": "Firebox / rear site corner"
+    },
+    {
+      "map": "de_mirage",
+      "route": "jungle-a",
+      "pocket": "palace",
+      "name": "Palace / balcony ledges"
+    },
+    {
+      "map": "de_mirage",
+      "route": "underpass-connector",
+      "pocket": "ladder",
+      "name": "Ladder room / Short edge"
+    },
+    {
+      "map": "de_mirage",
+      "route": "market-b",
+      "pocket": "van",
+      "name": "Van / raised ledge"
+    },
+    {
+      "map": "de_mirage",
+      "route": "b-apartments",
+      "pocket": "get-right",
+      "name": "GeT_RiGhT / Apps-side pillar"
+    },
+    {
+      "map": "de_mirage",
+      "route": "b-apartments",
+      "pocket": "b-arches",
+      "name": "B arches / Short entry"
+    },
+    {
+      "map": "de_mirage",
+      "route": "b-apartments",
+      "pocket": "market-window",
+      "name": "Market Window / E-box side"
+    },
+    {
+      "map": "de_mirage",
+      "route": "b-apartments",
+      "pocket": "market-door",
+      "name": "Market Door / Jail side"
+    }
+  ]
+}

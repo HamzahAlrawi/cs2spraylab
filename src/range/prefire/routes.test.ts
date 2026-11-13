@@ -6,6 +6,7 @@ import dataset from './data/openprefire-dust2.json';
 import retakes from './data/retakes-dust2.json';
 import authored from './data/authored-dust2.json';
 import combatLeads from './data/combat-dust2-leads.json';
+import community from './data/community-retakes-dust2.json';
 import {prefireAngleSource, prefireClearingRoutes, prefireRoutes, prefireLineup, prefireRouteAliases, sourcePoint} from './routes';
 import {choosePrefireAngles, prefireCandidates} from './occupancy';
 import {randomStream} from '../duel/rng';
@@ -41,6 +42,7 @@ describe('licensed common-angle samples', () => {
     for (const angle of prefireRoutes.flatMap(prefireCandidates)) {
       expect(angle.source).toBeDefined();
       const original = angle.source!.dataset === 'spraylab-authored' ? authored.angles[angle.source!.index - 1]
+        : angle.source!.dataset === 'community-retakes-dust2' ? community.angles[angle.source!.index - 1]
         : angle.source!.dataset === 'duel-density' ? combatLeads.angles[angle.source!.index - 1]
         : angle.source!.dataset === 'retakes' ? retakes.angles[angle.source!.index - 1]
         : dataset.profiles[angle.source!.profile as keyof typeof dataset.profiles].angles[angle.source!.index - 1];
@@ -149,8 +151,8 @@ describe('licensed common-angle samples', () => {
     const holds = (id: string) => prefireCandidates(prefireRoutes.find(route => route.id === id)!).map(angle => angle.id);
     expect(holds('mid-doors')).toEqual(expect.arrayContaining(['openprefire:mid_to_b/20', 'openprefire:mid_to_b/21']));
     expect(holds('upper-tunnels')).toEqual(expect.arrayContaining(['openprefire:b_tunnel/1', 'openprefire:b_tunnel/5']));
-    expect(new Set(prefireRoutes.flatMap(prefireCandidates).map(angle => angle.id)).size).toBe(212);
-    expect(prefireRoutes.flatMap(prefireCandidates)).toHaveLength(375);
+    expect(new Set(prefireRoutes.flatMap(prefireCandidates).map(angle => angle.id)).size).toBe(256);
+    expect(prefireRoutes.flatMap(prefireCandidates)).toHaveLength(453);
     for (const id of ['mid-doors', 'upper-tunnels']) {
       const route = prefireRoutes.find(route => route.id === id)!;
       expect(route).toMatchObject({enemySide: 'ct', phase: 'preplant'});

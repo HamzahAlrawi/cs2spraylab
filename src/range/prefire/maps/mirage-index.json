@@ -1,6 +1,6 @@
 {
   "id": "de_mirage",
-  "revision": "2026-11-13-mirage-coverage-v2",
+  "revision": "2026-11-13-mirage-pockets-v3",
   "routes": [
     {
       "id": "a-ramp",
@@ -9,6 +9,10 @@
         {
           "id": "a-ramp-common-angles",
           "name": "A site / boxes, Stairs & Sandwich"
+        },
+        {
+          "id": "a-ramp-deep-site",
+          "name": "A / Shadows, Ninja & Firebox"
         }
       ]
     },
@@ -69,6 +73,10 @@
           {
             "id": "a-ramp-common-angles",
             "name": "A site / boxes, Stairs & Sandwich"
+          },
+          {
+            "id": "a-ramp-deep-site",
+            "name": "A / Shadows, Ninja & Firebox"
           }
         ]
       },

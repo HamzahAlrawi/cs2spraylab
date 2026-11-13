@@ -15,3 +15,9 @@ export function anySilhouetteSight(origin,points,ray){
     return d>.01&&!ray(origin,{x:dx/d,y:dy/d,z:dz/d},d-.01);
   });
 }
+
+export function physicalStepDistance(before,afterSpeed,step,maximumSpeed){
+  const speed=Math.max(before.speed,afterSpeed,Math.min(before.velocity,maximumSpeed));
+  return [speed,step,maximumSpeed].every(Number.isFinite)&&step>0&&speed<=maximumSpeed
+    ? speed*step+.002 : NaN;
+}

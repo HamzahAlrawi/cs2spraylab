@@ -8,7 +8,7 @@ import {createHash} from 'node:crypto';
 import {performance} from 'node:perf_hooks';
 import * as THREE from 'three';
 import {createServer} from 'vite';
-import {pointFromEvidence,boundedAimCommand,watchOnAuthoredRoute,anySilhouetteSight} from './prefire-audit-contracts.mjs';
+import {pointFromEvidence,boundedAimCommand,watchOnAuthoredRoute,anySilhouetteSight,physicalStepDistance} from './prefire-audit-contracts.mjs';
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const arg = name => process.argv.find(value => value.startsWith(`--${name}=`))?.slice(name.length + 3);
@@ -45,14 +45,23 @@ try {
   const {nativeMaps,defaultNativeMapId} = await vite.ssrLoadModule('/src/range/prefire/maps/index.ts');
   const definition=nativeMaps.forAuthoring(arg('map')??defaultNativeMapId);
   const catalog=await nativeMaps.loadCatalogForAuthoring(definition.id),prefireRoutes=catalog.routes;
-  const {sourcePoint} = await vite.ssrLoadModule('/src/range/prefire/route-helpers.ts');
+  const {sourcePoint,prefireLineup} = await vite.ssrLoadModule('/src/range/prefire/route-helpers.ts');
   const {catalogSha256,mapPackageKey}=await vite.ssrLoadModule('/src/range/prefire/map-onboarding.ts');
   if (requestedRoutes?.some(id => !prefireRoutes.some(route => route.id === id))) throw new Error('Unknown --routes ID.');
-  const selectedRoutes = requestedRoutes ? prefireRoutes.filter(route => requestedRoutes.includes(route.id)) : prefireRoutes;
+  const baseRoutes = requestedRoutes ? prefireRoutes.filter(route => requestedRoutes.includes(route.id)) : prefireRoutes;
+  const lineupId=arg('lineup');
+  if(lineupId&&(baseRoutes.length!==1||!baseRoutes[0].lineups?.some(lineup=>lineup.id===lineupId)))
+    throw Error('--lineup requires one --routes ID and a known authored lineup');
+  const selectedRoutes=baseRoutes.map(route=>lineupId?prefireLineup(route,lineupId):route);
   const {placePrefireTarget} = await vite.ssrLoadModule('/src/range/prefire/placement.ts');
   const {sanitizePrefireConfig} = await vite.ssrLoadModule('/src/range/prefire/config.ts');
   const {defaults} = await vite.ssrLoadModule('/src/range/config.ts');
   const {STEP, UNIT, stanceCurve} = await vite.ssrLoadModule('/src/range/actor-physics.ts');
+  const {equipmentIds,equipmentStats}=await vite.ssrLoadModule('/src/range/equipment.ts');
+  const maximumMovementSpeed=Math.max(245,...equipmentIds.map(id=>equipmentStats(id).speed))*UNIT;
+  // Match the simulation's active equipment input, including utility and
+  // residual velocity while switching back. This is not a CS2 parity test.
+  const movementSpeed=(sim,actor)=>(sim.utilityPresentation(actor.id)?245:actor.weapon.actions.stats.speed)*UNIT;
   const {idleCommand} = await vite.ssrLoadModule('/src/range/duel/types.ts');
   const {actorHeadPoint, traceActor} = await vite.ssrLoadModule('/src/range/duel/geometry.ts');
   const {actorVisibilitySamples}=await vite.ssrLoadModule('/src/range/duel/actor-visibility.ts');
@@ -256,7 +265,7 @@ try {
   }
   for (const route of selectedRoutes) {
     let warmup, targets, views, plans;
-    const practice = sanitizePrefireConfig({mapId:definition.id,routeId: route.id, population: 'all', botBehavior: 'angle-specific', returnFire: true, reactionMs: 1000},catalog);
+    const practice = sanitizePrefireConfig({mapId:definition.id,routeId: route.id,lineupId, population: 'all', botBehavior: 'angle-specific', returnFire: true, reactionMs: 1000},catalog);
     resetQueries();
     const coldStarted = performance.now();
     try {
@@ -422,7 +431,8 @@ try {
               .map(bot => ({key: sim.prefireBotDecision(bot.id)?.key, feet: feetOf(bot)}))});
         }
         sim.command(0, command);
-        const before = sim.actors.map(actor => ({position: {...actor.position}, feet: actor.feet}));
+        const before = sim.actors.map(actor => ({position: {...actor.position}, feet: actor.feet,
+          speed:movementSpeed(sim,actor),velocity:Math.hypot(actor.velocity.x,actor.velocity.z)}));
         const stepStarted = performance.now(); sim.step();
         if (sim.tick % 128 === 0) metric.stepSamples.push(performance.now() - stepStarted);
         metric.playerDistance += gap(player.position, before[0].position);
@@ -433,7 +443,9 @@ try {
           bot.maxExcursion = Math.max(bot.maxExcursion, gap(actor.position, plans[i].anchor));
           bot.stanceMin = Math.min(bot.stanceMin, actor.duckAmount ?? 0); bot.stanceMax = Math.max(bot.stanceMax, actor.duckAmount ?? 0);
           if (!actor.grounded) {bot.airborneTicks++; fail('bot-false-air-or-fall', context, {time: sim.time, feet: actor.feet, phase: decision.phase});}
-          if (distance > 225 * UNIT * STEP + .002) fail('nonphysical-bot-displacement', context, {time: sim.time, distance, velocity});
+          const distanceBound=physicalStepDistance(before[actor.id],movementSpeed(sim,actor),STEP,maximumMovementSpeed);
+          if (!Number.isFinite(distanceBound)||distance>distanceBound) fail('nonphysical-bot-displacement', context,
+            {time: sim.time,distance,velocity,distanceBound,utility:sim.utilityPresentation(actor.id)?.kind,weapon:actor.weapon.id});
           if (decision.phase !== bot.phase) {
             if (decision.phase === 'exposed') bot.exposed++;
             if (decision.phase === 'waiting' && bot.phase === 'retreating') bot.returns++;

@@ -5,7 +5,8 @@ import {createServer} from 'vite';
 
 const root='src/range/prefire/data/',file=root+'mirage-authored-routes.json';
 const current=JSON.parse(fs.readFileSync(file)),practice=JSON.parse(fs.readFileSync(root+'openprefire-mirage.json')),
-  retakes=JSON.parse(fs.readFileSync(root+'retakes-mirage.json'));
+  retakes=JSON.parse(fs.readFileSync(root+'retakes-mirage.json')),
+  community=JSON.parse(fs.readFileSync(root+'community-retakes-mirage.json'));
 const names={2:'Default / front box',3:'Triple / Ticket-side box',4:'Default / plant-side box',
   5:'Firebox / rear site',6:'Shadows / under balcony',7:'Sandwich / site-side corner',8:'Stairs / top step',9:'Palace balcony',
   10:'CT rotation / Market side',11:'CT rotation / Ticket approach',12:'Window / back room',13:'Short / Ladder-room approach',
@@ -77,6 +78,22 @@ try{
       proposals.push({id:`de_mirage:retakes/${index}`,name:names[index],position:s.position,rotation:s.rotation,
         crouched:s.crouched,moving:false,source:{dataset:'retakes-mirage',profile:'mirage',index}});
     }
+    const communityNames={1:'Default / Ramp-facing site hold',2:'Market / B window corner',3:'Market / rear room',4:'Market / CT-side door',
+      5:'CT rotation / Jungle ramp',6:'Jungle / CT-side slope',7:'Top Mid / side alley',8:'CT spawn / Ticket approach',
+      9:'CT spawn / Market rotation',10:'Top Mid / Chair-side approach',11:'Jungle / Window rotation',12:'Apartments / House entrance',
+      13:'CT spawn / Jungle turn',14:'Underpass / rear landing',15:'Underpass / Apartments steps',16:'Mid / right-side wall',
+      17:'Underpass / stairs corner',18:'Mid / Top Mid wall',19:'Palace / balcony outer ledge',20:'Chair / Mid corner',
+      21:'A site / Firebox-side default',22:'Connector / A-side exit',23:'B site / Bench-side hold',24:'Van / rear ledge',
+      25:'A default / plant face',26:'A site / central box',27:'B default / Market-facing edge',28:'B default / Short-facing edge',
+      29:'B site / centre pillar',30:'Tetris / Ramp-side edge',31:'Shadows / under Palace',32:'Ramp / close site-side corner',
+      33:'Bench / back-wall corner',34:'GeT_RiGhT / Van-side pillar',35:'Palace / balcony front lip',36:'A site / close plant cover',
+      37:'Short / B archway',38:'Short / Ladder-side corner'};
+    const scope=p=>route.region==='A site'?p[1]<-1100&&p[0]>-1450:
+      route.region==='B site'?p[0]<-1300&&p[1]>-600:p[0]>-1600&&p[1]>-1300&&p[1]<600;
+    for(const s of community.angles.filter(s=>scope(s.position))){
+      proposals.push({id:`de_mirage:community-retakes/${s.index}`,name:communityNames[s.index],position:s.position,rotation:s.rotation,
+        crouched:s.crouched,moving:false,source:{dataset:'community-retakes-mirage',profile:'mirage-community',index:s.index}});
+    }
     const spawn=placePrefireTarget(collision,route.spawn),eyes=[...audit.prefireSpawnEyes(spawn),
       ...[-64,0,64].flatMap(x=>[-64,0,64].flatMap(z=>[46,52,58,64].map(h=>({x:spawn.x+x*.0254,y:spawn.y+h*.0254,z:spawn.z+z*.0254}))))];
     const walks=[false,true].map(crouch=>audit.walkPrefireAuditPath(collision,[route.spawn,...route.path],crouch));
@@ -122,6 +139,9 @@ try{
     'ct_push_palace/1':'Palace / balcony back edge','ct_push_palace/7':'Palace / balcony-side pillar',
     'a_ramp/5':'Stairs / Jungle raised box','a_ramp/8':'Jungle / A-site entrance',
     'a_ramp/9':'Ticket / site back wall','a_ramp/18':'Firebox / Ninja-side corner',
+    'a_ramp/12':'Ninja / site box gap','a_ramp/15':'Shadows / under Palace exit',
+    'a_ramp/16':'Shadows / Palace-side pillar','a_ramp/21':'Shadows / front edge',
+    'a_ramp/28':'Ticket / CT-side close',
     'a_ramp/19':'Jungle / back-room corner','a_ramp/22':'Jungle / close wall','a_ramp/24':'Short / Ladder-room corner',
   };
   const all=[...new Map(current.routes.flatMap(r=>[...r.angles,...r.alternatives]).map(a=>[a.id,a])).values()].sort((a,b)=>a.id.localeCompare(b.id));
@@ -147,11 +167,17 @@ try{
       if(angles.some(a=>!a))throw Error(`Focused lineup includes an unadmitted hold: ${route.id}`);
       route.lineups=[{id:`${route.id}-common-angles`,name:spec.name,angles}];
     }
+    if(route.id==='a-ramp'){
+      const ids=['openprefire/a_ramp/16','openprefire/a_ramp/12','openprefire/a_ramp/18','openprefire/under_to_jungle/20','retakes/8'];
+      const angles=ids.map(id=>[...route.angles,...route.alternatives].find(a=>a.id===`de_mirage:${id}`));
+      if(angles.some(a=>!a))throw Error('Deep A clear needs admitted Shadows, Ninja, Firebox, Ticket and Stairs holds');
+      route.lineups=[...route.lineups??[],{id:'a-ramp-deep-site',name:'A / Shadows, Ninja & Firebox',angles}];
+    }
   }
   fs.mkdirSync('research/mirage',{recursive:true});
   fs.writeFileSync(`research/mirage/coverage-${process.argv.includes('--metadata-only')?'metadata':filter?'approaches':'expansion'}-2026-11-13.json`,JSON.stringify(report,null,2)+'\n');
   if(process.argv.includes('--apply')){
-    current.revision='2026-11-13-mirage-coverage-v2';
+    current.revision='2026-11-13-mirage-pockets-v3';
     fs.writeFileSync(file,JSON.stringify(current,null,2)+'\n');
   }
 }finally{collision?.dispose();await vite.close();}
