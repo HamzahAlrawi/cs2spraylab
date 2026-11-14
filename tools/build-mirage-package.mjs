@@ -19,6 +19,8 @@ if(!process.argv.includes('--pack-only')){
 }
 if(process.argv.includes('--pack-only'))run('build-grenade-map-collision.mjs','de_mirage');
 run('build-full-map-delivery.mjs','mirage');
+// Context and delivery pins both depend on rebuilt chunk metadata. Publish the
+// complete root manifest only after both assets exist, never stale old context.
+await buildDuelContext(process.cwd(),{assetId:'mirage',publishManifests:false});
 run('build-duel-delivery.mjs','mirage');
-await buildDuelContext(process.cwd(),{assetId:'mirage'});
 console.log('Mirage assets built. Re-run native/beta evidence after reviewing changed source hashes; this command never approves a map.');

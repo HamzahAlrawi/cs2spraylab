@@ -7,6 +7,7 @@ import {validateNativeSurfaces, type NativeSurface, type NativePrimitive, type N
 import {validateConvexSolid, convexRayInterval, buildSolidTree, solidTreeSteps, querySolidTree, type ConvexNativeSolid} from './native-solids';
 import grenadeClips from './native-grenade-clips.json';
 import type {NativeGrenadeQuery} from './native-grenade-query';
+import {NativeMapEntities, type NativeEntityManifest} from './native-entities';
 
 export type NativeCollisionManifest = {version: number; unit: number; build: string; collisionSha256: string; sourceCollisionSha256?:string;
   surfaces?: NativeSurface[];
@@ -93,6 +94,7 @@ export class NativeMapCollision implements TerrainQueries {
   readonly collisionSha256: string;
   readonly sourceCollisionSha256: string;
   private grenadeQuery?:NativeGrenadeQuery;
+  private entities?: NativeMapEntities;
   readonly bounds = {minX: Infinity, maxX: -Infinity, minZ: Infinity, maxZ: -Infinity};
   private readonly world: RAPIER.World;
   private readonly shapes = new Map<number, RAPIER.Cuboid>();
@@ -345,7 +347,32 @@ export class NativeMapCollision implements TerrainQueries {
     if (!shape) {shape = new RAPIER.Cuboid(radius, height / 2, radius); if (this.shapes.size > 32) this.shapes.clear(); this.shapes.set(height, shape);}
     return shape;
   }
+  installEntities(manifest: NativeEntityManifest, visibility: (id: string, visible: boolean) => void) {
+    if (this.disposed) throw Error('Cannot install entities on a disposed map');
+    const next = new NativeMapEntities(manifest, visibility);
+    this.entities?.dispose(); this.entities = next;
+  }
+  resetEntities() {this.entities?.reset();}
+  entityActive(id: string) {return this.entities?.isActive(id) ?? true;}
+  damageEntity(id: string, damage: number) {
+    return this.entities?.damage(id, damage);
+  }
+  damageEntitiesInRadius(point: Vec, radius: number, damageAtDistance: (distance: number) => number) {
+    const events = this.entities?.damageInRadius(point, radius, damageAtDistance, (center, id) => {
+      const delta = {x: center.x - point.x, y: center.y - point.y, z: center.z - point.z}, distance = Math.hypot(delta.x, delta.y, delta.z);
+      if (distance < .0001) return true;
+      const hit = this.ray(point, {x: delta.x / distance, y: delta.y / distance, z: delta.z / distance}, distance);
+      return !hit || hit.entityId === id;
+    }) ?? [];
+    return events;
+  }
   sweep(from: Vec, to: Vec, height: number): HullSweep {
+    const fixed = this.staticSweep(from, to, height);
+    const dynamic = this.entities?.sweep({x: from.x, y: from.y + height / 2 + skin, z: from.z},
+      {x: to.x, y: to.y + height / 2 + skin, z: to.z}, this.shape(height));
+    return dynamic && dynamic.fraction < fixed.fraction ? {...dynamic, position: {...dynamic.position, y: dynamic.position.y - height / 2 - skin}} : fixed;
+  }
+  private staticSweep(from: Vec, to: Vec, height: number): HullSweep {
     if (this.disposed) return {position: {...from}, fraction: 0, startSolid: true};
     const delta = {x: to.x - from.x, y: to.y - from.y, z: to.z - from.z};
     if (Math.hypot(delta.x, delta.y, delta.z) < 1e-10) return {position: {...from}, fraction: 1, startSolid: false};
@@ -362,6 +389,10 @@ export class NativeMapCollision implements TerrainQueries {
       fraction, contact: {normal: {...hit.normal1}}, startSolid: false};
   }
   sweepSphere(from:Vec,to:Vec,radius:number):HullSweep {
+    const fixed = this.staticSphere(from, to, radius), dynamic = this.entities?.sweep(from, to, this.sphereShapes.get(radius)!);
+    return dynamic && dynamic.fraction < fixed.fraction ? dynamic : fixed;
+  }
+  private staticSphere(from:Vec,to:Vec,radius:number):HullSweep {
     if(this.disposed)return {position:{...from},fraction:0,startSolid:true};
     let shape=this.sphereShapes.get(radius);if(!shape){shape=new RAPIER.Ball(radius);this.sphereShapes.set(radius,shape);}
     const delta={x:to.x-from.x,y:to.y-from.y,z:to.z-from.z},length=Math.hypot(delta.x,delta.y,delta.z);
@@ -392,6 +423,12 @@ export class NativeMapCollision implements TerrainQueries {
     this.grenadeQuery?.release();this.grenadeQuery=query;
   }
   sweepGrenade(from:Vec,to:Vec,radius:number):HullSweep {
+    let shape = this.grenadeShapes.get(radius);
+    if (this.entities && !shape) {shape = new RAPIER.Cuboid(radius, radius, radius); this.grenadeShapes.set(radius, shape);}
+    const fixed = this.staticGrenade(from, to, radius), dynamic = this.entities?.sweep(from, to, shape!, true);
+    return dynamic && dynamic.fraction < fixed.fraction ? dynamic : fixed;
+  }
+  private staticGrenade(from:Vec,to:Vec,radius:number):HullSweep {
     if(this.disposed)return{position:{...from},fraction:0,startSolid:true};
     if(this.grenadeQuery)return this.grenadeQuery.sweep(from,to,radius);
     let shape=this.grenadeShapes.get(radius);if(!shape){shape=new RAPIER.Cuboid(radius,radius,radius);this.grenadeShapes.set(radius,shape);}
@@ -436,11 +473,21 @@ export class NativeMapCollision implements TerrainQueries {
 
   fits(position: Vec, feet: number, height: number) {
     if (this.disposed) return false;
+    if (this.entities && !this.entities.fits({...position, y: feet + skin}, height - skin * 2, radius - skin)) return false;
     const shape = new RAPIER.Cuboid(radius - skin, height / 2 - skin, radius - skin);
     return !this.world.intersectionWithShape({x: position.x, y: feet + height / 2 + skin, z: position.z}, rotation,
       shape, undefined, movementGroup);
   }
   vertical(position: Vec, from: number, to: number, height: number): ReturnType<ResolveVertical> {
+    const fixed = this.staticVertical(position, from, to, height);
+    const hit = this.entities?.sweep({x: position.x, y: from + height / 2 + skin, z: position.z},
+      {x: position.x, y: to + height / 2 + skin, z: position.z}, this.shape(height));
+    if (!hit?.contact || hit.fraction >= 1 || (to <= from ? hit.contact.normal.y < .7 : hit.contact.normal.y >= -.5)) return fixed;
+    const feet = hit.position.y - height / 2 - skin;
+    return (to <= from ? feet > fixed.feet : feet < fixed.feet)
+      ? {feet, grounded: to <= from, ceiling: to > from, normal: hit.contact.normal} : fixed;
+  }
+  private staticVertical(position: Vec, from: number, to: number, height: number): ReturnType<ResolveVertical> {
     if (this.disposed) return {feet: from, grounded: false, ceiling: false};
     const key = `${position.x}:${position.z}`;
     let surfaces = this.surfaces.get(key);
@@ -487,6 +534,8 @@ export class NativeMapCollision implements TerrainQueries {
     if (this.disposed) return;
     if (!(maxDistance > 0) || !Number.isFinite(origin.x + origin.y + origin.z + direction.x + direction.y + direction.z)) return;
     const hit = this.world.castRayAndGetNormal(new RAPIER.Ray(origin, direction), maxDistance, true, undefined, shotGroup);
+    const entity = this.entities?.ray(origin, direction, maxDistance);
+    if (entity && (!hit || entity.distance < hit.timeOfImpact)) return entity;
     return hit ? {distance: hit.timeOfImpact, normal: {...hit.normal}, ...this.hitMetadata(hit)} : undefined;
   }
   private hitMetadata(hit: RAPIER.RayColliderIntersection): NativeSurfaceHit {
@@ -517,7 +566,7 @@ export class NativeMapCollision implements TerrainQueries {
       const hit = this.ray(origin,unit,range);
       return hit ? [{...hit,entry:hit.distance,entryNormal:hit.normal,validated:false}] : [];
     }
-    const result: NativeSurfaceInterval[] = [];
+    const result: NativeSurfaceInterval[] = this.entities?.traceSolid(origin, unit, range) ?? [];
     for (const solid of querySolidTree(this.solidTree,origin,unit,range)) {
       const interval = convexRayInterval(solid,origin,unit);
       if (interval && interval.entry <= range) result.push({...interval,validated:true,primitiveId:solid.primitive.id,
@@ -546,6 +595,7 @@ export class NativeMapCollision implements TerrainQueries {
   dispose() {
     if (this.disposed) return;
     this.disposed = true;
+    this.entities?.dispose(); this.entities = undefined;
     this.grenadeQuery?.release();this.grenadeQuery=undefined;
     this.world.free(); this.shapes.clear(); this.grenadeShapes.clear();this.sphereShapes.clear();this.columns.clear(); this.surfaces.clear(); this.triangles.length = 0; this.corpseMeshes.clear();
     this.ids.clear(); this.sourceSurfaces.clear(); this.primitiveGroups.clear(); this.openShots.length = 0; this.solidTree = undefined;

@@ -122,7 +122,7 @@ export async function bakeContextAtlas(document) {
   return {size,tiles:textures.length+1,bytes:atlasImage.length};
 }
 
-export async function buildDuelContext(root=process.cwd(),{assetId='dust2'}={}) {
+export async function buildDuelContext(root=process.cwd(),{assetId='dust2',publishManifests=true}={}) {
   await Promise.all([MeshoptDecoder.ready,MeshoptEncoder.ready,MeshoptSimplifier.ready]);
   const base=path.join(root,nativeMapFiles(assetId).out),out=path.join(base,'duel/context');
   const manifestBytes=await fs.readFile(path.join(base,'visual.json')),manifest=JSON.parse(manifestBytes);
@@ -134,6 +134,8 @@ export async function buildDuelContext(root=process.cwd(),{assetId='dust2'}={}) 
   for(const file of manifest.files) {
     if(!/^visual-\d+\.gltf$/.test(file))throw Error('Unexpected native visual filename');
     const source=await io.read(path.join(base,file));
+    // Mutable props must not survive as an unbreakable distant duplicate.
+    for (const node of [...source.getRoot().listNodes()]) if (node.getExtras().nativeEntityId) node.dispose();
     for(const mesh of source.getRoot().listMeshes())for(const primitive of [...mesh.listPrimitives()]) {
       sourceTriangles+=(primitive.getIndices()?.getCount()??primitive.getAttribute('POSITION').getCount())/3;
       if(primitive.getMaterial()?.getAlphaMode()!=='OPAQUE')mesh.removePrimitive(primitive);
@@ -191,7 +193,7 @@ export async function buildDuelContext(root=process.cwd(),{assetId='dust2'}={}) 
   await fs.writeFile(path.join(base,'duel/objects',objectName),compressed);
   await fs.writeFile(path.join(out,'context.glb'),binary);
   await fs.writeFile(path.join(out,'context.json'),JSON.stringify(metadata,null,2)+'\n');
-  await buildMapManifests(root,{assetId});
+  if (publishManifests) await buildMapManifests(root,{assetId});
   console.log(JSON.stringify(metadata));return metadata;
 }
 

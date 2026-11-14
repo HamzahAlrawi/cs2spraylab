@@ -136,6 +136,11 @@ for label, resource in spec['clips'].items():
     frames = [float(frame) for frame in range(int(start), int(end) + 1)]
     if not frames or frames[-1] < end - 1e-5:
         frames.append(end)
+    # glTF's Blender exporter drops a one-key object action, even though the
+    # character pose is retained. Keep a duplicate sample so a native static
+    # grenade-charge pose also exports its weapon mount instead of using idle.
+    if len(frames) == 1:
+        frames.append(frames[0] + 1)
     max_error, max_mount_error = 0, 0
     rotations, root_rotation = {}, None
     for frame in frames:
@@ -188,7 +193,7 @@ bpy.ops.object.select_all(action='DESELECT')
 for obj in [character, rig] + hands + meshes:
     obj.select_set(True)
 for obj in meshes:
-    obj['assembly_version'] = 5
+    obj['assembly_version'] = 6
     obj['native_view_variant'] = variant
     obj['native_view_weapon'] = ident
     obj['native_view_build'] = spec['build']
@@ -197,9 +202,10 @@ for obj in meshes:
         obj['native_reload'] = Path(spec['clips']['reload']).name.removesuffix('.vnmclip_c')
 bpy.ops.export_scene.gltf(filepath=str(ROOT / spec['output']), export_format='GLB',
     use_selection=True, export_animations=True, export_animation_mode='NLA_TRACKS',
-    export_anim_single_armature=False, export_frame_range=False, export_extras=True)
+    export_anim_single_armature=False, export_frame_range=False, export_extras=True,
+    export_optimize_animation_keep_anim_object=True)
 (ROOT / 'research/weapon-actions' / (asset_key + '-export.json')).write_text(json.dumps({
-    'assetKey': asset_key, 'variant': variant, 'assemblyVersion': 5,
+    'assetKey': asset_key, 'variant': variant, 'assemblyVersion': 6,
     'build': spec['build'], 'sourceModel': 'agents/models/ctm_sas/ctm_sas.vmdl_c',
     'sourceSha256': spec['sourceSha256'], 'bindSha256': spec['bindSha256'],
     'skeleton': spec['skeleton'], 'pickup': spec['pickup'], 'clips': inventory,

@@ -160,7 +160,7 @@ export async function loadNativeMap(signal: AbortSignal | undefined, options: Na
       pendingFiles.get('visibility.json'),pendingFiles.get('visibility.bin')]).then(([metadata,bytes])=>
         new NativeVisibility(metadata,new Uint8Array(bytes)));
     void visibilityTask?.catch(error=>scope.abort(error));
-    const visibleMeshes: {mesh: THREE.Mesh; clusters: number[]}[] = [];
+    const visibleMeshes: {mesh: THREE.Mesh; clusters: number[]; entityId?: string; pvs: boolean}[] = [];
     if (visuals.version !== 2 || !Array.isArray(visuals.files) || !visuals.files.length || visuals.files.length > 64 ||
       new Set(visuals.files).size !== visuals.files.length || visuals.files.some((file:string) => !/^visual-\d+\.gltf$/.test(file))) throw new Error('Native map visuals need rebuilding.');
     const inventory = validateMapResources(visuals.resources as MapResource[]);
@@ -253,7 +253,9 @@ export async function loadNativeMap(signal: AbortSignal | undefined, options: Na
         }
         if(!node.geometry.boundingSphere)node.geometry.computeBoundingSphere();
         const clusters: number[] = node.userData.nativeClusters ?? node.parent?.userData.nativeClusters ?? [0];
-        visibleMeshes.push({mesh: node, clusters});
+        let ancestor: THREE.Object3D | null = node;
+        while (ancestor && typeof ancestor.userData.nativeEntityId !== 'string') ancestor = ancestor.parent;
+        visibleMeshes.push({mesh: node, clusters, entityId: ancestor?.userData.nativeEntityId, pvs: true});
       });
       return asset;
       } catch (error) {scope.abort(error); throw error;}
@@ -264,6 +266,9 @@ export async function loadNativeMap(signal: AbortSignal | undefined, options: Na
     if(visibility&&visibleMeshes.some(({clusters})=>clusters.some(cluster=>!Number.isInteger(cluster)||cluster<0||
       cluster>=visibility.metadata.m_nBaseClusterCount)))throw new Error('Invalid native mesh visibility clusters.');
     await collisionTask;
+    if (visuals.nativeEntities) collision!.installEntities(visuals.nativeEntities, (id, active) => {
+      for (const item of visibleMeshes) if (item.entityId === id) item.mesh.visible = active && item.pvs;
+    });
     // Texture clones may share an ImageBitmap across UV channels. Never close
     // it while another texture still needs its first GPU upload.
     const retainedImages = new Set([...textures.values()].map(texture => texture.image));
@@ -301,7 +306,10 @@ export async function loadNativeMap(signal: AbortSignal | undefined, options: Na
         const row = visibility.pointRow([point.x / .0254, -point.z / .0254, point.y / .0254]);
         if (lastKey === visibility.key) return;
         lastKey = visibility.key;
-        for (const {mesh, clusters} of visibleMeshes) mesh.visible = NativeVisibility.visible(clusters, row);
+        for (const item of visibleMeshes) {
+          item.pvs = NativeVisibility.visible(item.clusters, row);
+          item.mesh.visible = item.pvs && (!item.entityId || loadedCollision.entityActive(item.entityId));
+        }
       },
       dispose};
   } catch (error) {

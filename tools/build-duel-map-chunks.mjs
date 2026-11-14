@@ -182,7 +182,7 @@ function writeAsset(directory, name, bytes) {
 
 function writeJson(directory, name, value) {return writeAsset(directory, name, Buffer.from(JSON.stringify(value)));}
 
-async function writeVisuals(io, parts, directory) {
+async function writeVisuals(io, parts, directory, sourceEntities) {
   const files = [], fileHashes = {}, resources = new Map();
   let triangles = 0, nodes = 0;
   for (const part of parts) {
@@ -208,7 +208,9 @@ async function writeVisuals(io, parts, directory) {
   }
   if (!files.length) throw new Error('Chunk contains no render geometry');
   const bytes = files.reduce((sum, file) => sum + fs.statSync(path.join(directory, file)).size, 0) + [...resources.values()].reduce((sum, r) => sum + r.bytes, 0);
-  const manifest = {version: 2, files, fileHashes, bytes, resources: [...resources.values()]};
+  const entityIds = new Set(parts.flatMap(part => part.document.getRoot().listNodes().map(node => node.getExtras().nativeEntityId)).filter(Boolean));
+  const manifest = {version: 2, files, fileHashes, bytes, resources: [...resources.values()],
+    ...(sourceEntities ? {nativeEntities: {...sourceEntities, entities: sourceEntities.entities.filter(e => entityIds.has(e.id))}} : {})};
   const primary = writeJson(directory, 'visual.json', manifest);
   return {manifest, primary, triangles, nodes};
 }
@@ -260,7 +262,7 @@ export async function buildDuelMapChunks({root = process.cwd(), ids,assetId='dus
   const summaries = [];
   for (const context of chunks) {
     const {chunk, directory, bounds, collision, collisionPrimary, binaryPrimary} = context;
-    const visual = await writeVisuals(io, context.parts, directory);
+    const visual = await writeVisuals(io, context.parts, directory, sourceVisual.nativeEntities);
     const manifest = {
       version: 1, id: chunk.id, map: catalog.map, routeId: chunk.routeId, name: chunk.name, build: sourceCollision.build,
       coordinateSystem: catalog.coordinateSystem, sourceCollisionSha256: sourceCollision.collisionSha256,

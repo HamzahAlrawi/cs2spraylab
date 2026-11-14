@@ -115,6 +115,8 @@ if (!process.argv.includes('--collision-only')) {
 const rawMap = `${work}/native-current.glb`;
 if (refresh || cache.exporterVersion !== exporterVersion || !fs.existsSync(rawMap)) execFileSync(cli, ['-i', vpk, '-f', `maps/${identity.mapId}.vmap_c`, '-d', '--gltf_export_format', 'glb', '--gltf_export_materials', '--gltf_textures_adapt', '--gltf_export_extras', '-o', rawMap], {stdio: 'ignore',windowsHide:true});
 const {buildDust2Visuals} = await import('./build-dust2-visuals.mjs');
+const {extractMapEntities} = await import('./native-map-entities.mjs');
+extractMapEntities(identity, {game, cli, build});
 const {importVisibility} = await import('./import-dust2-visibility.mjs');
 const visibility = importVisibility(cli, vpk, work, out, refresh,identity.mapId);
 const visuals = await buildDust2Visuals(rawMap, out, visibility,identity.name);

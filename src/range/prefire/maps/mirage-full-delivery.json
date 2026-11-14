@@ -1,8 +1,8 @@
 {
-  "url": "/maps/mirage/duel/objects/a161220cb61e4259f79ef4304a00b605cad4d8dfc6174cd8185ce4c57c53b366.bin",
-  "bytes": 15100,
-  "sha256": "a161220cb61e4259f79ef4304a00b605cad4d8dfc6174cd8185ce4c57c53b366",
-  "decodedBytes": 56597,
-  "decodedSha256": "72441bd7fa3facde2cc82931ca82913329dbbd2d7eee74a59296a3ab1488cb0e",
+  "url": "/maps/mirage/duel/objects/73cc792fde2f70b3557de03cdc38e691d9e2856738917bb6db9b5c9cc9c642b2.bin",
+  "bytes": 15105,
+  "sha256": "73cc792fde2f70b3557de03cdc38e691d9e2856738917bb6db9b5c9cc9c642b2",
+  "decodedBytes": 56598,
+  "decodedSha256": "fa90dbab9e07ba9a4dea7d6b3d31f7ecb46efc7f02393957e6cf592260134594",
   "encoding": "gzip"
 }

@@ -56,8 +56,8 @@
       },
       "view": {
         "url": "/models/view-utility-he.glb",
-        "sha256": "2b6bc9c965f5737a9ed0037bfc971761546e35a8a4d240899d63c0a10b43e2b1",
-        "bytes": 2053324
+        "sha256": "ae988e988d612cdc54d0dd0d11efd8268696d365af5383289ae3069db43e0c2e",
+        "bytes": 2059072
       },
       "clips": {
         "idle": {
@@ -113,7 +113,7 @@
           "crc": "00227731ed",
           "bytes": 4319,
           "seconds": 0,
-          "samples": 1,
+          "samples": 2,
           "maxPartMatrixError": 4.6566128730773926e-9,
           "maxMountMatrixError": 3.5762786865234375e-7,
           "quaternionContinuity": true,
@@ -125,7 +125,7 @@
           "crc": "00056bafa0",
           "bytes": 4310,
           "seconds": 0,
-          "samples": 1,
+          "samples": 2,
           "maxPartMatrixError": 4.6566128730773926e-9,
           "maxMountMatrixError": 3.5762786865234375e-7,
           "quaternionContinuity": true,
@@ -137,7 +137,7 @@
           "crc": "0096c33c98",
           "bytes": 4295,
           "seconds": 0,
-          "samples": 1,
+          "samples": 2,
           "maxPartMatrixError": 4.6566128730773926e-9,
           "maxMountMatrixError": 3.5762786865234375e-7,
           "quaternionContinuity": true,
@@ -229,8 +229,8 @@
       },
       "view": {
         "url": "/models/view-utility-flash.glb",
-        "sha256": "4c0f7c67a34725f497aed04117d811b5efac56353e40237a8bdfcd96bee94daf",
-        "bytes": 2245672
+        "sha256": "575b4b1157811a7ec03a5534e6524d824bed17741117ed3ab2abbe83213f3119",
+        "bytes": 2251496
       },
       "clips": {
         "idle": {
@@ -238,7 +238,7 @@
           "crc": "00673ac130",
           "bytes": 4301,
           "seconds": 0,
-          "samples": 1,
+          "samples": 2,
           "maxPartMatrixError": 5.960464477539063e-8,
           "maxMountMatrixError": 8.940696716308594e-8,
           "quaternionContinuity": true,
@@ -286,7 +286,7 @@
           "crc": "00b220b6cf",
           "bytes": 4295,
           "seconds": 0,
-          "samples": 1,
+          "samples": 2,
           "maxPartMatrixError": 1.862645149230957e-9,
           "maxMountMatrixError": 1.4901161193847656e-7,
           "quaternionContinuity": true,
@@ -298,7 +298,7 @@
           "crc": "003ad79c37",
           "bytes": 4298,
           "seconds": 0,
-          "samples": 1,
+          "samples": 2,
           "maxPartMatrixError": 1.862645149230957e-9,
           "maxMountMatrixError": 1.4901161193847656e-7,
           "quaternionContinuity": true,
@@ -310,7 +310,7 @@
           "crc": "009ff9d836",
           "bytes": 4295,
           "seconds": 0,
-          "samples": 1,
+          "samples": 2,
           "maxPartMatrixError": 1.862645149230957e-9,
           "maxMountMatrixError": 1.4901161193847656e-7,
           "quaternionContinuity": true,
@@ -402,8 +402,8 @@
       },
       "view": {
         "url": "/models/view-utility-smoke.glb",
-        "sha256": "b8b9b9e219a61ad42fb39124d9d7eb1eb027eed4863f7ccd41daeaba4f0d3740",
-        "bytes": 2086068
+        "sha256": "eafba3853d93382c2f18dd269e0bd2d5769575a8f67cbc296c8f1468057a0993",
+        "bytes": 2091808
       },
       "clips": {
         "idle": {
@@ -459,7 +459,7 @@
           "crc": "00ead3941f",
           "bytes": 4361,
           "seconds": 0,
-          "samples": 1,
+          "samples": 2,
           "maxPartMatrixError": 3.725290298461914e-9,
           "maxMountMatrixError": 5.960464477539063e-8,
           "quaternionContinuity": true,
@@ -471,7 +471,7 @@
           "crc": "001d0f464b",
           "bytes": 4357,
           "seconds": 0,
-          "samples": 1,
+          "samples": 2,
           "maxPartMatrixError": 3.725290298461914e-9,
           "maxMountMatrixError": 5.960464477539063e-8,
           "quaternionContinuity": true,
@@ -483,7 +483,7 @@
           "crc": "00b3f213f8",
           "bytes": 4353,
           "seconds": 0,
-          "samples": 1,
+          "samples": 2,
           "maxPartMatrixError": 3.725290298461914e-9,
           "maxMountMatrixError": 5.960464477539063e-8,
           "quaternionContinuity": true,
@@ -575,8 +575,8 @@
       },
       "view": {
         "url": "/models/view-utility-molotov.glb",
-        "sha256": "6b300156c827e666790c487a7b20b38c2105818acb0f22299a2f1ae013fe3379",
-        "bytes": 2287140
+        "sha256": "bdf5af7a7941f8a3fb0ac2d5a67866a226d6c970368a3703e861bede39165d7f",
+        "bytes": 2293160
       },
       "clips": {
         "idle": {
@@ -584,7 +584,7 @@
           "crc": "006855e22b",
           "bytes": 4456,
           "seconds": 0,
-          "samples": 1,
+          "samples": 2,
           "maxPartMatrixError": 4.172325134277344e-7,
           "maxMountMatrixError": 4.24903703333257e-8,
           "quaternionContinuity": true,
@@ -632,7 +632,7 @@
           "crc": "00872d8928",
           "bytes": 4470,
           "seconds": 0,
-          "samples": 1,
+          "samples": 2,
           "maxPartMatrixError": 3.2782554626464844e-7,
           "maxMountMatrixError": 4.24903703333257e-8,
           "quaternionContinuity": true,
@@ -644,7 +644,7 @@
           "crc": "00bcbe32c7",
           "bytes": 4461,
           "seconds": 0,
-          "samples": 1,
+          "samples": 2,
           "maxPartMatrixError": 2.384185791015625e-7,
           "maxMountMatrixError": 4.24903703333257e-8,
           "quaternionContinuity": true,
@@ -656,7 +656,7 @@
           "crc": "009186122e",
           "bytes": 4953,
           "seconds": 0,
-          "samples": 1,
+          "samples": 2,
           "maxPartMatrixError": 2.980232238769531e-7,
           "maxMountMatrixError": 4.24903703333257e-8,
           "quaternionContinuity": true,
@@ -748,8 +748,8 @@
       },
       "view": {
         "url": "/models/view-utility-incendiary.glb",
-        "sha256": "60cfbbdc9a0cf2268df7de76e6fdda912a6233713d423d6a79ccd4205d7868a7",
-        "bytes": 2174680
+        "sha256": "487fc856076d8ed91f6668360d71499bed12bfbf47eeadf73b2678729c66bb4e",
+        "bytes": 2180460
       },
       "clips": {
         "idle": {
@@ -805,7 +805,7 @@
           "crc": "0053265215",
           "bytes": 4307,
           "seconds": 0,
-          "samples": 1,
+          "samples": 2,
           "maxPartMatrixError": 3.725290298461914e-9,
           "maxMountMatrixError": 5.960464477539063e-8,
           "quaternionContinuity": true,
@@ -817,7 +817,7 @@
           "crc": "0096aff60f",
           "bytes": 4303,
           "seconds": 0,
-          "samples": 1,
+          "samples": 2,
           "maxPartMatrixError": 3.725290298461914e-9,
           "maxMountMatrixError": 5.960464477539063e-8,
           "quaternionContinuity": true,
@@ -829,7 +829,7 @@
           "crc": "004e90b026",
           "bytes": 4300,
           "seconds": 0,
-          "samples": 1,
+          "samples": 2,
           "maxPartMatrixError": 3.725290298461914e-9,
           "maxMountMatrixError": 5.960464477539063e-8,
           "quaternionContinuity": true,
@@ -921,8 +921,8 @@
       },
       "view": {
         "url": "/models/view-utility-decoy.glb",
-        "sha256": "91a1736fa5b9cb267ab01709e7d49e1795df7631b1405dd9ac2f1b9eaa89bd83",
-        "bytes": 2263420
+        "sha256": "360a5f54b3bf6916daa98f5463d714b268db0c367f9216fc43ec1cced1b0023b",
+        "bytes": 2269028
       },
       "clips": {
         "idle": {
@@ -930,7 +930,7 @@
           "crc": "001c74ca22",
           "bytes": 4280,
           "seconds": 0,
-          "samples": 1,
+          "samples": 2,
           "maxPartMatrixError": 5.960464477539063e-8,
           "maxMountMatrixError": 8.940696716308594e-8,
           "quaternionContinuity": true,
@@ -978,7 +978,7 @@
           "crc": "005a44e42b",
           "bytes": 4291,
           "seconds": 0,
-          "samples": 1,
+          "samples": 2,
           "maxPartMatrixError": 1.862645149230957e-9,
           "maxMountMatrixError": 1.4901161193847656e-7,
           "quaternionContinuity": true,
@@ -990,7 +990,7 @@
           "crc": "001444f5d5",
           "bytes": 4293,
           "seconds": 0,
-          "samples": 1,
+          "samples": 2,
           "maxPartMatrixError": 1.862645149230957e-9,
           "maxMountMatrixError": 1.4901161193847656e-7,
           "quaternionContinuity": true,
@@ -1002,7 +1002,7 @@
           "crc": "002d24f481",
           "bytes": 4291,
           "seconds": 0,
-          "samples": 1,
+          "samples": 2,
           "maxPartMatrixError": 1.862645149230957e-9,
           "maxMountMatrixError": 1.4901161193847656e-7,
           "quaternionContinuity": true,

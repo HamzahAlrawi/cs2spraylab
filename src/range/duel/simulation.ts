@@ -21,6 +21,7 @@ import {applyTagging, recoverTagging, type TaggingState} from '../tagging';
 import {DamagePunch} from '../aim-punch';
 import {RadarMemory} from './radar';
 import {resolveBulletRay} from './penetration';
+import {nativeHEBlastDamage, nativeHEStats} from './grenade-native-blast';
 import {traceMelee} from './melee';
 import {advanceEnvironment,createEnvironmentState,damageEnvironmentPiece,environmentPieceId,environmentSolids,
   useEnvironmentPiece,arenaBoostPOIs,type EnvironmentState,type EnvironmentResult} from './environment';
@@ -168,6 +169,7 @@ export class DuelSimulation {
     this.tradeRandom = randomStream(seed, 'death-trades');
     this.terrainTactics=new TerrainTactics(seed);
     this.authoredArena = arena;
+    arena.native?.resetEntities?.();
     this.environment = createEnvironmentState(arena);
     this.arena = {...arena,solids:environmentSolids(arena,this.environment)};
     configureArenaAcoustics(this.acoustics,this.arena);
@@ -864,6 +866,11 @@ export class DuelSimulation {
         this.utilitySound(event);
       } else if (event.type === 'detonate' || event.type === 'extinguish') {
         if(event.type==='detonate')this.utilityTeam.detonated(event.utilityId,event.time);
+        if (event.type === 'detonate' && event.kind === 'he') {
+          for (const broken of this.arena.native?.damageEntitiesInRadius?.(event.position, nativeHEStats.radiusUnits * UNIT,
+            distance => nativeHEBlastDamage(distance / UNIT)) ?? [])
+            this.emit({kind: 'environment', tick: this.tick, actorId: event.actorId, environmentId: broken.id, action: 'break', point: broken.point});
+        }
         this.emit({kind: 'utility', tick: this.tick, actorId: event.actorId, utility: event.kind,
           action: event.type, point: event.position});
       } else if (event.type === 'expire') this.utilityWeapons.delete(event.utilityId);
@@ -950,6 +957,8 @@ export class DuelSimulation {
         addHit(victim,nearest.group,pointOnRay(fired.origin,fired.direction,nearest.distance),fired.direction,damage);
       }
       if(fired.kind==='melee')shooter.weapon.resolveMeleeHit(fired.ordinal,!!nearest.target);
+      if (!nearest.target && surface.pieceId && fired.kind === 'melee')
+        this.damageNativeEntity(surface.pieceId, equipmentStats(fired.weapon).damage, shooter.id);
       return;
     }
     const coachingTarget = this.phase==='fighting' && shooter.id === 0 ? targets.find(target => target.id === this.coach.shotTarget(shotId) && target.alive) : undefined;
@@ -977,6 +986,7 @@ export class DuelSimulation {
           this.emit({kind:'surface',tick:this.tick,shooter:shooter.id,shotId,point:contact.point,surfaceId:contact.surfaceId,
             phase:contact.phase,material:contact.material,residualDamage:contact.residualDamage});
           if(contact.phase==='entry'&&contact.environmentId) {
+            this.damageNativeEntity(contact.environmentId, contact.residualDamage, shooter.id);
             this.applyEnvironment(damageEnvironmentPiece(this.authoredArena,this.environment,contact.environmentId,contact.residualDamage,
               {x:direction.x*contact.residualDamage*.2,y:0,z:direction.z*contact.residualDamage*.2}),shooter.id);
           }
@@ -1070,6 +1080,11 @@ export class DuelSimulation {
       this.emit({kind:'environment',tick:this.tick,actorId,environmentId:event.id,action:event.kind==='opened'?'open':
         event.kind==='closed'?'close':event.kind==='destroyed'?'break':'move',point:event.position});
     }
+  }
+
+  private damageNativeEntity(id: string, damage: number, actorId: number) {
+    const broken = this.arena.native?.damageEntity?.(id, damage);
+    if (broken) this.emit({kind: 'environment', tick: this.tick, actorId, environmentId: broken.id, action: 'break', point: broken.point});
   }
 
   private dropWeapon(actor:CombatActor) {

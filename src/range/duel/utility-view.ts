@@ -21,6 +21,9 @@ export class UtilityView {
   private readonly actions = new Map<UtilityViewAction, THREE.AnimationAction>();
   private readonly active = new Set<THREE.AnimationAction>();
   private readonly weaponMeshes: THREE.Object3D[] = [];
+  private anchor?: THREE.Object3D;
+  private readonly mounts: {root: THREE.Object3D; offset: THREE.Matrix4}[] = [];
+  private readonly mountMatrix = new THREE.Matrix4();
   private inspectAt?: number;
   private thrown?: {at: number; strength: number; startedAt: number};
   private kind: UtilityKind;
@@ -45,6 +48,18 @@ export class UtilityView {
       if (typeof object.userData.native_view_weapon === 'string') this.weaponMeshes.push(object);
     });
     this.sample('idle', 0);
+    this.anchor = scene.getObjectByName('wpn');
+    if (this.anchor) {
+      scene.updateMatrixWorld(true);
+      const roots = new Set<THREE.Object3D>();
+      for (const mesh of this.weaponMeshes) {
+        let root = mesh;
+        while (root.parent && root.parent !== scene) root = root.parent;
+        if (root !== scene && !root.getObjectByName('wpn')) roots.add(root);
+      }
+      for (const root of roots) this.mounts.push({root,
+        offset: new THREE.Matrix4().copy(this.anchor.matrixWorld).invert().multiply(root.matrixWorld)});
+    }
   }
   duration(name: UtilityViewAction) {
     const exported = this.actions.get(name)?.getClip().duration ?? 0;
@@ -132,6 +147,18 @@ export class UtilityView {
       action.time = THREE.MathUtils.clamp(key === other ? otherTime : key === timed ? time : 0, 0, action.getClip().duration);
     }
     syncAnimationActions(this.actions.values(), this.active); this.mixer.update(0);
+    // Older cached GLBs omit constant weapon-object tracks in ready poses.
+    // Follow the native socket, retaining the exported idle bind relationship;
+    // secondary weapon bones (pin/lever etc.) still use their authored tracks.
+    if (this.anchor && this.mounts.length) {
+      this.anchor.updateWorldMatrix(true, false);
+      for (const {root, offset} of this.mounts) {
+        root.parent?.updateWorldMatrix(true, false);
+        this.mountMatrix.copy(root.parent?.matrixWorld ?? this.scene.matrixWorld).invert()
+          .multiply(this.anchor.matrixWorld).multiply(offset).decompose(root.position, root.quaternion, root.scale);
+        root.updateMatrixWorld(true);
+      }
+    }
   }
   dispose() {this.mixer.stopAllAction(); this.mixer.uncacheRoot(this.scene); this.actions.clear(); this.active.clear();}
 }

@@ -16,7 +16,7 @@ export type NativePrimitive = {
   triangleSurfaces?: number[];
 };
 export type NativeSurfaceHit = {
-  surfaceId: number; primitiveId?: number; surface?: NativeSurface;
+  surfaceId: number; primitiveId?: number; surface?: NativeSurface; entityId?: string;
 };
 export type NativeSurfaceInterval = NativeSurfaceHit & {
   entry: number; exit?: number; entryNormal: Vec; exitNormal?: Vec;

@@ -26,6 +26,16 @@ function drop(sim: DuelSimulation, kind: 'he' | 'flash' | 'smoke' | 'molotov', x
 }
 
 describe('playable utility integration', () => {
+  it('keeps a smoke in hand without a world projectile or fuse while held for 30 seconds', () => {
+    const sim = fixture(['smoke']); sim.selectUtility('smoke'); sim.start();
+    sim.command(0, {fireHeld: true, firePressed: true});
+    const events = advance(sim, 30);
+    expect(events.some(event => event.kind === 'utility' && event.action === 'throw')).toBe(false);
+    expect(sim.utilityPresentation(0)?.kind).toBe('smoke');
+    expect(sim.utilityPresentation(0)?.primedAt).toBeDefined();
+    expect(sim.utilities.projectiles).toHaveLength(0); expect(sim.utilities.effects).toHaveLength(0);
+    expect(sim.utilityInventory().smoke).toBe(1);
+  });
   it('holds a grenade until release, consumes one stock and never fires the hidden gun', () => {
     const sim = fixture(); sim.selectUtility('he'); sim.start();
     const ammo = sim.actors[0].weapon.ammo;

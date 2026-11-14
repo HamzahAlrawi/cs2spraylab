@@ -7,6 +7,7 @@ import {blocksMovement, blocksShots, environmentPieceId, resolveEnvironmentSolid
 import type {TerrainQueries} from '../terrain';
 import {analyticActorBodyZones, type ActorHitPose} from './actor-hitboxes';
 import type {NativeSurfaceQueries, SurfaceMaterial as NativeMaterial} from '../prefire/native-surfaces';
+import type {NativeEntityControls} from '../prefire/native-entities';
 
 export type PropStyle = 'plain' | 'generator' | 'pallets' | 'vent' | 'cabinet' | 'concrete-stack' | 'roadblock' | 'kiosk' | 'rack' | 'planter' | 'dock' | 'pump' | 'bench' | 'stairs' | 'ramp' | 'door' | 'glass' | 'vent-panel' | 'movable';
 export type Solid = {center: Vec; size: Vec; kind?: 'concrete' | 'cargo' | 'crate' | 'barrier'; style?: PropStyle; poiId?: string} & EnvironmentMetadata;
@@ -17,7 +18,7 @@ export type Arena = {minX: number; maxX: number; minZ: number; maxZ: number; sol
   tactical?: {entry: Vec; watchPoints: Vec[]; searchPoints: Vec[]};
   roundSetup?: {course: string; start: number; holds: string[]};
   traversalVolumes?: TraversalVolume[]; traversalLinks?: TraversalLink[];
-  native?: TerrainQueries & NativeSurfaceQueries & {build?: string; collisionSha256?: string}};
+  native?: TerrainQueries & NativeSurfaceQueries & NativeEntityControls & {build?: string; collisionSha256?: string}};
 export type ArenaSpawn = {feet: Vec; yaw: number; pitch?: number; crouched?: boolean; lane?: number};
 export const testArena = (): Arena => ({minX: -12, maxX: 12, minZ: -20, maxZ: 12, solids: []});
 
@@ -249,7 +250,8 @@ export function traceSolid(origin: Vec, direction: Vec, arena: Arena, maxDistanc
   if (!validRay(origin, direction, maxDistance)) return closest;
   const native = arena.native?.ray(origin, direction, maxDistance);
   if (native) closest = {distance: native.distance, exitDistance: native.distance, surfaceId: native.surfaceId, source: 'native',
-    normal: native.normal, entry: pointOnRay(origin, direction, native.distance), thickness: Infinity, material: native.surface?.material};
+    normal: native.normal, entry: pointOnRay(origin, direction, native.distance), thickness: Infinity, material: native.surface?.material,
+    pieceId: native.entityId};
   for (let index = 0; index < arena.solids.length; index++) {
     const solid = resolveEnvironmentSolid(arena.solids[index], index, state);
     if (!blocksShots(solid)) continue;

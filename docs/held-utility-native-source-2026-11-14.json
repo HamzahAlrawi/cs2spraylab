@@ -1,0 +1,140 @@
+{
+  "build": "2000943",
+  "archiveDirectorySha256": "50226f207f0a90b2b85c095717bd42bfa3804a801149903cb6f7262d000d6b5d",
+  "extractorSha256": "fbdfb2eb289f21a86bcab2391cf3258bf61359a274bc67b69e471845301c27b9",
+  "clips": [
+    {
+      "kind": "he",
+      "action": "hold-high",
+      "resource": "animation/anims/viewmodel/grenade/grenade_hegrenade/throwcharge_high_hegrenade.vnmclip_c",
+      "sha256": "79f933a5df1983758d2783ed81b36808987eef00b9afeec90924bea94dd134a0",
+      "referenceBuild": "2000935"
+    },
+    {
+      "kind": "he",
+      "action": "hold-mid",
+      "resource": "animation/anims/viewmodel/grenade/grenade_hegrenade/throwcharge_mid_hegrenade.vnmclip_c",
+      "sha256": "2800fdb85551bf11697b97271b4d1cf7939774845959da6dea7f4a214da9b059",
+      "referenceBuild": "2000935"
+    },
+    {
+      "kind": "he",
+      "action": "hold-low",
+      "resource": "animation/anims/viewmodel/grenade/grenade_hegrenade/throwcharge_low_hegrenade.vnmclip_c",
+      "sha256": "fc59b6019709529f0a560ba1c959acb20fc52f3409336be5b57ae5d119c859ee",
+      "referenceBuild": "2000935"
+    },
+    {
+      "kind": "flash",
+      "action": "hold-high",
+      "resource": "animation/anims/viewmodel/grenade/grenade_flashbang/throwcharge_high_flashbang.vnmclip_c",
+      "sha256": "f85120acca252b0d30bdb6f652c9731ba7f90ec3e00073bee8c96017634608a3",
+      "referenceBuild": "2000935"
+    },
+    {
+      "kind": "flash",
+      "action": "hold-mid",
+      "resource": "animation/anims/viewmodel/grenade/grenade_flashbang/throwcharge_mid_flashbang.vnmclip_c",
+      "sha256": "998b35d79fcc56ec487a3cf0446db82e0deb455f6f00f5775f32c694490ccfa4",
+      "referenceBuild": "2000935"
+    },
+    {
+      "kind": "flash",
+      "action": "hold-low",
+      "resource": "animation/anims/viewmodel/grenade/grenade_flashbang/throwcharge_low_flashbang.vnmclip_c",
+      "sha256": "133ccd03b9c4c33097d8d7c41ce6fd31a3c2a6f564c36f184b1d289eb6ca4579",
+      "referenceBuild": "2000935"
+    },
+    {
+      "kind": "smoke",
+      "action": "pullpin",
+      "resource": "animation/anims/viewmodel/grenade/grenade_smokegrenade/pullpin_smoke.vnmclip_c",
+      "sha256": "fe4d9f8cb4c9facbefebcff6efcf82547bba045b3011ea09bf7054b07d2513a7",
+      "referenceBuild": "2000935"
+    },
+    {
+      "kind": "smoke",
+      "action": "hold-high",
+      "resource": "animation/anims/viewmodel/grenade/grenade_smokegrenade/throwcharge_high_smoke.vnmclip_c",
+      "sha256": "5bee5a88693c9c7fcad0e614d090c516cfef65563bd785b739cf2dbdda1750e1",
+      "referenceBuild": "2000935"
+    },
+    {
+      "kind": "smoke",
+      "action": "hold-mid",
+      "resource": "animation/anims/viewmodel/grenade/grenade_smokegrenade/throwcharge_mid_smoke.vnmclip_c",
+      "sha256": "21508b09abbf58b7b46db13ac5d307dd4cd56653f710e842c5e65ec2a04601be",
+      "referenceBuild": "2000935"
+    },
+    {
+      "kind": "smoke",
+      "action": "hold-low",
+      "resource": "animation/anims/viewmodel/grenade/grenade_smokegrenade/throwcharge_low_smoke.vnmclip_c",
+      "sha256": "556b3602cfc179960478772e3d95e068ee6c7db9243b3bfa34cd6e40524d246c",
+      "referenceBuild": "2000935"
+    },
+    {
+      "kind": "molotov",
+      "action": "hold-high",
+      "resource": "animation/anims/viewmodel/grenade/grenade_molotov/throwcharge_high_molotov.vnmclip_c",
+      "sha256": "b8ab8cda5f61b3c62628e721ca4ab356adc0a00912a7ee8e5edbe75001e59244",
+      "referenceBuild": "2000935"
+    },
+    {
+      "kind": "molotov",
+      "action": "hold-mid",
+      "resource": "animation/anims/viewmodel/grenade/grenade_molotov/throwcharge_mid_molotov.vnmclip_c",
+      "sha256": "f748efe403e4b117573cfdc4fc183d70ce160d641b70f24a3de4194e2c2cc3c9",
+      "referenceBuild": "2000935"
+    },
+    {
+      "kind": "molotov",
+      "action": "hold-low",
+      "resource": "animation/anims/viewmodel/grenade/grenade_molotov/throwcharge_low_molotov.vnmclip_c",
+      "sha256": "b4484f427a90aa14b314e4a2374aa85920e331324e4327dc1f67f2c1a6706ea6",
+      "referenceBuild": "2000935"
+    },
+    {
+      "kind": "incendiary",
+      "action": "hold-high",
+      "resource": "animation/anims/viewmodel/grenade/grenade_incendiary/throwcharge_high_incendiary.vnmclip_c",
+      "sha256": "a181f3a730484ae758261c87d1328ac17c3e29c64fdd650157890e2c0f65d347",
+      "referenceBuild": "2000935"
+    },
+    {
+      "kind": "incendiary",
+      "action": "hold-mid",
+      "resource": "animation/anims/viewmodel/grenade/grenade_incendiary/throwcharge_mid_incendiary.vnmclip_c",
+      "sha256": "515226b17fad7f5b316dfcd5f5203271f9b36c991fdc0ab91ef002a1c47b1a0d",
+      "referenceBuild": "2000935"
+    },
+    {
+      "kind": "incendiary",
+      "action": "hold-low",
+      "resource": "animation/anims/viewmodel/grenade/grenade_incendiary/throwcharge_low_incendiary.vnmclip_c",
+      "sha256": "643d3d89f75ca4e6b1c7cf55b98bfa1af8e0f50f6c7babdda678db5a8ccefd87",
+      "referenceBuild": "2000935"
+    },
+    {
+      "kind": "decoy",
+      "action": "hold-high",
+      "resource": "animation/anims/viewmodel/grenade/_default_grenade/throwcharge_high_grenade.vnmclip_c",
+      "sha256": "3dfe746b7e7855c52728c597a13ee4a575e667c633fc039d52f1047ca8871e63",
+      "referenceBuild": "2000935"
+    },
+    {
+      "kind": "decoy",
+      "action": "hold-mid",
+      "resource": "animation/anims/viewmodel/grenade/_default_grenade/throwcharge_mid_grenade.vnmclip_c",
+      "sha256": "36515567b67a696b02c7876ee74260d47f84d0c024aedf0cc3b20007bcd9c1ef",
+      "referenceBuild": "2000935"
+    },
+    {
+      "kind": "decoy",
+      "action": "hold-low",
+      "resource": "animation/anims/viewmodel/grenade/_default_grenade/throwcharge_low_grenade.vnmclip_c",
+      "sha256": "0f404aa9c54a7873db876c7f75dd3145cdc067e04bc9ba8afd855332eda29ea3",
+      "referenceBuild": "2000935"
+    }
+  ]
+}

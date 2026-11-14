@@ -7,10 +7,22 @@ import {parseKv3} from './kv3.mjs';
 import {NodeIO} from '@gltf-transform/core';
 
 const game = process.env.CS2_PATH || 'C:/Program Files (x86)/Steam/steamapps/common/Counter-Strike Global Offensive';
-const cli = path.resolve('.local-tools/vrf/Source2Viewer-CLI.exe');
+const cli = path.resolve(process.env.SOURCE2VIEWER || '.local-tools/vrf-dev/Source2Viewer-CLI.exe');
 const blender = process.env.BLENDER || 'C:/Program Files/Blender Foundation/Blender 5.2/blender.exe';
-const run = args => execFileSync(cli, ['-i', `${game}/game/csgo/pak01_dir.vpk`, ...args],
-  {encoding: 'utf8', windowsHide: true, maxBuffer: 60e6});
+const run = args => {
+  const output = execFileSync(cli, ['-i', `${game}/game/csgo/pak01_dir.vpk`, ...args],
+    {encoding: 'utf8', windowsHide: true, maxBuffer: 60e6});
+  if (/Exception:|file\(s\) failed to process/.test(output)) throw Error('Native utility extraction failed; update Source2Viewer before retrying.');
+  return output;
+};
+const extractModel = (target, args) => {
+  const pending = target.replace(/\.glb$/, '-pending.glb');
+  if (fs.existsSync(pending)) fs.unlinkSync(pending);
+  run([...args, '-o', pending]);
+  const bytes = fs.readFileSync(pending);
+  if (bytes.readUInt32LE(0) !== 0x46546c67 || bytes.readUInt32LE(8) !== bytes.length) throw Error('Invalid fresh native model export');
+  fs.renameSync(pending, target);
+};
 const listing = run(['-l', '-f', 'animation/anims/viewmodel/grenade/', '-e', 'vnmclip_c']);
 const files = [...listing.matchAll(/^(\S+\.vnmclip_c) CRC:(\w+) size:(\d+)/gm)];
 const build = fs.readFileSync(`${game}/game/csgo/steam.inf`, 'utf8').match(/ClientVersion=(\d+)/)[1];
@@ -48,9 +60,9 @@ for (const kind of kinds) {
   const previous = fs.existsSync(specPath) ? JSON.parse(fs.readFileSync(specPath)) : null;
   if (!process.argv.includes('--reuse-source') || previous?.signature !== signature || !fs.existsSync(source)) {
     console.log(`Extracting ${kind}: native model, textures, arms and nine view actions`);
-    run(['-f', `${native.m_szWorldModel}_c`, '-o', bind, '-d', '--gltf_export_format', 'glb',
+    extractModel(bind, ['-f', `${native.m_szWorldModel}_c`, '-d', '--gltf_export_format', 'glb',
       '--gltf_export_materials', '--gltf_textures_adapt', '--gltf_export_animations', '--gltf_animation_list', '__bind_pose_only__']);
-    run(['-f', 'agents/models/ctm_sas/ctm_sas.vmdl_c', '-o', source, '-d', '--gltf_export_format', 'glb',
+    extractModel(source, ['-f', 'agents/models/ctm_sas/ctm_sas.vmdl_c', '-d', '--gltf_export_format', 'glb',
       '--gltf_export_materials', '--gltf_textures_adapt', '--gltf_export_animations', '--gltf_compose_additive',
       '--gltf_animation_list', Object.values(clips).map(file => path.posix.basename(file, '.vnmclip_c')).join(',')]);
   }

@@ -1,0 +1,255 @@
+{
+  "schema": 1,
+  "mapId": "de_mirage",
+  "build": "2000943",
+  "mapSha256": "e66cdf1ae6a976f6f6ba510a2addd04b25a4c1cfd811f51f1ef13f0954e6e350",
+  "entityLump": {
+    "resource": "maps/de_mirage/entities/default_ents.vents_c",
+    "sha256": "81e72e970cc0a7b0cd819fa7d76c4562eebe38ad5a216753dd5c5f5fed4fc2c9"
+  },
+  "extractorSha256": "fbdfb2eb289f21a86bcab2391cf3258bf61359a274bc67b69e471845301c27b9",
+  "entities": [
+    {
+      "id": "native:de_mirage:2:60417:3716",
+      "model": "models/props/de_mirage/shutter_window_l_breakable.vmdl",
+      "modelSha256": "877ad070890fe9fcb484e83e861b9476fb71d88166ab2c1b795265680188496c",
+      "classname": "prop_dynamic",
+      "origin": [
+        -1919,
+        -269.847473,
+        -72
+      ],
+      "health": 1,
+      "active": true,
+      "targetname": "",
+      "movement": true,
+      "shots": true,
+      "grenades": true,
+      "enableOnBreak": [
+        "[PR#]shutter.l.remainder"
+      ],
+      "vertices": 8,
+      "triangles": 12
+    },
+    {
+      "id": "native:de_mirage:2:60417:3758",
+      "model": "models/props/de_mirage/wall_hole_b_cover_sheetmetal.vmdl",
+      "modelSha256": "8ba1a64a2013833a8fd8b9ad7a0677c73b124b21ef59b133750ef06fa744795f",
+      "classname": "prop_dynamic",
+      "origin": [
+        -1172,
+        -432,
+        -24
+      ],
+      "health": 1,
+      "active": true,
+      "targetname": "[PR#]prop.breakable.02",
+      "movement": true,
+      "shots": true,
+      "grenades": true,
+      "enableOnBreak": [],
+      "vertices": 30,
+      "triangles": 48
+    },
+    {
+      "id": "native:de_mirage:2:60417:4063",
+      "model": "models/props/de_mirage/wall_hole_cover_sheetmetal.vmdl",
+      "modelSha256": "bffb77d35a3820dfc0fd40ecdf38e6080aeb23af00e6c2cfe31d533dbd03564d",
+      "classname": "prop_dynamic",
+      "origin": [
+        -1336,
+        -974,
+        -132
+      ],
+      "health": 1,
+      "active": true,
+      "targetname": "[PR#]prop.breakable.01",
+      "movement": true,
+      "shots": true,
+      "grenades": true,
+      "enableOnBreak": [],
+      "vertices": 68,
+      "triangles": 108
+    },
+    {
+      "id": "native:de_mirage:2:60417:4201",
+      "model": "models/props/de_mirage/shutter_window_l_remainder.vmdl",
+      "modelSha256": "9cde0047798e91e7d49c7bac65c2d15ee4e07ad4647fc2d1b9949c49ff91a07b",
+      "classname": "prop_dynamic",
+      "origin": [
+        -1888,
+        -276,
+        -72
+      ],
+      "health": 0,
+      "active": false,
+      "targetname": "[PR#]shutter.l.remainder",
+      "movement": false,
+      "shots": false,
+      "grenades": false,
+      "enableOnBreak": [],
+      "vertices": 18,
+      "triangles": 32
+    },
+    {
+      "id": "native:de_mirage:2:60417:4202",
+      "model": "models/props/de_mirage/shutter_window_r_remainder.vmdl",
+      "modelSha256": "2dedc708b88ce6c89f1e3688b52e47cc995eb77d03591d6368d3a0895ee8752e",
+      "classname": "prop_dynamic",
+      "origin": [
+        -1952,
+        -276,
+        -72
+      ],
+      "health": 0,
+      "active": false,
+      "targetname": "[PR#]shutter.r.remainder",
+      "movement": false,
+      "shots": false,
+      "grenades": false,
+      "enableOnBreak": [],
+      "vertices": 12,
+      "triangles": 20
+    },
+    {
+      "id": "native:de_mirage:2:60417:4395",
+      "model": "maps/de_mirage/entities/unnamed_2_60417_4395.vmdl",
+      "modelSha256": "00e7646bea2fae521813a30e2fab729ce04197586fe983ae3cd81bd089a71c28",
+      "classname": "func_breakable",
+      "origin": [
+        -863.026245,
+        -2508.184082,
+        -88.5
+      ],
+      "health": 1,
+      "active": true,
+      "targetname": "",
+      "movement": true,
+      "shots": true,
+      "grenades": true,
+      "enableOnBreak": [],
+      "vertices": 9,
+      "triangles": 14
+    },
+    {
+      "id": "native:de_mirage:2:60417:7355",
+      "model": "models/de_mirage/food/magixx_sauce_01a/magixx_sauce_bottle_breakable_01a.vmdl",
+      "modelSha256": "2c3963a2173893989b53e34c2e31ee9c37866040c708d386eb8d0732e91a3f87",
+      "classname": "prop_physics_multiplayer",
+      "origin": [
+        -1866.178101,
+        -363.517731,
+        -137.672607
+      ],
+      "health": 2,
+      "active": true,
+      "targetname": "",
+      "movement": false,
+      "shots": true,
+      "grenades": true,
+      "enableOnBreak": [],
+      "vertices": 72,
+      "triangles": 140
+    },
+    {
+      "id": "native:de_mirage:2:60417:7356",
+      "model": "models/de_mirage/food/magixx_sauce_01a/magixx_sauce_bottle_breakable_01a.vmdl",
+      "modelSha256": "2c3963a2173893989b53e34c2e31ee9c37866040c708d386eb8d0732e91a3f87",
+      "classname": "prop_physics_multiplayer",
+      "origin": [
+        -1859.5,
+        -360.75,
+        -137.672607
+      ],
+      "health": 2,
+      "active": true,
+      "targetname": "",
+      "movement": false,
+      "shots": true,
+      "grenades": true,
+      "enableOnBreak": [],
+      "vertices": 72,
+      "triangles": 140
+    },
+    {
+      "id": "native:de_mirage:2:60417:7360",
+      "model": "models/de_mirage/food/magixx_sauce_01a/magixx_sauce_bottle_breakable_01a.vmdl",
+      "modelSha256": "2c3963a2173893989b53e34c2e31ee9c37866040c708d386eb8d0732e91a3f87",
+      "classname": "prop_physics_multiplayer",
+      "origin": [
+        -1859.106934,
+        -347.624878,
+        -168
+      ],
+      "health": 2,
+      "active": true,
+      "targetname": "",
+      "movement": false,
+      "shots": true,
+      "grenades": true,
+      "enableOnBreak": [],
+      "vertices": 72,
+      "triangles": 140
+    },
+    {
+      "id": "native:de_mirage:2:60417:7361",
+      "model": "models/de_mirage/food/magixx_sauce_01a/magixx_sauce_bottle_breakable_01a.vmdl",
+      "modelSha256": "2c3963a2173893989b53e34c2e31ee9c37866040c708d386eb8d0732e91a3f87",
+      "classname": "prop_physics_multiplayer",
+      "origin": [
+        -1876.875,
+        -359.375,
+        -165.809113
+      ],
+      "health": 2,
+      "active": true,
+      "targetname": "",
+      "movement": false,
+      "shots": true,
+      "grenades": true,
+      "enableOnBreak": [],
+      "vertices": 72,
+      "triangles": 140
+    },
+    {
+      "id": "native:de_mirage:2:60417:7363",
+      "model": "models/de_mirage/food/magixx_sauce_01a/magixx_sauce_bottle_breakable_01a.vmdl",
+      "modelSha256": "2c3963a2173893989b53e34c2e31ee9c37866040c708d386eb8d0732e91a3f87",
+      "classname": "prop_physics_multiplayer",
+      "origin": [
+        -2120.625,
+        -461.625,
+        -168
+      ],
+      "health": 2,
+      "active": true,
+      "targetname": "",
+      "movement": false,
+      "shots": true,
+      "grenades": true,
+      "enableOnBreak": [],
+      "vertices": 72,
+      "triangles": 140
+    },
+    {
+      "id": "native:de_mirage:2:60417:7364",
+      "model": "models/de_mirage/food/magixx_sauce_01a/magixx_sauce_bottle_breakable_01a.vmdl",
+      "modelSha256": "2c3963a2173893989b53e34c2e31ee9c37866040c708d386eb8d0732e91a3f87",
+      "classname": "prop_physics_multiplayer",
+      "origin": [
+        -2021.875,
+        -388.084229,
+        -123.970078
+      ],
+      "health": 2,
+      "active": true,
+      "targetname": "",
+      "movement": false,
+      "shots": true,
+      "grenades": true,
+      "enableOnBreak": [],
+      "vertices": 72,
+      "triangles": 140
+    }
+  ]
+}

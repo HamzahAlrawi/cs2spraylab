@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "mapId": "de_mirage",
+  "revision": "2026-11-13-mirage-pockets-v3",
+  "packageKey": "setup-v2:76a48a7204e7ceedadd8f05d39946840",
+  "catalogSha256": "9f79408f815e087aefeae5effc4f5e98ac9b6a5e54dd26ee71678abf6c2c8651",
+  "evidenceFile": "docs/map-beta/de_mirage/2026-11-14-breakables-pools.json",
+  "evidenceSha256": "db25b72551edf594dec4e7a8c50e3340c41e916ada6526b56bc8afbdcf487b48",
+  "nativeCollisionSha256": "6253487f363acf4b1b5bd2e8af0468a8fc29814ec36e564a8643f4645da88352",
+  "nativeBuild": "2000942",
+  "caseCount": 428,
+  "unresolved": [
+    "Beta, not full CS2 parity certification: matched-build visual, movement and utility capture review remains pending.",
+    "Common-angle coverage and individual peek tactics need further review. Current weights are authored physical-family coverage, not measured encounter probabilities.",
+    "Six native Duel chunks and eight Prefire approaches are included, including Short-to-B and Jungle-to-A. Palace dropping, the full CT Palace push and other retake approaches remain outside guided-route coverage.",
+    "Whole-map grenade queries include enabled static brushes and mutable supported breakable PHYS. Complete native debris/prop behavior, breakable penetration and matched-build smoke lineup trajectories remain unverified.",
+    "Broad-device frame-time, complete chunk-handoff and long-session memory acceptance are not fully certified."
+  ]
+}

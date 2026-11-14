@@ -11,6 +11,22 @@ function setup() {
   return {view, state, body};
 }
 describe('native grenade view action selection', () => {
+  it('keeps the grenade on its native socket when static ready clips omit object tracks', () => {
+    const scene = new THREE.Group(), anchor = new THREE.Bone(), rig = new THREE.Group(), body = new THREE.Mesh();
+    anchor.name = 'wpn'; rig.name = 'grenadeRig'; rig.position.set(.1, -.2, -.4);
+    body.userData.native_view_weapon = 'utility-smoke'; rig.add(body); scene.add(anchor, rig);
+    const clip = (name: string, position: number[]) => new THREE.AnimationClip(name, 1,
+      [new THREE.VectorKeyframeTrack('wpn.position', [0], position)]);
+    const view = new UtilityView(scene, [clip('idle', [0, 0, 0]), clip('pullpin', [0, .1, .2]),
+      clip('hold-high', [.3, .4, .6]), clip('hold-mid', [.2, .1, .3]), clip('hold-low', [-.1, -.2, .1])], 'smoke');
+    const state = {kind: 'smoke' as const, selectedAt: -2, readyAt: -1, primedAt: 0};
+    const offset = new THREE.Vector3(.1, -.2, -.4);
+    for (const strength of [1, .5, 0, .25, .75]) for (const time of [.5, .8, 1, 2, 30]) {
+      view.update({...state, strength}, time);
+      expect(rig.position.clone().sub(anchor.position).distanceTo(offset)).toBeLessThan(1e-6);
+    }
+    view.dispose();
+  });
   it('selects draw, idle, pin and all three strength poses without changing gameplay state', () => {
     const {view, state} = setup(); const original = {...state};
     view.update(state, 1.1); expect(view.activeAction).toBe('draw');

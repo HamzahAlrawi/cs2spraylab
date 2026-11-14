@@ -679,7 +679,7 @@ const november13CommonAngles = {
   ]}],
 } as const satisfies ChangelogRelease;
 
-export const latestChanges = {
+const november13CommonPockets = {
   id:'update-2026-11-13-common-pockets',title:'Clear the whole angle (November 13)',baselineCommit:'8bda170',
   sections:[{id:'named-map-pockets',title:'Common holds & complete clears',items:[
     'Mirage Ramp now continues through the site to clear Shadows and deep boxes. Underpass begins before the House stairs, and Market continues toward Bench.',
@@ -688,7 +688,18 @@ export const latestChanges = {
   ]}],
 } as const satisfies ChangelogRelease;
 
+export const latestChanges = {
+  id:'update-2026-11-14-held-utilities-breakables',title:'Held grenades & Mirage breakables (November 14)',baselineCommit:'a291a7b',
+  sections:[{id:'utility-attachments',title:'Grenades stay in hand',items:[
+    'Fixed a missing attachment track that made a primed smoke float in front of the player. All six grenade types keep their native hand attachment through every throw strength, including long holds.',
+  ]},{id:'mirage-breakable-props',title:'Open the angle',items:[
+    'Mirage sheet-metal covers, the Window shutter and supported fragile props now break from shots, knife hits and nearby HE damage. Their visible surfaces and native collision clear together and reset each round.',
+    'Disabled shutter remnants stay hidden until their native break output enables them. Dynamic debris physics and full Source 2 breakable penetration remain separate fidelity work.',
+  ]}],
+} as const satisfies ChangelogRelease;
+
 export const changelogHistory = [
+  november13CommonPockets,
   november13CommonAngles,
   november7WallSlide,
   november7Loading,

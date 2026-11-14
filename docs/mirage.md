@@ -148,6 +148,12 @@ Content-addressed map cache headers are generated per map, respecting
 
 ## Remaining Acceptance Work
 
+Held utility attachments and mutable native breakables are covered by the
+[November 14 audit](held-utilities-breakables-2026-11-14.md). Generated visuals
+retain entity identities, health, disabled/non-solid flags and linked remnants;
+native PHYS is kept separate from immutable world/query-cache geometry. These
+changes do not certify full Source 2 debris, prop movement or penetration parity.
+
 Native-capture image and trajectory comparisons, individual pocket/callout/peek
 review, additional CT/retake routes, measured encounter data, complete bot skill/
 count/seed scenarios, grenade trajectories and broad-device memory/frame-time/

@@ -400,6 +400,10 @@ export async function optimizeDuelVisuals({root = rootDefault, ids, apply = fals
     const source = rebuildVisuals ? await reconstructSourceChunk(root, chunk, metadata, io,assetId) : await readChunk(directory, io);
     if (source.visualBytes) assert.equal(sha256(source.visualBytes), metadata.visualManifestSha256);
     const result = await optimizeDocument(source.document, policy,`/maps/${assetId}/duel/shared/`); result.before.bytes = source.visual.bytes;
+    if (source.visual.nativeEntities) {
+      result.visual.nativeEntities = source.visual.nativeEntities;
+      result.files.set('visual.json', Buffer.from(JSON.stringify(result.visual)));
+    }
     const updatedMetadata = optimizedMetadata(metadata, result.files, protectedAssets, result, source.inputVisualSha256 ?? sha256(source.visualBytes), toolHash, policy);
     // Validate the exact serialized asset through a separate glTF decode before
     // it can replace a working chunk, including texture/material associations.

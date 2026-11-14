@@ -26,6 +26,9 @@ export async function buildDust2Visuals(rawMap, out, visibility,mapName='Dust 2'
   await MeshoptEncoder.ready; await MeshoptSimplifier.ready;
   const io = new NodeIO().registerExtensions(ALL_EXTENSIONS).registerDependencies({'meshopt.encoder': MeshoptEncoder});
   const original = await io.read(rawMap), output = new Document();
+  const entitiesFile = path.join(out, 'entities.json');
+  const nativeEntities = fs.existsSync(entitiesFile) ? JSON.parse(fs.readFileSync(entitiesFile, 'utf8')) : undefined;
+  const matchedEntities = new Set();
   output.setLogger(new Logger(Logger.Verbosity.ERROR));
   const buffer = output.createBuffer(), scene = output.createScene(`${mapName} native surfaces`);
   const sourceMaterials = original.getRoot().listMaterials();
@@ -68,6 +71,14 @@ export async function buildDust2Visuals(rawMap, out, visibility,mapName='Dust 2'
     const mesh = node.getMesh(); if (!mesh) continue;
     // VRF's [Source y, Source z, Source x] is already in metres.
     const matrix = new Matrix4().makeRotationY(Math.PI / 2).multiply(new Matrix4().fromArray(node.getWorldMatrix()));
+    const nativeEntity = nativeEntities?.entities.find(entity => {
+      const stem = path.posix.basename(entity.model, '.vmdl');
+      if (!node.getName().startsWith(stem + '.') && node.getName() !== stem) return false;
+      const origin = entity.origin;
+      return Math.hypot(matrix.elements[12] - origin[0] * .0254, matrix.elements[13] - origin[2] * .0254,
+        matrix.elements[14] + origin[1] * .0254) < .05;
+    });
+    if (nativeEntity) matchedEntities.add(nativeEntity.id);
     normalMatrix.getNormalMatrix(matrix);
     for (const primitive of mesh.listPrimitives()) {
       const material = primitive.getMaterial(), vmat = material?.getExtras().vmat ?? {};
@@ -93,8 +104,8 @@ export async function buildDust2Visuals(rawMap, out, visibility,mapName='Dust 2'
       for (let i = 0; i < ia.length; i += 3) {
         const verts = [ia[i], ia[i + 1], ia[i + 2]].map(index => p.fromArray(pa, index * 3).applyMatrix4(matrix).toArray());
         const cx = Math.floor((verts[0][0] + verts[1][0] + verts[2][0]) / 3 / 24), cz = Math.floor((verts[0][2] + verts[1][2] + verts[2][2]) / 3 / 24);
-        const materialIndex = materialGroups.get(material), key = `${cx}:${cz}:${materialIndex}`;
-        if (!cells.has(key)) cells.set(key, {positions: [], normals: [], uv0: [], uv1: [], colors: [], material: canonicalMaterials[materialIndex], uv1Present: true, colorSize, sector: `${cx}:${cz}`});
+        const materialIndex = materialGroups.get(material), key = `${cx}:${cz}:${materialIndex}:${nativeEntity?.id ?? ''}`;
+        if (!cells.has(key)) cells.set(key, {positions: [], normals: [], uv0: [], uv1: [], colors: [], material: canonicalMaterials[materialIndex], uv1Present: true, colorSize, sector: `${cx}:${cz}`, nativeEntityId: nativeEntity?.id});
         const cell = cells.get(key);
         for (let corner = 0; corner < 3; corner++) {
           const index = ia[i + corner]; cell.positions.push(...verts[corner]);
@@ -118,7 +129,8 @@ export async function buildDust2Visuals(rawMap, out, visibility,mapName='Dust 2'
     const nativeMin = [box.min.x / .0254, -box.max.z / .0254, box.min.y / .0254];
     const nativeMax = [box.max.x / .0254, -box.min.z / .0254, box.max.y / .0254];
     const clusters = visibility.boxClusters(nativeMin, nativeMax);
-    scene.addChild(output.createNode(name).setMesh(output.createMesh(name).addPrimitive(primitive)).setExtras({sector: cell.sector, nativeClusters: clusters}));
+    scene.addChild(output.createNode(name).setMesh(output.createMesh(name).addPrimitive(primitive)).setExtras({sector: cell.sector, nativeClusters: clusters,
+      ...(cell.nativeEntityId ? {nativeEntityId: cell.nativeEntityId} : {})}));
   }
   await output.transform(weld(), simplify({simplifier: MeshoptSimplifier, ratio: .5, error: .00015, lockBorder: true}), dedup());
   const nodes = scene.listChildren(), sectors = new Map();
@@ -150,7 +162,10 @@ export async function buildDust2Visuals(rawMap, out, visibility,mapName='Dust 2'
     }
   }
   const bytes = [...resources.values()].reduce((sum, r) => sum + r.bytes, 0) + files.reduce((sum, f) => sum + fs.statSync(`${out}/${f}`).size, 0);
-  const manifest = {version: 2, files, fileHashes:Object.fromEntries(files.map((file,index)=>[file,hashes[index]])), bytes, resources: [...resources.values()]};
+  const missingEntities = nativeEntities?.entities.filter(entity => !matchedEntities.has(entity.id)) ?? [];
+  if (missingEntities.length) throw Error(`Native destructible visuals unmatched: ${missingEntities.map(e => e.id).join(', ')}`);
+  const manifest = {version: 2, files, fileHashes:Object.fromEntries(files.map((file,index)=>[file,hashes[index]])), bytes, resources: [...resources.values()],
+    ...(nativeEntities ? {nativeEntities} : {})};
   fs.writeFileSync(`${out}/visual.json`, JSON.stringify(manifest));
   pruneDust2Assets(out, manifest);
   console.log(`Native surface visuals: ${(bytes / 1e6).toFixed(2)} MB, ${triangles} triangles, ${nodes.length} culled material batches in ${files.length} sectors.`);

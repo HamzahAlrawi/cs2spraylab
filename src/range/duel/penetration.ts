@@ -191,7 +191,7 @@ export function resolveBulletRay(request: BulletRayRequest): BulletRayResult {
     const known = !!surface?.gameMaterial && Number.isFinite(surface.penetrationModifier) && surface.penetrationModifier! > 0;
     crossings.push({kind:'surface',surfaceId:interval.surfaceId,primitiveId:interval.primitiveId,nativeSurface:surface,
       entry:interval.entry,exit:validExit ? interval.exit! : Infinity,entryNormal:interval.entryNormal,exitNormal:interval.exitNormal ?? interval.entryNormal,
-      solid:{center:pointOnRay(origin,direction,interval.entry),size:{x:1,y:1,z:1},material:surface?.material ?? 'concrete',
+      solid:{id:interval.entityId,center:pointOnRay(origin,direction,interval.entry),size:{x:1,y:1,z:1},material:surface?.material ?? 'concrete',
         penetrable:!!validExit && known,penetrationModifier:special?.modifier ?? surface?.penetrationModifier,damageLoss:special?.damageLoss ?? .16}});
   } else {
     const native = arena.native?.ray(origin, direction, range);
